@@ -1,0 +1,47 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="page-title">Control Hierarchy</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+<body>
+<div class="portletBody">
+     <div class="navIntraTool">
+         <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+         <a rsf:id="summary-link" href="summary.html">Summary</a>
+         <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+         <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+         <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+         <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+     </div>
+
+    <ul class="breadCrumb" style="clear: both; height: 1.5em">
+        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li style="float: left"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+        <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
+    </ul>
+    <h3 rsf:id="modify-location-message">Add/Modify Hierarchy Item under School Science</h3>
+    <form rsf:id="modify-node-form">
+        <p class="shorttext">
+            <label rsf:id="title-label" for="node-title">Title</label>
+            <input id="node-title" rsf:id="node-title" type="text"/>
+        </p>
+        <p class="shorttext">
+            <label rsf:id="abbreviation-label" for="node-abbr">Abbreviation</label>
+            <input rsf:id="node-abbr" type="text" />
+        </p>
+        <div class="act">
+            <input type="submit" rsf:id="save-node-button" value="Save Item" />
+            <a href="hierarchy_control.html" rsf:id="cancel-link">Cancel</a>
+        </div>
+    </form>
+</div>
+<script>document.getElementById('node-title').focus();</script>
+</body>
+</html>

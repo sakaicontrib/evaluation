@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.sakaiproject</groupId>
+   <artifactId>evaluation</artifactId>
+   <name>Sakai Evaluation Project</name>
+   <version>1.2.0</version><!--eval.version-->
+   <description>
+      Online Course and Instructor Ratings
+
+      The Evaluation System is a tool that runs under Sakai version 2.2 or higher. The
+      Evaluation System is used to conduct formative and summative (end of term) evaluations
+      and review the results. An evaluation consists of a series of scaled and/or free text
+      questions, which are delivered to students over a fixed time period (typically a few
+      days).
+
+      The evaluation system allows colleges, departments, and instructors to manage their
+      own body of questions which are part of a combined end of term evaluation. This allows
+      colleges and departments within a larger institution to collect targeted information
+      from their students, while preserving a consistent set of questions used through the
+      institution.
+
+      Evaluation results can easily be reviewed within a single course, across colleges or
+      departments, or across the entire university. Results can be reviewed for a single
+      evaluation covering a short time period, or can be displayed for a series of
+      evaluations conducted across a larger time period.
+
+      The evaluation system contacts students to notify them of upcoming evaluations
+      automatically, and to remind students to complete an ongoing evaluation. The
+      notification scheme is intended to increase the response rate.
+   </description>
+   <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
+   <packaging>pom</packaging>
+
+   <parent>
+      <artifactId>master</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>2.5.0</version>
+      <relativePath>../master/pom.xml</relativePath>
+   </parent>
+
+   <profiles>
+      <profile>
+         <id>full</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>api</module>
+            <module>impl</module>
+            <module>pack</module>
+            <module>deployer</module>
+            <module>tool</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>tool</id>
+         <modules>
+            <module>tool</module>
+         </modules>
+      </profile>
+   </profiles>
+
+   <!-- Project developers -->
+   <developers>
+      <developer>
+         <id>aaronz@vt.edu</id>
+         <name>Aaron Zeckoski</name>
+         <email>aaron@caret.cam.ac.uk</email>
+         <url>http://confluence.sakaiproject.org/confluence/display/~aaronz</url>
+         <organization>CARET</organization>
+         <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+         <roles>
+            <role>Project Manager</role>
+            <role>Architect</role>
+            <role>Developer</role>
+         </roles>
+         <timezone>0</timezone>
+      </developer>
+   </developers>
+
+   <repositories>
+      <repository>
+         <id>sakai-maven</id>
+         <name>Sakai Maven Repo</name>
+         <layout>default</layout>
+               <url>http://source.sakaiproject.org/maven2</url>
+         <snapshots>
+           <enabled>false</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <id>default</id>
+         <name>Maven Repository Switchboard</name>
+         <layout>default</layout>
+               <url>http://repo1.maven.org/maven2</url>
+         <snapshots>
+           <enabled>false</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
+
+   <distributionManagement>
+      <repository>
+         <id>Sakai-Maven2</id>
+         <name>Sakaiproject Maven 2 repository</name>
+         <url>file://source.sakaiproject.org/maven2/</url>
+      </repository>
+      <site>
+         <id>local site</id>
+         <url>file:./site/</url>
+      </site>
+   </distributionManagement>
+
+   <issueManagement>
+      <system>JIRA</system>
+      <url>http://jira.sakaiproject.org/jira/browse/EVALSYS</url>
+   </issueManagement>
+
+   <ciManagement>
+      <system>Continuum</system>
+      <url>http://saffron.caret.cam.ac.uk/continuum</url>
+      <notifiers>
+         <notifier>
+            <type>mail</type>
+            <sendOnError>true</sendOnError>
+            <sendOnFailure>true</sendOnFailure>
+            <sendOnSuccess>false</sendOnSuccess>
+            <sendOnWarning>false</sendOnWarning>
+            <configuration>
+               <address>aaron@caret.cam.ac.uk</address>
+            </configuration>
+         </notifier>
+      </notifiers>
+   </ciManagement>
+
+   <!-- define the license -->
+   <licenses>
+      <license>
+         <name>Educational Community License, Version 1.0</name>
+         <url>http://www.opensource.org/licenses/ecl1.php</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <!-- define source code repository location -->
+   <scm>
+      <connection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</connection>
+      <developerConnection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</developerConnection>
+      <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
+   </scm>
+
+</project>

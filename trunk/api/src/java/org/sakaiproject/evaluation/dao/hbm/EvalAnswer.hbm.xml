@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAnswer" table="EVAL_ANSWER" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <many-to-one name="templateItem" class="org.sakaiproject.evaluation.model.EvalTemplateItem" foreign-key="ANSWER_TEMPLATEITEM_FKC" lazy="proxy" fetch="select">
+            <column name="TEMPLATEITEM_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" foreign-key="ANSWER_ITEM_FKC" lazy="proxy" fetch="select">
+            <column name="ITEM_FK" />
+        </many-to-one>
+        <many-to-one name="response" class="org.sakaiproject.evaluation.model.EvalResponse" foreign-key="ANSWER_RESPONSE_FKC" lazy="proxy" fetch="select">
+            <column name="RESPONSE_FK" not-null="true" />
+        </many-to-one>
+        <!-- the textual answer if the associated item requires a text response -->
+        <property name="text" type="text">
+            <column name="TEXT_ANSWER" />
+        </property>
+        <!-- the numeric answer if the associated item requires a number response -->
+        <property name="numeric" type="java.lang.Integer" index="eval_answer_num">
+            <column name="NUM_ANSWER" />
+        </property>
+        <!-- stores an encoded string which represents multiple answers (multiAnswerCode) -->
+        <property name="multiAnswerCode" type="java.lang.String" length="255">
+            <column name="MULTI_ANSWER_CODE" />
+        </property>
+        <!-- if this answer is associated with an instructor or 
+        	environment or other then place the unique id here -->
+        <property name="associatedId" type="java.lang.String">
+            <column name="ASSOCIATED_ID" />
+        </property>
+        <!-- stores the type of the association (only set if associated id is set),
+        	uses constant strings -->
+        <property name="associatedType" type="java.lang.String">
+            <column name="ASSOCIATED_TYPE" />
+        </property>
+        <property name="comment" type="text">
+            <column name="COMMENT_ANSWER" />
+        </property>
+    </class>
+</hibernate-mapping>
