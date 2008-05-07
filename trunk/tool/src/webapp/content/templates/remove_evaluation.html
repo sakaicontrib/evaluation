@@ -1,0 +1,59 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=removeeval.page.title">Remove Evaluation</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body>
+		<div class="portletBody">
+			
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li><li class="lastCrumb" rsf:id="msg=removeeval.page.title">Remove Evaluation</li>
+			</ul>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+
+			<p class="alertMessage"  rsf:id="remove-eval-confirm-name">Are you sure you want to remove evaluation (eval title)? The removal is permanant.</p>
+
+			<p rsf:id="msg=removeeval.note" class="instruction">All data related to the evaluation will be removed permanantly.</p>
+
+			<table border="0" cellpadding="0" cellspacing="0" class="itemSummary" summary="summary placeholder">
+				<tr>
+					<th rsf:id="msg=removeeval.title.header">Evaluation&nbsp;Title</th>
+					<td>
+						<span rsf:id="evalTitle">Evaluation Title 1</span>
+					</td>
+				</tr>
+				<tr>
+					<th rsf:id="msg=removeeval.assigned.header">Assigned</th>
+					<td rsf:id="evalAssigned">Course 1010</td>
+				</tr>
+				<tr>
+					<th rsf:id="msg=removeeval.start.date.header">Start&nbsp;Date</th>
+					<td rsf:id="evalStartDate" >EvalStartDate</td>
+				</tr>
+				<tr>
+					<th align="center" rsf:id="msg=removeeval.due.date.header">Due&nbsp;Date</th>
+					<td rsf:id="evalDueDate" >EvalDueDate</td>	
+				</tr>
+ 			</table>
+            <div class="act">
+                <form rsf:id="removeEvalForm" name="removeEval_form" method="post" class="inlineForm">
+                     <input rsf:id="remove-eval-command-link" type="submit" value="Remove Evaluation" class="active" accesskey="s"/>
+                </form>
+                <input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;"  accesskey="x"/>
+            </div>
+		</div>
+	</body>
+</html>
+

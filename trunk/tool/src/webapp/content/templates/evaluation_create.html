@@ -1,0 +1,86 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title rsf:id="msg=starteval.page.title">Start Evaluation</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+</head>
+
+<body>
+<div class="portletBody">
+
+<div class="navIntraTool">
+   <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+   <a rsf:id="summary-link" href="summary.html">Summary</a>
+   <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+   <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+   <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+   <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+</div>
+
+<div>
+	<ul class="breadCrumb">
+		<li ><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="msg=starteval.page.title">Start Evaluation</li>
+	</ul>
+</div>
+
+<div rsf:id="message-for:*" class="alertMessage">
+	<ul style="margin:0px;">
+		<li>Message for user here</li>
+	</ul>
+</div>
+	
+	<h3 rsf:id="msg=starteval.header">Start a new evaluation</h3>
+	<form rsf:id="start_eval_form" name="start_eval_form" method="post">
+		<p class="shorttext">
+			<label rsf:id="msg=starteval.title.header" for="title">Title</label>
+			<input name="title" rsf:id="title"   id="title"  type="text" value="" size="50" maxlength="255" />
+		</p>
+		<div class="longtext evalEditorSmall">
+			<label rsf:id="msg=starteval.instructions.header">Instructions</label>
+			<div rsf:id="instructions:">
+		    	 <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
+			 </div>
+			 <p class="instruction textPanelFooter"><span rsf:id="msg=starteval.instructions.desc">these will appear at the top of the evaluation</span></p>
+		 </div> 
+		
+          <!-- This block (choose template) is not visible if the user came 
+			 from a screen where they had already chosen the template. -->
+		  <div rsf:id="chooseTemplate:">
+		  	<h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
+			<p rsf:id="msg=starteval.choose.template.desc" class="instruction">Select the template to use for this evaluation. Templates define the questions used.</p>
+				<table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+					<tr>
+						<th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
+						<th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>
+						<th id="actionCol" align="center">&nbsp;</th>
+					</tr>
+					<tr rsf:id="templateOptions:"> 
+						<td headers="titleCol">
+                            <span rsf:id="templateRadio"/>
+							&nbsp;<input type="radio" rsf:id="radioValue" id="radioValue"/>
+							<label rsf:id="radioLabel" for="radioValue">Template Title 1</label>
+						</td>
+						<td headers="ownerCol">&nbsp;<span rsf:id="radioOwner">OwnerUsername</span></td>						
+						<td headers="actionCol" class="itemAction">&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link" target="_blank">View preview</a></td>
+					</tr>
+				</table>
+			</div>
+            <div rsf:id="showTemplate:" class="shorttext">
+              <span rsf:id="eval_template_title">Template: template title</span>
+              &nbsp; (<a rsf:id="eval_template_preview_link" href="preview_eval.html" target="_blank">View preview</a>)
+            </div>
+
+			<p class="act">
+				<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" class="active"  accesskey="s" />
+				<input rsf:id="cancel-button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />				
+			</p>	
+	</form>
+	
+</div>	
+</body>
+</html>

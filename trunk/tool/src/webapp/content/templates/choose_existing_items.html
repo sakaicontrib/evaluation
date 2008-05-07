@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=items.existing.page.title">Items - Choose Items</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body>
+		<div class="portletBody">
+
+        <div class="navIntraTool">
+            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+            <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+            <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+            <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+            <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+        </div>
+		
+		<div>
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+				<li><a rsf:id="modify-template-link" href="template_modify.html">Template</a></li>
+				<!--// gsilver: this link goes to the dashboard -->
+				<li><a rsf:id="modify-items-link" href="modify_items.html">Items</a></li>
+				<li rsf:id="msg=items.choose.items" class="lastCrumb">Choose Items</li>
+			</ul>
+		</div>
+		
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+				<li>Message for user here</li>
+			</ul>
+		</div>
+		
+		<div class="navPanel">
+			<div class="viewNav">
+				<h3 rsf:id="msg=items.existing.page.title">Items</h3>
+			</div>	
+			<div class="searchNav">
+					<span rsf:id="search-current" class="highlight">Current Search:</span>
+					<span rsf:id="search-current-value" class="instruction">Search Text</span>
+					<form rsf:id="search-form" action="choose_existing_items.html" method="get">
+						<input rsf:id="search-box" type="text" size="25" maxlength="100" />
+						<input rsf:id="search-command" type="submit" value="Search" />
+					</form>
+			</div>
+		</div>
+		
+		<form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
+
+            <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->			
+            <p>
+                <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
+                <a rsf:id="cancel-items" href="template_modify.html" class="makeButton" id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+            </p>
+
+			<table class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
+				<caption rsf:id="msg=item.list.summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
+				<thead class="skip">
+					<tr>
+						<th width="5%" scope="col" class="attach"><span rsf:id="msg=items.select.col.title" class="skip">Select</span></th>
+						<th scope="col"><span rsf:id="msg=items.item.col.title">Items</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr rsf:id="item-list:">
+						<td class="attach">
+							<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
+						</td>
+						<td><h5>
+							<label rsf:id="item-label" for="id1">
+								<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+							</label>
+							</h5>
+							<div rsf:id="item-scale" class="instruction">Item Scale (the title of the scale and the points in parens)</div>
+
+						</td>
+					</tr>
+					<tr rsf:id="item-list:" class="itemsListOddLine">
+						<td class="attach">
+							<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
+						</td>
+						<td>
+							<h5>
+								<label rsf:id="item-label" for="id2">
+									<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+								</label>
+							</h5>
+							<div rsf:id="item-scale" class="instruction">Item Scale (the title of the scale and the points in parens)</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<p>
+				<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
+                <div rsf:id="no-items" />
+				<a rsf:id="cancel-items-bottom" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+			</p>
+			
+		</form>
+		
+		</div>
+	</body>
+</html>

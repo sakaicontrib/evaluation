@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalTranslation" table="EVAL_TRANSLATION" lazy="false" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" />
+        </property>
+        <property name="languageCode" type="java.lang.String" index="eval_trans_langcode">
+            <column name="LANGUAGE_CODE" not-null="true" length="255" />
+        </property>
+        <property name="objectClass" type="java.lang.String" index="eval_trans_class">
+            <column name="OBJECT_CLASS" not-null="true" length="255" />
+        </property>
+        <property name="objectId" type="java.lang.String" index="eval_trans_objectid">
+            <column name="OBJECT_ID" not-null="true" length="255" />
+        </property>
+        <property name="fieldName" type="java.lang.String" index="eval_trans_field">
+            <column name="FIELD_NAME" not-null="true" length="255" />
+        </property>
+        <property name="translation" type="text">
+            <column name="TRANSLATION" not-null="true" />
+        </property>
+	</class>
+</hibernate-mapping>
