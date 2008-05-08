@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.exceptions.InUseException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -164,7 +163,6 @@ public interface EvalAuthoringService {
     * 
     * @param itemId the id of an EvalItem object
     * @param userId the internal user id (not username)
-    * @throws InUseException if this item is in use and cannot be removed
     */
    public void deleteItem(Long itemId, String userId);
 
@@ -661,5 +659,25 @@ public interface EvalAuthoringService {
     * otherwise this will return null if no insertions were made
     */
    public List<EvalTemplateItem> doAutoUseInsertion(String autoUseTag, Long templateId, String insertionPointConstant, boolean saveAll);
+
+   // IN USE checks
+
+   /**
+    * @param scaleId the unique id for an {@link EvalScale}
+    * @return true if this scale is used in any items
+    */
+   public boolean isUsedScale(Long scaleId);
+
+   /**
+    * @param itemId the unique id for an {@link EvalItem}
+    * @return true if this item is used in any template (i.e. connected to any template item)
+    */
+   public boolean isUsedItem(Long itemId);
+
+   /**
+    * @param templateId the unique id for an {@link EvalTemplate}
+    * @return true if this template is used in any evalautions
+    */
+   public boolean isUsedTemplate(Long templateId);
 
 }
