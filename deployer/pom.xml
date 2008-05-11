@@ -5,7 +5,7 @@
    <name>Sakai Evaluation Shared Deployer</name>
    <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-deployer</artifactId>
-   <version>1.2.0</version><!--eval.version-->
+   <version>1.2.1</version><!--eval.version-->
    <organization>
       <name>Sakai Project</name>
       <url>http://www.sakaiproject.org/</url>
@@ -18,7 +18,7 @@
    <parent>
       <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>1.2.0</version><!--eval.version-->
+      <version>1.2.1</version><!--eval.version-->
    </parent>
 
     <properties>
