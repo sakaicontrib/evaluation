@@ -278,7 +278,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             props, values, comparisons, order, options);
       log.debug("getSharedEntitiesForUser: HQL=" + hql);
       Map<String, Object> params = new HashMap<String, Object>();
-      List<T> l = executeHqlQuery(hql, params, start, limit);
+      List<T> l = (List<T>) executeHqlQuery(hql, params, start, limit);
       return l;
    }
 
@@ -391,7 +391,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          String hql = "select eval from EvalEvaluation as eval " 
             + " where 1=1 " + activeHQL + groupsHQL //+ responsesHQL 
             + " order by eval.dueDate, eval.title, eval.id";
-         evals = executeHqlQuery(hql, params, startResult, maxResults);
+         evals = (List<EvalEvaluation>) executeHqlQuery(hql, params, startResult, maxResults);
          Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       }
       return evals;
@@ -458,7 +458,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       String hql = "select eval from EvalEvaluation as eval " 
          + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
          + " order by eval.dueDate, eval.title, eval.id";
-      evals = executeHqlQuery(hql, params, startResult, maxResults);
+      evals = (List<EvalEvaluation>) executeHqlQuery(hql, params, startResult, maxResults);
       Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       return evals;
    }
@@ -498,7 +498,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          + " order by ansswerresp.id, answer.id";
       // TODO optimize this once we are using a newer version of hibernate that supports "with"
 
-      List<EvalAnswer> results = executeHqlQuery(hql, params, 0, 0);
+      List<EvalAnswer> results = (List<EvalAnswer>) executeHqlQuery(hql, params, 0, 0);
       return results;
    }
 
@@ -930,7 +930,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          // select b.baz from Foo f join f.bars b"
          // select g.* from EVAL_ADHOC_GROUP g join EVAL_ADHOC_PARTICIPANTS p on p.ID = g.ID and p.USER_ID = 'aaronz' order by g.ID
          String hql = "from EvalAdhocGroup ag join ag." + permCheck + " userIds  where userIds.id = :userId order by ag.id";
-         results = executeHqlQuery(hql, params, 0, 0);
+         results = (List<EvalAdhocGroup>) executeHqlQuery(hql, params, 0, 0);
       } else {
          results = new ArrayList<EvalAdhocGroup>();
       }
@@ -1259,60 +1259,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return false;
    }
-
-   /**
-    * Provides an easy way to execute an hql query with named parameters
-    * 
-    * @param hql
-    *           a hibernate query language query
-    * @param params
-    *           the map of named parameters
-    * @param start
-    *           the entry number to start on (based on current sort rules), first entry is 0
-    * @param limit
-    *           the maximum number of entries to return, 0 returns as many entries as possible
-    * @return a list of whatever you requested in the HQL
-    */
-   @SuppressWarnings("unchecked")
-   private List executeHqlQuery(String hql, Map<String, Object> params, int start, int limit) {
-      List l = null;
-      try {
-         Query query = getSession().createQuery(hql);
-         query.setFirstResult(start);
-         if (limit > 0) {
-            query.setMaxResults(limit);
-         }
-         setParameters(query, params);
-         l = query.list();
-      } catch (org.hibernate.exception.SQLGrammarException e) {
-         // failed to execute the query
-         StringBuilder info = new StringBuilder();
-         info.append("Failure info: errorCode=" + e.getErrorCode());
-         info.append(", SQLstate=" + e.getSQLState());
-         info.append(", SQL=" + e.getSQL());
-         throw new RuntimeException("Unable to execute query: " + e.getMessage() + " :: HQL=" + hql + " :: " + info, e);
-      }
-      return l;
-   }
-
-
-   /**
-    * This is supported natively in Hibernate 3.2.x and up
-    * 
-    * @param query
-    * @param params
-    */
-   private void setParameters(Query query, Map<String, Object> params) {
-      for (String name : params.keySet()) {
-         Object param = params.get(name);
-         if (param.getClass().isArray()) {
-            query.setParameterList(name, (Object[]) param);
-         } else {
-            query.setParameter(name, param);
-         }
-      }
-   }
-
 
 
    /**

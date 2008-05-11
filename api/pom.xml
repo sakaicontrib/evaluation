@@ -6,7 +6,7 @@
     <name>Sakai Evaluation API</name>
     <groupId>org.sakaiproject.evaluation</groupId>
     <artifactId>sakai-evaluation-api</artifactId>
-    <version>1.2.0</version><!--eval.version-->
+    <version>1.2.1</version><!--eval.version-->
     <organization>
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
@@ -16,7 +16,7 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>1.2.0</version><!--eval.version-->
+        <version>1.2.1</version><!--eval.version-->
     </parent>
 
     <!-- you must deploy your API to shared or it will be 
