@@ -33,9 +33,9 @@ public class HierarchyTreeNodeSelectRenderer {
        this.hierarchyLogic = logic;
     }
     
-    private EvalCommonLogic externalLogic;
-    public void setExternalLogic(EvalCommonLogic externalLogic) {
-       this.externalLogic = externalLogic;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+       this.commonLogic = commonLogic;
     }
     
     String groupsSelectID; 
@@ -103,7 +103,7 @@ public class HierarchyTreeNodeSelectRenderer {
        
        Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
        for (String groupID: groupIDs) {
-           EvalGroup evalGroupObj = externalLogic.makeEvalGroupObject(groupID);
+           EvalGroup evalGroupObj = commonLogic.makeEvalGroupObject(groupID);
            renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj);
        }
        

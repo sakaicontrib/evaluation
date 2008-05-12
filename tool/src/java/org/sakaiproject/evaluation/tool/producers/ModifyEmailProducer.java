@@ -49,9 +49,9 @@ public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsRep
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -95,8 +95,8 @@ public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsRep
       String emailTemplateOTP = emailTemplateLocator + emailTemplateId + ".";
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
       if (emailViewParams.evaluationId == null) {
          /*

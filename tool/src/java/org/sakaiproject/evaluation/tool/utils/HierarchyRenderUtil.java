@@ -57,9 +57,9 @@ public class HierarchyRenderUtil {
       this.hierarchyLogic = logic;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalGroupsProvider groupProvider;
@@ -104,7 +104,7 @@ public class HierarchyRenderUtil {
       //UISelectChoice.make(tableRow, "select-checkbox", clientID, evalGroupIDs.size());
       UIBoundBoolean.make(tableRow, "select-checkbox");
       evalGroupIDs.add(groupID);
-      UIOutput name = UIOutput.make(tableRow, "node-name", externalLogic.getDisplayTitle(groupID));
+      UIOutput name = UIOutput.make(tableRow, "node-name", commonLogic.getDisplayTitle(groupID));
       name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
    }
 
@@ -181,7 +181,7 @@ public class HierarchyRenderUtil {
        */
       Set<String> assignedGroupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
       for (String assignedGroupID: assignedGroupIDs) {
-         EvalGroup assignedGroup = externalLogic.makeEvalGroupObject(assignedGroupID);
+         EvalGroup assignedGroup = commonLogic.makeEvalGroupObject(assignedGroupID);
          UIBranchContainer groupRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
          UIOutput.make(groupRow, "node-metadata-cell");
          UIOutput groupName = UIOutput.make(groupRow, "node-name", assignedGroup.title);

@@ -62,9 +62,9 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 		this.settings = settings;
 	}
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -87,8 +87,8 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -167,7 +167,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 			 * Dropdown values are visible only for admins. For instructors
 			 * (non-admin) we just show the private label
 			 */
-			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
+			if (commonLogic.isUserAdmin(commonLogic.getCurrentUserId())) {
 				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:");
 				UISelect.make(showSharingOptions, "sharing",
 						EvalToolConstants.SHARING_VALUES, 

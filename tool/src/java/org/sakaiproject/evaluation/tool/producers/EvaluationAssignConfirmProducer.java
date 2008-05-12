@@ -61,9 +61,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalSettings settings;
@@ -112,8 +112,8 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
       /*
        * top links here
@@ -178,7 +178,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             && selectedGroupIDs.length > 0) {
          for (int i = 0; i < selectedGroupIDs.length; ++i) {
             String evalGroupId = selectedGroupIDs[i];
-            EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+            EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
             if (EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
                adhocGroups.add(group);
             } else {
@@ -199,10 +199,10 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
                if (assignGroupId != null) {
                   UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
-                        externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
+                        commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                }
             }
-            Set<String> s = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+            Set<String> s = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
             UIOutput.make(groupRow, "enrollment", s.size() + "");
          }
       } else {
@@ -244,10 +244,10 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                   Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
                   if (assignGroupId != null) {
                      UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
-                           externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
+                           commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                   }
                }
-               Set<String> s = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+               Set<String> s = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
                UIOutput.make(groupRow, "enrollment", s.size() + "");
             }
          } else {

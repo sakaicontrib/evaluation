@@ -56,9 +56,9 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
    }
 
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic external) {
-      this.externalLogic = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalAuthoringService authoringService;
@@ -143,7 +143,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
             for (EvalTemplate template : templates) {
                UIBranchContainer itemsBranch = UIBranchContainer.make(inUseBranch, "items:");
                UIMessage.make(itemsBranch, "itemInfo", "removeitem.inuse.info", new Object[] {template.getId(), 
-                     externalLogic.getEvalUserById(template.getOwner()).displayName, template.getTitle()});
+                     commonLogic.getEvalUserById(template.getOwner()).displayName, template.getTitle()});
             }
          }
       }

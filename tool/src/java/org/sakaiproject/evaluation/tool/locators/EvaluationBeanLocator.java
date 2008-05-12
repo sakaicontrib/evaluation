@@ -37,9 +37,9 @@ public class EvaluationBeanLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic external) {
-      this.externalLogic = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -64,7 +64,7 @@ public class EvaluationBeanLocator implements BeanLocator {
       EvalEvaluation togo = delivered.get(name);
       if (togo == null) {
          if (name.startsWith(NEW_PREFIX)) {
-            togo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, externalLogic.getCurrentUserId(),
+            togo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, commonLogic.getCurrentUserId(),
                   null, null, EvalConstants.EVALUATION_STATE_PARTIAL, null, null, null);
             // set the defaults for this newly created evaluation
             evalBeanUtils.setEvaluationDefaults(togo, EvalConstants.EVALUATION_TYPE_EVALUATION);
@@ -85,7 +85,7 @@ public class EvaluationBeanLocator implements BeanLocator {
          }
          // fix up all the dates before saving
          evalBeanUtils.fixupEvaluationDates(evaluation);
-         evaluationSetupService.saveEvaluation(evaluation, externalLogic.getCurrentUserId(), false);
+         evaluationSetupService.saveEvaluation(evaluation, commonLogic.getCurrentUserId(), false);
       }
    }
 

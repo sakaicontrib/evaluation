@@ -25,9 +25,9 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class CSVReportExporter implements ReportExporter {
    private static final char COMMA = ',';
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalResponseAggregatorUtil responseAggregator;
@@ -63,7 +63,7 @@ public class CSVReportExporter implements ReportExporter {
       List<String> questionTextRow = new ArrayList<String>();
       for (DataTemplateItem dti: dtiList) {
          questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti.getTemplateItemType()));
-         questionTextRow.add( externalLogic.makePlainTextFromHTML( dti.templateItem.getItem().getItemText() ) );
+         questionTextRow.add( commonLogic.makePlainTextFromHTML( dti.templateItem.getItem().getItemText() ) );
          if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
             questionCatRow.add( messageLocator.getMessage("reporting.spreadsheet.instructor", 
                   instructorIdtoEvalUser.get(dti.associateId).displayName) );
@@ -120,7 +120,7 @@ public class CSVReportExporter implements ReportExporter {
       /*
         String[] topRowArray = new String[responses.topRow.size()];
         for (int i = 0; i < responses.topRow.size(); i++) {
-            String questionString = externalLogic.cleanupUserStrings(responses.topRow.get(i));
+            String questionString = commonLogic.cleanupUserStrings(responses.topRow.get(i));
             topRowArray[i] = (String) questionString;
         }
         //write the top row to CSVWriter object

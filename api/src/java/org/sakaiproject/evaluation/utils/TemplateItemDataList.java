@@ -771,7 +771,7 @@ public class TemplateItemDataList {
    /**
     * A helper method to get the list of unique instructor userIds 
     * for the {@link EvalConstants#ITEM_CATEGORY_INSTRUCTOR} type item answers from the list of answers<br/>
-    * <b>NOTE:</b> Use getEvalUsersByIds(String[]) from externalLogic to turn this into a set of EvalUsers if needed
+    * <b>NOTE:</b> Use getEvalUsersByIds(String[]) from commonLogic to turn this into a set of EvalUsers if needed
     * 
     * @param answers a list of {@link EvalAnswer}
     * @return the set of userIds

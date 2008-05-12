@@ -71,9 +71,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       this.locale = locale;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -123,8 +123,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       UIMessage.make(tofill, "page-title", "controlevaluations.page.title");
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -168,7 +168,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
 
-      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false, true);
+      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(commonLogic.getCurrentUserId(), false, false, true);
       for (int j = 0; j < evals.size(); j++) {
          // get queued, active, closed evaluations by date
          // check the state of the eval to determine display data
@@ -225,10 +225,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
-                  externalLogic.getEntityURL(evaluation));
+                  commonLogic.getEntityURL(evaluation));
             if (evaluation.getEvalCategory() != null) {
                UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
-                     externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
+                     commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
                catLink.decorators = new DecoratorList( 
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
@@ -276,10 +276,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
-                  externalLogic.getEntityURL(evaluation));
+                  commonLogic.getEntityURL(evaluation));
             if (evaluation.getEvalCategory() != null) {
                UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
-                     externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
+                     commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
                catLink.decorators = new DecoratorList( 
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
@@ -412,7 +412,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
       List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
       EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
-      return externalLogic.getDisplayTitle( eac.getEvalGroupId() );
+      return commonLogic.getDisplayTitle( eac.getEvalGroupId() );
    }
 
    /**

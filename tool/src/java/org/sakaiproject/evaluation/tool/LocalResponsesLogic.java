@@ -42,9 +42,9 @@ public class LocalResponsesLogic {
 
    private static Log log = LogFactory.getLog(LocalResponsesLogic.class);
 
-   private EvalCommonLogic external;
-   public void setExternal(EvalCommonLogic external) {
-      this.external = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalDeliveryService responsesLogic;
@@ -59,8 +59,8 @@ public class LocalResponsesLogic {
     */
    public EvalResponse newResponse() {
       log.debug("Creating a new response");
-      EvalResponse togo = new EvalResponse(new Date(), external
-            .getCurrentUserId(), new String(), new Date(), null);
+      EvalResponse togo = new EvalResponse(new Date(), 
+            commonLogic.getCurrentUserId(), new String(), new Date(), null);
       togo.setEndTime(new Date()); // TODO - I don't think this will work
       return togo;
    }
@@ -164,7 +164,7 @@ public class LocalResponsesLogic {
          }
       }
       response.setAnswers(newAnswers);
-      responsesLogic.saveResponse(response, external.getCurrentUserId());
+      responsesLogic.saveResponse(response, commonLogic.getCurrentUserId());
    }
 
 }

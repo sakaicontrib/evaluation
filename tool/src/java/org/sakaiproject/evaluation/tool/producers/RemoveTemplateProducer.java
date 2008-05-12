@@ -49,9 +49,9 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		return VIEW_ID;
 	}
 
-	private EvalCommonLogic externalLogic;
-	public void setExternalLogic(EvalCommonLogic externalLogic) {
-		this.externalLogic = externalLogic;
+	private EvalCommonLogic commonLogic;
+	public void setCommonLogic(EvalCommonLogic commonLogic) {
+		this.commonLogic = commonLogic;
 	}
 
    private EvalAuthoringService authoringService;
@@ -65,7 +65,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		String currentUserId = externalLogic.getCurrentUserId();
+		String currentUserId = commonLogic.getCurrentUserId();
 
 		String actionBean = "templateBBean.";
 

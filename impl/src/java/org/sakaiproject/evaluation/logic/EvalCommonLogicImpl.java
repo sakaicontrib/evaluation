@@ -588,6 +588,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
    // ADHOC
 
+   public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId) {
+      return adhocSupportLogic.getAdhocGroupById(adhocGroupId);
+   }
+
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
       return adhocSupportLogic.getAdhocGroupsForOwner(userId);
    }

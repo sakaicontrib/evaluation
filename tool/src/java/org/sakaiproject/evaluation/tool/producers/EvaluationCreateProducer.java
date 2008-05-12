@@ -61,9 +61,9 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -87,8 +87,8 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -162,7 +162,7 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
                   UIBranchContainer.make(chooseTemplate, "templateOptions:", i + "");
                UISelectChoice.make(radiobranch, "radioValue", selectID, i);
                UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
-               EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
+               EvalUser owner = commonLogic.getEvalUserById( template.getOwner() );
                UIOutput.make(radiobranch, "radioOwner", owner.displayName );
                UIInternalLink.make(radiobranch, "viewPreview_link", 
                      UIMessage.make("starteval.view.preview.link"), 

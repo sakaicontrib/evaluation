@@ -44,9 +44,9 @@ public class ReportHandlerHook implements HandlerHook {
 
    private static Log log = LogFactory.getLog(ReportHandlerHook.class);
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -100,7 +100,7 @@ public class ReportHandlerHook implements HandlerHook {
       // get evaluation and template from DAO
       EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
 
-      String currentUserId = externalLogic.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
 
       // do a permission check
       if (!reportingPermissions.canViewEvaluationResponses(evaluation, drvp.groupIds)) {

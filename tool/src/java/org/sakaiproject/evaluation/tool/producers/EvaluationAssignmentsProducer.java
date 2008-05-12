@@ -58,9 +58,9 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalSettings settings;
@@ -133,15 +133,15 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
             if (assignGroup.getNodeId() == null) {
                // only include directly added groups (i.e. nodeId is null)
                String evalGroupId = assignGroup.getEvalGroupId();
-               EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+               EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
                UIBranchContainer groupRow = UIBranchContainer.make(groupsBranch, "groups:", evalGroupId);
                UIOutput.make(groupRow, "groupTitle", group.title);
                UIOutput.make(groupRow, "groupType", group.type);
                // direct link to the group eval
                UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
-                     externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
+                     commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                // calculate the enrollments count
-               Set<String> s = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+               Set<String> s = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
                UIOutput.make(groupRow, "enrollment", s.size() + "");               
             }
          }
@@ -180,15 +180,15 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
                   UIBranchContainer groupsTable = UIBranchContainer.make(nodeRowGroups, "nodeGroupTable:");
                   for (EvalAssignGroup assignGroup : nodeAssignGroups) {
                      String evalGroupId = assignGroup.getEvalGroupId();
-                     EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+                     EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
                      UIBranchContainer groupRow = UIBranchContainer.make(groupsTable, "groups:", evalGroupId);
                      UIOutput.make(groupRow, "groupTitle", group.title);
                      UIOutput.make(groupRow, "groupType", group.type);
                      // direct link to the group eval
                      UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
-                           externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
+                           commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                      // calculate the enrollments count
-                     Set<String> s = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+                     Set<String> s = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
                      UIOutput.make(groupRow, "enrollment", s.size() + "");               
                   }
                }

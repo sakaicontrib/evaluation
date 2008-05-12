@@ -40,9 +40,9 @@ public class LocalTemplateLogic {
 
    private static Log log = LogFactory.getLog(LocalTemplateLogic.class);
 
-   private EvalCommonLogic external;
-   public void setExternal(EvalCommonLogic external) {
-      this.external = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalAuthoringService authoringService;
@@ -50,12 +50,9 @@ public class LocalTemplateLogic {
       this.authoringService = authoringService;
    }
 
-
-
    /*
     * Real methods below
     */
-
 
    // TEMPLATES
 
@@ -64,12 +61,12 @@ public class LocalTemplateLogic {
    }
 
    public void saveTemplate(EvalTemplate tosave) {
-      authoringService.saveTemplate(tosave, external.getCurrentUserId());
+      authoringService.saveTemplate(tosave, commonLogic.getCurrentUserId());
    }
 
    public EvalTemplate newTemplate() {
       EvalTemplate currTemplate = new EvalTemplate(new Date(), 
-            external.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
+            commonLogic.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
             null, "private", Boolean.FALSE);
       currTemplate.setDescription(""); // Note- somehow gives DataIntegrityViolation if null
       return currTemplate;
@@ -105,7 +102,7 @@ public class LocalTemplateLogic {
 
       // TODO currently creating a fake template (newTemplate()) so the bind does not fail, this should supposedly use a defunneler
       EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
-            external.getCurrentUserId(), newTemplate(), newItem(), null, 
+            commonLogic.getCurrentUserId(), newTemplate(), newItem(), null, 
             EvalToolConstants.ITEM_CATEGORY_VALUES[0], level, nodeId);
       newTemplateItem.setUsesNA(new Boolean(false));
       return newTemplateItem;
@@ -134,7 +131,7 @@ public class LocalTemplateLogic {
          // failure to associate an item with this templateItem
          throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
       }
-      authoringService.saveTemplateItem(templateItem, external.getCurrentUserId());
+      authoringService.saveTemplateItem(templateItem, commonLogic.getCurrentUserId());
    }
 
 
@@ -146,7 +143,7 @@ public class LocalTemplateLogic {
     * @param templateItemId a unique id of an {@link EvalTemplateItem}
     */
    public void deleteTemplateItem(Long templateItemId) {
-      String currentUserId = external.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
       if (! authoringService.canControlTemplateItem(currentUserId, templateItemId)) {
          throw new SecurityException("User ("+currentUserId+") cannot control this template item ("+templateItemId+")");
       }
@@ -211,7 +208,7 @@ public class LocalTemplateLogic {
 
    public void saveItem(EvalItem item) {
       connectScaleToItem(item);
-      authoringService.saveItem(item, external.getCurrentUserId());
+      authoringService.saveItem(item, commonLogic.getCurrentUserId());
    }
 
    /**
@@ -222,15 +219,15 @@ public class LocalTemplateLogic {
    public void hideItem(Long itemId) {
       EvalItem item = fetchItem(itemId);
       item.setHidden(true);
-      authoringService.saveItem(item, external.getCurrentUserId());
+      authoringService.saveItem(item, commonLogic.getCurrentUserId());
    }
 
    public void deleteItem(Long id) {
-      authoringService.deleteItem(id, external.getCurrentUserId());
+      authoringService.deleteItem(id, commonLogic.getCurrentUserId());
    }
 
    public EvalItem newItem() {
-      EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
+      EvalItem newItem = new EvalItem(new Date(), commonLogic.getCurrentUserId(), "", 
             EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
       newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
       newItem.setScale(newScale()); // create a holder for a new scale which will get overwritten or cleared out if not used
@@ -255,7 +252,7 @@ public class LocalTemplateLogic {
             scale.getIdeal().equals(EvalToolConstants.NULL)) {
          scale.setIdeal(null);
       }
-      authoringService.saveScale(scale, external.getCurrentUserId());
+      authoringService.saveScale(scale, commonLogic.getCurrentUserId());
    }
 
    /**
@@ -266,16 +263,16 @@ public class LocalTemplateLogic {
    public void hideScale(Long scaleId) {
       EvalScale scale = fetchScale(scaleId);
       scale.setHidden(true);
-      authoringService.saveScale(scale, external.getCurrentUserId());
+      authoringService.saveScale(scale, commonLogic.getCurrentUserId());
    }
 
    public void deleteScale(Long id) {
-      authoringService.deleteScale(id, external.getCurrentUserId());
+      authoringService.deleteScale(id, commonLogic.getCurrentUserId());
    }
 
    public EvalScale newScale() {
       EvalScale currScale = new EvalScale(new Date(), 
-            external.getCurrentUserId(), null, 
+            commonLogic.getCurrentUserId(), null, 
             EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
       currScale.setOptions(EvalToolConstants.defaultInitialScaleValues);
       currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
@@ -301,7 +298,7 @@ public class LocalTemplateLogic {
                EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
             // for multiple type items we need to save the scale
             if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) || 
-               EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
+                  EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
                // only make the connection for new (non-persistent) scales
                EvalScale scale = item.getScale();
                if (scale.getId() == null) {
@@ -315,7 +312,7 @@ public class LocalTemplateLogic {
                      if (item.getOwner() != null) {
                         scale.setOwner(item.getOwner());
                      } else {
-                        scale.setOwner(external.getCurrentUserId());
+                        scale.setOwner(commonLogic.getCurrentUserId());
                      }
                   }
                   if (scale.getTitle() == null) {
@@ -346,18 +343,18 @@ public class LocalTemplateLogic {
     * it is not ideal but it works
     * @param tosave
     */
-//   private void connectTemplateToTI(EvalTemplateItem tosave) {
-//      if (tosave.getTemplate() != null) {
-//         Long templateId = tosave.getTemplate().getId();
-//         if (templateId != null) {
-//            // this lookup is needed so hibernate can make the connection
-//            tosave.setTemplate(authoringService.getTemplateById(templateId));
-//         } else {
-//            // the template was not set correctly so we have to die
-//            throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
-//            		"), all templateItems must be associated with an existing template");
-//         }
-//      }
-//   }
+// private void connectTemplateToTI(EvalTemplateItem tosave) {
+// if (tosave.getTemplate() != null) {
+// Long templateId = tosave.getTemplate().getId();
+// if (templateId != null) {
+// // this lookup is needed so hibernate can make the connection
+// tosave.setTemplate(authoringService.getTemplateById(templateId));
+// } else {
+// // the template was not set correctly so we have to die
+// throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
+// "), all templateItems must be associated with an existing template");
+// }
+// }
+// }
 
 }

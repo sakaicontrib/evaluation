@@ -40,10 +40,10 @@ public class ExpertItemsBean {
 	public Map<String, Boolean> selectedIds = new HashMap<String, Boolean>();
 	public Long templateId;
 
-	private EvalCommonLogic externalLogic;
-	public void setExternal(EvalCommonLogic external) {
-		this.externalLogic = external;
-	}
+	private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
+   }
 
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
@@ -59,7 +59,7 @@ public class ExpertItemsBean {
 	public String processActionAddItems() {
 		log.debug("in process action add items, selectedItems=" + selectedIds.size());
 
-		String currentUserId = externalLogic.getCurrentUserId();
+		String currentUserId = commonLogic.getCurrentUserId();
 		String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
 		String hierarchyNodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 

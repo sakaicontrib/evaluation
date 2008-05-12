@@ -118,6 +118,14 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
    // ADHOC methods
 
    /**
+    * Get the adhoc group by the unique id (not the evalGroupId)
+    * 
+    * @param adhocGroupId the unique id for an {@link EvalAdhocGroup}
+    * @return the adhoc group or null if not found
+    */
+   public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId);
+
+   /**
     * Save this adhoc user,
     * owner and email must be set<br/>
     * This will check to see if this user already exists and will update the existing one

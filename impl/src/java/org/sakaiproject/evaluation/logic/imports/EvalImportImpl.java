@@ -97,10 +97,12 @@ public class EvalImportImpl implements EvalImport {
 	public void setEvalEvaluationsLogic(EvalEvaluationSetupService evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
 	}
-	private EvalCommonLogic externalLogic;
-	public void setExternalLogic(EvalCommonLogic externalLogic) {
-		this.externalLogic = externalLogic;
-	}
+
+	private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
+   }
+
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
@@ -234,7 +236,7 @@ public class EvalImportImpl implements EvalImport {
 					
 					//save or update
 					authoringService.saveScale(scale, currentUserId);
-					externalLogic.registerEntityEvent(event, scale);
+					commonLogic.registerEntityEvent(event, scale);
 					scalesSaved++;
 					
 					//ping session to keep it alive
@@ -304,7 +306,7 @@ public class EvalImportImpl implements EvalImport {
 					
 					//save or update
 					authoringService.saveItem(item, currentUserId);
-					externalLogic.registerEntityEvent(event, item);
+					commonLogic.registerEntityEvent(event, item);
 					itemsSaved++;
 					
 					//ping session to keep it alive
@@ -378,7 +380,7 @@ public class EvalImportImpl implements EvalImport {
 					}
 					
 					authoringService.saveTemplate(template, currentUserId);
-					externalLogic.registerEntityEvent(event, template);
+					commonLogic.registerEntityEvent(event, template);
 					templatesSaved++;
 					
 					//ping session to keep it alive
@@ -446,7 +448,7 @@ public class EvalImportImpl implements EvalImport {
 						event = EVENT_TEMPLATEITEM_UPDATE;
 					}
 					authoringService.saveTemplateItem(templateItem, currentUserId);
-					externalLogic.registerEntityEvent(event, templateItem);
+					commonLogic.registerEntityEvent(event, templateItem);
 					templateItemsSaved++;
 					
 					//ping session to keep it alive
@@ -522,7 +524,7 @@ public class EvalImportImpl implements EvalImport {
 					
 					//save or update
 					evalEvaluationsLogic.saveEvaluation(evaluation, currentUserId, false);
-					externalLogic.registerEntityEvent(event, evaluation);
+					commonLogic.registerEntityEvent(event, evaluation);
 					evaluationsSaved++;
 					
 					//ping session to keep it alive
@@ -587,8 +589,8 @@ public class EvalImportImpl implements EvalImport {
 					
 					//TODO remove: testing
 					String evalGroupId = element.getChildText("PROVIDER_ID");
-					Set userIds = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-					userIds = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+					Set userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+					userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 					//TODO remove: testing
 					
 					if(evalAssignGroup == null) {
@@ -605,7 +607,7 @@ public class EvalImportImpl implements EvalImport {
 					
 					//save or update
 					evaluationSetupService.saveAssignGroup(evalAssignGroup, currentUserId);
-					externalLogic.registerEntityEvent(event, evalAssignGroup);
+					commonLogic.registerEntityEvent(event, evalAssignGroup);
 					assignGroupsSaved++;
 					
 					//ping session to keep it alive

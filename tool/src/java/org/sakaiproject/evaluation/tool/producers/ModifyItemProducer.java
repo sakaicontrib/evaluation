@@ -80,9 +80,9 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       this.settings = settings;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -118,8 +118,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -200,7 +200,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
          itemOTP = "itemWBL." + ItemBeanWBL.NEW_1 + ".";
          commonDisplayOTP = itemOTP;
-         EvalUser owner = externalLogic.getEvalUserById( currentUserId );
+         EvalUser owner = commonLogic.getEvalUserById( currentUserId );
          itemOwnerName = owner.displayName;
          // check if we are operating in a template
          if (templateId != null) {
@@ -233,7 +233,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         EvalUser owner = externalLogic.getEvalUserById( item.getOwner() );
+         EvalUser owner = commonLogic.getEvalUserById( item.getOwner() );
          itemOwnerName = owner.displayName;
          itemClassification = item.getClassification();
          itemOTP = "itemWBL." + itemId + ".";
@@ -255,7 +255,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         EvalUser owner = externalLogic.getEvalUserById( templateItem.getItem().getOwner() );
+         EvalUser owner = commonLogic.getEvalUserById( templateItem.getItem().getOwner() );
          itemOwnerName = owner.displayName;
          itemClassification = templateItem.getItem().getClassification();
          templateItemOTP = "templateItemWBL." + templateItemId + ".";
