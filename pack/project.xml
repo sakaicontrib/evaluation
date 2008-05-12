@@ -54,8 +54,8 @@
 
       <dependency>
          <groupId>velocity</groupId>
-         <artifactId>velocity</artifactId>
-         <version>1.5</version>
+         <artifactId>velocity-dep</artifactId>
+         <version>1.5-beta2</version>
          <properties>
             <war.bundle>true</war.bundle>
          </properties>
