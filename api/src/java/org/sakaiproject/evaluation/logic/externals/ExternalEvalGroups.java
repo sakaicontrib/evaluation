@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 
 /**

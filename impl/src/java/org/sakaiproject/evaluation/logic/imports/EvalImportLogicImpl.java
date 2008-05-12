@@ -34,7 +34,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImport;
 import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
 import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;

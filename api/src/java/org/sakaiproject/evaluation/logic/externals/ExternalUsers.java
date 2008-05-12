@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic.externals;
 import java.util.List;
 import java.util.Locale;
 
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 
 

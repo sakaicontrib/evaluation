@@ -12,10 +12,15 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.externals;
+package org.sakaiproject.evaluation.logic;
 
 import java.io.Serializable;
 
+import org.sakaiproject.evaluation.logic.externals.ExternalContent;
+import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
+import org.sakaiproject.evaluation.logic.externals.ExternalScheduler;
+import org.sakaiproject.evaluation.logic.externals.ExternalTextUtils;
+import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 

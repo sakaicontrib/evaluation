@@ -11,6 +11,7 @@ api/src/java/org/sakaiproject/evaluation/constant/EvalEmailConstants.java svn_ke
 api/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java -text
 api/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvoker.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/logic/EvalCommonLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryService.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_keywords=Date+Revision+Author+URL+Id
@@ -28,7 +29,6 @@ api/src/java/org/sakaiproject/evaluation/logic/exceptions/BlankRequiredFieldExce
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/InvalidDatesException.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/ResponseSaveException.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/UserMessage.java svn_keywords=Date+Revision+Author+URL+Id
-api/src/java/org/sakaiproject/evaluation/logic/externals/EvalCommonLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalContent.java svn_keywords=Date+Revision+Author+URL+Id
@@ -95,6 +95,7 @@ impl/src/java/org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml -text svn_ke
 impl/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/EvalCommonLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryServiceImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationServiceImpl.java svn_keywords=Date+Revision+Author+URL+Id
@@ -108,7 +109,6 @@ impl/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProviderI
 impl/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+URL+Id
-impl/src/java/org/sakaiproject/evaluation/logic/externals/EvalCommonLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/externals/EvalSecurityChecksImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text svn_keywords=Date+Revision+Author+URL+Id
