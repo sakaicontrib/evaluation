@@ -51,5 +51,6 @@
 	<classpathentry kind="var" path="M2_REPO/net/sf/opencsv/opencsv/1.7/opencsv-1.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/lowagie/itext/2.0.7/itext-2.0.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/poi/poi/3.0.1-FINAL/poi-3.0.1-FINAL.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

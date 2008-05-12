@@ -15,9 +15,6 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
@@ -31,8 +28,8 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 
 	protected EvalEmailsLogicImpl emailsLogic;
-	private MockEvalExternalLogic externalLogic;
 	private EvalSettings settings;
+	private MockEvalExternalLogic externalLogicMock;
 
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {
@@ -49,9 +46,8 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
          throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
       }
 
-		// setup the mock objects if needed
-      externalLogic = new MockEvalExternalLogic();
-
+      externalLogicMock = (MockEvalExternalLogic) externalLogic;
+      
 		// create and setup the object to be tested
 		emailsLogic = new EvalEmailsLogicImpl();
 		emailsLogic.setCommonLogic(commonLogic);
@@ -146,18 +142,18 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
       String[] sentEmails = null;
 
       // test send to just the evaluatees
-      externalLogic.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), false);
       assertNotNull(sentEmails);
       assertEquals(1, sentEmails.length);
-      assertEquals(1, externalLogic.getNumEmailsSent());
+      assertEquals(1, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluatees and owner
-      externalLogic.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), true);
       assertNotNull(sentEmails);
       assertEquals(2, sentEmails.length);
-      assertEquals(2, externalLogic.getNumEmailsSent());
+      assertEquals(2, externalLogicMock.getNumEmailsSent());
 
       // test that invalid evaluation id causes failure
       try {
@@ -176,18 +172,18 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
       String[] sentEmails = null;
 
       // test send to just the evaluators
-      externalLogic.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), false);
 		assertNotNull(sentEmails);
       assertEquals(2, sentEmails.length);
-      assertEquals(2, externalLogic.getNumEmailsSent());
+      assertEquals(2, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluators and evaluatees
-      externalLogic.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), true);
       assertNotNull(sentEmails);
       assertEquals(3, sentEmails.length);
-      assertEquals(3, externalLogic.getNumEmailsSent());
+      assertEquals(3, externalLogicMock.getNumEmailsSent());
 
       // test that invalid evaluation id causes failure
       try {
