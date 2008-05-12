@@ -14,6 +14,14 @@
             ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
     </bean>
 
+    <!-- handles api based retrieval of application settings -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
+        class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    </bean>
+
     <!-- utils which require other low level evaluation beans -->
     <bean id="org.sakaiproject.evaluation.beans.EvalBeanUtils"
         class="org.sakaiproject.evaluation.beans.EvalBeanUtils">
