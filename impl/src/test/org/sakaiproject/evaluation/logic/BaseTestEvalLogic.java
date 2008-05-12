@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
@@ -33,6 +34,8 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringContextTests {
 
    protected EvaluationDao evaluationDao;
+   protected EvalCommonLogic commonLogic;
+   protected EvalExternalLogic externalLogic;
    protected EvalTestDataLoad etdl;
 
    protected String[] getConfigLocations() {
@@ -49,6 +52,16 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
       evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
       if (evaluationDao == null) {
          throw new NullPointerException("DAO could not be retrieved from spring context");
+      }
+
+      externalLogic = (EvalExternalLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
+      if (externalLogic == null) {
+         throw new NullPointerException("externalLogic could not be retrieved from spring context");
+      }
+
+      commonLogic = (EvalCommonLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalCommonLogic");
+      if (commonLogic == null) {
+         throw new NullPointerException("commonLogic could not be retrieved from spring context");
       }
 
       // check the preloaded test data

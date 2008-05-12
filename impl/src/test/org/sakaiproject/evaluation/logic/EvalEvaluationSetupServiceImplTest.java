@@ -70,13 +70,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // setup the mock objects if needed
       EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
       emailsLogicImpl.setEvaluationService(evaluationService);
-      emailsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
+      emailsLogicImpl.setCommonLogic(commonLogic);
       emailsLogicImpl.setSettings(settings);
 
       // create the other needed logic impls
       EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
       authoringServiceImpl.setDao(evaluationDao);
-      authoringServiceImpl.setExternalLogic( new MockEvalExternalLogic() );
+      authoringServiceImpl.setCommonLogic(commonLogic);
       authoringServiceImpl.setSecurityChecks(securityChecks);
       authoringServiceImpl.setSettings(settings);
       authoringService = authoringServiceImpl;
@@ -85,7 +85,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // create and setup the object to be tested
       evaluationSetupService = new EvalEvaluationSetupServiceImpl();
       evaluationSetupService.setDao(evaluationDao);
-      evaluationSetupService.setExternalLogic( new MockEvalExternalLogic() );
+      evaluationSetupService.setCommonLogic(commonLogic);
       evaluationSetupService.setHierarchyLogic( new MockExternalHierarchyLogic() );
       evaluationSetupService.setSettings(settings);
       evaluationSetupService.setSecurityChecks(securityChecks);

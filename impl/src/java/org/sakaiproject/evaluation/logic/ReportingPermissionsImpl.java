@@ -47,9 +47,9 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
       this.dao = dao;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalSettings evalSettings;
@@ -79,7 +79,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
     * @see org.sakaiproject.evaluation.logic.ReportingPermissions#chooseGroupsPartialCheck(org.sakaiproject.evaluation.model.EvalEvaluation)
     */
    public Set<String> getResultsViewableEvalGroupIdsForCurrentUser(EvalEvaluation evaluation) {
-      String currentUserId = externalLogic.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
       Set<String> groupIdsTogo = new HashSet<String>();
 
       boolean canViewResponses = false; // is user able to view any results/responses at all
@@ -137,7 +137,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
     * @see org.sakaiproject.evaluation.logic.ReportingPermissions#canViewEvaluationResponses(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[])
     */
    public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds) {
-      String currentUserId = externalLogic.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
 
       boolean canViewResponses = false;
 
@@ -303,7 +303,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
          viewableGroupIds.addAll( dao.getViewableEvalGroupIds(evaluationId, perm, groupIds) );
       }
       for (String groupId: viewableGroupIds) {
-         if (! externalLogic.isUserAllowedInEvalGroup(userId, perm, groupId)) {
+         if (! commonLogic.isUserAllowedInEvalGroup(userId, perm, groupId)) {
             viewableGroupIds.remove(groupId);
          }
       }

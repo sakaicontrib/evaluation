@@ -17,13 +17,15 @@ package org.sakaiproject.evaluation.test.mocks;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -48,7 +50,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class MockEvalExternalLogic implements EvalCommonLogic {
+public class MockEvalExternalLogic implements EvalExternalLogic {
 
 	/**
 	 * Note: Admin has all perms in all sites
@@ -360,14 +362,6 @@ public class MockEvalExternalLogic implements EvalCommonLogic {
       return user;
    }
 
-   public List<EvalUser> getEvalUsersByIds(String[] userIds) {
-      List<EvalUser> users = new ArrayList<EvalUser>();
-      for (String userId : userIds) {
-         users.add( getEvalUserById(userId) );
-      }
-      return users;
-   }
-
 	/**
 	 * Return usernames from the data load class
 	 */
@@ -546,6 +540,19 @@ public class MockEvalExternalLogic implements EvalCommonLogic {
    private String currentGroupId = EvalTestDataLoad.SITE1_REF;
    public void setCurrentGroupId(String evalGroupId) {
       currentGroupId = evalGroupId;
+   }
+
+   public <T> T getBean(Class<T> type) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
+      Map<String, EvalUser> users = new HashMap<String, EvalUser>();
+      for (String userId : userIds) {
+         users.put(userId, getEvalUserById(userId) );
+      }
+      return users;
    }
 
 }

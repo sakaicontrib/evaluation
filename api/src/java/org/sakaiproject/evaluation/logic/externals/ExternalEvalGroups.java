@@ -49,14 +49,6 @@ public interface ExternalEvalGroups {
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId);
 
-	/**
-	 * Get the title associated with an evalGroup
-	 * 
-	 * @param evalGroupId the internal unique ID for an evalGroup
-	 * @return the displayable title or default text "--------" if it cannot be found
-	 */
-	public String getDisplayTitle(String evalGroupId);
-
 
 	// ENROLLMENTS
 

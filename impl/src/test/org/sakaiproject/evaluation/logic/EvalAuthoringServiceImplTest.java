@@ -62,7 +62,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // create and setup the object to be tested
       authoringService = new EvalAuthoringServiceImpl();
       authoringService.setDao(evaluationDao);
-      authoringService.setExternalLogic( new MockEvalExternalLogic() );
+      authoringService.setCommonLogic(commonLogic);
       authoringService.setSettings(settings);
       authoringService.setSecurityChecks(securityChecks);
 

@@ -54,7 +54,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 
 		// create and setup the object to be tested
 		emailsLogic = new EvalEmailsLogicImpl();
-		emailsLogic.setExternalLogic(externalLogic);
+		emailsLogic.setCommonLogic(commonLogic);
 		emailsLogic.setEvaluationService(evaluationService);
 		emailsLogic.setSettings(settings);
 

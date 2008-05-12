@@ -58,9 +58,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       this.dao = dao;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic external) {
-      this.externalLogic = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private ExternalHierarchyLogic hierarchyLogic;
@@ -161,9 +161,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          }
 
          if (newResponse) {
-            externalLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
+            commonLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
          } else {
-            externalLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+            commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
          }
          int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
          log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
@@ -240,7 +240,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       comparisons.add(ByPropsFinder.EQUALS);
 
       // if user is admin then return all matching responses for this evaluation
-      if (! externalLogic.isUserAdmin(userId)) {
+      if (! commonLogic.isUserAdmin(userId)) {
          // not admin, only return the responses for this user
          props.add("owner");
          values.add(userId);
@@ -450,7 +450,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       String evalGroupId = response.getEvalGroupId();
 
       // get the instructors for this evaluation
-      Set<String> instructors = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+      Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 
       // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
       List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);

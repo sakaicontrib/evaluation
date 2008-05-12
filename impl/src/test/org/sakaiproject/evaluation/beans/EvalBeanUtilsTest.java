@@ -16,8 +16,6 @@ package org.sakaiproject.evaluation.beans;
 
 import org.sakaiproject.evaluation.logic.BaseTestEvalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-
 
 /**
  * Testing the bean utils
@@ -43,7 +41,7 @@ public class EvalBeanUtilsTest extends BaseTestEvalLogic {
 
       // create and setup the object to be tested
       evalBeanUtils = new EvalBeanUtils();
-      evalBeanUtils.setExternalLogic( new MockEvalExternalLogic() );
+      evalBeanUtils.setCommonLogic(commonLogic);
       evalBeanUtils.setSettings(settings);
 
    }

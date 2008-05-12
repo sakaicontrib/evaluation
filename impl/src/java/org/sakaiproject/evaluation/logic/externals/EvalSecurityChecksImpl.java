@@ -45,9 +45,9 @@ public class EvalSecurityChecksImpl {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalBeanUtils evalBeanUtils;
@@ -349,7 +349,7 @@ public class EvalSecurityChecksImpl {
       // special check for admin control over default templates
       if (emailTemplate != null  
             && emailTemplate.getDefaultType() != null
-            && externalLogic.isUserAdmin(userId) ) {
+            && commonLogic.isUserAdmin(userId) ) {
                allowed = true;         
       } else {
          if (emailTemplate == null || 

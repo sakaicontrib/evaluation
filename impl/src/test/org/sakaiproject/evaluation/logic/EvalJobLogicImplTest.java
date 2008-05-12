@@ -52,14 +52,14 @@ public class EvalJobLogicImplTest extends BaseTestEvalLogic {
       // setup the mock objects if needed
       EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
       emailsLogicImpl.setEvaluationService(evaluationService);
-      emailsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
+      emailsLogicImpl.setCommonLogic(commonLogic);
       emailsLogicImpl.setSettings(settings);
 		
 		//create and setup the object to be tested
 		jobLogic = new EvalJobLogicImpl();
 		jobLogic.setEmails(emailsLogicImpl);
 		jobLogic.setEvaluationService(evaluationService);
-		jobLogic.setExternalLogic( new MockEvalExternalLogic() );
+		jobLogic.setCommonLogic(commonLogic);
 		jobLogic.setSettings(settings);
 		// FIXME set the remaining dependencies
 		

@@ -51,9 +51,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
 
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalSettings settings;
@@ -121,7 +121,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             continue; // skip processing for invalid groups
          }
 
-         Set<String> userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+         Set<String> userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
                EvalConstants.PERM_BE_EVALUATED);
          // add in the owner or remove them based on the setting
          if (includeOwner) {
@@ -148,13 +148,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
          log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
             sentEmails.add(emailAddresses[j]);            
          }
-         externalLogic.registerEntityEvent(EVENT_EMAIL_CREATED, eval);
+         commonLogic.registerEntityEvent(EVENT_EMAIL_CREATED, eval);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -186,23 +186,23 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       // loop through groups and send emails to correct users group
       for (int i = 0; i < assignGroups.size(); i++) {
          EvalAssignGroup assignGroup = assignGroups.get(i);
-         EvalGroup group = externalLogic.makeEvalGroupObject(assignGroup.getEvalGroupId());
+         EvalGroup group = commonLogic.makeEvalGroupObject(assignGroup.getEvalGroupId());
          if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
             //notify students
-            userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+            userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
                   EvalConstants.PERM_TAKE_EVALUATION);
             studentNotification = true;
          } else {
             //instructor may opt-in or opt-out
             if (assignGroup.getInstructorApproval().booleanValue()) {
                //instructor has opted-in, notify students
-               userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+               userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
                      EvalConstants.PERM_TAKE_EVALUATION);
                studentNotification = true;
             } else {
                if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
                   // instructor has not opted-in, notify instructors
-                  userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+                  userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
                         EvalConstants.PERM_BE_EVALUATED);
                   studentNotification = false;
                } else {
@@ -236,13 +236,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(currentTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
          log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
             sentEmails.add(emailAddresses[j]);            
          }
-         externalLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
+         commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -257,7 +257,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       List<String> sentEmails = new ArrayList<String>();
 
       // get group
-      EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+      EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
       // only process valid groups
       if ( EvalConstants.GROUP_TYPE_INVALID.equals(group.type) ) {
          throw new IllegalArgumentException("Invalid group type for group with id (" + evalGroupId + "), cannot send available emails");
@@ -268,7 +268,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, evaluationId);
 
       //get student ids
-      Set<String> userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+      Set<String> userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
             EvalConstants.PERM_TAKE_EVALUATION);
       if (userIdsSet.size() > 0) {
          String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
@@ -280,13 +280,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
          log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
             sentEmails.add(emailAddresses[j]);            
          }
-         externalLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
+         commonLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -337,13 +337,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
             log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
                sentEmails.add(emailAddresses[j]);            
             }
-            externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
+            commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
          }
       }
 
@@ -419,7 +419,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (includeAdmins && 
                   evalAssignGroup.getInstructorsViewResults().booleanValue() &&
                   jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)) {
-               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(evalGroupId,
+               userIdsSet.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupId,
                      EvalConstants.PERM_BE_EVALUATED));
             }
 
@@ -427,7 +427,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (includeEvaluatees && 
                   evalAssignGroup.getStudentsViewResults().booleanValue() &&
                   jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS)) {
-               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(evalGroupId,
+               userIdsSet.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupId,
                      EvalConstants.PERM_TAKE_EVALUATION));
             }
          }
@@ -446,13 +446,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
             log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
                sentEmails.add(emailAddresses[j]);            
             }
-            externalLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
+            commonLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
          }
       }
       return (String[]) sentEmails.toArray(new String[] {});
@@ -484,7 +484,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, 
-            externalLogic.getUserLocale(externalLogic.getCurrentUserId()));
+            commonLogic.getUserLocale(commonLogic.getCurrentUserId()));
 
       replacementValues.put("EvalStartDate", df.format(eval.getStartDate()));
       String dueDate = "--------";
@@ -519,13 +519,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          Long assignGroupId = evaluationService.getAssignGroupId(eval.getId(), group.evalGroupId);
          EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(assignGroupId);
          if (assignGroup != null) {
-            evalEntityURL = externalLogic.getEntityURL(assignGroup);
+            evalEntityURL = commonLogic.getEntityURL(assignGroup);
          }
       }
 
       if (evalEntityURL == null) {
          // just get the URL to the evaluation without group context
-         evalEntityURL = externalLogic.getEntityURL(eval);
+         evalEntityURL = commonLogic.getEntityURL(eval);
       }
 
       // all URLs are identical because the user permissions determine access uniquely
@@ -534,7 +534,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       replacementValues.put("URLtoOptIn", evalEntityURL);
       replacementValues.put("URLtoOptOut", evalEntityURL);
       replacementValues.put("URLtoViewResults", evalEntityURL);
-      replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
+      replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
 
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
    }
