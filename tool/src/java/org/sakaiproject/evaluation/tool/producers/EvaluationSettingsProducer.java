@@ -89,9 +89,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       this.settings = settings;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -139,8 +139,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -263,7 +263,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                      UIBranchContainer.make(chooseTemplate, "templateOptions:", i + "");
                   UISelectChoice.make(radiobranch, "radioValue", selectID, i);
                   UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
-                  EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
+                  EvalUser owner = commonLogic.getEvalUserById( template.getOwner() );
                   UIOutput.make(radiobranch, "radioOwner", owner.displayName );
                   UIInternalLink.make(radiobranch, "viewPreview_link", 
                         UIMessage.make("starteval.view.preview.link"), 
@@ -456,7 +456,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             UIInput.make(categoryBranch, "eval-category", evaluationOTP + "evalCategory");
             if (evaluation.getEvalCategory() != null) {
                UILink.make(categoryBranch, "eval-category-direct-link", UIMessage.make("general.direct.link"), 
-                     externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) )
+                     commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) )
                      .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
             }
          }

@@ -46,9 +46,9 @@ public class TakeEvalBean {
       this.responseBeanLocator = responseBeanLocator;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private TargettedMessageList messages;
@@ -73,7 +73,7 @@ public class TakeEvalBean {
          return "failure";
       }
       messages.addMessage( new TargettedMessage("evaluations.take.message",
-            new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
+            new Object[] { eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) }, 
             TargettedMessage.SEVERITY_INFO));
       return "success";
    }

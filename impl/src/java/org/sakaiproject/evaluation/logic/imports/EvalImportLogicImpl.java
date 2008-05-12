@@ -56,9 +56,9 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	private static final Log log = LogFactory.getLog(EvalImportLogicImpl.class);
 	
 	//Spring injection
-	private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+	private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
 	private EvalImport evalImport;
@@ -77,10 +77,10 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	 */
 	public List<String> load(String id) {
 		List<String> messages = new ArrayList<String>();
-		String currentUserId = externalLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
+		String currentUserId = commonLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
 		try
 		{
-		   Boolean qrtzImport = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
+		   Boolean qrtzImport = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
          if (qrtzImport) {
             processInQuartz(id);
          } else {
@@ -111,7 +111,7 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 				Scheduler.DEFAULT_GROUP, evalImportJob.getClass());
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 		jobDataMap.put("ID", (String)id);
-		jobDataMap.put("CURRENT_USER", externalLogic.getCurrentUserId() ); //sessionManager.getCurrentSessionUserId());
+		jobDataMap.put("CURRENT_USER", commonLogic.getCurrentUserId() ); //sessionManager.getCurrentSessionUserId());
 		
 		//job name + group should be unique
 		String jobGroup = EvalUtils.makeUniqueIdentifier(20); //idManager.createUuid();

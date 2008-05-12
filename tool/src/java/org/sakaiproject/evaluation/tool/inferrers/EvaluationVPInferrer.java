@@ -48,9 +48,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
     private static Log log = LogFactory.getLog(EvaluationVPInferrer.class);
 
-    private EvalCommonLogic externalLogic;
-    public void setExternalLogic(EvalCommonLogic externalLogic) {
-        this.externalLogic = externalLogic;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
     }
 
     private EvalEvaluationService evaluationService;
@@ -124,12 +124,12 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         } else {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions,
             // failsafe goes to take eval when it cannot determine where else to go
-            String currentUserId = externalLogic.getCurrentUserId();
+            String currentUserId = commonLogic.getCurrentUserId();
             log.warn("Note: User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
                 // go to the reports view
                 if (currentUserId.equals(evaluation.getOwner()) ||
-                        externalLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
+                        commonLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
                     return new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
                 } else {
                     // require auth
@@ -142,7 +142,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 if (evalGroupId == null) {
                    Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
                     EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
-                            externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED), 
+                            commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED), 
                             m.get(evaluationId) );
                     if (evalGroups.length > 0) {
                         // if we are being evaluated in at least one group in this eval then we can add items
@@ -150,7 +150,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                         return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                     }
                 } else {
-                    if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
+                    if (commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                         // those being evaluated get to go to add their own questions
                         // TODO - except we do not have a view yet so go to the preview eval page 
                         return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
@@ -161,10 +161,10 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             }
 
             // finally, try to go to the take evals view
-            if (! externalLogic.isUserAnonymous(currentUserId) ) {
+            if (! commonLogic.isUserAnonymous(currentUserId) ) {
                 // check perms if not anonymous
                 if (currentUserId.equals(evaluation.getOwner()) ||
-                        externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
+                        commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                     return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                 } else {
                     if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {

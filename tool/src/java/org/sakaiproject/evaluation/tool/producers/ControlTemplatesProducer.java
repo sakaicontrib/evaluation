@@ -57,9 +57,9 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 	}
 
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalAuthoringService authoringService;
@@ -90,8 +90,8 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
       UIMessage.make(tofill, "page-title", "controltemplates.page.title");
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      String currentUserId = commonLogic.getCurrentUserId();
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
@@ -182,10 +182,10 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 
 				// direct link to the template
 				UILink.make(templateBranch, "template-direct-link", UIMessage.make("general.direct.link"), 
-				      externalLogic.getEntityURL(template) )
+				      commonLogic.getEntityURL(template) )
 				      .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 
-            EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
+            EvalUser owner = commonLogic.getEvalUserById( template.getOwner() );
 				UIOutput.make(templateBranch, "template-owner", owner.displayName );
 				UIOutput.make(templateBranch, "template-last-update", df.format( template.getLastModified() ));
 

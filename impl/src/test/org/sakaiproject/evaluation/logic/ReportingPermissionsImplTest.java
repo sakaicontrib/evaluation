@@ -33,7 +33,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    protected ReportingPermissionsImpl reportingPermissions;
    private EvalEvaluationService evaluationService;
    private EvalSettings settings;
-   private MockEvalExternalLogic externalLogicMock;
+   private MockEvalExternalLogic commonLogicMock;
 
    private Boolean instructorViewResults = null;
    private Boolean studentViewResults = null;
@@ -60,7 +60,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       }
 
       // setup the mock objects if needed
-      externalLogicMock = (MockEvalExternalLogic) externalLogic;
+      commonLogicMock = (MockEvalExternalLogic) commonLogic;
       
       //create and setup the object to be tested
       reportingPermissions = new ReportingPermissionsImpl();
@@ -208,7 +208,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
 
       // admin can always view results
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.ADMIN_USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.ADMIN_USER_ID);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationNew, null);
       assertTrue(allowed);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationActive, null);
@@ -218,7 +218,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationViewable, null);
       assertTrue(allowed);
 
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationNew, null);
       assertTrue(allowed);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationActive, null);
@@ -228,7 +228,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationViewable, null);
       assertTrue(allowed);
 
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.USER_ID);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationNew, null);
       assertFalse(allowed);
       allowed = reportingPermissions.canViewEvaluationResponses(etdl.evaluationActive, null);
@@ -246,7 +246,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
 
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.ADMIN_USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.ADMIN_USER_ID);
       evalGroupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(etdl.evaluationActive);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
@@ -259,7 +259,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
 
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
       evalGroupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(etdl.evaluationActive);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
@@ -272,7 +272,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
 
-      externalLogicMock.setCurrentUserId(EvalTestDataLoad.USER_ID);
+      commonLogicMock.setCurrentUserId(EvalTestDataLoad.USER_ID);
       evalGroupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(etdl.evaluationActive);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());

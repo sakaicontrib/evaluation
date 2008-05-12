@@ -92,9 +92,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic external) {
-      this.externalLogic = external;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalAuthoringService authoringService;
@@ -157,7 +157,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       boolean canAccess = false; // can a user access this evaluation
       boolean userCanAccess = false; // can THIS user take this evaluation
 
-      String currentUserId = externalLogic.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -215,7 +215,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // select the first eval group the current user can take evaluation in,
             // also store the total number so we can give the user a list to choose from if there are more than one
             Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
-            if ( externalLogic.isUserAdmin(currentUserId) ) {
+            if ( commonLogic.isUserAdmin(currentUserId) ) {
                // special case, the super admin can always access
                userCanAccess = true;
                List<EvalAssignGroup> assignGroups = m.get(evaluationId);
@@ -225,7 +225,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                      // set the evalGroupId to the first valid group if unset
                      evalGroupId = assignGroup.getEvalGroupId();
                   }
-                  validGroups.add( externalLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
+                  validGroups.add( commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
                }
             } else {
                EvalGroup[] evalGroups;
@@ -235,11 +235,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                   evalGroups = new EvalGroup[assignGroups.size()];
                   for (int i = 0; i < assignGroups.size(); i++) {
                      EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
-                     evalGroups[i] = externalLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
+                     evalGroups[i] = commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
                   }
                } else {
                   evalGroups = EvalUtils.getGroupsInCommon(
-                        externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
+                        commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
                         m.get(evaluationId) );
                }
                for (int i = 0; i < evalGroups.length; i++) {
@@ -250,7 +250,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         evalGroupId = group.evalGroupId;
                         userCanAccess = true;
                      }
-                     validGroups.add( externalLogic.makeEvalGroupObject(group.evalGroupId) );
+                     validGroups.add( commonLogic.makeEvalGroupObject(group.evalGroupId) );
                   }
                }
             }
@@ -316,7 +316,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // fill in group title
             UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
             UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
-            UIOutput.make(groupTitle, "group-title", externalLogic.getDisplayTitle(evalGroupId) );
+            UIOutput.make(groupTitle, "group-title", commonLogic.getDisplayTitle(evalGroupId) );
 
             // show instructions if not null
             if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
@@ -350,7 +350,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // BEGIN the complex task of rendering the evaluation items
 
             // get the instructors for this evaluation
-            Set<String> instructors = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+            Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 
             // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
             List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
@@ -385,7 +385,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
                   UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                  EvalUser instructor = externalLogic.getEvalUserById( tig.associateId );
+                  EvalUser instructor = commonLogic.getEvalUserById( tig.associateId );
                   UIMessage.make(categorySectionBranch, "categoryHeader", 
                         "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
                }

@@ -48,9 +48,9 @@ public class TemplateBBean {
 
    private static Log log = LogFactory.getLog(TemplateBBean.class);
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private LocalTemplateLogic localTemplateLogic;
@@ -131,7 +131,7 @@ public class TemplateBBean {
     */
    public String copyTemplate() {
       log.debug("make a copy of a template ("+templateId+") at the users request");
-      String ownerId = externalLogic.getCurrentUserId();
+      String ownerId = commonLogic.getCurrentUserId();
       Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, false);
       messages.addMessage( new TargettedMessage("controltemplates.copy.user.message", 
             new Object[] {templateId, copiedId}, TargettedMessage.SEVERITY_INFO) );
@@ -143,7 +143,7 @@ public class TemplateBBean {
     * templateId must be set
     */
    public String removeTemplate() {
-      String ownerId = externalLogic.getCurrentUserId();
+      String ownerId = commonLogic.getCurrentUserId();
       EvalTemplate template = authoringService.getTemplateById(templateId);
       authoringService.deleteTemplate(templateId, ownerId);
       messages.addMessage( new TargettedMessage("controltemplates.remove.user.message", 
@@ -171,7 +171,7 @@ public class TemplateBBean {
     */
    public String copyItem() {
       log.debug("make a copy of an item ("+itemId+") at the users request");
-      String ownerId = externalLogic.getCurrentUserId();
+      String ownerId = commonLogic.getCurrentUserId();
       Long[] copiedIds = authoringService.copyItems(new Long[] {itemId}, ownerId, false, false);
       messages.addMessage( new TargettedMessage("controlitems.copy.user.message", 
             new Object[] {itemId, copiedIds[0]}, TargettedMessage.SEVERITY_INFO) );
@@ -274,7 +274,7 @@ public class TemplateBBean {
     */
    public String copyScale() {
       log.debug("make a copy of a scale ("+scaleId+") at the users request");
-      String ownerId = externalLogic.getCurrentUserId();
+      String ownerId = commonLogic.getCurrentUserId();
       Long[] copiedIds = authoringService.copyScales(new Long[] {scaleId}, null, ownerId, false);
       messages.addMessage( new TargettedMessage("controlscales.copy.user.message", 
             new Object[] {scaleId, copiedIds[0]}, TargettedMessage.SEVERITY_INFO) );

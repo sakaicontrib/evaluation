@@ -93,9 +93,9 @@ public class SetupEvalBean {
       this.evaluationService = evaluationService;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private ExternalHierarchyLogic hierarchyLogic;
@@ -153,7 +153,7 @@ public class SetupEvalBean {
          throw new IllegalArgumentException("evaluationId cannot be null");
       }
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-      evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
+      evaluationSetupService.deleteEvaluation(evaluationId, commonLogic.getCurrentUserId());
       messages.addMessage( new TargettedMessage("controlevaluations.delete.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
@@ -166,7 +166,7 @@ public class SetupEvalBean {
       if (evaluationId == null) {
          throw new IllegalArgumentException("evaluationId cannot be null");
       }
-      EvalEvaluation eval = evaluationSetupService.closeEvaluation(evaluationId, externalLogic.getCurrentUserId());
+      EvalEvaluation eval = evaluationSetupService.closeEvaluation(evaluationId, commonLogic.getCurrentUserId());
       messages.addMessage( new TargettedMessage("controlevaluations.closed.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
@@ -181,7 +181,7 @@ public class SetupEvalBean {
       }
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       // TODO reopen action
-      //evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
+      //evaluationSetupService.deleteEvaluation(evaluationId, commonLogic.getCurrentUserId());
       messages.addMessage( new TargettedMessage("controlevaluations.reopen.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
@@ -208,7 +208,7 @@ public class SetupEvalBean {
       }
 
       // assign to the evaluation
-      evaluationSetupService.assignEmailTemplate(emailTemplate.getId(), evaluationId, null, externalLogic.getCurrentUserId());
+      evaluationSetupService.assignEmailTemplate(emailTemplate.getId(), evaluationId, null, commonLogic.getCurrentUserId());
 
       // user message
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
@@ -228,7 +228,7 @@ public class SetupEvalBean {
       }
 
       // reset to default email template
-      evaluationSetupService.assignEmailTemplate(null, evaluationId, emailTemplateType, externalLogic.getCurrentUserId());
+      evaluationSetupService.assignEmailTemplate(null, evaluationId, emailTemplateType, commonLogic.getCurrentUserId());
 
       return "successReset";
    }
@@ -299,7 +299,7 @@ public class SetupEvalBean {
       } else {
          if (reOpening) {
             // we are reopening the evaluation
-            externalLogic.registerEntityEvent(EVENT_EVAL_REOPENED, eval);
+            commonLogic.registerEntityEvent(EVENT_EVAL_REOPENED, eval);
             messages.addMessage( new TargettedMessage("controlevaluations.reopen.user.message",
                   new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
          } else {
@@ -349,7 +349,7 @@ public class SetupEvalBean {
          // save eval and assign groups
 
          // save the new evaluation state (moving from partial), set to true should fix up the state automatically
-         evaluationSetupService.saveEvaluation(eval, externalLogic.getCurrentUserId(), true);
+         evaluationSetupService.saveEvaluation(eval, commonLogic.getCurrentUserId(), true);
 
          // NOTE - this allows the evaluation to be saved with zero assign groups if this fails
 
@@ -359,7 +359,7 @@ public class SetupEvalBean {
 
          // failsafe check (to make sure we are not creating an eval with no assigned groups)
          if (assignedHierList.isEmpty()) {
-            evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
+            evaluationSetupService.deleteEvaluation(evaluationId, commonLogic.getCurrentUserId());
             throw new IllegalStateException("Invalid evaluation created with no assignments! Destroying evaluation: " + evaluationId);
          }
 

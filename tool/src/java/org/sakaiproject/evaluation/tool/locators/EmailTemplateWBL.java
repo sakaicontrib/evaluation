@@ -43,9 +43,9 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
     */
    public static String NEW_1 = NEW_PREFIX + "1:";
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -76,7 +76,7 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
          if (name.startsWith(NEW_PREFIX)) {
             String emailTemplateTypeConstant = name.substring(name.indexOf(':') + 1);
             EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(emailTemplateTypeConstant);
-            togo = new EvalEmailTemplate(externalLogic.getCurrentUserId(), emailTemplateTypeConstant,
+            togo = new EvalEmailTemplate(commonLogic.getCurrentUserId(), emailTemplateTypeConstant,
                   defaultTemplate.getSubject(), defaultTemplate.getMessage());
          } else {
             Long emailTemplateId = Long.valueOf(name);
@@ -92,7 +92,7 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
     */
    public boolean remove(String name) {
       Long emailTemplateId = Long.valueOf(name);
-      evaluationSetupService.removeEmailTemplate(emailTemplateId, externalLogic.getCurrentUserId());
+      evaluationSetupService.removeEmailTemplate(emailTemplateId, commonLogic.getCurrentUserId());
       delivered.remove(name);
       messages.addMessage( new TargettedMessage("controlemailtemplates.template.removed.message",
             new Object[] { emailTemplateId }, 
@@ -114,7 +114,7 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
          if (key.startsWith(NEW_PREFIX)) {
             // add in extra logic needed for new items here
          }
-         evaluationSetupService.saveEmailTemplate(emailTemplate, externalLogic.getCurrentUserId());
+         evaluationSetupService.saveEmailTemplate(emailTemplate, commonLogic.getCurrentUserId());
          messages.addMessage( new TargettedMessage("controlemailtemplates.template.saved.message",
                new Object[] { emailTemplate.getType(), emailTemplate.getSubject() }, 
                TargettedMessage.SEVERITY_INFO));

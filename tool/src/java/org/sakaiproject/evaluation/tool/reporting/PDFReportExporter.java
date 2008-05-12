@@ -32,9 +32,9 @@ import uk.org.ponder.messageutil.MessageLocator;
 public class PDFReportExporter implements ReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -74,11 +74,11 @@ public class PDFReportExporter implements ReportExporter {
       if (useBannerImage != null && useBannerImage == true) {
          String bannerImageLocation = (String) evalSettings.get(EvalSettings.PDF_BANNER_IMAGE_LOCATION);
          if (bannerImageLocation != null) {
-            bannerImageBytes = externalLogic.getFileContent(bannerImageLocation);
+            bannerImageBytes = commonLogic.getFileContent(bannerImageLocation);
          }
       }
 
-      EvalUser user = externalLogic.getEvalUserById( externalLogic.getCurrentUserId() );
+      EvalUser user = commonLogic.getEvalUserById( commonLogic.getCurrentUserId() );
 
       DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
@@ -96,7 +96,7 @@ public class PDFReportExporter implements ReportExporter {
 
       // set title and instructions
       evalPDFReportBuilder.addIntroduction( evaluation.getTitle(), 
-            externalLogic.makePlainTextFromHTML(evaluation.getInstructions()) );
+            commonLogic.makePlainTextFromHTML(evaluation.getInstructions()) );
 
       // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
@@ -152,7 +152,7 @@ public class PDFReportExporter implements ReportExporter {
    private void renderDataTemplateItem(EvalPDFReportBuilder evalPDFReportBuilder, DataTemplateItem dti) {
       EvalTemplateItem templateItem = dti.templateItem;
       EvalItem item = templateItem.getItem();
-      String questionText = externalLogic.makePlainTextFromHTML(item.getItemText());
+      String questionText = commonLogic.makePlainTextFromHTML(item.getItemText());
 
       List<EvalAnswer> itemAnswers = dti.getAnswers();
 

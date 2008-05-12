@@ -77,9 +77,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       return VIEW_ID;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
-      this.externalLogic = externalLogic;
+   private EvalCommonLogic commonLogic;
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -120,7 +120,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
+      String currentUserId = commonLogic.getCurrentUserId();
       
       // render top links
       renderTopLinks(tofill, currentUserId);
@@ -199,7 +199,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       
-      List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+      List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
       
       if (evalGroups.size() > 0) {
          Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
@@ -415,7 +415,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     * @param currentUserId
     */
    private void renderTopLinks(UIContainer tofill, String currentUserId) {
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
       /*
