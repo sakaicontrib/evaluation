@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 
 
 /**

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.content.api.FilePickerHelper;
-import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolSession;
 

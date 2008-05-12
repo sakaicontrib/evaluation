@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
 import uk.org.ponder.rsf.components.UIContainer;
