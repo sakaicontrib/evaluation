@@ -50,7 +50,6 @@
          <groupId>org.sakaiproject</groupId>
          <artifactId>generic-dao</artifactId>
          <version>[0.9.6,1.0)</version>
-         <scope>provided</scope>
       </dependency>
 
       <!-- Spring and Hibernate dependencies. -->
@@ -104,9 +103,9 @@
       </dependency>
 
       <dependency>
-         <groupId>velocity</groupId>
+         <groupId>org.apache.velocity</groupId>
          <artifactId>velocity</artifactId>
-         <version>1.5-beta2</version>
+         <version>1.5</version>
       </dependency>
 
       <!-- Various Sakai dependencies -->

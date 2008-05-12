@@ -105,8 +105,8 @@
 
       <dependency>
          <groupId>velocity</groupId>
-         <artifactId>velocity-dep</artifactId>
-         <version>1.5-beta2</version>
+         <artifactId>velocity</artifactId>
+         <version>1.5</version>
       </dependency>
 
       <!-- Various Sakai dependencies -->
