@@ -38,9 +38,9 @@ public class EvalBeanUtils {
 
    private static Log log = LogFactory.getLog(EvalBeanUtils.class);
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic external) {
-      this.externalLogic = external;
+   private EvalCommonLogic commonLogic;   
+   public void setCommonLogic(EvalCommonLogic commonLogic) {
+      this.commonLogic = commonLogic;
    }
 
    private EvalSettings settings;
@@ -59,7 +59,7 @@ public class EvalBeanUtils {
     */
    public int getResponsesNeededToViewForResponseRate(int responsesCount, int enrollmentsCount) {
       int responsesNeeded = 1;
-      if ( externalLogic.isUserAdmin( externalLogic.getCurrentUserId() ) ) {
+      if ( commonLogic.isUserAdmin( commonLogic.getCurrentUserId() ) ) {
          responsesNeeded = 0;
       } else {
          int minResponses = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
@@ -86,7 +86,7 @@ public class EvalBeanUtils {
     */
    public boolean checkUserPermission(String userId, String ownerId) {
       boolean allowed = false;
-      if ( externalLogic.isUserAdmin(userId) ) {
+      if ( commonLogic.isUserAdmin(userId) ) {
          allowed = true;
       } else if ( ownerId.equals(userId) ) {
          allowed = true;

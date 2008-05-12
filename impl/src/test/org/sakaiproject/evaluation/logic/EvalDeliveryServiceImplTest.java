@@ -69,14 +69,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       // create the other needed logic impls
       EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
       authoringServiceImpl.setDao(evaluationDao);
-      authoringServiceImpl.setExternalLogic( new MockEvalExternalLogic() );
+      authoringServiceImpl.setCommonLogic(commonLogic);
       authoringServiceImpl.setSettings(settings);
       authoringServiceImpl.setSecurityChecks(securityChecks);
 
       // create and setup the object to be tested
       deliveryService = new EvalDeliveryServiceImpl();
       deliveryService.setDao(evaluationDao);
-      deliveryService.setExternalLogic( new MockEvalExternalLogic() );
+      deliveryService.setCommonLogic(commonLogic);
       deliveryService.setHierarchyLogic( new MockExternalHierarchyLogic() );
       deliveryService.setEvaluationService(evaluationService);
       deliveryService.setSettings(settings);

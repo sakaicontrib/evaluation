@@ -35,6 +35,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImport;
 import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
 import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
@@ -79,7 +80,7 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		String currentUserId = externalLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
 		try
 		{
-		   Boolean qrtzImport = externalLogic.getConfigurationSetting(EvalCommonLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
+		   Boolean qrtzImport = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
          if (qrtzImport) {
             processInQuartz(id);
          } else {

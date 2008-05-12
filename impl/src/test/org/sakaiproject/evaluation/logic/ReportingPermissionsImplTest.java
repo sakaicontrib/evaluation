@@ -68,7 +68,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       reportingPermissions.setEvalBeanUtils(evalBeanUtils);
       reportingPermissions.setEvalSettings(settings);
       reportingPermissions.setEvaluationService(evaluationService);
-      reportingPermissions.setExternalLogic( externalLogic );
+      reportingPermissions.setCommonLogic(commonLogic);
 
       // store the current settings so we can muck around with them
       instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);

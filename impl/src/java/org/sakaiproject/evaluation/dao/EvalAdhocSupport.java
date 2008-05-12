@@ -1,6 +1,6 @@
 /**
- * $Id: EvalAdhocSupport.java 46678 2008-03-13 12:23:46Z aaronz@vt.edu $
- * $URL: https://source.sakaiproject.org/contrib/evaluation/trunk/api/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java $
+ * $Id$
+ * $URL$
  * EvalAdhocSupport.java - evaluation - Mar 10, 2008 5:52:29 PM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

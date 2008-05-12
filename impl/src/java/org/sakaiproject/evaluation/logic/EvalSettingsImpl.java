@@ -23,9 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
-
+import org.sakaiproject.genericdao.api.search.Search;
 
 /**
  * Implementation for the settings control
@@ -41,8 +42,8 @@ public class EvalSettingsImpl implements EvalSettings {
       this.dao = dao;
    }
 
-   private EvalCommonLogic externalLogic;
-   public void setExternalLogic(EvalCommonLogic externalLogic) {
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 
@@ -186,8 +187,8 @@ public class EvalSettingsImpl implements EvalSettings {
          }
       }
       if (! found) {
-         List<EvalConfig> l = dao.findByProperties(EvalConfig.class, 
-               new String[] {"name"}, new Object[] {name});
+         List<EvalConfig> l = dao.findBySearch(EvalConfig.class, 
+               new Search("name", name) );
          if (l.size() > 0) {
             config = (EvalConfig) l.get(0);
          } else {

@@ -8,7 +8,6 @@ api/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalEmailConstants.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java -text
 api/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvoker.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalCommonLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -74,6 +73,7 @@ api/src/java/org/sakaiproject/evaluation/utils/TemplateItemDataList.java svn_key
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupportImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvokerImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_keywords=Date+Revision+Author+URL+Id
@@ -152,7 +152,6 @@ pack/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/components.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/entity-providers.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/external-logic.xml -text svn_keywords=Date+Revision+Author+URL+Id
-pack/src/webapp/WEB-INF/hibernate-hbms.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/logic-backup.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/logic-support.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Author+URL+Id

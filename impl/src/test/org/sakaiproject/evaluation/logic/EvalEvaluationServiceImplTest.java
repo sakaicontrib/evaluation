@@ -62,7 +62,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       // create and setup the object to be tested
       evaluationService = new EvalEvaluationServiceImpl();
       evaluationService.setDao(evaluationDao);
-      evaluationService.setExternalLogic( new MockEvalExternalLogic() );
+      evaluationService.setCommonLogic(commonLogic);
       evaluationService.setSecurityChecks(securityChecks);
       evaluationService.setSettings(settings);
 
