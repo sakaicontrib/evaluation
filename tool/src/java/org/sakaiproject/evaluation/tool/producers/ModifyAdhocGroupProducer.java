@@ -109,7 +109,7 @@ ActionResultInterceptor {
        * or not.  If it's not, we also attach the Adhoc Group ID to the button.
        */
       if (newGroup) {
-         UICommand saveButton = UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.newsave"), "adhocGroupsBean.addNewAdHocGroup");
+         UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.newsave"), "adhocGroupsBean.addNewAdHocGroup");
       }
       else {
          UICommand saveButton = UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.update"), "adhocGroupsBean.addUsersToAdHocGroup");

@@ -491,8 +491,6 @@
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
         <property name="viewStateHandler" ref="viewStateHandler" />
-        <property name="evalAdhocSupport"
-            ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
     </bean>
 
     <!-- This renderer is only used by the EvaluationAssignProducer (right above here) -->

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -38,11 +37,9 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
-import uk.org.ponder.rsf.builtin.UVBProducer;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -101,17 +98,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
       this.hierarchyLogic = logic;
    }
-   
+
    private ViewStateHandler vsh;
    public void setViewStateHandler(ViewStateHandler vsh) {
       this.vsh = vsh;
    }
-   
-   private EvalAdhocSupport evalAdhocSupport;
-   public void setEvalAdhocSupport(EvalAdhocSupport bean) {
-      this.evalAdhocSupport = bean;
-   }
-   
+
    /**
     * Instance Variables for building up rendering information.
     */
@@ -121,7 +113,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
       // local variables used in the render logic
       String currentUserId = commonLogic.getCurrentUserId();
-      
+
       // render top links
       renderTopLinks(tofill, currentUserId);
 
@@ -150,7 +142,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       // this is a get form which does not submit to a backing bean
       EvalViewParameters formViewParams = (EvalViewParameters) evalViewParams.copyBase();
       formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
-      
+
       /* 
        * About this form.
        * 
@@ -170,14 +162,14 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        * 
        */
       UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
-      
+
       // Things for building the UISelect of Hierarchy Node Checkboxes
       List<String> hierNodesLabels = new ArrayList<String>();
       List<String> hierNodesValues = new ArrayList<String>();
       UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder", 
-              new String[] {}, new String[] {}, "selectedHierarchyNodeIDs", new String[] {});
+            new String[] {}, new String[] {}, "selectedHierarchyNodeIDs", new String[] {});
       String hierNodesSelectID = hierarchyNodesSelect.getFullID();
-      
+
       // Things for building the UISelect of Eval Group Checkboxes
       List<String> evalGroupsLabels = new ArrayList<String>();
       List<String> evalGroupsValues = new ArrayList<String>();
@@ -198,9 +190,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        */
       Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-      
+
       List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-      
+
       if (evalGroups.size() > 0) {
          Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
          for (int i=0; i < evalGroups.size(); i++) {
@@ -211,30 +203,30 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          /*
           * Area 1. Selection GUI for Hierarchy Nodes and Evaluation Groups
           */
-         
+
          if (showHierarchy) {
             UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
-            
+
             addCollapseControl(hierarchyArea, "hierarchy-assignment-area", "hide-button", "show-button");
-            
+
             hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:", 
-                    evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
-                    hierNodesLabels, hierNodesValues);
+                  evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
+                  hierNodesLabels, hierNodesValues);
          }
 
          /*
           * Area 2. display checkboxes for selecting the non-hierarchy groups
           */
          UIBranchContainer evalgroupArea = UIBranchContainer.make(form, "evalgroups-area:");
-         
+
          // If both the hierarchy and adhoc groups are disabled, don't hide the
          // selection area and don't make it collapsable, since it will be the
          // only thing on the screen.
          if (! showHierarchy && ! useAdHocGroups) {
-             UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
+            UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
          }
          else {
-             addCollapseControl(evalgroupArea, "evalgroups-assignment-area", "hide-button", "show-button");
+            addCollapseControl(evalgroupArea, "evalgroups-assignment-area", "hide-button", "show-button");
          }
 
          String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
@@ -254,7 +246,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
             evalGroupsLabels.add(evalGroup.title);
             evalGroupsValues.add(evalGroup.evalGroupId);
-            
+
             UISelectChoice choice = UISelectChoice.make(checkboxRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
 
             // get title from the map since it is faster
@@ -266,43 +258,43 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       } else {
          // TODO tell user there are no groups to assign to
       }
-      
+
       /*
        * Area 3: Selection GUI for Adhoc Groups
        */
       if (useAdHocGroups) {
-          UIBranchContainer adhocGroupsArea = UIBranchContainer.make(form, "use-adhoc-groups-area:");
-          
-          addCollapseControl(adhocGroupsArea, "evalgroups-assignment-area", "hide-button", "show-button");
-      
-          // Table of Existing adhoc groups for selection
-          List<EvalAdhocGroup> myAdhocGroups = evalAdhocSupport.getAdhocGroupsForOwner(currentUserId);
-          if (myAdhocGroups.size() > 0) {
-              UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
-          
-              int count = 0;
-	          for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
-	              UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
-	              if (count % 2 == 0) {
-	                  tableRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
-	               }
-	              
-	              evalGroupsLabels.add(adhocGroup.getTitle());
-	              evalGroupsValues.add(adhocGroup.getEvalGroupId());
-	              
-	              UISelectChoice choice = UISelectChoice.make(tableRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
+         UIBranchContainer adhocGroupsArea = UIBranchContainer.make(form, "use-adhoc-groups-area:");
 
-	              // get title from the map since it is faster
-	              UIOutput title = UIOutput.make(tableRow, "groupTitle", adhocGroup.getTitle() );
-	              UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
-	              
-	              count ++;
-	          }
-          }
-          UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
-                  new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null, vsh.getFullURL(evalViewParams)));
+         addCollapseControl(adhocGroupsArea, "evalgroups-assignment-area", "hide-button", "show-button");
+
+         // Table of Existing adhoc groups for selection
+         List<EvalAdhocGroup> myAdhocGroups = commonLogic.getAdhocGroupsForOwner(currentUserId);
+         if (myAdhocGroups.size() > 0) {
+            UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
+
+            int count = 0;
+            for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
+               UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
+               if (count % 2 == 0) {
+                  tableRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+               }
+
+               evalGroupsLabels.add(adhocGroup.getTitle());
+               evalGroupsValues.add(adhocGroup.getEvalGroupId());
+
+               UISelectChoice choice = UISelectChoice.make(tableRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
+
+               // get title from the map since it is faster
+               UIOutput title = UIOutput.make(tableRow, "groupTitle", adhocGroup.getTitle() );
+               UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
+
+               count ++;
+            }
+         }
+         UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
+               new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null, vsh.getFullURL(evalViewParams)));
       }
-      
+
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see
       // the large comment further up.
       evalGroupsSelect.optionlist = UIOutputMany.make(evalGroupsValues.toArray(new String[] {}));
@@ -310,7 +302,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
       hierarchyNodesSelect.optionlist = UIOutputMany.make(hierNodesValues.toArray(new String[] {}));
       hierarchyNodesSelect.optionnames = UIOutputMany.make(hierNodesLabels.toArray(new String[] {}));
-      
+
       // all command buttons are just HTML now so no more bindings
       UIMessage.make(form, "back-button", "general.back.button");
       UIMessage assignButton = UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
@@ -321,7 +313,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       UIMessage assignErrorDiv = UIMessage.make(tofill, "nogroups-error", "assigneval.invalid.selection");
       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initEvalAssignValidation", 
             new String[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()}));
-      
+
       // Setup JavaScript for the collapseable sections
       UIVerbatim.make(tofill, "initJavaScript", initJS.toString());
    }
@@ -359,7 +351,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       return evalGroupIDs;
    }
 
-   
+
    /**
     * Taking the parent container and rsf:id's for the collapsed area and tags
     * to show and hide, creates the necessary javascript.  The Javascript is
@@ -372,15 +364,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     * @param showId
     */
    private void addCollapseControl(UIContainer tofill, String areaId, String hideId,
-           String showId) {
-       UIOutput hideControl = UIOutput.make(tofill, hideId);
-       UIOutput showControl = UIOutput.make(tofill, showId);
-       
-       //makeToggle: function (showId, hideId, areaId, toggleClass, initialHide) {
-       UIOutput areaDiv = UIOutput.make(tofill, areaId);
-       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.makeToggle", 
-             new String[] { showControl.getFullID(),hideControl.getFullID(),
-               areaDiv.getFullID(),null,"true"}));
+         String showId) {
+      UIOutput hideControl = UIOutput.make(tofill, hideId);
+      UIOutput showControl = UIOutput.make(tofill, showId);
+
+      //makeToggle: function (showId, hideId, areaId, toggleClass, initialHide) {
+      UIOutput areaDiv = UIOutput.make(tofill, areaId);
+      initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.makeToggle", 
+            new String[] { showControl.getFullID(),hideControl.getFullID(),
+            areaDiv.getFullID(),null,"true"}));
    }
 
    /* (non-Javadoc)
@@ -407,7 +399,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    public ViewParameters getViewParameters() {
       return new EvalViewParameters();
    }
-   
+
    /**
     * Renders the usual action breadcrumbs at the top.
     * 
