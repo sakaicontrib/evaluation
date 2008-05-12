@@ -28,7 +28,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
@@ -93,8 +93,8 @@ public class SetupEvalBean {
       this.evaluationService = evaluationService;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

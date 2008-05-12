@@ -1,7 +1,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ELReference;
@@ -22,8 +22,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 public class AdministrateReportingProducer implements ViewComponentProducer {
     public static final String VIEW_ID = "administrate_reporting";
     
-    private EvalExternalLogic external;
-    public void setExternal(EvalExternalLogic external) {
+    private EvalCommonLogic external;
+    public void setExternal(EvalCommonLogic external) {
         this.external = external;
     }
     

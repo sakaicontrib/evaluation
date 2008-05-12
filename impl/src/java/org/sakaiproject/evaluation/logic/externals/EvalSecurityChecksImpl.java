@@ -44,8 +44,8 @@ public class EvalSecurityChecksImpl {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

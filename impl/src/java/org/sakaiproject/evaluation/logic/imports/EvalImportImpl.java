@@ -44,7 +44,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImport;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -97,8 +97,8 @@ public class EvalImportImpl implements EvalImport {
 	public void setEvalEvaluationsLogic(EvalEvaluationSetupService evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
 	}
-	private EvalExternalLogic externalLogic;
-	public void setExternalLogic(EvalExternalLogic externalLogic) {
+	private EvalCommonLogic externalLogic;
+	public void setExternalLogic(EvalCommonLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
    private EvalAuthoringService authoringService;

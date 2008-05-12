@@ -9,7 +9,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -48,8 +48,8 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
       this.dao = dao;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

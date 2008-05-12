@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -59,8 +59,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       this.dao = dao;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic external) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic external) {
       this.externalLogic = external;
    }
 

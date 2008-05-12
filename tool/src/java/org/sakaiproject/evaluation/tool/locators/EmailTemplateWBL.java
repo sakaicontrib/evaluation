@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -43,8 +43,8 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
     */
    public static String NEW_1 = NEW_PREFIX + "1:";
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

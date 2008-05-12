@@ -9,7 +9,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -53,8 +53,8 @@ public class EvalResponseAggregatorUtil {
       this.messageLocator = locator;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setEvalExternalLogic(EvalExternalLogic logic) {
+   private EvalCommonLogic externalLogic;
+   public void setEvalExternalLogic(EvalCommonLogic logic) {
       this.externalLogic = logic;
    }
 

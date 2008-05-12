@@ -15,11 +15,11 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 
 /**
  * Handles all logic associated with processing email notifications,
- * the methods to send emails are in {@link EvalExternalLogic}
+ * the methods to send emails are in {@link EvalCommonLogic}
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -46,8 +46,8 @@ public class PreloadDataImpl {
       this.dao = evaluationDao;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

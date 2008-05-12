@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
 import uk.org.ponder.rsf.components.UIContainer;
@@ -22,8 +22,8 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       return VIEW_ID;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
+   private EvalCommonLogic external;
+   public void setExternal(EvalCommonLogic external) {
       this.external = external;
    }
 

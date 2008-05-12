@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -38,8 +38,8 @@ public class EvalBeanUtils {
 
    private static Log log = LogFactory.getLog(EvalBeanUtils.class);
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic external) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic external) {
       this.externalLogic = external;
    }
 

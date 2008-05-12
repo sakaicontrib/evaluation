@@ -1,6 +1,6 @@
 /**
- * $Id$
- * $URL$
+ * $Id: EvalAdhocSupport.java 46678 2008-03-13 12:23:46Z aaronz@vt.edu $
+ * $URL: https://source.sakaiproject.org/contrib/evaluation/trunk/api/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java $
  * EvalAdhocSupport.java - evaluation - Mar 10, 2008 5:52:29 PM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -33,7 +33,7 @@ import org.sakaiproject.evaluation.model.EvalAdhocUser;
  * This interface should be used when fetching adhoc groups (especially for getting the list of existing adhoc groups).
  * <br/>
  * When fetching user information about a large group of users (e.g. when displaying the adhoc group members to the user) 
- * you should use the methods in {@link EvalExternalLogic} (in particular {@link ExternalUsers}).
+ * you should use the methods in {@link EvalCommonLogic} (in particular {@link ExternalUsers}).
  * <br/>
  * {@link ExternalUsers#getEvalUsersByIds(String[])} in particular is the method to fetch a large list of users and 
  * it does it as efficiently as possible. All user interaction should be done with {@link EvalUser} objects

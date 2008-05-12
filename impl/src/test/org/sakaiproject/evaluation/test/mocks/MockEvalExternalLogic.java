@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -48,7 +48,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class MockEvalExternalLogic implements EvalExternalLogic {
+public class MockEvalExternalLogic implements EvalCommonLogic {
 
 	/**
 	 * Note: Admin has all perms in all sites

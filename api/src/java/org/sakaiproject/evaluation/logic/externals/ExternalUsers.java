@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 
 /**
  * This interface provides methods to get user information into the evaluation system,
- * @see EvalExternalLogic
+ * @see EvalCommonLogic
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

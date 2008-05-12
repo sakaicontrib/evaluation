@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -45,8 +45,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    protected final String EVENT_EVAL_VIEWABLE_INSTRUCTORS =    "eval.state.viewable.inst";
    protected final String EVENT_EVAL_VIEWABLE_STUDENTS =       "eval.state.viewable.stud";
 
-   protected EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   protected EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

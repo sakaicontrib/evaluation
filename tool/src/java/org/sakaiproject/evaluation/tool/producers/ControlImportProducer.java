@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.content.api.FilePickerHelper;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolSession;
 
@@ -64,8 +64,8 @@ public class ControlImportProducer implements
 	}
 	
 	// Spring injection 
-	private EvalExternalLogic externalLogic;
-	public void setExternalLogic(EvalExternalLogic externalLogic) {
+	private EvalCommonLogic externalLogic;
+	public void setExternalLogic(EvalCommonLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
 	

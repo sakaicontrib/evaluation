@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.tool.viewparams.AdminTestEGViewParameters;
@@ -55,8 +55,8 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         return VIEW_ID;
     }
 
-    private EvalExternalLogic external;
-    public void setExternal(EvalExternalLogic external) {
+    private EvalCommonLogic external;
+    public void setExternal(EvalCommonLogic external) {
         this.external = external;
     }
 

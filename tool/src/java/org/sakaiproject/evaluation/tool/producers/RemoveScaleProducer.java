@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
@@ -51,8 +51,8 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
    }
 
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
+   private EvalCommonLogic external;
+   public void setExternal(EvalCommonLogic external) {
       this.external = external;
    }
 

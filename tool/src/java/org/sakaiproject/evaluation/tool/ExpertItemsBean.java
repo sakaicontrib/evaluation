@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -40,8 +40,8 @@ public class ExpertItemsBean {
 	public Map<String, Boolean> selectedIds = new HashMap<String, Boolean>();
 	public Long templateId;
 
-	private EvalExternalLogic externalLogic;
-	public void setExternal(EvalExternalLogic external) {
+	private EvalCommonLogic externalLogic;
+	public void setExternal(EvalCommonLogic external) {
 		this.externalLogic = external;
 	}
 

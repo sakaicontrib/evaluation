@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 import uk.org.ponder.beanutil.BeanLocator;
@@ -37,8 +37,8 @@ public class EvaluationBeanLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic external) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic external) {
       this.externalLogic = external;
    }
 

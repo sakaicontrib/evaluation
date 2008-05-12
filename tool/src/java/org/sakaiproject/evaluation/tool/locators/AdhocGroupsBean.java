@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -208,8 +208,8 @@ public class AdhocGroupsBean {
       this.evalAdhocSupport = bean;
    }
    
-   private EvalExternalLogic externalLogic;
-   public void setEvalExternalLogic(EvalExternalLogic logic) {
+   private EvalCommonLogic externalLogic;
+   public void setEvalExternalLogic(EvalCommonLogic logic) {
       this.externalLogic = logic;
    }
    

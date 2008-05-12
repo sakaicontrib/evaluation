@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.tool.locators.AdhocGroupsBean;
@@ -44,8 +44,8 @@ ActionResultInterceptor {
        this.evalAdhocSupport = bean;
     }
     
-    private EvalExternalLogic externalLogic;
-    public void setEvalExternalLogic(EvalExternalLogic logic) {
+    private EvalCommonLogic externalLogic;
+    public void setEvalExternalLogic(EvalCommonLogic logic) {
        this.externalLogic = logic;
     }
     
