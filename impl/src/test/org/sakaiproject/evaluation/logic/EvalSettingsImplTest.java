@@ -45,14 +45,6 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
 	private final String INVALID_CONSTANT = "XXXXXXXXXXXX" + ":java.lang.String";
 
-	@Override
-	protected String[] getConfigLocations() {
-		// point to the needed spring config files, must be on the classpath
-		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
-		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
-	}
-
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {
 	   super.onSetUpBeforeTransaction();
@@ -64,7 +56,7 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 		// create and setup the object to be tested
 		evalSettings = new EvalSettingsImpl();
 		evalSettings.setDao(evaluationDao);
-		evalSettings.setExternalLogic( new MockEvalExternalLogic() );
+		evalSettings.setExternalLogic(externalLogic);
 
 	}
 
