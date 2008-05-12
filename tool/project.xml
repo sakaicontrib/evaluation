@@ -35,6 +35,12 @@
       </dependency>
 
 
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-entitybroker-api</artifactId>
+         <version>${sakai.version}</version>
+      </dependency>
+
       <!-- Servlet dependency -->
       <dependency>
          <groupId>servletapi</groupId>
@@ -79,12 +85,6 @@
 
       <dependency>
          <groupId>sakaiproject</groupId>
-         <artifactId>sakai-entitybroker-api</artifactId>
-         <version>${sakai.version}</version>
-      </dependency>
-
-      <dependency>
-         <groupId>sakaiproject</groupId>
          <artifactId>sakai-site-api</artifactId>
          <version>${sakai.version}</version>
       </dependency>
@@ -110,22 +110,6 @@
          <properties>
             <war.bundle>true</war.bundle>
          </properties>
-      </dependency>
-
-
-      <!-- dao and hibernate needed to do the request wrapper -->
-      <!-- generic DAO -->
-      <dependency>
-         <groupId>generic-dao</groupId>
-         <artifactId>generic-dao</artifactId>
-         <version>0.9.1</version>
-      </dependency>
-
-      <!-- Hibernate dependency -->
-      <dependency>
-         <groupId>${sakai.hibernate.groupId}</groupId>
-         <artifactId>${sakai.hibernate.artifactId}</artifactId>
-         <version>${sakai.hibernate.version}</version>
       </dependency>
 
       <!-- Spring dependency -->

@@ -58,14 +58,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- generic DAO -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>generic-dao</artifactId>
-            <version>${sakai.generic-dao.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Quartz scheduling -->
         <dependency>
             <groupId>quartz</groupId>

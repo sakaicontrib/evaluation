@@ -33,6 +33,13 @@
          <scope>provided</scope>
       </dependency>
 
+      <dependency>
+         <groupId>org.sakaiproject.entitybroker</groupId>
+         <artifactId>entitybroker-api</artifactId>
+         <version>[1.3.3,1.4.0)</version>
+         <scope>provided</scope>
+      </dependency>
+
       <!-- Servlet dependency -->
       <dependency>
          <groupId>servletapi</groupId>
@@ -62,12 +69,6 @@
          <groupId>org.sakaiproject</groupId>
          <artifactId>sakai-entity-api</artifactId>
          <version>${sakai.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.sakaiproject.entitybroker</groupId>
-         <artifactId>entitybroker-api</artifactId>
-         <version>1.2.0</version>
-         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.sakaiproject</groupId>
@@ -102,19 +103,6 @@
          <type>jar</type>
       </dependency>
 
-      <!-- generic DAO -->
-      <dependency>
-         <groupId>org.sakaiproject</groupId>
-         <artifactId>generic-dao</artifactId>
-         <version>${sakai.generic-dao.version}</version>
-         <scope>provided</scope>
-      </dependency>
-      <!-- Hibernate dependency -->
-      <dependency>
-         <groupId>${sakai.hibernate.groupId}</groupId>
-         <artifactId>${sakai.hibernate.artifactId}</artifactId>
-         <version>${sakai.hibernate.version}</version>
-      </dependency>
       <!-- Spring dependency -->
       <dependency>
          <groupId>${sakai.spring.groupId}</groupId>
