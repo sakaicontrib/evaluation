@@ -29,7 +29,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 
 	protected EvalEmailsLogicImpl emailsLogic;
 	private EvalSettings settings;
-	private MockEvalExternalLogic commonLogicMock;
+	private MockEvalExternalLogic externalLogicMock;
 
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {
@@ -46,7 +46,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
          throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
       }
 
-      commonLogicMock = (MockEvalExternalLogic) commonLogic;
+      externalLogicMock = (MockEvalExternalLogic) externalLogic;
       
 		// create and setup the object to be tested
 		emailsLogic = new EvalEmailsLogicImpl();
@@ -142,18 +142,18 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
       String[] sentEmails = null;
 
       // test send to just the evaluatees
-      commonLogicMock.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), false);
       assertNotNull(sentEmails);
       assertEquals(1, sentEmails.length);
-      assertEquals(1, commonLogicMock.getNumEmailsSent());
+      assertEquals(1, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluatees and owner
-      commonLogicMock.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), true);
       assertNotNull(sentEmails);
       assertEquals(2, sentEmails.length);
-      assertEquals(2, commonLogicMock.getNumEmailsSent());
+      assertEquals(2, externalLogicMock.getNumEmailsSent());
 
       // test that invalid evaluation id causes failure
       try {
@@ -172,18 +172,18 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
       String[] sentEmails = null;
 
       // test send to just the evaluators
-      commonLogicMock.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), false);
 		assertNotNull(sentEmails);
       assertEquals(2, sentEmails.length);
-      assertEquals(2, commonLogicMock.getNumEmailsSent());
+      assertEquals(2, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluators and evaluatees
-      commonLogicMock.resetEmailsSentCounter();
+      externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), true);
       assertNotNull(sentEmails);
       assertEquals(3, sentEmails.length);
-      assertEquals(3, commonLogicMock.getNumEmailsSent());
+      assertEquals(3, externalLogicMock.getNumEmailsSent());
 
       // test that invalid evaluation id causes failure
       try {
