@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
 import uk.org.ponder.beanutil.PathUtil;
@@ -53,8 +53,8 @@ public class AdministrateProducer implements ViewComponentProducer {
    }
 
    // Spring injection 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 

@@ -97,9 +97,9 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationContextAware {
+public class EvalCommonLogicImpl implements EvalCommonLogic, ApplicationContextAware {
 
-   private static Log log = LogFactory.getLog(EvalExternalLogicImpl.class);
+   private static Log log = LogFactory.getLog(EvalCommonLogicImpl.class);
 
    private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
    private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;

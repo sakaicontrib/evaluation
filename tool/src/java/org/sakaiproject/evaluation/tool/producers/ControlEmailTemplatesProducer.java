@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.tool.locators.LineBreakResolver;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
@@ -52,8 +52,8 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
       return VIEW_ID;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
+   private EvalCommonLogic external;
+   public void setExternal(EvalCommonLogic external) {
       this.external = external;
    }
 

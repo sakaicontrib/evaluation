@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 
@@ -42,8 +42,8 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX +"1";
 
-    private EvalExternalLogic external;
-    public void setExternal(EvalExternalLogic external) {
+    private EvalCommonLogic external;
+    public void setExternal(EvalCommonLogic external) {
        this.external = external;
     }
 

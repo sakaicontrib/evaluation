@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -56,8 +56,8 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
    }
 
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic external) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic external) {
       this.externalLogic = external;
    }
 

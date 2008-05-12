@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 
@@ -32,7 +32,7 @@ public class AdhocGroupMemberRemovalBean {
     * Stuff we need injected.
     */
    private EvalAdhocSupport evalAdhocSupport;
-   private EvalExternalLogic externalLogic;
+   private EvalCommonLogic externalLogic;
    private TargettedMessageList messages;
      
    /**
@@ -88,7 +88,7 @@ public class AdhocGroupMemberRemovalBean {
       this.adhocUserId = adhocUserId;
    }
    
-   public void setEvalExternalLogic(EvalExternalLogic logic) {
+   public void setEvalExternalLogic(EvalCommonLogic logic) {
       this.externalLogic = logic;
    }
    

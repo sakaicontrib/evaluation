@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -42,8 +42,8 @@ public class LocalResponsesLogic {
 
    private static Log log = LogFactory.getLog(LocalResponsesLogic.class);
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
+   private EvalCommonLogic external;
+   public void setExternal(EvalCommonLogic external) {
       this.external = external;
    }
 

@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 
@@ -46,9 +46,9 @@ public class HierarchyNodeLocator implements WriteableBeanLocator {
    public static final String NEW_PREFIX = "new-";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalExternalLogic external;
+   private EvalCommonLogic external;
 
-   public void setExternal(EvalExternalLogic external) {
+   public void setExternal(EvalCommonLogic external) {
       this.external = external;
    }
 

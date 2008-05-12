@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
@@ -67,8 +67,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       this.dao = dao;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic external) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic external) {
       this.externalLogic = external;
    }
 
@@ -133,7 +133,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          @SuppressWarnings("unchecked")
          @Override
          public void run() {
-            String serverId = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+            String serverId = externalLogic.getConfigurationSetting(EvalCommonLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
             Boolean lockObtained = dao.obtainLock(EVAL_UPDATE_TIMER, serverId, repeatInterval);
             // only execute the code if we have an exclusive lock
             if (lockObtained != null && lockObtained) {
@@ -154,7 +154,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         // purge out partial evaluations older than the partial purge time
                         if (evaluation.getLastModified().getTime() < partialPurgeTime) {
                            log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
-                           deleteEvaluation(evaluation.getId(), EvalExternalLogic.ADMIN_USER_ID);
+                           deleteEvaluation(evaluation.getId(), EvalCommonLogic.ADMIN_USER_ID);
                         }
                      } else {
                         String currentEvalState = evaluation.getState();

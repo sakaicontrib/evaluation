@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -49,8 +49,8 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		return VIEW_ID;
 	}
 
-	private EvalExternalLogic externalLogic;
-	public void setExternalLogic(EvalExternalLogic externalLogic) {
+	private EvalCommonLogic externalLogic;
+	public void setExternalLogic(EvalCommonLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
 

@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 
 
 /**
@@ -37,8 +37,8 @@ public class EvalDataPreloaderImpl {
       this.dao = evaluationDao;
    }
 
-   private EvalExternalLogic externalLogic;
-   public void setExternalLogic(EvalExternalLogic externalLogic) {
+   private EvalCommonLogic externalLogic;
+   public void setExternalLogic(EvalCommonLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
 
@@ -48,8 +48,8 @@ public class EvalDataPreloaderImpl {
    }
 
    public void init() {
-      boolean autoDDL = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_AUTO_DDL, false);
-      String serverId = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+      boolean autoDDL = externalLogic.getConfigurationSetting(EvalCommonLogic.SETTING_AUTO_DDL, false);
+      String serverId = externalLogic.getConfigurationSetting(EvalCommonLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
       if (autoDDL) {
          log.info("Auto DDL enabled: Checking preload data exists...");
          if (! preloadData.checkCriticalDataPreloaded() ) {

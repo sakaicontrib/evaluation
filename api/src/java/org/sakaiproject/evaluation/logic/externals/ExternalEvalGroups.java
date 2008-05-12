@@ -23,7 +23,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 /**
  * This interface provides methods to get EvalGroups (user collections) information
  * into the evaluation system and permissions related to those EvalGroups,
- * @see EvalExternalLogic
+ * @see EvalCommonLogic
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

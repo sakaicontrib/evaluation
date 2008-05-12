@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -48,8 +48,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
     private static Log log = LogFactory.getLog(EvaluationVPInferrer.class);
 
-    private EvalExternalLogic externalLogic;
-    public void setExternalLogic(EvalExternalLogic externalLogic) {
+    private EvalCommonLogic externalLogic;
+    public void setExternalLogic(EvalCommonLogic externalLogic) {
         this.externalLogic = externalLogic;
     }
 
