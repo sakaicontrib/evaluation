@@ -60,6 +60,18 @@
             <module>tool</module>
          </modules>
       </profile>
+      <profile>
+         <id>api</id>
+         <modules>
+            <module>api</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>ddl</id>
+         <modules>
+            <module>impl/src/ddl</module>
+         </modules>
+      </profile>
    </profiles>
 
    <!-- Project developers -->
