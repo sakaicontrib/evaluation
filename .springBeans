@@ -16,15 +16,26 @@
 	</configs>
 	<configSets>
 		<configSet>
-			<name><![CDATA[RSF]]></name>
-			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
-			<incomplete>true</incomplete>
+			<name><![CDATA[RUN]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
 			<configs>
-				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
-				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 				<config>pack/src/webapp/WEB-INF/components.xml</config>
 				<config>pack/src/webapp/WEB-INF/entity-providers.xml</config>
 				<config>pack/src/webapp/WEB-INF/external-logic.xml</config>
+				<config>pack/src/webapp/WEB-INF/logic-backup.xml</config>
+				<config>pack/src/webapp/WEB-INF/logic-support.xml</config>
+				<config>pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
+				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
+				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[TEST]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>impl/src/test/hibernate-test.xml</config>
 				<config>pack/src/webapp/WEB-INF/logic-backup.xml</config>
 				<config>pack/src/webapp/WEB-INF/logic-support.xml</config>
 				<config>pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
