@@ -4,52 +4,38 @@
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
 
-    <!-- Create a sessionFactory from the Sakai parent base SessionFactory bean, 
-        instead of using the central Sakai one or making our own,
-        this is primarily to allow us to share the settings,
-        give this your HBM files so the SessionFactory can use them -->
-    <bean id="org.sakaiproject.evaluation.dao.SessionFactory"
-        parent="org.sakaiproject.springframework.orm.hibernate.SessionFactoryBase">
-        <property name="mappingLocations">
-            <bean class="org.sakaiproject.genericdao.springutil.ResourceFinder" factory-method="getResources">
-                <constructor-arg>
-                    <list>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalTags.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalTagsMeta.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
-                        <value>org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml</value>
-                    </list>
-                </constructor-arg>
-            </bean>
-        </property>
-    </bean>
-
-    <!-- Create a transaction manager -->
-    <bean id="org.sakaiproject.evaluation.dao.TransactionManager" 
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory"
-            ref="org.sakaiproject.evaluation.dao.SessionFactory" />
+    <!-- define the list of HBM mapping files -->
+    <bean id="hbmMappingList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTags.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTagsMeta.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml</value>
+            </list>
+        </constructor-arg>
     </bean>
 
     <!-- create a DAO bean, use the hibernate implementation -->
     <bean id="org.sakaiproject.evaluation.dao.EvaluationDao"
         class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl" init-method="init">
-        <property name="sessionFactory" ref="org.sakaiproject.evaluation.dao.SessionFactory" />
+        <property name="sessionFactory" 
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
         <property name="persistentClasses">
             <list>
                 <value>org.sakaiproject.evaluation.model.EvalAdhocGroup</value>
@@ -105,14 +91,14 @@
         <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
     </bean>
 
+    <!-- beans for handling transactional access to all services -->
 
     <!-- a general transaction interceptor for the logic beans -->
     <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
         class="org.springframework.transaction.interceptor.TransactionInterceptor">
-        <property name="transactionManager">
-            <ref bean="org.sakaiproject.evaluation.dao.TransactionManager" />
-        </property>
-        <property name="transactionAttributes">
+      <property name="transactionManager" 
+        ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+      <property name="transactionAttributes">
             <props>
                 <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
                 <prop key="can*">PROPAGATION_REQUIRED,readOnly</prop>
@@ -124,7 +110,7 @@
         </property>
     </bean>
 
-    <!-- bean to wrap all the logic beans inside the transaction interceptor -->
+    <!-- bean to wrap DAO and all the logic beans inside the transaction interceptor -->
     <bean
         class="org.sakaiproject.genericdao.springutil.CurrentClassLoaderBeanNameAutoProxyCreator">
         <property name="interceptorNames">

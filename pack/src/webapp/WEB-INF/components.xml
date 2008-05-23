@@ -7,6 +7,7 @@
 
     <!-- Bring in the hibernate related beans (DAO) -->
     <import resource="spring-hibernate.xml" />
+    <import resource="sakai-hibernate.xml" />
 
     <!-- Bring in external logic beans (BOTTOM level) -->
     <import resource="external-logic.xml" />
