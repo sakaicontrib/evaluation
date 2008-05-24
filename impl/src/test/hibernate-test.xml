@@ -27,7 +27,7 @@
    <bean id="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory"
       class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
       <property name="dataSource" ref="javax.sql.DataSource" />
-      <property name="mappingResources" ref="hbmMappingList" />
+      <property name="mappingResources" ref="evaluation.hbmMappingList" />
       <property name="hibernateProperties">
          <props>
             <prop key="hibernate.dialect">${hibernate.dialect}</prop>

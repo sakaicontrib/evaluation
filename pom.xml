@@ -190,9 +190,14 @@
     <!-- define the license -->
     <licenses>
         <license>
-            <name>Educational Community License, Version 1.0</name>
-            <url>http://www.opensource.org/licenses/ecl1.php</url>
-            <distribution>repo</distribution>
+            <name>Apache License 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <comments>For opensource use</comments>
+        </license>
+        <license>
+            <name>Creative Commons Attribution 3.0</name>
+            <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
+            <comments>For commercial use</comments>
         </license>
     </licenses>
 
