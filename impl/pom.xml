@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>generic-dao</artifactId>
-            <version>[0.9.7,1.0)</version>
+            <version>[0.9.8,1.0)</version>
         </dependency>
 
         <!-- Spring and Hibernate dependencies. -->
