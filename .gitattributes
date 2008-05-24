@@ -93,6 +93,7 @@ api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/aspectj/EvalServicesProfiler.aj -text
+impl/src/java/org/sakaiproject/evaluation/aspectj/ProfileSummary.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupportImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvokerImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id

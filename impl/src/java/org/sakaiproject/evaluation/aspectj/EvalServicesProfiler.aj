@@ -29,15 +29,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public aspect EvalServicesProfiler {
 
    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(EvalServicesProfiler.class);
-
-   public static int logSummary = 100;
-
-   pointcut evalLogicImpl():
-      execution(* xxx.org.sakaiproject.evaluation.logic.*Impl.*(..)); // currently disabled => xxx. -AZ
+   public static int logSummary = 1000;
+   public static boolean logMethodCalls = true;
 
    public Map<String, ServiceMethodProfile> profiles = new ConcurrentHashMap<String, ServiceMethodProfile>();
    private int outputCounter = 0;
 
+   /**
+    * pointcut on all public methods of major logic impls + EvalJobLogicImpl
+    */
+   pointcut evalLogicImpl():
+      (execution(public * org.sakaiproject.evaluation.logic.*Impl.*(..)) ||
+       execution(public * org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl.*(..))
+   );
+
+   /**
+    * around advice for all methods in the evalLogicImpl pointcut
+    */
    Object around() : evalLogicImpl() {
       long startTime = System.nanoTime();
       Object methodReturn = proceed(); // this executes the method and gets the return value
@@ -59,18 +67,37 @@ public aspect EvalServicesProfiler {
       smp.runTime = smp.runTime + runTime;
 
       // log the method profile
-      log.info("PROFILING: " + serviceMethodName + " :: runTime=" + runTime + " ns :: totalCalls=" + smp.methodCalls + " :: " + sig.toLongString());
+      if (logMethodCalls) {
+         log.info("PROFILING: " + serviceMethodName + " :: runTime=" + runTime + " ns :: totalCalls=" + smp.methodCalls + " :: " + sig.toLongString());
 
-      // log a summary every 100 (or whatever logsummary is set to)
-      outputCounter++;
-      if (outputCounter % logSummary == 0) {
-         generateLogSummary("");
+         // log a summary every 1000 (or whatever logsummary is set to)
+         outputCounter++;
+         if (outputCounter % logSummary == 0) {
+            generateLogSummary("");
+         }
       }
+
       // standard return
       return methodReturn;
    }
 
+   /**
+    * This pointcut allows use to intercept static calls to the generateSummary method
+    */
+   pointcut makeSummary(): execution(public static String org.sakaiproject.evaluation.aspectj.ProfileSummary.generateSummary());
+
+   Object around() : makeSummary() {
+      // simply ignore the execution in the method are replace it with the summary from this aspect
+      String summary = generateSummary( new java.util.Date().toString() );
+      log.info(summary);
+      return summary;
+   }
+
    public void generateLogSummary(String note) {
+      log.info( generateSummary(note) );
+   }
+
+   public String generateSummary(String note) {
       outputCounter = 0;
       StringBuilder sb = new StringBuilder();
       List<ServiceMethodProfile> l = new ArrayList<ServiceMethodProfile>();
@@ -80,8 +107,10 @@ public aspect EvalServicesProfiler {
       for (ServiceMethodProfile profile : l) {
          sb.append("    " + profile.toString() + "\n");
       }
-      log.info(sb);
+      return sb.toString();
    }
+
+   // internal classes to support the summary reporting
 
    public class ServiceMethodProfile {
       public String serviceName;
