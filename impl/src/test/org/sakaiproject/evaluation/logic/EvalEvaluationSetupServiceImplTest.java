@@ -306,15 +306,17 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     */
    public void testDeleteEvaluation() {
       // remove evaluation which has not started (uses 2 email templates)
-      Long availableId = etdl.evaluationNew.getAvailableEmailTemplate().getId();
-      Long reminderId = etdl.evaluationNew.getReminderEmailTemplate().getId();
+      EvalEvaluation unStarted = evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
+      assertNotNull(unStarted);
+      Long availableId = unStarted.getAvailableEmailTemplate().getId();
+      Long reminderId = unStarted.getReminderEmailTemplate().getId();
       int countEmailTemplates = evaluationDao.countByProperties(EvalEmailTemplate.class, 
             new String[] { "id" }, 
             new Object[] { new Long[] {availableId, reminderId} });
       assertEquals(2, countEmailTemplates);
 
-      evaluationSetupService.deleteEvaluation(etdl.evaluationNew.getId(), EvalTestDataLoad.MAINT_USER_ID);
-      EvalEvaluation eval = evaluationService.getEvaluationById(etdl.evaluationNew.getId());
+      evaluationSetupService.deleteEvaluation(unStarted.getId(), EvalTestDataLoad.MAINT_USER_ID);
+      EvalEvaluation eval = evaluationService.getEvaluationById(unStarted.getId());
       assertNull(eval);
 
       // check to make sure the associated email templates were also removed

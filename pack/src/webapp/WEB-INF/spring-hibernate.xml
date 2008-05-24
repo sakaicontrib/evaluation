@@ -5,7 +5,7 @@
 <beans>
 
     <!-- define the list of HBM mapping files -->
-    <bean id="hbmMappingList" class="java.util.ArrayList">
+    <bean id="evaluation.hbmMappingList" class="java.util.ArrayList">
         <constructor-arg>
             <list>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>

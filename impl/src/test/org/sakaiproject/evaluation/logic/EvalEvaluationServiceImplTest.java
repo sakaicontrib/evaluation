@@ -517,7 +517,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationService.getAssignHierarchyByEval(null);
          fail("Should have thrown exception");
-      } catch (NullPointerException e) {
+      } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
    }
