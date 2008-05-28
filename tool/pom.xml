@@ -37,9 +37,8 @@
 
         <!-- Servlet dependency -->
         <dependency>
-            <groupId>servletapi</groupId>
-            <artifactId>servletapi</artifactId>
-            <version>${sakai.servletapi.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
 
         <!-- Sakai util -->
@@ -99,9 +98,8 @@
 
         <!-- Spring dependency -->
         <dependency>
-            <groupId>${sakai.spring.groupId}</groupId>
-            <artifactId>${sakai.spring.artifactId}</artifactId>
-            <version>${sakai.spring.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
         </dependency>
 
         <!-- RSF dependencies -->

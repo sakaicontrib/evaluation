@@ -47,44 +47,48 @@ public aspect EvalServicesProfiler {
     * around advice for all methods in the evalLogicImpl pointcut
     */
    Object around() : evalLogicImpl() {
-      long startTime = System.nanoTime();
-      Object methodReturn = proceed(); // this executes the method and gets the return value
-      long runTime = System.nanoTime() - startTime;
-      org.aspectj.lang.Signature sig = thisJoinPoint.getSignature(); // find out info about the method
-      String serviceName = sig.getDeclaringTypeName();
-      String methodName = sig.getName();
-      String serviceMethodName = serviceName + ":" + methodName;
-
-      ServiceMethodProfile smp = null;
-      if (profiles.containsKey(serviceMethodName)) {
-         smp = profiles.get(serviceMethodName);
-      } else {
-         smp = new ServiceMethodProfile(sig.getDeclaringTypeName(), sig.getName());
-         profiles.put(serviceMethodName, smp);
-      }
-      // track the total methodCalls and total runTime
-      smp.methodCalls = smp.methodCalls + 1;
-      smp.runTime = smp.runTime + runTime;
-
-      // log the method profile
-      if (logMethodCalls) {
-         log.info("PROFILING: " + serviceMethodName + " :: runTime=" + runTime + " ns :: totalCalls=" + smp.methodCalls + " :: " + sig.toLongString());
-
-         // log a summary every 1000 (or whatever logsummary is set to)
-         outputCounter++;
-         if (outputCounter % logSummary == 0) {
-            generateLogSummary("");
+      if (enabled) {
+         long startTime = System.nanoTime();
+         Object methodReturn = proceed(); // this executes the method and gets the return value
+         long runTime = System.nanoTime() - startTime;
+         org.aspectj.lang.Signature sig = thisJoinPoint.getSignature(); // find out info about the method
+         String serviceName = sig.getDeclaringTypeName();
+         String methodName = sig.getName();
+         String serviceMethodName = serviceName + ":" + methodName;
+   
+         ServiceMethodProfile smp = null;
+         if (profiles.containsKey(serviceMethodName)) {
+            smp = profiles.get(serviceMethodName);
+         } else {
+            smp = new ServiceMethodProfile(sig.getDeclaringTypeName(), sig.getName());
+            profiles.put(serviceMethodName, smp);
          }
+         // track the total methodCalls and total runTime
+         smp.methodCalls = smp.methodCalls + 1;
+         smp.runTime = smp.runTime + runTime;
+   
+         // log the method profile
+         if (logMethodCalls) {
+            log.info("PROFILING: " + serviceMethodName + " :: runTime=" + runTime + " ns :: totalCalls=" + smp.methodCalls + " :: " + sig.toLongString());
+   
+            // log a summary every 1000 (or whatever logsummary is set to)
+            outputCounter++;
+            if (outputCounter % logSummary == 0) {
+               generateLogSummary("");
+            }
+         }
+         // standard return
+         return methodReturn;
+      } else {
+         // skip the logging
+         return proceed();
       }
-
-      // standard return
-      return methodReturn;
    }
 
    /**
     * This pointcut allows use to intercept static calls to the generateSummary method
     */
-   pointcut makeSummary(): execution(public static String org.sakaiproject.evaluation.aspectj.ProfileSummary.generateSummary());
+   pointcut makeSummary(): execution(public static String org.sakaiproject.evaluation.aspectj.ProfilerControl.generateSummary());
 
    Object around() : makeSummary() {
       // simply ignore the execution in the method are replace it with the summary from this aspect
@@ -92,6 +96,40 @@ public aspect EvalServicesProfiler {
       log.info(summary);
       return summary;
    }
+
+   pointcut enableProfiler(): execution(public static void org.sakaiproject.evaluation.aspectj.ProfilerControl.enableProfiler(..));
+
+   boolean enabled = false; // off by default
+   after() returning() : enableProfiler() {
+      if (enabled) {
+         enabled = false;
+      } else {
+         enabled = true;
+      }
+      log.info("Set the profiler to enabled=" + enabled);
+   }
+
+   pointcut resetProfiler(): execution(public static void org.sakaiproject.evaluation.aspectj.ProfilerControl.resetProfiler(..));
+
+   after() returning() : resetProfiler() {
+      String summary = generateSummary( new java.util.Date().toString() );
+      log.info(summary);
+      profiles.clear();
+      outputCounter = 0;
+      log.info("Cleared the profiler data");
+   }
+
+   pointcut enableMethodLogging(): execution(public static void org.sakaiproject.evaluation.aspectj.ProfilerControl.enableMethodLogging(..));
+
+   after() returning() : enableMethodLogging() {
+      if (logMethodCalls) {
+         logMethodCalls = false;
+      } else {
+         logMethodCalls = true;
+      }
+      log.info("Set the profiler to enabled=" + enabled);
+   }
+
 
    public void generateLogSummary(String note) {
       log.info( generateSummary(note) );
