@@ -19,16 +19,21 @@ package org.sakaiproject.evaluation.aspectj;
  * 
  * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
-public class ProfileSummary {
+public class ProfilerControl {
 
    /**
     * Get the profiling summary and log it
     * @return the summary from the profiling aspect
     */
    public static String generateSummary() {
-      // does nothing at all
-      String summary = "Aspect should have populated this";
-      return summary;
+      // does nothing really
+      return "Aspect should have populated this";
    }
+
+   public static void enableProfiler() {}
+
+   public static void resetProfiler() {}
+
+   public static void enableMethodLogging() {}
 
 }

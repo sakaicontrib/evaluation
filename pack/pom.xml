@@ -27,17 +27,11 @@
       in the war bundle and the components.xml file 
       (which is basically a spring-config file with a special name -->
    <dependencies>
+
       <!-- Internal dependencies -->
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-impl</artifactId>
-      </dependency>
-
-      <!-- sakai dependencies -->
-      <dependency>
-         <groupId>org.sakaiproject</groupId>
-         <artifactId>sakai-util</artifactId>
-         <version>${sakai.version}</version>
          <scope>runtime</scope>
       </dependency>
 
