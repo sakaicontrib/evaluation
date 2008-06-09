@@ -227,6 +227,37 @@ public interface EvalSettings {
     * CONSTANT: Show the import controls and the importing options for importing templates/items/scales/evals - {@link Boolean}, default False
     */
    public static final String ENABLE_IMPORTING = "ENABLE_IMPORTING:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Show the email controls and the email options for one-email-per-student notification - {@link Boolean}, default False
+    */
+   public static final String ENABLE_SINGLE_EMAIL_PER_STUDENT = "ENABLE_SINGLE_EMAIL_PER_STUDENT:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Frequency of reminders when one email per student is set. - {@link Integer},default 0}
+    */
+   public static final String SINGLE_EMAIL_REMINDER_DAYS = "SINGLE_EMAIL_REMINDER_DAYS:java.lang.Integer";
+   /**
+    * CONSTANT: Email delivery options: EvalConstants.MAIL_DELIVERY_OPTION_NONE|EMAIL_DELIVERY_OPTION_SEND|EMAIL_DELIVERY_OPTION_LOG - {@link String}, 
+    * default EMAIL_DELIVERY_OPTION_SEND
+    */
+   public static final String EMAIL_DELIVERY_OPTION = "EMAIL_DELIVERY_OPTION:java.lang.String";
+   /**
+    * CONSTANT: The number of emails to process in a batch before pausing EMAIL_WAIT_INTERVAL seconds. 0 causes 1 batch with all. - {@link Integer},default 0}
+    */
+   public static final String EMAIL_BATCH_SIZE = "EMAIL_BATCH_SIZE:java.lang.Integer";
+   /**
+    * CONSTANT: The number of seconds to wait before processing another EMAIL_BATCH_SIZE emails. 0 causes no wait between batches. - {@link Integer},default 0}
+    */
+   public static final String EMAIL_WAIT_INTERVAL = "EMAIL_WAIT_INTERVAL:java.lang.Integer";
+   /**
+    * CONSTANT: Log the email addresses of users receiving email. - {@link Boolean}, default False
+    */
+   public static final String LOG_EMAIL_RECIPIENTS = "LOG_EMAIL_RECIPIENTS:java.lang.Boolean";
+   /**
+    * CONSTANT: Log a message every LOG_PROGRESS_EVERY operations during batch operations. 0 cause no logging of progress messages.- {@link Integer},default 0}
+    */
+   public static final String LOG_PROGRESS_EVERY = "LOG_PROGRESS_EVERY:java.lang.Integer";
 
    /**
     * If this is enabled then we are allow the user to create their own adhoc groups and we search
@@ -242,7 +273,8 @@ public interface EvalSettings {
     * it makes little sense to enable this if adhoc groups are off
     */
    public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
-
+   
+  
 
    /**
     * This is here to identify all the boolean ONLY settings in the system,
@@ -263,6 +295,8 @@ public interface EvalSettings {
       ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
       ENABLE_ITEM_COMMENTS,
+      ENABLE_NOT_AVAILABLE,
+      ENABLE_SINGLE_EMAIL_PER_STUDENT,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
       ENABLE_SUMMARY_SITES_BOX,
@@ -275,7 +309,7 @@ public interface EvalSettings {
       INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
       ITEM_USE_RESULTS_SHARING,
       ITEM_USE_COURSE_CATEGORY_ONLY,
-      ENABLE_NOT_AVAILABLE,
+      LOG_EMAIL_RECIPIENTS,
       REQUIRE_COMMENTS_BLOCK,
       USE_EXPERT_ITEMS,
       USE_EXPERT_TEMPLATES

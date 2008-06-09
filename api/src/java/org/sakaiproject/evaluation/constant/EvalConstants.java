@@ -545,24 +545,50 @@ public class EvalConstants {
    public static final String EMAIL_TEMPLATE_RESULTS = "Results";
    /**
     * EmailTemplate type setting:
-    * This identifies a template as the "single-email-per-user evaluation available template",
-    * used when the evaluation is available to be taken
+    * This identifies a template as the one-email-per-user evaluation-is-available template,
+    * used when the evaluation is available to be taken.
     */
-   public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE = "ConsolidatedAvailable";
+    public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE = "ConsolidatedAvailable";
 	/**
 	 * EmailTemplate type setting:
-	 * This identifies a template as the "single-email-per-user evaluation reminder template",
-	 * used when evaluation responses are outstanding
+	 * This identifies a template as the one-email-per-user evaluation reminder template,
+	 * used when evaluation responses are outstanding.
 	 */
 	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER = "ConsolidatedReminder";
 	/**
 	 * EmailTemplate type setting:
-	 * This identifies a template as the "single-email-per-user evaluation subject template",
+	 * This identifies a template as the one-email-per-user evaluation-is-available subject template,
 	 * used with the "single-email-per-user" email notification option
 	 */
-	public static final String EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT = "ConsolidatedSubject";
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE_SUBJECT = "ConsolidatedAvailSubject";
+	/**
+	 * EmailTemplate type setting:
+	 * This identifies a template as the one-email-per-user evaluation reminder subject template,
+	 * used with the "single-email-per-user" email notification option
+	 */
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER_SUBJECT = "ConsolidatedReminderSubject";
+	/**
+	 * Email Delivery option setting:
+	 * This value is pre-loaded as the default option for email delivery.
+	 */
+	public static final String EMAIL_DELIVERY_DEFAULT = "send";
 	
-	
+	/**
+	 * Email Delivery option setting:
+	 * This value send email to the Sakai email system. Use this value when you want to send email to users.
+	 */
+	public static final String EMAIL_DELIVERY_SEND = "send";
+	/**
+	 * Email Delivery option setting:
+	 * This value writes email to the server log. Use this value when you want to check the content of email.
+	 */
+	public static final String EMAIL_DELIVERY_LOG = "log";
+	/**
+	 * Email Delivery option setting:
+	 * This value prevents email from being sent or logged. Use this value when you want to test safely by disabling sending of email.
+	 */
+	public static final String EMAIL_DELIVERY_NONE = "none";
+
    /**
     * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others
     */

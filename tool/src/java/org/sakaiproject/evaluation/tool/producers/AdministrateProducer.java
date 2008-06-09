@@ -64,8 +64,7 @@ public class AdministrateProducer implements ViewComponentProducer {
    }
 
    // Used to prepare the path for WritableBeanLocator
-   private String ADMIN_WBL = "settingsBean";
-
+   public static final String ADMIN_WBL = "settingsBean";
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -108,13 +107,16 @@ public class AdministrateProducer implements ViewComponentProducer {
       UIInternalLink.make(tofill, "control-scales-link",
             UIMessage.make("controlscales.page.title"),
             new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-
+      
       UIInternalLink.make(tofill, "control-emailtemplates-link",
             UIMessage.make("controlemailtemplates.page.title"),
             new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
 
-
       // BREADCRUMBS
+      UIInternalLink.make(tofill, "control-email-toplink",
+              UIMessage.make("controlemail.page.title"),
+              new SimpleViewParameters(ControlEmailProducer.VIEW_ID));
+      
       UIInternalLink.make(tofill, "control-reporting-toplink", 
             UIMessage.make("administrate.top.control.reporting"),
             new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
@@ -138,7 +140,23 @@ public class AdministrateProducer implements ViewComponentProducer {
                UIMessage.make("administrate.top.control.hierarchy"),
                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
       }
-
+      
+    //alert user to current email setting
+      Object[] params = new Object[]{"",""};
+      String delivery = (String)evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+      if(EvalConstants.EMAIL_DELIVERY_SEND.equals(delivery)) {
+    	  params[0] = "SEND email";
+    	  params[1] = "PRODUCTION";
+      }
+      else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(delivery)) {
+    	  params[0] = "LOG email";
+    	  params[1] = "DEVELOPMENT";
+      }
+      else if(EvalConstants.EMAIL_DELIVERY_NONE.equals(delivery)) {
+    	  params[0] = "NOT send email";
+    	  params[1] = "TEST";
+      }
+      UIMessage.make(tofill, "email-delivery", "administrate.email.delivery", params);
 
       //System Settings
       UIForm form = UIForm.make(tofill, "basic-form");		
@@ -202,7 +220,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, true);
       UIMessage.make(form, "instructors-hierarchy-note", "administrate.instructors.hierarchy.note");
 
-      //Select for number of questions intructors can add
+      //Select for number of questions instructors can add
       makeSelect(form, "instructors-num-questions", 
             EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
             EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
@@ -336,41 +354,58 @@ public class AdministrateProducer implements ViewComponentProducer {
       UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);	
    }
 
-   /*
-    * (non-Javadoc)
-    * This method is used to render checkboxes.
+   /**
+    * Construct a UIBoundBoolean administrative setting component
+    * 
+    * @param parent the containing UIContainer
+    * @param ID the component's RSF id
+    * @param adminkey the administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings
     */
-   private void makeBoolean(UIContainer parent, String ID, String adminkey) {
-      // Must use "composePath" here since admin keys currently contain periods
-      UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(ADMIN_WBL, adminkey));
+   public static void makeBoolean(UIContainer parent, String ID, String adminkey) {
+	      // Must use "composePath" here since admin keys currently contain periods
+	      UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(ADMIN_WBL, adminkey));
    }
 
-   /*
-    * (non-Javadoc)
-    * This is a common method used to render dropdowns (select boxes).
+   /**
+    * Construct a UISelect administrative setting component
+    * 
+    * Values and labels are contained in org.sakaiproject.evaluation.tool.EvalToolConstants.<br />
+    * Administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings<br />
+    * 
+    * @param parent the containing UIContainer
+    * @param ID the component's RSF id
+    * @param values the options from which the the user has to choose
+    * @param labels the labels for the options from which the user has to choose
+    * @param adminkey the administrative setting constant 
+    * @param message use message properties if true, do not use message properties if false
     */
-   private void makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey, boolean message) {
-      UISelect selection = UISelect.make(parent, ID); 
-      selection.selection = new UIInput();
-      if (adminkey != null) {
-         selection.selection.valuebinding = new ELReference(PathUtil.composePath(ADMIN_WBL, adminkey));
-      }
-      UIBoundList selectvalues = new UIBoundList();
-      selectvalues.setValue(values);
-      selection.optionlist = selectvalues;
-      UIBoundList selectlabels = new UIBoundList();
-      selectlabels.setValue(labels);
-      selection.optionnames = selectlabels;   
+   public static void makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey, boolean message) {
+	      UISelect selection = UISelect.make(parent, ID); 
+	      selection.selection = new UIInput();
+	      if (adminkey != null) {
+	         selection.selection.valuebinding = new ELReference(PathUtil.composePath(ADMIN_WBL, adminkey));
+	      }
+	      UIBoundList selectvalues = new UIBoundList();
+	      selectvalues.setValue(values);
+	      selection.optionlist = selectvalues;
+	      UIBoundList selectlabels = new UIBoundList();
+	      selectlabels.setValue(labels);
+	      selection.optionnames = selectlabels;   
 
-      if (message)
-         selection.setMessageKeys();
-   }
+	      if (message)
+	         selection.setMessageKeys();
+	   }
 
-   /*
-    * (non-Javadoc)
-    * This is a common method used to render text boxes.
+   /**
+    * Construct a UIInput administrative setting component
+    * 
+    * Administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings.<br />
+    * 
+    * @param parent the containing UIContainer
+    * @param ID the component's RSF id
+    * @param adminkey the administrative setting constant
     */
-   private void makeInput(UIContainer parent, String ID, String adminkey) {
-      UIInput.make(parent, ID, PathUtil.composePath(ADMIN_WBL, adminkey));
-   }
+   public static void makeInput(UIContainer parent, String ID, String adminkey) {
+	      UIInput.make(parent, ID, PathUtil.composePath(ADMIN_WBL, adminkey));
+	   }
 }

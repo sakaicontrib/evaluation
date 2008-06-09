@@ -222,6 +222,13 @@
         <property name="external"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
+    
+    <bean class="org.sakaiproject.evaluation.tool.producers.ControlEmailProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalSettings" 
+        	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
         <property name="commonLogic"
