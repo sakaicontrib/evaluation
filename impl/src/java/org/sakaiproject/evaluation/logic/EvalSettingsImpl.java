@@ -57,11 +57,14 @@ public class EvalSettingsImpl implements EvalSettings {
     */
    public void init() {
       log.debug("init");
+      
+      log.debug("BOOLEAN_SETTINGS " + BOOLEAN_SETTINGS);
 
       // convert the array into a Set to make it easier to work with
       for (int i = 0; i < BOOLEAN_SETTINGS.length; i++) {
          booleanSettings.add(BOOLEAN_SETTINGS[i]);
-      }      
+      }
+      
 
       // count the current config settings
       int count = dao.countAll(EvalConfig.class);

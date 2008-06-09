@@ -117,7 +117,8 @@ public class EvalImportImpl implements EvalImport {
 	private String currentUserId;
 	private int numPersisted;
 	
-	//error messages during processing to surface to UI
+	// error messages during processing to surface to UI 
+	// TODO collecting parameter pattern
 	private List<String> messages = new ArrayList<String>();
 	
 	public void init() {

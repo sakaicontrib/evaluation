@@ -31,20 +31,23 @@ public class EvalEmailConstants {
     * EmailTemplate message setting:
     * This is the default template for when the evaluation is created<br/>
     * Replaceable strings:<br/>
-    * ${EarliestDueDate} - for single email per user, the earliest due date among evaluations available to a user
+    * ${EarliestEvalDueDate} - for single email per user, the earliest due date among evaluations available to a user
     * ${EvalTitle} - the title of this evaluation
     * ${EvalStartDate} - the start date of this evaluation
     * ${EvalDueDate} - the due date of this evaluation
     * ${EvalResultsDate} - the view results date of this evaluation
     * ${EvalGroupTitle} - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
+    * ${EvalToolTitle} - the title of the evaluation tool seen by users of the tool (e.g., "Teaching Questionnaires")
+    * ${EvalSite} - a description of the site where the evaluation tool is located
+    * ${EvalCLE} - the local name of the Collaboration and Learning Environment where the evaluation tool is used
     * ${HelpdeskEmail} - the email address for the helpdesk (or the support contact)
+    * ${MyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
     * ${URLtoAddItems} - the direct URL for evaluatees to add items to evals assigned from above
     * ${URLtoTakeEval} - the direct URL for evaluators to take this evaluation
     * ${URLtoViewResults} - the direct URL to view results for this evaluation
     * ${URLtoSystem} - the main URL to the system this is running in
     * ${URLtoAddItems} - the direct URL to add items to an evaluation
     * ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
-    * ${URLtoMyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
     * Special <#if Var == "true"> </#if> variables:
     * ShowAddItemsText - will be "true" if the add items text should be shown
     * ShowOptInText - will be "true" if this eval is opt-in (exclusive with opt-in)
@@ -219,37 +222,41 @@ public class EvalEmailConstants {
     * EmailTemplate subject: Default subject for available single-email-notification 
     */
    public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
+
    
    /**
     * EmailTemplate message setting:
     * This is the default template for when the single email per student option is in effect and an evaluation is available.
     * Replaceable strings:<br/>
     * ${EarliestEvalDueDate} - the earliest due date among evaluations available to a user
+    * ${EvalCLE} - the local name of the Collaboration and Learning Environment where the evaluation tool is used
+    * ${EvalSite} - a description of the site where the evaluation tool is located
+    * ${EvalToolTitle} - the title of the evaluation tool seen by users of the tool (e.g., "Teaching Questionnaires")
     * ${HelpdeskEmail} - the email address for the helpdesk (or the support contact)
-    * ${URLtoMyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
+    * ${MyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
     * ${URLtoSystem} - the main URL to the system this is running in
     */
 	public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT = 
 		"Course feedback on one or more of your classes is due by ${EarliestEvalDueDate}. You " +
-		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
+		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +
-		"	${URLtoMyWorkspaceDashboard}\n\n" + 
-		"You will need to provide a login name and password to access the Teaching Questionnaires " + 
+		"	${MyWorkspaceDashboard}\n\n" + 
+		"You will need to provide a login name and password to access the ${EvalToolTitle} " + 
 		"site.  This identification is required to ensure that only authorized students " +
 		"submit questionnaires and that each student submits only one questionnaire per class.  Note, however, " +
 		"that teachers and administrators will not have access to any identifying information you " +
 		"submit, and they will not be able to associate specific ratings or comments with " +
 		"specific students.\n\n" +
-		"Thank you in advance for submitting your Teaching Questionnaires and helping the " +
+		"Thank you in advance for submitting your ${EvalToolTitle} and helping the " +
 		"University maintain and improve the quality of its teaching.\n\n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in viewing the Teaching Questionnaires, please send an email to ${HelpdeskEmail} " +
+		"Should you encounter any technical difficulty in viewing the ${EvalToolTitle}, please send an email to ${HelpdeskEmail} " +
 		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
 		"Alternate Instructions: \n" +
 		"1) Go to ${URLtoSystem} \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
-		"3) Click on 'Teaching Questionnaires' in the left navigation menu under My Workspace. \n" +
+		"3) Click on '${EvalToolTitle}' in the left navigation menu under ${EvalSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
 	
 	 /**
@@ -257,35 +264,52 @@ public class EvalEmailConstants {
 	  */
 	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
 
+
 	/**
 	 * EmailTemplate message setting:
 	 * This is the default template for when the single email per student option is in effect and an evaluation response is outstanding.
 	 * Replaceable strings:<br/>
 	 * ${EarliestEvalDueDate} - the earliest due date among evaluations available to a user
+	 * ${EvalSite} - a description of the site where the evaluation tool is located
+	 * ${EvalCLE} - the local name of the Collaboration and Learning Environment where the evaluation tool is used
+	 * ${EvalToolTitle} - the title of the evaluation tool seen by users of the tool (e.g., "Teaching Questionnaires")
 	 * ${HelpdeskEmail} - the email address for the helpdesk (or the support contact)
-	 * ${URLtoMyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
+	 * ${MyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
 	 * ${URLtoSystem} - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT = 
 		"Course feedback on one or more of your classes is due by ${EarliestEvalDueDate}. You " +
-		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
+		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +
-		"	${URLtoMyWorkspaceDashboard}\n\n" + 
-		"You will need to provide a logion name and password to access the Teaching Questionnaires " + 
+		"	${MyWorkspaceDashboard}\n\n" + 
+		"You will need to provide a logion name and password to access the ${EvalToolTitle} " + 
 		"site.  This identification is required to ensure that only authorized students " +
 		"submit questionnaires  and that each student submits only one questionnaire per class.  Note, however, " +
 		"that teachers and administrators will not have access to any identifying information you " +
 		"submit, and they will not be able to associate specific ratings or comments with " +
 		"specific students.\n\n" +
-		"Thank you in advance for submitting your Teaching Questionnaires and helping the " +
+		"Thank you in advance for submitting your ${EvalToolTitle} and helping the " +
 		"University maintain and improve the quality of its teaching.\n\n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in viewing the Teaching Questionnaires, please send an email to ${HelpdeskEmail} " +
+		"Should you encounter any technical difficulty in viewing the ${EvalToolTitle}, please send an email to ${HelpdeskEmail} " +
 		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
 		"Alternate Instructions: \n" +
 		"1) Go to ${URLtoSystem} \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
-		"3) Click on 'Teaching Questionnaires' in the left navigation menu under My Workspace. \n" +
+		"3) Click on '${EvalToolTitle}' in the left navigation menu under ${EvalSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
+		
+	/**
+	 * Email text describing where a user should look for the evaluation tool.
+	 *
+	public static final String EMAIL_EVALUATION_SITE = "My Workspace";
+	*/
+	
+	/**
+	 * Email text describing to a user what the evaluation tool is called.
+	 *
+	public static final String EMAIL_EVALUATION_TOOL = "Course Evaluations";
+	*/
+
 }

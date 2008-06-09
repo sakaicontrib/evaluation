@@ -158,6 +158,17 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_ADHOC_GROUPS, true);
          saveConfig(EvalSettings.ENABLE_ADHOC_USERS, true);
          saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
+         
+         // Default email settings
+         saveConfig(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);
+         saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0);
+         saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
+         saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+         saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
+         saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
+        
+         // Default batch performance metrics settings
+         saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);
 
          log.info("Preloaded " + dao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
       }
@@ -203,7 +214,7 @@ public class PreloadDataImpl {
          dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 
         		 EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, 
         		 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
-        		 
+ 
          log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }
    }

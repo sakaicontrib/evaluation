@@ -1,0 +1,77 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=controlemail.page.title">Email Templates Control</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<div class="portletBody">
+		    <div class="navIntraTool">
+            	<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            	<a rsf:id="summary-link" href="summary.html">Summary</a>
+            	<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+            	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+            	<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+            	<a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+			</div>
+			<div rsf:id="message-for:*" class="alertMessage">
+   				<ul style="margin:0px;">
+      				<li>Message for user here</li>
+   				</ul>
+			</div>
+			<h3 rsf:id="msg=controlemail.title">Control Email</h3>
+			<form  rsf:id="emailcontrol-form" method="post">
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.type">Type of Email Notification</span></legend>
+					<p class=   "checkbox indnt1">
+						<input type="checkbox" rsf:id="emailtype" name="emailtype"  id="emailtype-id" />
+						<label rsf:id="msg=controlemail.single.email" for="emailtype-id">Enable single email per student</label>
+					</p>
+					<p class="instruction" rsf:id="controlemail-instructions">
+						The implementation of single email per student (UM) requires a daily Quartz job that does the email processing.
+						This job must be running before evaluations begin if this option is chosen.
+						<br /><br />
+					</p>
+				</fieldset>
+				<div rsf:id="one-email-settings:">
+					<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.single.email.settings">One Email Per Student</span></legend>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.reminder.frequency" for="send-reminders-id" class="block">Send reminders... never, daily, etc.</label>
+							<select rsf:id="send-reminders" id="send-reminders-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.log.progress.every" for="log-progress-every-id" class="block">Log progress every... 10, 25, 50 etc.</label>
+							<select rsf:id="log-progress-every" id="log-progress-every-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.batch.size" for="email-batch-size-id" class="block">Number of emails to send as a batch</label>
+							<select rsf:id="email-batch-size" id="email-batch-size-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.wait.interval" for="wait-interval-id" class="block">Seconds to wait between sending batches of email</label>
+							<select rsf:id="wait-interval" id="wait-interval-id"></select>
+						</p>
+					</fieldset>
+				</div>
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.delivery.control">Control Email Delivery</span></legend>
+					<p class=	"longtext indnt1">
+						<label rsf:id="msg=controlemail.header" for="delivery-option-id" class="block">Email delivery options</label>
+						<select rsf:id="delivery-option" id="delivery-option-id"></select>
+					</p>
+					<p class=   "checkbox indnt1">
+						<input type="checkbox" rsf:id="log-recipients" id="log-recipients-id" />
+						<label rsf:id="msg=controlemail.log.recipients" for="log-recipients-id">Log email recipient addresses in the server log</label>
+					</p>
+				</fieldset>
+					<p class="act">
+						<input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
+						<input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
+					</p>
+			</form>
+		</div>
+	</body>
+</html>

@@ -119,9 +119,41 @@ public class EvalToolConstants {
       "modifyitem.course.category",
       "modifyitem.instructor.category"
    };
+   
+   /**
+    * Email Settings: Page pulldown constants for email processing type
+    * <ol>
+	* <li>Multiple emails per student - one email per evaluation response outstanding.</li>
+	* <li>Single email per student - one email if any of a student's responses are outstanding.</li>
+	* </ol>
+    */
+	public static String[] EMAIL_TYPE_VALUES = new String[] {
+		"multiple", "single"};
+	public static String[] EMAIL_TYPE_LABELS = new String[] {
+		"Multiple emails per student - one email per response outstanding.",
+		"Single email per student - one email if any of a student's responses are outstanding."
+	};
+	public static final String SINGLE_EMAIL = "single";
+	public static final String MULTIPLE_EMAILS = "multiple";
+ 
+ 
+	/**
+	 * Email Settings: Page pulldown constants for email delivery options
+	 * <ol>
+	 * <li>Send email. This mode should be used in production, when you do want to send email to real users.</li>
+	 * <li>Log email to the server log. This mode may be used in development to check the content of email messages.</li>
+	 * <li>Do not send email. This mode may be used for safer testing, when you don't want to accidentally send email to real users.</li>
+	 * </ol>
+	 */
+	public static String[] EMAIL_DELIVERY_VALUES = new String[] {
+		"send", "log", "none"};
+	public static String[] EMAIL_DELIVERY_LABELS = new String[] {
+		"Send email. This mode should be used in production, when you do want to send email to real users.",
+		"Log email to the server log. This mode may be used in development to check the content of email messages.", 
+		"Do not send email. This mode may be used for safer testing, when you don't want to accidentally send email to real users."};
 
    /**
-    * Evaluation Settings: Page pulldown constants for reminder interval
+    * Evaluation/Email Settings: Page pulldown constants for reminder interval
     */
    public static final String[] REMINDER_EMAIL_DAYS_VALUES = new String[] {
       "0", "1", "2", "3", "4", "5", "6", "7" };
@@ -136,6 +168,12 @@ public class EvalToolConstants {
       "evalsettings.reminder.days.6",
       "evalsettings.reminder.days.7" 
    };
+   
+   /**
+    * Defines the allowed values for the Integer constants in batch-related pulldowns
+    */
+   public static final String[] PULLDOWN_BATCH_VALUES = new String[] {
+	   "0", "10", "25", "50", "100", "250", "500", "750", "1000"};
 
    /**
     * Evaluation settings: Values for instructor options for using evaluationSetupService from above
@@ -154,7 +192,7 @@ public class EvalToolConstants {
 
 
    /**
-    * Modify Essay: Page pulldown constants for reponse size
+    * Modify Essay: Page pulldown constants for response size
     */
    public static final String[] RESPONSE_SIZE_VALUES = new String[] {
       "2", 
