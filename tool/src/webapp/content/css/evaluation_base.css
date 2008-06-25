@@ -16,10 +16,9 @@
 	}
 }
 
-A.inactive {
-	text-decoration: none;
+.navIntraTool a.inactive {
 	font-weight: bold;
-	font-style: italic;
+/*	font-style: italic;*/
 } 
  
 .testStyles {
