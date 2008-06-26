@@ -117,8 +117,6 @@ public class ExpertCategoryProducer implements ViewComponentProducer, ViewParams
 
       UIMessage.make(tofill, "page-title", "expert.category.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
       UIInternalLink.make(tofill, "modify-template", UIMessage.make("modifytemplate.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
             new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
 
