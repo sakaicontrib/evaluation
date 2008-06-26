@@ -334,11 +334,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                categoryMessage = "modifyitem.environment.category";
             }
             UIMessage.make(itemBranch, "item-category", categoryMessage);
-            UIMessage.make(tofill, "item-category-title", "modifytemplate.item.category.title");
+            UIMessage.make(itemBranch, "item-category-title", "modifytemplate.item.category.title");
 
             EvalUser owner = commonLogic.getEvalUserById( templateItem.getOwner() );
             UIOutput.make(itemBranch, "item-owner-name", owner.displayName);
-            UIMessage.make(tofill, "item-owner-title", "modifytemplate.item.owner.title");
+            UIMessage.make(itemBranch, "item-owner-title", "modifytemplate.item.owner.title");
 
             /* Hierarchy Messages 
              * Only Display these if they are enabled in the preferences.
