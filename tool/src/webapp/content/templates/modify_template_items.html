@@ -65,7 +65,7 @@
 				<div class="navPanel">
 					<div class="listNav">
 						<div rsf:id="level-header" class="instruction">Current Level - # existing items</div>
-						<label rsf:id="add-item-note" for="add-item-control:::add-item-classification-selection">Add Item:</label>
+						<label rsf:id="add-item-note">Add Item:</label>
 						<div rsf:id="add-item-control:" style="display:inline;">
 							<form name="modify_template_items_form" style="display:inline;">
 								<select	id="itemClassification-selection">
@@ -120,26 +120,22 @@
 									</div>
 
 									<div class="itemLine2">
-										<label class="itemNum" for="item-row::0:item-select-selection">
-											<select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder" title="Choose a new order for this item">
-												<option value="1" selected="selected">1</option>
-												<option value="2">2</option>
-												<option value="3">3</option>
-											</select>
-										</label>
+										<select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+											<option value="1" selected="selected">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+										</select>
 										<h4 rsf:id="item-text" class="itemText">
 											Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.
 										</h4>
-										<span class="scaleDesc textPanelFooter">
+										<div class="scaleDesc textPanelFooter">
 											<span rsf:id="item-scale-type-title" class="lighthighlight">Scale Type:</span>	
 											<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
-                                            <span rsf:id="item-resultssharing-enabled" class="lighthighlight">Results Sharing</span>
-                                            <span rsf:id="item-resultssharing">Results Sharing</span>
-                                            <span rsf:id="item-options" class="lighthighlight">Options:</span>
-                                            <span rsf:id="item-na-enabled">NA</span>
-                                            <span rsf:id="item-comment-enabled">Comment</span>
-										</span>
-										<span class="scaleDesc textPanelFooter">
+                      <span rsf:id="item-resultssharing-enabled" class="lighthighlight">Results Sharing</span>
+                      <span rsf:id="item-resultssharing">Results Sharing</span>
+                      <span rsf:id="item-options" class="lighthighlight">Options:</span>
+                      <span rsf:id="item-na-enabled">NA</span>
+                      <span rsf:id="item-comment-enabled">Comment</span>
 											<span rsf:id="item-owner-title" class="lighthighlight">Owner:</span>
 											<span rsf:id="item-owner-name">Owner name</span>
 											<span rsf:id="item-category-title" class="lighthighlight">Category:</span>
@@ -148,7 +144,7 @@
 											<span rsf:id="item-hierarchy-level">Top Level</span>
 											<span rsf:id="item-hierarchy-nodeid-title" class="lighthighlight">Hierarchy ID:</span>
 											<span rsf:id="item-hierarchy-nodeid">Some Node ID or Professor ID</span>
-										</span>
+										</div>
 										<div class="cleaner">&nbsp;</div>
 									</div>
 									<ol rsf:id="block-children:" class="itemLine3">
@@ -188,23 +184,19 @@
 									</div>
 
 									<div class="itemLine2">
-										<label class="itemNum" for="item-row::1:item-select-selection">
-											<select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder" title="Choose a new order for this item">
-												<option value="1">1</option>
-												<option value="2" selected="selected">2</option>
-												<option value="3">3</option>
-											</select>
-										</label>
+										<select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+											<option value="1">1</option>
+											<option value="2" selected="selected">2</option>
+											<option value="3">3</option>
+										</select>
 										<h4 rsf:id="item-text" class="itemText">
 											Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.
 										</h4>
-										<span class="scaleDesc textPanelFooter">
+										<div class="scaleDesc textPanelFooter">
 											<span rsf:id="item-scale-type-title" class="lighthighlight">Scale Type:</span>	
 											<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
 											<span rsf:id="item-na-title" class="lighthighlight">NA available:</span>
 											<span rsf:id="item-na-value">yes/no</span>
-										</span>
-										<span class="scaleDesc textPanelFooter">
 											<span rsf:id="item-owner-title"class="lighthighlight">Results Sharing</span>
 											<span rsf:id="item-owner-name" >
 												Owner name
@@ -223,7 +215,7 @@
 											<span rsf:id="item-hierarchy-level">Top Level</span>
 											<span rsf:id="item-hierarchy-nodeid-title" class="lighthighlight">Hierarchy ID</span>
 											<span rsf:id="item-hierarchy-nodeid">Some Node ID or Professor ID</span>
-										</span>
+										</div>
 
 										<div class="cleaner">&nbsp;</div>
 									</div>
@@ -286,23 +278,19 @@
 									</div>
 
 									<div class="itemLine2">
-										<label class="itemNum" for="item-row::2:item-select-selection">
-											<select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder" title="Choose a new order for this item">
-												<option value="1">1</option>
-												<option value="2">2</option>
-												<option value="3" selected="selected">3</option>
-											</select>
-										</label>
+										<select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3" selected="selected">3</option>
+										</select>
 										<h4 rsf:id="item-text" class="itemText">
 											Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.
 										</h4>
-										<span class="scaleDesc textPanelFooter">
+										<div class="scaleDesc textPanelFooter">
 											<span rsf:id="item-scale-type-title" class="lighthighlight">Scale Type:</span>	
 											<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
 											<span rsf:id="item-na-title" class="lighthighlight">NA available:</span>
 											<span rsf:id="item-na-value">yes/no</span>
-										</span>
-										<span class="scaleDesc textPanelFooter">
 											<span rsf:id="item-owner-title"class="lighthighlight">Results Sharing</span>
 											<span rsf:id="item-owner-name" >
 												Owner name
@@ -321,7 +309,7 @@
 											<span rsf:id="item-hierarchy-level">Top Level</span>
 											<span rsf:id="item-hierarchy-nodeid-title" class="lighthighlight">Hierarchy ID</span>
 											<span rsf:id="item-hierarchy-nodeid">Some Node ID or Professor ID</span>
-										</span>
+										</div>
 
 										<div class="cleaner">&nbsp;</div>
 									</div>
