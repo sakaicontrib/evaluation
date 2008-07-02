@@ -33,8 +33,8 @@
 <h3 rsf:id="warning-message" style="color:red;"></h3>
 
 <div style="width:99%;">
-	<div class="divrow">
-		<div class="leftcol">
+	<div class="navPanel">
+		<div class="viewNav">
 			<span rsf:id="current_test_header" style="font-weight:bold;">Currently</span> ::
 			<span rsf:id="current_test_user_header">Username</span>:
             <span rsf:id="current_test_user"><i>No username</i></span>
@@ -42,10 +42,10 @@
             <span rsf:id="current_test_group_header">GroupId</span>:
             <span rsf:id="current_test_group"><i>No groupId</i></span>
 		</div>
-		<div class="rightcol">
+		<div class="listNav">
 			<form rsf:id="current_test_form" action="admin_test_evalgroup_provider.html" method="get">
-                <span rsf:id="current_test_user_header">Username</span>
-				<input rsf:id="current_test_user_input" type="text" size="18" maxlength="200" />
+                <label rsf:id="current_test_user_header">Username</label>
+				<input rsf:id="current_test_user_input" type="text" size="18" maxlength="200" id="a"/>
                 &nbsp;
                 <span rsf:id="current_test_group_header">GroupId</span>
                 <input rsf:id="current_test_group_input" type="text" size="18" maxlength="200" />
@@ -53,7 +53,6 @@
    				<input rsf:id="current_test_form_command" type="submit" value="Test" />
 			</form>
 		</div>
-		<div class="cleaner">&nbsp;</div>
 	</div>
 </div>
 
