@@ -365,7 +365,7 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 .lighthighlight{ color: #000; padding-left: .5em }
 /*PART 7 end*/
 /*PART 8 - utils and variants from sakai rendering*/
-.navIntraTool a.inactive{ text-decoration: none; font-weight: bold }
+.navIntraTool a.inactive{ text-decoration: none; font-weight: bold}
 form{ margin: 0; display: inline }
 .oddrow{ background-color: #E1E1E1 }
 /*Special style to force divs to be able to work right when floating in all browsers*/
@@ -377,6 +377,15 @@ form{ margin: 0; display: inline }
 	margin: 0;
 	padding: 0;
 	background: transparent
+}
+.toggler{
+	/*the clickable target of a disclosure pair*/
+		cursor:pointer;
+		color:#35b;
+		font-weight: bold;
+}
+.toggler:hover{
+	color:#33f
 }
 /*a button masquerading as a link*/
 .makeLink{
