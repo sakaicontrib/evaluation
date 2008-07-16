@@ -32,6 +32,8 @@ import uk.org.ponder.messageutil.MessageLocator;
 public class PDFReportExporter implements ReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
 
+   int displayNumber;
+
    private EvalCommonLogic commonLogic;
    public void setCommonLogic(EvalCommonLogic commonLogic) {
       this.commonLogic = commonLogic;
@@ -98,6 +100,9 @@ public class PDFReportExporter implements ReportExporter {
       evalPDFReportBuilder.addIntroduction( evaluation.getTitle(), 
             commonLogic.makePlainTextFromHTML(evaluation.getInstructions()) );
 
+      // Reset question numbering
+      displayNumber = 0;
+      
       // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
 
@@ -165,11 +170,12 @@ public class PDFReportExporter implements ReportExporter {
          evalPDFReportBuilder.addSectionHeader(questionText);
       }
       else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+    	 displayNumber++;
          List<String> essays = new ArrayList<String>();
          for (EvalAnswer answer: itemAnswers) {
             essays.add(answer.getText());
          }
-         evalPDFReportBuilder.addTextItemsList(questionText, essays);
+         evalPDFReportBuilder.addTextItemsList(displayNumber + ". " + questionText, essays);
       }
       else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
             EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
@@ -182,6 +188,8 @@ public class PDFReportExporter implements ReportExporter {
 //       showPercentages = true;
 //       }
 
+         displayNumber++;
+         
          int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
 
          String[] optionLabels;
@@ -196,7 +204,7 @@ public class PDFReportExporter implements ReportExporter {
             optionLabels = item.getScale().getOptions();
          }
 
-         evalPDFReportBuilder.addLikertResponse(questionText, 
+         evalPDFReportBuilder.addLikertResponse(displayNumber + ". " + questionText, 
                optionLabels, responseArray, showPercentages);
 
          // handle comments
