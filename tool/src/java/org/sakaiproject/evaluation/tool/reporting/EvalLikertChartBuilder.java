@@ -71,7 +71,7 @@ public class EvalLikertChartBuilder {
         CategoryAxis domainAxis = plot.getDomainAxis();
         
         // Set the font for the labels
-        Font labelFont = new Font("Serif", Font.PLAIN, 7);
+        Font labelFont = new Font("Serif", Font.PLAIN, 6);
         
         CategoryItemRenderer itemRenderer = plot.getRenderer();
         itemRenderer.setBaseItemLabelFont(labelFont);
