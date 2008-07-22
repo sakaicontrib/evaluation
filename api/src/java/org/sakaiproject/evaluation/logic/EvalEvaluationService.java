@@ -55,6 +55,14 @@ public interface EvalEvaluationService {
     * @return true if there is an evaluation with this id, false otherwise
     */
    public boolean checkEvaluationExists(Long evaluationId);
+   
+   /**
+    * Check to see if an evaluation exists with the following state
+    * 
+    * @param state {@link EvalConstants#STATE_ORDER}
+    * @return true if any evaluation with the state exists
+    */
+   public boolean isEvaluationWithState(String state);
 
    /**
     * Get the evaluation associated with this external id<br/>
@@ -96,6 +104,13 @@ public interface EvalEvaluationService {
 
 
    // EVALUATION STATES
+   
+   /**
+    * Set the flag for available email sent to true (i.e., sent)
+    * 
+    * @param evalIds the evaluations whose flags should be set to true
+    */
+   public void setAvailableEmailSent(Long[] evalIds);
 
    /**
     * Find the current state (in queue, active, closed, etc.) 
@@ -399,6 +414,7 @@ public interface EvalEvaluationService {
     * @return a list of response ids, in order by response id
     */
    public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
+   
 
 
    // PERMISSIONS
@@ -432,6 +448,15 @@ public interface EvalEvaluationService {
     * @throws IllegalArgumentException if the template cannot be found
     */
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
+   
+   /**
+    * Get the earliest due date from the evaluations available to be be taken by the user,
+    * formatted for display
+    * 
+    * @param userId the id of the user
+    * @return the earliest due date, formatted for display e.g., Mar 17, 2008
+    */
+   public String getEarliestDueDate(String userId);
 
    /**
     * Get an email template for an eval by type, will always return an email template
@@ -441,6 +466,14 @@ public interface EvalEvaluationService {
     * @return the email template of the supplied type for this eval
     */
    public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
+   
+   /**
+    * Get an email template for an eval by external id, will always return an email template
+    * 
+    * @param eid the exteernal id of the email template
+    * @return the email template identified by this eid
+    */
+   public EvalEmailTemplate getEmailTemplateByEid(String eid);
 
    /**
     * Get an email template by its unique id

@@ -221,7 +221,7 @@ public class EvalEmailConstants {
    /**
     * EmailTemplate subject: Default subject for available single-email-notification 
     */
-   public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
+   public static final String SINGLE_EMAIL_AVAILABLE_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
 
    
    /**
@@ -236,7 +236,7 @@ public class EvalEmailConstants {
     * ${MyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
     * ${URLtoSystem} - the main URL to the system this is running in
     */
-	public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT = 
+	public static final String SINGLE_EMAIL_AVAILABLE_DEFAULT_TEXT = 
 		"Course feedback on one or more of your classes is due by ${EarliestEvalDueDate}. You " +
 		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +
@@ -262,7 +262,7 @@ public class EvalEmailConstants {
 	 /**
 	  * EmailTemplate subject: Default subject for reminder single-email-notification 
 	  */
-	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
+	public static final String SINGLE_EMAIL_REMINDER_DEFAULT_SUBJECT = "Course feedback due by ${EarliestEvalDueDate}\n";
 
 
 	/**
@@ -277,7 +277,7 @@ public class EvalEmailConstants {
 	 * ${MyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
 	 * ${URLtoSystem} - the main URL to the system this is running in
 	 */
-	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT = 
+	public static final String SINGLE_EMAIL_REMINDER_DEFAULT_TEXT = 
 		"Course feedback on one or more of your classes is due by ${EarliestEvalDueDate}. You " +
 		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +

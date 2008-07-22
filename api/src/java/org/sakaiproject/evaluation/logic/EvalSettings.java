@@ -231,12 +231,19 @@ public interface EvalSettings {
    /**
     * CONSTANT: Show the email controls and the email options for one-email-per-student notification - {@link Boolean}, default False
     */
-   public static final String ENABLE_SINGLE_EMAIL_PER_STUDENT = "ENABLE_SINGLE_EMAIL_PER_STUDENT:java.lang.Boolean";
+   public static final String ENABLE_SINGLE_EMAIL = "ENABLE_SINGLE_EMAIL:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: The Date of the next single email reminder  - {@link String}, 
+    * default is null
+    */
+   public static final String NEXT_REMINDER_DATE = "NEXT_REMINDER_DATE:java.util.Date";
    
    /**
     * CONSTANT: Frequency of reminders when one email per student is set. - {@link Integer},default 0}
     */
-   public static final String SINGLE_EMAIL_REMINDER_DAYS = "SINGLE_EMAIL_REMINDER_DAYS:java.lang.Integer";
+   public static final String REMINDER_INTERVAL_DAYS = "REMINDER_INTERVAL_DAYS:java.lang.Integer";
+   
    /**
     * CONSTANT: Email delivery options: EvalConstants.MAIL_DELIVERY_OPTION_NONE|EMAIL_DELIVERY_OPTION_SEND|EMAIL_DELIVERY_OPTION_LOG - {@link String}, 
     * default EMAIL_DELIVERY_OPTION_SEND
@@ -274,8 +281,6 @@ public interface EvalSettings {
     */
    public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
    
-  
-
    /**
     * This is here to identify all the boolean ONLY settings in the system,
     * this does not include Booleans which are configurable (i.e. can be set to null, true, or false)
@@ -296,7 +301,7 @@ public interface EvalSettings {
       ENABLE_IMPORTING,
       ENABLE_ITEM_COMMENTS,
       ENABLE_NOT_AVAILABLE,
-      ENABLE_SINGLE_EMAIL_PER_STUDENT,
+      ENABLE_SINGLE_EMAIL,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
       ENABLE_SUMMARY_SITES_BOX,

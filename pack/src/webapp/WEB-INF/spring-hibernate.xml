@@ -124,7 +124,7 @@
                 <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
                 <value>org.sakaiproject.evaluation.logic.Eval*</value>
                 <value>org.sakaiproject.evaluation.beans.Eval*</value>
-                <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
+                <value>org.sakaiproject.evaluation.logic.imports.Eval*</value>
             </list>
         </property>
     </bean>

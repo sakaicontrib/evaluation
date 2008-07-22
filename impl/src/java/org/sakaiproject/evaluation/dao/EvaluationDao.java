@@ -271,6 +271,13 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    public Set<String> getViewableEvalGroupIds(Long evaluationId, String permissionConstant,
          String[] evalGroupIds);
+   
+   /**
+    * 
+    * @param availableEmailSent
+    * @return
+    */
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(Boolean availableEmailSent); 
 
    /**
     * Get adhoc groups for a user and permission, 
@@ -340,6 +347,13 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @return true if success, false otherwise
     */
    public boolean lockEvaluation(EvalEvaluation evaluation, Boolean lockState);
+   
+   /**
+    * 
+    * @param state See {@link EvalConstants#STATE_ORDER}
+    * @return true if any evaluation exists with this state
+    */
+   public boolean isEvaluationWithState(String state);
 
    /**
     * @param scaleId

@@ -160,12 +160,13 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
          
          // Default email settings
-         saveConfig(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);
+         saveConfig(EvalSettings.REMINDER_INTERVAL_DAYS, 0);
+         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "2050-12-20 12:15 AM");
          saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0);
          saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
          saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
          saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
-         saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
+         saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL, false);
         
          // Default batch performance metrics settings
          saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);
@@ -184,6 +185,10 @@ public class PreloadDataImpl {
 
    private void saveConfig(String key, String value) {
       dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
+   }
+   
+   private void saveConfig(String key, Date value) {
+	   dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), SettingsLogicUtils.getStringFromDate(value)));
    }
 
    /**
@@ -207,13 +212,13 @@ public class PreloadDataImpl {
                EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_REMINDER));
          dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_RESULTS, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_RESULTS));
-         //one email per user
-         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 
-        		 EvalEmailConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT, 
-        		 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE));
-         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 
-        		 EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, 
-        		 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
+         //single email templates
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE, 
+        		 EvalEmailConstants.SINGLE_EMAIL_AVAILABLE_DEFAULT_SUBJECT,EvalEmailConstants.SINGLE_EMAIL_AVAILABLE_DEFAULT_TEXT, 
+        		 EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE));
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER, 
+        		 EvalEmailConstants.SINGLE_EMAIL_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.SINGLE_EMAIL_REMINDER_DEFAULT_TEXT, 
+        		 EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER));
  
          log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }

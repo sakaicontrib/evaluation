@@ -44,6 +44,8 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 	private final String TEST_VALUE3 = "test value three";
 
 	private final String INVALID_CONSTANT = "XXXXXXXXXXXX" + ":java.lang.String";
+	
+	
 
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {

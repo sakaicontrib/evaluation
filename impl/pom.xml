@@ -20,7 +20,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
+    
         <!-- Evaluation dependencies -->
         <dependency>
             <groupId>org.sakaiproject.evaluation</groupId>
@@ -109,56 +109,80 @@
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-authz-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-component-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-component</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-content-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
+        
+		<dependency>
+			<groupId>sakaiproject</groupId>
+			<artifactId>sakai-coursemanagement-api</artifactId>
+			<version>${sakai.version}</version>
+		</dependency>
+		
+		       <!-- CTools UmiacClient dependency -->
+        <dependency>
+            <groupId>org.sakaiproject</groupId>
+            <artifactId>sakai-ctools-providers-impl</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-email-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-entity-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-scheduler-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-site-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-tool-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-user-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-util-api</artifactId>
+            <version>${sakai.version}</version>
         </dependency>
 
         <!-- Apache commons dependencies -->

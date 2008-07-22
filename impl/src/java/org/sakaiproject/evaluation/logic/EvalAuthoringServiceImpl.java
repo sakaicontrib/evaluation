@@ -559,6 +559,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // get item and check it
       EvalItem item = templateItem.getItem();
+
       if (item == null) {
          throw new IllegalArgumentException("Item cannot be null");
       } else if (item.getId() == null) {
@@ -613,6 +614,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                item.setTemplateItems( new HashSet() );
             }
             item.getTemplateItems().add(templateItem);
+           
             Set itemSet = new HashSet();
             itemSet.add(item);
             entitySets[1] = itemSet;

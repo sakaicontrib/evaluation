@@ -589,7 +589,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
     * @param useDateTime
     * @param sameViewDateForAll
     */
-   protected void generateViewDateControl(UIBranchContainer parent, String rsfId, 
+   private void generateViewDateControl(UIBranchContainer parent, String rsfId, 
          String binding, Boolean viewResultsSetting, Boolean useDateTime, boolean sameViewDateForAll) {
       if (viewResultsSetting == null || viewResultsSetting) {
          // only show something if this on or configurable

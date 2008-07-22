@@ -9,6 +9,9 @@
             <column name="ID" />
             <generator class="native" />
         </id>
+        <property name="eid" type="java.lang.String" index="eval_emailtemplate_eid">
+            <column name="EID" length="255" />
+        </property>
         <property name="lastModified" type="java.util.Date">
             <column name="LAST_MODIFIED" not-null="true" />
         </property>

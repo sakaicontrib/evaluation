@@ -141,20 +141,20 @@ public class AdministrateProducer implements ViewComponentProducer {
                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
       }
       
-    //alert user to current email setting
+      //alert user to current email setting
       Object[] params = new Object[]{"",""};
       String delivery = (String)evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
       if(EvalConstants.EMAIL_DELIVERY_SEND.equals(delivery)) {
-    	  params[0] = "SEND email";
-    	  params[1] = "PRODUCTION";
+    	  params[0] = "send email";
+    	  params[1] = "production";
       }
       else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(delivery)) {
-    	  params[0] = "LOG email";
-    	  params[1] = "DEVELOPMENT";
+    	  params[0] = "log email";
+    	  params[1] = "development";
       }
       else if(EvalConstants.EMAIL_DELIVERY_NONE.equals(delivery)) {
-    	  params[0] = "NOT send email";
-    	  params[1] = "TEST";
+    	  params[0] = "not send email";
+    	  params[1] = "testing";
       }
       UIMessage.make(tofill, "email-delivery", "administrate.email.delivery", params);
 
@@ -237,7 +237,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true); 
       UIMessage.make(form, "students-unanswered-note", "administrate.students.unanswered.note");
 
-      //Select for whether student can modify responses upto due date
+      //Select for whether student can modify responses up to due date
       makeSelect(form, "students-modify-responses", 
             administrateConfigurableValues, 
             administrateConfigurableLabels, 

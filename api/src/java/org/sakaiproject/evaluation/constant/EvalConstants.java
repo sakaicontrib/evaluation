@@ -548,25 +548,25 @@ public class EvalConstants {
     * This identifies a template as the one-email-per-user evaluation-is-available template,
     * used when the evaluation is available to be taken.
     */
-    public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE = "ConsolidatedAvailable";
+    public static final String SINGLE_EMAIL_TEMPLATE_AVAILABLE = "SingleEmailAvailable";
 	/**
 	 * EmailTemplate type setting:
 	 * This identifies a template as the one-email-per-user evaluation reminder template,
 	 * used when evaluation responses are outstanding.
 	 */
-	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER = "ConsolidatedReminder";
+	public static final String SINGLE_EMAIL_TEMPLATE_REMINDER = "SingleEmailReminder";
 	/**
 	 * EmailTemplate type setting:
 	 * This identifies a template as the one-email-per-user evaluation-is-available subject template,
 	 * used with the "single-email-per-user" email notification option
 	 */
-	public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE_SUBJECT = "ConsolidatedAvailSubject";
+	public static final String SINGLE_EMAIL_TEMPLATE_AVAILABLE_SUBJECT = "SingleEmailAvailSubject";
 	/**
 	 * EmailTemplate type setting:
 	 * This identifies a template as the one-email-per-user evaluation reminder subject template,
 	 * used with the "single-email-per-user" email notification option
 	 */
-	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER_SUBJECT = "ConsolidatedReminderSubject";
+	public static final String SINGLE_EMAIL_TEMPLATE_REMINDER_SUBJECT = "SingleEmailReminderSubject";
 	/**
 	 * Email Delivery option setting:
 	 * This value is pre-loaded as the default option for email delivery.

@@ -47,6 +47,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
+import org.springframework.dao.DataAccessException;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -901,7 +902,42 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return viewableEvalGroupIds;
    }
 
-
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getActiveEvaluationIdsByAvailableEmailSent(java.lang.Boolean)
+    */
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(
+			Boolean availableEmailSent) {
+		String hqlQuery = "select eval.id from EvalEvaluation eval where eval.state = '" + EvalConstants.EVALUATION_STATE_ACTIVE + "' ";
+		if(availableEmailSent != null) {
+			if(availableEmailSent.booleanValue())
+				hqlQuery = hqlQuery + "and eval.availableEmailSent = 1";
+			else
+				hqlQuery = hqlQuery + "and eval.availableEmailSent = 0";
+		}
+		List<EvalEvaluation> l = new ArrayList<EvalEvaluation>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+      }
+      return l.toArray(new Long[] {});
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isEvaluationWithState(java.lang.String)
+	 */
+	public boolean isEvaluationWithState(String state) {
+	      String hqlQuery = "from EvalEvaluation as eval where eval.state = '" + state + "'";
+	      if (count(hqlQuery) > 0) {
+	         // this is used by single email
+	         return true;
+	      }
+	      return false;
+	}
+	
    /**
     * Get adhoc groups for a user and permission, 
     * this is a way to check the perms for a user

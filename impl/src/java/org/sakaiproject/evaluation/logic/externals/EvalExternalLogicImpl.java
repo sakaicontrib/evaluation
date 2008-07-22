@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
@@ -34,6 +35,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.api.app.scheduler.DelayedInvocation;
 import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
@@ -43,6 +45,9 @@ import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.content.api.FilePickerHelper;
+import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
@@ -72,11 +77,15 @@ import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.site.api.ToolConfiguration;
+import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
+import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
@@ -95,6 +104,7 @@ import org.sakaiproject.util.ResourceLoader;
 public class EvalExternalLogicImpl implements EvalExternalLogic {
 
    private static Log log = LogFactory.getLog(EvalExternalLogicImpl.class);
+   private static Log metric = LogFactory.getLog("metrics." + EvalExternalLogicImpl.class.getName());
 
    private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
    private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
@@ -112,6 +122,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    private AuthzGroupService authzGroupService;
    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
       this.authzGroupService = authzGroupService;
+   }
+   
+   private ContentHostingService contentHostingService;
+   public void setContentHostingService(ContentHostingService service) {
+      this.contentHostingService = service;
+   }
+
+   private CourseManagementService courseManagementService;
+   public void setCourseManagementService(CourseManagementService courseManagementService) {
+	      this.courseManagementService = courseManagementService;
    }
 
    private EmailService emailService;
@@ -133,6 +153,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    public void setFunctionManager(FunctionManager functionManager) {
       this.functionManager = functionManager;
    }
+   
+   protected ScheduledInvocationManager scheduledInvocationManager;
+   public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
+      this.scheduledInvocationManager = scheduledInvocationManager;
+   }
 
    private SecurityService securityService;
    public void setSecurityService(SecurityService securityService) {
@@ -153,6 +178,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    public void setSiteService(SiteService siteService) {
       this.siteService = siteService;
    }
+   
+   private ThreadLocalManager threadLocalManager;
+   public void setThreadLocalManager(ThreadLocalManager threadLocalManager) {
+	      this.threadLocalManager = threadLocalManager;
+   }
+   
+   protected TimeService timeService;
+   public void setTimeService(TimeService timeService) {
+      this.timeService = timeService;
+   }
 
    private ToolManager toolManager;
    public void setToolManager(ToolManager toolManager) {
@@ -162,21 +197,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    private UserDirectoryService userDirectoryService;
    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
       this.userDirectoryService = userDirectoryService;
-   }
-
-   private ContentHostingService contentHostingService;
-   public void setContentHostingService(ContentHostingService service) {
-      this.contentHostingService = service;
-   }
-
-   protected ScheduledInvocationManager scheduledInvocationManager;
-   public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
-      this.scheduledInvocationManager = scheduledInvocationManager;
-   }
-
-   protected TimeService timeService;
-   public void setTimeService(TimeService timeService) {
-      this.timeService = timeService;
    }
 
    public void init() {
@@ -316,7 +336,27 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
       return user;
    }
-
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getEvalUserByEid(java.lang.String)
+    */
+   public EvalUser getEvalUserByEid(String eid) {
+	     EvalUser user = makeInvalidUser(eid, null);
+	      if (isUserAnonymous(eid)) {
+	         user = makeAnonymousUser(eid);
+	      } else {
+	         try {
+	            User sakaiUser = userDirectoryService.getUserByEid(eid);
+	            user = new EvalUser(eid, EvalConstants.USER_TYPE_EXTERNAL,
+	                  sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+	         } catch(UserNotDefinedException ex) {
+	            log.debug("Sakai could not get user from user external id: " + eid, ex);
+	         }
+	      }
+	      return user;
+   }
+   
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserByEmail(java.lang.String)
     */
@@ -358,6 +398,50 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
       return users;
    }
+   
+   public String getSectionTitle(String providerId) {
+		String title = providerId;
+		Section section = null;
+		section = courseManagementService.getSection(providerId);
+		if(section != null)
+			title = section.getTitle();
+		return title;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getMyWorkspaceUrl(java.lang.String)
+    */
+   public String getMyWorkspaceUrl(String userId) {
+		String url = null;
+		String toolPage = null;
+		// userId - this is Sakai id NOT eid
+		if(userId == null || userId.length() == 0) {
+		   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+	   }
+	   else {
+		   try {
+			   String myWorkspaceId = siteService.getUserSiteId(userId);
+			   Site myWorkspace = siteService.getSite(myWorkspaceId);
+			   List<SitePage> pages = myWorkspace.getPages();
+			   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
+				   SitePage page = i.next();
+				   List<ToolConfiguration> tools = page.getTools();
+				   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
+					   ToolConfiguration tc = j.next();
+					   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
+						   toolPage = page.getId();
+					   }
+				   }
+			   }
+			   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~rwellis/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+			   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+		   } catch (Exception e) {
+			   log.error("getMyWorkspaceUrl(String userId) " + e);
+		   }
+	   }
+	return url;
+	}
 
 
    /**
@@ -899,6 +983,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
       return returnValue;
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#checkResource(java.lang.String)
+    */
+   public boolean checkResource(String resourceId) {
+	   if(resourceId == null)
+		   return false;
+	   try {
+		   contentHostingService.checkResource(resourceId);
+		   return true;
+	   }
+	   catch(Exception e) {
+		   return false;
+	   }
+   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.ExternalContent#getFileContent(java.lang.String)
@@ -912,7 +1012,120 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          return null;
       }
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#getStreamContent(java.lang.String)
+    */
+   public InputStream getStreamContent(String resourceId) {
+	   try {
+			ContentResource resource = contentHostingService.getResource(resourceId);
+			InputStream in = resource.streamContent();
+			return in;
+	   }
+	   catch(Exception e) {
+	         log.warn("Cannot get InputStream for ContentResource. " + e);
+	         return null;
+	   }
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#setImportedResourceAttributes()
+    */
+   public void setImportedResourceAttributes() {
+		ToolSession toolSession = sessionManager.getCurrentToolSession();
+		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_TITLE_TEXT,
+				"XML File Data Import");
+		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_INSTRUCTION_TEXT,
+				"Please select an XML data file from which to read data.");
+		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_MAX_ATTACHMENTS,
+				FilePickerHelper.CARDINALITY_SINGLE);
+	}
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#getImportResourceId()
+    */
+   public String getImportedResourceId() {
+		String id = null;
+		List refs = null;
 
+		ToolSession toolSession = sessionManager.getCurrentToolSession();
+
+		// check that there is an attachment
+		if (toolSession.getAttribute(FilePickerHelper.FILE_PICKER_CANCEL) == null
+				&& toolSession
+						.getAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS) != null) {
+			refs = (List) toolSession
+					.getAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
+			if (refs == null || refs.size() != 1) {
+				return null;
+			}
+			toolSession
+					.removeAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
+			toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_CANCEL);
+			Reference ref = (Reference) refs.get(0);
+			id = ref.getId();
+			// check that the resource is accessible
+			if (checkResource(id)) {
+				return id;
+			}
+		}
+		return null;
+	}
+
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#removeResource(java.lang.String)
+    */
+   public boolean removeResource(String resourceId) {
+	   try {
+		   contentHostingService.removeResource(resourceId);
+		   return true;
+	   }
+	   catch(Exception e) {
+		   return false;
+	   }
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#setSessionActive()
+    */
+   public void setSessionActive() {
+	Session session = sessionManager.getCurrentSession();
+	if(ADMIN_USER_ID.equals(session.getUserId())) {
+			session.setActive();
+		}
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#setSessionUserIdAdmin()
+    */
+   public boolean setSessionUserIdAdmin(String uid) {
+	   //TODO protect this call
+	   Session session = sessionManager.getCurrentSession();
+	   if (session != null && uid != null) {
+		   // if uid is in the admin group
+		   if(isUserAdmin(uid)) {
+			   //set the session user to admin
+			   //session.setUserId(userDirectoryService.ADMIN_ID);
+			   session.setUserId(uid);
+			   return true;
+			}
+		}
+		return false;
+	}
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#clearBindings()
+    */
+   public void clearBindings() {
+	   ThreadLocalManager.clear();
+   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#cleanupUserStrings(java.lang.String)

@@ -18,120 +18,126 @@
 
 package org.sakaiproject.evaluation.logic.imports;
 
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.impl.StdSchedulerFactory;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImport;
-import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
 import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
-import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.tool.api.Session;
 
 /**
- * Handle the importing of external data into the Evaluation System.
- * 
- * By default, processing occurs in the current interactive session. The
- * session is periodically set active to avoid timing out during a long-running
- * import. Property eval.qrtzImport=true in sakai.properties causes processing
- * in a Quartz job rather than the current interactive session.
- * 
- * @author rwellis
- */
+* Importing external data into the Evaluation System.
+* Process in a thread in the background and periodically 
+* set the thread's session active to avoid timing out.
+* 
+* @author rwellis
+*/
 public class EvalImportLogicImpl implements EvalImportLogic {
 	
 	private static final Log log = LogFactory.getLog(EvalImportLogicImpl.class);
 	
-	//Spring injection
-	private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
-
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
+	
 	private EvalImport evalImport;
 	public void setEvalImport(EvalImport evalImport) {
 		this.evalImport = evalImport;
 	}
 
-	private EvalImportJob evalImportJob;
-	public void setEvalImportJob(EvalImportJob evalImportJob) {
-		this.evalImportJob = evalImportJob;
+	public void init() {
 	}
-
+	
+	public EvalImportLogicImpl() {
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalImportLogic#load(java.lang.String)
 	 */
-	public List<String> load(String id) {
+	public String load(String id) {
 		List<String> messages = new ArrayList<String>();
-		String currentUserId = commonLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
-		try
-		{
-		   Boolean qrtzImport = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
-         if (qrtzImport) {
-            processInQuartz(id);
-         } else {
-            messages = evalImport.process(id, currentUserId);
-         }
+		String currentUserId = externalLogic.getCurrentUserId();
+		// check for permission to read the resource
+		if(externalLogic.checkResource(id)) {
+			try {
+				//process in a new thread
+				processInThread(id, currentUserId);
+			}
+			catch(Exception e) {
+				if(log.isWarnEnabled())
+					log.warn(e);
+				return "exception";
+			}
+			return "importing";
 		}
-		catch(Exception e)
-		{
-			if(log.isWarnEnabled())	log.warn(e);
-			messages.add("There was a problem loading the data: " + e.toString());
-			
-		}
-		return messages;
+		else return "exception";
 	}
 	
-	/**
-	 * Start a Quartz job to process the XML ContentResource data
-	 * 
-	 * @param id the Reference id that identifies the ContentResource 
-	 * @throws JobExecutionException
-	 */
-	protected void processInQuartz(String id) throws JobExecutionException {
-		
-		Scheduler scheduler = null;
-		
-		//pass Reference's id in job detail and schedule job to run
-		JobDetail jobDetail = new JobDetail("EvalImportJob",
-				Scheduler.DEFAULT_GROUP, evalImportJob.getClass());
-		JobDataMap jobDataMap = jobDetail.getJobDataMap();
-		jobDataMap.put("ID", (String)id);
-		jobDataMap.put("CURRENT_USER", commonLogic.getCurrentUserId() ); //sessionManager.getCurrentSessionUserId());
-		
-		//job name + group should be unique
-		String jobGroup = EvalUtils.makeUniqueIdentifier(20); //idManager.createUuid();
-		
-		//associate a trigger with the job
-		SimpleTrigger trigger = new SimpleTrigger("EvalImportTrigger", jobGroup, new Date());
-		try
-		{
-			//get a scheduler instance from the factory
-			scheduler = StdSchedulerFactory.getDefaultScheduler();
-			
-			//associate job with schedule
-			scheduler.scheduleJob(jobDetail, trigger);
-			
-			//start the scheduler
-			scheduler.start();
+	protected boolean processInThread(String id, String currentUserId) {
+		boolean retVal = false;
+		try {
+			Import i = new Import(id, currentUserId);
+			Thread t = new Thread(i);
+			t.start();
+			retVal = true;
 		}
-		catch(SchedulerException e)
+		catch (Exception e) {
+			throw new RuntimeException("error importing XML data");
+		}
+		return retVal;
+	}
+	
+	/** Class that starts a session to import XML data. */
+	protected class Import implements Runnable
+	{
+		public void init(){}
+		public void start(){}
+		
+		private String m_id = null;
+		private String m_currentUserId = null;
+		
+		//constructor
+		Import(String id, String currentUserId)
 		{
-			throw new JobExecutionException(e);
+			m_id = id;
+			m_currentUserId = currentUserId;
+		}
+
+		public void run()
+		{
+		    try
+			{	
+		    	externalLogic.setSessionUserIdAdmin(m_currentUserId);
+				/* set the current user to admin
+				Session s = sessionManager.getCurrentSession();
+				if (s != null)
+				{
+					s.setUserId(userDirectoryService.ADMIN_ID);
+				}
+				else
+				{
+					Log.warn("chef", this + ".run() - Session is null, cannot set user id to ADMIN_ID user");
+				}
+		    	*/
+		    	
+				if(m_id != null) {
+					evalImport.process(m_id, m_currentUserId);
+				}
+			}
+		    catch(Exception e) {
+		    	throw new RuntimeException("Import exception " + e);
+		    }
+		    finally
+			{
+				//clear any current bindings
+		    	externalLogic.clearBindings();
+			}
 		}
 	}
 }
+

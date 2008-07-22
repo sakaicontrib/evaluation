@@ -32,6 +32,42 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
       ExternalContent, ExternalScheduler, ExternalTextUtils, ExternalComponents, ExternalEntities {
 
    public static final String ADMIN_USER_ID = "admin";
+   
+   /**
+    * Clear ThreadLocal bindings after import.
+    */
+   public void clearBindings();
+    
+   /**
+    * Get the URL to the user's tool placement on the My Worksite site
+    * e.g., https://testctools.ds.itd.umich.edu/portal/site/~rwellis/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+    * 
+    * @param userId the user
+    * @return the URL
+    */
+   public String getMyWorkspaceUrl(String userId);
+   
+   /**
+    * Get the title of the course section associated with the provider id.
+    * 
+    * @param providerId the provider identifier for a course section
+    * @return the section title
+    */
+   public String getSectionTitle(String providerId);
+   
+   /**
+    * Set the current session to active.
+    */
+   public void setSessionActive();
+   
+   /**
+    * If the current user is in the admin group, 
+    * set the current session user id to admin.
+    * 
+    * @parameter uid The identity of the current user
+    * @return true if successful, false otherwise
+    */
+   public boolean setSessionUserIdAdmin(String uid);
 
    // EVAL USER retrieval
 
@@ -62,6 +98,15 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     * @return a map of userId to {@link EvalUser} objects which match with the input ids
     */
    public Map<String, EvalUser> getEvalUsersByIds(String[] userIds);
+   
+   /**
+    * Get  a populated user object for the given external id,
+    * will not return null, always returns an object though it may be marked as invalid
+    * 
+    * @param eid the user's external identifier
+    * @return the user
+    */
+   public EvalUser getEvalUserByEid(String eid);
 
    // SERVER
 

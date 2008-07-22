@@ -14,7 +14,9 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -152,6 +154,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       }
       return evals;
    }
+   
+	public void setAvailableEmailSent(Long[] evalIds) {
+		for (int i = 0; i < evalIds.length; i++) {
+			Long evaluationId = evalIds[i];
+			EvalEvaluation eval = getEvaluationById(evaluationId);
+			eval.setAvailableEmailSent(Boolean.TRUE);
+			// use dao because evaluation is locked
+			dao.save(eval);
+		}
+	}
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationState(java.lang.Long)
@@ -699,6 +711,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       );
       return count;
    }
+   
+   
+ 
 
    /**
     * Setup the responses search parameters,
@@ -771,7 +786,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
 
    // EMAIL TEMPLATES
-
+   
    @SuppressWarnings("unchecked")
    public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly) {
 
@@ -807,6 +822,84 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             values.toArray(new Object[values.size()]), 
             ArrayUtils.listToIntArray(comparisons) );
       return templates;
+   }
+   
+   @SuppressWarnings("unchecked")
+   public boolean isEvaluationWithState(String state) {
+	   return dao.isEvaluationWithState(state);
+   }
+   
+   @SuppressWarnings("unchecked")
+   public String getEarliestDueDate(String userId) {
+	   String earliest = null;
+	   Date dueDate = null;
+	   if(userId == null) 
+		   throw new NullPointerException("getEarliestDueDate(String userId) userId == null");
+	   try {
+		   //dueDate = (evaluationLogic.getEvaluationsForUser(userId, true, true)).get(0).getDueDate();
+		   dueDate = (getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE)).get(0).getDueDate();
+		   earliest = DateFormat.getDateInstance().format(dueDate);
+		   //e.g., Mar 17, 2008
+	   }
+	   catch(NullPointerException e) {
+		   throw new NullPointerException("getEvaluationsForUser(userId " + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE)).get(0).getDueDate()");
+	   }
+	   return earliest;
+   }
+
+   //TODO COPIED CODE! THIS NEEDS TO BE SHARED BY SETUP SERVICE AND LOWER
+   
+   /* (non-Javadoc)
+    * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
+      List<EvalGroup> takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+
+      String[] evalGroupIds = new String[takeGroups.size()];
+      for (int i=0; i<takeGroups.size(); i++) {
+         EvalGroup c = (EvalGroup) takeGroups.get(i);
+         evalGroupIds[i] = c.evalGroupId;
+      }
+
+      // get the evaluations
+      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
+
+      if (evals.size() > 0) {
+         // filter out taken/untaken if desired
+         if (untakenOnly != null) {
+            // create an array of the evaluation ids
+            Long[] evalIds = new Long[evals.size()];
+            for (int j = 0; j < evals.size(); j++) {
+               evalIds[j] = evals.get(j).getId();
+            }
+   
+            // now get the responses for all the returned evals
+            List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
+                  new String[] {"owner", "evaluation.id"}, 
+                  new Object[] {userId, evalIds});
+   
+            // Iterate through and remove the evals this user already took
+            for (int i = 0; i < l.size(); i++) {
+               Long evalIdTaken = l.get(i).getEvaluation().getId();
+               for (int j = 0; j < evals.size(); j++) {
+                  if (evalIdTaken.equals(evals.get(j).getId())) {
+                     if (untakenOnly) {
+                        // filter out the evaluations this user already took
+                        evals.remove(j);
+                     }
+                  } else {
+                     if (! untakenOnly) {
+                        // filter out the evaluations this user hasn't taken
+                        evals.remove(j);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return evals;
    }
 
    @SuppressWarnings("unchecked")
@@ -853,6 +946,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
       if (emailTemplate == null || emailTemplate.getMessage() == null) {
          emailTemplate = getDefaultEmailTemplate(emailTemplateTypeConstant);
+      }
+      return emailTemplate;
+   }
+   
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEmailTemplateByEidByEid(java.lang.String)
+    */
+   @SuppressWarnings("unchecked")
+   public EvalEmailTemplate getEmailTemplateByEid(String eid) {
+      List<EvalEmailTemplate> emailTemplates = new ArrayList<EvalEmailTemplate>();
+      EvalEmailTemplate emailTemplate = null;
+      if(eid != null) {
+    	  emailTemplates = dao.findByProperties(EvalEmailTemplate.class, new String[] {"eid"}, new Object[] {eid});
+         if(!emailTemplates.isEmpty())
+        	 emailTemplate = (EvalEmailTemplate)emailTemplates.get(0);
       }
       return emailTemplate;
    }

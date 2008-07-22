@@ -56,15 +56,12 @@
     </bean>
 
         <!-- DO NOT USE SAKAI SERVICES DIRECTLY -->
-<!-- 
     <bean id="importBean" class="org.sakaiproject.evaluation.tool.ImportBean">
         <property name="evalImportLogic"
             ref="org.sakaiproject.evaluation.logic.imports.EvalImportLogic" />
-        <property name="contentHostingService"
-            ref="org.sakaiproject.content.api.ContentHostingService" />
-        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+        <property name="externalLogic"
+        	ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
     </bean>
--->
 
     <bean id="expertItemsBean" class="org.sakaiproject.evaluation.tool.ExpertItemsBean">
         <property name="commonLogic"
@@ -228,6 +225,10 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings" 
         	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="externalLogic"
+        	ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="locale" ref="requestLocale" />
+        <property name="dateEvolver" ref="fieldDateInputEvolver" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">

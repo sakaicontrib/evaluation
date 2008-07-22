@@ -14,6 +14,13 @@
 
 package org.sakaiproject.evaluation.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This is a weird location but it will have to do for now,
  * This util has a set of static methods which are used to process data
@@ -22,8 +29,17 @@ package org.sakaiproject.evaluation.utils;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class SettingsLogicUtils {
+	
+   private static Log log = LogFactory.getLog(SettingsLogicUtils.class);
 
    public static final String DEFAULT_TYPE = "java.lang.String";
+   
+	/**
+	 * String representation of a Date in the form year-month-day hr:min AM/PM (e.g. "2008-10-20 12:15 AM")
+	 */
+	public static final String DATE_FORMAT = "yyyy-MM-dd hh:mm aa";
+	
+	private static SimpleDateFormat df;
 
    /**
     * Get the name associated with a settings constant, if this constant does not
@@ -83,5 +99,37 @@ public class SettingsLogicUtils {
       }
       return constant.trim();
    }
+   
+	/**
+	 * A utility method to get a Date from a formatted String
+	 * @param dateString a date String
+	 * @return the corresponding Date
+	 */
+	public static Date getDateFromString(String dateString) {
 
+		if (dateString == null || "".equals(dateString)) {
+			return null;
+		}
+		df = new SimpleDateFormat(DATE_FORMAT);
+		try {
+			return df.parse(dateString);
+		} catch (ParseException pe) {
+			log.warn("Invalid date: " + dateString);
+			return null;
+		}
+	}
+	
+	/**
+	 * A utility method to get a formatted String from a Date
+	 * @param the Date to be formated
+	 * @return the String representation of the Date
+	 */
+	public static String getStringFromDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		df = new SimpleDateFormat(DATE_FORMAT);
+		String formatted = df.format(date);
+		return formatted;
+	}
 }

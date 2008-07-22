@@ -52,6 +52,15 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
     * @return a populated {@link EvalUser} object (may be marked as invalid)
     */
    public EvalUser getEvalUserById(String userId);
+   
+   /**
+    * Get a populated user object for the given user eid,
+    * will not return null, always returns an object though it may be marked as invalid
+    * 
+    * @param eid the external user id
+    * @return a populated {@link EvalUser} object (may be marked as invalid)
+    */
+   public EvalUser getEvalUserByEid(String eid);
 
    /**
     * Get user object populated with data based on the input email,
@@ -74,7 +83,7 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
     * @return a list of {@link EvalUser} objects which match with the input userIds and are in the same order
     */
    public List<EvalUser> getEvalUsersByIds(String[] userIds);
-
+   
    // GROUPS
 
    /**

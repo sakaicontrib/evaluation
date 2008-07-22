@@ -144,6 +144,8 @@ public class EvalEvaluation implements java.io.Serializable {
    private Boolean unregisteredAllowed;
 
    private Boolean locked;
+   
+   private Boolean availableEmailSent;
 
    private String authControl;
 
@@ -294,9 +296,17 @@ public class EvalEvaluation implements java.io.Serializable {
    public void setAuthControl(String authControl) {
       this.authControl = authControl;
    }
-
+   
+   public Boolean getAvailableEmailSent() {
+	      return availableEmailSent;
+   }
+   
    public EvalEmailTemplate getAvailableEmailTemplate() {
       return availableEmailTemplate;
+   }
+   
+   public void setAvailableEmailSent(Boolean availableEmailSent) {
+	      this.availableEmailSent = availableEmailSent;
    }
 
    public void setAvailableEmailTemplate(EvalEmailTemplate availableEmailTemplate) {

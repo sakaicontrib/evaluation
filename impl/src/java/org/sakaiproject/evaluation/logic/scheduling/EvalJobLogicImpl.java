@@ -40,6 +40,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public class EvalJobLogicImpl implements EvalJobLogic {
 
    protected static Log log = LogFactory.getLog(EvalJobLogicImpl.class);
+   protected static Log metric = LogFactory.getLog("metrics." + EvalJobLogicImpl.class.getName());
 
    // max length for events                           // max-32:12345678901234567890123456789012
    protected final String EVENT_EVAL_VIEWABLE_INSTRUCTORS =    "eval.state.viewable.inst";
@@ -64,8 +65,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    public void setEmails(EvalEmailsLogic emails) {
       this.emails = emails;
    }
-
-
 
    /**
     * Check whether the job type is valid
@@ -119,12 +118,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       if (evaluationId == null || jobType == null) {
          throw new NullPointerException("jobAction: both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
       }
-
-      /*
-       * Note: If interactive response time is too slow waiting for mail to be sent, sending mail
-       * could be done as another type of job run by the scheduler in a separate thread.
-       */
-
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
          // this eval was purged out so wipe out all the jobs
@@ -136,33 +129,46 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       // fix up EvalEvaluation state (also persists it)
       String evalState = evaluationService.returnAndFixEvalState(eval, true);
       Date now = new Date();
+      
+		boolean singleEmail = ((Boolean)settings.get(EvalSettings.ENABLE_SINGLE_EMAIL)).booleanValue();
 
       // dispatch to send email and/or schedule jobs based on jobType
       if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
          // if opt-in, opt-out, or questions addable, notify instructors
+    	//TODO is delivery option is none, skip sending email
          sendCreatedEmail(evaluationId);
 
       } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
-         sendAvailableEmail(evaluationId);
+    	 // //Note: if single email is set, available and reminder email is sent by EvalSingleEmailImpl
+    	//TODO is delivery option is none, skip sending email
+    	 if(!singleEmail)
+    		  sendAvailableEmail(evaluationId);
          if (eval.getDueDate() != null) {
             // might not have a due date set
             scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
          }
          int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
          if (reminderDays > 0) {
-            scheduleReminder(eval.getId());
+        	// if using single email, skip scheduling a reminder
+        	 //TODO is delivery option is none, skip sending email
+        	if(!singleEmail)
+        		scheduleReminder(eval.getId());
          }
 
       } else if (EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
-         int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
-         if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-               && reminderDays > 0) {
-            if (eval.getDueDate() == null 
-                  || eval.getDueDate().after(now)) {
-               sendReminderEmail(evaluationId);
-               scheduleReminder(evaluationId);
-            }
-         }
+    	  // if using single email, skip sending/scheduling a reminder
+    	//TODO is delivery option is none, skip sending email
+    	  if(!singleEmail) {
+	         int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
+	         if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
+	               && reminderDays > 0) {
+	            if (eval.getDueDate() == null 
+	                  || eval.getDueDate().after(now)) {
+	               sendReminderEmail(evaluationId);
+	               scheduleReminder(evaluationId);
+	            }
+	         }
+    	  }
 
       } else if (EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
          if (log.isDebugEnabled())
@@ -207,11 +213,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
          commonLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_INSTRUCTORS, eval);
+       //TODO is delivery option is none, skip sending email
          // send results viewable notification to owner if protected, or all if not
          sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
          commonLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_STUDENTS, eval);
+       //TODO is delivery option is none, skip sending email
          // send results viewable notification to owner if protected, or all if not
          sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
       }

@@ -10,6 +10,7 @@
         init-method="init">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
@@ -25,31 +26,60 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
     </bean>
+    
+   <!-- job to consolidate email notifications for active evaluations -->
+   <bean id="evalSingleEmailImpl"
+   		class="org.sakaiproject.evaluation.logic.scheduling.EvalSingleEmailImpl"
+   		init-method="init" destroy-method="destroy">
+   		<property name="evalEmailsLogic">
+   			<ref bean="org.sakaiproject.evaluation.logic.EvalEmailsLogic"/>
+   		</property>
+   		<property name="evalSettings">
+   			<ref bean="org.sakaiproject.evaluation.logic.EvalSettings"/>
+   		</property>
+   		<property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+   	</bean>
+    
+   <!-- this is the helper that will register the above bean with the job scheduler -->
+   <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.EvalSingleEmailImpl"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      singleton="true" init-method="init">
+      <property name="beanId">
+      	<value>evalSingleEmailImpl</value>
+      </property>
+      <property name="jobName">
+         <value>Single Email Evaluation Notification</value>
+      </property>
+      <property name="schedulerManager">
+         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+      </property>
+   </bean>
 
     <!-- imports -->
-    <!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ
-        <bean id="org.sakaiproject.evaluation.logic.imports.EvalImport"
-        class="org.sakaiproject.evaluation.logic.imports.EvalImportImpl"
-        init-method="init">
-        <property name="EvalEvaluationSetupService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
-        <property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-        <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
-        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="authoringService"
-        ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
-        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
-        </bean>
-        
-        <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportLogic"
-        class="org.sakaiproject.evaluation.logic.imports.EvalImportLogicImpl"
-        init-method="init"> 
-        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="evalImport"
-        ref="org.sakaiproject.evaluation.logic.imports.EvalImport" />
-        <property name="evalImportJob"
-        ref="org.sakaiproject.evaluation.logic.imports.EvalImportJob" />
-        </bean>
-    -->
+    <!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ -->
+    <bean id="org.sakaiproject.evaluation.logic.imports.EvalImport"
+    	class="org.sakaiproject.evaluation.logic.imports.EvalImportImpl"
+    	init-method="init">
+    	<property name="authoringService"
+    		ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+    	<property name="commonLogic"
+    		ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+    	<property name="externalLogic"
+    		ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    	<property name="evaluationService"
+    		ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    	<property name="evaluationSetupService"
+    		ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportLogic"
+    	class="org.sakaiproject.evaluation.logic.imports.EvalImportLogicImpl"
+    	init-method="init">
+     	<property name="externalLogic"
+    		ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    	<property name="evalImport"
+    		ref="org.sakaiproject.evaluation.logic.imports.EvalImport" />
+    </bean>
 
 </beans>

@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.test.mocks;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -554,5 +555,57 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       }
       return users;
    }
+	
+	public String getMyWorkspaceUrl(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void clearBindings() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void setSessionActive() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public boolean setSessionUserIdAdmin(String uid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean checkResource(String resourceId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public String getImportedResourceId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public InputStream getStreamContent(String resourceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public boolean removeResource(String resourceId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void setImportedResourceAttributes() {
+		// TODO Auto-generated method stub
+	}
+	
+	public String getSectionTitle(String providerId) {
+		return null;
+	}
+	
+	public EvalUser getEvalUserByEid(String eid) {
+		return null;
+	}
 
 }

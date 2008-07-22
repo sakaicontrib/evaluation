@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -104,6 +106,8 @@ public class EvalSettingsImpl implements EvalSettings {
             setting = new Integer( c.getValue() );
          } else if (type.equals("java.lang.Float")) {
             setting = new Float( c.getValue() );
+         } else if (type.equals("java.util.Date")) {
+        	 setting = SettingsLogicUtils.getDateFromString( c.getValue() );
          } else {
             setting = c.getValue();
          }
@@ -210,6 +214,8 @@ public class EvalSettingsImpl implements EvalSettings {
       }
       return config;
    }
+   
+
 
    /**
     * clear out the cache and reload all config settings

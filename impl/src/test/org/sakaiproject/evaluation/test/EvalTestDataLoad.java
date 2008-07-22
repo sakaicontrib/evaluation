@@ -117,6 +117,136 @@ public class EvalTestDataLoad {
    public final static String EVAL_CATEGORY_2 = "category two";
 
    public final static String EVAL_FROM_EMAIL = "admin@eval.testing.com";
+   
+   public final static String VALID_IMPORT_XML =
+	 "<?xml version='1.0' encoding='UTF-8'?>" +
+	   	"<EVAL_DATA>" +
+			"<EVAL_SCALES>" +
+				"<EVAL_SCALE>" +
+					"<EID>TEST-SCALE-1</EID>" +
+					"<OWNER>admin</OWNER>" +
+					"<TITLE>EVALSYS-TEST Agree/Disagree Scale</TITLE>" +
+					"<SHARING>public</SHARING>" +
+					"<EXPERT>0</EXPERT>" +
+					"<EXPERT_DESCRIPTION></EXPERT_DESCRIPTION>" +
+					"<IDEAL>low</IDEAL>" +
+					"<LOCKED>0</LOCKED>" +
+					"<EVAL_SCALE_OPTIONS>" +
+	    				"<EVAL_SCALE_OPTION>" +
+	        				"<SCALE_OPTION>Strongly Agree</SCALE_OPTION>" +
+	        				"<SCALE_OPTION_INDEX>0</SCALE_OPTION_INDEX>" +
+	    				"</EVAL_SCALE_OPTION>" +
+	    				"<EVAL_SCALE_OPTION>" +
+	        				"<SCALE_OPTION>Agree</SCALE_OPTION>" +
+	        				"<SCALE_OPTION_INDEX>1</SCALE_OPTION_INDEX>" +
+	    				"</EVAL_SCALE_OPTION>" +
+	    				"<EVAL_SCALE_OPTION>" +
+	        				"<SCALE_OPTION>Neutral</SCALE_OPTION>" +
+	        				"<SCALE_OPTION_INDEX>2</SCALE_OPTION_INDEX>" +
+	    				"</EVAL_SCALE_OPTION>" +
+	    				"<EVAL_SCALE_OPTION>" +
+	        				"<SCALE_OPTION>Disagree</SCALE_OPTION>" +
+	        				"<SCALE_OPTION_INDEX>3</SCALE_OPTION_INDEX>" +
+	    				"</EVAL_SCALE_OPTION>" +
+	    				"<EVAL_SCALE_OPTION>" +
+	        				"<SCALE_OPTION>Strongly Disagree</SCALE_OPTION>" +
+	        				"<SCALE_OPTION_INDEX>4</SCALE_OPTION_INDEX>" +
+	    				"</EVAL_SCALE_OPTION>" +
+					"</EVAL_SCALE_OPTIONS>" +
+				"</EVAL_SCALE>" +
+			"</EVAL_SCALES>" +
+			"<EVAL_ITEMS>" +
+				"<EVAL_ITEM>" +
+					"<EID>TEST-ITEM-1</EID>" +
+					"<OWNER>admin</OWNER>" +
+					"<ITEM_TEXT>This is item text for testing.</ITEM_TEXT>" +
+					"<DESCRIPTION></DESCRIPTION>" +
+					"<SHARING>public</SHARING>" +
+					"<CLASSIFICATION>Scaled</CLASSIFICATION>" +
+					"<EXPERT>1</EXPERT>" +
+					"<EXPERT_DESCRIPTION></EXPERT_DESCRIPTION>" +
+					"<SCALE_EID>TEST-SCALE-1</SCALE_EID>" +
+					"<USES_NA>1</USES_NA>" +
+					"<DISPLAY_ROWS></DISPLAY_ROWS>" +
+					"<SCALE_DISPLAY_SETTING>Stepped</SCALE_DISPLAY_SETTING>" +
+					"<CATEGORY>Course</CATEGORY>" +
+					"<LOCKED>0</LOCKED>" +
+					"<IG_ITEM_ID></IG_ITEM_ID>" +
+				"</EVAL_ITEM>" +
+			"</EVAL_ITEMS>" +
+			"<EVAL_TEMPLATES>" +
+				"<EVAL_TEMPLATE>" +
+					"<EID>TEST-TEMPLATE-1</EID>" +
+					"<OWNER>admin</OWNER>" +
+					"<TYPE>standard</TYPE>" +
+					"<TITLE>EVALSYS TEST Course Core (1)</TITLE>" +
+					"<DESCR>EVALSYS TEST Course Core (1)</DESCR>" +
+					"<SHARING>private</SHARING>" +
+					"<EXPERT>0</EXPERT>" +
+					"<EXPERTDESCR></EXPERTDESCR>" +
+					"<LOCKED>0</LOCKED>" +
+				"</EVAL_TEMPLATE>" +
+			"</EVAL_TEMPLATES>" +
+			"<EVAL_TEMPLATEITEMS>" +
+				"<EVAL_TEMPLATEITEM>" +
+					"<EID>TEMPLATE-TEST-1</EID>" +
+					"<OWNER>admin</OWNER>" +
+					"<TEMPLATE_EID>TEST-TEMPLATE-1</TEMPLATE_EID>" +
+					"<ITEM_EID>TEST-ITEM-1</ITEM_EID>" +
+					"<DISPLAY_ORDER>1</DISPLAY_ORDER>" +
+					"<ITEM_CATEGORY>Course</ITEM_CATEGORY>" +
+					"<HIERARCHY_LEVEL>toplevel</HIERARCHY_LEVEL>" +
+					"<HIERARCHY_NODE_ID>000topid</HIERARCHY_NODE_ID>" +
+					"<DISPLAY_ROWS></DISPLAY_ROWS>" +
+					"<SCALE_FK></SCALE_FK>" +
+					"<USES_NA>1</USES_NA>" +
+					"<BLOCK_PARENT></BLOCK_PARENT>" +
+					"<BLOCK_ID></BLOCK_ID>" +
+					"<RESULTS_SHARING>private</RESULTS_SHARING>" +
+				"</EVAL_TEMPLATEITEM>" +
+			"</EVAL_TEMPLATEITEMS>" +
+			"<EVAL_EVALUATIONS>" +
+				"<EVAL_EVALUATION>" +
+					"<EID>511</EID>" +
+					"<OWNER>admin</OWNER>" +
+					"<TITLE>AOSS 605 001 Andronova</TITLE>" +
+					"<INSTRUCTIONS>This questionnaire asks for your opinions about this class and the way it was taught. " + 
+					"Indicate your agreement or disagreement with the statements below.  Mark N/A if you feel a statement is not applicable.</INSTRUCTIONS>" +
+					"<START_DATE>2007-10-08 03:00:00</START_DATE>" +
+					"<DUE_DATE>2007-10-14 03:00:00</DUE_DATE>" +
+					"<STOP_DATE>2007-10-14 03:00:00</STOP_DATE>" +
+					"<VIEW_DATE>2007-10-15 03:00:00</VIEW_DATE>" +
+					"<STUDENTS_DATE></STUDENTS_DATE>" +
+					"<INSTRUCTORS_DATE></INSTRUCTORS_DATE>" +
+					"<INSTRUCTOR_OPT>Required</INSTRUCTOR_OPT>" +
+					"<REMINDER_DAYS>3</REMINDER_DAYS>" +
+					"<REMINDER_FROM_EMAIL>um_evaluations@umich.edu</REMINDER_FROM_EMAIL>" +
+					"<TERM_ID></TERM_ID>" +
+					"<AVAILABLE_EMAIL_TEMPLATE>Available</AVAILABLE_EMAIL_TEMPLATE>" +
+					"<REMINDER_EMAIL_TEMPLATE>Reminder</REMINDER_EMAIL_TEMPLATE>" +
+					"<TEMPLATE_EID>24102</TEMPLATE_EID>" +
+					"<RESULTS_PRIVATE>0</RESULTS_PRIVATE>" +
+					"<BLANK_RESPONSES_ALLOWED>1</BLANK_RESPONSES_ALLOWED>" +
+					"<MODIFY_RESPONSES_ALLOWED>0</MODIFY_RESPONSES_ALLOWED>" +
+					"<UNREGISTERED_ALLOWED>0</UNREGISTERED_ALLOWED>" +
+					"<LOCKED>0</LOCKED>" +
+					"<AUTH_CONTROL>AUTH</AUTH_CONTROL>" +
+					"<EVAL_CATEGORY></EVAL_CATEGORY>" +
+				"</EVAL_EVALUATION>" +
+			"</EVAL_EVALUATIONS>" +
+			"<EVAL_ASSIGN_GROUPS>" +
+				"<EVAL_ASSIGN_GROUP>" +
+					"<EID>850</EID>" +
+					"<EVAL_EVALUATION_EID>378</EVAL_EVALUATION_EID>" +
+					"<PROVIDER_ID>2007,2,A,MFG,440,001</PROVIDER_ID>" +
+					"<OWNER>admin</OWNER>" +
+					"<GROUP_TYPE>Provided</GROUP_TYPE>" +
+					"<INSTRUCTOR_APPROVAL>1</INSTRUCTOR_APPROVAL>" +
+					"<INSTRUCTOR_VIEW_RESULTS>1</INSTRUCTOR_VIEW_RESULTS>" +
+					"<STUDENT_VIEW_RESULTS>0</STUDENT_VIEW_RESULTS>" +
+				"</EVAL_ASSIGN_GROUP>" +
+			"</EVAL_ASSIGN_GROUPS>" +
+		"</EVAL_DATA>";
 
    /**
     * Used by {@link #templateItem6UU}, {@link #templateItem2A}, {@link #templateUnused}, and {@link #item4}

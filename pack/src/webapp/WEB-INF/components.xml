@@ -88,9 +88,4 @@
             ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
     </bean>
 
-    <!-- IMPORTING -->
-    <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportJob"
-        class="org.sakaiproject.evaluation.logic.imports.EvalImportJobImpl">
-    </bean>
-
 </beans>

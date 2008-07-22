@@ -133,6 +133,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalSingleEmailImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate-test.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate.cfg.xml -text svn_keywords=Date+Revision+Author+URL+Id

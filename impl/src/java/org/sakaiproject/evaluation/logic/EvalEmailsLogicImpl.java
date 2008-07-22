@@ -25,7 +25,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -42,6 +45,7 @@ import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
+   private static Log metric = LogFactory.getLog("metrics." + EvalEmailsLogicImpl.class.getName());
 
    // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
    protected final String EVENT_EMAIL_CREATED =                      "eval.email.eval.created";
@@ -55,7 +59,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    public void setCommonLogic(EvalCommonLogic commonLogic) {
       this.commonLogic = commonLogic;
    }
-
+   
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
+	   this.dao = dao;
+   }
+   
    private EvalSettings settings;
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
@@ -64,6 +73,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
+   }
+   
+   private EvalExternalLogic externalLogic;
+   public void setEvalExternalLogic(EvalExternalLogic externalLogic) {
+	      this.externalLogic = externalLogic;
    }
 
 
@@ -291,6 +305,394 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       return (String[]) sentEmails.toArray(new String[] {});
    }
+   
+   /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalAvailableSingleEmail()
+	 */
+	public String[] sendEvalAvailableSingleEmail() {
+		Long[] evalIds = new Long[] {};
+		String[] toAddresses = null;
+		List<EvalAssignGroup> groups = null;
+		Set<String> allUserIds = new HashSet<String>();
+		Set<String> userIdsTakingEval = new HashSet<String>();
+		Map<Long, List<EvalAssignGroup>> assignGroupMap = new HashMap<Long, List<EvalAssignGroup>>();
+		Map<String, Set<Long>> emailTemplateMap = new HashMap<String, Set<Long>>();
+		long start, end;
+		float seconds;
+
+		// get ids of evaluations that are active but haven't been announced yet
+		start = System.currentTimeMillis();
+		evalIds = dao.getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE);
+		end = System.currentTimeMillis();
+		seconds = (end - start) / 1000;
+		if (metric.isInfoEnabled())
+			metric
+					.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
+							+ " took "
+							+ seconds
+							+ " seconds for "
+							+ evalIds.length + " evaluation ids.");
+
+		if (evalIds.length > 0) {
+
+			// get groups assigned to these evaluations
+			start = System.currentTimeMillis();
+			assignGroupMap = evaluationService.getAssignGroupsForEvals(evalIds,
+					false, null);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length + " evaluation ids.");
+
+			start = System.currentTimeMillis();
+			for (int i = 0; i < evalIds.length; i++) {
+				groups = assignGroupMap.get(evalIds[i]);
+				for (int j = 0; j < groups.size(); j++) {
+
+					// get the users in these groups
+					userIdsTakingEval.addAll(evaluationService
+							.getUserIdsTakingEvalInGroup(evalIds[i], groups
+									.get(j).getEvalGroupId(),
+									EvalConstants.EVAL_INCLUDE_ALL));
+
+					// build a map of user id key and email template id list
+					// value
+					emailTemplatesByUser(evalIds[i], userIdsTakingEval,
+							emailTemplateMap,
+							EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE);
+					allUserIds.addAll(userIdsTakingEval);
+				}
+			}
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length + " evaluation ids.");
+
+			// send email announcement (one email per email template in the
+			// user's active evaluations)
+			start = System.currentTimeMillis();
+			if (!allUserIds.isEmpty())
+				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
+								+ allUserIds.size()
+								+ " user ids "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length
+								+ " evaluation ids.");
+
+			// set flag saying evaluation announcement was sent
+			start = System.currentTimeMillis();
+			evaluationService.setAvailableEmailSent(evalIds);
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step  for setAvailableEmailSent "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length + " evaluation ids.");
+		}
+		return toAddresses;
+	}
+
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalReminderSingleEmail()
+    */
+   public String[] sendEvalReminderSingleEmail() {
+		Long[] evalIds = new Long[] {};
+		String[] toAddresses = null;
+		List<EvalAssignGroup> groups = null;
+		Set<String> allUserIds = new HashSet<String>();
+		Set<String> userIdsTakingEval = new HashSet<String>();
+		Map<Long, List<EvalAssignGroup>> assignGroupMap = new HashMap<Long, List<EvalAssignGroup>>();
+		Map<String, Set<Long>> emailTemplateMap = new HashMap<String, Set<Long>>();
+		long start, end;
+		float seconds;
+		
+		// get evaluations that are active and have been announced
+		start = System.currentTimeMillis();
+		evalIds = dao.getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE);
+		end = System.currentTimeMillis();
+		seconds = (end - start)/1000;
+		if(metric.isInfoEnabled())
+			metric.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
+					" took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
+		
+		if (evalIds.length > 0) {
+			
+			// get groups assigned to these evaluations
+			start = System.currentTimeMillis();
+			assignGroupMap = evaluationService.getAssignGroupsForEvals(evalIds,
+					false, null);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length + " evaluation ids.");
+
+			start = System.currentTimeMillis();
+			for (int i = 0; i < evalIds.length; i++) {
+				groups = assignGroupMap.get(evalIds[i]);
+				for (int j = 0; j < groups.size(); j++) {
+					
+					// get the non-responders in these groups
+					userIdsTakingEval = evaluationService
+							.getUserIdsTakingEvalInGroup(evalIds[i], groups
+									.get(j).getEvalGroupId(),
+									EvalConstants.EVAL_INCLUDE_NONTAKERS);
+
+					//build a map of user id key and email template id list value
+					emailTemplatesByUser(evalIds[i], userIdsTakingEval,
+							emailTemplateMap,
+							EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER);
+					allUserIds.addAll(userIdsTakingEval);
+				}
+			}
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step emailTemplatesByUser "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length + " evaluation ids.");
+
+			
+			// send email announcement (one email per email template in the
+			// user's active evaluations)
+			start = System.currentTimeMillis();
+			if (!allUserIds.isEmpty())
+				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			if (metric.isInfoEnabled())
+				metric
+						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
+								+ allUserIds.size()
+								+ " user ids "
+								+ " took "
+								+ seconds
+								+ " seconds for "
+								+ evalIds.length
+								+ " evaluation ids.");
+		}
+		return toAddresses;
+	}
+   
+   /**
+    * Build a map of user id key and email template id value
+    * 
+    * @param evalId the evaluation identifier
+    * @param userIdsTakingEval the identifiers of users taking the evaluation
+    * @param emailTemplateMap the collecting parameter pattern for the map of user id key and email template id value
+    * @param type the type of email template from EvalConstants
+    */
+   private void emailTemplatesByUser(Long evaluationId, Set<String> userIds, Map<String, Set<Long>> emailTemplateMap, String type) {
+	   if(evaluationId == null || userIds == null || emailTemplateMap == null || type == null)
+		   throw new IllegalArgumentException("emailTemplatesByUser parameter(s) null");
+	   Long emailTemplateId = null;
+	   Set<Long> emailTemplateIds = null;
+	   EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
+	   if(EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER.equals(type)) {
+		  emailTemplateId = evaluation.getReminderEmailTemplate().getId();
+	   }
+	   else if(EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE.equals(type)) {
+		   emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
+	   }
+	   for(String id : userIds) {
+		   emailTemplateIds = emailTemplateMap.get(id);
+		   if(emailTemplateIds == null) {
+			   emailTemplateIds = new HashSet<Long>();
+			   emailTemplateIds.add(emailTemplateId);
+			   emailTemplateMap.put(id, emailTemplateIds);
+		   }
+		   else {
+			   emailTemplateIds.add(emailTemplateId);
+		   }
+	   }
+   }
+
+   /**
+    * Send one email per email template used for the active evaluations for a user
+    * 
+    * @param uniqueIds the identities of the users to be notified
+    * @param subjectConstant the email subject template
+    * @param textConstant the email text template
+    * @return an array of the email addresses to which email was sent
+    */
+   private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, Set<Long>> emailTemplatesMap) {
+		if (uniqueIds == null || uniqueIds == null || emailTemplatesMap == null) {
+			throw new IllegalArgumentException(
+					"sendEvalSingleEmail() parameter(s) missing.");
+		} else {
+			if (metric.isInfoEnabled())
+				metric.info("There are " + uniqueIds.size()
+						+ " unique user ids in the single email queue.");
+		}
+		// get related settings
+		String from = null, deliveryOption = null;
+		Boolean logEmailRecipients = null;
+		Integer batch = null, wait = null, modulo = null;
+		getSingleEmailSettings(from, deliveryOption, logEmailRecipients, batch,
+				wait, modulo);
+		
+		// check there is something to do
+		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
+				&& !logEmailRecipients.booleanValue()) {
+			if (log.isWarnEnabled())
+				log
+						.warn("EMAIL_DELIVERY_NONE and no logging of email recipients");
+			return null;
+		}
+
+		String url = null, message = null, subject = null, to = null;
+		Map<String, String> replacementValues = new HashMap<String, String>();
+		List<String> recipients = new ArrayList<String>();
+		List<String> sentEmails = new ArrayList<String>();
+		Set<Long> emailTemplateIds = new HashSet<Long>();
+		EvalEmailTemplate template = null;
+		int numProcessed = 0;
+		for (String s : uniqueIds) {
+			// direct link to summary page of tool on My Worksite
+			try {
+				replacementValues.clear();
+				url = externalLogic.getMyWorkspaceUrl(s);
+				replacementValues.put("MyWorkspaceDashboard", url);
+				replacementValues.put("EarliestDueDate", evaluationService
+						.getEarliestDueDate(s));
+				replacementValues.put("HelpdeskEmail", from);
+				
+				//get the email template ids for this user
+				emailTemplateIds = emailTemplatesMap.get(s);
+				
+				// toUserIds may be eid or id, we're using one id at a time
+				toUserIds = new String[] { s };
+				
+				for(Long i : emailTemplateIds) {
+					//get the template
+					template = evaluationService.getEmailTemplate(i);
+					//make the substitutions
+					message = makeEmailMessage(template.getMessage(),
+							replacementValues);
+					subject = makeEmailMessage(template.getSubject(),
+							replacementValues);
+					//send the mail
+			        String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+			         
+			         // store sent emails to return
+			         for (int j = 0; j < emailAddresses.length; j++) {
+			            sentEmails.add(emailAddresses[j]);            
+			         }
+			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
+					if (logEmailRecipients.booleanValue()) {
+						to = ((EvalUser)externalLogic.getEvalUserById(s)).email;
+						recipients.add(to);
+						// log batches of emails sent and pause between batches
+					}
+					numProcessed = logEmailsProcessed(batch, wait, modulo, numProcessed);
+				}
+			} catch (Exception e) {
+				log.error("sendEvalConsolidatedNotification() User id '" + s
+						+ "',URL '" + url + "' " + e);
+			}
+		}
+		// log total number processed
+		if(metric.isInfoEnabled())
+			metric.info(numProcessed + " emails processed in total.");
+		return (String[]) sentEmails.toArray(new String[] {});
+	}
+
+
+   /**
+    * If metrics logger for class is set with info level logging,
+    * periodically log progress sending email
+    * 
+    * @param batch the number of emails sent without a pause
+    * @param wait the length of time in seconds to pause
+    * @param modulo the interval for updating progress
+    * @param numProcessed the number of emails processed
+    * @return
+    */
+private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
+		int numProcessed) {
+	numProcessed++;
+	if ((numProcessed % modulo.intValue()) == 0) {
+		if(metric.isInfoEnabled())
+			metric.info(numProcessed + " emails processed.");
+	}
+	if ((numProcessed % batch.intValue()) == 0) {
+		if(metric.isInfoEnabled())
+			metric.info("wait" + wait + " seconds.");
+		try {
+			Thread.sleep(wait * 1000);
+		} catch (Exception e) {
+			if (log.isErrorEnabled())
+				log.error("Thread sleep interrupted.");
+		}
+	}
+	return numProcessed;
+}
+   
+   /**
+    * Get email settings used with single email option
+    * 
+    * @param from
+    * @param deliveryOption
+    * @param logEmailRecipients
+    * @param batch
+    * @param wait
+    * @param modulo
+    */
+   private void getSingleEmailSettings(String from, String deliveryOption, Boolean logEmailRecipients, Integer batch, Integer wait, Integer modulo) {
+		from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+	    if (from == null) {
+	         throw new IllegalStateException("Could not get a from email address from system settings or the evaluation");
+	    }
+		deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+	    if (deliveryOption == null) {
+	         throw new IllegalStateException("Could not get the delivery option from system settings or the evaluation");
+	    }
+		logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+	    if (logEmailRecipients == null) {
+	         throw new IllegalStateException("Could not get logging of email recipients from system settings or the evaluation");
+	    }
+		batch = Integer.parseInt((String) settings.get(EvalSettings.EMAIL_BATCH_SIZE));
+	    if (batch == null) {
+	         throw new IllegalStateException("Could not get batch size system settings or the evaluation");
+	    }
+		wait = Integer.parseInt((String) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL));
+	    if (wait == null) {
+	         throw new IllegalStateException("Could not get a wait value from system settings or the evaluation");
+	    }
+		modulo = Integer.parseInt((String) settings.get(EvalSettings.LOG_PROGRESS_EVERY));
+	    if (modulo == null) {
+	         throw new IllegalStateException("Could not get a logging interval from system settings or the evaluation");
+	    }
+   }
 
 
    /* (non-Javadoc)
@@ -462,6 +864,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
    // INTERNAL METHODS
 
+   /**
+    * INTERNAL METHOD<br/>
+    * Builds the single email message from a template and a bunch of variables
+    * (passed in and otherwise)
+    * @param messageTemplate
+    * @param replacementValues a map of String -> String representing $keys in the template to replace with text values
+    * @return the processed message template with replacements and logic handled
+    */
+   private String makeEmailMessage(String messageTemplate, Map<String, String> replacementValues) {
+	   replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
+	   return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+   }
 
    /**
     * INTERNAL METHOD<br/>
