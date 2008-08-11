@@ -83,8 +83,14 @@ public class SettingsWBL implements WriteableBeanLocator {
           *  This is primarily to catch Integers and Strings. 
           */
          if (toset instanceof String) {
-            Class<?> proptype = SettingsLogicUtils.getTypeClass(beanname);
-            toset = leafParser.parse(proptype, (String) toset);
+            if ( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE.equals(beanname) && 
+                  ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE) ) {
+               // special handling for 4 part select
+               toset = null;
+            } else {
+               Class<?> proptype = SettingsLogicUtils.getTypeClass(beanname);
+               toset = leafParser.parse(proptype, (String) toset);
+            }
          }
       }
       evalSettings.set(beanname, toset);

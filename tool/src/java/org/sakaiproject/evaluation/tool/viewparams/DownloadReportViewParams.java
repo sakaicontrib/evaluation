@@ -45,6 +45,6 @@ public class DownloadReportViewParams extends SimpleViewParameters {
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-	   return super.getParseSpec() + ",templateId,evalId,groupIds,@1:filename";
+		return super.getParseSpec() + ",templateId,evalId,groupIds,@1:filename";
 	}
 }
