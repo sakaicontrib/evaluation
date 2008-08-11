@@ -405,7 +405,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
          // If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
          // i.e. NULL in the database then show the instructor opt select box. Else just show the value as label
          String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
-         if (instUseFromAboveValue == null) {
+         if (instUseFromAboveValue == null || 
+               EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(instUseFromAboveValue)) {
             UISelect instOpt = UISelect.make(form, "instructorOpt", EvalToolConstants.INSTRUCTOR_OPT_VALUES, 
                   EvalToolConstants.INSTRUCTOR_OPT_LABELS, evaluationOTP + "instructorOpt").setMessageKeys();
             if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
