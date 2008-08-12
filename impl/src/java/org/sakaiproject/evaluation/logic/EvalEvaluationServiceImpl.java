@@ -37,6 +37,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -241,6 +243,46 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          }
       }
       return totalEnrollments;
+   }
+
+   /**
+    * JIRA EvalSys-588
+    */
+   public boolean isEvalGroupValidForEvaluation(String evalGroupId, Long evaluationId) {
+      // grab the evaluation itself first
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
+      // check the evaluation state
+      String state = EvalUtils.getEvaluationState(eval, false);
+      if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
+            ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
+         //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
+         return false;
+      } 
+
+      if (evalGroupId != null) {
+         // TODO note that this could be more efficient if there was an index on groupId and instructorApproval and a count was used
+         // check that the evalGroupId is valid for this evaluation
+         List<EvalAssignGroup> ags = dao.findBySearch(EvalAssignGroup.class, 
+               new Search( new Restriction[] {
+                     new Restriction("evaluation.id", evaluationId),
+                     new Restriction("evalGroupId", evalGroupId)
+               } ) );
+         if (ags.size() <= 0) {
+            //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
+            return false;
+         } else {
+            // make sure instructor approval is true
+            EvalAssignGroup eag = ags.get(0);
+            if (! eag.getInstructorApproval().booleanValue() ) {
+               //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
+               return false;
+            }
+         }
+      }
+      
+      return true;
+      
    }
 
 

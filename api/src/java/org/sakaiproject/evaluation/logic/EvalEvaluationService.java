@@ -291,6 +291,16 @@ public interface EvalEvaluationService {
     */
    public int countParticipantsForEval(Long evaluationId);
 
+   /**
+    * Check if a GroupId is assigned to an evaluation<br/>
+    * UMD - JIRA http://jira.sakaiproject.org/jira/browse/EVALSYS-588
+    *
+    * @param evaluationId unique id of an {@link EvalEvaluation}
+    * @param evalGroupId the internal unique ID for an evalGroup
+    * @return true if the evalGroupId is in the eval, otherwise return false
+    */
+   public boolean isEvalGroupValidForEvaluation(String evalGroupId, Long evaluationId);
+
 
    // PERMISSIONS
 
