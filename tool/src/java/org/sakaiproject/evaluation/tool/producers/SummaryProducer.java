@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -179,8 +178,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
 			}
 
-			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
+			// http://jira.sakaiproject.org/jira/browse/EVALSYS-588
+			// Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
+			List<EvalGroup> groups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);			// now fetch all the information we care about for these evaluations at once (for speed)
 			List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
 
 			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -193,15 +193,18 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title" );
             UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title" );
 
-            List<EvalGroup> groups = evalGroups.get(eval.getId());
+            // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
+            //List<EvalGroup> groups = evalGroups.get(eval.getId());
 				for (int j=0; j<groups.size(); j++) {
 					EvalGroup group = (EvalGroup) groups.get(j);
 					if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
 						continue; // skip processing for invalid groups
 					}
 
+               // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
+               //if (commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
 					//check that the user can take evaluations in this evalGroupId
-					if (commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
+					if (evaluationService.isEvalGroupValidForEvaluation(group.evalGroupId, eval.getId())) {
 						String groupId = group.evalGroupId;
 						String title = EvalUtils.makeMaxLengthString(group.title, 50);
 						String status = "unknown.caps";
