@@ -1,0 +1,549 @@
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import org.apache.axis.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.sakaiproject.authz.cover.SecurityService;
+import org.sakaiproject.authz.cover.AuthzGroupService;
+import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.user.api.UserDirectoryService;
+
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+
+import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
+
+import org.sakaiproject.util.Validator;
+
+
+public class Evaluation {
+    private static final Log LOG = LogFactory.getLog("org.sakaiproject.axis.evaluation");
+
+    private EvalAuthoringService evalAuthoringService;
+    private EvalEvaluationSetupService evalEvaluationSetupService;
+    private EvalExternalLogic evalExternalLogic;
+    private EvalEvaluationService evalEvaluationService;
+    private EvalDeliveryService evalDeliveryService;
+    private ExternalHierarchyLogic hierarchyLogic;
+    //private EvalResponseAggregatorUtil responseAggregator;
+
+    public Evaluation() {
+        evalEvaluationService = (EvalEvaluationService) ComponentManager.get("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+        evalEvaluationSetupService = (EvalEvaluationSetupService) ComponentManager.get("org.sakaiproject.evaluation.logic.EvalEvaluationSetupService");
+        evalAuthoringService = (EvalAuthoringService) ComponentManager.get("org.sakaiproject.evaluation.logic.EvalAuthoringService");
+        evalExternalLogic = (EvalExternalLogic) ComponentManager.get("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
+        evalDeliveryService = (EvalDeliveryService) ComponentManager.get("org.sakaiproject.evaluation.logic.EvalDeliveryService");
+        hierarchyLogic = (ExternalHierarchyLogic) ComponentManager.get("org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic");
+        //responseAggregator = (EvalResponseAggregatorUtil) ComponentManager.get("org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil");
+    }
+
+    private void checkSecurity(String sessionid) throws AxisFault {
+        Session session = establishSession(sessionid);
+        if (!SecurityService.isSuperUser() && !"evaluation".equals(session.getUserEid()))
+        {
+            LOG.warn("NonSuperUser trying to script eval: " + session.getUserId());
+            throw new AxisFault("NonSuperUser trying script eval: " + session.getUserId());
+        }
+    }
+
+    private Session establishSession(String id) throws AxisFault 
+    {
+        Session s = SessionManager.getSession(id);
+    
+        if (s == null) {
+            throw new AxisFault("Session "+id+" is not active");
+        }
+        s.setActive();
+        SessionManager.setCurrentSession(s);
+        return s;
+    }
+    
+    public String getEvalBySectionEid(String sectioneid) throws AxisFault {
+    	
+    	// Look up the course id
+    	//AuthzGroupService.getAuthzGroupIds(String sectioneid);
+    	
+    	return "not-implemented";
+    }
+    
+    /* Reporting methods */
+    public String getAllResponses(String sessionid, Long evaluationId, String groupid) throws AxisFault {
+        
+    	checkSecurity(sessionid);
+    	LOG.info("getResponses: "+ sessionid + " " + evaluationId + " ");
+    	EvalEvaluation evaluation = evalEvaluationService.getEvaluationById(evaluationId);
+
+        String groupIds[] = new String[]{ groupid };
+    	
+    	String responseList = "";
+    	
+        // do a permission check
+        // if (! reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
+//           throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
+  //      }
+
+        Long templateId = evaluation.getTemplate().getId();
+
+        // Fetch most of all the data and metadata with the ultra TIDL object
+        TemplateItemDataList tidl = prepareTemplateItemDataStructure(evaluation, groupIds);
+
+        List<EvalTemplateItem> allTemplateItems = tidl.getAllTemplateItems();
+
+        if (! allTemplateItems.isEmpty()) {
+
+           // Evaluation Info
+           // evaluation.getTitle());
+
+           // get the list of all instructors for this report and put the user objects for them into a map
+//           Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(tidl.getAnswers());
+//           Map<String, EvalUser> instructorIdtoEvalUser = responseAggregator.getInstructorsInformation(instructorIds);
+
+           int renderedItemCount = 0;
+           // loop through the TIGs and handle each associated category
+           for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+        	   
+              // loop through the hierarchy node groups
+              for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
+
+                 List<DataTemplateItem> dtis = hng.getDataTemplateItems(true); // include block children
+                 for (int i = 0; i < dtis.size(); i++) {
+                    DataTemplateItem dti = dtis.get(i);
+
+                    EvalTemplateItem templateItem = dti.templateItem;
+                    String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
+                    
+                    if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) 
+                            || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) 
+                            || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
+                            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
+
+                       responseList = responseList + templateItem.getId() + "," + templateItem.getItem().getCopyOf() + "," +templateItem.getItem().getEid() + ","; 
+                       // evalExternalLogic.makePlainTextFromHTML(templateItem.getItem().getItemText()) + ",";                     
+                   	
+                       // get the answers associated with this data template item
+                       List<EvalAnswer> itemAnswers = dti.getAnswers();
+                       int responsesCount = itemAnswers.size();
+                       
+                       EvalScale scale = templateItem.getItem().getScale();
+                       String[] scaleOptions = scale.getOptions();
+                       String scaleLabels[] = new String[scaleOptions.length];
+
+                       int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
+
+                       for (int x = 0; x < scaleLabels.length; x++) {
+                    	   responseList = responseList + choicesCounts[x] + ",";
+                    	   // evalExternalLogic.makePlainTextFromHTML(scaleOptions[x]) + 
+                        }
+
+                        if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
+                           responseList = responseList + choicesCounts[choicesCounts.length-1] + ","; 
+                           	//"na" + " : " +  
+                        }
+
+                       renderedItemCount++;
+                       responseList = responseList + "END\n";
+                    }
+                 }
+              }
+
+           }
+
+        }
+        
+        return responseList;
+    }
+    
+    public String getRespondents(String sessionid, Long evaluationId, String groupid) throws AxisFault {
+    	
+    	return "not-implemented";
+    }
+
+    /* Create a scale with mostly default settings */
+    public String addScale(String sessionid, String ownerEid, String title, String[] choices) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        EvalScale scale = new EvalScale(new Date(), ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        scale.setOptions(choices);
+        // We may need to add an option for the scale type
+        scale.setIdeal(EvalConstants.SCALE_IDEAL_HIGH);
+        evalAuthoringService.saveScale(scale,ownerId);
+        return scale.getId()+"";
+    }
+
+    public String addScale(String sessionid, String ownerEid, String title, String[] choices, String scaletype) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        EvalScale scale = new EvalScale(new Date(), ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        scale.setOptions(choices);
+        // We may need to add an option for the scale type
+        scale.setIdeal(scaletype);
+        evalAuthoringService.saveScale(scale,ownerId);
+        return scale.getId()+"";
+    }
+
+    /**
+     * This addScale method takes an EID and Scale Mode
+     *
+     */
+    public String addScale(String sessionid, String ownerEid, String[] choices, String idealscaletype, String scaleEid, String scaleMode) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        EvalScale scale = new EvalScale(new Date(), ownerId, EvalUtils.makeUniqueIdentifier(36), scaleMode, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        
+        scale.setOptions(choices);
+        // We may need to add an option for the scale type
+        scale.setIdeal(idealscaletype);
+        scale.setEid(scaleEid);
+        evalAuthoringService.saveScale(scale,ownerId);
+        return scale.getId()+"";
+    }
+
+    /*
+     *  Returns a String representation of the new Template ID.
+     */
+    public String addTemplate(String sessionid, String ownerEid, String title, String desc) throws AxisFault {
+        checkSecurity(sessionid);
+        return addTemplate(sessionid, ownerEid, title, desc, "private", false, "standard");
+    }
+
+    /*
+     *  Returns a String representation of the new Template ID.
+     */
+    public String addTemplate(String sessionid, String ownerEid, String title, String desc, String sharing,
+        boolean expert, String templateType) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        EvalTemplate template = new EvalTemplate(new Date(), ownerId, templateType,title,sharing,new Boolean(expert));
+        template.setDescription(desc);
+        template.setExpertDescription("");
+        evalAuthoringService.saveTemplate(template,ownerId);
+        return template.getId()+"";
+    }
+
+    public String addHeaderItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText) throws AxisFault {
+        checkSecurity(sessionid);
+        return addHeaderItemToTemplate(sessionid, templateId,ownerEid,itemText,DEFAULT_SHARING,DEFAULT_CATEGORY,
+            DEFAULT_IS_EXPERT,EvalConstants.HIERARCHY_LEVEL_TOP,EvalConstants.HIERARCHY_NODE_ID_NONE);
+    }
+
+    private static final String DEFAULT_SHARING = EvalConstants.SHARING_PRIVATE;
+    private static final String DEFAULT_EVAL_STATE = EvalConstants.EVALUATION_STATE_VIEWABLE;
+    private static final String DEFAULT_CATEGORY = "Course";
+    private static final boolean DEFAULT_IS_EXPERT = false;
+
+    private String getOwnerId(String ownerEid) throws AxisFault {
+        return evalExternalLogic.getUserId(ownerEid);
+    }
+
+    public String addHeaderItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, String sharing, String category, boolean expert, String hierLevel,
+        String hierNodeId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        String classification = "Header";
+        Long templateIdLong = new Long( templateId);
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            category, hierLevel, hierNodeId);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";
+    }
+
+    public String addEssayItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int numberOfResponseLines) throws AxisFault {
+        checkSecurity(sessionid);
+        return addEssayItemToTemplate(sessionid, templateId, ownerEid, itemText, numberOfResponseLines,
+            DEFAULT_SHARING, DEFAULT_CATEGORY, DEFAULT_IS_EXPERT, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+    }
+
+    public String addEssayItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int numberOfResponseLines, String sharing, String category, boolean expert, String hierLevel,
+        String hierNodeId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+        String classification = "Essay";
+        Long templateIdLong = new Long(templateId);
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
+        evalItem.setDisplayRows(new Integer(numberOfResponseLines));
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            category, hierLevel, hierNodeId);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";  
+    }
+    
+    /* This version takes a scale id, rather than array of strings to make a new scale */
+    public String addScaledItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, String scaleDisplayType, int scaleId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+
+        // Fetch the Scale
+        EvalScale scale = evalAuthoringService.getScaleById(new Long(scaleId));
+
+        String classification = EvalConstants.ITEM_TYPE_SCALED;
+        Long templateIdLong = new Long(templateId);
+
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,DEFAULT_SHARING,classification,DEFAULT_IS_EXPERT);
+        evalItem.setScale(scale);
+        evalItem.setScaleDisplaySetting(scaleDisplayType);
+        //evalItem.setScaleDisplaySetting("Vertical");
+
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            DEFAULT_CATEGORY, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";
+    }
+    
+    public String addScaledItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, String[] choices, String scaleDisplayType) throws AxisFault {
+        checkSecurity(sessionid);
+        return addScaledItemToTemplate(sessionid, templateId, ownerEid, itemText, choices, scaleDisplayType,
+            DEFAULT_SHARING, DEFAULT_CATEGORY, DEFAULT_IS_EXPERT, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+    }
+    
+    public String addScaledItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, String[] choices, String scaleDisplayType, String sharing, String category, boolean expert, String hierLevel,
+        String hierNodeId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+
+        //Make the Scale
+        EvalScale scale = new EvalScale(new Date(), ownerId, EvalUtils.makeUniqueIdentifier(36), EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        scale.setOptions(choices);
+        // We may need to add an option for the scale type
+        scale.setIdeal(EvalConstants.SCALE_IDEAL_HIGH);
+        evalAuthoringService.saveScale(scale,ownerId);
+
+        String classification = EvalConstants.ITEM_TYPE_SCALED;
+        Long templateIdLong = new Long(templateId);
+
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
+        evalItem.setScale(scale);
+        evalItem.setScaleDisplaySetting(scaleDisplayType);
+        //evalItem.setScaleDisplaySetting("Vertical");
+
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            category, hierLevel, hierNodeId);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";
+    }
+
+    public String addMultipleChoiceItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int scaleId) throws AxisFault {
+        checkSecurity(sessionid);
+        return addMultipleChoiceItemToTemplate(sessionid, templateId, ownerEid, itemText, scaleId,
+            DEFAULT_SHARING, DEFAULT_CATEGORY, DEFAULT_IS_EXPERT, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+    }
+
+    public String addMultipleChoiceItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int scaleId, String sharing, String category, boolean expert, String hierLevel,
+        String hierNodeId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+
+        //Make the Scale
+        EvalScale scale = evalAuthoringService.getScaleById(new Long(scaleId));
+
+        String classification = "MultipleChoice";
+        Long templateIdLong = new Long(templateId);
+
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
+        evalItem.setScale(scale);
+        evalItem.setScaleDisplaySetting("Vertical");
+
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            category, hierLevel, hierNodeId);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";  
+    }
+
+    public String addMultipleAnswerItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int scaleId) throws AxisFault {
+        checkSecurity(sessionid);
+        return addMultipleAnswerItemToTemplate(sessionid, templateId, ownerEid, itemText, scaleId,
+            DEFAULT_SHARING, DEFAULT_CATEGORY, DEFAULT_IS_EXPERT, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+    }
+
+    public String addMultipleAnswerItemToTemplate(String sessionid, int templateId, String ownerEid,
+        String itemText, int scaleId, String sharing, String category, boolean expert, String hierLevel,
+        String hierNodeId) throws AxisFault {
+        checkSecurity(sessionid);
+        String ownerId = getOwnerId(ownerEid);
+
+        //Make the Scale
+        EvalScale scale = evalAuthoringService.getScaleById(new Long(scaleId));
+
+        String classification = "MultipleAnswer";
+        Long templateIdLong = new Long(templateId);
+
+        EvalTemplate evalTemplate = evalAuthoringService.getTemplateById(templateIdLong);
+        EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
+        evalItem.setScale(scale);
+        evalItem.setScaleDisplaySetting("Vertical");
+
+        evalAuthoringService.saveItem(evalItem,ownerId);
+        int displayOrder = evalTemplate.getTemplateItems().size()+1;
+        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+            category, hierLevel, hierNodeId);
+        evalAuthoringService.saveTemplateItem(templateItem,ownerId);
+        return templateItem.getId()+"";  
+    }
+    
+    /**
+     * Returns the String representation of the created evaluation id
+     *
+     * This creates a Simple Evaluation with some stop/due/view dates based off
+     * the current time.
+     *
+     * If anonymous is set to true the survey will be anonymous. If set to false,
+     * will try to use the groupIds params to assign the authentication.
+     */
+/*
+    public String createSimpleEvaluation(String sessionid, String ownerEid, String title,
+        String instructions, int templateId, boolean anonymous, String[] groupIds) throws AxisFault {
+        checkSecurity(sessionid);
+        
+        String ownerId = getOwnerId(ownerEid);
+        
+        Date startDate = new Date();
+        Date dueDate = new Date(startDate.getTime() + (1000 * 60 * 3));
+        Date stopDate = new Date(startDate.getTime() + (1000 * 60 * 4));
+        Date viewDate = new Date(startDate.getTime() + (1000 * 60 * 5));
+        
+        EvalTemplate template = evalAuthoringService.getTemplateById(new Long(templateId));
+        
+        //EvalEvaluation eval = new EvalEvaluation(new Date(), ownerId, title, startDate, dueDate,
+        //    stopDate, viewDate, DEFAULT_EVAL_STATE, new Integer(0), template);
+        
+        String authtype = EvalConstants.EVALUATION_AUTHCONTROL_NONE;
+        if (!anonymous) {
+            authtype = EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ;
+        }
+        
+        // Get the EmailTemplates getDefaultEmailTemplate
+        EvalEmailTemplate availableEmailTemplate = evalEvaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED);
+        EvalEmailTemplate reminderEmailTemplate = evalEvaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+        
+        EvalEvaluation eval = new EvalEvaluation(
+            EvalConstants.EVALUATION_TYPE_EVALUATION, // type
+            ownerId, title, instructions, //eval owner, title, and instructions
+            startDate, dueDate, stopDate, viewDate, // start, due, stop, and view dates
+            null, null, // studentsDate, instructorsDate
+            DEFAULT_EVAL_STATE, EvalConstants.INSTRUCTOR_OPT_OUT, // eval state and instructor opting
+            new Integer(0), "awesome@stuff.org",   // reminderDays, reminder email
+            null,   // termid 
+            availableEmailTemplate, reminderEmailTemplate, // EvalEmailTemplates for availableEmailTemplate and reminderEmailTemplate
+            template,
+            null, // EvalTemplate for added template?
+            null, // Set<EvalResponse> responses,
+            new Boolean(false), // resultsPrivate,
+            new Boolean(true), new Boolean(false), // blankResponsesAllowed, modifyResponsesAllowed
+            new Boolean(false), new Boolean(false), // unregisteredAllowed, locked
+            authtype, "" // authControl, evalCategory
+        );
+        
+        evalEvaluationSetupService.saveEvaluation(eval, ownerId);
+        
+        if (!anonymous) {
+            evalEvaluationSetupService.addEvalAssignments(eval.getId(), new String[] {}, groupIds);
+        }
+        
+        return eval.getId()+"";
+    }
+*/
+    /* Returns the String representation of the created evaluation id */
+    //public boolean checkIfTemplateExists(String sessionid, String templateName) throws AxisFault {
+    //    checkSecurity(sessionid);
+    //    return !evalAuthoringService.checkTemplateTitleUnused(templateName, null);
+   // }
+
+    //public boolean checkIfScaleExists(String sessionid, String templateName) throws AxisFault {
+    //    checkSecurity(sessionid);
+    //    return !evalAuthoringService.checkTemplateTitleUnused(templateName, null);
+    //}
+    
+    /* Util methods */
+    
+    // copied from EvalResponseAggregatorUtil
+    private TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
+        List<EvalTemplateItem> allTemplateItems = 
+           evalAuthoringService.getTemplateItemsForTemplate(eval.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
+
+        // get all the answers
+        List<EvalAnswer> answers = evalDeliveryService.getAnswersForEval(eval.getId(), groupIds, null);
+
+        // get the list of all instructors for this report and put the user objects for them into a map
+        Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
+
+        // Get the sorted list of all nodes for this set of template items
+        List<EvalHierarchyNode> hierarchyNodes = makeEvalNodesList(hierarchyLogic, allTemplateItems);
+
+        // make the TI data structure
+        Map<String, List<String>> associates = new HashMap<String, List<String>>();
+        associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
+        TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
+
+        return tidl;
+     }
+
+    // copied from ...
+    private static List<EvalHierarchyNode> makeEvalNodesList(ExternalHierarchyLogic hierarchyLogic, List<EvalTemplateItem> templateItems) {
+        Set<String> nodeIds = new HashSet<String>();
+        for (EvalTemplateItem templateItem : templateItems) {
+           if (EvalConstants.HIERARCHY_LEVEL_NODE.equals(templateItem.getHierarchyLevel())) {
+              nodeIds.add(templateItem.getHierarchyNodeId());
+           }
+        }
+        List<EvalHierarchyNode> hierarchyNodes = new ArrayList<EvalHierarchyNode>();
+        if (nodeIds.size() > 0) {
+           Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(nodeIds.toArray(new String[] {}));
+           hierarchyNodes = hierarchyLogic.getSortedNodes(nodes);
+        }
+        return hierarchyNodes;
+     }
+    
+}
