@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
@@ -212,7 +211,12 @@ public class AdhocGroupsBean {
          String userId = null;
 
          // check if this is a valid username for an existing user
-         EvalUser user = commonLogic.getEvalUserById(potentialId);
+         String internalUserId = commonLogic.getUserId(potentialId);
+         if (internalUserId == null) {
+            internalUserId = potentialId;
+         }
+         // look up the username by their internal id
+         EvalUser user = commonLogic.getEvalUserById(internalUserId);
          if (EvalConstants.USER_TYPE_EXTERNAL.equals(user.type)
                || EvalConstants.USER_TYPE_INTERNAL.equals(user.type)) {
             userId = user.userId;
