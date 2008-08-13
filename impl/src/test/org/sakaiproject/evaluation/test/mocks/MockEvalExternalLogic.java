@@ -32,8 +32,6 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 
 /**
  * This is a mock class for testing purposes, it will allow us to test all the classes
@@ -498,17 +496,17 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
    
    public String createScheduledJob(Date executionDate, Long evaluationId, String jobType) {
       // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
-      throw new NotImplementedException();
+      throw new UnsupportedOperationException();
    }
 
    public void deleteScheduledJob(String jobID) {
       // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
-      throw new NotImplementedException();
+      throw new UnsupportedOperationException();
    }
 
    public EvalScheduledJob[] findScheduledJobs(Long evaluationId, String jobType) {
       // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
-      throw new NotImplementedException();
+      throw new UnsupportedOperationException();
    }
 
 
