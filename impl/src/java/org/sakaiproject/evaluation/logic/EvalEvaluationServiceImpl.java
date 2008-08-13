@@ -829,20 +829,26 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	   return dao.isEvaluationWithState(state);
    }
    
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEarliestDueDate(java.lang.String)
+    */
    @SuppressWarnings("unchecked")
    public String getEarliestDueDate(String userId) {
 	   String earliest = null;
 	   Date dueDate = null;
 	   if(userId == null) 
-		   throw new NullPointerException("getEarliestDueDate(String userId) userId == null");
+		   throw new NullPointerException("getEarliestDueDate(String userId) userId is null.");
 	   try {
-		   //dueDate = (evaluationLogic.getEvaluationsForUser(userId, true, true)).get(0).getDueDate();
-		   dueDate = (getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE)).get(0).getDueDate();
-		   earliest = DateFormat.getDateInstance().format(dueDate);
+		   List<EvalEvaluation> evaluations = getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+		   if(evaluations != null && !evaluations.isEmpty()) {
+			   dueDate = evaluations.get(0).getDueDate();
+			   earliest = DateFormat.getDateInstance().format(dueDate);
+		   }
 		   //e.g., Mar 17, 2008
 	   }
 	   catch(NullPointerException e) {
-		   throw new NullPointerException("getEvaluationsForUser(userId " + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE)).get(0).getDueDate()");
+		   throw new NullPointerException("getEvaluationsForUser(userId " + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE))");
 	   }
 	   return earliest;
    }
@@ -855,7 +861,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
       List<EvalGroup> takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
-
       String[] evalGroupIds = new String[takeGroups.size()];
       for (int i=0; i<takeGroups.size(); i++) {
          EvalGroup c = (EvalGroup) takeGroups.get(i);

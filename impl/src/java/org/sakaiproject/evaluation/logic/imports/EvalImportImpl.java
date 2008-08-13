@@ -131,20 +131,6 @@ public class EvalImportImpl implements EvalImport {
 	 */
 	public List<String> process(String id, String userId) {
 		
-		/*testing
-		EvalTemplate template = authoringService
-		.getTemplateByEid(templateEid);
-		EvalTemplateItem templateItem = authoringService
-		.getTemplateItemByEid(eid);
-		// new templateItem
-		EvalTemplateItem evalTemplateItem = new EvalTemplateItem(
-				new Date(), owner, template, item, displayOrder,
-				itemCategory, level, nodeId, displayRows,
-				scaleDisplaySetting, usesNA, false, blockParent, blockId,
-				resultsSharing);
-		evalTemplateItem.setEid(eid);
-		*/
-		
 		List<String> messages = new ArrayList<String>();
 		if (id == null || userId == null) {
 			throw new IllegalArgumentException(
@@ -230,7 +216,7 @@ public class EvalImportImpl implements EvalImport {
 					.newInstance("/EVAL_DATA/EVAL_SCALES/EVAL_SCALE");
 			List scales = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(scales.size() + " EvalScales in XML");
+				metric.info("Metric " + scales.size() + " EvalScales in XML");
 			// process EvalScales
 			for (Iterator iter = scales.iterator(); iter.hasNext();) {
 				try {
@@ -264,8 +250,8 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime()) + " saveOrUpdateScales took "
-						+ seconds + " to save or update " + scalesSaved
+				metric.info("Metric " + new String(getTime()) + " saveOrUpdateScales took "
+						+ seconds + " seconds to save or update " + scalesSaved
 						+ " EvalScales");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -297,7 +283,7 @@ public class EvalImportImpl implements EvalImport {
 					.newInstance("/EVAL_DATA/EVAL_ITEMS/EVAL_ITEM");
 			List items = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(items.size() + " EvalItems in XML");
+				metric.info("Metric " + items.size() + " EvalItems in XML");
 			// process EvalItems
 			for (Iterator iter = items.iterator(); iter.hasNext();) {
 				try {
@@ -331,8 +317,8 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime()) + " saveOrUpdateItems took "
-						+ seconds + " to save or update " + itemsSaved
+				metric.info("Metric " + new String(getTime()) + " saveOrUpdateItems took "
+						+ seconds + " seconds to save or update " + itemsSaved
 						+ " EvalItems");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -369,7 +355,7 @@ public class EvalImportImpl implements EvalImport {
 			 */
 			List items = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(items.size() + " EvalTemplates in XML");
+				metric.info("Metric " + items.size() + " EvalTemplates in XML");
 			// process EvalTemplates
 			for (Iterator iter = items.iterator(); iter.hasNext();) {
 				try {
@@ -403,9 +389,9 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime())
+				metric.info("Metric " + new String(getTime())
 						+ " saveOrUpdateTemplates took " + seconds
-						+ " to save or update " + templatesSaved
+						+ " seconds to save or update " + templatesSaved
 						+ " EvalTemplates");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -438,7 +424,7 @@ public class EvalImportImpl implements EvalImport {
 					.newInstance("/EVAL_DATA/EVAL_EMAIL_TEMPLATES/EVAL_EMAIL_TEMPLATE");
 			List emailTemplates = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(emailTemplates.size()
+				metric.info("Metric " + emailTemplates.size()
 						+ " EvalEmailTemplates in XML");
 			// process EvalEmailTemplates
 			for (Iterator iter = emailTemplates.iterator(); iter.hasNext();) {
@@ -477,9 +463,9 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime())
+				metric.info("Metric " + new String(getTime())
 						+ " saveOrUpdateEmailTemplates took " + seconds
-						+ " to save or update " + emailTemplatesSaved
+						+ " seconds to save or update " + emailTemplatesSaved
 						+ " EvalEmailTemplates");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -511,7 +497,7 @@ public class EvalImportImpl implements EvalImport {
 					.newInstance("/EVAL_DATA/EVAL_TEMPLATEITEMS/EVAL_TEMPLATEITEM");
 			List items = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(items.size() + " EvalTemplateItems in XML");
+				metric.info("Metric " + items.size() + " EvalTemplateItems in XML");
 			// process EvalTemplateItems
 			for (Iterator iter = items.iterator(); iter.hasNext();) {
 				try {
@@ -553,8 +539,8 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime()) + " saveOrUpdateScales took "
-						+ seconds + " to save or update " + templateItemsSaved
+				metric.info("Metric " + new String(getTime()) + " saveOrUpdateScales took "
+						+ seconds + " seconds to save or update " + templateItemsSaved
 						+ " EvalTemplateItems");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -591,7 +577,7 @@ public class EvalImportImpl implements EvalImport {
 			 */
 			List evals = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(evals.size() + " EvalEvaluations in XML");
+				metric.info("Metric " + evals.size() + " EvalEvaluations in XML");
 			// process EvalEvaluations
 			for (Iterator iter = evals.iterator(); iter.hasNext();) {
 				try {
@@ -626,9 +612,9 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime())
+				metric.info("Metric " + new String(getTime())
 						+ " saveOrUpdateEvaluations took " + seconds
-						+ " to save or update " + evaluationsSaved
+						+ " seconds to save or update " + evaluationsSaved
 						+ " EvalEvaluations");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -665,7 +651,7 @@ public class EvalImportImpl implements EvalImport {
 			 */
 			List evalAssignGroups = docsPath.selectNodes(doc);
 			if (metric.isInfoEnabled())
-				metric.info(evalAssignGroups.size()
+				metric.info("Metric " + evalAssignGroups.size()
 						+ " EvalAssignGroups in XML");
 			// process EvalAsignGroups
 			for (Iterator iter = evalAssignGroups.iterator(); iter.hasNext();) {
@@ -702,9 +688,9 @@ public class EvalImportImpl implements EvalImport {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric.info(new String(getTime())
+				metric.info("Metric " + new String(getTime())
 						+ " saveOrUpdateAssignGroups took " + seconds
-						+ " to save or update " + assignGroupsSaved
+						+ " seconds to save or update " + assignGroupsSaved
 						+ " EvalAssignGroups");
 		} catch (JDOMException jde) {
 			log.error("There was an error parsing the XML data. " + jde);
@@ -1516,17 +1502,8 @@ public class EvalImportImpl implements EvalImport {
 						.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
 				messages
 						.add("EvalEvaluation was not saved/updated in the database, because eid was missing.");
-				// TODO add to audit trail
 			}
-			/*
-			 * String providerId = element.getChildText("PROVIDER_ID");
-			 * if(providerId == null || "".equals(providerId)) {
-			 * log.warn("EvalEvaluation with eid '" + eid + "' was not
-			 * saved/updated in the database, because provider id was
-			 * missing."); messages.add("EvalEvaluation with eid '" + eid + "'
-			 * was not saved/updated in the database, because provider id was
-			 * missing."); //TODO add to audit trail }
-			 */
+			//TODO if provider id is null throw an exception
 			String title = element.getChildText("TITLE");
 			String owner = element.getChildText("OWNER");
 			Date startDate = getDate(element.getChildText("START_DATE"));
@@ -1536,12 +1513,22 @@ public class EvalImportImpl implements EvalImport {
 			Date studentsDate = getDate(element.getChildText("STUDENTS_DATE"));
 			Date instructorsDate = getDate(element
 					.getChildText("INSTRUCTORS_DATE"));
+			// (UM) use single email templates as Available, Reminder
+			/*
 			EvalEmailTemplate availableEmailTemplate = evaluationService
 					.getDefaultEmailTemplate(element
 							.getChildText("AVAILABLE_EMAIL_TEMPLATE"));
 			EvalEmailTemplate reminderEmailTemplate = evaluationService
 					.getDefaultEmailTemplate(element
 							.getChildText("REMINDER_EMAIL_TEMPLATE"));
+			*/
+			EvalEmailTemplate availableEmailTemplate = evaluationService
+			.getEmailTemplateByEid(element
+					.getChildText("AVAILABLE_EMAIL_TEMPLATE_EID"));
+			EvalEmailTemplate reminderEmailTemplate = evaluationService
+			.getEmailTemplateByEid(element
+					.getChildText("REMINDER_EMAIL_TEMPLATE_EID"));
+			
 			EvalTemplate template = authoringService.getTemplateByEid(element
 					.getChildText("TEMPLATE_EID"));
 			String instructions = element.getChildText("INSTRUCTIONS");
@@ -1612,6 +1599,7 @@ public class EvalImportImpl implements EvalImport {
 					blankResponsesAllowed, modifyResponsesAllowed,
 					unregisteredAllowed, locked, authControl, evalCategory);
 			evaluation.setEid(eid);
+			evaluation.setAvailableEmailSent(Boolean.FALSE);
 			return evaluation;
 		} catch (Exception e) {
 			throw new RuntimeException("newEvaluation() eid '" + eid + "' " + e);
@@ -1689,7 +1677,7 @@ public class EvalImportImpl implements EvalImport {
 			evaluation.setModifyResponsesAllowed(modifyResponsesAllowed);
 			evaluation.setUnregisteredAllowed(unregisteredAllowed);
 			evaluation.setLocked(locked);
-
+			// TODO get email template eid from evaluation, fetch email template by eid, and use its id to set available email template fk (and reminder fk)
 			evaluation.setAvailableEmailTemplate(evaluationService
 					.getDefaultEmailTemplate(element
 							.getChildText("AVAILABLE_EMAIL_TEMPLATE")));

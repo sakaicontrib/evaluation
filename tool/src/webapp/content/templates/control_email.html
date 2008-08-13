@@ -43,11 +43,17 @@
 							<label rsf:id="msg=controlemail.reminder.frequency" for="send-reminders-id" class="block">Send reminders... never, daily, etc.</label>
 							<select rsf:id="send-reminders" id="send-reminders-id"></select>
 						</p>
-						<div rsf:id="next-reminder-settings:" class="shorttext">
-							<span  rsf:id="showNextReminderDate:">
+						<div rsf:id="next-reminder-date:" class="shorttext">
+							<label rsf:id="msg=controlemail.next.reminder.date" for="reminder_date_dummy" class="block">Next reminder date</label>
+							<br /><br />
+							<span  rsf:id="show-next-reminder-date:">
 							  <input type="text" id="reminder_date_dummy" name="reminder_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
 							  <img src="../images/calendar.gif" />
 							</span>
+							<p class="instruction" rsf:id="next-reminder-date-instructions">
+								Setting the next reminder date overrides reminder interval for the next reminder.
+								<br /><br />
+							</p>
 						</div>
 						<p class=	"longtext indnt1">
 							<label rsf:id="msg=controlemail.log.progress.every" for="log-progress-every-id" class="block">Log progress every... 10, 25, 50 etc.</label>

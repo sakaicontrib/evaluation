@@ -161,7 +161,7 @@ public class PreloadDataImpl {
          
          // Default email settings
          saveConfig(EvalSettings.REMINDER_INTERVAL_DAYS, 0);
-         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "2050-12-20 12:15 AM");
+         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "Sat Dec 20 09:15:00 EST 2008");
          saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0);
          saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
          saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
@@ -187,9 +187,11 @@ public class PreloadDataImpl {
       dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
    }
    
+   /*
    private void saveConfig(String key, Date value) {
 	   dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), SettingsLogicUtils.getStringFromDate(value)));
    }
+   */
 
    /**
     * Preload the default email template

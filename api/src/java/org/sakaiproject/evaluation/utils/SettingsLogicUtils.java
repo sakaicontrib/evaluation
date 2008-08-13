@@ -35,9 +35,9 @@ public class SettingsLogicUtils {
    public static final String DEFAULT_TYPE = "java.lang.String";
    
 	/**
-	 * String representation of a Date in the form year-month-day hr:min AM/PM (e.g. "2008-10-20 12:15 AM")
+	 * String representation of a Date e.g. Sat Dec 20 09:15:00 EST 2008
 	 */
-	public static final String DATE_FORMAT = "yyyy-MM-dd hh:mm aa";
+	public static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
 	
 	private static SimpleDateFormat df;
 

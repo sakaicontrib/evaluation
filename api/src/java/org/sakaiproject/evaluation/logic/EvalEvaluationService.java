@@ -453,7 +453,7 @@ public interface EvalEvaluationService {
     * Get the earliest due date from the evaluations available to be be taken by the user,
     * formatted for display
     * 
-    * @param userId the id of the user
+    * @param userId the Sakai id of the user (not username)
     * @return the earliest due date, formatted for display e.g., Mar 17, 2008
     */
    public String getEarliestDueDate(String userId);

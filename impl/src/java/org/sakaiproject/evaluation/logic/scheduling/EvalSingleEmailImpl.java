@@ -22,7 +22,6 @@
 
 package org.sakaiproject.evaluation.logic.scheduling;
 
-import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -75,10 +74,9 @@ public class EvalSingleEmailImpl implements Job{
 	}
 	
 	private static Log log = LogFactory.getLog(EvalSingleEmailImpl.class);
-	private static Log metric = LogFactory.getLog("metrics." + EvalSingleEmailImpl.class.getName());
+	private static final Log metric = LogFactory.getLog("metrics." + EvalSingleEmailImpl.class.getName());
 	
 	private int reminderInterval; //unit is a day
-	private String dateString; //saving as a String setting for ease of checking
 	private Boolean logEmailRecipients; //optional
 	
 	public void init() {
@@ -90,82 +88,70 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
-			if (log.isWarnEnabled()) {
-				log
-						.warn("EvalSingleEmailImpl.execute() called by Job Scheduler.");
-			}
+			if (metric.isInfoEnabled())
+				metric
+						.info("Metric EvalSingleEmailImpl.execute() was called by the Job Scheduler.");
 			if (checkSettings()) {
 				if (!evaluationService
 						.isEvaluationWithState(EvalConstants.EVALUATION_STATE_ACTIVE)) {
-					if (log.isInfoEnabled())
-						log.info("There are no active evaluations.");
+					if (metric.isInfoEnabled())
+						metric
+								.info("Metric EvalSingleEmailImpl.execute() found no active evaluations.");
 					return;
 				}
 			} else {
 				log.error("Settings are inconsistent with job execution.");
 				return;
 			}
-
 			Locale locale = new ResourceLoader().getLocale();
 			logEmailRecipients = (Boolean) evalSettings
 					.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
 			String[] recipients = new String[] {};
 			long start, end;
 			float seconds;
-
-			// use a date which is related to the current user's locale
-			/*
-			DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM,
-					locale);
-			dateString = (String) evalSettings
-					.get(EvalSettings.NEXT_REMINDER_DATE);
-			Date reminderDate = df.parse(dateString);
-			*/
+			// next reminder date
 			Date reminderDate = (Date) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
 			reminderInterval = ((Integer) evalSettings
 					.get(EvalSettings.REMINDER_INTERVAL_DAYS)).intValue();
 			long day = 1000 * 60 * 60 * 24;
-
-			// see if today is GE reminderDate
-			long rdate = reminderDate.getTime();
-			long tdate = System.currentTimeMillis();
-			if (tdate >= rdate) {
-				// today is a reminder day
-				start = System.currentTimeMillis();
-				recipients = evalEmailsLogic.sendEvalReminderSingleEmail();
-				end = System.currentTimeMillis();
-				seconds = (end - start) / 1000;
-				if (metric.isInfoEnabled())
-					metric
-							.info("evalEmailsLogic.sendEvalReminderSingleEmail() took "
-									+ seconds
-									+ " seconds to send email to "
-									+ recipients.length + " addresses.");
-				// log email recipients
-				if (logEmailRecipients.booleanValue()) {
-					logEmailRecipients(recipients);
+			// check if reminders are to be sent
+			if(reminderInterval > 0) {
+				// see if time is equal to or after reminder date
+				long rdate = reminderDate.getTime();
+				long tdate = System.currentTimeMillis();
+				if (tdate >= rdate) {
+					// today is a reminder day
+					start = System.currentTimeMillis();
+					recipients = evalEmailsLogic.sendEvalReminderSingleEmail();
+					end = System.currentTimeMillis();
+					seconds = (end - start) / 1000;
+					if (metric.isInfoEnabled())
+						metric
+								.info("Metric EvalEmailsLogic.sendEvalReminderSingleEmail() took "
+										+ seconds
+										+ " seconds to send email to "
+										+ recipients.length + " addresses.");
+					// log email recipients
+					if (logEmailRecipients.booleanValue()) {
+						logEmailRecipients(recipients);
+					}
+					// set next reminder date
+					long nextReminder = tdate + (day * reminderInterval);
+					updateConfig(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
 				}
-				// set next reminder date
-				long nextReminder = tdate + (day * reminderInterval);
-				updateConfig(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
-				//evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
-				/*
-				df.getCalendar().setTimeInMillis(nextReminder);
-				updateConfig(EvalSettings.NEXT_REMINDER_DATE, df.toString());
-				*/
 			}
+			recipients = new String[] {};
+			start = System.currentTimeMillis();
 			/*
 			 * Note: available follows reminder so available's setting
 			 * EvalEvaluation.avalableEmailSent won't trigger a reminder
 			 */
-			recipients = new String[] {};
-			start = System.currentTimeMillis();
 			recipients = evalEmailsLogic.sendEvalAvailableSingleEmail();
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailsLogic.sendEvalAvailableSingleEmail() took "
+						.info("Metric EvalEmailsLogic.sendEvalAvailableSingleEmail() took "
 								+ seconds
 								+ " seconds to send email to "
 								+ recipients.length + " addresses.");
@@ -177,10 +163,9 @@ public class EvalSingleEmailImpl implements Job{
 			log.error("Error executing consolidated email job." + e);
 			throw new JobExecutionException(e);
 		}
-		if (log.isWarnEnabled()) {
-			log
-					.warn("EvalConsolidatedNotificationJob.execute() normal execution.");
-		}
+		if (metric.isInfoEnabled())
+			metric
+					.info("Metric EvalSingleEmailImpl.execute() normal execution completed.");
 	}
 	
 	/**
@@ -228,10 +213,11 @@ public class EvalSingleEmailImpl implements Job{
 			check = false;
 		}
 		if(!singleEmail.booleanValue()) {
+			log.error("EvalSingleEmailImpl.execute() was called but EvalSettings.ENABLE_SINGLE_EMAIL was false.");
 			check = false;
 		}
 		if(((String)evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION)).equals(EvalConstants.EMAIL_DELIVERY_NONE)) {
-			if(((String)evalSettings.get(EvalSettings.LOG_EMAIL_RECIPIENTS)).equalsIgnoreCase("false")) {
+			if(!((Boolean)evalSettings.get(EvalSettings.LOG_EMAIL_RECIPIENTS)).booleanValue()) {
 				log.warn("EvalSingleEmailImpl.execute() was called but EvalSettings.EMAIL_DELIVERY_OPTION is EMAIL_DELIVERY_NONE and EvalSettings.LOG_EMAIL_RECIPIENTS is false. There is nothing to do.");
 				check = false;
 			}
@@ -242,7 +228,6 @@ public class EvalSingleEmailImpl implements Job{
 	private void updateConfig(String key, Date date) {
 		updateConfig(key, SettingsLogicUtils.getStringFromDate(date));
 	}
-	
     private void updateConfig(String key, int value) {
         updateConfig(key, Integer.toString(value));
     }

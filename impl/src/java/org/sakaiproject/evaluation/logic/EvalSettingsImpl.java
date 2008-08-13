@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,7 +108,14 @@ public class EvalSettingsImpl implements EvalSettings {
          } else if (type.equals("java.lang.Float")) {
             setting = new Float( c.getValue() );
          } else if (type.equals("java.util.Date")) {
-        	 setting = SettingsLogicUtils.getDateFromString( c.getValue() );
+        	 try {
+        		 // See if we can parse the output of Date.toString()
+        	     SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        	     setting = format.parse(c.getValue());
+        	 }
+        	 catch(ParseException e) {
+        		 throw new RuntimeException(e);
+        	 }
          } else {
             setting = c.getValue();
          }

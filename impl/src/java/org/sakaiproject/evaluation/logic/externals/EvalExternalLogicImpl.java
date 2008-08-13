@@ -412,15 +412,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getMyWorkspaceUrl(java.lang.String)
     */
-   public String getMyWorkspaceUrl(String userId) {
-		String url = null;
-		String toolPage = null;
-		// userId - this is Sakai id NOT eid
-		if(userId == null || userId.length() == 0) {
-		   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
-	   }
-	   else {
-		   try {
+   public String getMyWorkspaceUrl(String userEid) {
+	   String url = null;
+	   try {
+		   String userId = userDirectoryService.getUserByEid(userEid).getId();
+		   String toolPage = null;
+		   //userId is Sakai id
+		   if(userId == null || userId.length() == 0) {
+			   log.error("getMyWorkspaceUrl(String userEid) userId is null or empty.");
+		   }
+		   else {
 			   String myWorkspaceId = siteService.getUserSiteId(userId);
 			   Site myWorkspace = siteService.getSite(myWorkspaceId);
 			   List<SitePage> pages = myWorkspace.getPages();
@@ -431,16 +432,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 					   ToolConfiguration tc = j.next();
 					   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
 						   toolPage = page.getId();
+						   break;
 					   }
 				   }
 			   }
-			   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~rwellis/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+			   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
 			   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
-		   } catch (Exception e) {
-			   log.error("getMyWorkspaceUrl(String userId) " + e);
-		   }
+			   }
+	   } catch (Exception e) {
+		   log.error("getMyWorkspaceUrl(String userEid) '" + userEid + "' " + e);
 	   }
-	return url;
+	   return url;
 	}
 
 

@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImport;
 import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
-import org.sakaiproject.tool.api.Session;
 
 /**
 * Importing external data into the Evaluation System.

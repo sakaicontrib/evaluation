@@ -76,7 +76,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    }
    
    private EvalExternalLogic externalLogic;
-   public void setEvalExternalLogic(EvalExternalLogic externalLogic) {
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
 	      this.externalLogic = externalLogic;
    }
 
@@ -313,7 +313,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	 */
 	public String[] sendEvalAvailableSingleEmail() {
 		Long[] evalIds = new Long[] {};
-		String[] toAddresses = null;
+		String[] toAddresses = new String[] {};
 		List<EvalAssignGroup> groups = null;
 		Set<String> allUserIds = new HashSet<String>();
 		Set<String> userIdsTakingEval = new HashSet<String>();
@@ -329,7 +329,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		seconds = (end - start) / 1000;
 		if (metric.isInfoEnabled())
 			metric
-					.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
+					.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
 							+ " took "
 							+ seconds
 							+ " seconds for "
@@ -345,7 +345,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+						.info("Metric  EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -374,7 +374,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
+						.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -389,7 +389,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
+						.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
 								+ allUserIds.size()
 								+ " user ids "
 								+ " took "
@@ -419,7 +419,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    public String[] sendEvalReminderSingleEmail() {
 		Long[] evalIds = new Long[] {};
-		String[] toAddresses = null;
+		String[] toAddresses = new String[] {};
 		List<EvalAssignGroup> groups = null;
 		Set<String> allUserIds = new HashSet<String>();
 		Set<String> userIdsTakingEval = new HashSet<String>();
@@ -434,7 +434,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		end = System.currentTimeMillis();
 		seconds = (end - start)/1000;
 		if(metric.isInfoEnabled())
-			metric.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
+			metric.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
 					" took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 		
 		if (evalIds.length > 0) {
@@ -447,7 +447,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -475,7 +475,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step emailTemplatesByUser "
+						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step emailTemplatesByUser "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -491,7 +491,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
 				metric
-						.info("evalEmailLogicImpl.sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
+						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
 								+ allUserIds.size()
 								+ " user ids "
 								+ " took "
@@ -545,20 +545,23 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @return an array of the email addresses to which email was sent
     */
    private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, Set<Long>> emailTemplatesMap) {
-		if (uniqueIds == null || uniqueIds == null || emailTemplatesMap == null) {
+		if (uniqueIds == null || toUserIds == null || emailTemplatesMap == null) {
 			throw new IllegalArgumentException(
 					"sendEvalSingleEmail() parameter(s) missing.");
 		} else {
 			if (metric.isInfoEnabled())
-				metric.info("There are " + uniqueIds.size()
+				metric.info("Metric There are " + uniqueIds.size()
 						+ " unique user ids in the single email queue.");
 		}
-		// get related settings
-		String from = null, deliveryOption = null;
-		Boolean logEmailRecipients = null;
-		Integer batch = null, wait = null, modulo = null;
-		getSingleEmailSettings(from, deliveryOption, logEmailRecipients, batch,
-				wait, modulo);
+		// get email settings
+		Object[] mailSettings = new Object[6];
+		mailSettings = getSingleEmailSettings();
+		String from = (String)mailSettings[0];
+		String deliveryOption = (String)mailSettings[1];
+		Boolean logEmailRecipients = (Boolean)mailSettings[2];
+		Integer batch = (Integer)mailSettings[3];
+		Integer wait = (Integer)mailSettings[4];
+		Integer modulo = (Integer)mailSettings[5];
 		
 		// check there is something to do
 		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
@@ -575,22 +578,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List<String> sentEmails = new ArrayList<String>();
 		Set<Long> emailTemplateIds = new HashSet<Long>();
 		EvalEmailTemplate template = null;
+		String userId = null;
+		String earliestDueDate = null;
 		int numProcessed = 0;
+		// uniqueIds are user usernames (eid's)
 		for (String s : uniqueIds) {
-			// direct link to summary page of tool on My Worksite
 			try {
 				replacementValues.clear();
+				// direct link to summary page of tool on My Worksite
 				url = externalLogic.getMyWorkspaceUrl(s);
 				replacementValues.put("MyWorkspaceDashboard", url);
-				replacementValues.put("EarliestDueDate", evaluationService
-						.getEarliestDueDate(s));
+				userId = externalLogic.getUserId(s);
+				earliestDueDate = evaluationService.getEarliestDueDate(userId);
+				replacementValues.put("EarliestEvalDueDate", earliestDueDate);
 				replacementValues.put("HelpdeskEmail", from);
-				
+				replacementValues.put("EvalToolTitle", EvalConstants.EVAL_TOOL_TITLE);
+				replacementValues.put("EvalSite", EvalConstants.EVALUATION_TOOL_SITE);
+				replacementValues.put("EvalCLE", EvalConstants.EVALUATION_CLE);
+
 				//get the email template ids for this user
 				emailTemplateIds = emailTemplatesMap.get(s);
-				
-				// toUserIds may be eid or id, we're using one id at a time
-				toUserIds = new String[] { s };
+				toUserIds = new String[] { userId };
 				
 				for(Long i : emailTemplateIds) {
 					//get the template
@@ -617,12 +625,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				}
 			} catch (Exception e) {
 				log.error("sendEvalConsolidatedNotification() User id '" + s
-						+ "',URL '" + url + "' " + e);
+						+ "', url '" + url + "' " + e);
 			}
 		}
 		// log total number processed
 		if(metric.isInfoEnabled())
-			metric.info(numProcessed + " emails processed in total.");
+			metric.info("Metric " + numProcessed + " emails processed in total.");
 		return (String[]) sentEmails.toArray(new String[] {});
 	}
 
@@ -637,25 +645,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @param numProcessed the number of emails processed
     * @return
     */
-private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
+   private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
 		int numProcessed) {
-	numProcessed++;
-	if ((numProcessed % modulo.intValue()) == 0) {
-		if(metric.isInfoEnabled())
-			metric.info(numProcessed + " emails processed.");
-	}
-	if ((numProcessed % batch.intValue()) == 0) {
-		if(metric.isInfoEnabled())
-			metric.info("wait" + wait + " seconds.");
-		try {
-			Thread.sleep(wait * 1000);
-		} catch (Exception e) {
-			if (log.isErrorEnabled())
-				log.error("Thread sleep interrupted.");
+		numProcessed = numProcessed++;
+		if(numProcessed > 0) {
+			if ((numProcessed % modulo.intValue()) == 0) {
+				if(metric.isInfoEnabled())
+					metric.info("Metric " + numProcessed + " emails processed.");
+			}
+			if ((numProcessed % batch.intValue()) == 0) {
+				if(metric.isInfoEnabled())
+					metric.info("Metric wait" + wait + " seconds.");
+				try {
+					Thread.sleep(wait * 1000);
+				} catch (Exception e) {
+					if (log.isErrorEnabled())
+						log.error("Thread sleep interrupted.");
+				}
+			}
 		}
+		return numProcessed;
 	}
-	return numProcessed;
-}
    
    /**
     * Get email settings used with single email option
@@ -667,31 +677,33 @@ private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
     * @param wait
     * @param modulo
     */
-   private void getSingleEmailSettings(String from, String deliveryOption, Boolean logEmailRecipients, Integer batch, Integer wait, Integer modulo) {
-		from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-	    if (from == null) {
+   private Object[] getSingleEmailSettings() {
+	   Object[] emailSettings = new Object[6];
+		emailSettings[0] = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+	    if (emailSettings[0] == null) {
 	         throw new IllegalStateException("Could not get a from email address from system settings or the evaluation");
 	    }
-		deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
-	    if (deliveryOption == null) {
+	    emailSettings[1] = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+	    if (emailSettings[1] == null) {
 	         throw new IllegalStateException("Could not get the delivery option from system settings or the evaluation");
 	    }
-		logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-	    if (logEmailRecipients == null) {
+	    emailSettings[2] = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+	    if (emailSettings[2] == null) {
 	         throw new IllegalStateException("Could not get logging of email recipients from system settings or the evaluation");
 	    }
-		batch = Integer.parseInt((String) settings.get(EvalSettings.EMAIL_BATCH_SIZE));
-	    if (batch == null) {
+	    emailSettings[3] = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
+	    if (emailSettings[3] == null) {
 	         throw new IllegalStateException("Could not get batch size system settings or the evaluation");
 	    }
-		wait = Integer.parseInt((String) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL));
-	    if (wait == null) {
+	    emailSettings[4] = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
+	    if (emailSettings[4] == null) {
 	         throw new IllegalStateException("Could not get a wait value from system settings or the evaluation");
 	    }
-		modulo = Integer.parseInt((String) settings.get(EvalSettings.LOG_PROGRESS_EVERY));
-	    if (modulo == null) {
+	    emailSettings[5] = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
+	    if (emailSettings[5] == null) {
 	         throw new IllegalStateException("Could not get a logging interval from system settings or the evaluation");
 	    }
+	    return emailSettings;
    }
 
 

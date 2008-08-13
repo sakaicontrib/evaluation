@@ -14,6 +14,8 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="externalLogic"
+    		ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
     </bean>
 
     <!-- jobs processing -->

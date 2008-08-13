@@ -1,6 +1,5 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -8,9 +7,8 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
-import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -18,7 +16,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -31,57 +29,54 @@ public class ControlEmailProducer implements ViewComponentProducer {
 	 * This is used for navigation within the system.
 	 */
 	public static final String VIEW_ID = "control_email";
+	
+	// Used to prepare the path for WritableBeanLocator
+	public static final String ADMIN_WBL = "settingsBean";
 
 	public String getViewID() {
 		return VIEW_ID;
 	}
-
-	// Spring injection 
+	// injection
 	private EvalCommonLogic commonLogic;
-
 	public void setCommonLogic(EvalCommonLogic commonLogic) {
 		this.commonLogic = commonLogic;
 	}
-
 	private EvalSettings evalSettings;
 	public void setEvalSettings(EvalSettings evalSettings) {
 		this.evalSettings = evalSettings;
 	}
-	
 	private EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
-	
 	private Locale locale;
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
-	
 	private FormatAwareDateInputEvolver dateevolver;
 	public void setDateEvolver(FormatAwareDateInputEvolver dateevolver) {
 		this.dateevolver = dateevolver;
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer,
+	 *      uk.org.ponder.rsf.viewstate.ViewParameters,
+	 *      uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-		boolean useDateTime = true;
-		
-		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-		DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
 
 		if (!userAdmin) {
 			// Security check and denial
 			throw new SecurityException(
 					"Non-admin users may not access this page");
 		}
-		
+
 		/*
 		 * top links here
 		 */
@@ -111,125 +106,85 @@ public class ControlEmailProducer implements ViewComponentProducer {
 
 		UIForm form = UIForm.make(tofill, "emailcontrol-form");
 		
-	     // use a date which is related to the current users locale
-	     DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-		
-		/* one email per course evaluation (default) OR one email per student 
-		 * having one or more evaluations for which no response has been submitted (UM) */
-		UIMessage.make(form, "controlemail-instructions", "controlemail.instructions");
+		/*
+		 * one email per course evaluation (default) OR one email per student
+		 * having one or more evaluations for which no response has been
+		 * submitted (UM)
+		 */
+		UIMessage.make(form, "controlemail-instructions",
+				"controlemail.instructions");
 		AdministrateProducer.makeBoolean(form, "emailtype",
 				EvalSettings.ENABLE_SINGLE_EMAIL);
+		UIBranchContainer oneemail = UIBranchContainer.make(form,
+				"one-email-settings:");
+		AdministrateProducer.makeSelect(oneemail, "log-progress-every",
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalSettings.EMAIL_BATCH_SIZE, false);
+		AdministrateProducer.makeSelect(oneemail, "email-batch-size",
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalSettings.EMAIL_BATCH_SIZE, false);
+		AdministrateProducer.makeSelect(oneemail, "wait-interval",
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalSettings.EMAIL_WAIT_INTERVAL, false);
+		AdministrateProducer.makeSelect(oneemail, "send-reminders",
+				EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
+				EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,
+				EvalSettings.REMINDER_INTERVAL_DAYS, true);
+
+		UIMessage.make(form, "next-reminder-date-instructions",
+				"controlemail.next.reminder.date.instructions");
+		UIVerbatim.make(tofill, "reminder_date_instruction", UIMessage
+				.make("controlemail.next.reminder.date.instructions"));
 		
-		//settings re single email per student
-		Boolean singleEmailEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_SINGLE_EMAIL);
-		if (singleEmailEnabled != null && singleEmailEnabled.booleanValue()) {
-			UIBranchContainer oneemail = UIBranchContainer.make(form,
-					"one-email-settings:");
-			AdministrateProducer.makeSelect(oneemail, "log-progress-every",
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalSettings.EMAIL_BATCH_SIZE, false);
-			AdministrateProducer.makeSelect(oneemail, "email-batch-size",
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalSettings.EMAIL_BATCH_SIZE, false);
-			AdministrateProducer.makeSelect(oneemail, "wait-interval",
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalToolConstants.PULLDOWN_BATCH_VALUES,
-					EvalSettings.EMAIL_WAIT_INTERVAL, false);
-			AdministrateProducer.makeSelect(oneemail, "send-reminders",
-					EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
-					EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,
-					EvalSettings.REMINDER_INTERVAL_DAYS, true);
-			
-			Date nextReminderDate = (Date)evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
-			UIMessage.make(tofill, "current_date", "evalsettings.dates.current", 
-					new Object[] { dateFormat.format(nextReminderDate), timeFormat.format(nextReminderDate) });
-			
-			//String evaluationOTP = "evaluationBeanLocator." + evalViewParams.evaluationId + ".";
-			
-			String binding = "settingsBean";
+		String reminderOTP = "settingsBean.";
 
-			/*
-			 * 	<div rsf:id="next-reminder-settings:" class="shorttext">
-					<span  rsf:id="showNextReminderDate:">
-						<input type="text" id="reminder_date_dummy" name="reminder_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-						<img src="../images/calendar.gif" />
-					</span>
-				</div>
-			 */
+		// next reminder date
+		Date nextReminder = (Date) evalSettings
+				.get(EvalSettings.NEXT_REMINDER_DATE);
+		UIBranchContainer date = UIBranchContainer.make(form,
+				"next-reminder-date:");
+		generateReminderDateSelector(date, "show-next-reminder-date", true, nextReminder);
 
-			
-			// Next Reminder Date
-			UIBranchContainer showNextReminderDate = UIBranchContainer.make(form, "next-reminder-settings:");
-			generateNextReminderDateSelector(showNextReminderDate, "nextReminderDate", binding, 
-					nextReminderDate, useDateTime);
-		}
-
-		//dispose of email by sending to email system, log, or dev/null
+		// dispose of email by sending to email system, log, or dev/null
 		AdministrateProducer.makeSelect(form, "delivery-option",
 				EvalToolConstants.EMAIL_DELIVERY_VALUES,
 				EvalToolConstants.EMAIL_DELIVERY_LABELS,
 				EvalSettings.EMAIL_DELIVERY_OPTION, false);
 
-		//log email To: addresses
+		// log email To: addresses
 		AdministrateProducer.makeBoolean(form, "log-recipients",
 				EvalSettings.LOG_EMAIL_RECIPIENTS);
-		
-	      // Save Settings button
-	      UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);  
-	}
-	
+
+		// Save Settings button
+		UICommand.make(form, "saveSettings", UIMessage
+				.make("administrate.save.settings.button"), null);
+	}// fillComponents
+
 	/**
 	 * Generates the date picker control for next reminder date
 	 * 
-	 * @param parent the parent container
-	 * @param rsfId the rsf id of the checkbox
-	 * @param binding the EL binding for this control value
-	 * @param initValue null or an initial date value
+	 * @param parent
+	 *            the parent container
+	 * @param rsfId
+	 *            the rsf id of the evolver
 	 * @param useDateTime
+	 * 			  true to use both date and time, false to use date only
+	 * @param initValue
+	 *            null or an initial date value
 	 */
-	private void generateNextReminderDateSelector(UIBranchContainer parent, String rsfId, String binding,
-			Date initValue, boolean useDateTime) {
+	private void generateReminderDateSelector(UIBranchContainer parent, String rsfId,
+			boolean useDateTime, Date initValue) {
 		
-		/*
-		 * UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
-         if (useDateTime) {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
-         } else {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
-         }
-         dateevolver.evolveDateInput(datePicker, initValue);
-		 */
-		
+		String binding = PathUtil.composePath(ADMIN_WBL, EvalSettings.NEXT_REMINDER_DATE);
 		UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
 		if (useDateTime) {
-			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
 		} else {
-			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
 		}
 		dateevolver.evolveDateInput(datePicker, initValue);
 	}
-	
-	/* Missing UIOutput
-	 *   private void generateDateSelector(UIBranchContainer parent, String rsfId, String binding, 
- Date initValue, String currentEvalState, String worksUntilState, boolean useDateTime) {
-if ( EvalUtils.checkStateAfter(currentEvalState, worksUntilState, true) ) {
- String suffix = ".date";
- if (useDateTime) {
-    suffix = ".time";
- }
- UIOutput.make(parent, rsfId + "_disabled", null, binding)
-    .resolver = new ELReference("dateResolver." + suffix);
-} else {
- UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
- if (useDateTime) {
-    dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
- } else {
-    dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
- }
- dateevolver.evolveDateInput(datePicker, initValue);
-}
-}
-	 */
 }
