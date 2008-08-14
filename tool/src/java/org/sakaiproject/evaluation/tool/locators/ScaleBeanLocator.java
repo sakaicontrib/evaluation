@@ -21,7 +21,6 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 
 /**
@@ -77,7 +76,7 @@ public class ScaleBeanLocator implements WriteableBeanLocator {
    }
 
    public void set(String beanname, Object toset) {
-      throw new NotImplementedException();
+      throw new UnsupportedOperationException();
    }
 
 }

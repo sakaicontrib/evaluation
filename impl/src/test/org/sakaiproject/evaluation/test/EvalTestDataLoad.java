@@ -46,8 +46,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.genericdao.api.GenericDao;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 
 /**
  * This class holds a bunch of items used to prepopulate the database and then
@@ -1315,7 +1313,7 @@ public class EvalTestDataLoad {
       int idCounter = 0;
 
       public Object findById(Class entityClass, Serializable id) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public String getIdProperty(Class entityClass) {
@@ -1323,27 +1321,27 @@ public class EvalTestDataLoad {
       }
 
       public List getPersistentClasses() {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public void invokeTransactionalAccess(Runnable toinvoke) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public void setPersistentClasses(List classes) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public void create(Object object) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public void delete(Object object) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public boolean delete(Class entityClass, Serializable id) {
-         throw new NotImplementedException();
+         throw new UnsupportedOperationException();
       }
 
       public void save(Object object) {
