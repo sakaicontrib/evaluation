@@ -440,6 +440,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
      * Gets a date to display to the user depending on the state, guarantees to
      * return a date even if the dates are null
      * 
+     * FIXME this method seems to be wrong.
+     * 
      * @param eval
      *            an evaluation (must be saved already)
      * @param evalState
@@ -459,6 +461,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 } else if (eval.getDueDate() != null) {
                     eval.getDueDate();
                 } else {
+                    // FIXME there's no due date so we give out a finishing date of the start?! 
                     eval.getStartDate();
                 }
             } else {
