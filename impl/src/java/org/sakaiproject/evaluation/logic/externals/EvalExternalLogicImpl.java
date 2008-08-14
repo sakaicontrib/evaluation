@@ -280,7 +280,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
       // used up both cheap tests, now try the costly one
       try {
-         userDirectoryService.getUser(userId);
+        userDirectoryService.getUser(userId);
       } catch (UserNotDefinedException e) {
          return true;
       }
@@ -342,19 +342,25 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getEvalUserByEid(java.lang.String)
     */
    public EvalUser getEvalUserByEid(String eid) {
-	     EvalUser user = makeInvalidUser(eid, null);
-	      if (isUserAnonymous(eid)) {
-	         user = makeAnonymousUser(eid);
-	      } else {
-	         try {
-	            User sakaiUser = userDirectoryService.getUserByEid(eid);
-	            user = new EvalUser(eid, EvalConstants.USER_TYPE_EXTERNAL,
-	                  sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
-	         } catch(UserNotDefinedException ex) {
-	            log.debug("Sakai could not get user from user external id: " + eid, ex);
-	         }
-	      }
-	      return user;
+	   EvalUser user = makeInvalidUser(eid, null);
+	   try {
+		   User sakaiUser = userDirectoryService.getUserByEid(eid);
+		   if (isUserAnonymous(sakaiUser.getId())) {
+			   user = makeAnonymousUser(eid);
+		   }
+		   else {
+			   /*
+			   user = new EvalUser(eid, EvalConstants.USER_TYPE_EXTERNAL,
+	    				 sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+	    				 */
+			   user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
+	    				 sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+		   }
+	     }
+	     catch (UserNotDefinedException ex) {
+	    	 log.debug("Sakai could not get user from user external id: " + eid, ex);
+	     }
+	     return user;
    }
    
    /* (non-Javadoc)
