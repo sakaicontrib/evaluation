@@ -185,23 +185,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
             // Map<Long, List<EvalGroup>> evalGroups =
             // evaluationService.getEvalGroupsForEval(evalIds, false, null);
-            List<EvalGroup> groups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION); // now
-                                                                                                                          // fetch
-                                                                                                                          // all
-                                                                                                                          // the
-                                                                                                                          // information
-                                                                                                                          // we
-                                                                                                                          // care
-                                                                                                                          // about
-                                                                                                                          // for
-                                                                                                                          // these
-                                                                                                                          // evaluations
-                                                                                                                          // at
-                                                                                                                          // once
-                                                                                                                          // (
-                                                                                                                          // for
-                                                                                                                          // speed
-                                                                                                                          // )
+            List<EvalGroup> groups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
+            // now fetch all the information we care about for these evaluations at once (for speed)
+            
             List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
