@@ -459,10 +459,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 if (eval.getStopDate() != null) {
                     date = eval.getStopDate();
                 } else if (eval.getDueDate() != null) {
-                    eval.getDueDate();
+                    date = eval.getDueDate();
                 } else {
                     // FIXME there's no due date so we give out a finishing date of the start?! 
-                    eval.getStartDate();
+                    date = eval.getStartDate();
                 }
             } else {
                 if (eval.getDueDate() != null && EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
