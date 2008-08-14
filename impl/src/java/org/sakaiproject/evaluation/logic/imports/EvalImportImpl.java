@@ -1466,16 +1466,17 @@ public class EvalImportImpl implements EvalImport {
 					"STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(
 					Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			EvalEvaluation evaluation = evaluationService
-					.getEvaluationByEid(element.getChildText("EVALUATION_EID"));
+					.getEvaluationByEid(element.getChildText("EVAL_EVALUATION_EID"));
 			evalAssignGroup.setEvaluation(evaluation);
-			evalAssignGroup.setEvalGroupType(new String(element
-					.getChildText(element.getChildText("GROUP_TYPE"))));
-			evalAssignGroup.setEvalGroupId(new String(element
-					.getChildText(element.getChildText("PROVIDER_ID"))));
+			String groupType = element.getChildText("GROUP_TYPE");
+			evalAssignGroup.setEvalGroupType(groupType);
+			String providerId = element.getChildText("PROVIDER_ID");
+			evalAssignGroup.setEvalGroupId(providerId);
 			evalAssignGroup.setInstructorApproval(instructorApproval);
 			evalAssignGroup.setInstructorsViewResults(instructorsViewResults);
 			evalAssignGroup.setLastModified(new Date());
-			evalAssignGroup.setOwner(new String(element.getChildText("OWNER")));
+			String owner = element.getChildText("OWNER");
+			evalAssignGroup.setOwner(owner);
 			evalAssignGroup.setStudentsViewResults(studentsViewResults);
 		} catch (Exception e) {
 			throw new RuntimeException("setAssignGroupProperties() eid '" + eid
@@ -1678,12 +1679,22 @@ public class EvalImportImpl implements EvalImport {
 			evaluation.setUnregisteredAllowed(unregisteredAllowed);
 			evaluation.setLocked(locked);
 			// TODO get email template eid from evaluation, fetch email template by eid, and use its id to set available email template fk (and reminder fk)
+			EvalEmailTemplate availableEmailTemplate = evaluationService
+			.getEmailTemplateByEid(element
+					.getChildText("AVAILABLE_EMAIL_TEMPLATE_EID"));
+			evaluation.setAvailableEmailTemplate(availableEmailTemplate);
+			EvalEmailTemplate reminderEmailTemplate = evaluationService
+			.getEmailTemplateByEid(element
+					.getChildText("REMINDER_EMAIL_TEMPLATE_EID"));
+			evaluation.setReminderEmailTemplate(reminderEmailTemplate);
+			/*
 			evaluation.setAvailableEmailTemplate(evaluationService
 					.getDefaultEmailTemplate(element
 							.getChildText("AVAILABLE_EMAIL_TEMPLATE")));
 			evaluation.setReminderEmailTemplate(evaluationService
 					.getDefaultEmailTemplate(element
 							.getChildText("REMINDER_EMAIL_TEMPLATE")));
+							*/
 			evaluation.setTemplate(authoringService.getTemplateByEid(element
 					.getChildText("TEMPLATE_EID")));
 
