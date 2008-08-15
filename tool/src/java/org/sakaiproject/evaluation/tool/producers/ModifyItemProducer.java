@@ -267,10 +267,17 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       // display the breadcrumb bar
       if (templateId != null) {
-         // creating template item
-         UIInternalLink.make(tofill, "modify-template-items",
+          // creating template item
+          UIInternalLink.make(tofill, "control-items-breadcrumb",
+                  UIMessage.make("controltemplates.page.title"), 
+                  new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+          UIInternalLink.make(tofill, "modify-template-items",
                UIMessage.make("modifytemplate.page.title"), 
                new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId));
+      } else {
+          UIInternalLink.make(tofill, "control-items-breadcrumb",
+                  UIMessage.make("controlitems.page.title"), 
+                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
       }
       UIMessage.make(tofill, "item-header", "modifyitem.item.header");
 
