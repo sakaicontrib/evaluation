@@ -863,7 +863,7 @@ label.block{
 	padding:.3em;
 	border:none;
 	list-style: none  !important; 
-}	
+}
 .fullDisplayHorizontal td{
 	padding:0;
 /*
@@ -884,6 +884,9 @@ label.block{
 }
 
 .fullVertical .na label{
+	padding-left:.2em
+}
+.fullDisplay .na label{
 	padding-left:.2em
 }
 .fakeHeader{

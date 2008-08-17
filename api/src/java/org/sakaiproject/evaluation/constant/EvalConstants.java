@@ -611,6 +611,7 @@ public class EvalConstants {
     * The numeric value stored when a student responds N/A
     */
    public static final Integer NA_VALUE = -1;
+   
    /**
     * The number stored for no numeric answer
     */

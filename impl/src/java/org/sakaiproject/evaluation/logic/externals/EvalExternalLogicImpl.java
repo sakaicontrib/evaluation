@@ -538,7 +538,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
 
       if (c == null) {
-         log.error("Could not get group from evalGroupId:" + evalGroupId);
+    	  // changed from error to debug because it is not an error if the group type is Provided
+         log.debug("Could not get group from evalGroupId:" + evalGroupId);
          // create a fake group placeholder as an error notice
          c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                EvalConstants.GROUP_TYPE_INVALID );

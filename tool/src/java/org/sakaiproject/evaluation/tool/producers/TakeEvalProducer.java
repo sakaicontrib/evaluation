@@ -385,7 +385,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
                   UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-            	   //TODO bug - tig.associatedId = "rwellis" and "mhaskins" returns Anonymous instructor
                   EvalUser instructor = commonLogic.getEvalUserById( tig.associateId );
                   UIMessage.make(categorySectionBranch, "categoryHeader", 
                         "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
