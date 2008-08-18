@@ -328,8 +328,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             }
          }
 
-         UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount});
-
          if (dti.usesComments()) {
             // render the comments
             UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
