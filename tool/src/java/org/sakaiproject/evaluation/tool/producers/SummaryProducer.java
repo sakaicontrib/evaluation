@@ -186,8 +186,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             // Map<Long, List<EvalGroup>> evalGroups =
             // evaluationService.getEvalGroupsForEval(evalIds, false, null);
             List<EvalGroup> groups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
-            // now fetch all the information we care about for these evaluations at once (for speed)
-            
+            // now fetch all the information we care about for these evaluations
+            // at once (for speed)
+
             List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -319,22 +320,50 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
                 UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
-                Date displayDate = null;
                 String evalState = evaluationService.updateEvaluationState(eval.getId());
                 if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
-                    displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_ACTIVE);
+                    // If we are in the queue we are yet to start -- so say when
+                    // we will
+
+                    UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.starts");
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getStartDate()));
+
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
-                    displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+                    // Active evaluations can either be open forever or close at
+                    // some point:
+                    if (eval.getDueDate() != null) {
+                        UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.due");
+                        UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getDueDate()));
+                        // Should probably add something here if there's a grace
+                        // period
+                    } else {
+                        UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.nevercloses");
+                    }
+
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
-                    displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_CLOSED);
+                    // Evaluations can have a grace period, if so that must
+                    // close at some point;
+                    // Grace periods never remain open forever
+                    UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.gracetill");
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getStopDate()));
+
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
-                    displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+                    // if an evaluation is closed then it is not yet viewable
+                    // and ViewDate must have been set
+                    UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.resultsviewableon");
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getViewDate()));
+
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
-                    displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+                    // FIXME if an evaluation is viewable we may want to notify
+                    // if
+                    // there are instructor/student dates
+                    UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.resultsviewablesince");
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(evalViewableOn(eval)));
+
                     int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
                     int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
@@ -346,7 +375,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                                 new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded })));
                     }
                 } else {
-                    displayDate = eval.getStartDate();
+                    UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.fallback");
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getStartDate()));
                 }
 
                 /*
@@ -364,8 +394,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                             EvaluationSettingsProducer.VIEW_ID, eval.getId()));
                 }
 
-                UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalState);
-                UIOutput.make(evalrow, "evalAdminDate", df.format(displayDate));
             }
         }
 
@@ -437,6 +465,23 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
     }
 
     /**
+     * Find out when an evaluation became first viewable.
+     * 
+     * @param eval
+     *            an evaluation
+     * @return the date results were first viewable on
+     */
+    private Date evalViewableOn(EvalEvaluation eval) {
+        if (eval.getViewDate() != null) {
+            return eval.getViewDate();
+        } else if (eval.getStopDate() != null) {
+            return eval.getStopDate();
+        } else {
+            return eval.getDueDate();
+        }
+    }
+
+    /**
      * Gets a date to display to the user depending on the state, guarantees to
      * return a date even if the dates are null
      * 
@@ -450,30 +495,20 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
      *            EVALUATION_STATE_CLOSED would get the due date
      * @return a displayable date
      */
-    private Date getDisplayableDate(EvalEvaluation eval, String evalState) {
-        Date date = null;
-        if (eval.getViewDate() != null && EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
-            date = eval.getViewDate();
-        } else {
-            if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
-                if (eval.getStopDate() != null) {
-                    date = eval.getStopDate();
-                } else if (eval.getDueDate() != null) {
-                    date = eval.getDueDate();
-                } else {
-                    // FIXME there's no due date so we give out a finishing date of the start?! 
-                    date = eval.getStartDate();
-                }
-            } else {
-                if (eval.getDueDate() != null && EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
-                    date = eval.getDueDate();
-                } else {
-                    date = eval.getStartDate();
-                }
-            }
-        }
-        return date;
-    }
+    /*
+     * private Date getDisplayableDate(EvalEvaluation eval, String evalState) {
+     * Date date = null; if (eval.getViewDate() != null &&
+     * EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) { date =
+     * eval.getViewDate(); } else { if
+     * (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) { if
+     * (eval.getStopDate() != null) { date = eval.getStopDate(); } else if
+     * (eval.getDueDate() != null) { date = eval.getDueDate(); } else { // FIXME
+     * there's no due date so we give out a finishing date of the start?! date =
+     * eval.getStartDate(); } } else { if (eval.getDueDate() != null &&
+     * EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) { date =
+     * eval.getDueDate(); } else { date = eval.getStartDate(); } } } return
+     * date; }
+     */
 
     /*
      * (non-Javadoc)
