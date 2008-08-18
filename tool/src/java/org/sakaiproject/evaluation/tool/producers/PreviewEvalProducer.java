@@ -42,12 +42,14 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -119,6 +121,10 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
       EvalEvaluation eval = null;
       EvalTemplate template = null;
 
+      UIInternalLink.make(tofill, "summary-link", 
+              UIMessage.make("summary.page.title"), 
+              new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      
       if (evaluationId == null) {
          // previewing a template
          UIMessage.make(tofill, "preview-title", "previeweval.template.title");
