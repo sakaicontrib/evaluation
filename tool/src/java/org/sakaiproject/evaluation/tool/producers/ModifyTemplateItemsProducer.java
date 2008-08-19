@@ -188,8 +188,10 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       }
 
       // add in existing items selection
-      templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
-      templateItemLabelList.add("item.classification.existing");
+      if ((Boolean) evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)){
+          templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
+          templateItemLabelList.add("item.classification.existing");
+      }
 
       // add in expert items choice if enabled
       Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
