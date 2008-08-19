@@ -85,7 +85,8 @@ var EvalSystem = function() {
         var hideButton = $(escIdForJquery(hideId));
         var area = $(escIdForJquery(areaId));
         var toggles = $(toggleClass == null ? null : "." + toggleClass);
-
+        
+        var togglearea = showButton.parent().parent();
         showButton.show();
         hideButton.show();
 
@@ -110,9 +111,19 @@ var EvalSystem = function() {
         } else {
             showAction();
         }
+        
+        var toggle = function(event) {
+        	showButton.toggle();
+        	hideButton.toggle();
+        	area.toggle("normal");
+        	toggles.toggle("normal");
+        	RSF.getDOMModifyFirer().fireEvent();
+        }
 
-        showButton.click( function (event) { showAction(event) });
-        hideButton.click( function (event) { hideAction(event) });
+        togglearea.click( function (event) { toggle(event) } );
+        
+        /*showButton.click( function (event) { showAction(event) });
+        hideButton.click( function (event) { hideAction(event) });*/
     },
 
     // this just makes it easier to add in more stuff later -AZ
