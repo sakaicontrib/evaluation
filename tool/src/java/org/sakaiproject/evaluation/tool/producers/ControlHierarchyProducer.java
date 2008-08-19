@@ -1,6 +1,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
 import uk.org.ponder.rsf.components.UIContainer;
@@ -30,6 +31,11 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
    private HierarchyRenderUtil hierUtil;
    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
       hierUtil = util;
+   }
+   
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+       this.evalSettings = evalSettings;
    }
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -62,9 +68,11 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       UIInternalLink.make(tofill, "control-templates-link",
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+          UIInternalLink.make(tofill, "control-items-link",
+                  UIMessage.make("controlitems.page.title"), 
+                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      }
 
       hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:");
 

@@ -11,6 +11,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -41,6 +42,11 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
     public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
        this.hierarchyLogic = hierarchyLogic;
     }
+
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+       this.evalSettings = evalSettings;
+   }
     
     public String getViewID() {
         return VIEW_ID;
@@ -70,9 +76,11 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         UIInternalLink.make(tofill, "control-templates-link",
               UIMessage.make("controltemplates.page.title"), 
               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "control-items-link",
-              UIMessage.make("controlitems.page.title"), 
-              new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+	    UIInternalLink.make(tofill, "control-items-link",
+		  UIMessage.make("controlitems.page.title"), 
+		  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  }
         UIInternalLink.make(tofill, "control-evaluations-link",
               UIMessage.make("controlevaluations.page.title"),
            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));

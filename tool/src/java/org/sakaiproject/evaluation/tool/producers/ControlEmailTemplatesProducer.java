@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.tool.locators.LineBreakResolver;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
@@ -66,6 +67,11 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
    private String DEFAULTS = "defaults";
    private String OTHERS = "others";
    private UIDecorator classDecorator = new UIStyleDecorator("inactive");
+   
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+       this.evalSettings = evalSettings;
+   }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -97,9 +103,12 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
       UIInternalLink.make(tofill, "control-templates-link",
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+          UIInternalLink.make(tofill, "control-items-link",
+                  UIMessage.make("controlitems.page.title"), 
+                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));    
+      }
+      
       UIInternalLink.make(tofill, "control-evaluations-link",
             UIMessage.make("controlevaluations.page.title"),
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));

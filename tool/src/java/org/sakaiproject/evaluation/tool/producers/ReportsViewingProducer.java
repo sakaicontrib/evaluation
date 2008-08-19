@@ -497,9 +497,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          UIInternalLink.make(tofill, "control-templates-link",
                UIMessage.make("controltemplates.page.title"), 
                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-items-link",
-               UIMessage.make("controlitems.page.title"), 
-               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+	     UIInternalLink.make(tofill, "control-items-link",
+		   UIMessage.make("controlitems.page.title"), 
+		   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  }
       } 
 
       if (beginEvaluation) {
