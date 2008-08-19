@@ -148,13 +148,6 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
          scaleOTP += scaleId + ".";
       }
 
-      /*
-       * top menu links and bread crumbs here
-       */
-      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("controlscales.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-
       UIForm form = UIForm.make(tofill, "basic-form");
 
       UIInput.make(form, "scale-title", scaleOTP + "title");
