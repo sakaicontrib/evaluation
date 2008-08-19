@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.sakaiproject.content.api.FilePickerHelper;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolSession;
 
@@ -70,8 +71,15 @@ public class ControlImportProducer implements
 	}
 	
 	private SessionManager sessionManager;
+
+    
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
+	}
+	
+	private EvalSettings evalSettings;
+	public void setEvalSettings(EvalSettings evalSettings) {
+	    this.evalSettings=evalSettings;
 	}
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -101,9 +109,11 @@ public class ControlImportProducer implements
       UIInternalLink.make(tofill, "control-templates-link",
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+          UIInternalLink.make(tofill, "control-items-link",
+                  UIMessage.make("controlitems.page.title"), 
+                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      }
 
 		//parameters for helper
 		ToolSession toolSession = sessionManager.getCurrentToolSession();

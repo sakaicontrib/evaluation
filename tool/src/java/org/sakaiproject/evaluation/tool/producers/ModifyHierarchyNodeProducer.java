@@ -6,6 +6,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
@@ -48,6 +49,11 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
       this.hierarchyLogic = hierarchyLogic;
    }
 
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+       this.evalSettings = evalSettings;
+   }
+
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
       String currentUserId = external.getCurrentUserId();
       boolean userAdmin = external.isUserAdmin(currentUserId);
@@ -72,9 +78,11 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
       UIInternalLink.make(tofill, "control-templates-link",
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+	  UIInternalLink.make(tofill, "control-items-link",
+		UIMessage.make("controlitems.page.title"), 
+		new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  }
       UIInternalLink.make(tofill, "control-evaluations-link",
             UIMessage.make("controlevaluations.page.title"),
          new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));

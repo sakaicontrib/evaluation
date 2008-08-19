@@ -7,6 +7,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 
@@ -60,6 +61,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewPa
       this.reportingPermissions = perms;
    }
 
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+       this.evalSettings = evalSettings;
+   }
+
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -91,9 +97,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewPa
          UIInternalLink.make(tofill, "control-templates-link",
                UIMessage.make("controltemplates.page.title"), 
                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-items-link",
-               UIMessage.make("controlitems.page.title"), 
-               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  if ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+	     UIInternalLink.make(tofill, "control-items-link",
+		   UIMessage.make("controlitems.page.title"), 
+		   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	  }
       } else {
          throw new SecurityException("User attempted to access " + 
                VIEW_ID + " when they are not allowed");

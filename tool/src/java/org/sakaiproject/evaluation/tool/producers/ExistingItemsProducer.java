@@ -20,6 +20,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.viewparams.ChooseItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -75,6 +76,11 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
    }
+   
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings){
+      this.evalSettings = evalSettings;
+   }
 
 
    /* (non-Javadoc)
@@ -108,9 +114,11 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
          UIInternalLink.make(tofill, "control-templates-link",
                UIMessage.make("controltemplates.page.title"), 
                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-items-link",
-               UIMessage.make("controlitems.page.title"), 
-               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+         if ((Boolean) evalSettings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+             UIInternalLink.make(tofill, "control-items-link",
+                     UIMessage.make("controlitems.page.title"), 
+                     new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+         }
       } else {
          throw new SecurityException("User attempted to access " + 
                VIEW_ID + " when they are not allowed");
