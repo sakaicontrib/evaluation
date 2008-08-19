@@ -112,7 +112,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
          UIInternalLink.make(tofill, "control-templates-link",
                UIMessage.make("controltemplates.page.title"), 
                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-	  if ((Boolean)settings.get(EvalSettings.ENABLE_MY_QUESTION_BANK)) {
+	  if ((Boolean)settings.get(EvalSettings.ENABLE_ITEM_BANK)) {
 	     UIInternalLink.make(tofill, "control-items-link",
 		   UIMessage.make("controlitems.page.title"), 
 		   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
