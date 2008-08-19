@@ -275,9 +275,9 @@ public interface EvalSettings {
    public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
    
    /**
-    * If this is enabled then users will be allowed to use My Question Bank features 
+    * If this is enabled then users will be allowed to use Item Bank features 
     */
-   public static final String ENABLE_MY_QUESTION_BANK = "ENABLE_MY_QUESTION_BANK:java.lang.Boolean";
+   public static final String ENABLE_ITEM_BANK = "ENABLE_ITEM_BANK:java.lang.Boolean";
 
    /**
     * This is here to identify all the boolean ONLY settings in the system,
@@ -298,7 +298,7 @@ public interface EvalSettings {
       ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
       ENABLE_ITEM_COMMENTS,
-      ENABLE_MY_QUESTION_BANK,
+      ENABLE_ITEM_BANK,
       ENABLE_NOT_AVAILABLE,
       ENABLE_SINGLE_EMAIL_PER_STUDENT,
       ENABLE_PDF_REPORT_BANNER,
