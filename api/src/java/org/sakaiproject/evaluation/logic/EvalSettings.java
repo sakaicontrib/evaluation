@@ -280,6 +280,11 @@ public interface EvalSettings {
    public static final String ENABLE_ITEM_BANK = "ENABLE_ITEM_BANK:java.lang.Boolean";
 
    /**
+    * If this is enabled then users will be allowed group "rating questions" together into a question block
+    */
+   public static final String ENABLE_QUESTION_BLOCKS = "ENABLE_QUESTION_BLOCKS:java.lang.Boolean";
+   
+   /**
     * This is here to identify all the boolean ONLY settings in the system,
     * this does not include Booleans which are configurable (i.e. can be set to null, true, or false)
     * but only includes the booleans which are always true or false
@@ -303,6 +308,7 @@ public interface EvalSettings {
       ENABLE_SINGLE_EMAIL_PER_STUDENT,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
+      ENABLE_QUESTION_BLOCKS,
       ENABLE_SUMMARY_SITES_BOX,
       ENABLE_XLS_REPORT_EXPORT,
       EVAL_USE_DATE_TIME,
