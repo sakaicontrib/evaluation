@@ -87,9 +87,11 @@ var EvalSystem = function() {
         var toggles = $(toggleClass == null ? null : "." + toggleClass);
         
         var togglearea = showButton.parent().parent();
+        
         showButton.show();
         hideButton.show();
-
+        showButton.parent().next().wrap("<a href=\"#\"></a>");
+        
         var showAction = function(event) {
             showButton.hide();
             hideButton.show();
