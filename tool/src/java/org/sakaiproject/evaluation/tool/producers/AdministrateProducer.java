@@ -351,6 +351,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-item-results-sharing",  EvalSettings.ITEM_USE_RESULTS_SHARING);
       makeBoolean(form, "general-enable-importing",  EvalSettings.ENABLE_IMPORTING);
       makeBoolean(form, "general-enable-item-bank", EvalSettings.ENABLE_ITEM_BANK);
+      makeBoolean(form, "general-enable-question-blocks", EvalSettings.ENABLE_QUESTION_BLOCKS);
 
       // Save settings button
       // NB no action now required
