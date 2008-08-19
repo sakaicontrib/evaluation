@@ -259,6 +259,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             itemNumArr[h] = Integer.toString(h + 1);
          }
 
+         boolean questionBlocksEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_QUESTION_BLOCKS);
+
          for (int i = 0; i < templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
             sCurItemNum = Integer.toString(i);
@@ -271,8 +273,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIInput.make(itemBranch, "hidden-item-num", templateItemOTP + "displayOrder", sCurItemNum);
 
             // only show Block Check box for scaled and block parents
-            if ( templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) ||
-                  templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) ) {
+            if ( questionBlocksEnabled && (templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) ||
+                  templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) )) {
                UIOutput checkBranch = UIOutput.make(itemBranch, "block-check-branch");
                UIBoundBoolean blockCB = UIBoundBoolean.make(itemBranch, "block-checkbox", Boolean.FALSE);
                // we have to force the id so the JS block checking can work
@@ -421,12 +423,15 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             new Object[] { "", Integer.toString(templateItemsList.size()) } );
 
       // the create block form
-      UIForm blockForm = UIForm.make(tofill, "createBlockForm",
-            new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
-      UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
-      createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
+      if ((Boolean) evalSettings.get(EvalSettings.ENABLE_QUESTION_BLOCKS)) {
+          UIForm blockForm = UIForm.make(tofill, "createBlockForm",
+                  new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
+          UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
+          createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
 
-      UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
+          UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
+      }
+
    }
 
    /* (non-Javadoc)
