@@ -112,18 +112,6 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		    try
 			{	
 		    	externalLogic.setSessionUserIdAdmin(m_currentUserId);
-				/* set the current user to admin
-				Session s = sessionManager.getCurrentSession();
-				if (s != null)
-				{
-					s.setUserId(userDirectoryService.ADMIN_ID);
-				}
-				else
-				{
-					Log.warn("chef", this + ".run() - Session is null, cannot set user id to ADMIN_ID user");
-				}
-		    	*/
-		    	
 				if(m_id != null) {
 					evalImport.process(m_id, m_currentUserId);
 				}
