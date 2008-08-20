@@ -108,13 +108,17 @@
         </property>
     </bean>
 
+    <!-- see CTL-1214, RSF-123, RootHandlerBeanOverride and OverridedServletRoot: 
+         also reportHandlerHook no longer implements HandlerHook -->
+    <!--  
     <bean parent="handlerHookParent">
         <property name="value">
             <bean parent="RSACBridgeProxy">
                 <property name="targetBeanName" value="reportHandlerHook" />
             </bean>
         </property>
-    </bean>
+    </bean> 
+    -->
 
     <!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
     <bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
