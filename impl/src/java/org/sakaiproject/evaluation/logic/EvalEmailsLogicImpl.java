@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -575,7 +576,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		String url = null, message = null, subject = null, to = null;
 		Map<String, String> replacementValues = new HashMap<String, String>();
 		List<String> recipients = new ArrayList<String>();
-		List<String> sentEmails = new ArrayList<String>();
+		List<String> sentToAddresses = new ArrayList<String>();
 		Set<Long> emailTemplateIds = new HashSet<Long>();
 		EvalEmailTemplate template = null;
 		String userId = null;
@@ -613,16 +614,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					//send the mail
 			        String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
 			         
-			         // store sent emails to return
+			         // accumulate the addresses of email recipients
 			         for (int j = 0; j < emailAddresses.length; j++) {
-			            sentEmails.add(emailAddresses[j]);            
+			        	 sentToAddresses.add(emailAddresses[j]);            
 			         }
 			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
-					if (logEmailRecipients.booleanValue()) {
-						to = ((EvalUser)externalLogic.getEvalUserById(s)).email;
-						recipients.add(to);
-						// log batches of emails sent and pause between batches
-					}
+			         
+			        // handle throttling email delivery and logging progress
 					numProcessed = logEmailsProcessed(batch, wait, modulo, numProcessed);
 				}
 			} catch (Exception e) {
@@ -630,12 +628,51 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						+ "', url '" + url + "' " + e);
 			}
 		}
-		// log total number processed
+		// handle logging of total number of email messages processed
 		if(metric.isInfoEnabled())
 			metric.info("Metric " + numProcessed + " emails processed in total.");
-		return (String[]) sentEmails.toArray(new String[] {});
+		
+		// handle logging of email recipients
+		if(logEmailRecipients.booleanValue())
+			logRecipients(sentToAddresses);
+		
+		return (String[]) sentToAddresses.toArray(new String[] {});
 	}
-
+   
+   /**
+    * If metrics logger for class is set with info level logging,
+    * log a sorted list of email recipients at end of job 10 per line
+    * 
+    * @param sentToAddresses
+    */
+   private void logRecipients(List<String> sentToAddresses) {
+	   Collections.sort(sentToAddresses);
+	   StringBuffer sb = new StringBuffer();
+	   String line = null;
+	   int size = sentToAddresses.size();
+	   int cnt = 0;
+	   for(int i = 0; i < size; i++) {
+		   if(cnt > 0)
+			   sb.append(",");
+		   sb.append((String)sentToAddresses.get(i));
+		   cnt++;
+		   //TODO number of addresses per line below should be configurable
+		   if((i+1) % 10 == 0) {
+			   line = sb.toString();
+			   if(metric.isInfoEnabled())
+				   metric.info("Metric: email sent to " + line);
+				//write a line and empty the buffer
+				sb.setLength(0);
+				cnt = 0;
+			}
+		}
+		//if anything hasn't been written out do it now
+		if(sb.length() > 0) {
+			line = sb.toString();
+			if (log.isWarnEnabled())
+				log.warn("Metric: email sent to " + line);
+		}
+   }
 
    /**
     * If metrics logger for class is set with info level logging,
@@ -649,7 +686,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
 		int numProcessed) {
-		numProcessed = numProcessed++;
+		numProcessed = numProcessed + 1;
 		if(numProcessed > 0) {
 			if ((numProcessed % modulo.intValue()) == 0) {
 				if(metric.isInfoEnabled())

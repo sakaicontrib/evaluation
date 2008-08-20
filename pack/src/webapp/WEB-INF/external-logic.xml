@@ -31,6 +31,7 @@
    		ref="org.sakaiproject.component.api.ServerConfigurationService" />
    	<property name="sessionManager"
    		ref="org.sakaiproject.tool.api.SessionManager" />
+   	<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    	<property name="siteService"
    		ref="org.sakaiproject.site.api.SiteService" />
    	<property name="toolManager"
