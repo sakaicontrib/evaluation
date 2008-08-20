@@ -418,14 +418,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getMyWorkspaceUrl(java.lang.String)
     */
-   public String getMyWorkspaceUrl(String userEid) {
+   public String getMyWorkspaceUrl(String userId) {
 	   String url = null;
 	   try {
-		   String userId = userDirectoryService.getUserByEid(userEid).getId();
 		   String toolPage = null;
 		   //userId is Sakai id
 		   if(userId == null || userId.length() == 0) {
-			   log.error("getMyWorkspaceUrl(String userEid) userId is null or empty.");
+			   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
 		   }
 		   else {
 			   String myWorkspaceId = siteService.getUserSiteId(userId);
@@ -446,7 +445,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
 			   }
 	   } catch (Exception e) {
-		   log.error("getMyWorkspaceUrl(String userEid) '" + userEid + "' " + e);
+		   log.error("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
 	   }
 	   return url;
 	}

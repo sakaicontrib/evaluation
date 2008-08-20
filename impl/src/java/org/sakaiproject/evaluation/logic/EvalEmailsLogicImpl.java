@@ -539,7 +539,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    /**
     * Send one email per email template used for the active evaluations for a user
     * 
-    * @param uniqueIds the identities of the users to be notified
+    * @param uniqueIds the Sakai identities of the users to be notified
     * @param subjectConstant the email subject template
     * @param textConstant the email text template
     * @return an array of the email addresses to which email was sent
@@ -581,15 +581,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		String userId = null;
 		String earliestDueDate = null;
 		int numProcessed = 0;
-		// uniqueIds are user usernames (eid's)
+		// uniqueIds are user ids
 		for (String s : uniqueIds) {
 			try {
 				replacementValues.clear();
 				// direct link to summary page of tool on My Worksite
 				url = externalLogic.getMyWorkspaceUrl(s);
 				replacementValues.put("MyWorkspaceDashboard", url);
-				userId = externalLogic.getUserId(s);
-				earliestDueDate = evaluationService.getEarliestDueDate(userId);
+				//userId = externalLogic.getUserId(s);
+				//earliestDueDate = evaluationService.getEarliestDueDate(userId);
+				earliestDueDate = evaluationService.getEarliestDueDate(s);
 				replacementValues.put("EarliestEvalDueDate", earliestDueDate);
 				replacementValues.put("HelpdeskEmail", from);
 				replacementValues.put("EvalToolTitle", EvalConstants.EVAL_TOOL_TITLE);
@@ -598,7 +599,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 				//get the email template ids for this user
 				emailTemplateIds = emailTemplatesMap.get(s);
-				toUserIds = new String[] { userId };
+				//toUserIds = new String[] { userId };
+				toUserIds = new String[] { s };
 				
 				for(Long i : emailTemplateIds) {
 					//get the template
@@ -624,7 +626,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					numProcessed = logEmailsProcessed(batch, wait, modulo, numProcessed);
 				}
 			} catch (Exception e) {
-				log.error("sendEvalConsolidatedNotification() User id '" + s
+				log.error("sendEvalSingleEmail() User id '" + s
 						+ "', url '" + url + "' " + e);
 			}
 		}
