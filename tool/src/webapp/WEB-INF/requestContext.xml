@@ -88,6 +88,17 @@
         <property name="response" ref="httpServletResponse" />
     </bean>
 
+	<!-- Bean override for rootHandlerHook see RSF-123 and CTL-1214 -->
+	<bean id="rootHandlerBean" class="org.sakaiproject.evaluation.tool.utils.RootHandlerBeanOverride" init-method="handle">
+		<property name="rootHandlerBeanBase" ref="overridedRootHandlerBean"/>
+		<property name="reportHandlerHook" ref="reportHandlerHook"/>
+	</bean>
+
+	<bean id="overridedRootHandlerBean" parent="rootHandlerBeanBase" init-method="doNothing" class="org.sakaiproject.evaluation.tool.utils.OverridedServletRootHandlerBean">
+    	<property name="httpServletRequest" ref="httpServletRequest" />
+    	<property name="httpServletResponse" ref="httpServletResponse" />
+  	</bean>
+
     <bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports"
         class="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports">
         <property name="reportingPermissions"

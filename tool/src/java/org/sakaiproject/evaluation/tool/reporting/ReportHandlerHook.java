@@ -30,7 +30,6 @@ import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 
-import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -40,7 +39,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ReportHandlerHook implements HandlerHook {
+public class ReportHandlerHook {
 
    private static Log log = LogFactory.getLog(ReportHandlerHook.class);
 

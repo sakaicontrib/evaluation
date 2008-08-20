@@ -277,8 +277,10 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportViewParamsInterce
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalResponseAggregatorUtil.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/utils/OverridedServletRootHandlerBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RenderingUtils.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/utils/RootHandlerBeanOverride.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdhocGroupParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
