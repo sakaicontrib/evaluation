@@ -1,72 +1,72 @@
 
     create table EVAL_ADHOC_EVALUATEES (
         GROUP_ID number(19,0) not null,
-        USER_ID varchar2(255) not null,
+        USER_ID varchar2(255 char) not null,
         EVALUATEES_INDEX number(10,0) not null,
         primary key (GROUP_ID, EVALUATEES_INDEX)
     );
 
     create table EVAL_ADHOC_GROUP (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        TITLE varchar2(255),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        TITLE varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_ADHOC_PARTICIPANTS (
         GROUP_ID number(19,0) not null,
-        USER_ID varchar2(255) not null,
+        USER_ID varchar2(255 char) not null,
         PARTICIPANTS_INDEX number(10,0) not null,
         primary key (GROUP_ID, PARTICIPANTS_INDEX)
     );
 
     create table EVAL_ADHOC_USER (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        EMAIL varchar2(255) not null unique,
-        USER_TYPE varchar2(255),
-        USERNAME varchar2(255) unique,
-        DISPLAY_NAME varchar2(255),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        EMAIL varchar2(255 char) not null unique,
+        USER_TYPE varchar2(255 char),
+        USERNAME varchar2(255 char) unique,
+        DISPLAY_NAME varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_ANSWER (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
+        LAST_MODIFIED timestamp not null,
         TEMPLATEITEM_FK number(19,0) not null,
         ITEM_FK number(19,0),
         RESPONSE_FK number(19,0) not null,
         TEXT_ANSWER clob,
         NUM_ANSWER number(10,0),
-        MULTI_ANSWER_CODE varchar2(255),
-        ASSOCIATED_ID varchar2(255),
-        ASSOCIATED_TYPE varchar2(255),
+        MULTI_ANSWER_CODE varchar2(255 char),
+        ASSOCIATED_ID varchar2(255 char),
+        ASSOCIATED_TYPE varchar2(255 char),
         COMMENT_ANSWER clob,
         primary key (ID)
     );
 
     create table EVAL_ASSIGN_GROUP (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        group_id varchar2(255) not null,
-        group_type varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        group_id varchar2(255 char) not null,
+        group_type varchar2(255 char) not null,
         INSTRUCTOR_APPROVAL number(1,0) not null,
         INSTRUCTORS_VIEW_RESULTS number(1,0) not null,
         STUDENTS_VIEW_RESULTS number(1,0) not null,
         EVALUATION_FK number(19,0) not null,
-        NODE_ID varchar2(255),
+        NODE_ID varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_ASSIGN_HIERARCHY (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        NODE_ID varchar2(255) not null,
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        NODE_ID varchar2(255 char) not null,
         INSTRUCTOR_APPROVAL number(1,0) not null,
         INSTRUCTORS_VIEW_RESULTS number(1,0) not null,
         STUDENTS_VIEW_RESULTS number(1,0) not null,
@@ -76,106 +76,106 @@
 
     create table EVAL_CONFIG (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        NAME varchar2(255) not null unique,
-        VALUE varchar2(255) not null,
+        LAST_MODIFIED timestamp not null,
+        NAME varchar2(255 char) not null unique,
+        VALUE varchar2(255 char) not null,
         primary key (ID)
     );
 
     create table EVAL_EMAIL_TEMPLATE (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        TEMPLATE_TYPE varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        TEMPLATE_TYPE varchar2(255 char) not null,
         SUBJECT clob not null,
         MESSAGE clob not null,
-        defaultType varchar2(255),
+        defaultType varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_EVALUATION (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        EVAL_TYPE varchar2(255) default 'Evaluation' not null,
-        OWNER varchar2(255) not null,
-        TITLE varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        EVAL_TYPE varchar2(255 char) default 'Evaluation' not null,
+        OWNER varchar2(255 char) not null,
+        TITLE varchar2(255 char) not null,
         INSTRUCTIONS clob,
-        START_DATE date not null,
-        DUE_DATE date,
-        STOP_DATE date,
-        VIEW_DATE date,
+        START_DATE timestamp not null,
+        DUE_DATE timestamp,
+        STOP_DATE timestamp,
+        VIEW_DATE timestamp,
         STUDENT_VIEW_RESULTS number(1,0),
         INSTRUCTOR_VIEW_RESULTS number(1,0),
-        STUDENTS_DATE date,
-        INSTRUCTORS_DATE date,
-        STATE varchar2(255) not null,
-        INSTRUCTOR_OPT varchar2(255),
+        STUDENTS_DATE timestamp,
+        INSTRUCTORS_DATE timestamp,
+        STATE varchar2(255 char) not null,
+        INSTRUCTOR_OPT varchar2(255 char),
         REMINDER_DAYS number(10,0) not null,
-        REMINDER_FROM_EMAIL varchar2(255),
-        TERM_ID varchar2(255),
+        REMINDER_FROM_EMAIL varchar2(255 char),
+        TERM_ID varchar2(255 char),
         AVAILABLE_EMAIL_SENT number(1,0),
         AVAILABLE_EMAIL_TEMPLATE_FK number(19,0),
         REMINDER_EMAIL_TEMPLATE_FK number(19,0),
         TEMPLATE_FK number(19,0) not null,
-        RESULTS_SHARING varchar2(255) default 'visible' not null,
+        RESULTS_SHARING varchar2(255 char) default 'visible' not null,
         BLANK_RESPONSES_ALLOWED number(1,0),
         MODIFY_RESPONSES_ALLOWED number(1,0),
         UNREGISTERED_ALLOWED number(1,0),
         LOCKED number(1,0),
-        AUTH_CONTROL varchar2(255),
-        EVAL_CATEGORY varchar2(255),
-        AUTO_USE_TAG varchar2(255),
-        AUTO_USE_INSERTION varchar2(255),
+        AUTH_CONTROL varchar2(255 char),
+        EVAL_CATEGORY varchar2(255 char),
+        AUTO_USE_TAG varchar2(255 char),
+        AUTO_USE_INSERTION varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_GROUPNODES (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        NODE_ID varchar2(255) not null,
+        LAST_MODIFIED timestamp not null,
+        NODE_ID varchar2(255 char) not null,
         primary key (ID)
     );
 
     create table EVAL_GROUPNODES_GROUPS (
         ID number(19,0) not null,
-        GROUPS varchar2(255) not null,
+        GROUPS varchar2(255 char) not null,
         GROUPS_INDEX number(10,0) not null,
         primary key (ID, GROUPS_INDEX)
     );
 
     create table EVAL_ITEM (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
         ITEM_TEXT clob not null,
         DESCRIPTION clob,
-        SHARING varchar2(255) not null,
-        CLASSIFICATION varchar2(255) not null,
+        SHARING varchar2(255 char) not null,
+        CLASSIFICATION varchar2(255 char) not null,
         EXPERT number(1,0) not null,
         EXPERT_DESCRIPTION clob,
         SCALE_FK number(19,0),
         USES_NA number(1,0),
         USES_COMMENT number(1,0),
         DISPLAY_ROWS number(10,0),
-        SCALE_DISPLAY_SETTING varchar2(255),
-        CATEGORY varchar2(255),
+        SCALE_DISPLAY_SETTING varchar2(255 char),
+        CATEGORY varchar2(255 char),
         LOCKED number(1,0),
         COPY_OF number(19,0),
         HIDDEN number(1,0),
-        AUTO_USE_TAG varchar2(255),
+        AUTO_USE_TAG varchar2(255 char),
         IG_ITEM_ID number(19,0),
         primary key (ID)
     );
 
     create table EVAL_ITEMGROUP (
         ID number(19,0) not null,
-        LAST_MODIFIED date,
-        OWNER varchar2(255) not null,
-        type varchar2(255) not null,
-        title varchar2(80) not null,
+        LAST_MODIFIED timestamp,
+        OWNER varchar2(255 char) not null,
+        type varchar2(255 char) not null,
+        title varchar2(80 char) not null,
         description clob,
         EXPERT number(1,0),
         GROUP_PARENT_FK number(19,0),
@@ -184,19 +184,19 @@
 
     create table EVAL_LOCK (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        NAME varchar2(255) not null unique,
-        HOLDER varchar2(255) not null,
+        LAST_MODIFIED timestamp not null,
+        NAME varchar2(255 char) not null unique,
+        HOLDER varchar2(255 char) not null,
         primary key (ID)
     );
 
     create table EVAL_RESPONSE (
         ID number(19,0) not null,
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        GROUP_ID varchar2(255) not null,
-        START_TIME date not null,
-        END_TIME date,
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        GROUP_ID varchar2(255 char) not null,
+        START_TIME timestamp not null,
+        END_TIME timestamp,
         EVALUATION_FK number(19,0) not null,
         COMMENT_RESPONSE clob,
         primary key (ID)
@@ -204,15 +204,15 @@
 
     create table EVAL_SCALE (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        TITLE varchar2(255) not null,
-        SCALE_MODE varchar2(255) not null,
-        SHARING varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        TITLE varchar2(255 char) not null,
+        SCALE_MODE varchar2(255 char) not null,
+        SHARING varchar2(255 char) not null,
         EXPERT number(1,0) not null,
         EXPERT_DESCRIPTION clob,
-        IDEAL varchar2(255),
+        IDEAL varchar2(255 char),
         LOCKED number(1,0),
         COPY_OF number(19,0),
         HIDDEN number(1,0),
@@ -221,80 +221,80 @@
 
     create table EVAL_SCALE_OPTIONS (
         ID number(19,0) not null,
-        SCALE_OPTION varchar2(255) not null,
+        SCALE_OPTION varchar2(255 char) not null,
         SCALE_OPTION_INDEX number(10,0) not null,
         primary key (ID, SCALE_OPTION_INDEX)
     );
 
     create table EVAL_TAGS (
         ID number(19,0) not null,
-        LAST_MODIFIED date,
-        TAG varchar2(255) not null,
-        ENTITY_TYPE varchar2(255) not null,
-        ENTITY_ID varchar2(255) not null,
+        LAST_MODIFIED timestamp,
+        TAG varchar2(255 char) not null,
+        ENTITY_TYPE varchar2(255 char) not null,
+        ENTITY_ID varchar2(255 char) not null,
         primary key (ID)
     );
 
     create table EVAL_TAGS_META (
         ID number(19,0) not null,
-        LAST_MODIFIED date,
-        OWNER varchar2(255) not null,
-        TAG varchar2(255) not null,
-        TITLE varchar2(255),
+        LAST_MODIFIED timestamp,
+        OWNER varchar2(255 char) not null,
+        TAG varchar2(255 char) not null,
+        TITLE varchar2(255 char),
         DESCRIPTION clob,
         primary key (ID)
     );
 
     create table EVAL_TEMPLATE (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
-        TYPE varchar2(255) not null,
-        TITLE varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
+        TYPE varchar2(255 char) not null,
+        TITLE varchar2(255 char) not null,
         DESCRIPTION clob,
-        SHARING varchar2(255) not null,
+        SHARING varchar2(255 char) not null,
         EXPERT number(1,0) not null,
         expertDescription clob,
         LOCKED number(1,0),
         COPY_OF number(19,0),
         HIDDEN number(1,0),
-        AUTO_USE_TAG varchar2(255),
+        AUTO_USE_TAG varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_TEMPLATEITEM (
         ID number(19,0) not null,
-        EID varchar2(255),
-        LAST_MODIFIED date not null,
-        OWNER varchar2(255) not null,
+        EID varchar2(255 char),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar2(255 char) not null,
         template_id number(19,0) not null,
         item_id number(19,0) not null,
         DISPLAY_ORDER number(10,0) not null,
-        ITEM_CATEGORY varchar2(255) not null,
-        HIERARCHY_LEVEL varchar2(255) not null,
-        HIERARCHY_NODE_ID varchar2(255) not null,
+        ITEM_CATEGORY varchar2(255 char) not null,
+        HIERARCHY_LEVEL varchar2(255 char) not null,
+        HIERARCHY_NODE_ID varchar2(255 char) not null,
         DISPLAY_ROWS number(10,0),
-        SCALE_DISPLAY_SETTING varchar2(255),
+        SCALE_DISPLAY_SETTING varchar2(255 char),
         USES_NA number(1,0),
         USES_COMMENT number(1,0),
         BLOCK_PARENT number(1,0),
         BLOCK_ID number(19,0),
-        RESULTS_SHARING varchar2(255),
+        RESULTS_SHARING varchar2(255 char),
         COPY_OF number(19,0),
         HIDDEN number(1,0),
-        AUTO_USE_TAG varchar2(255),
-        AUTO_USE_INSERT_TAG varchar2(255),
+        AUTO_USE_TAG varchar2(255 char),
+        AUTO_USE_INSERT_TAG varchar2(255 char),
         primary key (ID)
     );
 
     create table EVAL_TRANSLATION (
         ID number(19,0) not null,
-        LAST_MODIFIED date,
-        LANGUAGE_CODE varchar2(255) not null,
-        OBJECT_CLASS varchar2(255) not null,
-        OBJECT_ID varchar2(255) not null,
-        FIELD_NAME varchar2(255) not null,
+        LAST_MODIFIED timestamp,
+        LANGUAGE_CODE varchar2(255 char) not null,
+        OBJECT_CLASS varchar2(255 char) not null,
+        OBJECT_ID varchar2(255 char) not null,
+        FIELD_NAME varchar2(255 char) not null,
         TRANSLATION clob not null,
         primary key (ID)
     );
