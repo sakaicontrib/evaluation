@@ -84,6 +84,7 @@
 
     create table EVAL_EMAIL_TEMPLATE (
         ID numeric(19,0) identity not null,
+        EID varchar(255) null,
         LAST_MODIFIED datetime not null,
         OWNER varchar(255) not null,
         TEMPLATE_TYPE varchar(255) not null,
@@ -114,6 +115,7 @@
         REMINDER_DAYS int not null,
         REMINDER_FROM_EMAIL varchar(255) null,
         TERM_ID varchar(255) null,
+        AVAILABLE_EMAIL_SENT tinyint null,
         AVAILABLE_EMAIL_TEMPLATE_FK numeric(19,0) null,
         REMINDER_EMAIL_TEMPLATE_FK numeric(19,0) null,
         TEMPLATE_FK numeric(19,0) not null,
@@ -351,6 +353,8 @@
     create index eval_templ_type on EVAL_EMAIL_TEMPLATE (TEMPLATE_TYPE);
 
     create index eval_templ_owner on EVAL_EMAIL_TEMPLATE (OWNER);
+
+    create index eval_emailtemplate_eid on EVAL_EMAIL_TEMPLATE (EID);
 
     create index eval_eval_term on EVAL_EVALUATION (TERM_ID);
 
