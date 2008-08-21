@@ -567,8 +567,10 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       }
       
       // FIXME figure out what anonymised surveys do.
-      UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new ListOfEvaluationTakersViewParams(
-              "exportListOfEvaluationTakers", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
+      if (!evaluation.getUnregisteredAllowed()) {
+          UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new ListOfEvaluationTakersViewParams(
+                  "exportListOfEvaluationTakers", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
+      }
    }
 
 
