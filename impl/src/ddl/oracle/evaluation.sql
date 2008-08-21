@@ -485,4 +485,4 @@
 
     create index eval_trans_langcode on EVAL_TRANSLATION (LANGUAGE_CODE);
 
-    create sequence hibernate_sequence;
+    -- create sequence hibernate_sequence;
