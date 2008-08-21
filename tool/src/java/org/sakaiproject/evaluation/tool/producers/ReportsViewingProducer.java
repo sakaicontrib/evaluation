@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
+import org.sakaiproject.evaluation.tool.viewparams.ListOfEvaluationTakersViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
@@ -564,6 +565,10 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
                "pdfResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
       }
+      
+      // FIXME figure out what anonymised surveys do.
+      UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new ListOfEvaluationTakersViewParams(
+              "exportListOfEvaluationTakers", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
    }
 
 
