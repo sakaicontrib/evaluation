@@ -225,11 +225,9 @@
         </property>	
     </bean>
     <!-- FIXME -->
-    <bean id="CSVTakersExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
+    <bean id="CSVTakersExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVTakersReportExporter">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evalResponseAggregatorUtil"
-            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
         <property name="messageLocator" ref="messageLocator" />
     </bean>
     <bean id="CSVReportExporter"
@@ -315,18 +313,23 @@
     <bean parent="viewParamsRegistrarParent">
         <property name="viewID" value="csvResultsReport" />
         <property name="viewParamsClass"
-            value="org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams" />
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
 
     <bean parent="viewParamsRegistrarParent">
         <property name="viewID" value="xlsResultsReport" />
         <property name="viewParamsClass"
-            value="org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams" />
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
 
     <bean parent="viewParamsRegistrarParent">
         <property name="viewID" value="pdfResultsReport" />
         <property name="viewParamsClass"
-            value="org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams" />
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+    <bean parent="viewParamsRegistrarParent">
+    	<property name="viewID" value="csvTakersReport"/>
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
 </beans>

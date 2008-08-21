@@ -33,10 +33,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
-import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
-import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
-import org.sakaiproject.evaluation.tool.viewparams.ListOfEvaluationTakersViewParams;
-import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
+import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -550,26 +547,26 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
       Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
       if (allowCSVExport != null && allowCSVExport == true) {
-         UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
+         UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new DownloadReportViewParams(
                "csvResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
       }
 
       Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
       if (allowXLSExport != null && allowXLSExport == true) {
-         UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
+         UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new DownloadReportViewParams(
                "xlsResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xls"));
       }
 
       Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
       if (allowPDFExport != null && allowPDFExport == true) {
-         UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
+         UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new DownloadReportViewParams(
                "pdfResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
       }
       
       // FIXME figure out what anonymised surveys do.
       if (!evaluation.getUnregisteredAllowed()) {
-          UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new ListOfEvaluationTakersViewParams(
-                  "exportListOfEvaluationTakers", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
+          UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new DownloadReportViewParams(
+                  "csvTakersReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
       }
    }
 

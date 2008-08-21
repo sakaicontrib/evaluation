@@ -14,24 +14,13 @@
 
 package org.sakaiproject.evaluation.tool.reporting;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.ReportingPermissions;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
-import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
-import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * Handles the generation of files for exporting results
