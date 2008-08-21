@@ -266,6 +266,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleChoiceRenderer.
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/CSVReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/CSVTakersReportExporter.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/CurrentViewableReports.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalLikertChartBuilder.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalPDFReportBuilder.java -text svn_keywords=Date+Revision+Author+URL+Id
