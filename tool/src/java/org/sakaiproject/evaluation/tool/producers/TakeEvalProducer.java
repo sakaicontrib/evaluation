@@ -382,7 +382,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
                UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
                // handle printing the category header
-               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                   UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                   EvalUser instructor = commonLogic.getEvalUserById( tig.associateId );
