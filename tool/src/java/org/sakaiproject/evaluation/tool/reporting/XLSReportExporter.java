@@ -254,4 +254,8 @@ public class XLSReportExporter implements ReportExporter {
       return cell;
    }
 
+   public String getContentType() {
+       return "application/vnd.ms-excel";
+   }
+
 }

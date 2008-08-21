@@ -208,6 +208,30 @@
     <bean class="org.sakaiproject.evaluation.tool.inferrers.ItemVPInferrer" />
 
     <!-- Reporting Utilities -->
+    <bean id="reportExporterBean" class="org.sakaiproject.evaluation.tool.reporting.ReportExporterBean">
+    	<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="reportingPermissions"
+            ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+        <property name="exportersMap">
+        	<map>
+        		<entry key="csvResultsReport" value-ref="CSVReportExporter"/>
+        		<entry key="xlsResultsReport" value-ref="XLSReportExporter"/>
+        		<entry key="pdfResultsReport" value-ref="PDFReportExporter"/>
+        		<entry key="csvTakersReport" value-ref="CSVTakersExporter"/>
+        	</map>
+        </property>	
+    </bean>
+    <!-- FIXME -->
+    <bean id="CSVTakersExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalResponseAggregatorUtil"
+            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
     <bean id="CSVReportExporter"
         class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
         <property name="commonLogic"
