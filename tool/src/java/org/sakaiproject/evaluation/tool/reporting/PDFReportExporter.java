@@ -225,4 +225,8 @@ public class PDFReportExporter implements ReportExporter {
          log.warn("Trying to add unknown type to PDF: " + templateItemType);
       }
    }
+   
+   public String getContentType() {
+       return "application/pdf";
+   }
 }

@@ -34,5 +34,7 @@ public interface ReportExporter {
     * @param outputStream the resulting data will be placed into this
     */
    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream);
+   
+   public String getContentType();
 
 }

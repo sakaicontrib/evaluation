@@ -145,4 +145,8 @@ public class CSVReportExporter implements ReportExporter {
          throw UniversalRuntimeException.accumulate(e1, "Could not close the CSVWriter");
       }
    }
+
+   public String getContentType() {
+       return "text/csv";
+   }
 }
