@@ -148,6 +148,7 @@ public class PreloadDataImpl {
 
          // REPORTING
          saveConfig(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
+         saveConfig(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT, true);
          saveConfig(EvalSettings.ENABLE_PDF_REPORT_BANNER, false);
          saveConfig(EvalSettings.ENABLE_PDF_REPORT_EXPORT, false);
          saveConfig(EvalSettings.ENABLE_XLS_REPORT_EXPORT, true);

@@ -564,7 +564,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       }
       
       // FIXME should this be protected with an option?
-      if (!EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
+      Boolean allowListOfEvalTakers = (Boolean) evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
+      if (allowListOfEvalTakers != null && allowListOfEvalTakers == true) {
           UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new DownloadReportViewParams(
                   "csvTakersReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
       }

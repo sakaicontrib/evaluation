@@ -39,7 +39,6 @@ public class CSVTakersReportExporter implements ReportExporter {
     }
 
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
-
         OutputStreamWriter osw = new OutputStreamWriter(outputStream);
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try {
@@ -51,7 +50,7 @@ public class CSVTakersReportExporter implements ReportExporter {
                 throw UniversalRuntimeException.accumulate(e, "IO Exception thrown whilst trying to print out CSV of evaluation takers");
             }
         }
-        
+
         CSVWriter writer = new CSVWriter(osw, DELIMITER);
 
         Set<EvalResponse> responses = evaluation.getResponses();
@@ -60,7 +59,7 @@ public class CSVTakersReportExporter implements ReportExporter {
         List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
         log.debug("users.size(): " + users.size());
         String[] row = new String[1];
-        
+
         try {
             for (EvalUser user : users) {
                 row[0] = user.email;
