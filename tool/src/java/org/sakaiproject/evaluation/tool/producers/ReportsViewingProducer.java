@@ -213,7 +213,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                }
                UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
                // handle printing the category header
-               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                   UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.course");
                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                   EvalUser instructor = instructorIdtoEvalUser.get( tig.associateId );
