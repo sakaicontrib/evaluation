@@ -248,7 +248,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       saveReorderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.save.order.title") ) );
 
       UIMessage.make(form2, "orderingInstructions", "modifytemplate.instructions.reorder");
-
+      
+      boolean questionBlocksEnabled = !((Boolean) evalSettings.get(EvalSettings.DISABLE_QUESTION_BLOCKS));
+      
       if ((templateItemsList != null) && (templateItemsList.size() > 0)) {
          String sCurItemNum = null;
          String templateItemOTPBinding = null;
@@ -258,8 +260,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
          for (int h = 0; h < templateItemsList.size(); h++) {
             itemNumArr[h] = Integer.toString(h + 1);
          }
-
-         boolean questionBlocksEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_QUESTION_BLOCKS);
 
          for (int i = 0; i < templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
@@ -423,7 +423,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             new Object[] { "", Integer.toString(templateItemsList.size()) } );
 
       // the create block form
-      if ((Boolean) evalSettings.get(EvalSettings.ENABLE_QUESTION_BLOCKS)) {
+      if (questionBlocksEnabled) {
           UIForm blockForm = UIForm.make(tofill, "createBlockForm",
                   new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
           UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
