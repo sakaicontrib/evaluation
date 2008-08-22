@@ -63,6 +63,11 @@ public class AdministrateReportingProducer implements ViewComponentProducer {
         AdministrateProducer.makeInput(form, "pdf-banner-image-location", EvalSettings.PDF_BANNER_IMAGE_LOCATION);
         UIMessage.make(form, "pdf-banner-image-location-note", "controlreporting.pdfbanner.location.label");
         
+        // Allow CSV Export
+        AdministrateProducer.makeBoolean(form, "allow-list-of-takers-export", EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
+        UIMessage.make(form, "allow-list-of-takers-export-note", "controlreporting.enable.list.of.takers.label");
+
+        
         UICommand.make(form, "saveSettings",UIMessage.make("controlreporting.save"), null);
     }
 }

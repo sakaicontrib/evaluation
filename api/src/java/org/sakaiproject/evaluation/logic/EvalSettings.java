@@ -178,6 +178,11 @@ public interface EvalSettings {
     */
    public static final String ENABLE_CSV_REPORT_EXPORT = "ENABLE_CSV_REPORT_EXPORT:java.lang.Boolean";
    /**
+    * CONSTANT: Allow CSV export of list of takers {@link Boolean}, default True
+    */
+   public static final String ENABLE_LIST_OF_TAKERS_EXPORT = "ENABLE_LIST_OF_TAKERS_EXPORT:java.lang.Boolean";
+
+   /**
     * CONSTANT: Allow XLS Export for Reporting - {@link Boolean}, default True
     */
    public static final String ENABLE_XLS_REPORT_EXPORT = "ENABLE_XLS_REPORT_EXPORT:java.lang.Boolean";
@@ -283,6 +288,8 @@ public interface EvalSettings {
     * If this is enabled then users will be allowed group "rating questions" together into a question block
     */
    public static final String ENABLE_QUESTION_BLOCKS = "ENABLE_QUESTION_BLOCKS:java.lang.Boolean";
+
+
    
    /**
     * This is here to identify all the boolean ONLY settings in the system,
@@ -297,6 +304,7 @@ public interface EvalSettings {
       ENABLE_ADHOC_GROUPS,
       ENABLE_ADHOC_USERS,
       ENABLE_CSV_REPORT_EXPORT,
+      ENABLE_LIST_OF_TAKERS_EXPORT,
       ENABLE_EVAL_CATEGORIES,
       ENABLE_EVAL_EARLY_CLOSE,
       ENABLE_EVAL_REOPEN,
