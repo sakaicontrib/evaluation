@@ -160,7 +160,7 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_ADHOC_USERS, true);
          saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
          saveConfig(EvalSettings.DISABLE_ITEM_BANK, false);
-         saveConfig(EvalSettings.ENABLE_QUESTION_BLOCKS, true);
+         saveConfig(EvalSettings.DISABLE_QUESTION_BLOCKS, false);
          
          // Default email settings
          saveConfig(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);

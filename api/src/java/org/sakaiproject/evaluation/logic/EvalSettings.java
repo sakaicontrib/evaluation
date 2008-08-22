@@ -287,7 +287,7 @@ public interface EvalSettings {
    /**
     * If this is enabled then users will be allowed group "rating questions" together into a question block
     */
-   public static final String ENABLE_QUESTION_BLOCKS = "ENABLE_QUESTION_BLOCKS:java.lang.Boolean";
+   public static final String DISABLE_QUESTION_BLOCKS = "DISABLE_QUESTION_BLOCKS:java.lang.Boolean";
 
 
    
@@ -316,7 +316,7 @@ public interface EvalSettings {
       ENABLE_SINGLE_EMAIL_PER_STUDENT,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
-      ENABLE_QUESTION_BLOCKS,
+      DISABLE_QUESTION_BLOCKS,
       ENABLE_SUMMARY_SITES_BOX,
       ENABLE_XLS_REPORT_EXPORT,
       EVAL_USE_DATE_TIME,
