@@ -100,7 +100,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
-      if ((Boolean)evalSettings.get(EvalSettings.ENABLE_ITEM_BANK)) {
+      if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
           UIInternalLink.make(tofill, "control-items-link",
                 UIMessage.make("controlitems.page.title"),
                 new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
@@ -350,7 +350,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       // INSTITUTION SPECIFIC SETTINGS
       makeBoolean(form, "general-item-results-sharing",  EvalSettings.ITEM_USE_RESULTS_SHARING);
       makeBoolean(form, "general-enable-importing",  EvalSettings.ENABLE_IMPORTING);
-      makeBoolean(form, "general-enable-item-bank", EvalSettings.ENABLE_ITEM_BANK);
+      makeBoolean(form, "general-disable-item-bank", EvalSettings.DISABLE_ITEM_BANK);
       makeBoolean(form, "general-enable-question-blocks", EvalSettings.ENABLE_QUESTION_BLOCKS);
 
       // Save settings button

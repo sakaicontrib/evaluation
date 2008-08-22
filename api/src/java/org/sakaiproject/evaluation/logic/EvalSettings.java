@@ -282,7 +282,7 @@ public interface EvalSettings {
    /**
     * If this is enabled then users will be allowed to use Item Bank features 
     */
-   public static final String ENABLE_ITEM_BANK = "ENABLE_ITEM_BANK:java.lang.Boolean";
+   public static final String DISABLE_ITEM_BANK = "DISABLE_ITEM_BANK:java.lang.Boolean";
 
    /**
     * If this is enabled then users will be allowed group "rating questions" together into a question block
@@ -311,7 +311,7 @@ public interface EvalSettings {
       ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
       ENABLE_ITEM_COMMENTS,
-      ENABLE_ITEM_BANK,
+      DISABLE_ITEM_BANK,
       ENABLE_NOT_AVAILABLE,
       ENABLE_SINGLE_EMAIL_PER_STUDENT,
       ENABLE_PDF_REPORT_BANNER,
