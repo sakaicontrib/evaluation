@@ -23,7 +23,9 @@
 package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
@@ -135,7 +137,15 @@ public class EvalSingleEmailImpl implements Job{
 					if (logEmailRecipients.booleanValue()) {
 						logEmailRecipients(recipients);
 					}
-					// set next reminder date
+					// set next reminder date 1 minute after midnight
+					Calendar calendar = new GregorianCalendar();
+					calendar.setTime( new Date() );
+					calendar.set(Calendar.AM_PM, Calendar.AM);
+					calendar.set(Calendar.MINUTE, 1);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.HOUR, 0);
+					Date nextReminderDate = calendar.getTime();
+					tdate = nextReminderDate.getTime();
 					long nextReminder = tdate + (day * reminderInterval);
 					updateConfig(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
 				}

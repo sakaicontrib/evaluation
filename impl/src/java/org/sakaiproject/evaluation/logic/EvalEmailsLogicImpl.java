@@ -646,37 +646,39 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @param sentToAddresses
     */
    private void logRecipients(List<String> sentToAddresses) {
-	   Collections.sort(sentToAddresses);
-	   StringBuffer sb = new StringBuffer();
-	   String line = null;
-	   int size = sentToAddresses.size();
-	   int cnt = 0;
-	   for(int i = 0; i < size; i++) {
-		   if(cnt > 0)
-			   sb.append(",");
-		   sb.append((String)sentToAddresses.get(i));
-		   cnt++;
-		   //TODO number of addresses per line below should be configurable
-		   if((i+1) % 10 == 0) {
-			   line = sb.toString();
-			   if(metric.isInfoEnabled())
-				   metric.info("Metric: email sent to " + line);
-				//write a line and empty the buffer
-				sb.setLength(0);
-				cnt = 0;
+	   if(sentToAddresses != null && !sentToAddresses.isEmpty()) {
+		   Collections.sort(sentToAddresses);
+		   StringBuffer sb = new StringBuffer();
+		   String line = null;
+		   int size = sentToAddresses.size();
+		   int cnt = 0;
+		   for(int i = 0; i < size; i++) {
+			   if(cnt > 0)
+				   sb.append(",");
+			   sb.append((String)sentToAddresses.get(i));
+			   cnt++;
+			   //TODO number of addresses per line below should be configurable
+			   if((i+1) % 10 == 0) {
+				   line = sb.toString();
+				   if(metric.isInfoEnabled())
+					   metric.info("Metric: email sent to " + line);
+					//write a line and empty the buffer
+					sb.setLength(0);
+					cnt = 0;
+				}
 			}
-		}
-		//if anything hasn't been written out do it now
-		if(sb.length() > 0) {
-			line = sb.toString();
-			if (log.isWarnEnabled())
-				log.warn("Metric: email sent to " + line);
-		}
+			//if anything hasn't been written out do it now
+			if(sb.length() > 0) {
+				line = sb.toString();
+				if (metric.isInfoEnabled())
+					metric.info("Metric: email sent to " + line);
+			}
+	   }
    }
 
    /**
-    * If metrics logger for class is set with info level logging,
-    * periodically log progress sending email
+    * Periodically wait and/or log progress sending email 
+    * if metrics logger for class is set with info level logging
     * 
     * @param batch the number of emails sent without a pause
     * @param wait the length of time in seconds to pause
@@ -688,18 +690,24 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		int numProcessed) {
 		numProcessed = numProcessed + 1;
 		if(numProcessed > 0) {
-			if ((numProcessed % modulo.intValue()) == 0) {
-				if(metric.isInfoEnabled())
-					metric.info("Metric " + numProcessed + " emails processed.");
+			//periodic log message
+			if(modulo != null && modulo.intValue() > 0) {
+				if ((numProcessed % modulo.intValue()) == 0) {
+					if(metric.isInfoEnabled())
+						metric.info("Metric " + numProcessed + " emails processed.");
+				}
 			}
-			if ((numProcessed % batch.intValue()) == 0) {
-				if(metric.isInfoEnabled())
-					metric.info("Metric wait" + wait + " seconds.");
-				try {
-					Thread.sleep(wait * 1000);
-				} catch (Exception e) {
-					if (log.isErrorEnabled())
-						log.error("Thread sleep interrupted.");
+			//perodic wait
+			if(batch != null && wait != null && batch.intValue() > 0 && wait.intValue() > 0) {
+				if ((numProcessed % batch.intValue()) == 0) {
+					if(metric.isInfoEnabled())
+						metric.info("Metric wait " + wait + " seconds.");
+					try {
+						Thread.sleep(wait * 1000);
+					} catch (Exception e) {
+						if (log.isErrorEnabled())
+							log.error("Thread sleep interrupted.");
+					}
 				}
 			}
 		}

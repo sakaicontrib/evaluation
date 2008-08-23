@@ -282,9 +282,9 @@ public class EvalEmailConstants {
 		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +
 		"	${MyWorkspaceDashboard}\n\n" + 
-		"You will need to provide a logion name and password to access the ${EvalToolTitle} " + 
+		"You will need to provide a login name and password to access the ${EvalToolTitle} " + 
 		"site.  This identification is required to ensure that only authorized students " +
-		"submit questionnaires  and that each student submits only one questionnaire per class.  Note, however, " +
+		"submit questionnaires and that each student submits only one questionnaire per class.  Note, however, " +
 		"that teachers and administrators will not have access to any identifying information you " +
 		"submit, and they will not be able to associate specific ratings or comments with " +
 		"specific students.\n\n" +
@@ -299,17 +299,4 @@ public class EvalEmailConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on '${EvalToolTitle}' in the left navigation menu under ${EvalSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
-		
-	/**
-	 * Email text describing where a user should look for the evaluation tool.
-	 *
-	public static final String EMAIL_EVALUATION_SITE = "My Workspace";
-	*/
-	
-	/**
-	 * Email text describing to a user what the evaluation tool is called.
-	 *
-	public static final String EMAIL_EVALUATION_TOOL = "Course Evaluations";
-	*/
-
 }

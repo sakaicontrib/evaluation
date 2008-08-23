@@ -120,7 +120,7 @@ public class ControlEmailProducer implements ViewComponentProducer {
 		AdministrateProducer.makeSelect(oneemail, "log-progress-every",
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
-				EvalSettings.EMAIL_BATCH_SIZE, false);
+				EvalSettings.LOG_PROGRESS_EVERY, false);
 		AdministrateProducer.makeSelect(oneemail, "email-batch-size",
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,

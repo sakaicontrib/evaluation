@@ -425,7 +425,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getMyWorkspaceUrl(java.lang.String)
     */
    public String getMyWorkspaceUrl(String userId) {
-	   String url = null;
+	   String url = EvalConstants.NO_LINK_AVAILABLE;
 	   try {
 		   String toolPage = null;
 		   //userId is Sakai id
