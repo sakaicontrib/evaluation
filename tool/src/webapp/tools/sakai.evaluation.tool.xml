@@ -4,8 +4,6 @@
   <tool id="sakai.rsf.evaluation"
         title="Teaching Questionnaires"
         description="Questionnaires about teaching.">
-     <category name="course" />
-     <category name="project" />
      <category name="myworkspace" />
   </tool>
 </registration>
