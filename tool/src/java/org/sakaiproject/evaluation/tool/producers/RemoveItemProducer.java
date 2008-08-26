@@ -126,6 +126,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
          UIInternalLink.make(tofill, "items-templates-link", 
                UIMessage.make("modifytemplate.page.title"), 
                new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId() ) );
+         UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId()));
          UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.templateitem.confirmation",
                new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
          if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
@@ -140,6 +141,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
          UIInternalLink.make(tofill, "items-templates-link", 
                UIMessage.make("controlitems.page.title"), 
                new SimpleViewParameters(ControlItemsProducer.VIEW_ID) );
+         UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
          UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.item.confirmation");
 
          // in use message
@@ -158,8 +160,6 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       // use the renderer evolver to show the item
       itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true);
-
-      UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
 
       UIForm form = UIForm.make(tofill, "remove-item-form");
 
