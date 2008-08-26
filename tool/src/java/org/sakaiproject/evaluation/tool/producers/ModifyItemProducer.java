@@ -276,10 +276,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
           UIInternalLink.make(tofill, "modify-template-items",
                UIMessage.make("modifytemplate.page.title"), 
                new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId));
+          UIInternalLink.make(tofill, "cancel-button", UIMessage.make("general.cancel.button"), new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId));
       } else {
           UIInternalLink.make(tofill, "control-items-breadcrumb",
                   UIMessage.make("controlitems.page.title"), 
                   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+          UIInternalLink.make(tofill, "cancel-button", UIMessage.make("general.cancel.button"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
       }
       UIMessage.make(tofill, "item-header", "modifyitem.item.header");
 
@@ -507,7 +509,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
       }
 
-      UIMessage.make(form, "cancel-button", "general.cancel.button");
+      
 
       String saveBinding = null;
       if (templateId == null) {
