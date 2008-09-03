@@ -588,13 +588,15 @@ public class EvalImportImpl implements EvalImport {
 						// create new
 						evaluation = newEvaluation(element, messages);
 						event = EVENT_EVALUATION_SAVE;
+						evaluationSetupService.saveEvaluation(evaluation,
+								userId, true);
 					} else {
 						// update existing
 						setEvaluationProperties(element, evaluation, messages);
 						event = EVENT_EVALUATION_UPDATE;
+						evaluationSetupService.saveEvaluation(evaluation,
+								userId, false);
 					}
-					evaluationSetupService.saveEvaluation(evaluation,
-							userId, false);
 					commonLogic.registerEntityEvent(event, evaluation);
 					evaluationsSaved++;
 					if((evaluationsSaved % 100) == 0) {
@@ -1495,7 +1497,7 @@ public class EvalImportImpl implements EvalImport {
 		String eid = null;
 		try {
 			eid = element.getChildText("EID");
-			String state = null;
+			String state = EvalConstants.EVALUATION_STATE_PARTIAL;
 			EvalTemplate addedTemplate = null;
 			eid = element.getChildText("EID");
 			if (eid == null || "".equals(eid)) {
@@ -1609,6 +1611,7 @@ public class EvalImportImpl implements EvalImport {
 
 	/**
 	 * Set EvalEvaluation properties from XML Element data
+	 * Template is excluded from the properties being set
 	 * 
 	 * @param element
 	 *            the Element
@@ -1617,7 +1620,7 @@ public class EvalImportImpl implements EvalImport {
 	 */
 	private void setEvaluationProperties(Element element,
 			EvalEvaluation evaluation, List<String> messages) {
-		String eid = null;
+ 		String eid = null;
 		try {
 			eid = element.getChildText("EID");
 			if (eid == null || "".equals(eid)) {
@@ -1629,17 +1632,6 @@ public class EvalImportImpl implements EvalImport {
 						"Eid missing for EvalEvaluation");
 				// TODO add to audit trail
 			}
-			/*
-			 * String providerId = element.getChildText("PROVIDER_ID");
-			 * if(providerId == null || "".equals(providerId)) {
-			 * log.warn("EvalEvaluation with eid '" + eid + "' was not
-			 * saved/updated in the database, because provider id was
-			 * missing."); messages.add("EvalEvaluation with eid '" + eid + "'
-			 * was not saved/updated in the database, because provider id was
-			 * missing."); throw new IllegalArgumentException("Provider Id
-			 * missing for EvalEvaluation with eid '" + eid + "'"); //TODO add
-			 * to audit trail }
-			 */
 			evaluation.setTitle(new String(element.getChildText("TITLE")));
 			evaluation.setOwner(new String(element.getChildText("OWNER")));
 			evaluation
@@ -1678,7 +1670,6 @@ public class EvalImportImpl implements EvalImport {
 			evaluation.setModifyResponsesAllowed(modifyResponsesAllowed);
 			evaluation.setUnregisteredAllowed(unregisteredAllowed);
 			evaluation.setLocked(locked);
-			// TODO get email template eid from evaluation, fetch email template by eid, and use its id to set available email template fk (and reminder fk)
 			EvalEmailTemplate availableEmailTemplate = evaluationService
 			.getEmailTemplateByEid(element
 					.getChildText("AVAILABLE_EMAIL_TEMPLATE_EID"));
@@ -1688,15 +1679,12 @@ public class EvalImportImpl implements EvalImport {
 					.getChildText("REMINDER_EMAIL_TEMPLATE_EID"));
 			evaluation.setReminderEmailTemplate(reminderEmailTemplate);
 			/*
-			evaluation.setAvailableEmailTemplate(evaluationService
-					.getDefaultEmailTemplate(element
-							.getChildText("AVAILABLE_EMAIL_TEMPLATE")));
-			evaluation.setReminderEmailTemplate(evaluationService
-					.getDefaultEmailTemplate(element
-							.getChildText("REMINDER_EMAIL_TEMPLATE")));
-							*/
+			 * CT-682
+			 * Evaluation template is a copy of the original so do not
+			 * reset it to the original or check for getCopyOf() will fail later
 			evaluation.setTemplate(authoringService.getTemplateByEid(element
 					.getChildText("TEMPLATE_EID")));
+			*/
 
 			String instructions = element.getChildText("INSTRUCTIONS");
 			if (instructions == null || instructions.trim().equals("")) {
