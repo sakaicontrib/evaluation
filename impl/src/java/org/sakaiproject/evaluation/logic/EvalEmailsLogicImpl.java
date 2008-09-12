@@ -354,6 +354,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
+				// CT-697
+				userIdsTakingEval.clear();
 				groups = assignGroupMap.get(evalIds[i]);
 				for (int j = 0; j < groups.size(); j++) {
 
@@ -456,6 +458,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
+				// CT-697
+				userIdsTakingEval.clear();
 				groups = assignGroupMap.get(evalIds[i]);
 				for (int j = 0; j < groups.size(); j++) {
 					
