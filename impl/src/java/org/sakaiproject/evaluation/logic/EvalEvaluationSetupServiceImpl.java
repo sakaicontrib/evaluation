@@ -125,7 +125,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    public static String EVAL_UPDATE_TIMER = "eval_update_timer";
    protected void initiateUpdateStateTimer() {
       // timer repeats every 60 minutes
-      final long repeatInterval = 1000 * 60 * 60;
+	   final long repeatInterval = 1000 * 60 * 60;
       // start up a timer after 2 mins + random(10 mins)
       long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
 
@@ -133,7 +133,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          @SuppressWarnings("unchecked")
          @Override
          public void run() {
-            String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+        	String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
             Boolean lockObtained = dao.obtainLock(EVAL_UPDATE_TIMER, serverId, repeatInterval);
             // only execute the code if we have an exclusive lock
             if (lockObtained != null && lockObtained) {
@@ -170,11 +170,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                      log.info("Updated the state of "+count+" evaluations...");
                   }
                }
-
+               /*
+                * CT-700/EVALSYS-607 both of these expressions evaluate to false.
+                * System settings cache was not being refreshed. Perhaps there is
+                * a way to do this with Hibernate proxies, but for now exposing 
+                * method through interface instead.
+                * 
+               if(settings.getClass().isAssignableFrom(EvalSettingsImpl.class)) {
+                   ((EvalSettingsImpl) settings).resetCache();
+               }
                // finally we will reset the system config cache
                if (settings instanceof EvalSettingsImpl) {
                   ((EvalSettingsImpl) settings).resetCache();
                }
+               */
+               settings.resetCache();
             }
          }
       };

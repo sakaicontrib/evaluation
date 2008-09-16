@@ -83,6 +83,7 @@ public class EvalSettingsImpl implements EvalSettings {
 
       // initialize the cache
       resetCache();
+      log.debug("initialized the settings config cache");
    }
 
    /* (non-Javadoc)
@@ -239,6 +240,7 @@ public class EvalSettingsImpl implements EvalSettings {
          config = new EvalConfig(config.getLastModified(), config.getName(), config.getValue());
          configCache.put(config.getName(), config);
       }
+      log.debug("reset the settings config cache");
    }
 
    /**

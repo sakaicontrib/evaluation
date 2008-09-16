@@ -367,5 +367,11 @@ public interface EvalSettings {
     * @return true if the setting could be saved, false if not, throws runtime exceptions if invalid input
     */
    public boolean set(String settingConstant, Object settingValue);
+   
+   /**
+    * Clear out the cache and reload all config settings. <br/>
+    * This method is exposed in the interface as an alternative to the TimerTask evaluating a Hibernate proxy of EvalSettingsImpl.
+    */
+   public void resetCache();
 
 }

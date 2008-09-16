@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.entity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.entitybroker.event.EventReceiver;
@@ -28,6 +30,8 @@ import org.sakaiproject.evaluation.logic.EvalSettingsImpl;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, EventReceiver {
+	
+	private static Log log = LogFactory.getLog(ConfigEntityProviderImpl.class);
 
    private EvalSettingsImpl settingsImpl;
    public void setSettings(EvalSettingsImpl settings) {
@@ -57,8 +61,10 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
    public void receiveEvent(String eventName, String id) {
       if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
          settingsImpl.clearCacheItem(id);
+         log.debug("eventName '" + eventName + "' settingsImpl.clearCacheItem(" + id + ")");
       } else if (EvalSettings.EVENT_SET_MANY_CONFIG.equals(eventName)) {
          settingsImpl.resetCache();
+         log.debug("eventName '" + eventName + "' settingsImpl.resetCache()");
       }
    }
 
