@@ -125,8 +125,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    public static String EVAL_UPDATE_TIMER = "eval_update_timer";
    protected void initiateUpdateStateTimer() {
       // timer repeats every 60 minutes
-	   // TODO - put this back - final long repeatInterval = 1000 * 60 * 60;
-	   final long repeatInterval = 1000 * 60 * 3;
+	  final long repeatInterval = 1000 * 60 * 60;
       // start up a timer after 2 mins + random(10 mins)
       long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
 
