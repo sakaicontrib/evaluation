@@ -29,7 +29,6 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -328,9 +327,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		evalIds = dao.getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE);
 		end = System.currentTimeMillis();
 		seconds = (end - start) / 1000;
-		if (metric.isInfoEnabled())
-			metric
-					.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
+		if (log.isInfoEnabled())
+			log
+					.info("sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
 							+ " took "
 							+ seconds
 							+ " seconds for "
@@ -344,9 +343,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					false, null);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric  EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -375,9 +374,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -390,9 +389,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailLogicImpl.sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
 								+ allUserIds.size()
 								+ " user ids "
 								+ " took "
@@ -405,9 +404,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			start = System.currentTimeMillis();
 			evaluationService.setAvailableEmailSent(evalIds);
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("evalEmailLogicImpl.sendEvalAvailableSingleEmail() step  for setAvailableEmailSent "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalAvailableSingleEmail() step for setAvailableEmailSent "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -436,8 +435,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		evalIds = dao.getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE);
 		end = System.currentTimeMillis();
 		seconds = (end - start)/1000;
-		if(metric.isInfoEnabled())
-			metric.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
+		if(log.isInfoEnabled())
+			log.info("sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
 					" took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 		
 		if (evalIds.length > 0) {
@@ -448,9 +447,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					false, null);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -478,9 +477,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step emailTemplatesByUser "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalReminderSingleEmail() step emailTemplatesByUser "
 								+ " took "
 								+ seconds
 								+ " seconds for "
@@ -494,9 +493,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailLogicImpl.sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
+			if (log.isInfoEnabled())
+				log
+						.info("sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
 								+ allUserIds.size()
 								+ " user ids "
 								+ " took "
@@ -554,8 +553,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalArgumentException(
 					"sendEvalSingleEmail() parameter(s) missing.");
 		} else {
-			if (metric.isInfoEnabled())
-				metric.info("Metric There are " + uniqueIds.size()
+			if (log.isInfoEnabled())
+				log.info("There are " + uniqueIds.size()
 						+ " unique user ids in the single email queue.");
 		}
 		// get email settings
@@ -634,7 +633,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		// handle logging of total number of email messages processed
 		if(metric.isInfoEnabled())
-			metric.info("Metric " + numProcessed + " emails processed in total.");
+			metric.info(numProcessed + " emails processed in total.");
 		
 		// handle logging of email recipients
 		if(logEmailRecipients.booleanValue())
@@ -644,8 +643,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
    
    /**
-    * If metrics logger for class is set with info level logging,
-    * log a sorted list of email recipients at end of job 10 per line
+    * If logger for class is set with info level logging,
+    * log a sorted list of email recipients at end of job,
+    * 10 per line
     * 
     * @param sentToAddresses
     */
@@ -661,11 +661,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				   sb.append(",");
 			   sb.append((String)sentToAddresses.get(i));
 			   cnt++;
-			   //TODO number of addresses per line below should be configurable
 			   if((i+1) % 10 == 0) {
 				   line = sb.toString();
-				   if(metric.isInfoEnabled())
-					   metric.info("Metric: email sent to " + line);
+				   if(log.isInfoEnabled())
+					   log.info("email sent to " + line);
 					//write a line and empty the buffer
 					sb.setLength(0);
 					cnt = 0;
@@ -674,15 +673,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			//if anything hasn't been written out do it now
 			if(sb.length() > 0) {
 				line = sb.toString();
-				if (metric.isInfoEnabled())
-					metric.info("Metric: email sent to " + line);
+				if (log.isInfoEnabled())
+					log.info("email sent to " + line);
 			}
 	   }
    }
 
    /**
     * Periodically wait and/or log progress sending email 
-    * if metrics logger for class is set with info level logging
+    * if metric/logger for class is set with info level logging
     * 
     * @param batch the number of emails sent without a pause
     * @param wait the length of time in seconds to pause
@@ -698,14 +697,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if(modulo != null && modulo.intValue() > 0) {
 				if ((numProcessed % modulo.intValue()) == 0) {
 					if(metric.isInfoEnabled())
-						metric.info("Metric " + numProcessed + " emails processed.");
+						metric.info(numProcessed + " emails processed.");
 				}
 			}
-			//perodic wait
+			//periodic wait
 			if(batch != null && wait != null && batch.intValue() > 0 && wait.intValue() > 0) {
 				if ((numProcessed % batch.intValue()) == 0) {
-					if(metric.isInfoEnabled())
-						metric.info("Metric wait " + wait + " seconds.");
+					if(log.isInfoEnabled())
+						log.info("wait " + wait + " seconds.");
 					try {
 						Thread.sleep(wait * 1000);
 					} catch (Exception e) {
