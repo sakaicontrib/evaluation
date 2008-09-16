@@ -125,7 +125,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    public static String EVAL_UPDATE_TIMER = "eval_update_timer";
    protected void initiateUpdateStateTimer() {
       // timer repeats every 60 minutes
-	   final long repeatInterval = 1000 * 60 * 60;
+	   // TODO - put this back - final long repeatInterval = 1000 * 60 * 60;
+	   final long repeatInterval = 1000 * 60 * 3;
       // start up a timer after 2 mins + random(10 mins)
       long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
 
@@ -184,8 +185,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                   ((EvalSettingsImpl) settings).resetCache();
                }
                */
-               settings.resetCache();
             }
+            // we want this to happen on all servers in the cluster
+            settings.resetCache();
          }
       };
 
