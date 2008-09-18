@@ -41,11 +41,13 @@ public class EvalPDFReportBuilder {
          pdfWriter.setStrictImageSequence(true);
          document.open();
 
-         questionTextFont = new Font(Font.TIMES_ROMAN, 11, Font.BOLD);
-         paragraphFont = new Font(Font.TIMES_ROMAN, 9, Font.NORMAL);
-         frontTitleFont = new Font(Font.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
-         frontAuthorFont = new Font(Font.TIMES_ROMAN, 18, Font.NORMAL);
-         frontInfoFont = new Font(Font.TIMES_ROMAN, 16, Font.NORMAL);
+         // attempting to handle i18n chars better
+         BaseFont evalBF = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+         questionTextFont = new Font(evalBF, 11, Font.BOLD);
+         paragraphFont = new Font(evalBF, 9, Font.NORMAL);
+         frontTitleFont = new Font(evalBF, frontTitleSize, Font.NORMAL);
+         frontAuthorFont = new Font(evalBF, 18, Font.NORMAL);
+         frontInfoFont = new Font(evalBF, 16, Font.NORMAL);
       } catch (Exception e) {
          throw UniversalRuntimeException.accumulate(e, "Unable to start PDF Report");
       }
