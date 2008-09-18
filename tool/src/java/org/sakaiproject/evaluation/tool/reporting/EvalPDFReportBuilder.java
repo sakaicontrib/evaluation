@@ -13,6 +13,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.BaseFont;
@@ -42,12 +43,15 @@ public class EvalPDFReportBuilder {
          document.open();
 
          // attempting to handle i18n chars better
-         BaseFont evalBF = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-         questionTextFont = new Font(evalBF, 11, Font.BOLD);
-         paragraphFont = new Font(evalBF, 9, Font.NORMAL);
-         frontTitleFont = new Font(evalBF, frontTitleSize, Font.NORMAL);
-         frontAuthorFont = new Font(evalBF, 18, Font.NORMAL);
-         frontInfoFont = new Font(evalBF, 16, Font.NORMAL);
+         //BaseFont evalBF = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+         //paragraphFont = new Font(evalBF, 9, Font.NORMAL);
+         //paragraphFont = new Font(Font.TIMES_ROMAN, 9, Font.NORMAL);
+
+         questionTextFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.BOLD);
+         paragraphFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 9, Font.NORMAL);
+         frontTitleFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
+         frontAuthorFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 18, Font.NORMAL);
+         frontInfoFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.NORMAL);
       } catch (Exception e) {
          throw UniversalRuntimeException.accumulate(e, "Unable to start PDF Report");
       }
