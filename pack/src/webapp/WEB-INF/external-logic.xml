@@ -48,15 +48,5 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
    </bean>
-
-	<!-- U-M implementation -->
-   <bean id="org.sakaiproject.evaluation.providers.EvalGroupsProvider"
-   		class="org.sakaiproject.component.legacy.realm.EvalGroupsProviderUnivOfMichImpl"
-   		init-method="init">
-   		<property name="externalLogic"
-   			ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-   		<property name="groupProvider"
-   			ref="org.sakaiproject.component.legacy.realm.EvalUmiacProvider" />
-   </bean>
    
 </beans>
