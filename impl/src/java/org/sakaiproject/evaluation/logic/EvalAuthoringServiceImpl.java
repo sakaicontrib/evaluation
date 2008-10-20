@@ -346,7 +346,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
       return evalItem;
    }
-
+   
+   public List<Long> getIdsOfCopiesOfItem(Long itemId) {
+	   return dao.getIdsOfCopiesOfItem(itemId);
+	}
 
    public void saveItem(EvalItem item, String userId) {
       log.debug("item:" + item.getId() + ", userId:" + userId);
@@ -525,8 +528,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return l;
    }
 
-
-
    public EvalTemplateItem getTemplateItemById(Long templateItemId) {
       log.debug("templateItemId:" + templateItemId);
       EvalTemplateItem templateItem = (EvalTemplateItem) dao.findById(EvalTemplateItem.class, templateItemId);
@@ -548,6 +549,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
       return evalTemplateItem;
    }
+   
+	public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId) {
+		return dao.getIdsOfCopiesOfTemplateItem(templateItemId);
+	}
 
 
    @SuppressWarnings("unchecked")
@@ -1075,6 +1080,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
       return template;
    }
+   
+   public List<Long> getIdsOfCopiesOfTemplate(Long templateId) {
+	   return dao.getIdsOfCopiesOfTemplate(templateId);
+	}
 
 
    @SuppressWarnings("unchecked")
@@ -1904,5 +1913,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    public boolean isUsedTemplate(Long templateId) {
       return dao.isUsedTemplate(templateId);
    }
+
+
+
+
 
 }

@@ -925,6 +925,56 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return l.toArray(new Long[] {});
 	}
 	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfItem(java.lang.Long)
+	 */
+	public List<Long> getIdsOfCopiesOfItem(Long itemId) {
+		String hqlQuery = "select item.id from EvalItem item where item.copyOf = " + itemId.toString() + " ";
+		List<Long> l = new ArrayList<Long>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+		}
+		return l;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfTemplate(java.lang.Long)
+	 */
+	public List<Long> getIdsOfCopiesOfTemplate(Long templateId) {
+		String hqlQuery = "select template.id from EvalTemplate template where template.copyOf = " + templateId.toString() + " ";
+		List<Long> l = new ArrayList<Long>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+      }
+      return l;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfTemplateItem(java.lang.Long)
+	 */
+	public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId) {
+		String hqlQuery = "select templateItem.id from EvalTemplateItem templateItem where templateItem.copyOf = " + templateItemId.toString() + " ";
+		List<Long> l = new ArrayList<Long>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+		}
+		return l;
+	}
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isEvaluationWithState(java.lang.String)
@@ -1439,6 +1489,5 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
       }
    }
-
 
 }

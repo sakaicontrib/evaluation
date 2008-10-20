@@ -14,7 +14,9 @@
 
 package org.sakaiproject.evaluation.logic.scheduling;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

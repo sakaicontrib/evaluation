@@ -418,6 +418,30 @@ public interface EvalAuthoringService {
     */
    public EvalTemplate getTemplateById(Long templateId);
    
+   /**c
+    * Get the ids of items copied from an item
+    * 
+    * @param itemId the unique id of an item
+    * @return a list of ids empty if none found
+    */
+   public List<Long> getIdsOfCopiesOfItem(Long itemId);
+   
+   /**
+    * Get the ids of templates copied from a template
+    * 
+    * @param templateId the unique id of a template
+    * @return a list of ids empty if none found
+    */
+   public List<Long> getIdsOfCopiesOfTemplate(Long templateId);
+   
+   /**
+    * Get the ids of templateItems copied from a templateItem
+    * 
+    * @param templateItemId the unique id of a templateItem
+    * @return a list of ids empty if none found
+    */
+   public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId);
+   
    /**
     * Get the template associated with this external id<br/>
     * Note: A template eid is null except when the template

@@ -273,11 +273,35 @@ public interface EvaluationDao extends CompleteGenericDao {
          String[] evalGroupIds);
    
    /**
+    * Get ids of active evaluations based on whether the first notification for the 
+    * evaluation has been sent
     * 
-    * @param availableEmailSent
-    * @return
+    * @param availableEmailSent Boolean.TRUE first email has been sent, Boolean.FALSE
+    * first email has not been sent
+    * @return an array of evaluation ids
     */
 	public Long[] getActiveEvaluationIdsByAvailableEmailSent(Boolean availableEmailSent); 
+	
+	/**
+	 * Get ids of items that were copied from an item
+	 * @param itemId the item copied
+	 * @return a list of ids empty if none found
+	 */
+	public List<Long> getIdsOfCopiesOfItem(Long itemId);
+	
+	/**
+	 * Get ids of templates that were copied from a template
+	 * @param templateId the template copied
+	 * @return a list of ids empty if none found
+	 */
+	public List<Long> getIdsOfCopiesOfTemplate(Long templateId);
+	
+	/**
+	 * Get ids of templateItems that were copied from a templateItem
+	 * @param templateItemId the templateItem copied
+	 * @return a list of ids empty if none found
+	 */
+	public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId);
 
    /**
     * Get adhoc groups for a user and permission, 

@@ -126,9 +126,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    protected void initiateUpdateStateTimer() {
       // timer repeats every 60 minutes
 	  final long repeatInterval = 1000 * 60 * 60;
-      // start up a timer after 2 mins + random(10 mins)
+	  // start up a timer after 2 mins + random(10 mins)
       long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
-
+	  
       TimerTask runStateUpdateTask = new TimerTask() {
          @SuppressWarnings("unchecked")
          @Override

@@ -65,6 +65,8 @@
     	init-method="init">
     	<property name="authoringService"
     		ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+    	<property name="dao" 
+    		ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
     	<property name="commonLogic"
     		ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     	<property name="externalLogic"
