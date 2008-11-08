@@ -331,6 +331,7 @@ tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif svn_key
 tool/src/webapp/content/images/calendar.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/collapsed.png -text
 tool/src/webapp/content/images/corner.gif -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/cross.png -text svneol=unset#image/png
 tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-arrow.gif -text svn_keywords=Date+Revision+Author+URL+Id
@@ -348,6 +349,7 @@ tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif sv
 tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/pencil.png -text svneol=unset#image/png
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
@@ -388,6 +390,7 @@ tool/src/webapp/content/js/jquery/interface/ittabs.js -text svn_keywords=Date+Re
 tool/src/webapp/content/js/jquery/interface/iutil.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id

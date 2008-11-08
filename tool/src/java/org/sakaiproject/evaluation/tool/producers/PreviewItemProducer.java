@@ -15,6 +15,9 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -72,7 +75,10 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
       }
 
       // use the renderer evolver
-      itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true);
+//    use the renderer evolver to show the item
+      Map evalProps  = new HashMap<String, String>();
+      Boolean answerRequired = false;
+      itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, evalProps);
 
       // render the close button
       UIMessage.make(tofill, "close-button", "general.close.window.button");

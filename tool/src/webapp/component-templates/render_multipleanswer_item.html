@@ -12,7 +12,7 @@
 
             <div rsf:id="fullType:">
                 <!-- Full, Vertical DISPLAY -->
-               <span class="validFailGlyph">*</span>
+               <span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span>
                <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
                <div rsf:id="itemText" style="display:inline" class="label">Full or vertical display text here</div>
 
@@ -65,9 +65,9 @@
 
            <!-- the optional comment block to show after the item -->
            <div rsf:id="showComment:">
-               <div rsf:id="itemCommentHeader">Comment:</div>
-               <div>
-                    <textarea rsf:id="itemComment" cols="65" rows="3"></textarea>
+ <div class="addItem"><a class="commentLinks" onclick="showComment(this);return false;" href="#">Add a comment</a> </div>
+    <div class="hideComment" style="display:none"><a onclick="hideComment(this);return false;" href="#">Hide comment</a> </div>
+    <div><textarea style="display:none" rsf:id="itemComment" cols="65" rows="3"></textarea>
                </div>               
            </div>
 

@@ -48,12 +48,15 @@ public class TextRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
 
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
       if (templateItem.renderOption) {
          container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+      } else if (templateItem.getIsCompulsory() != null && templateItem.getIsCompulsory()) {
+    	  container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
       }
+
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;

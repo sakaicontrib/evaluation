@@ -548,8 +548,8 @@ public class TemplateItemDataList {
        * false otherwise
        * @see TemplateItemUtils#isRequired(EvalTemplateItem)
        */
-      public boolean isRequired() {
-         return TemplateItemUtils.isRequired(this.templateItem);
+      public boolean isRequired(boolean allowsEmptyResponses) {
+         return TemplateItemUtils.isRequired(this.templateItem, allowsEmptyResponses);
       }
 
       /**

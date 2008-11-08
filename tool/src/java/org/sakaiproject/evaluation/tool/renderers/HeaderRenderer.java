@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.Map;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
@@ -36,7 +38,7 @@ public class HeaderRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProps) {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$

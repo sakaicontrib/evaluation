@@ -331,6 +331,7 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 /*PART 7 - messages*/
 .alertMessage ul{ padding: 0; margin: 0; list-style: none }
 .alertMessage ul li{ padding: 0; margin: 0; list-style: none }
+
 .validFail{ /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/}
 .validFail .label{ color: #b11; font-weight: bold }
 .validFail label{ color: #000 !important }
@@ -342,6 +343,19 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 	font-size: 100%;
 	padding: 0
 }
+
+.compulsory{ /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/}
+.compulsory .label{ /* color: #b11; font-weight: bold */ }
+.compulsory label{ /* color: #000 !important */ }
+.compulsoryGlyph{	display:none; /* do not show if not child of .validFail */}
+.compulsory .compulsoryGlyph{
+	display: inline;
+	color: #b11;
+	font-weight: bold;
+	font-size: 100%;
+	padding: 0
+}
+
 .messageAlert{
 	background: #FFEEEE url(../images/exclamation.gif) 5px 7px no-repeat;
 	border: 1px solid #FF5555;
@@ -423,3 +437,6 @@ form{ margin: 0; display: inline }
 label.block{ padding: 0 0 .3em 0 }
 /*squeeze the default rteditor into a smaller space*/	
 .evalEditorSmall{ width: 50em }
+/*delete button*/
+.hideComment{ padding-left: 2em; background: transparent url(../images/cross.png) center left no-repeat}
+.editComment { padding-left: 2em; background: transparent url(../images/pencil.png) center left no-repeat}

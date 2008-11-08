@@ -14,7 +14,9 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -159,7 +161,10 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
       }
 
       // use the renderer evolver to show the item
-      itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true);
+      Map evalProps  = new HashMap<String, String>();
+      Boolean answerRequired = false;
+      evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
+      itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true, evalProps);
 
       UIForm form = UIForm.make(tofill, "remove-item-form");
 

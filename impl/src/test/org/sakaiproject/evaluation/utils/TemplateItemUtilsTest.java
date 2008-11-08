@@ -261,12 +261,12 @@ public class TemplateItemUtilsTest extends TestCase {
    public void testIsRequired() {
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem1U) );
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem2B) );
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem3A) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem5U) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem6UU) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem9B) );
+      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem1U, false) );
+      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem2B, false) );
+      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem3A, false) );
+      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem5U, false) );
+      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem6UU, false) );
+      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem9B, false) );
    }
 
    /**
@@ -281,7 +281,7 @@ public class TemplateItemUtilsTest extends TestCase {
       itemList.add(etdl.templateItem5U);
 
       List<EvalTemplateItem> list = null;
-      list = TemplateItemUtils.getRequiredTemplateItems(itemList);
+      list = TemplateItemUtils.getRequiredTemplateItems(itemList, false);
       assertNotNull(list);
       assertEquals(2, list.size());
       assertEquals(etdl.templateItem1U, list.get(0));

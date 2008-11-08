@@ -405,6 +405,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
          }
 
+         if (item.getIsCompulsory() == null) 
+        	 item.setIsCompulsory(false);
          // cleanup for XSS scripting and strings
          item.setItemText( commonLogic.cleanupUserStrings(item.getItemText()) );
          item.setDescription( commonLogic.cleanupUserStrings(item.getDescription()) );
@@ -1479,6 +1481,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          }
          copy.setCopyOf(original.getId());
          copy.setHidden(hidden);
+         copy.setIsCompulsory(original.getIsCompulsory());
          copiedItems.add(copy);
       }
       dao.saveSet(copiedItems);

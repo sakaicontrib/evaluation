@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -60,7 +61,7 @@ public class BlockRenderer implements ItemRenderer {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
     */
-   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProps) {
 
       // check to make sure we are only dealing with block parents
       if (templateItem.getBlockParent() == null) {
@@ -172,6 +173,7 @@ public class BlockRenderer implements ItemRenderer {
             UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
          }
 
+         Boolean evalAnswerReqired = new Boolean(evalProps.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED));
          // the child items rendering loop
          for (int j = 0; j < childList.size(); j++) {
 
@@ -179,10 +181,13 @@ public class BlockRenderer implements ItemRenderer {
             EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
             EvalItem childItem = childTemplateItem.getItem();
 
+            
             // For the radio buttons
             UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
             if (childTemplateItem.renderOption) {
                childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            } else if (childTemplateItem.getIsCompulsory()  && !evalAnswerReqired.booleanValue()) {
+           	 	childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
             if (colored) {
                UILink.make(childRow, "idealImage", idealImage);

@@ -188,6 +188,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       String displayRows = null; // the number of rows to display for the text area
       Boolean usesNA = null; // whether or not the item uses the N/A option
       Boolean usesComment = null; // whether or not the item uses the comment option
+      Boolean isCompulsory = null; //whether or no this question must be answered
       Long scaleId = null; // this holds the current scale id if there is one
 
       // now we validate the incoming view params
@@ -228,6 +229,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
          usesNA = item.getUsesNA();
          usesComment = item.getUsesComment();
+         isCompulsory = item.getIsCompulsory();
          // if this is locked then we should probably be failing at this point
          itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
          if (item.getScale() != null) {
@@ -251,6 +253,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
          usesComment = templateItem.getUsesComment();
+         isCompulsory = templateItem.getIsCompulsory();
          itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
          if (templateItem.getItem().getScale() != null) {
             currentScale = templateItem.getItem().getScale();
@@ -452,6 +455,17 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                   UIMessage.make(showComment,"item-comment-header", "modifyitem.item.comment.header")
                         .decorate( new UILabelTargetDecorator(bb) );
                }
+            }
+            
+            if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
+            	//compulsory 
+            	Boolean selectOptionsCompulsory = true;
+            	if (selectOptionsCompulsory) {
+            		UIBranchContainer showComp = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCompulsory:");
+            		UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + ".isCompulsory", isCompulsory);
+                    UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header")
+                          .decorate( new UILabelTargetDecorator(bb) );
+            	}
             }
          }
 

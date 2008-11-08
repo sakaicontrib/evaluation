@@ -54,7 +54,7 @@ public class ItemRendererImpl implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
 		// do a quick check to make sure stuff is ok
 		if (templateItem == null) {
 			throw new IllegalArgumentException("templateItem cannot be null");
@@ -74,7 +74,7 @@ public class ItemRendererImpl implements ItemRenderer {
 		if (renderer == null) {
 			throw new IllegalStateException("No renderer available for this item type: " + itemTypeConstant);
 		}
-		return renderer.renderItem(parent, ID, bindings, templateItem, displayNumber, disabled);
+		return renderer.renderItem(parent, ID, bindings, templateItem, displayNumber, disabled, evalProperties);
 	}
 
 	/* (non-Javadoc)
