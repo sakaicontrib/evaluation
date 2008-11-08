@@ -1184,6 +1184,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.saveTemplateItem( eiTest1, 
             EvalTestDataLoad.ADMIN_USER_ID);
       assertNotNull( eiTest1.getItem() );
+     
       assertNotNull( eiTest1.getTemplate() );
       assertNotNull( eiTest1.getItem().getTemplateItems() );
       assertNotNull( eiTest1.getTemplate().getTemplateItems() );
@@ -1248,7 +1249,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
-
+      
       // test saving templateItem with no template fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( new Date(), 

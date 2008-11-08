@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.Map;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -50,7 +52,7 @@ public class ScaledRenderer implements ItemRenderer {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
     */
-   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
       UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
       if (displayNumber <= 0) displayNumber = 0;
@@ -66,13 +68,18 @@ public class ScaledRenderer implements ItemRenderer {
       String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
       boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA().booleanValue();
 
+      Boolean evalAnswerReqired = new Boolean(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED));
+      
       if (EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(scaleDisplaySetting) ||
             EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
 
          UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
          if (templateItem.renderOption) {
             compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+        	 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
+
 
          // setup simple variables to make code more clear
          boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting);
@@ -153,6 +160,8 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+        	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
          for (int count = 0; count < optionCount; count++) {
@@ -218,6 +227,8 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
          if (templateItem.renderOption) {
             stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+        	 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
          // setup simple variables to make code more clear

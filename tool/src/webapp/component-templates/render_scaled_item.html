@@ -1,3 +1,4 @@
+<<<<<<< .working
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
@@ -238,13 +239,10 @@
 
            <!-- the optional comment block to show after the item -->
            <div rsf:id="showComment:" style="padding: 1em 0 0 0;">
-               <div rsf:id="itemCommentHeader">Comment:</div>
-               <div>
-                    <textarea rsf:id="itemComment" cols="65" rows="3"></textarea>
-               </div>               
+	       <div class="addItem"><a class="commentLinks" onclick="showComment(this);return false;" href="#">Add a comment</a> </div>
+    	       <div class="hideComment" style="display:none"><a onclick="hideComment(this);return false;" href="#">Hide comment</a> </div>
+    	       <div><textarea style="display:none" rsf:id="itemComment" cols="65" rows="3"></textarea></div>
            </div>
-
-		</div>
-	
-	</body>
+	</div>
+    </body>
 </html>

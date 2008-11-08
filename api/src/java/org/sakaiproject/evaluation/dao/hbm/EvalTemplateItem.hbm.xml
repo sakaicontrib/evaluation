@@ -87,5 +87,8 @@
         <property name="autoUseInsertionTag" type="java.lang.String">
             <column name="AUTO_USE_INSERT_TAG" length="255" />
         </property>
+                <property name="isCompulsory" type="java.lang.Boolean">
+        	<column name="COMPULSORY"/>
+        </property>
     </class>
 </hibernate-mapping>

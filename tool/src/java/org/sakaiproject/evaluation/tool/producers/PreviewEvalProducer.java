@@ -213,7 +213,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                if (i % 2 == 1) {
                   nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                }
-               renderItemPrep(nodeItemsBranch, dti);
+               renderItemPrep(nodeItemsBranch, dti, eval);
             }
          }
       }
@@ -226,7 +226,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
     * @param parent the parent container
     * @param dti the wrapped template item we will render
     */
-   private void renderItemPrep(UIBranchContainer parent, DataTemplateItem dti) {
+   private void renderItemPrep(UIBranchContainer parent, DataTemplateItem dti, EvalEvaluation eval) {
       int displayIncrement = 0; // stores the increment in the display number
       EvalTemplateItem templateItem = dti.templateItem;
       if (! TemplateItemUtils.isAnswerable(templateItem)) {
@@ -240,8 +240,15 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
          displayIncrement++;
       }
 
+      
       // render the item
-      itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true);
+      Map evalProps  = new HashMap<String, String>();
+      Boolean answerRequired = true;
+      if (eval.getBlankResponsesAllowed()!=null && eval.getBlankResponsesAllowed().booleanValue())
+    	  answerRequired = false;
+      evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
+      
+      itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true, evalProps);
 
       // increment the display number
       displayNumber += displayIncrement;

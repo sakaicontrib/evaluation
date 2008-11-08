@@ -38,6 +38,11 @@ public class EvalItem implements java.io.Serializable {
    private EvalScale scale;
 
    private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
+   
+   /**
+    * Must this item be answered when an evaluation is taken?
+    */
+   private Boolean isCompulsory;
 
    /**
     * display hint
@@ -293,5 +298,14 @@ public class EvalItem implements java.io.Serializable {
    public void setAutoUseTag(String autoUseTag) {
       this.autoUseTag = autoUseTag;
    }
+   
+   
+   public Boolean getIsCompulsory() {
+	   return this.isCompulsory;
+   }
 
+   public void setIsCompulsory(Boolean compulsory) {
+	   this.isCompulsory = compulsory;
+   }
+   
 }

@@ -414,7 +414,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                      if (i % 2 == 1) {
                         nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                      }
-                     renderItemPrep(nodeItemsBranch, form, dti);
+                     
+                     renderItemPrep(nodeItemsBranch, form, dti, eval);
                   }
                }
 
@@ -436,7 +437,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @param form the form this item will associate with
     * @param dti the wrapped template item we will render
     */
-   private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti) {
+   private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti, EvalEvaluation eval) {
       int displayIncrement = 0; // stores the increment in the display number
       String[] currentAnswerOTP = null; // holds array of bindings for items
       EvalTemplateItem templateItem = dti.templateItem;
@@ -467,7 +468,13 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       }
 
       // render the item
-      itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false);
+      Map evalProps  = new HashMap<String, String>();
+      Boolean answerRequired = true;
+      if (eval.getBlankResponsesAllowed().booleanValue())
+    	  answerRequired = false;
+      evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
+      
+      itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, evalProps);
 
       /* increment the item counters, if we displayed 1 item, increment by 1,
        * if we displayed a block, renderedItem has been incremented for each child, increment displayNumber by the number of blockChildren,

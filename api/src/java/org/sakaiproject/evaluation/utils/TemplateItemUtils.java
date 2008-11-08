@@ -238,15 +238,18 @@ public class TemplateItemUtils {
     * @param templateItem a templateItem persistent object
     * @return true if the item is required, false otherwise
     */
-   public static boolean isRequired(EvalTemplateItem templateItem) {
-      // all answerable items that are not textual are required
+   public static boolean isRequired(EvalTemplateItem templateItem, boolean surveyAllowsEmpty) {
+      // all answerable items that are not textual are required 
       boolean result = false;
       if (isAnswerable(templateItem)) {
          String type = getTemplateItemType(templateItem);
          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
             result = false;
+         } else if (!(templateItem.getIsCompulsory().booleanValue()) && surveyAllowsEmpty) {
+            result = false;
          } else {
-            result = true;
+        	 
+        	 return true;
          }
       }
       return result;
@@ -258,14 +261,14 @@ public class TemplateItemUtils {
     * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
     * @return a List of {@link EvalTemplateItem} objects
     */
-   public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
+   public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList, boolean surveyAllowsEmptyRepsonces) {       
       List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
 
       List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-         if (! isRequired(templateItem)) {
+         if (! isRequired(templateItem, surveyAllowsEmptyRepsonces)) {
             continue;
          }
          requiredItemsList.add(templateItem);
@@ -475,6 +478,7 @@ public class TemplateItemUtils {
       // set the other copy fields correctly
       copy.setCopyOf(original.getId());
       copy.setHidden(hidden);
+      copy.setIsCompulsory(original.getIsCompulsory());
       return copy;
    }
 

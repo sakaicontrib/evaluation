@@ -5,6 +5,9 @@ package org.sakaiproject.evaluation.model;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+
 /**
  * This is an item in a template,
  * Effectively items are reusable and therefore this is here to indicate an instance of an item
@@ -91,6 +94,11 @@ public class EvalTemplateItem implements java.io.Serializable {
     * it MUST be included
     */
    public List<EvalTemplateItem> childTemplateItems = null;
+   
+   /**
+    * Must this item be answered when an evaluation is taken?
+    */
+   private Boolean isCompulsory;
 
    // Constructors
 
@@ -130,7 +138,15 @@ public class EvalTemplateItem implements java.io.Serializable {
       this.usesComment = usesComment;
       this.blockParent = blockParent;
       this.blockId = blockId;
-      this.resultsSharing = resultsSharing;
+      if (item != null) {
+    	  String type = TemplateItemUtils.getTemplateItemType(this);
+    	  if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+    		  this.isCompulsory = new Boolean(false);
+    	  } else {
+    		  this.isCompulsory = new Boolean(true);
+    	  }
+      }
+      
    }
 
    @Override
@@ -311,5 +327,14 @@ public class EvalTemplateItem implements java.io.Serializable {
    public void setAutoUseInsertionTag(String autoUseInsertionTag) {
       this.autoUseInsertionTag = autoUseInsertionTag;
    }
+   
+   public Boolean getIsCompulsory() {
+	   return this.isCompulsory;
+   }
+
+   public void setIsCompulsory(Boolean compulsory) {
+	   this.isCompulsory = compulsory;
+   }
+   
 
 }

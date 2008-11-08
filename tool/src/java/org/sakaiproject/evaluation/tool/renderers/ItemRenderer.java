@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.Map;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
@@ -29,6 +31,8 @@ import uk.org.ponder.rsf.components.UIJointContainer;
  */
 public interface ItemRenderer {
 
+	public static final String EVAL_PROP_ANSWER_REQUIRED="evalAnswersRequired";
+	
 	/**
 	 * Renders an item correctly in a view based on the type and the settings stored within it<br/>
 	 * 
@@ -47,7 +51,7 @@ public interface ItemRenderer {
 	 * @param disabled if true, then the item is rendered as disabled and cannot be submitted, if false, the item can be submitted
 	 * @return a {@link UIJointContainer} which has been populated correctly
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled);
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties);
 
 	/**
 	 * Indicates the type of item this renderer handles

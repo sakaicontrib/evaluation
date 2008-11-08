@@ -121,7 +121,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
          // check to make sure answers are valid for this evaluation
          if (response.getAnswers() != null && !response.getAnswers().isEmpty()) {
-            checkAnswersValidForEval(response);
+        	checkAnswersValidForEval(response);
          } else {
             if (response.getEndTime() != null) {
                // the response is complete (submission of an evaluation) and not just creating the empty response
@@ -135,7 +135,41 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                   throw new ResponseSaveException("User submitted a blank response and there are required answers", 
                         ResponseSaveException.TYPE_BLANK_RESPONSE);
                }
+               
+               //are the answers that must be filled in
+               //Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
+               List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
+               String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
+               for (int i = 0; i < hierarchyNodes.size(); i++) {
+                  hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
+               }
+               
+               Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+               
+               // get a list of the valid templateItems for this evaluation
+               List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+                       instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
+               
+               
+               //make the TI data structure and get the flat list of DTIs
+               Map<String, List<String>> associates = new HashMap<String, List<String>>();
+               associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));  
+               
+               TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+               List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
+               
+               for (DataTemplateItem dti : allDTIs) {
+                  
+                  if (dti.isRequired(unansweredAllowed.booleanValue())) {
+//                	 all items must be completed so die if they are not
+                      throw new ResponseSaveException("User submitted a blank response and there are required answers2", 
+                            ResponseSaveException.TYPE_BLANK_RESPONSE);
+                  }
+               }
+               
+              
             }
+            
             response.setAnswers(new HashSet());
          }
 
@@ -471,12 +505,26 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
 
       Set<Long> answerableTemplateItemIds = new HashSet<Long>();
+      
+      //does the eval allow empty answers
+      Boolean unansweredAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+      if (unansweredAllowed == null) {
+         unansweredAllowed = eval.getBlankResponsesAllowed();
+      }
+      if (unansweredAllowed == null) {
+         unansweredAllowed = true; // default to skipping the check
+      }
+      
+      
       Set<String> requiredAnswerKeys = new HashSet<String>();
+     
+      
+      
       for (DataTemplateItem dti : allDTIs) {
          if (dti.isAnswerable()) {
             answerableTemplateItemIds.add(dti.templateItem.getId());
          }
-         if (dti.isRequired()) {
+         if (dti.isRequired(unansweredAllowed.booleanValue())) {
             requiredAnswerKeys.add(dti.getKey());
          }
       }
@@ -491,7 +539,17 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
                   + answer.getTemplateItem().getId());
          }
-
+         
+         //if the author has specified this as a compulsory question
+         log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().getIsCompulsory());
+         log.debug("numeric " + answer.getNumeric() + " text: " + answer.getText() );
+         if (answer.getNumeric() == null && answer.getText() == null &&  answer.getTemplateItem().getIsCompulsory() ) {
+        	 log.debug("answer for " + answer.getTemplateItem().getId() + "has not been answered ");
+              throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
+                    + answer.getTemplateItem().getId());
+           }
+         
+         
          // make sure the item and template item are available for this answer
          if (answer.getTemplateItem() == null || answer.getTemplateItem().getItem() == null) {
             throw new IllegalArgumentException("NULL templateItem or templateItem.item for answer: " 
@@ -551,15 +609,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       }
 
       // check if required answers are filled in
-      Boolean unansweredAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-      if (unansweredAllowed == null) {
-         unansweredAllowed = eval.getBlankResponsesAllowed();
-      }
-      if (unansweredAllowed == null) {
-         unansweredAllowed = true; // default to skipping the check
-      }
-
-      if (! unansweredAllowed) {
+//      if (! unansweredAllowed) {
          // all items must be completed so die if they are not
 
          // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
@@ -572,7 +622,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                   + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
                   requiredAnswerKeys.toArray(new String[] {}) );
          }
-      }
+  //    }
 
       return true;
    }
