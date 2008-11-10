@@ -30,6 +30,7 @@ import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
  * @author Antranig Basman (amb26@ponder.org.uk)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@SuppressWarnings("deprecation")
 public class RSFUtils {
  
   public static void targetLabel(UIComponent label, UIComponent target) {

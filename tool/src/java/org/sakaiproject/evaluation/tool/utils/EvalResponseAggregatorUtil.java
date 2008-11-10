@@ -289,14 +289,15 @@ public class EvalResponseAggregatorUtil {
    }
 
    /**
-    * Does the preparation work for getting the DITL.  At the moment, this is basically
+    * Does the preparation work for getting the TIDL.  At the moment, this is basically
     * everything from ReportsViewingProducer before it started iterating through
     * the template data items.  Looking into making this the same for all the reporting
     * formats.
+    * Requires access to the authoring, delivery, and hierarchy services
     * 
     * @param eval
     * @param groupIds
-    * @return
+    * @return a TIDL which is built for the given eval and group ids
     */
    public TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
       List<EvalTemplateItem> allTemplateItems = 
@@ -324,7 +325,7 @@ public class EvalResponseAggregatorUtil {
     * of group ids.  This is used in a number of the reporting classes.
     * 
     * @param groupIds
-    * @return
+    * @return a human readable string
     */
    public String getCommaSeparatedGroupNames(String[] groupIds) {
       StringBuilder groupsString = new StringBuilder();
@@ -342,7 +343,7 @@ public class EvalResponseAggregatorUtil {
     * spreadsheet header.
     * 
     * @param templateItemType
-    * @return
+    * @return the header label string
     */
    public String getHeaderLabelForItemType(String templateItemType) {
       String togo;

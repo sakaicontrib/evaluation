@@ -209,7 +209,7 @@ public class PDFReportExporter implements ReportExporter {
             }
 
             // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
-            AnswersMean answersMean = RenderingUtils.calculateMean(responseArray, templateItem.getUsesNA());
+            AnswersMean answersMean = RenderingUtils.calculateMean(responseArray);
             Object[] params = new Object[] {answersMean.getAnswersCount()+"", answersMean.getMeanText()};
             String answersAndMean = messageLocator.getMessage("viewreport.answers.mean", params);
 
