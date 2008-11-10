@@ -57,36 +57,49 @@ public class RenderingUtils {
     }
 
     /**
-     * Calculates the mean and number of counted answers from the responseArray
-     * (this comes from the {@link TemplateItemDataList#getAnswerChoicesCounts(String, int, List)})
+     * Calculates the weighted average and number of counted answers from the responseArray
+     * (this comes from the {@link TemplateItemDataList#getAnswerChoicesCounts(String, int, List)}) <br/>
+     * http://en.wikipedia.org/wiki/Weighted_mean
+     * 
      * @param responseArray an array of answers in the order such that 0 weighted answers are in the first array slot, etc.)
-     * @param usesNA if true this this array includes the count of N/A answers in the last slot
      * @return the AnswersMean object which holds the answers count and the mean
      */
-    public static AnswersMean calculateMean(int[] responseArray, boolean usesNA) {
-        int responseCount = usesNA ? responseArray.length - 1 : responseArray.length;
-        int answersCount = 0;
-        int answersTotal = 0;
+    public static AnswersMean calculateMean(int[] responseArray) {
+        int responseCount = responseArray.length - 1; // remove the NA count from the end
+        int totalAnswers = 0;
+        int totalValue = 0;
+        int totalWeight = 0;
         for (int i = 0; i < responseCount; i++) {
-            answersCount += responseArray[i];
-            answersTotal += answersTotal + (i * responseArray[i]);
+            int weight = i+1;
+            totalWeight += weight;
+            totalAnswers += responseArray[i];
+            totalValue += (weight * responseArray[i]);
         }
-        double mean = answersTotal / answersCount;
-        return new AnswersMean(answersCount, mean);
+        double weightedAverage = (double)totalValue / (double)totalAnswers; // (double)totalWeight;
+        return new AnswersMean(totalAnswers, weightedAverage);
     }
 
     public static class AnswersMean {
         private DecimalFormat df = new DecimalFormat("#0.00");
 
         public String meanText;
+        /**
+         * @return the weighted mean as text
+         */
         public String getMeanText() {
             return meanText;
         }
         public double mean;
+        /**
+         * @return the weighted mean
+         */
         public double getMean() {
             return mean;
         }
         public int answersCount;
+        /**
+         * @return the number of answered items (not counting NA)
+         */
         public int getAnswersCount() {
             return answersCount;
         }

@@ -807,6 +807,7 @@ public class TemplateItemDataList {
     * @param scaleChoices the number of scale choices (normally this is the size of the {@link EvalScale#getOptions()} array. 
     * The returned integer array will be this big (+1 for NA), each index being a count of answers for that scale choice
     * @param answers the List of EvalAnswers to work with
+    * @return an integer array which is the same size as the number of choices + 1 (for NA), ignore the last array entry if NA is not used for this item
     * @throws IllegalArgumentException if this is not an itemType that has numeric answers (Scaled/MC/MA/...)
     */
    public static int[] getAnswerChoicesCounts(String templateItemType, int scaleChoices, List<EvalAnswer> itemAnswers) {

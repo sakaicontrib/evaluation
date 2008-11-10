@@ -33,6 +33,8 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils.AnswersMean;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
@@ -324,6 +326,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                      new String[] { naCount+"", makePercentage(naCount, responsesCount) });
             }
+
+            // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
+            AnswersMean answersMean = RenderingUtils.calculateMean(choicesCounts);
+            Object[] params = new Object[] {answersMean.getAnswersCount()+"", answersMean.getMeanText()};
+            UIMessage.make(scaled, "statistics", "viewreport.answers.mean", params);
          }
 
          if (dti.usesComments()) {
@@ -341,7 +348,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                commentCount++;
             }
             if (comments.size() <= 0) {
-               UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
+               UIMessage.make(showCommentsBranch, "noComments", "viewreport.no.comments");
             }
             totalCommentsCount += comments.size();
          }            
