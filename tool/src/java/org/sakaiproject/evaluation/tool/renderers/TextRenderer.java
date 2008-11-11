@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@SuppressWarnings("deprecation")
 public class TextRenderer implements ItemRenderer {
 
 	/**
@@ -53,7 +56,7 @@ public class TextRenderer implements ItemRenderer {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
       if (templateItem.renderOption) {
          container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-      } else if (templateItem.getIsCompulsory() != null && templateItem.getIsCompulsory()) {
+      } else if (safeBool(templateItem.getIsCompulsory())) {
     	  container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
       }
 

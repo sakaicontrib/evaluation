@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
+
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -42,6 +44,7 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@SuppressWarnings("deprecation")
 public class ScaledRenderer implements ItemRenderer {
 
    /**
@@ -76,7 +79,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
          if (templateItem.renderOption) {
             compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
         	 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -160,7 +163,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -227,7 +230,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
          if (templateItem.renderOption) {
             stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (templateItem.getIsCompulsory() && !evalAnswerReqired.booleanValue()) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
         	 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 

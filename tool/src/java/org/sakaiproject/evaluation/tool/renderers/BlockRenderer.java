@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -186,7 +188,7 @@ public class BlockRenderer implements ItemRenderer {
             UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
             if (childTemplateItem.renderOption) {
                childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-            } else if (childTemplateItem.getIsCompulsory()  && !evalAnswerReqired.booleanValue()) {
+            } else if (safeBool(childTemplateItem.getIsCompulsory())  && ! safeBool(evalAnswerReqired.booleanValue())) {
            	 	childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
             if (colored) {
