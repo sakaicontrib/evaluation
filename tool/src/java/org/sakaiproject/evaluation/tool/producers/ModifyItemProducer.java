@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
+
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -68,6 +70,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@SuppressWarnings("deprecation")
 public class ModifyItemProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
    public static final String VIEW_ID = "modify_item";
@@ -229,7 +232,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
          usesNA = item.getUsesNA();
          usesComment = item.getUsesComment();
-         isCompulsory = item.getIsCompulsory();
+         isCompulsory = safeBool(item.getIsCompulsory());
          // if this is locked then we should probably be failing at this point
          itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
          if (item.getScale() != null) {
@@ -253,7 +256,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
          usesComment = templateItem.getUsesComment();
-         isCompulsory = templateItem.getIsCompulsory();
+         isCompulsory = safeBool(templateItem.getIsCompulsory());
          itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
          if (templateItem.getItem().getScale() != null) {
             currentScale = templateItem.getItem().getScale();

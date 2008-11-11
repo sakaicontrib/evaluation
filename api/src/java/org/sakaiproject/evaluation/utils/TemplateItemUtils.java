@@ -245,7 +245,7 @@ public class TemplateItemUtils {
          String type = getTemplateItemType(templateItem);
          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
             result = false;
-         } else if (!(templateItem.getIsCompulsory().booleanValue()) && surveyAllowsEmpty) {
+         } else if (! safeBool(templateItem.getIsCompulsory()) && surveyAllowsEmpty) {
             result = false;
          } else {
         	 
@@ -320,7 +320,6 @@ public class TemplateItemUtils {
     * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
     * @return a List of {@link EvalTemplateItem} objects without any block child objects
     */
-   @SuppressWarnings("unchecked")
    public static List<EvalTemplateItem> getNonChildItems(List<EvalTemplateItem> templateItemsList) {
       List<EvalTemplateItem> nonChildItemsList = new ArrayList<EvalTemplateItem>();
 
@@ -347,7 +346,6 @@ public class TemplateItemUtils {
     * @param blockParentId a unique identifier for an {@link EvalTemplateItem} which is a block parent
     * @return a List of {@link EvalTemplateItem} objects or empty if none found
     */
-   @SuppressWarnings("unchecked")
    public static List<EvalTemplateItem> getChildItems(List<EvalTemplateItem> templateItemsList, Long blockParentId) {
       List<EvalTemplateItem> childItemsList = new ArrayList<EvalTemplateItem>();
 
@@ -628,6 +626,18 @@ public class TemplateItemUtils {
       } else {
          throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
       }
+   }
+
+   /**
+    * @param bool takes a Boolean and converts it to a boolean to ensure no null pointer exceptions
+    * @return the boolean value of the Boolean or false if it is null
+    */
+   public static boolean safeBool(Boolean bool) {
+       boolean result = false;
+       if (bool != null) {
+           result = bool.booleanValue();
+       }
+       return result;
    }
 
 }      
