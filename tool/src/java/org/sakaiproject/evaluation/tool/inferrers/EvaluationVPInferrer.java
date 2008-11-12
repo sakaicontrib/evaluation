@@ -122,11 +122,12 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         	log.info("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
             return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
         } else {
-            // authenticated evaluation URLs depend on the state of the evaluation and the users permissions,
-            // failsafe goes to take eval when it cannot determine where else to go
+            // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
-            log.warn("Note: User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
-            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
+            log.info("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
+
+            // eval is over and viewable
+            if ( EvalUtils.checkStateAfter(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_VIEWABLE, true) ) {
                 // go to the reports view
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         commonLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
@@ -137,7 +138,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 }
             }
 
-            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
+            // eval has not started
+            if ( EvalUtils.checkStateBefore(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
                 // go to the add instructor items view if permission
                 if (evalGroupId == null) {
                    Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
@@ -163,14 +165,16 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // finally, try to go to the take evals view
             if (! commonLogic.isUserAnonymous(currentUserId) ) {
                 // check perms if not anonymous
-                if (currentUserId.equals(evaluation.getOwner()) ||
+                // switched to take check first
+                if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
+                	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
+                    return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                } else if (currentUserId.equals(evaluation.getOwner()) ||
                         commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
+                    // cannot take, but can preview
                     return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                 } else {
-                    if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
-                    	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
-                        return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
-                    }
+                    throw new SecurityException("User ("+currentUserId+") does not have permission to take or preview this evaluation ("+evaluationId+")");
                 }
             }
 

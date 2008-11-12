@@ -239,7 +239,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                   List<EvalAssignGroup> assignGroups = m.get(evaluationId);
                   evalGroups = new EvalGroup[assignGroups.size()];
                   for (int i = 0; i < assignGroups.size(); i++) {
-                     EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
+                     EvalAssignGroup assignGroup = assignGroups.get(i);
                      evalGroups[i] = commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
                   }
                } else {
@@ -305,7 +305,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                String[] values = new String[validGroups.size()];
                String[] labels = new String[validGroups.size()];
                for (int i=0; i<validGroups.size(); i++) {
-                  EvalGroup group = (EvalGroup) validGroups.get(i);
+                  EvalGroup group = validGroups.get(i);
                   values[i] = group.evalGroupId;
                   labels[i] = group.title;
                }
@@ -468,10 +468,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       }
 
       // render the item
-      Map evalProps  = new HashMap<String, String>();
+      Map<String, String> evalProps = new HashMap<String, String>();
       Boolean answerRequired = true;
-      if (eval.getBlankResponsesAllowed().booleanValue())
+      if (eval.getBlankResponsesAllowed().booleanValue()) {
     	  answerRequired = false;
+      }
       evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
       
       itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, evalProps);
@@ -514,7 +515,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       } else {
          // if the user has answered this question before, point at their response
          String key = TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), associatedType, associatedId);
-         EvalAnswer currAnswer = (EvalAnswer) answerMap.get(key);
+         EvalAnswer currAnswer = answerMap.get(key);
          if (currAnswer == null) {
             // this is a new answer
             newAnswer = true;
@@ -574,9 +575,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List i = new ArrayList();
+   public List<NavigationCase> reportNavigationCases() {
+      List<NavigationCase> i = new ArrayList<NavigationCase>();
       i.add(new NavigationCase("success", new SimpleViewParameters(SummaryProducer.VIEW_ID)));
       return i;
    }
