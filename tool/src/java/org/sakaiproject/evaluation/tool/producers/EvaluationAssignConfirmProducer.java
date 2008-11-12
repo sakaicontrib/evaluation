@@ -255,9 +255,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
          }
       }
 
-      // show submit buttons for first time evaluation creation && not active yet Evaluation case
+      // show submit buttons for first time evaluation creation && active or earlier
       String evalState = EvalUtils.getEvaluationState( evaluation, false );
-      if ( EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, false) ) {
+      if ( EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
          // first time evaluation creation or still in queue
          UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:");
          UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm");
