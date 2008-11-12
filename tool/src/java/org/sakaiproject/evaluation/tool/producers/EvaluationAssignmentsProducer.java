@@ -44,7 +44,6 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
-import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 /**
  * Show the currently assigned courses or confirm the assignment and create the evaluation
@@ -117,8 +116,9 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
 
       // normal page content
 
+      // show modify assignments link as long as the eval is active or earlier
       String evalState = evaluationService.updateEvaluationState(evaluationId);
-      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
+      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
          UIInternalLink.make(tofill, "modifyAssignmentsLink", UIMessage.make("evaluationassignments.add.assigns.link"), 
                new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evaluationId) );
       }

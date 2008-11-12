@@ -37,11 +37,9 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
-import uk.org.ponder.rsf.builtin.UVBProducer;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -69,6 +67,7 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
  */
+@SuppressWarnings("deprecation")
 public class EvaluationAssignProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
     public static final String VIEW_ID = "evaluation_assign";

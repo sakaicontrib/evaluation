@@ -368,14 +368,18 @@ public class SetupEvalBean {
                TargettedMessage.SEVERITY_INFO));
       } else {
          // just assigning groups
+         if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
+            throw new IllegalStateException("User cannot update evaluation assignments after an evaluation is active and complete");
+         }
 
-         // TODO - we might want to allow appending assigns while state is active?
+         // make sure we cannot remove assignments for active evals
+         boolean append = false;
          if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
-            throw new IllegalStateException("User cannot update evaluation assignments once an evaluation has started");
+             append = true; // can only append after active
          }
 
          // save all the assignments (hierarchy and group)
-         evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, false);
+         evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, append);
       }
       return "controlEvals";
    }
