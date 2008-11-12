@@ -132,7 +132,7 @@ public class TemplateBBean {
    public String copyTemplate() {
       log.debug("make a copy of a template ("+templateId+") at the users request");
       String ownerId = commonLogic.getCurrentUserId();
-      Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, false);
+      Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, true);
       messages.addMessage( new TargettedMessage("controltemplates.copy.user.message", 
             new Object[] {templateId, copiedId}, TargettedMessage.SEVERITY_INFO) );
       return "success";
@@ -342,7 +342,7 @@ public class TemplateBBean {
     * copying various settings around and fixing up child items to inherit from the parent items<br/>
     * This logic is getting complex enough that it probably needs to be broken out at some point
     * 
-    * @return
+    * @return 'success' if all is ok
     */
    public String saveBlockItemAction() {
       log.debug("Save Block items");
