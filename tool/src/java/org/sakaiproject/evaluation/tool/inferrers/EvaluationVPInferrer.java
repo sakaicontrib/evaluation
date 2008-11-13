@@ -134,7 +134,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                     return new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
                 } else {
                     // require auth
-                    throw new SecurityException("User must be authenticated to access this page");
+//                    throw new SecurityException("This evaluation/survey is closed and can longer be taken, only survey admins can access this:  User must be authenticated to access this page");
+                    // send user to take eval so they will get the closed message
+                    return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                 }
             }
 
