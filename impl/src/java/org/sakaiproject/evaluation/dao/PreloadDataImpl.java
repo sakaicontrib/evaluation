@@ -160,14 +160,19 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
          
          // Default email settings
-         saveConfig(EvalSettings.REMINDER_INTERVAL_DAYS, 0);
-         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "Sat Dec 20 09:15:00 EST 2008");
-         saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0);
-         saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
-         saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+         saveConfig(EvalSettings.REMINDER_INTERVAL_DAYS, 0); //no reminders
+         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "Sat Oct 18 09:15:00 EST 2008");
+         saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0); //no throttle
+         saveConfig(EvalSettings.EMAIL_LOCKS_SIZE, 100);//influences batch size
+         saveConfig(EvalSettings.EMAIL_SEND_QUEUED_ENABLED, true); // a simple flag that can be set
+         saveConfig(EvalSettings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL, 2); //minutes
+         saveConfig(EvalSettings.EMAIL_SEND_QUEUED_START_INTERVAL, 1); //minutes
+         saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0); //no throttle
+         saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);//send by default
+         
          saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
          saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL, false);
-        
+         
          // Default batch performance metrics settings
          saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);
 

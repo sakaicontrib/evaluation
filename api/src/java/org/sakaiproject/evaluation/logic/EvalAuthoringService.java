@@ -641,6 +641,14 @@ public interface EvalAuthoringService {
     * @return the list of all {@link EvalTemplate}s which are using this item (or empty if none found)
     */
    public List<EvalTemplate> getTemplatesUsingItem(Long itemId);
+   
+   /**
+    * Get the list of all the template items which are using an item
+    * 
+    * @param itemId the unique id of an {@link EvalItem}
+    * @return the list of all {@link EvalTemplateItem}s which are using this item (or empty if none found)
+    */
+   public List<EvalTemplateItem> getTemplateItemsUsingItem(Long itemId);
 
    // AUTO USE tags
 
@@ -703,5 +711,14 @@ public interface EvalAuthoringService {
     * @return true if this template is used in any evalautions
     */
    public boolean isUsedTemplate(Long templateId);
+   
+   /**
+    * TODO - is isUsedTemplate correct?
+    * @param templateId the unique id for an {@link EvalTemplate}
+    * @return true if this template is used in any evalautions
+    */
+   public boolean isUsedTemplateCopyOf(Long templateId);
+   
+   
 
 }

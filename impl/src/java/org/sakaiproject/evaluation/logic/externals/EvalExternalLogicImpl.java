@@ -699,7 +699,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
       return false;
    }
-
+   
+   /*
+    * EmailService batch email method
+    * 	public void sendMail(InternetAddress from, InternetAddress[] to, Map Hsubject, Map Hcontent, InternetAddress[] headerTo,
+			InternetAddress[] replyTo, List additionalHeader) {
+    */
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalEmail#sendEmailsToAddresses(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, boolean)
+    */
    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions) {
       String exceptionTracker = null;
 
@@ -729,7 +739,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
       return sendEmails(fromAddress, toEmails, subject, message, deferExceptions, exceptionTracker);
    }
-
+   
    /**
     * Handle the actual sending of the email
     * @param fromAddress

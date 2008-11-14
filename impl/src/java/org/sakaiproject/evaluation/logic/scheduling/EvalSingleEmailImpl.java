@@ -75,12 +75,14 @@ public class EvalSingleEmailImpl implements Job{
 		this.evaluationService = evaluationService;
 	}
 	
+	//diagnostics
 	private static Log log = LogFactory.getLog(EvalSingleEmailImpl.class);
+	//progress
 	private static final Log metric = LogFactory.getLog("metrics." + EvalSingleEmailImpl.class.getName());
 	
-	private int reminderInterval; //unit is a day
-	private Boolean logEmailRecipients; //optional
-	
+	private static final String FIRST_NOTIFICATION = "first email notification";
+	private static final String REMINDER = "reminder notification";
+
 	public void init() {
 		if(log.isDebugEnabled()) log.debug("init()");
 	}
@@ -90,30 +92,32 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
-			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalSingleEmailImpl.execute() was called by the Job Scheduler.");
+			if (log.isInfoEnabled())
+				log.info("EvalSingleEmailImpl.execute() was called by the JobScheduler.");
 			if (checkSettings()) {
 				if (!evaluationService
 						.isEvaluationWithState(EvalConstants.EVALUATION_STATE_ACTIVE)) {
-					if (metric.isInfoEnabled())
-						metric
-								.info("Metric EvalSingleEmailImpl.execute() found no active evaluations.");
+					if (log.isInfoEnabled())
+						log.info("EvalSingleEmailImpl.execute() found no active evaluations.");
 					return;
 				}
 			} else {
-				log.error("Settings are inconsistent with job execution.");
+				log.error("EvalSingleEmailImpl.execute() settings are inconsistent with job execution.");
 				return;
 			}
 			Locale locale = new ResourceLoader().getLocale();
-			logEmailRecipients = (Boolean) evalSettings
+			//an option
+			Boolean logEmailRecipients = (Boolean) evalSettings
 					.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
 			String[] recipients = new String[] {};
 			long start, end;
 			float seconds;
 			// next reminder date
 			Date reminderDate = (Date) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
-			reminderInterval = ((Integer) evalSettings
+			if (log.isInfoEnabled())
+				log.info("Next reminder date is " + reminderDate + ".");
+			//reminder interval unit is a day
+			int reminderInterval = ((Integer) evalSettings
 					.get(EvalSettings.REMINDER_INTERVAL_DAYS)).intValue();
 			long day = 1000 * 60 * 60 * 24;
 			// check if reminders are to be sent
@@ -123,19 +127,19 @@ public class EvalSingleEmailImpl implements Job{
 				long tdate = System.currentTimeMillis();
 				if (tdate >= rdate) {
 					// today is a reminder day
+					if (log.isInfoEnabled())
+						log.info("EvalSingleEmailImpl.execute() thinks today is a reminder day.");
 					start = System.currentTimeMillis();
 					recipients = evalEmailsLogic.sendEvalReminderSingleEmail();
 					end = System.currentTimeMillis();
 					seconds = (end - start) / 1000;
 					if (metric.isInfoEnabled())
-						metric
-								.info("Metric EvalEmailsLogic.sendEvalReminderSingleEmail() took "
-										+ seconds
-										+ " seconds to send email to "
-										+ recipients.length + " addresses.");
+						metric.info("metric EvalSingleEmailImpl.execute() It took " + seconds
+									+ " seconds to send " + REMINDER + "s to "
+									+ recipients.length + " addresses.");
 					// log email recipients
 					if (logEmailRecipients.booleanValue()) {
-						logEmailRecipients(recipients);
+						logEmailRecipients(recipients, REMINDER);
 					}
 					// set next reminder date 1 minute after midnight
 					Calendar calendar = new GregorianCalendar();
@@ -149,6 +153,10 @@ public class EvalSingleEmailImpl implements Job{
 					long nextReminder = tdate + (day * reminderInterval);
 					updateConfig(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
 				}
+				else {
+					if (log.isInfoEnabled())
+						log.info("EvalSingleEmailImpl.execute() thinks today is not a reminder day.");
+				}
 			}
 			recipients = new String[] {};
 			start = System.currentTimeMillis();
@@ -160,22 +168,19 @@ public class EvalSingleEmailImpl implements Job{
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (metric.isInfoEnabled())
-				metric
-						.info("Metric EvalEmailsLogic.sendEvalAvailableSingleEmail() took "
-								+ seconds
-								+ " seconds to send email to "
-								+ recipients.length + " addresses.");
+				metric.info("metric EvalSingleEmailImpl.execute() It took "
+							+ seconds + " seconds to send " + FIRST_NOTIFICATION + "s to "
+							+ recipients.length + " addresses.");
 
 			// log email recipients
 			if (logEmailRecipients.booleanValue())
-				logEmailRecipients(recipients);
+				logEmailRecipients(recipients, FIRST_NOTIFICATION);
 		} catch (Exception e) {
-			log.error("Error executing consolidated email job." + e);
+			log.error("EvalSingleEmailImpl.execute() job exception. " + e);
 			throw new JobExecutionException(e);
 		}
-		if (metric.isInfoEnabled())
-			metric
-					.info("Metric EvalSingleEmailImpl.execute() normal execution completed.");
+		if (log.isInfoEnabled())
+			log.info("EvalSingleEmailImpl.execute() finished.");
 	}
 	
 	/**
@@ -183,22 +188,22 @@ public class EvalSingleEmailImpl implements Job{
 	 * 
 	 * @param recipients the array of addresses
 	 */
-	private void logEmailRecipients(String[] recipients) {
+	private void logEmailRecipients(String[] recipients, String notification) {
 		Arrays.sort(recipients);
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 		int size = recipients.length;
 		int cnt = 0;
+		//limit the line length written to the log
 		for(int i = 0; i < size; i++) {
 			if(cnt > 0)
 				sb.append(",");
 			sb.append(recipients[i]);
 			cnt++;
-			//TODO the line limit if any is certainly bigger than this
-			if((i+1) % 10 == 0) {
+			if((i+1) % 25 == 0) {
 				line = sb.toString();
-				if (log.isWarnEnabled())
-					log.warn("Metric: email sent to " + line);
+				if (metric.isInfoEnabled())
+					metric.info("metric EvalSingleEmailImpl.logEmailRecipients() sent " + notification + " to "+ line + ".");
 				//write a line and empty the buffer
 				sb.setLength(0);
 				cnt = 0;
@@ -211,7 +216,7 @@ public class EvalSingleEmailImpl implements Job{
 	}
 	
 	/**
-	 * Check that consolidated notification is set and there is work to do.
+	 * Check that single email notification is set and there is work to do.
 	 * 
 	 * @return true if execution should proceed, false otherwise
 	 */
@@ -219,16 +224,17 @@ public class EvalSingleEmailImpl implements Job{
 		boolean check = true;
 		Boolean singleEmail = (Boolean)evalSettings.get(EvalSettings.ENABLE_SINGLE_EMAIL);
 		if(singleEmail == null) {
-			log.error("EvalSingleEmailImpl.execute() was called but EvalSettings.ENABLE_SINGLE_EMAIL was null.");
+			log.error("EvalSingleEmail was called, but EvalSettings.ENABLE_SINGLE_EMAIL was null.");
 			check = false;
 		}
 		if(!singleEmail.booleanValue()) {
-			log.error("EvalSingleEmailImpl.execute() was called but EvalSettings.ENABLE_SINGLE_EMAIL was false.");
+			log.error("EvalSingleEmail was called, but EvalSettings.ENABLE_SINGLE_EMAIL was false.");
 			check = false;
 		}
 		if(((String)evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION)).equals(EvalConstants.EMAIL_DELIVERY_NONE)) {
 			if(!((Boolean)evalSettings.get(EvalSettings.LOG_EMAIL_RECIPIENTS)).booleanValue()) {
-				log.warn("EvalSingleEmailImpl.execute() was called but EvalSettings.EMAIL_DELIVERY_OPTION is EMAIL_DELIVERY_NONE and EvalSettings.LOG_EMAIL_RECIPIENTS is false. There is nothing to do.");
+				log.warn("EvalSingleEmail was called, but EvalSettings.EMAIL_DELIVERY_OPTION is EMAIL_DELIVERY_NONE " +
+						"and EvalSettings.LOG_EMAIL_RECIPIENTS is false: EvalSingleEmail has no work to do.");
 				check = false;
 			}
 		}

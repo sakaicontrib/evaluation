@@ -1702,6 +1702,14 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
       return templates;
    }
+   
+   @SuppressWarnings("unchecked")
+   public List<EvalTemplateItem> getTemplateItemsUsingItem(Long itemId) {
+	     if (getItemById(itemId) == null) {
+	         throw new IllegalArgumentException("Invalid itemId, no item found with this id: " + itemId);
+	      }
+	   return dao.findByProperties(EvalTemplateItem.class, new String[] {"item.id"}, new Object[] { itemId });
+   }
 
 
 
@@ -1914,7 +1922,14 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return dao.isUsedTemplate(templateId);
    }
 
-
+   /**
+    * TODO - is isUsedTemplate correct?
+    * @param templateId the unique id for an {@link EvalTemplate}
+    * @return true if this template is used in any evalautions
+    */
+   public boolean isUsedTemplateCopyOf(Long templateId) {
+      return dao.isUsedTemplateCopyOf(templateId);
+   }
 
 
 

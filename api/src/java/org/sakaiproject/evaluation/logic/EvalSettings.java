@@ -102,6 +102,7 @@ public interface EvalSettings {
     * CONSTANT: Are users allowed to use Not Available in templates and evaluations - {@link Boolean}, default True
     */
    public static final String ENABLE_NOT_AVAILABLE = "ENABLE_NOT_AVAILABLE:java.lang.Boolean";
+   
    /**
     * Enable evaluation taker comments on all non-text answerable items, this is configured
     * on a per item basis, and will disable all comments if turned off
@@ -245,16 +246,35 @@ public interface EvalSettings {
    public static final String REMINDER_INTERVAL_DAYS = "REMINDER_INTERVAL_DAYS:java.lang.Integer";
    
    /**
+    * CONSTANT: Timer interval that controls how often we check for queued email to be sent. - {@link Integer},default 0}
+    */
+   public static final String EMAIL_SEND_QUEUED_REPEAT_INTERVAL = "EMAIL_SEND_QUEUED_REPEAT_INTERVAL:java.lang.Integer";
+   
+   /**
+    * CONSTANT: Interval before we start checking for queued email to be sent. - {@link Integer},default 0}
+    */
+   public static final String EMAIL_SEND_QUEUED_START_INTERVAL = "EMAIL_SEND_QUEUED_START_INTERVAL:java.lang.Integer";
+   
+   /**
+    * CONSTANT: Are servers allowed to send email that has been queued for delivery? - {@link Boolean}, default True
+    */
+   public static final String EMAIL_SEND_QUEUED_ENABLED = "EMAIL_SEND_QUEUED_ENABLED:java.lang.Boolean";
+   
+   /**
     * CONSTANT: Email delivery options: EvalConstants.MAIL_DELIVERY_OPTION_NONE|EMAIL_DELIVERY_OPTION_SEND|EMAIL_DELIVERY_OPTION_LOG - {@link String}, 
     * default EMAIL_DELIVERY_OPTION_SEND
     */
    public static final String EMAIL_DELIVERY_OPTION = "EMAIL_DELIVERY_OPTION:java.lang.String";
    /**
-    * CONSTANT: The number of emails to process in a batch before pausing EMAIL_WAIT_INTERVAL seconds. 0 causes 1 batch with all. - {@link Integer},default 0}
+    * CONSTANT: (Throttle) The number of emails to process in a batch before pausing EMAIL_WAIT_INTERVAL seconds. 0 causes 1 batch with all. - {@link Integer},default 0}
     */
    public static final String EMAIL_BATCH_SIZE = "EMAIL_BATCH_SIZE:java.lang.Integer";
    /**
-    * CONSTANT: The number of seconds to wait before processing another EMAIL_BATCH_SIZE emails. 0 causes no wait between batches. - {@link Integer},default 0}
+    * CONSTANT: The number of locks to use when queuing email for later sending. - {@link Integer},default 100}
+    */
+   public static final String EMAIL_LOCKS_SIZE = "EMAIL_LOCKS_SIZE:java.lang.Integer";
+   /**
+    * CONSTANT: (Throttle) The number of seconds to wait before processing another EMAIL_BATCH_SIZE emails. 0 causes no wait between batches. - {@link Integer},default 0}
     */
    public static final String EMAIL_WAIT_INTERVAL = "EMAIL_WAIT_INTERVAL:java.lang.Integer";
    /**
@@ -291,6 +311,7 @@ public interface EvalSettings {
       ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
       DISPLAY_HIERARCHY_HEADERS,
       DISPLAY_HIERARCHY_OPTIONS,
+      EMAIL_SEND_QUEUED_ENABLED,
       ENABLE_ADHOC_GROUPS,
       ENABLE_ADHOC_USERS,
       ENABLE_CSV_REPORT_EXPORT,

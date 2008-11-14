@@ -20,7 +20,7 @@
 
     <!-- jobs processing -->
     <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
-        class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl">
+    	class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl" >
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -52,6 +52,52 @@
       </property>
       <property name="jobName">
          <value>Single Email Evaluation Notification</value>
+      </property>
+      <property name="schedulerManager">
+         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+      </property>
+   </bean>
+   
+   <!-- jobs to enable and disable sending queued email notifications -->
+    	<bean id="enableSendingQueuedEmail"
+   		class="org.sakaiproject.evaluation.logic.scheduling.EvalEnableSendingQueuedEmail"
+   		init-method="init" destroy-method="destroy">
+   		<property name="evalSettings">
+   			<ref bean="org.sakaiproject.evaluation.logic.EvalSettings"/>
+   		</property>
+      	</bean>
+
+  	<bean id="disableSendingQueuedEmail"
+   		class="org.sakaiproject.evaluation.logic.scheduling.EvalDisableSendingQueuedEmail"
+   		init-method="init" destroy-method="destroy">
+   		<property name="evalSettings">
+   			<ref bean="org.sakaiproject.evaluation.logic.EvalSettings"/>
+   		</property>
+   	</bean>
+   	
+   	<!-- these are the helpers that will register the above beans with the job scheduler -->
+   	 <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.EvalEnableSendingQueuedEmail"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      singleton="true" init-method="init">
+      <property name="beanId">
+      	<value>enableSendingQueuedEmail</value>
+      </property>
+      <property name="jobName">
+         <value>Enable Sending Queued TQ Email</value>
+      </property>
+      <property name="schedulerManager">
+         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+      </property>
+   </bean>
+
+  <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.EvalDisableSendingQueuedEmail"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      singleton="true" init-method="init">
+      <property name="beanId">
+      	<value>disableSendingQueuedEmail</value>
+      </property>
+      <property name="jobName">
+         <value>Disable Sending Queued TQ Email</value>
       </property>
       <property name="schedulerManager">
          <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />

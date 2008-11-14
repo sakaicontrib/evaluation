@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalQueuedEmail" table="EVAL_QUEUED_EMAIL" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <property name="lock" type="string" index="eval_lock_name">
+            <column name="LOCK_NAME" not-null="true" length="255" />
+        </property>
+        <property name="toAddress" type="string">
+            <column name="TO_ADDRESS" not-null="true" length="255" />
+        </property>
+        <property name="subject" type="text">
+            <column name="SUBJECT" />
+        </property>
+        <property name="message" type="text">
+            <column name="MESSAGE" />
+        </property>
+    </class>
+</hibernate-mapping>

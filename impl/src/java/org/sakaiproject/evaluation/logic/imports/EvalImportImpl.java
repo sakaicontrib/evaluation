@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -182,7 +181,10 @@ public class EvalImportImpl implements EvalImport {
 			saveOrUpdateEvaluations(doc, messages,userId);
 
 			saveOrUpdateAssignGroups(doc, messages,userId);
-
+			
+			if(log.isInfoEnabled())
+				log.info("Importing of data is done.");
+			
 		} catch (JDOMException jde) {
 			publishException("error","There was a problem parsing the XML data.", jde, messages);
 		} catch (Exception e) {
@@ -238,15 +240,18 @@ public class EvalImportImpl implements EvalImport {
 						// create new
 						scale = newScale(element, messages);
 						scalesSaved++;
+						if((scalesSaved % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					} else {
 						// update existing
 						setScaleProperties(element, scale, messages);
 						scalesUpdated++;
+						if((scalesUpdated % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					}
 					authoringService.saveScale(scale, userId);
-					if((scalesSaved % 100) == 0 || (scalesUpdated % 100) == 0) {
-						externalLogic.setSessionActive();
-					}
 				} catch (Exception e) {
 					publishException("warn","EvalScale with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;
@@ -273,6 +278,7 @@ public class EvalImportImpl implements EvalImport {
 	 */
 	protected void saveOrUpdateItems(Document doc, List<String> messages, String userId) {
 		String eid = null;
+		String classification = null;
 		EvalItem item = null;
 		int itemsSaved = 0, itemsUpdated = 0;
 		long start, end;
@@ -295,21 +301,30 @@ public class EvalImportImpl implements EvalImport {
 						item = newItem(element, messages, userId);
 						authoringService.saveItem(item, userId);
 						itemsSaved++;
+						if((itemsSaved % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					} else {
-						// update existing and copies
+						// update existing
+						updateItemProperties(element, item, messages);
+						authoringService.saveItem(item, userId);
+						itemsUpdated++;
+
+						//update copies
 						List<Long> itemIds = authoringService.getIdsOfCopiesOfItem(item.getId());
-						itemIds.add(item.getId());
-						for(Long itemId : itemIds ) {
-							item = authoringService.getItemById(itemId);
-							setItemProperties(element, item, messages);
-							authoringService.saveItem(item, userId);
-							itemsUpdated++;
+						if(!itemIds.isEmpty()) {
+							for(Long itemId : itemIds ) {
+								item = authoringService.getItemById(itemId);
+								updateItemProperties(element, item, messages);
+								authoringService.saveItem(item, userId);
+								itemsUpdated++;
+							}
+						}
+						if((itemsUpdated % 100) == 0) {
+							externalLogic.setSessionActive();
 						}
 					}
-					
-					if((itemsSaved % 100) == 0 || (itemsUpdated % 100) == 0) {
-						externalLogic.setSessionActive();
-					}
+
 				} catch (Exception e) {
 					publishException("warn","EvalItem with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;
@@ -352,7 +367,9 @@ public class EvalImportImpl implements EvalImport {
 	}
 
 	/**
-	 * Save new or update existing EvalTemplates
+	 * Save new or update existing EvalTemplates. </ br>
+	 * If new, save new template and template items.
+	 * If existing, check whether in use or not. If in use, update copies of template, template items, items.
 	 * 
 	 * @param doc
 	 *            the Document created from the XML ContentResource
@@ -360,23 +377,19 @@ public class EvalImportImpl implements EvalImport {
 	 *            a collecting parameter pattern list of error messages
 	 */
 	protected void saveOrUpdateTemplates(Document doc, List<String> messages, String userId, List<Long> idsToSkip) {
+		if(doc == null || userId == null)
+			throw new IllegalArgumentException("Parameter(s) to saveOrUpdateTemplates() null.");
+		
 		List<Object> elements = null;
 		List<Long> templatesIds = null;
 		List<EvalTemplateItem> allTemplateItems = null;
-		EvalTemplateItem templateItem = null;
-		EvalTemplateItem evalTemplateItem = null;
-		Long itemId = null;
-		Long[] newTemplateItemIds = new Long[]{};
-		Long[] templateItemIds = new Long[]{};
-		Set<EvalTemplateItem> items = new HashSet();
-		String eid = null;
 		EvalTemplate template = null;
+		Long[] newTemplateItemIds = new Long[]{};
+		Set<EvalTemplateItem> templateItemSet = new HashSet<EvalTemplateItem>();
+		String eid = null;
 		int templatesSaved = 0, templatesUpdated = 0, templateItemsSaved = 0;
 		long start, end;
 		float seconds;
-		
-		if(doc == null || userId == null)
-			throw new RuntimeException("parameter(s) passed to saveOrUpdateTemplates null");
 		
 		start = System.currentTimeMillis();
 		try {
@@ -391,101 +404,94 @@ public class EvalImportImpl implements EvalImport {
 					if (template == null) {
 						// create new
 						if(authoringService.canCreateTemplate(userId)) {
-							//save template
 							template = newTemplate(element, messages);
 							authoringService.saveTemplate(template, userId);
-							//save template items belonging to template
-							templateItemIds = saveTemplateItems(doc, element, null);
-							templateItemsSaved = templateItemsSaved + templateItemIds.length;
-							//add to template items that don't need to be handled later
-							idsToSkip.addAll(Arrays.asList(templateItemIds));
-							//add template items to template
-							for(int i = 0; i < templateItemIds.length; i++) {
-								templateItem = authoringService.getTemplateItemById(templateItemIds[i]);
-								template.getTemplateItems().add(templateItem);
-							}
-							//save template items with template
-							authoringService.saveTemplate(template, userId);
-							//bump the templates saved counter
 							templatesSaved++;
+							if((templatesSaved % 100)  == 0 ) {
+								externalLogic.setSessionActive();
+							}
+							//get the associated template items
+							allTemplateItems = newTemplateItems(doc, element);
+							for(EvalTemplateItem ti : allTemplateItems) {
+								//save template items and update linkages
+								authoringService.saveTemplateItem(ti, userId);
+								idsToSkip.add(ti.getId());
+							}
+							templateItemsSaved = templateItemsSaved + allTemplateItems.size();
 						}
 						else {
 							log.warn("user with id '" + userId + "' cannot create EvalTemplate with eid '" + eid + "'.");
 						}
 					} else {
-						// update existing template and copies
+						// update existing
 						if(authoringService.canModifyTemplate(userId, template.getId())) {
-							//delete the original template items
+							//first update the original
+							setTemplateProperties(element, template);
+							authoringService.saveTemplate(template, userId);
+							templatesUpdated++;
 							allTemplateItems = authoringService.getTemplateItemsForTemplate(template.getId(),
 									new String[] {},new String[] {}, new String[] {});
 							for(EvalTemplateItem ti : allTemplateItems) {
-								Long tItemId = ti.getItem().getId();
+								// remove the templateItem and update all linkages
 								authoringService.deleteTemplateItem(ti.getId(), userId);
-								
-								/* EVALSYS-599 if this item is used elsewhere will cause exception(?)
-								if(authoringService.isUsedItem(itemId)) {
-									log.info("Cannot remove item, in use elsewhere.");
-								}
-								else {
-									authoringService.deleteItem(tItemId, userId);
-								}
-								*/
 							}
-							template.getTemplateItems().clear();
-							authoringService.saveTemplate(template, userId);
-							//save the new template items
-							newTemplateItemIds = saveTemplateItems(doc, element, null);
-							//bump the templates saved counter
-							templateItemsSaved = templateItemsSaved + newTemplateItemIds.length;
-							//note these don't need to be handled again
-							idsToSkip.addAll(Arrays.asList(newTemplateItemIds));
-							//add new template items to the template
-							for (int i = 0; i < newTemplateItemIds.length; i++) {
-								EvalTemplateItem ti = authoringService.getTemplateItemById(newTemplateItemIds[i]);
-								template.getTemplateItems().add(ti);
+							//save the contained XML template items with the updated template
+							allTemplateItems.clear();
+							//allTemplateItems contains the original template's new template items
+							allTemplateItems = newTemplateItems(doc, element);
+							for(EvalTemplateItem ti : allTemplateItems) {
+								//save template items and update linkages
+								authoringService.saveTemplateItem(ti, userId);
+								idsToSkip.add(ti.getId());
 							}
-							//save the revised template
-							authoringService.saveTemplate(template, userId);
-							//do the same for copies of the template
-							templatesIds = authoringService.getIdsOfCopiesOfTemplate(template.getId());
-							for(Long templateId:templatesIds) {
-								if (authoringService.canModifyTemplate(externalLogic.getCurrentUserId(), templateId)) {
-									template = authoringService.getTemplateById(templateId);
-									//delete the original template items
-									items = template.getTemplateItems();
-									for(EvalTemplateItem item : items) {
-										if(authoringService.canControlTemplateItem(externalLogic.getCurrentUserId(), item.getId())) {
-											itemId = item.getId();
-											authoringService.deleteTemplateItem(itemId, externalLogic.getCurrentUserId());
+							templateItemsSaved = templateItemsSaved + allTemplateItems.size();
+							
+							//if the template is being used, there are also copies of template, item, template item
+							//TODO isUsedTemplate found no EvalEvaluations because the template_fk was a copy of the original template id
+							if(authoringService.isUsedTemplateCopyOf(template.getId())) {
+								//copies of the template
+								templatesIds = authoringService.getIdsOfCopiesOfTemplate(template.getId());
+								List toDelete = new ArrayList();
+								for(Long templateId:templatesIds) {
+									if (authoringService.canModifyTemplate(externalLogic.getCurrentUserId(), templateId)) {
+										template = authoringService.getTemplateById(templateId);
+										setTemplateProperties(element, template);
+										authoringService.saveTemplate(template, userId);
+										templatesUpdated++;
+										templateItemSet = template.getTemplateItems();
+										toDelete.clear();
+										for(EvalTemplateItem ti : templateItemSet) {
+											if(authoringService.canControlTemplateItem(externalLogic.getCurrentUserId(), ti.getId())) {
+												toDelete.add(new Long(ti.getId()));
+											}
 										}
+										Long delete;
+										for(Object id:toDelete) {
+											delete = (Long)id;
+											// remove the templateItem and update all linkages
+											authoringService.deleteTemplateItem(delete, externalLogic.getCurrentUserId());
+										}
+										int index = allTemplateItems.size();
+										Long templateItemIds[] = new Long[index];
+										for(int i = 0; i < index; i++) {
+											templateItemIds[i] = allTemplateItems.get(i).getId();
+										}
+										
+										//save and link copies of template items and items to copy of template
+										newTemplateItemIds = authoringService.copyTemplateItems(templateItemIds, template.getOwner(), true, template.getId(), true);
+										templateItemsSaved = templateItemsSaved + newTemplateItemIds.length;
 									}
-									template.getTemplateItems().clear();
-									authoringService.saveTemplate(template, externalLogic.getCurrentUserId());
-									//save the new template items
-									Long[] copiedTemplateItemIds = saveTemplateItems(doc, element, newTemplateItemIds);
-									//bump the templates saved counter
-									templateItemsSaved = templateItemsSaved + copiedTemplateItemIds.length;
-									//note these don't need to be handled again
-									idsToSkip.addAll(Arrays.asList(copiedTemplateItemIds));
-									//add new template items to the template
-									for(Long templateItemId : copiedTemplateItemIds) {
-										evalTemplateItem = authoringService.getTemplateItemById(templateItemId);
-										template.getTemplateItems().add(evalTemplateItem);
+									else {
+										log.warn("user with id '" + userId + "' cannot modify EvalTemplate with eid '" + eid + "'.");
 									}
-									//save the revised template
-									authoringService.saveTemplate(template, externalLogic.getCurrentUserId());
-									templatesUpdated++;
 								}
 							}
-						}
-						else {
-							log.warn("user with id '" + userId + "' cannot modify EvalTemplate with eid '" + eid + "'.");
+							if((templatesUpdated % 100)  == 0 ) {
+								externalLogic.setSessionActive();
+							}
 						}
 					}
-					if((templatesSaved % 100) == 0 || (templatesUpdated % 100)  == 0 ) {
-						externalLogic.setSessionActive();
-					}
-				} catch (Exception e) {
+				}catch (Exception e) {
 					publishException("warn","EvalTemplate with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;
 				}
@@ -540,52 +546,39 @@ public class EvalImportImpl implements EvalImport {
 	}
 
 	/**
-	 * Get and save the Element data from an XML Document using an 
-	 * XPath expression for template items belonging to a specific template.
-	 * or an array of template item ids
+	 * Get the EvalTemplateItems associated with the EvalTemplate contained in the Element
 	 * 
 	 * @param doc
 	 * @param element
-	 * @param templateItemIds if not null, copy and these template items and save
-	 * @return Long[] ids of template items saved during template revision
+	 * @return 
 	 */
-	private Long[] saveTemplateItems(Document doc, Element element, Long[] toCopy) {
+	private List<EvalTemplateItem> newTemplateItems(Document doc, Element element) {
 		if(element == null) {
 			log.error("Element parameter to saveTemplateItems was null.");
 			throw new RuntimeException("Element parameter to saveTemplateItems was null.");
 		}
-		
-		List<Object> elements = new ArrayList();
-		EvalTemplateItem templateItem = null;
-		//the identifier of the updated template
 		String eid = element.getChildText("EID");
-		EvalTemplate template = authoringService.getTemplateByEid(eid);
+		List<EvalTemplateItem> evalTemplateItems = new ArrayList<EvalTemplateItem>();
 		List<String> messages = new ArrayList();
-		Long[] templateItemIds = new Long[]{};
-		Element el = null;
 		try {
-			if(toCopy == null || toCopy.length == 0) {
-				//the new template items belong to the updated template
-				elements = getElementsOfDoc(doc, "/EVAL_DATA/EVAL_TEMPLATEITEMS/EVAL_TEMPLATEITEM[TEMPLATE_EID=" + eid + "]");
-				templateItemIds = new Long[elements.size()];
-				for (int i = 0; i < elements.size(); i++) {
-					el = (Element) elements.get(i);
-					templateItem = newTemplateItem(el, messages);
-					//save the new template item
-					authoringService.saveTemplateItem(templateItem, externalLogic.getCurrentUserId());
-					templateItemIds[i] = templateItem.getId();
-				}
-			}
-			else {
-				//make copies of already saved template items
-				templateItemIds = authoringService.copyTemplateItems(toCopy, externalLogic.getCurrentUserId(), true, template.getId(), true);
+			EvalTemplate template = authoringService.getTemplateByEid(eid);
+			List<Object> elements = new ArrayList();
+			elements = getElementsOfDoc(doc, "/EVAL_DATA/EVAL_TEMPLATEITEMS/EVAL_TEMPLATEITEM[TEMPLATE_EID=" + eid + "]");
+			logElementsFound("EvalTemplateItem", elements.size());
+			Element el = null;
+			EvalTemplateItem templateItem = null;
+			for (int i = 0; i < elements.size(); i++) {
+				el = (Element) elements.get(i);
+				templateItem = newTemplateItem(el, messages);
+				//authoringService.saveTemplateItem(templateItem, externalLogic.getCurrentUserId());
+				evalTemplateItems.add(templateItem);
 			}
 		}
 		catch(Exception e) {
 			throw new RuntimeException(e);
 		}
-		//return template items saved as part of template change
-		return templateItemIds;
+		//TODO messages
+		return evalTemplateItems;
 	}
 
 	/**
@@ -619,17 +612,20 @@ public class EvalImportImpl implements EvalImport {
 					if (template == null) {
 						template = newEmailTemplate(element, messages);
 						emailTemplatesSaved++;
+						if((emailTemplatesSaved % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					} else {
 						// update existing
 						//TODO evaluationService.canControlEmailTemplate(userId, evaluationId, emailTemplateId)
 						setEmailTemplateProperties(element, template);
 						emailTemplatesUpdated++;
+						if((emailTemplatesUpdated % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					}
 					evaluationSetupService.saveEmailTemplate(template,
 							userId);
-					if((emailTemplatesSaved % 100) == 0 || (emailTemplatesSaved % 100) == 0) {
-						externalLogic.setSessionActive();
-					}
 				} catch (Exception e) {
 					publishException("warn","EvalEmailTemplate with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;
@@ -681,19 +677,21 @@ public class EvalImportImpl implements EvalImport {
 						// create new
 						templateItem = newTemplateItem(element, messages);
 						templateItemsSaved++;
+						if((templateItemsSaved % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					} else {
 						// update existing
 						if(idsToSkip.contains(templateItem.getId()))
 							continue;
 						setTemplateItemProperties(templateItem, element, messages);
 						templateItemsUpdated++;
+						if((templateItemsUpdated % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					}
 					authoringService.saveTemplateItem(templateItem,
 							userId);
-					
-					if((templateItemsSaved % 100) == 0 || (templateItemsUpdated % 100) == 0) {
-						externalLogic.setSessionActive();
-					}
 				} catch (Exception e) {
 					publishException("warn","EvalTemplateItem with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;
@@ -743,16 +741,19 @@ public class EvalImportImpl implements EvalImport {
 						evaluationSetupService.saveEvaluation(evaluation,
 								userId, true);
 						evaluationsSaved++;
+						if((evaluationsSaved % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					} else {
 						// update existing
 						setEvaluationProperties(element, evaluation, messages);
+						//save updates state based on current date settings
 						evaluationSetupService.saveEvaluation(evaluation,
 								userId, false);
 						evaluationsUpdated++;
-					}
-					
-					if((evaluationsSaved % 100) == 0) {
-						externalLogic.setSessionActive();
+						if((evaluationsUpdated % 100) == 0) {
+							externalLogic.setSessionActive();
+						}
 					}
 				} catch (Exception e) {
 					publishException("warn","EvalEvaluation with eid '" + eid + "'" + NOT_SAVED, e, messages);
@@ -830,17 +831,19 @@ public class EvalImportImpl implements EvalImport {
 								// create new
 								evalAssignGroup = newAssignGroup(element, messages);
 								assignGroupsSaved++;
+								if((assignGroupsSaved % 100) == 0) {
+									externalLogic.setSessionActive();
+								}
 							} else {
 								// update existing
 								setAssignGroupProperties(element, evalAssignGroup);
 								assignGroupsUpdated++;
+								if(assignGroupsUpdated % 100 == 0) {
+									externalLogic.setSessionActive();
+								}
 							}
 							evaluationSetupService.saveAssignGroup(evalAssignGroup,
 									userId);
-
-							if((assignGroupsSaved % 100) == 0 || assignGroupsUpdated % 100 == 0) {
-								externalLogic.setSessionActive();
-							}
 						}
 						else {
 							log.warn("user with id '" + userId + "' cannot create/modify EvalAssignGroup with eid '" + eid + "'.");
@@ -934,7 +937,6 @@ public class EvalImportImpl implements EvalImport {
 	 *            the EvalTemplate
 	 */
 	private void setTemplateProperties(Element element, EvalTemplate template) {
-		String eid = null;
 		try {
 			template.setOwner(element.getChildText("OWNER"));
 			template.setType(element.getChildText("TYPE"));
@@ -950,7 +952,7 @@ public class EvalImportImpl implements EvalImport {
 					: new Boolean(Boolean.FALSE);
 			template.setExpert(expert);
 		} catch (Exception e) {
-			throw new RuntimeException("setTemplateProperties() eid '" + eid
+			throw new RuntimeException("setTemplateProperties() eid '" + element.getChildText("EID")
 					+ "' " + e);
 		}
 	}
@@ -1274,11 +1276,10 @@ public class EvalImportImpl implements EvalImport {
 			// set options
 			HashMap<Integer, String> order = new HashMap<Integer, String>();
 			Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
-			List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
+			List<Element> options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
 			if (options != null && !options.isEmpty()) {
 				String[] choices = new String[options.size()];
-				for (Iterator iter = options.iterator(); iter.hasNext();) {
-					Element e = (Element) iter.next();
+				for(Element e: options) {
 					Integer key = Integer.parseInt(e
 							.getChildText("SCALE_OPTION_INDEX"));
 					String value = e.getChildText("SCALE_OPTION");
@@ -1388,15 +1389,12 @@ public class EvalImportImpl implements EvalImport {
 	 *            the EvalItem
 	 */
 	private void setItemProperties(Element element, EvalItem item, List<String> messages) {
-		String eid = null;
 		try {
-			eid = element.getChildText("EID");
 			item.setOwner(element.getChildText("OWNER"));
 			item.setItemText(element.getChildText("ITEM_TEXT"));
 			item.setDescription(element.getChildText("DESCRIPTION"));
 			item.setSharing(element.getChildText("SHARING"));
 			item.setClassification(element.getChildText("CLASSIFICATION"));
-
 			Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(
 					Boolean.TRUE)
 					: new Boolean(Boolean.FALSE);
@@ -1409,26 +1407,15 @@ public class EvalImportImpl implements EvalImport {
 					Boolean.TRUE)
 					: new Boolean(Boolean.FALSE);
 			item.setUsesNA(usesNA);
-
-			String displayRows = element.getChildText("DISPLAY_ROWS");
-			if (displayRows != null && !displayRows.trim().equals("")) {
-				try {
-					item.setDisplayRows(new Integer(Integer.parseInt(element
-							.getChildText("DISPLAY_ROWS"))));
-				} catch (NumberFormatException e) {
-					publishException("warn","There was a problem with DISPLAY_ROWS involving EvalItem with eid '"
-							+ item.getEid() + "'. ", e, messages);
-				}
-			}
 			item.setCategory(element.getChildText("CATEGORY"));
 			if (element.getChildText("LOCKED").trim().equals("1"))
 				item.setLocked(new Boolean(Boolean.TRUE));
 			else
 				item.setLocked(new Boolean(Boolean.FALSE));
 
-			// if not Essay type question
-			if (!item.getCategory().equals(EvalConstants.ITEM_TYPE_TEXT)) {
-
+			// if Scaled type question
+			if (!item.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
+				item.setDisplayRows(null);
 				item.setScaleDisplaySetting(element
 						.getChildText("SCALE_DISPLAY_SETTING"));
 				// set scale
@@ -1447,8 +1434,65 @@ public class EvalImportImpl implements EvalImport {
 							+ item.getEid() + "' " + item.getItemText(), null, messages);
 				}
 			}
+			// if Essay type question
+			if (item.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
+				item.setScale(null);
+				item.setScaleDisplaySetting(null);
+				String displayRows = element.getChildText("DISPLAY_ROWS");
+				if (displayRows != null && !displayRows.trim().equals("")) {
+					try {
+						item.setDisplayRows(new Integer(Integer.parseInt(element
+								.getChildText("DISPLAY_ROWS"))));
+					} catch (NumberFormatException e) {
+						publishException("warn","There was a problem with DISPLAY_ROWS involving EvalItem with eid '"
+								+ item.getEid() + "'. ", e, messages);
+					}
+				}
+			}
 		} catch (Exception e) {
-			throw new RuntimeException("setItemProperties() eid '" + eid + "' "
+			throw new RuntimeException("setItemProperties() '" + item.toString() + "' "
+					+ e);
+		}
+	}
+	
+	private void updateItemProperties(Element element, EvalItem item, List<String> messages) {
+		try {
+			String classification = item.getClassification();
+			//update item properties from XML
+			setItemProperties(element, item, messages);
+			
+			//CT-731 a change in item classification (Scaled, Essay) requires coordinated change in template item
+			if(element.getChildText("CLASSIFICATION") == null)
+				throw new RuntimeException("CLASSIFICATION is null.");
+			
+			if(!classification.equals(element.getChildText("CLASSIFICATION"))) {
+				List<EvalTemplateItem> templateItems = authoringService. getTemplateItemsUsingItem(item.getId());
+				if(EvalConstants.ITEM_TYPE_TEXT.equals(element.getChildText("CLASSIFICATION"))) {
+					//"Scaled" -> "Essay"
+					for(EvalTemplateItem ti: templateItems) {
+						ti.setScaleDisplaySetting(null);
+						ti.setDisplayRows(item.getDisplayRows());
+						ti.setUsesNA(item.getUsesNA());
+						authoringService.saveTemplateItem(ti, externalLogic.getCurrentUserId());
+					}
+				}
+				else if (EvalConstants.ITEM_TYPE_SCALED.equals(element.getChildText("CLASSIFICATION"))) {
+					//"Essay" -> "Scaled"
+					for(EvalTemplateItem ti: templateItems) {
+						ti.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_FULL);
+						ti.setDisplayRows(null);
+						ti.setUsesNA(item.getUsesNA());
+						authoringService.saveTemplateItem(ti, externalLogic.getCurrentUserId());
+					}
+				}
+				else {
+					if(log.isWarnEnabled())
+						log.warn("CLASSIFICATION change type is not implemented.");
+				}
+			}
+		}
+		catch(Exception e) {
+			throw new RuntimeException("updateItemProperties() '" + item.toString() + "' "
 					+ e);
 		}
 	}

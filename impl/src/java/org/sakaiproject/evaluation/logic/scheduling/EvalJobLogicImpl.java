@@ -14,9 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.scheduling;
 
-import java.util.ArrayList;
+
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +66,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    public void setEmails(EvalEmailsLogic emails) {
       this.emails = emails;
    }
-
+   
    /**
     * Check whether the job type is valid
     * 
@@ -92,6 +91,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          log.debug("EvalJobLogicImpl.processEvaluationStateChange(" + evaluationId + ") and state=" + actionState);
       if (evaluationId == null || actionState == null) {
          throw new NullPointerException("processEvaluationStateChange: both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
+      }
+      //are scheduled invocations needed?
+      if((((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED)).booleanValue())) {
+    	  if(log.isInfoEnabled())
+    		  log.info("EvalJobLogicImpl.processEvaluationStateChange(): EMAIL_SEND_QUEUED_ENABLED so skipping scheduled invocation management.");
+    	  return;
       }
 
       if (EvalJobLogic.ACTION_CREATE.equals(actionState)) {
@@ -259,6 +264,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(state)) {
          throw new IllegalStateException("Cannot process new evaluation that is in partial state, state must be after partial");
       }
+      //are scheduled invocations needed?
+      if((((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED)).booleanValue())) {
+    	  if(log.isInfoEnabled())
+    		  log.info("EvalJobLogicImpl.processEvaluationStateChange(): EMAIL_SEND_QUEUED_ENABLED so skipping scheduled invocation management.");
+    	  return;
+      }
 
       // send created email if instructor can add questions or opt-in or opt-out
       Integer instAddItemsNum = (Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
@@ -311,6 +322,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          log.warn(this + ".processEvaluationChange(Long " + eval.getId().toString() + ") for "
                + eval.getTitle() + ". Evaluation in UNKNOWN state");
          throw new RuntimeException("Evaluation '" + eval.getTitle() + "' in UNKNOWN state");
+      }
+      //are scheduled invocations needed?
+      if((((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED)).booleanValue())) {
+    	  if(log.isInfoEnabled())
+    		  log.info("EvalJobLogicImpl.processEvaluationStateChange(): EMAIL_SEND_QUEUED_ENABLED so skipping scheduled invocation management.");
+    	  return;
       }
 
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(state)) {

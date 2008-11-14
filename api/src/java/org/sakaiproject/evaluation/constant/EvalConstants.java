@@ -567,6 +567,8 @@ public class EvalConstants {
 	 * used with the "single-email-per-user" email notification option
 	 */
 	public static final String SINGLE_EMAIL_TEMPLATE_REMINDER_SUBJECT = "SingleEmailReminderSubject";
+	
+	
 	/**
 	 * Email Delivery option setting:
 	 * This value is pre-loaded as the default option for email delivery.
@@ -588,6 +590,11 @@ public class EvalConstants {
 	 * This value prevents email from being sent or logged. Use this value when you want to test safely by disabling sending of email.
 	 */
 	public static final String EMAIL_DELIVERY_NONE = "none";
+	
+	/**
+	 * EvalLock name prefix identifying email queued prior to delivery
+	 */
+	public static final String EMAIL_LOCK_PREFIX = "email_lock_";
 
    /**
     * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others

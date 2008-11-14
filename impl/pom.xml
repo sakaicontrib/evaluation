@@ -136,7 +136,7 @@
 			<version>${sakai.version}</version>
 		</dependency>
 		
-		       <!-- CTools UmiacClient dependency -->
+		<!-- CTools UmiacClient dependency -->
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-ctools-providers-impl</artifactId>

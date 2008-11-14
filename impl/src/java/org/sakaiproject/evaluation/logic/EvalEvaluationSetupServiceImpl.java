@@ -56,6 +56,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupService {
 
    private static Log log = LogFactory.getLog(EvalEvaluationSetupServiceImpl.class);
+   private static Log metric = LogFactory.getLog("metrics." + EvalEvaluationSetupServiceImpl.class.getName());
 
    private final String EVENT_EVAL_CREATE = "eval.evaluation.created";
    private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
@@ -137,6 +138,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             Boolean lockObtained = dao.obtainLock(EVAL_UPDATE_TIMER, serverId, repeatInterval);
             // only execute the code if we have an exclusive lock
             if (lockObtained != null && lockObtained) {
+              	if(log.isInfoEnabled()) {
+            		log.info("Server " + serverId + " obtained the lock " + EVAL_UPDATE_TIMER);
+            	}
+            	
                // get all evals that are not viewable (i.e. completely done with) or deleted 
                List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
                      new String[] {"state", "state"}, 
@@ -162,7 +167,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                            evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
                            count++;
                            // trigger the jobs logic to look at this since the state changed
-                           evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+                           if(!((Boolean)settings.get(EvalSettings.ENABLE_SINGLE_EMAIL)).booleanValue()) {
+                        	   //jobAction is not required if single email option is used
+                        	   evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+                           }
                         }
                      }
                   }
@@ -184,6 +192,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                   ((EvalSettingsImpl) settings).resetCache();
                }
                */
+            }
+            else {
+            	if(log.isInfoEnabled()) {
+            		log.info("Server " + serverId + " was not able to obtain the lock " + EVAL_UPDATE_TIMER);
+            	}
             }
             // we want this to happen on all servers in the cluster
             settings.resetCache();
@@ -406,11 +419,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          if (created) {
             commonLogic.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
             // call logic to manage Quartz scheduled jobs
-            evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
+            if(!((Boolean)settings.get(EvalSettings.ENABLE_SINGLE_EMAIL)).booleanValue()) {
+         	   //jobAction is not required if single email option is used
+            	evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
+            }
          } else {
             commonLogic.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
             // call logic to manage Quartz scheduled jobs
-            evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+            if(!((Boolean)settings.get(EvalSettings.ENABLE_SINGLE_EMAIL)).booleanValue()) {
+         	   //jobAction is not required if single email option is used
+            	evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+            }
          }
       }
 
@@ -490,8 +509,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          commonLogic.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 
          // remove any remaining scheduled jobs
-         evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
-
+         if(!((Boolean)settings.get(EvalSettings.ENABLE_SINGLE_EMAIL)).booleanValue()) {
+       	   //jobAction is not required if single email option is used
+        	 evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
+          }
          // this has to be after the removal of the evaluation
 
          // remove associated unused email templates

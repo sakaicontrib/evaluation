@@ -40,6 +40,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalLock;
+import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -463,7 +464,23 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       return evals;
    }
-
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmails(java.lang.Long[])
+    */
+   public List<EvalQueuedEmail> getQueuedEmails(Long[] emailIds) { 
+	   
+	   Map<String, Object> params = new HashMap<String, Object>();
+	     String idsHQL = "";
+	      if (emailIds != null && emailIds.length > 0) {
+	         idsHQL = " where email.id in (:emailIds) ";
+	         params.put("emailIds", emailIds);
+	      }
+	      String hql = "select email from EvalQueuedEmail as email" + idsHQL;
+	      List<EvalQueuedEmail> results = (List<EvalQueuedEmail>) executeHqlQuery(hql, params, 0, 0);
+	      return results;
+   }
 
    /**
     * Returns all answers to the given item associated with 
@@ -502,7 +519,38 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       List<EvalAnswer> results = (List<EvalAnswer>) executeHqlQuery(hql, params, 0, 0);
       return results;
    }
-
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmailByLockName(java.lang.String)
+    */
+   public List<Long> getQueuedEmailByLockName(String lockName) {
+	   List<Long> results = new ArrayList<Long>();
+       String hqlQuery = "select email.id from EvalQueuedEmail as email";
+	   if(lockName != null && lockName.length() > 0) {
+		   hqlQuery = hqlQuery + " where email.lock = '" + lockName + "'";
+	   }
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((Long) object);
+	   }
+	   return results;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmailLocks()
+    */
+   public List<String> getQueuedEmailLocks() {
+	   List<String> results = new ArrayList<String>();
+       String hqlQuery = "select distinct email.lock from EvalQueuedEmail as email";
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((String) object);
+	   }
+	   return results;
+   }
+   
    /**
     * Removes a group of templateItems and updates all related items 
     * and templates at the same time (inside one transaction)
@@ -1345,7 +1393,45 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return false;
    }
-
+   
+   /**
+    * TODO: is isUsedTemplate correct?
+    * @param templateId
+    * @return true if this template is used in any evalautions
+    */
+   public boolean isUsedTemplateCopyOf(Long templateId) {
+      log.debug("templateId: " + templateId);
+      String hqlQuery = "from EvalEvaluation as eval where eval.template.copyOf = '" + templateId + "'";
+      if (count(hqlQuery) > 0) {
+         // this is used by something
+         return true;
+      }
+      return false;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#obtainLocksForHolder(java.lang.String)
+    */
+   public List<EvalLock> obtainLocksForHolder(String lockName, String holderId) {
+	   List<EvalLock> results = new ArrayList<EvalLock>();
+       String hqlQuery = "select lock from EvalLock as lock";
+       if(lockName != null || holderId != null)
+    	   hqlQuery = hqlQuery + " where ";
+	   if(holderId != null && holderId.length() > 0) {
+		   hqlQuery = hqlQuery + " lock.holder = '" + holderId + "'";
+	   }
+	   if(lockName != null && holderId != null)
+		   hqlQuery = hqlQuery + " and ";
+	   if(holderId != null && holderId.length() > 0) {
+		   hqlQuery = hqlQuery + " lock.name like '%" + lockName + "%'";
+	   }
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((EvalLock) object);
+	   }
+	   return results;
+   }
 
    /**
     * Allows a lock to be obtained that is system wide,

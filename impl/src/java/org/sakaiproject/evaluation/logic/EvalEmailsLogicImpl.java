@@ -21,7 +21,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,9 +32,12 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalLock;
+import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 
@@ -84,6 +90,208 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    // INIT method
    public void init() {
       log.debug("Init");
+      String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+     	if(log.isInfoEnabled())
+    		log.info("EvalEmailLogicImpl.init() on " + serverId);
+      //clear email locks on startup
+      List<EvalLock> locks = dao.obtainLocksForHolder(EvalConstants.EMAIL_LOCK_PREFIX, serverId);
+   	if(log.isInfoEnabled())
+		log.info("EvalEmailLogicImpl.init() serverId '" + serverId + "' held " + locks.size() + " locks at startup. ");
+      if(locks != null && !locks.isEmpty()) {
+    	  for(EvalLock lock:locks) {
+    		  dao.releaseLock(lock.getName(), externalLogic.getCurrentUserId());
+    		   	if(log.isInfoEnabled())
+    				log.info("EvalEmailLogicImpl.init() Lock '" + lock.getName() + "' held by '" + lock.getHolder() + " was released. ");
+    	  }
+      }
+      //make sure we have the settings
+      if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)) != null &&
+    		  ((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)) != null) {
+    	  //and settings aren't 0
+    	  if((((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)).intValue() != 0) &&
+    	  	((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)).intValue() != 0) {
+    		  //and window for sending is active
+    		  if(((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED)) != null) {
+       			  if(log.isInfoEnabled())
+        			  log.info("EvalEmailLogicImpl.init() initiate polling for queued email. ");
+    		  
+	    		  // polling for queued email
+	    		  initiateSendEmailTimer();
+    		  }
+    		  else {
+    			  if(log.isInfoEnabled())
+        			  log.info("EvalEmailLogicImpl.init() polling for queued email is disabled. ");
+    		  }
+    	  }
+    	  else {
+    		  if(log.isInfoEnabled())
+    			  log.info("EvalEmailLogicImpl.init() polling repeat or start interval is 0 (never)" +
+    			  		" so polling for queued email is disabled. ");
+    	  }
+      }
+      else {
+			  if(log.isInfoEnabled())
+    			  log.info("EvalEmailLogicImpl.init() polling for queued email settings are null. ");
+      }
+   }
+
+   /**
+    * Send email from a holding table using locks to create non-overlapping
+    * sets of emails, to avoid servers sending duplicates of email in the holding table.
+    */
+   protected void initiateSendEmailTimer() {
+	   //hold lock for 48 hr so it isn't taken by another server before being released
+	   final long holdLock = 1000 * 60 * 60 * 48;
+
+	   // check the holding table every "n" minutes
+	   final long repeatInterval = 1000 * 60 * ((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)).intValue();
+	   // first run after "n" minutes and a random delay
+	   long startDelay =  (1000 * 60 * ((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)).intValue())
+	   		+ (1000 * 60 * new Random().nextInt(10));
+
+	   
+      TimerTask runSendEmailTask = new TimerTask() {
+         @SuppressWarnings("unchecked")
+         @Override
+         public void run() {
+        	 
+        	 String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+        	 // 0 (never)
+        	 if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)).intValue() == 0 ) {
+        		 if(log.isWarnEnabled())
+        			 log.warn("EvalEmailLogicImpl.initiateSendEmailTimer(): EMAIL_SEND_QUEUED_REPEAT_INTERVAL is 0 so quitting. "); 
+        		 return;
+        	 }
+        	 if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)).intValue() == 0 ) {
+        		 if(log.isWarnEnabled())
+        			 log.warn("EvalEmailLogicImpl.initiateSendEmailTimer():  EMAIL_SEND_QUEUED_START_INTERVAL is 0 so quitting. "); 
+        		 return;
+        	 }
+        	 
+        	 //TODO just use settings.get() where needed
+           	 /*  single email settings
+        	  * 0 FROM_EMAIL_ADDRESS
+        	  * 1 EMAIL_DELIVERY_OPTION
+        	  * 2 LOG_EMAIL_RECIPIENTS
+        	  * 3 EMAIL_BATCH_SIZE
+        	  * 4 EMAIL_WAIT_INTERVAL
+        	  * 5 LOG_PROGRESS_EVERY
+        	  */
+        	 Object[] mailSettings = new Object[6];
+        	 mailSettings = getSingleEmailSettings();
+        	 String from = (String)mailSettings[0];
+        	 String deliveryOption = (String)mailSettings[1];
+        	 Boolean logEmailRecipients = (Boolean)mailSettings[2];
+        	 Integer batch = (Integer)mailSettings[3];
+        	 Integer wait = (Integer)mailSettings[4];
+        	 Integer every = (Integer)mailSettings[5];
+        	 
+        	 int numProcessed = 0;
+        	 
+      		 if(log.isInfoEnabled())
+    			 log.info(serverId + " is beginning runSendEmailTask.run() ");
+        	 
+        	 //is the enabling flag true?
+        	 if(!(((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED))).booleanValue()) {
+        		 if(log.isInfoEnabled())
+        			 log.info(serverId + " runSendEmailTask.run(): EMAIL_SEND_QUEUED_ENABLED is false so quitting. "); 
+        		 return;
+        	 }
+        	 
+        	 
+        	//is there something to do?
+        	 if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
+        	 	&& !logEmailRecipients.booleanValue()) {
+        	 if (log.isWarnEnabled())
+        	 	log.warn(serverId + " runSendEmailTask.run(): EMAIL_DELIVERY_NONE and no logging of email recipients. " +
+        	 			" There is no work to do so quitting.");
+        	 	return;
+        	 }
+        	 if(log.isInfoEnabled())
+        		log.info(serverId + " runSendEmailTask.run(): checking if server holds a lock. ");
+        	
+        	//have I got an email_lock? if so, quit (one run() per server at a time)
+        	List<EvalLock> locks = dao.obtainLocksForHolder(EvalConstants.EMAIL_LOCK_PREFIX, serverId);
+        	if(locks != null && !locks.isEmpty()) {
+              	if(log.isInfoEnabled()) {
+            		log.info(serverId + " runSendEmailTask.run(): server has a lock so is quitting. ");
+            		for(EvalLock lock:locks) {
+            			log.info(serverId + " has lock: " + lock.getName() + ".");
+            		}
+              	}
+              	return;
+        	}
+           	if(log.isInfoEnabled())
+        		log.info(serverId +" runSendEmailTask.run(): server has no locks so is continuing. ");
+           	
+           	List<Long> emailIds = new ArrayList<Long>();
+           	EvalQueuedEmail email = null;
+           	
+           	//try these locks
+           	List<String> lockNames = dao.getQueuedEmailLocks();
+          	if(log.isInfoEnabled())
+        		log.info(serverId + " runSendEmailTask.run(): server found " + lockNames.size() + " lock names" +
+        				" in the queued notification table. ");
+           	for(String lockName: lockNames) {
+            	if(log.isInfoEnabled())
+            		log.info(serverId + " runSendEmailTask.run(): server is trying to obtain lock " + lockName + ". ");
+             	/*
+               	 * Note: Another server may acquire the lock if the repeatInterval is shorter than the TimerTask's processing time. 
+               	 * 		 This would defeat the purpose of a server holding a lock while processing a batch of email. We set the 
+               	 * 		 repeatInterval to a very high value and refresh the lock by obtaining it periodically until the TimerTask
+               	 * 		 processing has finished as a precaution against the server losing its lock before finishing.
+               	 */
+           		Boolean lockObtained = dao.obtainLock(lockName, serverId, holdLock);
+                // only execute the code if we have an exclusive lock
+                if (lockObtained != null && lockObtained) {
+                	//process notifications for this lock and then quit
+                   	if(log.isInfoEnabled())
+                		log.info(serverId + " runSendEmailTask.run(): server obtained lock " + lockName + ". ");
+                   	emailIds.clear();
+                	//claim the emails associated with this lock
+                   	emailIds = dao.getQueuedEmailByLockName(lockName);
+                  	if(metric.isInfoEnabled())
+                		metric.info(serverId + " metric runSendEmailTask.run(): server claimed " + emailIds.size() + " queued notifications. ");
+                  	boolean deferExceptions = true;
+                  	for(Long id: emailIds) {
+                  		email = dao.findById(EvalQueuedEmail.class, id);
+                     	if(log.isInfoEnabled())
+                    		log.debug(serverId + " runSendEmailTask.run(): retrieved queued notification " + email.toString() + ". ");
+                     	//TODO: see CT-719 for an array version of send, which should be faster
+                     	//send one email and delete from holding table for loss-less restart behavior
+                     	String[] to = new String[]{email.getToAddress()};
+                  		commonLogic.sendEmailsToAddresses(from, to, email.getSubject(), email.getMessage(), deferExceptions);
+                  		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_LOG))
+                		   log.info(serverId + " runSendEmailTask.run() sent notification: " + email.toString());
+                  		dao.delete(email);
+                  		if(log.isDebugEnabled())
+                		   log.debug(serverId + " runSendEmailTask.run(): server deleted notification from the email holding table: " +
+                		   		email.toString() + ". ");
+                  		
+                  		// handle throttling email delivery and logging progress
+                  		numProcessed = logEmailsProcessed(batch, wait, every, numProcessed, "sent");
+                  	}
+                  	dao.releaseLock(lockName, serverId);
+                  	if(log.isInfoEnabled())
+                		log.info(serverId + " runSendEmailTask.run(): server released lock " + lockName + ". ");
+                  	break;
+                }
+                else {
+                  	if(log.isInfoEnabled())
+                		log.info(serverId + " runSendEmailTask.run(): server didn't obtained lock "
+                				+ lockName + ". Try to obtain the next lock. ");
+                }
+           	}
+          	if(log.isInfoEnabled())
+        		log.info(serverId + " runSendEmailTask.run(): done sending any notifications. ");
+         }
+      };
+
+      // now we need to obtain a lock and then run the task if we have it
+      Timer timer = new Timer(true);
+      log.info("Initializing checking for queued email, first run in " + (startDelay/1000) + " seconds " +
+      		"and subsequent runs will happen every " + (repeatInterval/1000) + " seconds after that. ");
+      timer.schedule(runSendEmailTask, startDelay, repeatInterval);
    }
 
 
@@ -321,6 +529,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Map<String, Set<Long>> emailTemplateMap = new HashMap<String, Set<Long>>();
 		long start, end;
 		float seconds;
+		
+		if (log.isInfoEnabled())
+			log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): sending first notifications.");
 
 		// get ids of evaluations that are active but haven't been announced yet
 		start = System.currentTimeMillis();
@@ -328,12 +539,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		end = System.currentTimeMillis();
 		seconds = (end - start) / 1000;
 		if (log.isInfoEnabled())
-			log
-					.info("sendEvalAvailableSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE) "
-							+ " took "
-							+ seconds
-							+ " seconds for "
-							+ evalIds.length + " evaluation ids.");
+			log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): getting active evaluation ids needing first notification"
+					+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 
 		if (evalIds.length > 0) {
 
@@ -344,12 +551,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalAvailableSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length + " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): getting groups assigned to these evaluations"
+						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
@@ -375,12 +578,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalAvailableSingleEmail() step  emailTemplatesByUser "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length + " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): getting email templates associated with students"
+						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 
 			// send email announcement (one email per email template in the
 			// user's active evaluations)
@@ -390,27 +589,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalAvailableSingleEmail() step sendEvalSingleEmail for "
-								+ allUserIds.size()
-								+ " user ids "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length
-								+ " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): queuing first notifications for delivery to " 
+						+ allUserIds.size() + " user ids " + " took " + seconds + " seconds for "
+						+ evalIds.length + " evaluation ids.");
 
 			// set flag saying evaluation announcement was sent
 			start = System.currentTimeMillis();
 			evaluationService.setAvailableEmailSent(evalIds);
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalAvailableSingleEmail() step for setAvailableEmailSent "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length + " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): setting the 'available email sent' flag" 
+						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 		}
 		return toAddresses;
 	}
@@ -430,14 +619,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		long start, end;
 		float seconds;
 		
+		if (log.isInfoEnabled())
+			log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): sending reminders.");
+		
 		// get evaluations that are active and have been announced
 		start = System.currentTimeMillis();
 		evalIds = dao.getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE);
 		end = System.currentTimeMillis();
 		seconds = (end - start)/1000;
-		if(log.isInfoEnabled())
-			log.info("sendEvalReminderSingleEmail() step getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE) " + 
-					" took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
+		if (log.isInfoEnabled())
+			log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): getting active evaluation ids needing reminders"
+					+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 		
 		if (evalIds.length > 0) {
 			
@@ -448,12 +640,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalReminderSingleEmail() step getAssignGroupsForEvals(evalIds,false, null) "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length + " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): getting groups assigned to these evaluations"
+						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
@@ -478,14 +666,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalReminderSingleEmail() step emailTemplatesByUser "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length + " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): getting email templates associated with students"
+						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 
-			
 			// send email announcement (one email per email template in the
 			// user's active evaluations)
 			start = System.currentTimeMillis();
@@ -494,15 +677,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
-				log
-						.info("sendEvalReminderSingleEmail() step sendEvalSingleEmail for "
-								+ allUserIds.size()
-								+ " user ids "
-								+ " took "
-								+ seconds
-								+ " seconds for "
-								+ evalIds.length
-								+ " evaluation ids.");
+				log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): queuing reminders for " 
+						+ allUserIds.size() + " user ids " + " took " + seconds + " seconds for "
+						+ evalIds.length + " evaluation ids.");
 		}
 		return toAddresses;
 	}
@@ -551,13 +728,20 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, Set<Long>> emailTemplatesMap) {
 		if (uniqueIds == null || toUserIds == null || emailTemplatesMap == null) {
 			throw new IllegalArgumentException(
-					"sendEvalSingleEmail() parameter(s) missing.");
+					"EvalEmailLogicImpl.sendEvalSingleEmail(): parameter(s) missing.");
 		} else {
 			if (log.isInfoEnabled())
-				log.info("There are " + uniqueIds.size()
+				log.info("EvalEmailLogicImpl.sendEvalSingleEmail(): there are " + uniqueIds.size()
 						+ " unique user ids in the single email queue.");
 		}
-		// get email settings
+		/*  single email settings
+			0 FROM_EMAIL_ADDRESS
+			1 EMAIL_DELIVERY_OPTION
+			2 LOG_EMAIL_RECIPIENTS
+			3 EMAIL_BATCH_SIZE
+			4 EMAIL_WAIT_INTERVAL
+			5 LOG_PROGRESS_EVERY
+		*/
 		Object[] mailSettings = new Object[6];
 		mailSettings = getSingleEmailSettings();
 		String from = (String)mailSettings[0];
@@ -565,26 +749,30 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Boolean logEmailRecipients = (Boolean)mailSettings[2];
 		Integer batch = (Integer)mailSettings[3];
 		Integer wait = (Integer)mailSettings[4];
-		Integer modulo = (Integer)mailSettings[5];
+		Integer every = (Integer)mailSettings[5];
 		
 		// check there is something to do
 		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
 				&& !logEmailRecipients.booleanValue()) {
 			if (log.isWarnEnabled())
-				log
-						.warn("EMAIL_DELIVERY_NONE and no logging of email recipients");
+				log.warn("EvalEmailLogicImpl.sendEvalSingleEmail(): EMAIL_DELIVERY_NONE and no logging of email recipients");
 			return null;
 		}
 
-		String url = null, message = null, subject = null, to = null;
+		String url = null, message = null, subject = null;
 		Map<String, String> replacementValues = new HashMap<String, String>();
-		List<String> recipients = new ArrayList<String>();
 		List<String> sentToAddresses = new ArrayList<String>();
 		Set<Long> emailTemplateIds = new HashSet<Long>();
 		EvalEmailTemplate template = null;
-		String userId = null;
 		String earliestDueDate = null;
 		int numProcessed = 0;
+		int start = 0;
+		int sets = ((Integer)settings.get(EvalSettings.EMAIL_LOCKS_SIZE)).intValue();
+		
+		// a random starting number
+		if(sets > 0)
+			start = new Random().nextInt(sets);
+
 		// uniqueIds are user ids
 		for (String s : uniqueIds) {
 			try {
@@ -592,8 +780,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				// direct link to summary page of tool on My Worksite
 				url = externalLogic.getMyWorkspaceUrl(s);
 				replacementValues.put("MyWorkspaceDashboard", url);
-				//userId = externalLogic.getUserId(s);
-				//earliestDueDate = evaluationService.getEarliestDueDate(userId);
 				earliestDueDate = evaluationService.getEarliestDueDate(s);
 				replacementValues.put("EarliestEvalDueDate", earliestDueDate);
 				replacementValues.put("HelpdeskEmail", from);
@@ -603,7 +789,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 				//get the email template ids for this user
 				emailTemplateIds = emailTemplatesMap.get(s);
-				//toUserIds = new String[] { userId };
 				toUserIds = new String[] { s };
 				
 				for(Long i : emailTemplateIds) {
@@ -614,33 +799,68 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							replacementValues);
 					subject = makeEmailMessage(template.getSubject(),
 							replacementValues);
-					//send the mail
-			        String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-			         
-			         // accumulate the addresses of email recipients
-			         for (int j = 0; j < emailAddresses.length; j++) {
-			        	 sentToAddresses.add(emailAddresses[j]);            
-			         }
+					
+					String lockName = EvalConstants.EMAIL_LOCK_PREFIX + selectEmailSet(start, sets).toString();
+					start++;
+					//deprecated String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+					//queue an email
+					String emailAddress = queueOutgoingEmail(from, s, subject, message, lockName);
+					sentToAddresses.add(emailAddress);
+
 			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
 			         
 			        // handle throttling email delivery and logging progress
-					numProcessed = logEmailsProcessed(batch, wait, modulo, numProcessed);
+					numProcessed = logEmailsProcessed(batch, wait, every, numProcessed, "queued");
 				}
 			} catch (Exception e) {
-				log.error("sendEvalSingleEmail() User id '" + s
+				log.error("EvalEmailLogicImpl.sendEvalSingleEmail(): user id '" + s
 						+ "', url '" + url + "' " + e);
 			}
 		}
 		// handle logging of total number of email messages processed
 		if(metric.isInfoEnabled())
-			metric.info(numProcessed + " emails processed in total.");
+			metric.info("metric  EvalEmailLogicImpl.sendEvalSingleEmail(): total notifications queued " + numProcessed + ".");
 		
 		// handle logging of email recipients
 		if(logEmailRecipients.booleanValue())
 			logRecipients(sentToAddresses);
+		if(log.isInfoEnabled())
+			log.info("EvalEmailLogicImpl.sendEvalSingleEmail(): queuing of notifications is done.");
 		
 		return (String[]) sentToAddresses.toArray(new String[] {});
 	}
+   
+   /**
+    * There are 0 - EVAL_CONFIG.EMAIL_LOCKS_SIZE sets to select from.
+    * @param start
+    * @param sets
+    * @return
+    */
+   private Integer selectEmailSet(int start, int sets) {
+	   if(sets == 0)
+		   return 0;
+		Integer set = start % sets;
+		return set;
+   }
+   
+   /**
+    * Save pending email in a holding table for the email sending process(es) to read
+    * 
+    * @param from
+    * @param toUserId
+    * @param subject
+    * @param message
+    * @param lock
+    * @return
+    */
+   private String queueOutgoingEmail(String from, String toUserId, String subject, String message, String lock)  {
+	   EvalUser recipient = externalLogic.getEvalUserById(toUserId);
+	   EvalQueuedEmail email = new EvalQueuedEmail(lock, message, subject, recipient.email);
+	   dao.save(email);
+	   if(log.isDebugEnabled())
+		   log.debug("EvalEmailLogicImpl.queueOutgoingEmail(): saved to the the notification holding table: " + email.toString());
+	   return recipient.email;
+   }
    
    /**
     * If logger for class is set with info level logging,
@@ -664,7 +884,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			   if((i+1) % 10 == 0) {
 				   line = sb.toString();
 				   if(log.isInfoEnabled())
-					   log.info("email sent to " + line);
+					   log.info("EvalEmailLogicImpl.logRecipients(): notification queued for " + line);
 					//write a line and empty the buffer
 					sb.setLength(0);
 					cnt = 0;
@@ -674,37 +894,38 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if(sb.length() > 0) {
 				line = sb.toString();
 				if (log.isInfoEnabled())
-					log.info("email sent to " + line);
+					log.info("EvalEmailLogicImpl.logRecipients(): notification queued for " + line);
 			}
 	   }
    }
 
    /**
-    * Periodically wait and/or log progress sending email 
-    * if metric/logger for class is set with info level logging
+    * Periodically wait and/or log progress queuing and delivering
+    * email if metric and/or logger for class is set with info level 
+    * logging
     * 
-    * @param batch the number of emails sent without a pause
+    * @param batch the number of emails queued without a pause
     * @param wait the length of time in seconds to pause
     * @param modulo the interval for updating progress
     * @param numProcessed the number of emails processed
     * @return
     */
    private int logEmailsProcessed(Integer batch, Integer wait, Integer modulo,
-		int numProcessed) {
+		int numProcessed, String action) {
 		numProcessed = numProcessed + 1;
 		if(numProcessed > 0) {
 			//periodic log message
 			if(modulo != null && modulo.intValue() > 0) {
 				if ((numProcessed % modulo.intValue()) == 0) {
 					if(metric.isInfoEnabled())
-						metric.info(numProcessed + " emails processed.");
+						metric.info("metric  EvalEmailLogic.logEmailsProcessed: " + numProcessed + " notifications " + action + ".");
 				}
 			}
 			//periodic wait
 			if(batch != null && wait != null && batch.intValue() > 0 && wait.intValue() > 0) {
 				if ((numProcessed % batch.intValue()) == 0) {
 					if(log.isInfoEnabled())
-						log.info("wait " + wait + " seconds.");
+						log.info("EvalEmailLogic.logEmailsProcessed: wait " + wait + " seconds.");
 					try {
 						Thread.sleep(wait * 1000);
 					} catch (Exception e) {
@@ -775,7 +996,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
-      log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+      if(log.isDebugEnabled())
+    	  log.debug(groups.size() + " groups for available evaluation " + evaluationId + " were found.");
 
       List<String> sentEmails = new ArrayList<String>();
       // loop through groups and send emails to correct users in each
@@ -790,7 +1012,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          if (userIdsSet.size() > 0) {
             // turn the set into an array
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
-            log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
+            if(log.isDebugEnabled())
+            	log.debug(toUserIds.length + " users recieving "
                   + EvalConstants.EMAIL_TEMPLATE_REMINDER + " notification to for available evaluation ("
                   + evaluationId + ") and group (" + group.evalGroupId + ")");
 
@@ -802,7 +1025,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-            log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            log.info("EvalEmailLogic reminders sent to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
                sentEmails.add(emailAddresses[j]);            

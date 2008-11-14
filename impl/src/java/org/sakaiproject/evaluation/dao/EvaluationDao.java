@@ -11,6 +11,8 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.model.EvalLock;
+import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -241,6 +243,32 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    @SuppressWarnings("unchecked")
    public String getNodeIdForEvalGroup(String evalGroupId);
+   
+   /**
+    * Get the identifiers of persisted EvalQueuedEmail objects
+    * @param lockName the name of a lock composed of EvalConstants.EMAIL_LOCK_PREFIX
+    * and a number in a range defined by EvalSettings.EMAIL_LOCKS_SIZE. If null all
+    * EvalQueuedEmail ids will be returned.
+    * 
+    * @return a list of EvalQueuedEmail identifiers
+    */
+   @SuppressWarnings("unchecked")
+   public List<Long> getQueuedEmailByLockName(String lockName);
+   
+   /**
+    * Get the lockNames associated with queued email
+    * @return a list of unique lockNames associated with queued email
+    */
+   @SuppressWarnings("unchecked")
+   public List<String> getQueuedEmailLocks();
+   
+   /**
+    * Get the identified EvalQueuedEmail objects 
+    * @param 
+    * @return a list of unique lockNames associated with queued email
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalQueuedEmail> getQueuedEmails(Long[] emailIds);
 
    /**
     * Get all the users who have completely responded to an evaluation 
@@ -396,6 +424,13 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @return true if this template is used in any evalautions
     */
    public boolean isUsedTemplate(Long templateId);
+   
+   /**
+    * TODO - is isUsedTemplate correct?
+    * @param templateId
+    * @return true if this template is used in any evalautions
+    */
+   public boolean isUsedTemplateCopyOf(Long templateId);
 
    /**
     * Allows a lock to be obtained that is system wide,
@@ -413,6 +448,17 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    @SuppressWarnings("unchecked")
    public Boolean obtainLock(String lockId, String executerId, long timePeriod);
+   
+   /**
+    * Get the locks of a type held by a holder, or all locks if lockString is null
+    * and all holders if holderId is null.
+    * 
+    * @param lockName matching all or part of the lock name
+    * @param holderId a unique id for the holder of this lock (normally a server id)
+    * @return a list of locks
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalLock> obtainLocksForHolder(String lockName, String holderId);
 
    /**
     * Releases a lock that was being held,

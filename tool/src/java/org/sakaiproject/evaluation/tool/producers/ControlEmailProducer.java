@@ -121,10 +121,27 @@ public class ControlEmailProducer implements ViewComponentProducer {
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalSettings.LOG_PROGRESS_EVERY, false);
+		//(Control send task polling interval)
+		AdministrateProducer.makeSelect(oneemail, "check-queue-every",
+				EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+				EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL, false);
+		//(Control send task polling start delay)
+		AdministrateProducer.makeSelect(oneemail, "check-queue-start",
+				EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+				EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.EMAIL_SEND_QUEUED_START_INTERVAL, false);
+		//(Throttle while sending)
 		AdministrateProducer.makeSelect(oneemail, "email-batch-size",
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalSettings.EMAIL_BATCH_SIZE, false);
+		//(Influences batch size)
+		AdministrateProducer.makeSelect(oneemail, "email-locks-size",
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalToolConstants.PULLDOWN_BATCH_VALUES,
+				EvalSettings.EMAIL_LOCKS_SIZE, false);
+		//(Throttle while sending)
 		AdministrateProducer.makeSelect(oneemail, "wait-interval",
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,
 				EvalToolConstants.PULLDOWN_BATCH_VALUES,

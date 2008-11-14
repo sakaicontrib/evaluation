@@ -19,6 +19,7 @@ api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml -text sv
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalQueuedEmail.hbm.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -74,6 +75,7 @@ api/src/java/org/sakaiproject/evaluation/model/EvalGroupNodes.java -text svn_key
 api/src/java/org/sakaiproject/evaluation/model/EvalItem.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalItemGroup.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalLock.java svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalQueuedEmail.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalResponse.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalScale.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTags.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -131,6 +133,8 @@ impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModi
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalDisableSendingQueuedEmail.java -text
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalEnableSendingQueuedEmail.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalSingleEmailImpl.java -text
@@ -171,7 +175,7 @@ pack/src/webapp/WEB-INF/external-logic.xml -text svn_keywords=Date+Revision+Auth
 pack/src/webapp/WEB-INF/logic-backup.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/logic-support.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Author+URL+Id
-/pom.xml svn_keywords=Date+Revision+Author+URL+Id
+/pom.xml -text
 /project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 /project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 /removeEvalTablesMySQL.sql -text
