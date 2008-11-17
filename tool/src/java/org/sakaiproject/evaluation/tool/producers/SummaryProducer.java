@@ -261,106 +261,109 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluations admin box
 		 */
-      Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-      if (instViewResults == null) { instViewResults = true; } // if configurable then we will assume some are probably shared
-		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
-		/*
-		 * If the person is an admin, then just point new evals to existing object.
-		 * If the person is not an admin then only show owned evals +
-		 * not-owned evals that are available for viewing results.
-		 */
-		List<EvalEvaluation> newEvals = evals;
-		if (instViewResults 
-		      && !userAdmin) {
-			newEvals = new ArrayList<EvalEvaluation>();
-			for (EvalEvaluation evaluation : evals) {
-            // Add the owned evals
-            if (currentUserId.equals(evaluation.getOwner())) {
-               newEvals.add(evaluation);
-            } else {
-               // From the not-owned evals show those that are available for viewing results
-               if ( EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true) ) {
-                  newEvals.add(evaluation);
-               }
-            }
-         }
-		}
-
-		if (! newEvals.isEmpty()) {
-			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
-			// Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583 (need to send them to the eval control page eventually) -AZ
-			if (beginEvaluation) {
-   			UIInternalLink.make(evalAdminBC, "evaladmin-title-link",
-   					UIMessage.make("summary.evaluations.admin"),
-   					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
-			} else {
-			   UIMessage.make(evalAdminBC, "evaladmin-title", "summary.evaluations.admin");
+	  Boolean showAdministratingBox = (Boolean) settings.get(EvalSettings.ENABLE_ADMINISTRATING_BOX);
+	  if(showAdministratingBox != null && showAdministratingBox == true) {
+	  
+	      Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+	      if (instViewResults == null) { instViewResults = true; } // if configurable then we will assume some are probably shared
+			List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
+			/*
+			 * If the person is an admin, then just point new evals to existing object.
+			 * If the person is not an admin then only show owned evals +
+			 * not-owned evals that are available for viewing results.
+			 */
+			List<EvalEvaluation> newEvals = evals;
+			if (instViewResults 
+			      && !userAdmin) {
+				newEvals = new ArrayList<EvalEvaluation>();
+				for (EvalEvaluation evaluation : evals) {
+	            // Add the owned evals
+	            if (currentUserId.equals(evaluation.getOwner())) {
+	               newEvals.add(evaluation);
+	            } else {
+	               // From the not-owned evals show those that are available for viewing results
+	               if ( EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true) ) {
+	                  newEvals.add(evaluation);
+	               }
+	            }
+	         }
 			}
-			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm");
-
-			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title");
-			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status");
-			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date");
-
-			for (Iterator<EvalEvaluation> iter = newEvals.iterator(); iter.hasNext();) {
-				EvalEvaluation eval = (EvalEvaluation) iter.next();
-
-				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm,
-						"evalAdminList:", eval.getId().toString() );
-
-				Date displayDate = null;
-				String evalState = evaluationService.updateEvaluationState(eval.getId());
-            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
-               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_ACTIVE);
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
-            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
-               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
-            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
-               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_CLOSED);
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
-            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
-               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
-            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
-               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
-               int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
-               int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
-               int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-               if ( responsesNeeded == 0 ) {
-                  UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
-                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
-               } else {
-                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState)
-                        .decorate( new UITooltipDecorator( 
-                              UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ) );
-               }
-            } else {
-               displayDate = eval.getStartDate();
-            }
-
-
-				/*
-				 * 1) if a evaluation is queued, title link go to EditSettings page with populated data
-				 * 2) if a evaluation is active, title link go to EditSettings page with populated data
-				 * but start date should be disabled
-				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
-				 */
-				if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-               UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
-                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
-                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
-            } else {
-               UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
-                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
-                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId()));
-            }
-
-            UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalState);
-            UIOutput.make(evalrow, "evalAdminDate", df.format(displayDate));
-         }
-		}
-
+	
+			if (! newEvals.isEmpty()) {
+				UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
+				// Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583 (need to send them to the eval control page eventually) -AZ
+				if (beginEvaluation) {
+	   			UIInternalLink.make(evalAdminBC, "evaladmin-title-link",
+	   					UIMessage.make("summary.evaluations.admin"),
+	   					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
+				} else {
+				   UIMessage.make(evalAdminBC, "evaladmin-title", "summary.evaluations.admin");
+				}
+				UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm");
+	
+				UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title");
+				UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status");
+				UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date");
+	
+				for (Iterator<EvalEvaluation> iter = newEvals.iterator(); iter.hasNext();) {
+					EvalEvaluation eval = (EvalEvaluation) iter.next();
+	
+					UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm,
+							"evalAdminList:", eval.getId().toString() );
+	
+					Date displayDate = null;
+					String evalState = evaluationService.updateEvaluationState(eval.getId());
+	            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
+	               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_ACTIVE);
+	               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+	            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
+	               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+	               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+	            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
+	               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_CLOSED);
+	               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+	            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
+	               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+	               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+	            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
+	               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+	               int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
+	               int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
+	               int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+	               if ( responsesNeeded == 0 ) {
+	                  UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
+	                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
+	               } else {
+	                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState)
+	                        .decorate( new UITooltipDecorator( 
+	                              UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ) );
+	               }
+	            } else {
+	               displayDate = eval.getStartDate();
+	            }
+	
+	
+					/*
+					 * 1) if a evaluation is queued, title link go to EditSettings page with populated data
+					 * 2) if a evaluation is active, title link go to EditSettings page with populated data
+					 * but start date should be disabled
+					 * 3) if a evaluation is closed, title link go to previewEval page with populated data
+					 */
+					if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+	               UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
+	                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
+	                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
+	            } else {
+	               UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
+	                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
+	                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId()));
+	            }
+	
+	            UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalState);
+	            UIOutput.make(evalrow, "evalAdminDate", df.format(displayDate));
+	         }
+			}
+	  } //showAdministratingBox true
 
 		/*
 		 * Site/Group listing box

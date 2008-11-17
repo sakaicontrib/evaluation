@@ -812,17 +812,14 @@ public class EvalImportImpl implements EvalImport {
 		start = System.currentTimeMillis();
 		try {
 			elements = getElementsOfDoc(doc, "/EVAL_DATA/EVAL_ASSIGN_GROUPS/EVAL_ASSIGN_GROUP");
-			for(Object o: elements) {
-				Element element = (Element)o;
-			}
 			// metrics
 			logElementsFound("EvalAssignGroup", elements.size());
 			for(Object o: elements) {
 				try {
 					Element element = (Element)o;
 					eid = element.getChildText("EID");
-					evalEid = element.getChildText("EVALUATION_EID");
-					evalEvaluation = evaluationService.getEvaluationByEid(eid);
+					evalEid = element.getChildText("EVAL_EVALUATION_EID");
+					evalEvaluation = evaluationService.getEvaluationByEid(evalEid);
 					if(evalEvaluation != null) {
 						if(evaluationService.canCreateAssignEval(userId, evalEvaluation.getId())) {
 							evalAssignGroup = evaluationService
@@ -849,6 +846,10 @@ public class EvalImportImpl implements EvalImport {
 							log.warn("user with id '" + userId + "' cannot create/modify EvalAssignGroup with eid '" + eid + "'.");
 						}
 					}
+					else {
+						log.warn("EvalEvaluation assigned to EvalAsssignGroup with eid " + eid +  
+								" and EvalEvaluation eid " + evalEid + "is null.");
+					}	
 				} catch (Exception e) {
 					publishException("warn","EvalAssignGroup with eid '" + eid + "'" + NOT_SAVED, e, messages);
 					continue;

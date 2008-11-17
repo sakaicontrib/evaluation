@@ -134,6 +134,7 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
          saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
 
+         saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
          saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
          saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
          saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);

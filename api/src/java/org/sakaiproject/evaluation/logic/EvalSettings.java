@@ -102,7 +102,10 @@ public interface EvalSettings {
     * CONSTANT: Are users allowed to use Not Available in templates and evaluations - {@link Boolean}, default True
     */
    public static final String ENABLE_NOT_AVAILABLE = "ENABLE_NOT_AVAILABLE:java.lang.Boolean";
-   
+   /**
+    * CONSTANT: Is the box showing the Evaluations I am creating or administrating visible? - {@link Boolean}, default True
+    */
+   public static final String ENABLE_ADMINISTRATING_BOX = "ENABLE_ADMINISTRATING_BOX:java.lang.Boolean";
    /**
     * Enable evaluation taker comments on all non-text answerable items, this is configured
     * on a per item basis, and will disable all comments if turned off
@@ -326,6 +329,7 @@ public interface EvalSettings {
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
       ENABLE_SUMMARY_SITES_BOX,
+      ENABLE_ADMINISTRATING_BOX,
       ENABLE_XLS_REPORT_EXPORT,
       EVAL_USE_DATE_TIME,
       EVAL_USE_SAME_VIEW_DATES,
