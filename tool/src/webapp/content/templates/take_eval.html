@@ -80,7 +80,8 @@
 					</div>
 
 					<div class="act">
-						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"/>
+						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"
+                            onclick="this.disabled=true;this.value+='...';this.form.submit();" />
 					</div>
 				</form>
 			</div>
