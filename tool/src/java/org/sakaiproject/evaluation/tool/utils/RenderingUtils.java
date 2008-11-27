@@ -111,4 +111,23 @@ public class RenderingUtils {
         }
     }
 
+    /**
+     * This will produce the valid message key given a category constant
+     * @param categoryConstant
+     * @return the message key
+     */
+    public static String getCategoryLabelKey(String categoryConstant) {
+        String categoryMessage = "unknown.caps";
+        if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(categoryConstant) ) {
+            categoryMessage = "modifyitem.course.category";
+        } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(categoryConstant) ) {
+            categoryMessage = "modifyitem.instructor.category";
+        } else if ( EvalConstants.ITEM_CATEGORY_TA.equals(categoryConstant) ) {
+            categoryMessage = "modifyitem.ta.category";
+        } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(categoryConstant) ) {
+            categoryMessage = "modifyitem.environment.category";
+        }
+        return categoryMessage;
+    }
+
 }

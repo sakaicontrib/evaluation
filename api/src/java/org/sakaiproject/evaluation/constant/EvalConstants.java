@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the application for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.2-RC1"; 
+   public static String APP_VERSION = "1.2.2-RC2"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -405,6 +405,12 @@ public class EvalConstants {
    public static final String ITEM_CATEGORY_INSTRUCTOR = "Instructor";
    /**
     * Item category (category) setting:
+    * This item is in the TA category and will be repeated
+    * for each user who is marked as a TA
+    */
+   public static final String ITEM_CATEGORY_TA = "TeachingAssistant";
+   /**
+    * Item category (category) setting:
     * This item is in the environment category and will be repeated
     * for each environment setup for the evaluation group when the 
     * evaluation is rendered for the takers, a unique id for that
@@ -420,7 +426,8 @@ public class EvalConstants {
    public static final String[] ITEM_CATEGORY_ORDER = {
       ITEM_CATEGORY_COURSE,
       ITEM_CATEGORY_INSTRUCTOR,
-//      ITEM_CATEGORY_ENVIRONMENT
+      ITEM_CATEGORY_TA,
+      ITEM_CATEGORY_ENVIRONMENT
    };
 
 

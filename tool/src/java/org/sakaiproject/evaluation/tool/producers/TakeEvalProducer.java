@@ -389,10 +389,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     // handle printing the category header
                     if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                         UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
-                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                        EvalUser instructor = commonLogic.getEvalUserById( tig.associateId );
+                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)
+                            || EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                        EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         UIMessage.make(categorySectionBranch, "categoryHeader", 
-                                "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
+                                "takeeval.instructor.questions.header", new Object[] { user.displayName });
                     }
 
                     // loop through the hierarchy node groups
