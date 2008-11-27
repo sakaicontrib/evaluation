@@ -217,10 +217,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                // handle printing the category header
                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                   UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.course");
-               } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                  EvalUser instructor = instructorIdtoEvalUser.get( tig.associateId );
+               } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)
+                       || EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                  EvalUser user = instructorIdtoEvalUser.get( tig.associateId );
                   UIMessage.make(categorySectionBranch, "categoryHeader", 
-                        "viewreport.itemlist.instructor", new Object[] { instructor.displayName });
+                        "viewreport.itemlist.instructor", new Object[] { user.displayName });
                }
 
                // loop through the hierarchy node groups

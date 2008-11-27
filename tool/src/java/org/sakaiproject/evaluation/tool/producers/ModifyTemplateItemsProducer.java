@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -331,14 +332,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
             UIVerbatim.make(itemBranch, "item-text", templateItem.getItem().getItemText());
 
-            String categoryMessage = "unknown.caps";
-            if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory()) ) {
-               categoryMessage = "modifyitem.course.category";
-            } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory()) ) {
-               categoryMessage = "modifyitem.instructor.category";
-            } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(templateItem.getCategory()) ) {
-               categoryMessage = "modifyitem.environment.category";
-            }
+            String categoryMessage = RenderingUtils.getCategoryLabelKey(templateItem.getCategory());
             UIMessage.make(itemBranch, "item-category", categoryMessage);
             UIMessage.make(itemBranch, "item-category-title", "modifytemplate.item.category.title");
 

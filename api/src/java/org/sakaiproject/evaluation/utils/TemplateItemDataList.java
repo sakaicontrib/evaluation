@@ -749,24 +749,24 @@ public class TemplateItemDataList {
     * @return the appropriate value
     * @throws IllegalStateException if the categoryType does not match a valid one
     */
-   public static String getValueForCategory(String categoryType, String... values) {
-      boolean found = false;
-      if (values == null 
-            || values.length != EvalConstants.ITEM_CATEGORY_ORDER.length) {
-         throw new IllegalArgumentException("Must supply the same number of values as the number of valid categories");
-      }
-      String value = null;
-      for (int i = 0; i < EvalConstants.ITEM_CATEGORY_ORDER.length; i++) {
-         if (categoryType.equals(EvalConstants.ITEM_CATEGORY_ORDER[i])) {
-            found = true;
-            value = values[i];
-         }
-      }
-      if (! found) {
-         throw new IllegalStateException("Don't know how to handle rendering category type: " + categoryType);
-      }
-      return value;
-   }
+//   public static String getValueForCategory(String categoryType, String... values) {
+//      boolean found = false;
+//      if (values == null 
+//            || values.length != EvalConstants.ITEM_CATEGORY_ORDER.length) {
+//         throw new IllegalArgumentException("Must supply the same number of values as the number of valid categories");
+//      }
+//      String value = null;
+//      for (int i = 0; i < EvalConstants.ITEM_CATEGORY_ORDER.length; i++) {
+//         if (categoryType.equals(EvalConstants.ITEM_CATEGORY_ORDER[i])) {
+//            found = true;
+//            value = values[i];
+//         }
+//      }
+//      if (! found) {
+//         throw new IllegalStateException("Don't know how to handle rendering category type: " + categoryType);
+//      }
+//      return value;
+//   }
 
    /**
     * A helper method to get the list of unique instructor userIds 

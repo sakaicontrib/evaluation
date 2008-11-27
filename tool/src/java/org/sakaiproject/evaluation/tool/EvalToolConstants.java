@@ -108,7 +108,7 @@ public class EvalToolConstants {
       "templateitem.scale.select.full"
    };
 
-
+   // used for the default category choices
    public static String[] ITEM_CATEGORY_VALUES = new String[] {
       EvalConstants.ITEM_CATEGORY_COURSE,
       EvalConstants.ITEM_CATEGORY_INSTRUCTOR
@@ -119,7 +119,10 @@ public class EvalToolConstants {
       "modifyitem.course.category",
       "modifyitem.instructor.category"
    };
-   
+
+   public static String ITEM_CATEGORY_TA = EvalConstants.ITEM_CATEGORY_TA;
+   public static String ITEM_CATEGORY_TA_LABEL = "modifyitem.ta.category";
+
    /**
     * Email Settings: Page pulldown constants for email processing type
     * <ol>

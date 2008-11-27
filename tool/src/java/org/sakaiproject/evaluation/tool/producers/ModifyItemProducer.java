@@ -18,6 +18,7 @@ import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -476,11 +477,19 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             // show all category choices so the user can choose, default is course category
             UIBranchContainer showItemCategory = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCategory:");
             UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
+
+            String[] categoryValues = EvalToolConstants.ITEM_CATEGORY_VALUES; 
+            String[] categoryLabels = EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS;
+            // add in the TA category if enabled
+            Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+            if ( enableTA.booleanValue() ) {
+                categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_TA);
+                categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_TA_LABEL);
+            }
             UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
-                  EvalToolConstants.ITEM_CATEGORY_VALUES, 
-                  EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS,
-                  commonDisplayOTP + "category").setMessageKeys();
-            for (int i = 0; i < EvalToolConstants.ITEM_CATEGORY_VALUES.length; i++) {
+                    categoryValues, categoryLabels,
+                    commonDisplayOTP + "category").setMessageKeys();
+            for (int i = 0; i < categoryValues.length; i++) {
                UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
                UISelectChoice choice = UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
                UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i)
