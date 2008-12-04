@@ -59,7 +59,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    protected final String EVENT_EMAIL_GROUP_AVAILABLE =              "eval.email.evalgroup.available";
    protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
    protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
-
+   
+   //SAK-6320 ORA-01795: maximum number of expressions in a list is 1000
+   //TODO generalize through dao
+   protected final String QUERY_LIMIT = "eval.query.limit";
+   protected final String DEFAULT_QUERY_LIMIT = "100";
+   protected final int ORACLE_MAX_CLAUSES_IN_QUERY = 999;
 
    private EvalCommonLogic commonLogic;
    public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -546,8 +551,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			// get groups assigned to these evaluations
 			start = System.currentTimeMillis();
-			assignGroupMap = evaluationService.getAssignGroupsForEvals(evalIds,
-					false, null);
+			subsetGetAssignGroupsForEvals(assignGroupMap, evalIds);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -635,8 +639,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			
 			// get groups assigned to these evaluations
 			start = System.currentTimeMillis();
-			assignGroupMap = evaluationService.getAssignGroupsForEvals(evalIds,
-					false, null);
+			subsetGetAssignGroupsForEvals(assignGroupMap, evalIds);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -898,6 +901,54 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 	   }
    }
+   
+   private void subsetGetAssignGroupsForEvals(Map<Long, List<EvalAssignGroup>>assignGroupMap, Long[] evalIds) {
+	   List<Long> list = new ArrayList<Long>();
+	   int size = evalIds.length;
+	   int limit = 0;
+	   limit = setQueryLimit(limit);
+	   for(int i = 0; i < size; i++) {
+		   //add an id
+		   list.add(evalIds[i]);
+		   //if it's time to call the dao do it
+		   if(list.size() == limit) {
+			   Long[] sl = moveListToAssignGroupMap(assignGroupMap, list);
+			   metric.info("EvalEmailLogicImpl.subsetGetAssignGroupsForEvals(): added " + sl.length + " assigned groups for evaluations.");
+			   list.clear();
+		   }
+	   }
+	   //add any that remain
+	   if(!list.isEmpty()) {
+		   Long[] sl = moveListToAssignGroupMap(assignGroupMap, list);
+		   metric.info("EvalEmailLogicImpl.subsetGetAssignGroupsForEvals(): added " + sl.length + " assigned groups for evaluations.");
+		   list.clear();
+	   }
+   }
+
+
+	private int setQueryLimit(int limit) {
+		try {
+			   limit = Integer.parseInt(externalLogic.getConfigurationSetting(QUERY_LIMIT, DEFAULT_QUERY_LIMIT));
+			   //ORA-01795: maximum number of expressions in a list is 1000
+			   if(limit < 1 || limit > ORACLE_MAX_CLAUSES_IN_QUERY) {
+				   limit = Integer.parseInt(DEFAULT_QUERY_LIMIT);
+				   log.warn("populateAssignMapGroup() Oracle query limit value range error.");
+			   }
+		   }
+		   catch (NumberFormatException e) {
+			   log.error("populateAssignMapGroup() QUERY_LIMIT or DEFAULT_QUERY_LIMIT " +e);
+			   limit = Integer.parseInt(DEFAULT_QUERY_LIMIT);
+		   }
+		return limit;
+	}
+
+
+	private Long[] moveListToAssignGroupMap(
+			Map<Long, List<EvalAssignGroup>> assignGroupMap, List<Long> list) {
+		Long[] sl = (Long[]) list.toArray(new Long[0]);
+		   assignGroupMap.putAll(evaluationService.getAssignGroupsForEvals(sl,false, null));
+		return sl;
+	}
 
    /**
     * Periodically wait and/or log progress queuing and delivering
