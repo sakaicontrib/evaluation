@@ -154,7 +154,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                   // loop through and update the state of the evals if needed
                   int count = 0;
                   for (EvalEvaluation evaluation : evals) {
-                     String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
+                     //String evalState = evaluationService.returnAndFixEvalState(evaluation, false); not saving state change!
+                	 String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
                      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
                         // purge out partial evaluations older than the partial purge time
                         if (evaluation.getLastModified().getTime() < partialPurgeTime) {
