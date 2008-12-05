@@ -14,11 +14,11 @@
         </property>
         <!-- this should be the internal userId -->
         <property name="owner" type="java.lang.String" index="eval_response_owner">
-            <column name="OWNER" not-null="true" length="255" />
+            <column name="OWNER" not-null="true" length="255" unique-key="uniqueOwnerGroupEval" />
         </property>
         <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
         <property name="evalGroupId" type="java.lang.String" index="eval_response_groupid">
-            <column name="GROUP_ID" not-null="true" length="255" />
+            <column name="GROUP_ID" not-null="true" length="255" unique-key="uniqueOwnerGroupEval" />
         </property>
         <!-- This is the time when this response was initiated -->
         <property name="startTime" type="java.util.Date">
@@ -37,7 +37,7 @@
         </set>
         <!-- this is the associated evaluation -->
         <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="RESPONSE_EVALUATION_FKC" lazy="proxy" fetch="select" not-null="true">
-            <column name="EVALUATION_FK" not-null="true" />
+            <column name="EVALUATION_FK" not-null="true" unique-key="uniqueOwnerGroupEval" />
         </many-to-one>
         <property name="comment" type="text">
             <column name="COMMENT_RESPONSE" />

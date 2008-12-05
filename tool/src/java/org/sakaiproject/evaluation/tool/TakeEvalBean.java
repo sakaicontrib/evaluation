@@ -68,6 +68,8 @@ public class TakeEvalBean {
             messageKey = "takeeval.user.blank.response.exception";
          } else if (ResponseSaveException.TYPE_CANNOT_TAKE_EVAL.equals(e.type)) {
             messageKey = "takeeval.user.cannot.take.now.exception";
+         } else {
+             messageKey = "takeeval.user.cannot.save.reponse";
          }
          messages.addMessage( new TargettedMessage(messageKey, e) );
          return "failure";
