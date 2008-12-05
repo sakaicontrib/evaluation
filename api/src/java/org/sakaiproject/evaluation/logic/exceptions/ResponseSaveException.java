@@ -25,6 +25,7 @@ public class ResponseSaveException extends RuntimeException {
    public static String TYPE_MISSING_REQUIRED_ANSWERS = "missingRequiredAnswers";
    public static String TYPE_CANNOT_TAKE_EVAL = "userCannotTakeEval";
    public static String TYPE_BLANK_RESPONSE = "blankResponse";
+   public static String TYPE_CANNOT_SAVE = "cannotSave";
 
    public String type;
    public String[] missingItemAnswerKeys;
