@@ -213,9 +213,9 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/SettingsWBL.java -text s
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+URL+Id
@@ -393,12 +393,12 @@ tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Auth
 tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/administrate_email.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_objective.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/control_email.html -text
 tool/src/webapp/content/templates/control_email_templates.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/control_evaluations.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id

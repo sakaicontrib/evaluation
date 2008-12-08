@@ -117,7 +117,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       // BREADCRUMBS
       UIInternalLink.make(tofill, "control-email-toplink",
               UIMessage.make("controlemail.page.title"),
-              new SimpleViewParameters(ControlEmailProducer.VIEW_ID));
+              new SimpleViewParameters(AdministrateEmailProducer.VIEW_ID));
       
       UIInternalLink.make(tofill, "control-reporting-toplink", 
             UIMessage.make("administrate.top.control.reporting"),
