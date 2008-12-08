@@ -46,6 +46,8 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 
 /**
  * Implementation for EvalEvaluationSetupService
@@ -130,7 +132,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
 
       TimerTask runStateUpdateTask = new TimerTask() {
-         @SuppressWarnings("unchecked")
          @Override
          public void run() {
             String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
@@ -138,10 +139,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // only execute the code if we have an exclusive lock
             if (lockObtained != null && lockObtained) {
                // get all evals that are not viewable (i.e. completely done with) or deleted 
-               List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
-                     new String[] {"state", "state"}, 
-                     new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
-                     new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
+               List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, 
+                       new Search( new Restriction[] {
+                               new Restriction("state", EvalConstants.EVALUATION_STATE_VIEWABLE, Restriction.NOT_EQUALS),
+                               new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
+                       })
+               );
                if (evals.size() > 0) {
                   log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
                   // set the partial purge number of days to 5
@@ -422,8 +425,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    }
 
-
-   @SuppressWarnings("unchecked")
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#deleteEvaluation(java.lang.Long, java.lang.String)
+    */
    public void deleteEvaluation(Long evaluationId, String userId) {
       log.debug("evalId: " + evaluationId + ",userId: " + userId);
 
@@ -436,16 +440,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       if ( securityChecks.canUserRemoveEval(userId, evaluation) ) {
 
          // remove associated AssignGroups
-         List<EvalAssignGroup> acs = dao.findByProperties(EvalAssignGroup.class, 
-               new String[] {"evaluation.id"}, 
-               new Object[] {evaluationId});
+         List<EvalAssignGroup> acs = dao.findBySearch(EvalAssignGroup.class, 
+               new Search("evaluation.id", evaluationId) );
          Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
          dao.deleteSet(assignGroupSet);
 
          // remove associated assigned hierarchy nodes
-         List<EvalAssignHierarchy> ahs = dao.findByProperties(EvalAssignHierarchy.class, 
-               new String[] {"evaluation.id"}, 
-               new Object[] {evaluationId});
+         List<EvalAssignHierarchy> ahs = dao.findBySearch(EvalAssignHierarchy.class, 
+                 new Search("evaluation.id", evaluationId) );
          Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
          dao.deleteSet(assignHierSet);
 

@@ -122,7 +122,7 @@ public class EvalScheduledJob {
     * Decode a contextId in the evalId and jobType
     * 
     * @param contextId and encoded context string
-    * @return
+    * @return an eval id type object
     */
    public static EvalIdType decodeContextId(String contextId) {
       EvalIdType rvalue = new EvalIdType();

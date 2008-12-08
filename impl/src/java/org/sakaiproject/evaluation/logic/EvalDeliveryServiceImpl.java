@@ -155,6 +155,15 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                     Map<String, List<String>> associates = new HashMap<String, List<String>>();
                     associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));  
 
+                    // add in the TA list if there are any TAs
+                    Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+                    if (taEnabled.booleanValue()) {
+                        Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TA_ROLE);
+                        if (teachingAssistants.size() > 0) {
+                            associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+                        }
+                    }
+
                     TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
                     List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
 
@@ -488,9 +497,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         Long evaluationId = eval.getId();
         String evalGroupId = response.getEvalGroupId();
 
-        // get the instructors for this evaluation
-        Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-
         // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
         List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
         String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
@@ -498,13 +504,26 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
         }
 
+        // get the instructors for this evaluation
+        Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+
         // get all items for this evaluation
         List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
                 instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
 
-        // make the TI data structure and get the flat list of DTIs
         Map<String, List<String>> associates = new HashMap<String, List<String>>();
         associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+
+        // add in the TA list if there are any TAs
+        Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+        if (taEnabled.booleanValue()) {
+            Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TA_ROLE);
+            if (teachingAssistants.size() > 0) {
+                associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+            }
+        }
+
+        // make the TI data structure and get the flat list of DTIs
         TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
         List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
@@ -520,10 +539,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             unansweredAllowed = true; // default to skipping the check
         }
 
-
         Set<String> requiredAnswerKeys = new HashSet<String>();
-
-
 
         for (DataTemplateItem dti : allDTIs) {
             if (dti.isAnswerable()) {

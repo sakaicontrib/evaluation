@@ -789,6 +789,26 @@ public class TemplateItemDataList {
    }
 
    /**
+    * A helper method to get the list of unique TA userIds 
+    * for the {@link EvalConstants#ITEM_CATEGORY_TA} type item answers from the list of answers<br/>
+    * <b>NOTE:</b> Use getEvalUsersByIds(String[]) from commonLogic to turn this into a set of EvalUsers if needed
+    * 
+    * @param answers a list of {@link EvalAnswer}
+    * @return the set of userIds
+    */
+   public static Set<String> getTeachingAssistantsForAnswers(List<EvalAnswer> answers) {
+      Set<String> userIds = new HashSet<String>();
+      for (EvalAnswer answer: answers) {
+         if (EvalConstants.ITEM_CATEGORY_TA.equals(answer.getAssociatedType())) {
+            if (! EvalUtils.isBlank(answer.getAssociatedId())) {
+               userIds.add(answer.getAssociatedId());
+            }
+         }
+      }
+      return userIds;
+   }
+
+   /**
     * This helper method deals with producing an array of total number of responses for
     * a list of answers.  It does not deal with any of the logic (such as groups,
     * etc.) it takes to get a list of answers.

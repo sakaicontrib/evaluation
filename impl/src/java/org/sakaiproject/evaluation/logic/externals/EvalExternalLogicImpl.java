@@ -337,7 +337,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])
     */
-   @SuppressWarnings("unchecked")
    public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
       Map<String, EvalUser> users = new HashMap<String, EvalUser>();
       boolean foundAll = false;
