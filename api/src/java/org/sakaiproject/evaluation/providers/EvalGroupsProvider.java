@@ -34,9 +34,11 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  * </bean>
  * </xmp>
  * <br/>
- * The 2 permissions this provider has to deal with are {@link #PERM_BE_EVALUATED}
- * (roughly equivalent to instructor role) and {@link #PERM_TAKE_EVALUATION}
- * (roughly equivalent to student role), compare the incoming permission to the constant
+ * The 3 permissions this provider has to deal with 
+ * are {@link #PERM_BE_EVALUATED} (roughly equivalent to instructor role) 
+ * and {@link #PERM_TAKE_EVALUATION} (roughly equivalent to student role) 
+ * and {@link #PERM_TA_ROLE} (roughly equivalent to teaching assistants role), 
+ * compare the incoming permission to the constant
  * and only handle the cases indicated (do not try to handle all possible permissions)<br/>
  * <b>Note</b>: Specifically this allows us to reference eval groups and enrollments which
  * are not stored in something like Sakai
