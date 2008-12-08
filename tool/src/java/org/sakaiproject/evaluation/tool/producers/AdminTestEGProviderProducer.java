@@ -148,8 +148,8 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
 
         long startTime = 0;
         long total = 0;
-        Set s = null;
-        List l = null;
+        Set<String> s = null;
+        List<EvalGroup> l = null;
 
         // now run the tests
         UIBranchContainer tests1 = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_BE_EVALUATED");
@@ -290,10 +290,10 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
      * @param c any Collection
      * @return a String representing that collection
      */
-    private String collectionToString(Collection c) {
+    private String collectionToString(Collection<?> c) {
         StringBuilder sb = new StringBuilder();
         sb.append("(#:" + c.size() + ")");
-        for (Iterator iter = c.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = c.iterator(); iter.hasNext();) {
             sb.append( ", " + iter.next().toString() );
         }
         return sb.toString();

@@ -15,12 +15,12 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-public class ControlEmailProducer implements ViewComponentProducer {
+public class AdministrateEmailProducer implements ViewComponentProducer {
 
 	/**
 	 * This is used for navigation within the system.
 	 */
-	public static final String VIEW_ID = "control_email";
+	public static final String VIEW_ID = "administrate_email";
 
 	public String getViewID() {
 		return VIEW_ID;
@@ -93,7 +93,7 @@ public class ControlEmailProducer implements ViewComponentProducer {
 		
 		//settings re one email per student
 		Boolean student = (Boolean) evalSettings
-				.get(evalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+				.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
 		if (student != null && student) {
 			UIBranchContainer oneemail = UIBranchContainer.make(form,
 					"one-email-settings:");
