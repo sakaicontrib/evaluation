@@ -56,6 +56,11 @@ public interface EvalGroupsProvider {
 	 * Permission: User can take an evaluation for any eval group they have this permission in
 	 */
 	public final static String PERM_TAKE_EVALUATION = "provider.take.evaluation";
+	/**
+	 * Permission: User is marked as a TA in a section/course
+	 * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
+	 */
+	public final static String PERM_TA_ROLE = "provider.role.ta";
 
 	/**
 	 * Get a list of all user ids that can take an evaluation or be evaluated in

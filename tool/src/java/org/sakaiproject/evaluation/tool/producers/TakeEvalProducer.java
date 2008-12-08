@@ -371,6 +371,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // make the TI data structure and get the flat list of DTIs
                 Map<String, List<String>> associates = new HashMap<String, List<String>>();
                 associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+
+                // add in the TA list if there are any TAs
+                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
+                if (taEnabled.booleanValue()) {
+                    Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TA_ROLE);
+                    if (teachingAssistants.size() > 0) {
+                        associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+                    }
+                }
+
                 TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
                 // loop through all DTIs and flag items that were missing
@@ -389,11 +399,14 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     // handle printing the category header
                     if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                         UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
-                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)
-                            || EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.instructor.questions.header", new Object[] { user.displayName });
+                    } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                        EvalUser user = commonLogic.getEvalUserById( tig.associateId );
+                        UIMessage.make(categorySectionBranch, "categoryHeader", 
+                                "takeeval.ta.questions.header", new Object[] { user.displayName });
                     }
 
                     // loop through the hierarchy node groups

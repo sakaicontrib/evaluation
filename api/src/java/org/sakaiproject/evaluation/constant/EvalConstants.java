@@ -248,6 +248,11 @@ public class EvalConstants {
     * Permission: User can take an evaluation for any group they have this permission in
     */
    public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
+   /**
+    * Permission: User is marked as a TA in a section/course
+    * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
+    */
+   public final static String PERM_TA_ROLE = "section.role.ta";
 
 
    /**

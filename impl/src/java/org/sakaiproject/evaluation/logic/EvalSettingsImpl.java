@@ -175,7 +175,6 @@ public class EvalSettingsImpl implements EvalSettings {
     * else always get the persistent object if exists
     * @return a Config object or null if none found
     */
-   @SuppressWarnings("unchecked")
    protected EvalConfig getConfigByName(String name, boolean useCache) {
       EvalConfig config = null;
       boolean found = false;
@@ -214,7 +213,6 @@ public class EvalSettingsImpl implements EvalSettings {
    /**
     * clear out the cache and reload all config settings
     */
-   @SuppressWarnings("unchecked")
    public void resetCache() {
       // clear out cache
       configCache.clear();
