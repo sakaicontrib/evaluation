@@ -835,20 +835,20 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     */
    @SuppressWarnings("unchecked")
    public String getEarliestDueDate(String userId) {
-	   String earliest = null;
+	   String earliest = EvalConstants.NO_DATE_AVAILABLE;
 	   Date dueDate = null;
-	   if(userId == null) 
-		   throw new NullPointerException("getEarliestDueDate(String userId) userId is null.");
-	   try {
-		   List<EvalEvaluation> evaluations = getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
-		   if(evaluations != null && !evaluations.isEmpty()) {
-			   dueDate = evaluations.get(0).getDueDate();
-			   earliest = DateFormat.getDateInstance().format(dueDate);
+	   if(userId != null) {
+		   try {
+			   List<EvalEvaluation> evaluations = getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+			   if(evaluations != null && !evaluations.isEmpty()) {
+				   dueDate = evaluations.get(0).getDueDate();
+				   earliest = DateFormat.getDateInstance().format(dueDate);
+			   }
+			   //e.g., Mar 17, 2008
 		   }
-		   //e.g., Mar 17, 2008
-	   }
-	   catch(NullPointerException e) {
-		   throw new NullPointerException("getEvaluationsForUser(userId " + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE))");
+		   catch(Exception e) {
+			   log.warn("EvalEvaluationServiceImpl.getEarliestDueDate: getEvaluationsForUser(" + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE) " + e);
+		   }
 	   }
 	   return earliest;
    }

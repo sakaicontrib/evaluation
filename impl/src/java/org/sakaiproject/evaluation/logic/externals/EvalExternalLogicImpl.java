@@ -451,7 +451,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
 			   }
 	   } catch (Exception e) {
-		   log.error("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+		   log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
 	   }
 	   return url;
 	}

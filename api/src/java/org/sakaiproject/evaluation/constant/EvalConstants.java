@@ -618,8 +618,14 @@ public class EvalConstants {
     * The numeric value stored when a student responds N/A
     */
    public static final Integer NA_VALUE = -1;
+   
    /**
-    * The code string stored for no multiple answer
+    * The code string stored for no date for user
+    */
+   public static final String NO_DATE_AVAILABLE = "(no date available)";
+   
+   /**
+    * The code string stored for no site with tool for user
     */
    public static final String NO_LINK_AVAILABLE = "(no link available)";
    
