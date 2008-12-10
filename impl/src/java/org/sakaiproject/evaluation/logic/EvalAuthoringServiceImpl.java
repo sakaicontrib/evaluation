@@ -39,7 +39,9 @@ import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Order;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -91,15 +93,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
 
 
-   @SuppressWarnings("unchecked")
    public void init() {
       // this method will help us to patch up the system if needed
 
       // fix up the scales with null modes
-      List<EvalScale> scales = dao.findByProperties(EvalScale.class,
-            new String[] { "mode" }, 
-            new Object[] { "" },
-            new int[] { ByPropsFinder.NULL});
+      List<EvalScale> scales = dao.findBySearch(EvalScale.class,
+            new Search( new Restriction("mode", "", Restriction.NULL) ) );
       if (scales.size() > 0) {
          log.info("Found " + scales.size() + " scales with a null mode, fixing up data...");
          for (EvalScale scale : scales) {
@@ -119,13 +118,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return scale;
    }
 
-   @SuppressWarnings("unchecked")
    public EvalScale getScaleByEid(String eid) {
       log.debug("scale eid: " + eid);
       EvalScale evalScale = null;
       if (eid != null) {
-         List<EvalScale> evalScales = dao.findByProperties(EvalScale.class,
-               new String[] { "eid" }, new Object[] { eid });
+         List<EvalScale> evalScales = dao.findBySearch(EvalScale.class, new Search("eid", eid));
          if (evalScales != null && evalScales.size() == 1) {
             evalScale = evalScales.get(0);
          }
@@ -240,7 +237,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#getScalesForUser(java.lang.String, java.lang.String)
     */
-   @SuppressWarnings("unchecked")
    public List<EvalScale> getScalesForUser(String userId, String sharingConstant) {
       log.debug("userId: " + userId + ", sharingConstant: " + sharingConstant );
 
@@ -258,7 +254,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // only get type standard templates
       String[] props = new String[] { "mode" };
       Object[] values = new Object[] { EvalConstants.SCALE_MODE_SCALE };
-      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+      int[] comparisons = new int[] { Restriction.EQUALS };
 
       String[] order = new String[] {"title"};
       String[] options = new String[] {"notHidden"};
@@ -316,7 +312,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    protected EvalScale getScaleOrFail(Long scaleId) {
       EvalScale scale = getScaleById(scaleId);
       if (scale == null) {
-         throw new IllegalArgumentException("Cannot find scale with id: " + scale.getId());
+         throw new IllegalArgumentException("Cannot find scale with id: " + scaleId);
       }
       return scale;
    }
@@ -333,13 +329,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
-   @SuppressWarnings("unchecked")
    public EvalItem getItemByEid(String eid) {
       EvalItem evalItem = null;
       if (eid != null) {
          log.debug("eid: " + eid);
-         List<EvalItem> evalItems = dao.findByProperties(EvalItem.class,
-               new String[] { "eid" }, new Object[] { eid });
+         List<EvalItem> evalItems = dao.findBySearch(EvalItem.class, new Search("eid", eid));
          if (evalItems != null && evalItems.size() == 1) {
             evalItem = evalItems.get(0);
          }
@@ -492,18 +486,18 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // leave out the block parent items
       String[] props = new String[] { "classification" };
       Object[] values = new Object[] { EvalConstants.ITEM_TYPE_BLOCK_PARENT };
-      int[] comparisons = new int[] { ByPropsFinder.NOT_EQUALS };
+      int[] comparisons = new int[] { Restriction.NOT_EQUALS };
 
       if (!includeExpert) {
          props = ArrayUtils.appendArray(props, "expert");
          values = ArrayUtils.appendArray(values, Boolean.TRUE);
-         comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.NOT_EQUALS);
+         comparisons = ArrayUtils.appendArray(comparisons, Restriction.NOT_EQUALS);
       }
 
       if (filter != null && filter.length() > 0) {
          props = ArrayUtils.appendArray(props, "itemText");
          values = ArrayUtils.appendArray(values, "%" + filter + "%");
-         comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
+         comparisons = ArrayUtils.appendArray(comparisons, Restriction.LIKE);
       }
 
       String[] order = new String[] {"id"};
@@ -535,15 +529,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return templateItem;
    }
 
-
-   @SuppressWarnings("unchecked")
    public EvalTemplateItem getTemplateItemByEid(String eid) {
       log.debug("templateItemEid:" + eid);
       EvalTemplateItem evalTemplateItem = null;
       if (eid != null) {
-         List<EvalTemplateItem> evalTemplateItems = dao.findByProperties(
-               EvalTemplateItem.class, new String[] { "eid" },
-               new Object[] { eid });
+         List<EvalTemplateItem> evalTemplateItems = dao.findBySearch(EvalTemplateItem.class, new Search("eid", eid));
          if (evalTemplateItems != null && evalTemplateItems.size() == 1) {
             evalTemplateItem = evalTemplateItems.get(0);
          }
@@ -708,10 +698,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     */
    protected int getItemCountForTemplate(Long templateId) {
       // only count items which are not children of a block
-      int itemsCount = dao.countByProperties(EvalTemplateItem.class, 
-            new String[] {"template.id", "blockId"}, 
-            new Object[] {templateId, ""},
-            new int[] {EvaluationDao.EQUALS, EvaluationDao.NULL});
+      int itemsCount = (int) dao.countBySearch(EvalTemplateItem.class, new Search(
+                  new Restriction[] {
+                          new Restriction("template.id", templateId),
+                          new Restriction("blockId", "", Restriction.NULL)
+                  }
+              ));
+
 // OLD way
 //            int itemsCount = 0;
 //            if (template.getTemplateItems() != null) {
@@ -771,7 +764,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
 
 
-   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent) {
 
       // get the templateItem by id to verify parent exists
@@ -790,11 +782,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          l.add(templateItem);
       }
 
-      l.addAll( dao.findByProperties(EvalTemplateItem.class, 
-            new String[] { "blockId" }, 
-            new Object[] { parentId },
-            new int[] { ByPropsFinder.EQUALS },
-            new String[] { "displayOrder" }) );
+      l.addAll( dao.findBySearch(EvalTemplateItem.class, 
+              new Search( new Restriction("blockId", parentId), new Order("displayOrder") ) ) );
 
       return l;
    }
@@ -1077,12 +1066,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
-   @SuppressWarnings("unchecked")
    public EvalTemplate getTemplateByEid(String eid) {
       EvalTemplate evalTemplate = null;
       if (eid != null) {
-         List<EvalTemplate> evalTemplates = dao.findByProperties(EvalTemplate.class,
-               new String[] { "eid" }, new Object[] { eid });
+         List<EvalTemplate> evalTemplates = dao.findBySearch(EvalTemplate.class, new Search("eid", eid));
          if (!evalTemplates.isEmpty()) {
             evalTemplate = evalTemplates.get(0);
          }
@@ -1284,7 +1271,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // only get type standard templates
       String[] props = new String[] { "type" };
       Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
-      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+      int[] comparisons = new int[] { Restriction.EQUALS };
 
       String[] order = new String[] {"sharing","title"};
       String[] options = null;
@@ -1410,7 +1397,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
    // COPYING
 
-   @SuppressWarnings("unchecked")
    public Long[] copyScales(Long[] scaleIds, String title, String ownerId, boolean hidden) {
       if (ownerId == null || ownerId.length() == 0) {
          throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
@@ -1419,7 +1405,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          throw new IllegalArgumentException("Invalid scaleIds array, cannot be null or empty");         
       }
 
-      List<EvalScale> scales = dao.findByProperties(EvalScale.class, new String[] {"id"}, new Object[] { scaleIds });
+      List<EvalScale> scales = dao.findBySearch(EvalScale.class, new Search("id", scaleIds));
       if (scales.size() != scaleIds.length) {
          throw new IllegalArgumentException("Invalid scaleIds in the scaleIds array: " + scaleIds);
       }
@@ -1448,7 +1434,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return copiedIds;
    }
 
-   @SuppressWarnings("unchecked")
    public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden, boolean includeChildren) {
       if (ownerId == null || ownerId.length() == 0) {
          throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
@@ -1457,7 +1442,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          throw new IllegalArgumentException("Invalid itemIds array, cannot be null or empty");         
       }
 
-      List<EvalItem> items = dao.findByProperties(EvalItem.class, new String[] {"id"}, new Object[] { itemIds });
+      List<EvalItem> items = dao.findBySearch(EvalItem.class, new Search("id", itemIds));
       if (items.size() != itemIds.length) {
          throw new IllegalArgumentException("Invalid itemIds in array: " + itemIds);
       }
@@ -1495,7 +1480,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return copiedIds;
    }
 
-   @SuppressWarnings("unchecked")
    public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, Long toTemplateId, boolean includeChildren) {
       if (ownerId == null || ownerId.length() == 0) {
          throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");  
@@ -1512,7 +1496,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          }
       }
 
-      List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { templateItemIds });
+      List<EvalTemplateItem> templateItemsList = dao.findBySearch(EvalTemplateItem.class, new Search("id", templateItemIds));
       if (templateItemsList.size() != templateItemIds.length) {
          throw new IllegalArgumentException("Invalid templateItemIds in array: " + templateItemIds);
       }
@@ -1627,7 +1611,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
-   @SuppressWarnings("unchecked")
    public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden, boolean includeChildren) {
       if (ownerId == null || ownerId.length() == 0) {
          throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
@@ -1659,7 +1642,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          // now copy the template items and save the new linkages
          Long[] originalTIIds = TemplateItemUtils.makeTemplateItemsIdsArray(original.getTemplateItems());
          Long[] templateItemIds = copyTemplateItems(originalTIIds, ownerId, hidden, copy.getId(), includeChildren);
-         List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { templateItemIds });
+         List<EvalTemplateItem> templateItemsList = dao.findBySearch(EvalTemplateItem.class, 
+                 new Search("id", templateItemIds));
          copy.setTemplateItems( new HashSet<EvalTemplateItem>(templateItemsList) );
          dao.save(copy);
       }
@@ -1668,22 +1652,20 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
-   @SuppressWarnings("unchecked")
    public List<EvalItem> getItemsUsingScale(Long scaleId) {
       if (getScaleById(scaleId) == null) {
          throw new IllegalArgumentException("Invalid scaleId, no scale found with this id: " + scaleId);
       }
-      List<EvalItem> items = dao.findByProperties(EvalItem.class, new String[] {"scale.id"}, new Object[] { scaleId });
+      List<EvalItem> items = dao.findBySearch(EvalItem.class, new Search("scale.id", scaleId));
       return items;
    }
 
 
-   @SuppressWarnings("unchecked")
    public List<EvalTemplate> getTemplatesUsingItem(Long itemId) {
       if (getItemById(itemId) == null) {
          throw new IllegalArgumentException("Invalid itemId, no item found with this id: " + itemId);
       }
-      List<EvalTemplateItem> templateItems = dao.findByProperties(EvalTemplateItem.class, new String[] {"item.id"}, new Object[] { itemId });
+      List<EvalTemplateItem> templateItems = dao.findBySearch(EvalTemplateItem.class, new Search("item.id", itemId));
       Set<Long> ids = new HashSet<Long>();
       for (EvalTemplateItem templateItem : templateItems) {
          ids.add(templateItem.getTemplate().getId());
@@ -1700,17 +1682,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#getAutoUseTemplateItems(java.lang.String, java.lang.String, java.lang.String)
     */
-   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag) {
 
       List<EvalTemplateItem> items = new ArrayList<EvalTemplateItem>();
       // first add in the templates items
       if (! EvalUtils.isBlank(templateAutoUseTag)) {
-         List<EvalTemplate> templates = dao.findByProperties(EvalTemplate.class, 
-               new String[] {"autoUseTag"}, 
-               new Object[] {templateAutoUseTag}, 
-               new int[] {ByPropsFinder.EQUALS},
-               new String[] {"id"}
+         List<EvalTemplate> templates = dao.findBySearch(EvalTemplate.class, 
+                 new Search( new Restriction("autoUseTag", templateAutoUseTag), new Order("id"))
          );
          for (EvalTemplate template : templates) {
             List<EvalTemplateItem> templateItemsList = getTemplateItemsForTemplate(template.getId(), new String[] {}, null, null); // only hierarchy nodes
@@ -1720,11 +1698,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // now the template items (only if not already there)
       if (! EvalUtils.isBlank(templateItemAutoUseTag)) {
-         List<EvalTemplateItem> templateItems = dao.findByProperties(EvalTemplateItem.class, 
-               new String[] {"autoUseTag"}, 
-               new Object[] {templateItemAutoUseTag}, 
-               new int[] {ByPropsFinder.EQUALS},
-               new String[] {"displayOrder", "id"}
+         List<EvalTemplateItem> templateItems = dao.findBySearch(EvalTemplateItem.class, 
+                 new Search( 
+                         new Restriction[] { new Restriction("autoUseTag", templateItemAutoUseTag) }, 
+                         new Order[] { new Order("displayOrder"), new Order("id") }
+                 )
          );
          for (EvalTemplateItem templateItem : templateItems) {
             if (! items.contains(templateItem)) {
@@ -1735,11 +1713,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // finally put in the items wrapper in a templateItem
       if (! EvalUtils.isBlank(itemAutoUseTag)) {
-         List<EvalItem> evalItems = dao.findByProperties(EvalItem.class, 
-               new String[] {"autoUseTag"}, 
-               new Object[] {itemAutoUseTag}, 
-               new int[] {ByPropsFinder.EQUALS},
-               new String[] {"id"}
+         List<EvalItem> evalItems = dao.findBySearch(EvalItem.class, 
+                 new Search( new Restriction("autoUseTag", itemAutoUseTag), new Order("id"))
          );
          for (EvalItem evalItem : evalItems) {
             items.add( TemplateItemUtils.makeTemplateItem(evalItem) );
@@ -1752,7 +1727,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#doAutoUseInsertion(java.lang.String, java.lang.Long, java.lang.String, boolean)
     */
-   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> doAutoUseInsertion(String autoUseTag, Long templateId, String insertionPointConstant, boolean saveAll) {
       List<EvalTemplateItem> allTemplateItems = null;
       // get all the autoUse items
@@ -1807,7 +1781,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                copiedTIIds = ArrayUtils.appendArrays(copiedTIIds, copiedIds);
             }
             // fetch the new copies based on the ids
-            List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { copiedTIIds });
+            List<EvalTemplateItem> templateItemsList = dao.findBySearch(EvalTemplateItem.class, 
+                    new Search("id", copiedTIIds) );
             // now put the copied items into the list in the order of the copied ids
             for (int i = 0; i < copiedTIIds.length; i++) {
                Long id = copiedTIIds[i];
