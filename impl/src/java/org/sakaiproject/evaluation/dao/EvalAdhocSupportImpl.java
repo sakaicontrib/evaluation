@@ -279,10 +279,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @param group 
     */
    public void saveAdhocGroup(EvalAdhocGroup group) {
-      if (group.getOwner() == null) {
+      if (group.getOwner() == null || "".equals(group.getOwner())) {
          throw new IllegalArgumentException("owner must be set for adhoc group");
       }
-      if (group.getTitle() == null) {
+      if (group.getTitle() == null || "".equals(group.getTitle())) {
          throw new IllegalArgumentException("title must be set for adhoc group");
       }
       if (! (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
@@ -324,7 +324,6 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * other permissions will return no results
     * @return a list of adhoc groups for which this user has this permission
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
       List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
