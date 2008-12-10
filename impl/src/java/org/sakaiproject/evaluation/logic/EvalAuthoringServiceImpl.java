@@ -1457,7 +1457,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             // and then copied them all at once and then reassigned them but the code would be a lot harder to read
             EvalScale scale = null;
             if (includeChildren) {
-               Long[] scaleIds = copyScales(new Long[] {original.getScale().getId()}, null, ownerId, hidden);
+               // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
+               Long[] scaleIds = copyScales(new Long[] {original.getScale().getId()}, null, ownerId, true);
                scale = getScaleById(scaleIds[0]);
             } else {
                scale = original.getScale();
@@ -1602,7 +1603,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       EvalTemplateItem copy = TemplateItemUtils.makeCopyOfTemplateItem(original, toTemplate, ownerId, hidden);
       // copy the item as well if needed
       if (includeChildren) {
-         Long[] itemIds = copyItems(new Long[] {original.getItem().getId()}, ownerId, hidden, includeChildren);
+         // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
+         Long[] itemIds = copyItems(new Long[] {original.getItem().getId()}, ownerId, true, includeChildren);
          EvalItem item = getItemById(itemIds[0]);
          copy.setItem(item);
       }
@@ -1641,7 +1643,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             && original.getTemplateItems().size() > 0) {
          // now copy the template items and save the new linkages
          Long[] originalTIIds = TemplateItemUtils.makeTemplateItemsIdsArray(original.getTemplateItems());
-         Long[] templateItemIds = copyTemplateItems(originalTIIds, ownerId, hidden, copy.getId(), includeChildren);
+         // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
+         Long[] templateItemIds = copyTemplateItems(originalTIIds, ownerId, true, copy.getId(), includeChildren);
          List<EvalTemplateItem> templateItemsList = dao.findBySearch(EvalTemplateItem.class, 
                  new Search("id", templateItemIds));
          copy.setTemplateItems( new HashSet<EvalTemplateItem>(templateItemsList) );
