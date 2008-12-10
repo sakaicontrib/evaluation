@@ -2,7 +2,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -34,6 +33,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * AdhocGroupParams which we are currently using to go back to the Evaluation Assign Groups Page.
  * 
  * @author sgithens
+ * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
 public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewParamsReporter,
       ActionResultInterceptor {

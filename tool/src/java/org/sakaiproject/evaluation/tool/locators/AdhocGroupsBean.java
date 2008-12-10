@@ -77,6 +77,12 @@ public class AdhocGroupsBean {
       if (commonLogic.isUserAnonymous(currentUserId)) {
          throw new SecurityException("Anonymous users cannot create EvalAdhocGroups: " + currentUserId);
       }
+      if (adhocGroupTitle == null || "".equals(adhocGroupTitle)) {
+          messages.addMessage(new TargettedMessage("modifyadhocgroup.message.notitle",
+                  new Object[] {}, TargettedMessage.SEVERITY_ERROR));
+          return "noTitle";
+      }
+
       EvalAdhocGroup group = new EvalAdhocGroup(currentUserId, adhocGroupTitle);
 
       updateAdHocGroup(group);
@@ -126,7 +132,7 @@ public class AdhocGroupsBean {
       adhocGroupId = group.getId();
 
       messages.addMessage(new TargettedMessage("modifyadhocgroup.message.savednewgroup",
-            new String[] { group.getTitle() }, TargettedMessage.SEVERITY_INFO));
+            new Object[] { group.getTitle() }, TargettedMessage.SEVERITY_INFO));
 
       // Build the rejected users with no trailing commas
       //String[] rejectedStringList = rejectedUsers.toArray(new String[]{});
@@ -144,11 +150,11 @@ public class AdhocGroupsBean {
 
       if (rejectedUsers.size() > 0 && useAdhocusers) {
          messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers",
-               new String[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
+               new Object[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
       }
       else if (rejectedUsers.size() > 0) {
          messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers.noadhocusers",
-               new String[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
+               new Object[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
       }
       else {
          log.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
@@ -167,10 +173,8 @@ public class AdhocGroupsBean {
             }
          }
          messages.addMessage(new TargettedMessage("modifyadhocgroup.message.existingusers",
-               new String[] { alreadyInGroupUsersBuilder.toString() }, TargettedMessage.SEVERITY_ERROR ));
+               new Object[] { alreadyInGroupUsersBuilder.toString() }, TargettedMessage.SEVERITY_INFO ));
       }
-
-
    }
 
    /**
@@ -188,7 +192,7 @@ public class AdhocGroupsBean {
             || EvalUtils.isBlank(data.trim())
             || data.matches("[ \t\r\n]+")) {
          messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers",
-               new String[] { "NONE" }, TargettedMessage.SEVERITY_ERROR ));
+               new Object[] { "NONE" }, TargettedMessage.SEVERITY_ERROR ));
          return;
       }
 
