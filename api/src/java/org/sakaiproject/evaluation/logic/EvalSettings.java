@@ -294,6 +294,13 @@ public interface EvalSettings {
      */
     public static final String ENABLE_TA_CATEGORY = "ENABLE_TA_CATEGORY:java.lang.Boolean";
 
+    /**
+     * If this is true then the admin email address is used when sending eval emails,
+     * otherwise the system help address (or the configured help address if set) will be used <br/>
+     * https://bugs.caret.cam.ac.uk/browse/CTL-1525
+     */
+    public static final String USE_ADMIN_AS_FROM_EMAIL = "USE_ADMIN_AS_FROM_EMAIL:java.lang.Boolean";
+
 
 
     /**
@@ -335,6 +342,7 @@ public interface EvalSettings {
         ITEM_USE_COURSE_CATEGORY_ONLY,
         LOG_EMAIL_RECIPIENTS,
         REQUIRE_COMMENTS_BLOCK,
+        USE_ADMIN_AS_FROM_EMAIL,
         USE_EXPERT_ITEMS,
         USE_EXPERT_TEMPLATES
     };
