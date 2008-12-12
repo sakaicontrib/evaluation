@@ -30,7 +30,9 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Order;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 import org.sakaiproject.hierarchy.utils.HierarchyUtils;
@@ -103,7 +105,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#removeNode(java.lang.String)
     */
-   @SuppressWarnings("unchecked")
    public EvalHierarchyNode removeNode(String nodeId) {
       // fail to remove nodes when there are associated evalGroups
       Map<String, Integer> egCount = countEvalGroupsForNodes( new String[] {nodeId} );
@@ -113,9 +114,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       }
       HierarchyNode node = hierarchyService.removeNode(nodeId);
       // cleanup related data
-      List<EvalTemplateItem> l = dao.findByProperties(EvalTemplateItem.class, 
-            new String[] {"hierarchyNodeId"}, 
-            new Object[] {nodeId});
+      List<EvalTemplateItem> l = dao.findBySearch(EvalTemplateItem.class, new Search("hierarchyNodeId", nodeId) );
       for (EvalTemplateItem templateItem : l) {
          templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
          templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
@@ -149,7 +148,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return null;
    }
 
-
    public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds) {
       Set<String> s = new HashSet<String>();
       for (EvalHierarchyNode node : nodes) {
@@ -172,7 +170,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       }
       return s;
    }
-
 
    public void setEvalGroupsForNode(String nodeId, Set<String> evalGroupIds) {
       if (hierarchyService.getNodeById(nodeId) == null) {
@@ -210,7 +207,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return s;
    }
 
-
    public Map<String, Set<String>> getEvalGroupsForNodes(String[] nodeIds) {
       if (nodeIds == null) {
          throw new IllegalArgumentException("nodeIds cannot be null");
@@ -231,16 +227,13 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return m;
    }
 
-   @SuppressWarnings("unchecked")
    public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds) {
       Map<String, Integer> m = new HashMap<String, Integer>();
       for (int i = 0; i < nodeIds.length; i++) {
          m.put(nodeIds[i], 0);
       }
 
-      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
-            new String[] {"nodeId"}, 
-            new Object[] {nodeIds});
+      List<EvalGroupNodes> l = dao.findBySearch(EvalGroupNodes.class, new Search("nodeId", nodeIds) );
       for (Iterator<EvalGroupNodes> iter = l.iterator(); iter.hasNext();) {
          EvalGroupNodes egn = (EvalGroupNodes) iter.next();
          m.put(egn.getNodeId(), egn.getEvalGroups().length);
@@ -347,7 +340,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     * @param nodeId
     * @return the {@link EvalGroupNodes} or null if none found
     */
-   @SuppressWarnings("unchecked")
    private EvalGroupNodes getEvalGroupNodeByNodeId(String nodeId) {
       List<EvalGroupNodes> l = getEvalGroupNodesByNodeId(new String[] {nodeId});
       EvalGroupNodes egn = null;
@@ -362,13 +354,11 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     * @param nodeIds
     * @return a list of egn or empty list if none found
     */
-   @SuppressWarnings("unchecked")
    private List<EvalGroupNodes> getEvalGroupNodesByNodeId(String[] nodeIds) {
-      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
-            new String[] {"nodeId"}, 
-            new Object[] {nodeIds},
-            new int[] {ByPropsFinder.EQUALS}, 
-            new String[] {"id"});
+      List<EvalGroupNodes> l = dao.findBySearch(EvalGroupNodes.class, new Search(
+              new Restriction("nodeId", nodeIds),
+              new Order("id")
+          ) );
       return l;
    }
 
