@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.providers.EvalHierarchyProvider;
 
@@ -29,7 +28,7 @@ import org.sakaiproject.evaluation.providers.EvalHierarchyProvider;
  *
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
+public interface ExternalHierarchyLogic extends EvalHierarchyProvider, ExternalHierarchyPermissions {
 
    /**
     * Add a new node to a hierarchy
@@ -62,16 +61,6 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * @return the object representing the updated node
     */
    public EvalHierarchyNode updateNodeData(String nodeId, String title, String description);
-
-   /**
-    * Set permissions for a user for a node
-    * 
-    * @param userId the internal user id (not username)
-    * @param nodeId a unique id for a hierarchy node
-    * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants},
-    * if this is set to null then remove all permissions for this user from this node
-    */
-   public void assignUserNodePerm(String userId, String nodeId, String hierarchyPermConstant);
 
    /**
     * Set this set to be the set of eval group ids associated with this node,
