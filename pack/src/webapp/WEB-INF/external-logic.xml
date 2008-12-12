@@ -31,6 +31,7 @@
 	      init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
 </beans>

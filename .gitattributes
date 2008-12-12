@@ -53,6 +53,7 @@ api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEmail.java svn_
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEntities.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyPermissions.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalScheduler.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalSecurity.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalTextUtils.java svn_keywords=Date+Revision+Author+HeadURL+Id

@@ -51,9 +51,10 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 public interface EvalHierarchyProvider {
 
    /**
-    * Get the hierarchy root node
+    * Get the hierarchy root node of the eval hierarchy
     * 
     * @return the {@link EvalHierarchyNode} representing the root of the hierarchy
+    * @throws IllegalStateException if no node can be obtained
     */
    public EvalHierarchyNode getRootLevelNode();
 
