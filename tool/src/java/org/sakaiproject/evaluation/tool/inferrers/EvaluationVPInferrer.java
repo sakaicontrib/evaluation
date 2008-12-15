@@ -176,7 +176,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                     // cannot take, but can preview
                     return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                 } else {
-                    throw new SecurityException("User ("+currentUserId+") does not have permission to take or preview this evaluation ("+evaluationId+")");
+                    // no longer want to show security exceptions - https://bugs.caret.cam.ac.uk/browse/CTL-1548
+                    //throw new SecurityException("User ("+currentUserId+") does not have permission to take or preview this evaluation ("+evaluationId+")");
+                    return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                 }
             }
 

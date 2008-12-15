@@ -438,7 +438,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
             } else {
                 // user cannot access eval so give them a sad message
-                UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take");
+                EvalUser current = commonLogic.getEvalUserById(currentUserId);
+                UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take", 
+                        new String[] {current.displayName, current.email, current.username});
                 log.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
             }
         }
