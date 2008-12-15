@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.hierarchy.model.HierarchyNode;
 
 
 /**
@@ -89,7 +88,7 @@ public interface ExternalHierarchyPermissions {
      * @param userId the internal user id (not username)
      * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants},
      * if this is set to null then remove all permissions for this user from this node
-     * @return a Set of {@link HierarchyNode} objects
+     * @return a Set of {@link EvalHierarchyNode} objects
      */
     public Set<EvalHierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant);
 
