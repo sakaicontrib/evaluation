@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -173,13 +172,16 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      *      boolean)
      */
     public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly) {
-        Set<EvalHierarchyNode> eNodes = new TreeSet<EvalHierarchyNode>();
+        Set<EvalHierarchyNode> eNodes = new HashSet<EvalHierarchyNode>();
         if (evalHierarchyProvider != null) {
             eNodes = evalHierarchyProvider.getChildNodes(nodeId, directOnly);
         } else {
             Set<HierarchyNode> nodes = hierarchyService.getChildNodes(nodeId, directOnly);
             for (HierarchyNode node : nodes) {
-                eNodes.add(makeEvalNode(node));
+                EvalHierarchyNode eNode = makeEvalNode(node);
+                if (eNode != null) {
+                    eNodes.add( eNode );
+                }
             }
         }
         return eNodes;
@@ -209,7 +211,10 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         } else {
             Map<String, HierarchyNode> nodes = hierarchyService.getNodesByIds(nodeIds);
             for (HierarchyNode node : nodes.values()) {
-                s.add( makeEvalNode(node) );
+                EvalHierarchyNode eNode = makeEvalNode(node);
+                if (eNode != null) {
+                    s.add( eNode );
+                }
             }
         }
         return s;

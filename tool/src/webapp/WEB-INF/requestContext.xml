@@ -248,6 +248,8 @@
         <property name="external"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
+        <property name="evalSettings" 
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
     <bean

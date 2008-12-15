@@ -443,17 +443,18 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, evaluation.getId()) );
 
       // email from address control
-      String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-      // https://bugs.caret.cam.ac.uk/browse/CTL-1525 - default to admin address if option set
-      Boolean useAdminEmail = (Boolean) settings.get(EvalSettings.USE_ADMIN_AS_FROM_EMAIL);
-      if (useAdminEmail) {
-          // try to get the email address for the owner (eval admin)
-          EvalUser owner = commonLogic.getEvalUserById(currentUserId);
-          if (owner != null) {
-              defaultEmail = owner.email;
-          }
-      }
-      UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", new String[] {defaultEmail});
+//      String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+//      // https://bugs.caret.cam.ac.uk/browse/CTL-1525 - default to admin address if option set
+//      Boolean useAdminEmail = (Boolean) settings.get(EvalSettings.USE_ADMIN_AS_FROM_EMAIL);
+//      if (useAdminEmail) {
+//          // try to get the email address for the owner (eval admin)
+//          EvalUser owner = commonLogic.getEvalUserById(currentUserId);
+//          if (owner != null) {
+//              defaultEmail = owner.email;
+//          }
+//      }
+      UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", 
+              new Object[] {new ELReference(evaluationOTP + "reminderFromEmail")});
       UIInput.make(form, "reminderFromEmail", evaluationOTP + "reminderFromEmail");
 
 

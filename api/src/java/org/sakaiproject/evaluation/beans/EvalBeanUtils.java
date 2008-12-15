@@ -240,7 +240,9 @@ public class EvalBeanUtils {
             if (useAdminEmail) {
                 // try to get the email address for the owner (eval admin)
                 EvalUser owner = commonLogic.getEvalUserById(commonLogic.getCurrentUserId());
-                if (owner != null) {
+                if (owner != null 
+                        && owner.email != null 
+                        && ! "".equals(owner.email)) {
                     from = owner.email;
                 }
             }
