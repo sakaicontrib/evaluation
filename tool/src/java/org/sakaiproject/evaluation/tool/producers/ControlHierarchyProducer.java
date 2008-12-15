@@ -40,9 +40,6 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
-      UIMessage.make(tofill, "body-title", "controlhierarchy.page.title");
-
       String currentUserId = external.getCurrentUserId();
       boolean userAdmin = external.isUserAdmin(currentUserId);
 
@@ -74,8 +71,10 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
                   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
       }
 
-      hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:");
+      // start rendering the hierarchy controls
+      hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:", false);
 
+      // done rendering the hierarchy controls
       UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 

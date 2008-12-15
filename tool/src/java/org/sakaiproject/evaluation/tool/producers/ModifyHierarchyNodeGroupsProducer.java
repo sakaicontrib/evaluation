@@ -1,7 +1,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -35,19 +34,19 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
 
     private EvalCommonLogic external;
     public void setExternal(EvalCommonLogic external) {
-       this.external = external;
+        this.external = external;
     }
 
     private ExternalHierarchyLogic hierarchyLogic;
     public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
-       this.hierarchyLogic = hierarchyLogic;
+        this.hierarchyLogic = hierarchyLogic;
     }
 
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-       this.evalSettings = evalSettings;
-   }
-    
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
+
     public String getViewID() {
         return VIEW_ID;
     }
@@ -65,35 +64,33 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
          * top links here
          */
         UIInternalLink.make(tofill, "summary-link", 
-              UIMessage.make("summary.page.title"), 
-              new SimpleViewParameters(SummaryProducer.VIEW_ID));
+                UIMessage.make("summary.page.title"), 
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
         UIInternalLink.make(tofill, "administrate-link", 
-              UIMessage.make("administrate.page.title"),
-              new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+                UIMessage.make("administrate.page.title"),
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "control-scales-link",
-              UIMessage.make("controlscales.page.title"),
-              new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+                UIMessage.make("controlscales.page.title"),
+                new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
         UIInternalLink.make(tofill, "control-templates-link",
-              UIMessage.make("controltemplates.page.title"), 
-              new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-	  if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-	    UIInternalLink.make(tofill, "control-items-link",
-		  UIMessage.make("controlitems.page.title"), 
-		  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-	  }
+                UIMessage.make("controltemplates.page.title"), 
+                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+            UIInternalLink.make(tofill, "control-items-link",
+                    UIMessage.make("controlitems.page.title"), 
+                    new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        }
         UIInternalLink.make(tofill, "control-evaluations-link",
-              UIMessage.make("controlevaluations.page.title"),
-           new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+                UIMessage.make("controlevaluations.page.title"),
+                new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
         List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
-        
-        Collections.sort(evalGroups, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                EvalGroup e1 = (EvalGroup) o1; 
-                EvalGroup e2 = (EvalGroup) o2;
+
+        Collections.sort(evalGroups, new Comparator<EvalGroup>() {
+            public int compare(final EvalGroup e1, final EvalGroup e2) {
                 return e1.title.compareTo(e2.title);
             }
         });
@@ -101,25 +98,24 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         /*
          * Page titles and instructions, top menu links and bread crumbs here
          */
-        UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
 
         UIMessage.make(tofill, "page-title", "hierarchynode.groups.breadcrumb.title");
-        
+
         UIMessage.make(tofill, "assign-groups-title","hierarchynode.groups.body.title", new String[] {evalNode.title});
-        
+
         UIMessage.make(tofill, "select-header", "hierarchynode.groups.table.select");
         UIMessage.make(tofill, "title-header", "hierarchynode.groups.table.title");
-        
+
         UIForm form = UIForm.make(tofill, "assign-groups-form");
         for (EvalGroup group: evalGroups) {
             UIBranchContainer tablerow = UIBranchContainer.make(form, "group-row:");
             UIBoundBoolean.make(tablerow, "group-checkbox", "hierNodeGroupsLocator."+nodeId+"."+group.evalGroupId);
             UIOutput.make(tablerow, "group-title", group.title);
         }
-        
+
         UICommand.make(form, "save-groups-button", UIMessage.make("hierarchynode.groups.save"),
-                "hierNodeGroupsLocator.saveAll");
+        "hierNodeGroupsLocator.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("hierarchynode.groups.cancel"),
                 new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
@@ -128,6 +124,7 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         return new HierarchyNodeParameters();
     }
 
+    @SuppressWarnings("unchecked")
     public List reportNavigationCases() {
         List cases = new ArrayList();
         cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));

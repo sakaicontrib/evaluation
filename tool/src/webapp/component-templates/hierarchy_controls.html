@@ -16,12 +16,10 @@
             <tr>
                 <th rsf:id="node-metadata-header" style="display: none"></th>
                 <th rsf:id="node-select-header">Select</th>
-                <th rsf:id="hierarchy-header">Hierarchy Level</th>
-                <th rsf:id="add-item-header">Add Item:</th>
-                <th rsf:id="modify-item-header"></th>
-                <th rsf:id="items-level-header">Items at this level:</th>
-                <th rsf:id="assign-groups-header"></th>
-                <th rsf:id="assigned-group-count-header">Num Groups:</th>
+                <th rsf:id="msg=controlhierarchy.table.hierarchy.header">Hierarchy Level</th>
+                <th rsf:id="msg=controlhierarchy.table.nodes.header">Assigned Nodes</th>
+                <th rsf:id="msg=controlhierarchy.table.groups.header">Assigned Groups</th>
+                <th rsf:id="msg=controlhierarchy.table.users.header">Assigned Users</th>
             </tr>
         </thead>
         <tbody>
@@ -30,25 +28,25 @@
                     <input id="node-id-input" rsf:id="node-id-input" type="hidden" value="TheNodeID" />
                     <input id="parent-id-input" rsf:id="parent-id-input" type="hidden" value="TheParentID" />
                 </td>
-                <td rsf:id="node-select-cell">
-                    <input id="" class="evalgroupselect" rsf:id="select-checkbox" type="checkbox" />
-                </td>
-                <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
-                <td rsf:id="add-child-cell"><a rsf:id="add-child-link" href="">Add</a></td>
-                <td rsf:id="modify-node-cell"><a rsf:id="modify-node-link" href="">Modify</a></td>
-                <td rsf:id="child-info-cell">
+                <td rsf:id="row-data" style="text-indent:0em" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
+                <td rsf:id="node-name" style="text-indent:0em" width="25%"> - Institution Level</td>
+                <td rsf:id="nodes-cell">
                     <span rsf:id="number-children">3</span>
-                </td>
-                <td rsf:id="remove-node-cell">
+                    &nbsp;
+                    <a rsf:id="add-child-link" href="" style="font-size: 0.9em;">Add</a>
+                    <a rsf:id="modify-node-link" href="" style="font-size: 0.9em;">Modify</a>
                     <form rsf:id="remove-node-form">
-                        <input type="submit" rsf:id="remove-node-button" value="Remove"/>
+                        <input type="submit" rsf:id="remove-node-button" value="Remove" 
+                            style="font-size:0.9em;height:0.8em;margin:0px;padding:0px;" />
                     </form>
                 </td>
-                <td rsf:id="assign-groups-cell">
-                    <a rsf:id="assign-groups-link" href="">Assign Groups</a>
-                </td>
-                <td rsf:id="assigned-group-count-cell">
+                <td rsf:id="groups-cell">
                     <span rsf:id="assign-group-count">67</span>
+                    &nbsp;
+                    <a rsf:id="assign-groups-link" href="" style="font-size: 0.9em;">Assign Groups</a>
+                </td>
+                <td rsf:id="users-cell">
+                    <a rsf:id="assign-users-link" href="" style="font-size: 0.9em;">Assign Users</a>
                 </td>
             </tr>
         </tbody>
