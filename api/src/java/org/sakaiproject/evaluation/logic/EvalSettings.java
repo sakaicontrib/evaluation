@@ -300,6 +300,10 @@ public interface EvalSettings {
      * https://bugs.caret.cam.ac.uk/browse/CTL-1525
      */
     public static final String USE_ADMIN_AS_FROM_EMAIL = "USE_ADMIN_AS_FROM_EMAIL:java.lang.Boolean";
+    /**
+     * CONSTANT: Default frequency of reminders when evals are created - {@link Integer},default 1}
+     */
+    public static final String DEFAULT_EMAIL_REMINDER_FREQUENCY = "DEFAULT_EMAIL_REMINDER_FREQUENCY:java.lang.Integer";
 
 
 

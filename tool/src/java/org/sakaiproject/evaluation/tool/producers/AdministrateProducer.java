@@ -277,7 +277,6 @@ public class AdministrateProducer implements ViewComponentProducer {
 
 
       // GENERAL settings
-      makeInput(form, "general-helpdesk-email", EvalSettings.FROM_EMAIL_ADDRESS);
 
       // Select for number of responses before results could be viewed
       makeSelect(form, "general-responses-before-view",  
@@ -353,7 +352,6 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-disable-item-bank", EvalSettings.DISABLE_ITEM_BANK);
       makeBoolean(form, "general-disable-question-blocks", EvalSettings.DISABLE_QUESTION_BLOCKS);
       makeBoolean(form, "general-enable-ta-category", EvalSettings.ENABLE_TA_CATEGORY);
-      makeBoolean(form, "general-use-admin-from-email", EvalSettings.USE_ADMIN_AS_FROM_EMAIL);
 
       // Save settings button
       // NB no action now required

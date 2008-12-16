@@ -31,7 +31,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Restriction;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -129,7 +129,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // test using templates
       String[] props = new String[] { "type" };
       Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
-      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+      int[] comparisons = new int[] { Restriction.EQUALS };
 
       String[] order = new String[] {"sharing","title"};
       String[] options = new String[] {"notHidden"};
@@ -239,7 +239,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // test using templates
       String[] props = new String[] { "type" };
       Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
-      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+      int[] comparisons = new int[] { Restriction.EQUALS };
 
       String[] options = new String[] {"notHidden"};
       String[] notEmptyOptions = new String[] {"notHidden", "notEmpty"};

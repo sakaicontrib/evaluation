@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 
@@ -490,10 +491,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          if (available != null) {
             if (available.getDefaultType() == null) {
                // only remove non-default templates
-               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
-                     new String[] {"availableEmailTemplate.id"}, 
-                     new Object[] {available.getId()}) ;
-               if ( evalsUsingTemplate <= 1 ) {
+               long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class, 
+                     new Search("availableEmailTemplate.id", available.getId()) ) ;
+               if ( evalsUsingTemplate <= 1l ) {
                   // template was only used in this evaluation
                   emailSet.add( available );
                }
@@ -501,10 +501,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
          if (reminder != null) {
             if (reminder.getDefaultType() == null) {
-               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
-                     new String[] {"reminderEmailTemplate.id"}, 
-                     new Object[] {reminder.getId()}) ;
-               if ( evalsUsingTemplate <= 1 ) {
+               long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class, 
+                       new Search("reminderEmailTemplate.id", reminder.getId()) ) ;
+               if ( evalsUsingTemplate <= 1l ) {
                   // template was only used in this evaluation
                   emailSet.add( reminder );
                }
@@ -582,48 +581,48 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       return evaluation;
    }
 
-   
-   @SuppressWarnings("unchecked")
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean, boolean)
+    */
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial) {
 
-      Date recentClosedDate = null;
-      if (recentOnly) {
-         // only get recently closed evals, check system setting to get "recent" value
-         Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
-         if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
-         Calendar calendar = GregorianCalendar.getInstance();
-         calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
-         recentClosedDate = calendar.getTime();
-      }
+       Date recentClosedDate = null;
+       if (recentOnly) {
+           // only get recently closed evals, check system setting to get "recent" value
+           Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+           if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
+           Calendar calendar = GregorianCalendar.getInstance();
+           calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
+           recentClosedDate = calendar.getTime();
+       }
 
-      String[] evalGroupIds = null;
-      if (commonLogic.isUserAdmin(userId)) {
-         // null out the userId so we get all evaluations
-         userId = null;
-      } else {
-         if (showNotOwned) {
-            // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
-            List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
-            if (evaluatedGroups.size() > 0) {
-               evalGroupIds = new String[evaluatedGroups.size()];
-               for (int i = 0; i < evaluatedGroups.size(); i++) {
-                  EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
-                  evalGroupIds[i] = c.evalGroupId;
+       String[] evalGroupIds = null;
+       if (commonLogic.isUserAdmin(userId)) {
+           // null out the userId so we get all evaluations
+           userId = null;
+       } else {
+           if (showNotOwned) {
+               // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
+               List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+               if (evaluatedGroups.size() > 0) {
+                   evalGroupIds = new String[evaluatedGroups.size()];
+                   for (int i = 0; i < evaluatedGroups.size(); i++) {
+                       EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
+                       evalGroupIds[i] = c.evalGroupId;
+                   }
                }
-            }
-         }
-      }
+           }
+       }
 
-      List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0, includePartial);
+       List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0, includePartial);
 
-      return l;
+       return l;
    }
 
 
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
     */
-   @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
       List<EvalGroup> takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
@@ -646,9 +645,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
    
             // now get the responses for all the returned evals
-            List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
-                  new String[] {"owner", "evaluation.id"}, 
-                  new Object[] {userId, evalIds});
+            List<EvalResponse> l = dao.findBySearch(EvalResponse.class, new Search(
+                    new Restriction[] {
+                            new Restriction("owner", userId),
+                            new Restriction("evaluation.id", evalIds)
+                    }) );
    
             // Iterate through and remove the evals this user already took
             for (int i = 0; i < l.size(); i++) {
@@ -696,11 +697,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       List<EvalEvaluation> evals = new ArrayList<EvalEvaluation>();
       if (userId == null) {
          // get all evals for a category
-         evals = dao.findByProperties(EvalEvaluation.class,
-               new String[] {"evalCategory"}, 
-               new Object[] {evalCategory}, 
-               new int[] {EvaluationDao.EQUALS},
-               new String[] {"startDate"});
+         evals = dao.findBySearch(EvalEvaluation.class, new Search(
+                 new Restriction("evalCategory", evalCategory), 
+                 new Order("startDate") ) );
       } else {
          // get all evals for a specific user for a category
          List takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
@@ -965,12 +964,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    }
 
 
-   @SuppressWarnings("unchecked")
    public void deleteAssignHierarchyNodesById(Long[] assignHierarchyIds) {
       String userId = commonLogic.getCurrentUserId();
       // get the list of hierarchy assignments
-      List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignHierarchy.class,
-            new String[] { "id" }, new Object[] { assignHierarchyIds });
+      List<EvalAssignHierarchy> l = dao.findBySearch(EvalAssignHierarchy.class, new Search("id", assignHierarchyIds) );
       if (l.size() > 0) {
          Set<String> nodeIds = new HashSet<String>();         
          Long evaluationId = l.get(0).getEvaluation().getId();
@@ -984,9 +981,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
 
          // now get the list of assign groups with a nodeId that matches any of these and remove those also
-         List<EvalAssignGroup> eags = dao.findByProperties(EvalAssignGroup.class,
-               new String[] { "evaluation.id", "nodeId" }, 
-               new Object[] { evaluationId, nodeIds });
+         List<EvalAssignGroup> eags = dao.findBySearch(EvalAssignGroup.class, new Search(
+                 new Restriction[] {
+                         new Restriction("evaluation.id", evaluationId),
+                         new Restriction("nodeId", nodeIds)
+                 }) );
          Set<EvalAssignGroup> groups = new HashSet<EvalAssignGroup>();
          StringBuilder groupListing = new StringBuilder();
          if (eags.size() > 0) {
@@ -1011,7 +1010,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    // EMAIL TEMPLATES
 
-   @SuppressWarnings("unchecked")
    public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId) {
       log.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
 
@@ -1042,8 +1040,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // check if there are evaluations this is used in and if the user can modify this based on them
 
             // check available templates
-            List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
-                  new Object[] { emailTemplate.getId() });
+            List<EvalEvaluation> l = dao.findBySearch(EvalEvaluation.class, 
+                    new Search("availableEmailTemplate.id", emailTemplate.getId() ) );
             for (int i = 0; i < l.size(); i++) {
                EvalEvaluation eval = (EvalEvaluation) l.get(i);
                // check eval/template permissions
@@ -1051,8 +1049,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // check reminder templates
-            l = dao.findByProperties(EvalEvaluation.class, new String[] { "reminderEmailTemplate.id" },
-                  new Object[] { emailTemplate.getId() });
+            l = dao.findBySearch(EvalEvaluation.class,
+                    new Search("reminderEmailTemplate.id", emailTemplate.getId() ) );
             for (int i = 0; i < l.size(); i++) {
                EvalEvaluation eval = (EvalEvaluation) l.get(i);
                // check eval/template permissions
@@ -1072,7 +1070,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       log.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
    }
 
-   @SuppressWarnings("unchecked")
    public void removeEmailTemplate(Long emailTemplateId, String userId) {
       EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(emailTemplateId);
       if (emailTemplate != null) {
@@ -1089,9 +1086,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                templateTypeEval = "reminderEmailTemplate";
             }
             // get the evals that this template is used in
-            List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
-                  new String[] {templateTypeEval + ".id"}, 
-                  new Object[] {emailTemplateId});
+            List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, 
+                  new Search(templateTypeEval + ".id", emailTemplateId) );
             for (EvalEvaluation evaluation : evals) {
                // replace with the default template (that means null it out)
                if ( EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType) ) {
@@ -1117,13 +1113,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @param evaluationId
     * @return
     */
-   @SuppressWarnings("unchecked")
    protected List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
       // get all the evalGroupIds for the given eval ids in one storage call
       List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
-      l = dao.findByProperties(EvalAssignGroup.class,
-            new String[] {"evaluation.id"}, 
-            new Object[] {evaluationId} );
+      l = dao.findBySearch(EvalAssignGroup.class, new Search("evaluation.id", evaluationId) );
       return l;
    }
 
@@ -1144,13 +1137,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @param ac
     * @return true if duplicate found
     */
-   @SuppressWarnings("unchecked")
    protected boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
       log.debug("assignContext: " + ac.getId());
 
-      List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evalGroupId", "evaluation.id"}, 
-            new Object[] {ac.getEvalGroupId(), ac.getEvaluation().getId()});
+      List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, new Search(
+              new Restriction[] {
+                      new Restriction("evaluation.id", ac.getEvaluation().getId()),
+                      new Restriction("evalGroupId", ac.getEvalGroupId())
+              }) );
       if ( (ac.getId() == null && l.size() >= 1) || 
             (ac.getId() != null && l.size() >= 2) ) {
          // there is an existing AC which does the same mapping
@@ -1300,9 +1294,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (checkTemplate != null
                   && checkTemplate.getDefaultType() == null) {
                // only remove non-default templates
-               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
-                     new String[] {evalTemplateType + ".id"}, 
-                     new Object[] {checkEmailTemplateId}) ;
+               long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class,
+                       new Search(evalTemplateType + ".id", checkEmailTemplateId) ) ;
                if ( evalsUsingTemplate <= 0 ) {
                   // template was only used in this evaluation
                   dao.delete(checkTemplate);

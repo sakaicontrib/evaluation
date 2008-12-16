@@ -150,6 +150,8 @@ public class EvalToolConstants {
 	 */
 	public static String[] EMAIL_DELIVERY_VALUES = new String[] {
 		"send", "log", "none"};
+
+	// FIXME this should not be done this way, UM should put this in the messages file -AZ
 	public static String[] EMAIL_DELIVERY_LABELS = new String[] {
 		"Send email. This mode should be used in production, when you do want to send email to real users.",
 		"Log email to the server log. This mode may be used in development to check the content of email messages.", 
@@ -159,7 +161,7 @@ public class EvalToolConstants {
     * Evaluation/Email Settings: Page pulldown constants for reminder interval
     */
    public static final String[] REMINDER_EMAIL_DAYS_VALUES = new String[] {
-      "0", "1", "2", "3", "4", "5", "6", "7" };
+      "0", "1", "2", "3", "4", "5", "6", "7", "-1" };
 
    public static final String[] REMINDER_EMAIL_DAYS_LABELS = { 
       "evalsettings.reminder.days.0", 
@@ -169,7 +171,8 @@ public class EvalToolConstants {
       "evalsettings.reminder.days.4", 
       "evalsettings.reminder.days.5", 
       "evalsettings.reminder.days.6",
-      "evalsettings.reminder.days.7" 
+      "evalsettings.reminder.days.7",
+      "evalsettings.reminder.days.-1"
    };
    
    /**

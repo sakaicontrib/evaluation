@@ -61,6 +61,7 @@ import org.sakaiproject.tool.api.SessionManager;
  * 
  * @author rwellis
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ * FIXME rwellis, please use generics in all collections in this class -AZ
  */
 public class EvalImportImpl implements EvalImport {
 	

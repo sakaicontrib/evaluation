@@ -38,7 +38,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Order;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 
 /**
  * Implementation for EvalDeliveryService
@@ -235,8 +237,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         return response;
     }
 
-
-    @SuppressWarnings("unchecked")
     public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId) {
         EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
         if (evaluation == null) {
@@ -244,10 +244,12 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         EvalResponse response = null;
-        List<EvalResponse> responses = dao.findByProperties(EvalResponse.class, 
-                new String[] { "owner", "evaluation.id", "evalGroupId" }, 
-                new Object[] { userId, evaluationId, evalGroupId }
-        );
+        List<EvalResponse> responses = dao.findBySearch(EvalResponse.class, 
+                new Search( new Restriction[] {
+                        new Restriction("owner", userId),
+                        new Restriction("evaluation.id", evaluationId),
+                        new Restriction("evalGroupId", evalGroupId),
+                }) );
         if (responses.isEmpty()) {
             // create a new response and save it
             response = new EvalResponse(new Date(), userId, evalGroupId, new Date(), evaluation);
@@ -264,7 +266,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         return response;
     }
 
-    @SuppressWarnings("unchecked")
     public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, Boolean completed) {
         log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
 
@@ -273,70 +274,44 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         // check that the ids are actually valid
-        int count = dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationIds });
+        int count = (int) dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationIds) );
         if (count != evaluationIds.length) {
             throw new IllegalArgumentException("One or more invalid evaluation ids in evaluationIds: " + evaluationIds);
         }
 
-        List<String> props = new ArrayList<String>();
-        List<Object> values = new ArrayList<Object>();
-        List<Number> comparisons = new ArrayList<Number>();
-
-        // basic search params
-        props.add("evaluation.id");
-        values.add(evaluationIds);
-        comparisons.add(ByPropsFinder.EQUALS);
+        Search search = new Search("evaluation.id", evaluationIds);
 
         // if user is admin then return all matching responses for this evaluation
         if (! commonLogic.isUserAdmin(userId)) {
             // not admin, only return the responses for this user
-            props.add("owner");
-            values.add(userId);
-            comparisons.add(ByPropsFinder.EQUALS);
+            search.addRestriction( new Restriction("owner", userId) );
         }
 
-        handleCompleted(completed, props, values, comparisons);
+        handleCompleted(completed, search);
+        search.addOrder( new Order("id") );
 
-        return dao.findByProperties(EvalResponse.class, 
-                props.toArray(new String[props.size()]), 
-                values.toArray(new Object[values.size()]), 
-                ArrayUtils.listToIntArray(comparisons), 
-                new String[] { "id" });
+        return dao.findBySearch(EvalResponse.class, search);
     }
 
     public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
         log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
-        if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+        if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        List<String> props = new ArrayList<String>();
-        List<Object> values = new ArrayList<Object>();
-        List<Number> comparisons = new ArrayList<Number>();
-
-        // basic search params
-        props.add("evaluation.id");
-        values.add(evaluationId);
-        comparisons.add(ByPropsFinder.EQUALS);
+        Search search = new Search("evaluation.id", evaluationId);
 
         /* returns count of all responses in all eval groups if evalGroupId is null
          * and returns count of responses in this evalGroupId only if set
          */
         if (evalGroupId != null) {
-            props.add("evalGroupId");
-            values.add(evalGroupId);
-            comparisons.add(ByPropsFinder.EQUALS);
+            search.addRestriction( new Restriction("evalGroupId", evalGroupId) );
         }
 
-        handleCompleted(completed, props, values, comparisons);
+        handleCompleted(completed, search);
 
-        return dao.countByProperties(EvalResponse.class, 
-                props.toArray(new String[props.size()]), 
-                values.toArray(new Object[values.size()]), 
-                ArrayUtils.listToIntArray(comparisons)
-        );
-
+        return (int) dao.countBySearch(EvalResponse.class, search);
     }
 
     /**
@@ -346,16 +321,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @param values
      * @param comparisons
      */
-    private void handleCompleted(Boolean completed, List<String> props, List<Object> values, List<Number> comparisons) {
+    private void handleCompleted(Boolean completed, Search search) {
         if (completed != null) {
             // if endTime is null then the response is incomplete, if not null then it is complete
-            props.add("endTime");
-            values.add(""); // just need a placeholder
-            if (completed) {
-                comparisons.add(ByPropsFinder.NOT_NULL);
-            } else {
-                comparisons.add(ByPropsFinder.NULL);            
-            }
+            search.addRestriction( new Restriction("endTime", "", completed ? Restriction.NOT_NULL : Restriction.NULL) );
         }
     }
 
@@ -365,7 +334,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+        if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
@@ -375,36 +344,23 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvaluationResponses(java.lang.Long, java.lang.String[], java.lang.Boolean)
      */
-    @SuppressWarnings("unchecked")
     public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+        if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        List<String> props = new ArrayList<String>();
-        List<Object> values = new ArrayList<Object>();
-        List<Number> comparisons = new ArrayList<Number>();
-
-        // basic search params
-        props.add("evaluation.id");
-        values.add(evaluationId);
-        comparisons.add(ByPropsFinder.EQUALS);
+        Search search = new Search("evaluation.id", evaluationId);
 
         if (evalGroupIds != null && evalGroupIds.length > 0) {
-            props.add("evalGroupId");
-            values.add(evalGroupIds);
-            comparisons.add(ByPropsFinder.EQUALS);
+            search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
         }
 
-        handleCompleted(completed, props, values, comparisons);
+        handleCompleted(completed, search);
+        search.addOrder( new Order("id") );
 
-        return dao.findByProperties(EvalResponse.class, 
-                props.toArray(new String[props.size()]), 
-                values.toArray(new Object[values.size()]), 
-                ArrayUtils.listToIntArray(comparisons)
-        );
+        return dao.findBySearch(EvalResponse.class, search);
     }
 
 
@@ -415,7 +371,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public List<EvalAnswer> getAnswersForEval(Long evaluationId, String[] evalGroupIds, Long[] templateItemIds) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+        if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 

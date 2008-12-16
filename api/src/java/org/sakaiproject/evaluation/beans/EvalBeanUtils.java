@@ -228,7 +228,12 @@ public class EvalBeanUtils {
 
         // fix up the reminder days to the default
         if (eval.getReminderDays() == null) {
-            eval.setReminderDays(1);
+            Integer reminderDays = 1;
+            Integer defaultReminderDays = (Integer) settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY);
+            if (defaultReminderDays != null) {
+                reminderDays = defaultReminderDays;
+            }
+            eval.setReminderDays(reminderDays);
         }
 
         // set the reminder email address to the default
