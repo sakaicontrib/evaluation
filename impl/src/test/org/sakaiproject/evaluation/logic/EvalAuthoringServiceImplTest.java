@@ -28,8 +28,8 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -75,7 +75,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * test name like so: testMethodClassInt (for method(Class, int);
     */
 
-   @SuppressWarnings("unchecked")
    public void testPreloadedItemGroupsData() {
       // check the full count of preloaded items
       assertEquals(17, evaluationDao.countAll(EvalItemGroup.class) );
@@ -2684,7 +2683,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, Long, boolean)}.
     */
-   @SuppressWarnings("unchecked")
    public void testCopyTemplateItems() {
       Long[] copiedIds = null;
       Long[] templateItemIds = null;
@@ -2767,7 +2765,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
       assertNotNull(copiedIds);
       assertEquals(templateItemIds.length, copiedIds.length);
-      List<EvalTemplateItem> templateItems = evaluationDao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { copiedIds });
+      List<EvalTemplateItem> templateItems = evaluationDao.findBySearch(EvalTemplateItem.class, new Search("id", copiedIds) );
       assertNotNull(templateItems);
       assertEquals(templateItemIds.length, templateItems.size());
 

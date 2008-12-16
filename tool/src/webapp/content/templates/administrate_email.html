@@ -24,21 +24,35 @@
       				<li>Message for user here</li>
    				</ul>
 			</div>
+
 			<h3 rsf:id="msg=controlemail.title">Control Email</h3>
 			<form  rsf:id="emailcontrol-form" method="post">
-				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.type">Type of Email Notification</span></legend>
-					<p class=   "checkbox indnt1">
-						<input type="checkbox" rsf:id="emailtype" name="emailtype"  id="emailtype-id" />
-						<label rsf:id="msg=controlemail.single.email" for="emailtype-id">Enable single email per student</label>
-					</p>
-					<p class="instruction" rsf:id="controlemail-instructions">
-						The implementation of single email per student (UM) requires a daily Quartz job that does the email processing.
-						This job must be running before evaluations begin if this option is chosen.
-						<br /><br />
-					</p>
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.options">Email options</span></legend>
+                    <p class=   "longtext indnt1">
+                        <label class="block" rsf:id="msg=administrate.general.helpdesk.email.note" for="general-helpdesk-email">Helpdesk email address (email messages appear to come from this email address by default)</label>
+                        <input type="text" rsf:id="general-helpdesk-email" id="general-helpdesk-email" />
+                    </p>
+                    <p class=   "checkbox indnt1">
+                        <input type="checkbox" rsf:id="general-use-admin-from-email" />
+                        <label rsf:id="msg=administrate.use.admin.from.email" for="general-use-admin-from-email">Use evaluation admin email address to send from for notifications (uses the system help address otherwise)</label>
+                    </p>
+                    <p class=   "longtext indnt1">
+                        <label rsf:id="msg=controlemail.reminder.defaults" for="default-reminders-frequency-id" class="block">Send reminders... never, daily, etc.</label>
+                        <select rsf:id="default-reminders-frequency" id="default-reminders-frequency-id"></select>
+                    </p>
 				</fieldset>
-				<div rsf:id="one-email-settings:">
-					<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.single.email.settings">One Email Per Student</span></legend>
+
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.single.email.settings">One Email Per Student</span></legend>
+                    <p class=   "checkbox indnt1">
+                        <input type="checkbox" rsf:id="emailtype" name="emailtype"  id="emailtype-id" />
+                        <label rsf:id="msg=controlemail.single.email" for="emailtype-id">Enable single email per student</label>
+                    </p>
+                    <p class="instruction" rsf:id="msg=controlemail.instructions">
+                        The implementation of single email per student (UM) requires a daily Quartz job that does the email processing.
+                        This job must be running before evaluations begin if this option is chosen.
+                        <br /><br />
+                    </p>
+                    <div rsf:id="one-email-settings:">
 						<p class=	"longtext indnt1">
 							<label rsf:id="msg=controlemail.reminder.frequency" for="send-reminders-id" class="block">Send reminders... never, daily, etc.</label>
 							<select rsf:id="send-reminders" id="send-reminders-id"></select>
@@ -55,8 +69,9 @@
 							<label rsf:id="msg=controlemail.wait.interval" for="wait-interval-id" class="block">Seconds to wait between sending batches of email</label>
 							<select rsf:id="wait-interval" id="wait-interval-id"></select>
 						</p>
-					</fieldset>
-				</div>
+    				</div>
+                </fieldset>
+
 				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.delivery.control">Control Email Delivery</span></legend>
 					<p class=	"longtext indnt1">
 						<label rsf:id="msg=controlemail.header" for="delivery-option-id" class="block">Email delivery options</label>
@@ -67,11 +82,12 @@
 						<label rsf:id="msg=controlemail.log.recipients" for="log-recipients-id">Log email recipient addresses in the server log</label>
 					</p>
 				</fieldset>
-					<p class="act">
-						<input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
-						<input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
-					</p>
-			</form>
+
+                <p class="act">
+                    <input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
+                    <input type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />
+                </p>
+            </form>
 		</div>
 	</body>
 </html>

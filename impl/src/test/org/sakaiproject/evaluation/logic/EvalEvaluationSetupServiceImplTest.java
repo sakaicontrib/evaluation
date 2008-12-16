@@ -30,9 +30,9 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -310,9 +310,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertNotNull(unStarted);
       Long availableId = unStarted.getAvailableEmailTemplate().getId();
       Long reminderId = unStarted.getReminderEmailTemplate().getId();
-      int countEmailTemplates = evaluationDao.countByProperties(EvalEmailTemplate.class, 
-            new String[] { "id" }, 
-            new Object[] { new Long[] {availableId, reminderId} });
+      long countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class,
+              new Search("id", new Long[] {availableId, reminderId}) );
       assertEquals(2, countEmailTemplates);
 
       evaluationSetupService.deleteEvaluation(unStarted.getId(), EvalTestDataLoad.MAINT_USER_ID);
@@ -320,9 +319,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertNull(eval);
 
       // check to make sure the associated email templates were also removed
-      countEmailTemplates = evaluationDao.countByProperties(EvalEmailTemplate.class, 
-            new String[] { "id" }, 
-            new Object[] { new Long[] {availableId, reminderId} });
+      countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class, 
+              new Search("id", new Long[] {availableId, reminderId}) );
       assertEquals(0, countEmailTemplates);
 
       // attempt to remove evaluation which is not owned
@@ -334,16 +332,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       }
 
       // attempt to remove evaluation with assigned groups (check for cleanup)
-      int countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
-            new String[] { "evaluation.id" }, 
-            new Object[] { etdl.evaluationNewAdmin.getId() });
+      long countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
+              new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
       assertEquals(3, countACs);
       evaluationSetupService.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.ADMIN_USER_ID);
       eval = evaluationService.getEvaluationById(etdl.evaluationNewAdmin.getId());
       assertNull(eval);
-      countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
-            new String[] { "evaluation.id" }, 
-            new Object[] { etdl.evaluationNewAdmin.getId() });
+      countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
+              new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
       assertEquals(0, countACs);
 
       // attempt to remove evaluation which is active

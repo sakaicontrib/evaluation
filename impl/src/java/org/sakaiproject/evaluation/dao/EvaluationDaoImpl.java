@@ -46,7 +46,9 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
-import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
+import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -64,7 +66,7 @@ import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements EvaluationDao {
+public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements EvaluationDao {
 
    private static Log log = LogFactory.getLog(EvaluationDaoImpl.class);
 
@@ -75,15 +77,15 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
    public void fixupDatabase() {
       // fix up some of the null fields
-      int count = 0;
-      count = countByProperties(EvalEvaluation.class, new String[] {"studentViewResults"}, new Object[] {""}, new int[] {EvaluationDao.NULL});
+      long count = 0;
+      count = countBySearch(EvalEvaluation.class, new Search("studentViewResults","", Restriction.NULL) );
       if (count > 0) {
          int counter = 0;
          counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null");
          counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null");
          log.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
       }
-      count = countByProperties(EvalEvaluation.class, new String[] {"instructorViewResults"}, new Object[] {""}, new int[] {EvaluationDao.NULL});
+      count = countBySearch(EvalEvaluation.class, new Search("instructorViewResults","", Restriction.NULL) );
       if (count > 0) {
          int counter = 0;
          counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null");
@@ -185,36 +187,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       return query.toString();
    }
-
-   /**
-    * Generates the HQL snippet needed to represent this property/comparison/value triple
-    * 
-    * @param property the name of the entity property
-    * @param comparisonConstant the comparison constant (e.g. EQUALS)
-    * @param value the value to compare the property to
-    * @return a string representing the HQL snippet (e.g. propA = 'apple')
-    */
-   public String makeComparisonHQL(String property, int comparisonConstant, Object value) {
-      String sval = null;
-      if (value.getClass().isAssignableFrom(Boolean.class) 
-            || value.getClass().isAssignableFrom(Number.class)) {
-         // special handling for boolean and numbers
-         sval = value.toString();
-      } else {
-         sval = "'" + value.toString() + "'";
-      }
-      switch (comparisonConstant) {
-      case EQUALS:      return property + " = " + sval;
-      case GREATER:     return property + " > " + sval;
-      case LESS:        return property + " < " + sval;
-      case LIKE:        return property + " like " + sval;
-      case NOT_EQUALS:  return property + " <> " + sval;
-      case NOT_NULL:    return property + " is not null";
-      case NULL:        return property + " is null";
-      default: throw new IllegalArgumentException("Invalid comparison constant: " + comparisonConstant);
-      }
-   }
-
 
    /**
     * A general method for counting entities which are shared for a specific user,
@@ -1275,7 +1247,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * and the length of the repeat period plus the time to run the process for repeating jobs
     * @return true if a lock was obtained, false if not, null if failure
     */
-   @SuppressWarnings("unchecked")
    public Boolean obtainLock(String lockId, String executerId, long timePeriod) {
       if (executerId == null || 
             "".equals(executerId)) {
@@ -1290,9 +1261,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       Boolean obtainedLock = false;
       try {
          // check the lock
-         List<EvalLock> locks = findByProperties(EvalLock.class, 
-               new String[] {"name"},
-               new Object[] {lockId});
+         List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
          if (locks.size() > 0) {
             // check if this is my lock, if not, then exit, if so then go ahead
             EvalLock lock = locks.get(0);
@@ -1344,7 +1313,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * @param holderId a unique id for the holder of this lock (normally a server id)
     * @return true if a lock was released, false if not, null if failure
     */
-   @SuppressWarnings("unchecked")
    public Boolean releaseLock(String lockId, String executerId) {
       if (executerId == null || 
             "".equals(executerId)) {
@@ -1359,9 +1327,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       Boolean releasedLock = false;
       try {
          // check the lock
-         List<EvalLock> locks = findByProperties(EvalLock.class, 
-               new String[] {"name"},
-               new Object[] {lockId});
+         List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
          if (locks.size() > 0) {
             // check if this is my lock, if not, then exit, if so then go ahead
             EvalLock lock = locks.get(0);
@@ -1389,14 +1355,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * 
     * @param lockId
     */
-   @SuppressWarnings("unchecked")
    private void cleanupLockAfterFailure(String lockId) {
       getHibernateTemplate().clear(); // cancel any pending operations
       // try to clear the lock if things died
       try {
-         List<EvalLock> locks = findByProperties(EvalLock.class, 
-               new String[] {"name"},
-               new Object[] {lockId});
+         List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
          getHibernateTemplate().deleteAll(locks);
          getHibernateTemplate().flush();
       } catch (Exception ex) {

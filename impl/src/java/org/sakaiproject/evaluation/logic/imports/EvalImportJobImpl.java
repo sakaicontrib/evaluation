@@ -38,7 +38,7 @@ import org.sakaiproject.user.api.UserDirectoryService;
  * Process an XML ContentResource and save/update evaluation data using Quartz.
  * 
  * @author rwellis
- *
+ * FIXME rwellis, please use generics in all collections in this class -AZ
  */
 public class EvalImportJobImpl implements EvalImportJob{
 	

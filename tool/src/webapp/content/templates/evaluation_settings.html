@@ -248,9 +248,13 @@
 
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.reminder.settings.header">Evaluation Notifications</legend>
+                    <p class="instruction">
+                        <span rsf:id="msg=evalsettings.emails.instructions">Extra instructions</span>
+                    </p>
 					<p class="instruction">
 						<span rsf:id="msg=evalsettings.available.mail.desc">A notification email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
-						<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>						
+						<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>
+                        <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
 					</p>
                     <div id="evaluation_reminder_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
       					<p class="longtext">
@@ -264,6 +268,7 @@
       					<p class="instruction" style="clear:both">
       						<span rsf:id="msg=evalsettings.reminder.mail.desc">A reminder email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and edit the email template by clicking the link.</span>
       						<a href="preview_email.html" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">(View/Change this email?)</a>
+                            <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
       					</p>
                     </div>
 					<p class="instruction" style="clear:both">
