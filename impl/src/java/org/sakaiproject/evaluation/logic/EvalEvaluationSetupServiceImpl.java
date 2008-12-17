@@ -363,8 +363,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             evaluation.setModifyResponsesAllowed( Boolean.FALSE );
          }
       } else {
-         evaluation.setBlankResponsesAllowed( systemModifyResponses );
+         evaluation.setModifyResponsesAllowed( systemModifyResponses );
       }
+
       Boolean systemBlankResponses = (Boolean) settings.get( EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED );
       if ( systemBlankResponses == null ) {
          if (evaluation.getBlankResponsesAllowed() == null) {
@@ -373,6 +374,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       } else {
          evaluation.setBlankResponsesAllowed( systemBlankResponses );
       }
+
       // TODO - disabled for now
 //      String systemInstructorOpt = (String) settings.get( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE );
 //      if ( systemInstructorOpt == null ) {
