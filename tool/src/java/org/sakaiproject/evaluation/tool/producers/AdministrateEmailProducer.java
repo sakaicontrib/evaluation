@@ -8,6 +8,8 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -91,6 +93,7 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
                 EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
                 EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,
                 EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, true); 
+        UIInput evalTimeToWaitSecs = AdministrateProducer.makeInput(form, "eval-time-to-wait-secs", EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);
 
         /* one email per course evaluation (default) OR one email per student 
          * having one or more evaluations for which no response has been submitted (UM) */
@@ -130,6 +133,11 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
                 EvalSettings.LOG_EMAIL_RECIPIENTS);
 
         // Save Settings button
-        UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);	
+        UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);
+
+
+        // this fills in the javascript call
+        UIInitBlock.make(tofill, "initEvalJS", "EvalSystem.addNumericOnly", 
+                new Object[] { evalTimeToWaitSecs.getFullID(), "time-wait-errmsg"} );
     }
 }
