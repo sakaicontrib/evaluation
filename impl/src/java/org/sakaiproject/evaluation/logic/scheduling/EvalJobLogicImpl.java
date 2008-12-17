@@ -256,12 +256,18 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         if (instAddItemsNum == null) instAddItemsNum = 0;
         if ( instAddItemsNum > 0 || 
                 !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
+            // http://bugs.sakaiproject.org/jira/browse/EVALSYS-507
+            int timeToWaitSecs = 300;
+            Integer ttws = (Integer) settings.get(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);
+            if (ttws != null && ttws.intValue() > 0) {
+                timeToWaitSecs = ttws.intValue();
+            }
             /*
              * Note: email should NOT be sent at this point, so we
              * schedule email for EvalConstants.EVALUATION_TIME_TO_WAIT_MINS minutes from now, 
              * giving instructor time to delete the evaluation and its notification
              */
-            long runAt = new Date().getTime() + (1000 * 60 * EvalConstants.EVALUATION_TIME_TO_WAIT_MINS);
+            long runAt = new Date().getTime() + (1000 * timeToWaitSecs);
             scheduleJob(eval.getId(), new Date(runAt), EvalConstants.JOB_TYPE_CREATED);
         }
         scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);

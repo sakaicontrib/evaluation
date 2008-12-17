@@ -171,6 +171,7 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
             saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
             saveConfig(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, 0);
+            saveConfig(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS, 300);
 
             // Default batch performance metrics settings
             saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);

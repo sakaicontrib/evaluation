@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+
 
 /**
  * This allows access to and control of all system settings for the evaluation
@@ -304,7 +306,12 @@ public interface EvalSettings {
      * CONSTANT: Default frequency of reminders when evals are created - {@link Integer},default 1}
      */
     public static final String DEFAULT_EMAIL_REMINDER_FREQUENCY = "DEFAULT_EMAIL_REMINDER_FREQUENCY:java.lang.Integer";
-
+    /**
+     * CONSTANT: Time from when evaluation is created until the first notification event is triggered - {@link Integer},default 300}
+     * linked to {@link EvalConstants#EVALUATION_TIME_TO_WAIT_SECS}
+     */
+    public static final String EVALUATION_TIME_TO_WAIT_SECS = "EVALUATION_TIME_TO_WAIT_SECS:java.lang.Integer";
+    
 
 
     /**
