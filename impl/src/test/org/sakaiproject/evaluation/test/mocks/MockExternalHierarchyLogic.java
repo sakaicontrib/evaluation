@@ -278,4 +278,14 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
 
     }
 
+    public Map<String, Map<String, Set<String>>> getNodesAndPermsForUser(String... userIds) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Map<String, Map<String, Set<String>>> getUsersAndPermsForNodes(String... nodeIds) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

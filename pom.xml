@@ -35,7 +35,7 @@
     <version>1.2.2</version><!--eval.version-->
 
     <properties>
-        <hierarchy.version>1.2.2</hierarchy.version>
+        <hierarchy.version>1.2.4</hierarchy.version>
         <genericdao.version>0.9.12</genericdao.version>
         <sakai.version>2.5.2</sakai.version>
     </properties>

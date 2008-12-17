@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -104,5 +105,26 @@ public interface ExternalHierarchyPermissions {
      */
     public Set<String> getPermsForUserNodes(String userId, String[] nodeIds);
 
+    /**
+     * Get all the users and permissions currently assigned to nodes,
+     * the returned map will always contain every passed in nodeId as a key
+     * <br/>
+     * This is not super efficient by itself so it should not used when other methods are sufficient,
+     * however, it is actually much better than calling the other methods repeatedly so this is primarily
+     * for use in administrative interfaces
+     * 
+     * @param nodeIds an array of unique ids for hierarchy nodes
+     * @return the map of nodeId -> (map of userId -> Set(permission))
+     */
+    public Map<String, Map<String, Set<String>>> getUsersAndPermsForNodes(String... nodeIds);
+
+    /**
+     * Get all the nodeIds and permissions for the given userIds,
+     * the returned map will always contain every userId that was passed in as a key
+     * 
+     * @param userIds an array of unique ids for users (internal id, not eid)
+     * @return the map of userId -> (map of nodeId -> Set(permission))
+     */
+    public Map<String, Map<String, Set<String>>> getNodesAndPermsForUser(String... userIds);
 
 }
