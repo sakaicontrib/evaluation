@@ -405,6 +405,14 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         return hierarchyService.getPermsForUserNodes(userId, nodeIds);
     }
 
+    public Map<String, Map<String, Set<String>>> getNodesAndPermsForUser(String... userIds) {
+        return hierarchyService.getNodesAndPermsForUser(userIds);
+    }
+
+    public Map<String, Map<String, Set<String>>> getUsersAndPermsForNodes(String... nodeIds) {
+        return hierarchyService.getUsersAndPermsForNodes(nodeIds);
+    }
+
 
     /**
      * Create an eval node from a basic hierarchy node

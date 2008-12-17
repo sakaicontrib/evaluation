@@ -84,14 +84,14 @@ public class HierarchyRenderUtil {
      * 
      * @param parent
      * @param clientID
-     * @param showGroups if true then all the groups are rendered
+     * @param showCheckboxes if true then the checkboxes are rendered in front of every node
+     * @param showGroups if true then all the groups are rendered for each node
+     * @param showUsers if true then all users are rendered for each node
      */
-    public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showGroups) {
+    public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
 
-        /*
-         * Hidden header for column with metadata information.
-         */
+        //Hidden header for column with metadata information.
         UIOutput.make(parent, "node-metadata-header");
 
         // get the root node and the counts of all assigned groups for all nodes
@@ -107,7 +107,7 @@ public class HierarchyRenderUtil {
         }
 
         //showGroups = true;
-        renderHierarchyNode(joint, root, 0, groupsNodesMap, nodeIdToNode, showGroups);
+        renderHierarchyNode(joint, root, 0, groupsNodesMap, nodeIdToNode, showGroups, showUsers);
     }
 
     //   private void renderSelectHierarchyGroup(UIContainer tofill, String groupID, int level, Set<String> evalGroupIDs, String clientID) {
@@ -132,9 +132,11 @@ public class HierarchyRenderUtil {
      * @param groupsNodesMap this is simply passed along to avoid redoing the same query over and over
      * @param nodeIdToNode this is passed along to avoid pummeling the database when rendering the hierarchy
      * @param showGroups if true then show the groups, otherwise only show counts
+     * @param showUsers if true then show the users, otherwise just show the link
      */
     private void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, 
-            Map<String, Set<String>> groupsNodesMap, Map<String, EvalHierarchyNode> nodeIdToNode, boolean showGroups) {
+            Map<String, Set<String>> groupsNodesMap, Map<String, EvalHierarchyNode> nodeIdToNode, 
+            boolean showGroups, boolean showUsers) {
         String title = node.title != null ? node.title : "Null Title?";
         UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
 
@@ -189,9 +191,12 @@ public class HierarchyRenderUtil {
         UIInternalLink.make(tableRow, "assign-users-link", UIMessage.make("controlhierarchy.assignusers"), 
                 new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
 
-        /*
-         * If there are any assigned groups, render them as their own rows if show is on
-         */
+        // if show users is on then we show the full list of all users with perms in this node
+        if (showUsers && numberOfAssignedGroups > 0) {
+            // TODO hierarchyLogic.get
+        }
+
+        // If there are any assigned groups, render them as their own rows if show is on
         if (showGroups && numberOfAssignedGroups > 0) {
             Set<String> assignedGroupIDs = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id) : new HashSet<String>();
             for (String assignedGroupID: assignedGroupIDs) {
@@ -207,7 +212,7 @@ public class HierarchyRenderUtil {
         for (String childId : node.directChildNodeIds) {
             EvalHierarchyNode childNode = nodeIdToNode.get(childId);
             if (childNode != null) {
-                renderHierarchyNode(tofill, childNode, level+1, groupsNodesMap, nodeIdToNode, showGroups);
+                renderHierarchyNode(tofill, childNode, level+1, groupsNodesMap, nodeIdToNode, showGroups, showUsers);
             }
         }
     }
