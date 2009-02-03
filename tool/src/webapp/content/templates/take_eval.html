@@ -66,7 +66,7 @@
 
 			<div rsf:id="form-branch:">
 				<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
-                        onsubmit="$('submit_process').show();$(':submit').hide;">
+                        onsubmit="$(':submit').hide;$('submit_process').show();">
 					<div rsf:id="categorySection:">
                         <fieldset class="itemListNew">
                            <legend rsf:id="categoryHeader"> Group Items: </legend>
@@ -84,7 +84,8 @@
 
 					<div class="act">
                         <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
-						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
+						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" 
+                            onclick="$(this).hide();" />
 					</div>
 				</form>
 			</div>
