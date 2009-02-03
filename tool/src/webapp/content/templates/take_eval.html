@@ -8,9 +8,11 @@
 		<meta http-equiv="Expires" content="-1" />
 		<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+
 		<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
-		<script type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
 	
@@ -63,7 +65,8 @@
 			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
 
 			<div rsf:id="form-branch:">
-				<form rsf:id="evaluationForm" name="eval_form" method="post">
+				<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
+                        onsubmit="$('submit_process').show();$(':submit').hide;">
 					<div rsf:id="categorySection:">
                         <fieldset class="itemListNew">
                            <legend rsf:id="categoryHeader"> Group Items: </legend>
@@ -80,12 +83,18 @@
 					</div>
 
 					<div class="act">
-						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"
-                            onclick="this.disabled=true;this.value+='...';this.form.submit();" />
+                        <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
+						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
 					</div>
 				</form>
 			</div>
+
 <script type="text/javascript" language="javascript">processCommentBoxes();</script>
+<script type="text/javascript" language="javascript">
+  $(':submit').show();
+  $('submit_process').hide();
+</script>
+
 </div>
 	</body>
 </html>
