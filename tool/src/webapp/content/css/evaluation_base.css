@@ -6,10 +6,17 @@
 /*Styles for the drag and drop as in template item reorderer*/
 /*outer container of a sortable list*/
 DIV#itemTable{
-	border: 1px solid #FFDD77;
+	border: 1px solid #DFDFDF;
 	margin: .5em 0;
 	padding: 0 .5em;
-	background: #FFFFEE
+	background-color: #EEEEEE;
+}
+/*outer container of a block sortable list*/
+DIV#itemTableBlock{
+	border: 1px solid #DFDFDF;
+	margin: .5em 0;
+	padding: 0 .5em;
+	background-color: #EEEEEE;
 }
 /*inner container of a sortable list*/
 DIV.itemList{
@@ -20,15 +27,26 @@ DIV.itemList{
 }
 /*a sortable item*/
 DIV.itemRow{
-	border: 1px solid #aaa;
 	width: 100%;
 	padding: 0;
-	margin: .6em 0;
+	margin: .3em 0;
 	cursor: move;
-	background: #fff
+	background: #fff;
+	border: 1px solid #FFDD77;
+}
+/*a sortable block item*/
+DIV.itemRowBlock{
+	width: 100%;
+	padding: 0;
+	margin: .3em 0;
+	cursor: move;
+	background: #fff;
+	border: 1px solid #FFDD77;
 }
 /*all rows of an item*/
 .itemRow div{ padding: .2em; vertical-align: middle }
+/*all rows of a block item*/
+.itemRowBlock div{ padding: .2em; vertical-align: middle }
 /*first line in a sortable item,item type and links*/
 div.itemLine{
 	clear: left;
@@ -37,43 +55,52 @@ div.itemLine{
 }
 /*itemCheckbox,itemType,itemRight are the 3 children of itemLine*/
 .itemCheckbox{
-	float: left;
 	cursor: default;
-	padding: 1px 1.5em 1px 3px;
-	margin: 0
+	float: left;
+	padding: 0 1.5em 1px 3px
 }
 .itemCheckbox input{ margin: 0 }
 span.itemType{ float: left; padding: 0 }
 span.itemRight{
 	font-size: 0.9em;
 	float: right;
-	padding: 0 .4em;
-	white-space: nowrap
+	white-space: nowrap;
+	padding-right: 0.4em;
+	padding-bottom: 0;
+	padding-left: 0.4em;
+	margin-top: -1.7em;
 }
 /*selectReorder,itemText,scaleDesc are the 3 children of the 2nd row*/
 select.selectReorder{ font-weight: bold; float: left }
 h4.itemText{
 	display: inline;
-	padding: 0 0 0 .5em;
-	margin: .2em;
-	float: left
+	float: left;
+	width: 50%;
+	padding-top: 0em;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 1em;
+	overflow: hidden;
+	margin: 0.2em;
+	font-weight: normal;
+	position: static;
 }
 /*lines created with the rteditor are rendered as <p> - so flatten out a tad for alignment. */
 .itemText p{ margin-top: 0 }
 div.scaleDesc{
 	float: right;
 	text-align: right;
-	padding: .5em;
 	white-space: nowrap
 }
 /*third line in a sortable item - an ol with sub items listed*/
 .itemLine3{
 	clear: both;
-	margin: .5em .5em .5em 4.5em;
+	margin: .5em .5em .5em 9.5em;
 	list-style-position: outside;
 	padding: 0;
 	line-height: 150%;
-	font-size: 0.95em
+	font-size: 0.95em;
+	cursor:default
 }
 /*next 3 classes added/substracted script to Revert Order/Save Order and Group button bar after order has changed*/
 .orderChanged{ background-color: #ffc; border: 1px solid #fd7 }
@@ -92,16 +119,18 @@ div.scaleDesc{
 	float: left;
 	cursor: default;
 	margin: 0;
-	padding-right: 2.5em;
-	visibility: hidden
+	visibility: hidden;
+	padding-top: 0px;
+	padding-right: 2.4em;
+	padding-bottom: 1px;
+	padding-left: 3px;
 }
 /*next "selectable" collection added/susbstracted via script to give hints while grouping template items*/
 .selectable{
 	float: left;
 	cursor: default;
-	margin: 0;
-	padding: 1px 1.5em 1px 3px;
-	background: #eee url(../images/asterisk_orange.gif) 1.7em no-repeat
+	padding: 0 1.5em 1px 3px;
+	background: url(../images/asterisk_orange.gif) 1.7em no-repeat
 }
 .selectable input{ margin: 0 }
 .notselectable{
@@ -440,3 +469,215 @@ label.block{ padding: 0 0 .3em 0 }
 /*delete button*/
 .hideComment{ padding-left: 2em; background: transparent url(../images/cross.png) center left no-repeat}
 .editComment { padding-left: 2em; background: transparent url(../images/pencil.png) center left no-repeat}
+
+
+
+.actionArrow{
+background:#FFEEEE url(/library/image/sakai/collapse.gif) no-repeat scroll left 3px;
+font-weight:bold;
+padding:2px 5px 6px 13px;
+}
+
+.removeLink {
+	background:transparent url(/library/image/silk/delete.png) no-repeat scroll left center;
+	padding-left:1.6em;
+	text-indent: 110%;
+	overflow: hidden;
+	height: 25px;
+	width: 25px;
+}
+.editLink {
+background:transparent url(/library/image/silk/pencil.png) no-repeat scroll left center;
+padding-left:1.6em;
+}
+.preview {
+/*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
+padding-left:1.6em;
+}
+a.more {
+background-image: url(../images/collapsed.gif);
+background-position:100% center;
+background-repeat:no-repeat;
+padding-left:10px;
+padding-right:15px
+}
+a.less {
+background-image: url(../images/expanded.gif);
+background-position:100% center;
+background-repeat:no-repeat;
+padding-right:15px;
+padding-left:10px;
+}
+.removeArrow {
+	background-image: url(/library/image/sakai/expand-collapse.gif);
+	height: 7px;
+	width: 10px;
+	background-repeat: no-repeat;
+	margin-left: 97%
+}
+.removeDiv {
+	margin-top: -10px;
+	margin-left: 100%
+}
+
+.removeFooter{
+	background-color: #EEEEEE;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+.removeBody{
+	background-color: #EEEEEE;
+	margin-bottom: -5px;
+	margin-top: -5px;
+}
+.childControls {
+	color: #CCCCCC;
+	font-size: 10px;
+}
+.childItem:hover {
+	background-color: #EEEEEE;
+}
+.childItemDrag {
+	cursor: move;
+	}
+/*************************************/
+/* Inline Edit */
+/* hover effect over editable element */
+.inlineEdit-invitation {
+border : 1px solid #999;
+ background : lightyellow;
+ cursor : pointer;
+ /*margin : -1px;*/
+}
+.inlineEdit-tooltip {
+ position : absolute;
+ background : #CCC;
+ border : 1px solid #999;
+ font : normal 75% sans-serif;
+ padding : 3px 5px;
+}
+.inlineEdit-field {
+}
+
+/*Adapted from the SideBar Nav, this is for inlinePopups
+*/
+
+.popupMenu li.selectedTool span{
+  font-weight: bold;
+  background-color: #E0E2E4;
+  display: block;
+  padding-bottom : 2px;
+  padding-right : 10px !important;
+  padding-left : 10px;
+  padding-top : 2px;
+  margin-bottom : 0px;
+  margin-left : 0px;
+  margin-right : 0px;
+  margin-top : 0px;
+  background-position : center left !important;
+  background-repeat : no-repeat !important;
+  /*filter:alpha(opacity=50);
+  opacity: 0.50;
+  moz-opacity: 0.50;*/
+}
+
+.popupMenu li span{
+/*comment this line for a return to sanity
+display:none*/
+}
+
+
+
+.popupMenu li a:link,#toolMenu li a{
+display: block;
+text-decoration: none;
+color: #333;
+padding-bottom : 2px;
+padding-left : 10px !important;
+padding-right : 10px;
+padding-top : 2px;
+margin-bottom : 0px;
+margin-left : 0px;
+margin-right : 0px;
+margin-top : 0px;
+background-position : center left !important;
+background-repeat : no-repeat !important;
+
+}
+.popupMenu li a:hover{
+	text-decoration: none;
+	color: #333;
+	background: #D2EAF0;
+}
+
+.popupMenu li a.selected{
+	text-decoration: none;
+	color: #333;
+	cursor: text;
+}
+
+.popupMenu li a.selected:hover{
+	text-decoration: none;
+	color: #333;
+	cursor: text;
+}
+.popupMenu{
+	width: 10.2em;
+	padding: 0;
+	margin: 0;
+	color: #333;
+	background: #F3F4F5;
+}
+
+.popupMenu ul{
+	width:auto;
+	list-style: none;
+	margin: 0;
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.popupMenu li{
+
+	margin: 0;
+	width: auto;
+	padding: 0;
+	border-bottom: 1px solid #fff;
+	text-align: left;
+}
+/* Overlay */
+#overlay {
+
+     visibility: hidden;
+
+     position: absolute;
+
+     left: 0px;
+
+     top: 0px;
+
+     width:100%;
+
+     height:100%;
+
+     text-align:center;
+
+     z-index: 1000;
+
+}
+#overlay div {
+
+     width:300px;
+
+     margin: 100px auto;
+
+     background-color: #fff;
+
+     border:1px solid #000;
+
+     padding:15px;
+
+     text-align:center;
+
+}

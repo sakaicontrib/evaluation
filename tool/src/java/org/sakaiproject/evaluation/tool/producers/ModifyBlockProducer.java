@@ -7,6 +7,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -110,6 +111,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
       // analyze the string of templateItemIds
       String[] templateItemIds = evParameters.templateItemIds.split(",");
+      Log.info(templateItemIds);
       List<EvalTemplateItem> templateItemList = new ArrayList<EvalTemplateItem>(
             templateItemIds.length);
       List<EvalTemplateItem> blockItemList = new ArrayList<EvalTemplateItem>();
@@ -175,7 +177,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          // render block page
          UIForm form = UIForm.make(tofill, "blockForm"); //$NON-NLS-1$
 
-         UIMessage.make(form, "modifyblock-page-title", "modifyblock.page.title");
+         UIMessage.make(tofill, "modifyblock-page-title", "modifyblock.page.title");
          UIMessage.make(form, "modifyblock-items-list-title", "modifyblock.items.list.title"); //$NON-NLS-1$ //$NON-NLS-2$
          UIMessage.make(form, "modifyblock-items-list-instructions",
                "modifyblock.page.instructions");
@@ -192,7 +194,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          if (modify) {
             UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
             UIInternalLink.make(showLink, "remove_link", UIMessage
-                  .make("general.command.delete"), new TemplateItemViewParameters(
+                  .make("general.command.split.block"), new TemplateItemViewParameters(
                   RemoveItemProducer.VIEW_ID, templateId, firstTemplateItem.getId()));
          }
 
@@ -299,9 +301,10 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
             }
 
          }
+        
 
-         UIInput itemtext = UIInput.make(form, "item_text:", itemPath + ".item.itemText", null);
-         richTextEvolver.evolveTextInput(itemtext);
+         UIInput.make(form, "item-text", itemPath + ".item.itemText", null);
+         //richTextEvolver.evolveTextInput(itemtext);
 
 
          // render the items below
@@ -339,7 +342,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          saveCmd.parameters.add(new UIELBinding("#{templateBBean.templateItemIds}",
                evParameters.templateItemIds));
          saveCmd.parameters.add(new UIELBinding("#{templateBBean.originalDisplayOrder}",
-               originalDisplayOrder));
+              originalDisplayOrder));
 
       }
 

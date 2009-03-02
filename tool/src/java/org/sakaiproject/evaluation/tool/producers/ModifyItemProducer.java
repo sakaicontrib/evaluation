@@ -19,6 +19,10 @@ import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
 import java.util.List;
 
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import javax.naming.Context;
+import javax.swing.text.AbstractDocument.Content;
+
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -114,8 +118,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer) {
       this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
    }
-
-
+   
+ 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -126,6 +130,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+     
 
       /*
        * top links here
@@ -317,14 +322,14 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       UIMessage.make(form, "item-text-header", "modifyitem.item.text.header");
       UIMessage.make(form, "item-text-instruction", "modifyitem.item.text.instruction");
-
-      UIInput itemText = UIInput.make(form, "item-text:", itemOTP + "itemText");
+      
+      UIInput itemText = UIInput.make(form, "item-text", itemOTP + "itemText");
       if (itemLocked) {
          itemText.willinput = false;
          itemText.decorate(new UIDisabledDecorator());
       } else {
          // evolve this into a richtext editor
-         richTextEvolver.evolveTextInput( itemText );
+    	  //richTextEvolver.evolveTextInput( itemText );
       }
 
       if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {
@@ -389,7 +394,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
          UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
          UIInput expertDesc = UIInput.make(showItemExpert, "expert-desc:", itemOTP + "expertDescription");
-         richTextEvolver.evolveTextInput( expertDesc );			
+         //richTextEvolver.evolveTextInput( expertDesc );			
       }
 
       // Check to see if should show ITEM display hints

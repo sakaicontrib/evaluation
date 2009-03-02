@@ -4,32 +4,39 @@
 	<head>
 		<title rsf:id="page-title">Expert Items - Choose Items</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<!--<link  href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<link  href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<link  href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />-->
+         <script type="text/javascript"> 
+		$(document).ready(function() { 
+			$.facebox.setHeader($(".portletBody .titleHeader"));
+			$('a[rel*=facebox]').facebox();
+		}); 
+   
+</script> 
 	</head>
 	
 	<body>
 		<div class="portletBody">
-
-        <div class="navIntraTool">
-            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-            <a rsf:id="summary-link" href="summary.html">Summary</a>
-            <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-            <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-            <a rsf:id="control-items-link" href="control_items.html">My Items</a>
-            <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+         <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
+<!-- <div class="navIntraTool">
+            <a rsf:id="administrate-link" rel="facebox" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" rel="facebox" href="summary.html">Summary</a>
+            <a rsf:id="control-evaluations-link" rel="facebox" href="control_evaluations.html">My Evaluations</a>
+            <a rsf:id="control-templates-link" rel="facebox" href="control_templates.html">My Templates</a>
+            <a rsf:id="control-items-link" rel="facebox" href="control_items.html">My Items</a>
+            <a rsf:id="control-scales-link" rel="facebox" href="control_scales.html">My Scales</a>
         </div>
 	
 		<ul class="breadCrumb">
-		 	<li>	<a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li><a rsf:id="modify-template" href="template_modify.html">Template</a></li>
+		 	<li>	<a rsf:id="summary-link" rel="facebox" href="summary.html">Summary</a></li>
+			<li><a rsf:id="modify-template" rel="facebox" href="template_modify.html">Template</a></li>
 			<li rsf:id="expert-items">Expert Items:</li>
-			<li><a rsf:id="expert-items-category-link" href="choose_expert_category.html">Category</a></li>
-			<li><a rsf:id="expert-items-objective-link" href="choose_expert_objective.html">Objective</a></li>
+			<li><a rsf:id="expert-items-category-link" rel="facebox" href="choose_expert_category.html">Category</a></li>
+			<li><a rsf:id="expert-items-objective-link" rel="facebox" href="choose_expert_objective.html">Objective</a></li>
 			<li rsf:id="expert-items-items"  class="lastCrumb">Items</li>
-		</ul>
+		</ul>-->
 		
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul style="margin:0px;">
@@ -43,12 +50,12 @@
 			</div>
 			<div class=" med-noncur-step">
 				<span>
-					<a rsf:id="choose-category-1-link" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
+					<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
 				</span>
 			</div>
 			<div class=" med-noncur-step">
 				<span>
-					<a rsf:id="choose-objective-2-link" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a>
+					<a rsf:id="choose-objective-2-link" rel="facebox" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a>
 				</span>	
 			</div>	
 			<div class=" last-cur-step">
@@ -75,7 +82,7 @@
         <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->            
         <p class="act">
             <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-            <a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none">Cancel</a>         
+            <a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none" onclick="$(document).trigger('close.facebox'); return false;">Cancel</a>         
         </p>    
       
 			
@@ -121,7 +128,7 @@
 
 		<p class="act">
 			<input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-			<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none">Cancel</a>			
+			<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none" onclick="$(document).trigger('close.facebox'); return false;">Cancel</a>			
 		</p>	
 		
 		</form>

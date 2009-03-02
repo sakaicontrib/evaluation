@@ -331,7 +331,12 @@ tool/src/webapp/content/images/asterisk_orange.gif -text svneol=unset#image/gif 
 tool/src/webapp/content/images/asterisk_yellow.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/calendar.gif -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/callt.gif -text
+tool/src/webapp/content/images/calrt.gif -text
+tool/src/webapp/content/images/calx.gif -text
+tool/src/webapp/content/images/collapsed.gif -text
 tool/src/webapp/content/images/collapsed.png -text
+tool/src/webapp/content/images/control_updown.gif -text
 tool/src/webapp/content/images/corner.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/cross.png -text svneol=unset#image/png
 tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
@@ -339,6 +344,7 @@ tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif svn_keywo
 tool/src/webapp/content/images/down-arrow.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-line.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/exclamation.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/expanded.gif -text
 tool/src/webapp/content/images/first-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/first-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/ideal-high.jpg -text svn_keywords=Date+Revision+Author+URL+Id
@@ -351,12 +357,39 @@ tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif sv
 tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/pdate.gif -text
 tool/src/webapp/content/images/pencil.png -text svneol=unset#image/png
+tool/src/webapp/content/images/required.gif -text
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/uncollapsed.png -text
+tool/src/webapp/content/js/ISO8601-date.js -text
+tool/src/webapp/content/js/SakaiRSFWidgets.js -text
+tool/src/webapp/content/js/SakaiTableRenderer.js -text
 tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/double-list-select.js -text
+tool/src/webapp/content/js/dynamic-list-input.js -text
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/facebox/README.txt -text
+tool/src/webapp/content/js/facebox/b.png -text
+tool/src/webapp/content/js/facebox/bl[!!-~]copy.png -text
+tool/src/webapp/content/js/facebox/bl.png -text
+tool/src/webapp/content/js/facebox/br.png -text
+tool/src/webapp/content/js/facebox/closelabel.gif -text
+tool/src/webapp/content/js/facebox/evalAjax.js -text
+tool/src/webapp/content/js/facebox/facebox.css -text
+tool/src/webapp/content/js/facebox/facebox.js -text
+tool/src/webapp/content/js/facebox/facebox_og.js -text
+tool/src/webapp/content/js/facebox/loading.gif -text
+tool/src/webapp/content/js/facebox/tl.png -text
+tool/src/webapp/content/js/facebox/tr.png -text
+tool/src/webapp/content/js/fastxmlpull.js -text
+tool/src/webapp/content/js/fluid/Fluid.js -text
+tool/src/webapp/content/js/fluid/InlineEdit.css -text
+tool/src/webapp/content/js/fluid/InlineEdit.js -text
+tool/src/webapp/content/js/fluid/Undo.js -text
+tool/src/webapp/content/js/jquery-1.2.6.js -text
+tool/src/webapp/content/js/jquery.form.js -text
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/.project -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/accordion.js -text svn_keywords=Date+Revision+Author+URL+Id
@@ -390,9 +423,26 @@ tool/src/webapp/content/js/jquery/interface/isortables.js -text svn_keywords=Dat
 tool/src/webapp/content/js/jquery/interface/itooltip.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/ittabs.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/iutil.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/jquery/jARIA.js -text
+tool/src/webapp/content/js/jquery/jquery-ui-all-effects-1.6rc4.packed.js -text
+tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/jquery/jquery.keyboard-a11y.js -text
+tool/src/webapp/content/js/jquery/jquery.tooltip.js -text
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/rsf-parser.js -text
+tool/src/webapp/content/js/rsf-renderer.js -text
+tool/src/webapp/content/js/rsf.js -text
+tool/src/webapp/content/js/rsfbasic.js -text
+tool/src/webapp/content/js/rsfsakaiportal.js -text
+tool/src/webapp/content/js/scroller/jquery.scrollTo-1.4.0-min.js -text
+tool/src/webapp/content/js/tinyxmlsax.js -text
 tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/ui.core.js -text
+tool/src/webapp/content/js/ui.dialog.js -text
+tool/src/webapp/content/js/ui.draggable.js -text
+tool/src/webapp/content/js/ui.droppable.js -text
+tool/src/webapp/content/js/yahoo-calendar-setup.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_email.html -text

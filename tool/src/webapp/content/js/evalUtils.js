@@ -106,6 +106,7 @@ var EvalSystem = function() {
         var togglearea = showButton.parent().parent();
         
         showButton.show();
+		
         hideButton.show();
         showButton.parent().next().wrap("<a href=\"#\"></a>");
         
@@ -199,7 +200,8 @@ var EvalSystem = function() {
       var selection = $it(selectid);
       var url = selection.options[selection.selectedIndex].value;
       // See http://www.quirksmode.org/js/iframe.html for discussion
-      document.location.href = url;
+      //document.location.href = url;
+	  jQuery.facebox({ ajax: url });
     },
 
     decorateReorderSelects: function(namebase, count) {
@@ -210,7 +212,7 @@ var EvalSystem = function() {
         var selection = $it(selectid);
         selection.onchange = function() {
         	button.click();
-        };
+       };
       }
     }
  

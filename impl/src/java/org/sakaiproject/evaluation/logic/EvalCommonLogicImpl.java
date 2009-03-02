@@ -676,4 +676,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return md5;
     }
 
+
+public String getContentCollectionId(String siteId) {
+	// TODO Auto-generated method stub
+	return externalLogic.getContentCollectionId(siteId);
+}
+
 }

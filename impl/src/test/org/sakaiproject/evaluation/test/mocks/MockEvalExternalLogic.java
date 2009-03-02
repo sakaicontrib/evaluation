@@ -553,4 +553,9 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       return users;
    }
 
+public String getContentCollectionId(String siteId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }

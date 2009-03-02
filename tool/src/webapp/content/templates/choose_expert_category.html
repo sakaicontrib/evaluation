@@ -4,16 +4,24 @@
 	<head>
 		<title rsf:id="page-title">Expert Items - Choose Category</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<!--  <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" /> -->
 	</head>
+	
+	    <script type="text/javascript"> 
+		$(document).ready(function() { 
+			$.facebox.setHeader($(".portletBody .titleHeader"));
+			$('a[rel*=facebox]').facebox();
+		}); 
+   
+</script> 
 	
 	<body>
 		<div class="portletBody">
-
-           <div class="navIntraTool">
+ <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
+<!-- <div class="navIntraTool">
                <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
                <a rsf:id="summary-link" href="summary.html">Summary</a>
                <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
@@ -21,14 +29,14 @@
                <a rsf:id="control-items-link" href="control_items.html">My Items</a>
                <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
            </div>
-			
+				
 				<ul class="breadCrumb">
 					<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
 					<li><a rsf:id="modify-template" href="template_modify.html">Template</a></li>
 					<li rsf:id="expert-items">Expert Items</li>
 					<li rsf:id="expert-items-category"  class="lastCrumb">Category</li>
-				</ul>
-			
+				</ul>-->
+		
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
@@ -52,7 +60,7 @@
 
 			<p rsf:id="category-instructions" class="instruction">Click on a category to see objectives within it</p>
 			
-			<table  summary="Column 1 has links to categories, Column 2 has descriptions of categories" cellpadding="0" cellspacing="0"  class="listHier lines nolines" style="width:auto">
+			<table  summary="Column 1 has links to categories, Column 2 has descriptions of categories" cellpadding="0" cellspacing="0"  class="listHier lines nolines" style="width:100%">
 				<caption rsf:id="category-list-summary" class="skip">Column 1 has links to categories, Column 2 has descriptions of categories</caption>	
 				<thead>
 					<tr>
@@ -63,7 +71,7 @@
 				<tbody>
 					<tr rsf:id="expert-category-list:">
 						<td>
-							<a rsf:id="category-title-link" href="choose_expert_objective.html">category title</a>
+							<a rsf:id="category-title-link" rel="facebox" href="choose_expert_objective.html">category title</a>
 						</td>
 						<td rsf:id="category-description">
 							This is the category description for the expert category which I expect will be quite long and involved and will explain to the user what items are in this category and what it is good for
@@ -71,7 +79,7 @@
 					</tr>
 					<tr rsf:id="expert-category-list:">
 						<td>
-							<a rsf:id="category-title-link" href="choose_expert_objective.html">category title 2</a>
+							<a rsf:id="category-title-link" rel="facebox" href="choose_expert_objective.html">category title 2</a>
 						</td>
 						<td>
 							<span rsf:id="category-description">This is the category description for the expert category which I expect will be quite long and involved and will explain to the user what items are in this category and what it is good for</span>
@@ -81,7 +89,7 @@
 				</tbody>
 			</table>
 			<p class="act">			
-					<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton">Cancel</a>
+					<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" onclick="$(document).trigger('close.facebox');return false;">Cancel</a>
 			</p>		
 			
 		</div>

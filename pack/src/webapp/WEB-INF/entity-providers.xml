@@ -25,8 +25,20 @@
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider"
 			class="org.sakaiproject.evaluation.logic.entity.TemplateEntityProviderImpl">
+				<property name="authoringService"
+			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="developerHelperService"
+			ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
+	</bean>
+	
+	<bean id="org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider" 
+			class="org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProviderImpl" >
 		<property name="authoringService"
 			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-	</bean>
+		<property name="developerHelperService"
+			ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
+		<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		</bean>
 
 </beans>

@@ -214,7 +214,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 	@SuppressWarnings("unchecked")
    public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null)));
+		togo.add(new NavigationCase(new TemplateViewParameters(ControlTemplatesProducer.VIEW_ID, null)));
 		return togo;
 	}
 
