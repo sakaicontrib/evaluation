@@ -9,6 +9,18 @@
 	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 	   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	   	<link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script> 
+		<script src="../js/facebox/facebox.js" type="text/javascript"></script> 
+		<script src="../js/facebox/evalAjax.js" type="text/javascript"></script> 
+		<script src="../js/jquery/jquery-ui-all-effects-1.6rc4.packed.js" type="text/javascript"></script> 
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+		
+		<script>
+			$(document).ready(function(){
+				$(document).trigger('activateControls.templates');	
+			});
+		</script>
 	</head>
 	
 	<body>
@@ -25,7 +37,7 @@
 
 			<ul class="breadCrumb"  style="clear:both;height:1.5em">
 				<li  style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"  style="float:left" rsf:id="page-title">My Templates</li>
-				<li style="float:right" class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem">Add Template</a></li>
+				<li style="float:right" class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem" rel="facebox">Add Template</a></li>
 				<li style="float:right" class="lastCrumb"><a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem">Start Evaluation</a></li>
 			</ul>
 			
@@ -35,7 +47,7 @@
 				</ul>
 			</div>
 
-			<h3 rsf:id="templates-header" style="font-weight:bold;">Evaluation Templates</h3>
+			<h3 rsf:id="templates-header" style="font-weight:bold;" class="templatesControl">Evaluation Templates</h3>
 			<p class="instruction"  rsf:id="templates-description">Templates store items in a layout and are used to create evaluations</p>
 			
 			<!-- This block (list template) is not visible if there are no templates visible -->
@@ -52,7 +64,7 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <tr rsf:id="template-row:">
+                        <tr rsf:id="template-row:" rowId="">
                            <td headers="title">
                               <span rsf:id="template-title">Template Title</span>
                               &nbsp;&nbsp;
@@ -63,7 +75,7 @@
                            <td class="itemAction">
                               <a rsf:id="template-modify-link" href="modify_template_items.html">Edit</a>
                               <span rsf:id="template-modify-dummy"></span> | 
-                              <a rsf:id="template-delete-link" href="remove_template.html">Delete</a>
+                              <a rsf:id="template-delete-link" href="remove_template.html" rel="templateRemove">Delete</a>
                               <span rsf:id="template-delete-dummy"></span> | 
                               <a rsf:id="template-preview-link" href="preview_eval.html" target="_blank">Preview</a> |
                               <input rsf:id="template-copy-link" type="submit" class="makeLink" value="Copy" />

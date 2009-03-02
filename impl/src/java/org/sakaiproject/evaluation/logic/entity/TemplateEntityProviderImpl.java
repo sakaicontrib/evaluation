@@ -14,22 +14,37 @@
 
 package org.sakaiproject.evaluation.logic.entity;
 
+import java.util.Map;
+
+import org.sakaiproject.entitybroker.DeveloperHelperService;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
+import org.sakaiproject.entitybroker.entityprovider.capabilities.Deleteable;
+import org.sakaiproject.entitybroker.entityprovider.capabilities.Outputable;
+import org.sakaiproject.entitybroker.entityprovider.capabilities.Resolvable;
+import org.sakaiproject.entitybroker.entityprovider.extension.Formats;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 
 /**
  * Implementation for the entity provider for evaluation templates
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider {
+public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, Resolvable, Outputable, Deleteable {
 
 	private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
    }
+   
+   private DeveloperHelperService developerHelperService;
+   public void setDeveloperHelperService (DeveloperHelperService developerHelperService){
+	   this.developerHelperService = developerHelperService;
+   }
+  
 
 
 	/* (non-Javadoc)
@@ -56,5 +71,46 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 		}
 		return exists;
 	}
+
+	public Object getEntity(EntityReference ref) {
+		// TODO Auto-generated method stub
+		EvalTemplate item = authoringService.getTemplateById(new Long(ref.getId()));
+		if(item != null && isAllowedAccessEvalTemplateItem(ref)){
+			return (developerHelperService.cloneBean(item, 1, new String[]{})); 
+		}
+		else
+			throw new IllegalArgumentException("id is invalid.");
+		
+	}
+
+
+	public String[] getHandledOutputFormats() {
+		// TODO Auto-generated method stub
+		return new String[] {Formats.JSON, Formats.XML};
+	}
+
+	protected boolean isAllowedAccessEvalTemplateItem(EntityReference ref) {
+	    // check if the current user can access this
+	    String userRef = developerHelperService.getCurrentUserReference();
+	    if (userRef == null) {
+	        throw new SecurityException("Anonymous users may not view this Eval-item");
+	    } else {
+	        if (!developerHelperService.isUserAllowedInEntityReference(userRef, "VIEW", ref.getId())) {
+	            throw new SecurityException("This Eval-item is not accessible for the current user: " + userRef);
+	        }
+	    }
+	    return true;
+	}
+
+
+
+	public void deleteEntity(EntityReference ref, Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		if(isAllowedAccessEvalTemplateItem(ref) && authoringService.canRemoveTemplate(developerHelperService.getCurrentUserId(), new Long(ref.getId()))){
+			authoringService.deleteTemplate(new Long(ref.getId()), developerHelperService.getCurrentUserId());
+		}
+		
+	}
+
 
 }

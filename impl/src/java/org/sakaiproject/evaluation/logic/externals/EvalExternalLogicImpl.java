@@ -967,4 +967,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       return jobs;
    }
 
+public String getContentCollectionId(String siteId) {
+	String ret = contentHostingService.getSiteCollection(siteId);
+	return ret;
+}
+
 }

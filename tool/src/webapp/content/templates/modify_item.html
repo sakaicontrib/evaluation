@@ -4,15 +4,36 @@
 	<head>
 		<title rsf:id="msg=modifyitem.page.title">Add/Modify Item</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+       
+    <script type="text/javascript"> 
+$(document).ready(function() {
+    var siteId = $('#site-id').text();
+    SakaiProject.fckeditor.initializeEditor("item-text", siteId);
+    if($('#expert-desc').length > 0)
+        SakaiProject.fckeditor.initializeEditor("expert-desc", siteId);
+    if($.facebox.settings.objToUpdate == "block"){
+		$('#facebox .content .navPanel').hide();	
+		$('#facebox .content fieldset').hide();
+		$('#facebox .content form > div').not('.evalEditorSmall').not('.act').hide();
+	}
+	$.facebox.grow();
+	$.facebox.setHeader($(".portletBody .titleHeader"));
+	$('.act .submit').bind('click',function(){
+		submitForm('#item-form', 'item-text', 'modify_item', $(this));
+	});
+}); 
+</script> 
+
+
+
+
 	</head>
 	
 	<body>
+		
+	
 		<div class="portletBody">
-            <div class="navIntraTool">
+            <!--<div class="navIntraTool">
                <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
                <a rsf:id="summary-link" href="summary.html">Summary</a>
                <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
@@ -23,15 +44,15 @@
 
 			<ul class="breadCrumb">
 				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-items-breadcrumb" href="control_items.html">My Items</a></li><li rsf:id="modify-template-items"><a rsf:id="payload-component" href="modify_template_items.html">Modify Template</a></li><li class="lastCrumb" rsf:id="page-title">Modify Item</li>
-			</ul>
-			
+			</ul>						
+			-->
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
 				</ul>
 			</div>
-			
-			<h3 rsf:id="msg=modifyitem.page.title">Add/Modify Item</h3>
+
+			<h2 rsf:id="msg=modifyitem.page.title" class="titleHeader">Add/Modify Item</h2>
 			<div class="navPanel evalEditorSmall">
 				<div class="viewNav">
 					<span rsf:id="item-header">Item:</span>
@@ -45,16 +66,24 @@
 				</div>
 			</div>	
 
-			<form rsf:id="item-form" method="post">
+			<form rsf:id="item-form" method="post" id="item-form">
 
 			<p>
 				<span rsf:id="item-text-header">Item Text:</span>
+				
 				<span rsf:id="item-text-instruction" class="instruction">(this is the question or statement that the evaluator will respond to)</span>
 			</p>
 			<div class="evalEditorSmall">
-				<div rsf:id="item-text:">
+                
+				 <!--<div rsf:id="item-text:">
 					<textarea name="item-text-dummy" cols="80" rows="5"></textarea>
-				</div>
+				</div> -->
+				<textarea rsf:id="item-text" name="item-text-dummy" cols="80" rows="5"></textarea>
+
+
+
+
+
 			</div>
 
 			<div rsf:id="show-item-scale:" class="longtext">
@@ -132,8 +161,8 @@
 				<span rsf:id="expert-desc-instruction" class="instruction">this text describes the appropriate usage of this item for template authors</span>
 				</p>
 				<div  class="evalEditorSmall">
-					<div rsf:id="expert-desc:">
-						<textarea name="expert-desc-dummy" cols="80" rows="5"></textarea>
+					<div>setValue
+						<textarea rsf:id="expert-desc" name="expert-desc-dummy" cols="80" rows="5"></textarea>
 					</div>
 				</div>	
 			</div>
@@ -217,12 +246,10 @@
 
 				<div class="cleaner">&nbsp;</div>
 			</fieldset>
-
 			<div class="act">
-				<input rsf:id="save-item-action" type="submit" value="Save item" class="active"  accesskey="s" />
-				<a rsf:id="cancel-button" href="javascript:history.go(-1); return false;" accesskey="x">Cancel</a>					
-			</div>
-
+				<input rsf:id="save-item-action" type="button" value="Save item" class="active submit" accesskey="s" />
+				<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />					
+			</div> 
 			</form>
 		</div>
 	</body>

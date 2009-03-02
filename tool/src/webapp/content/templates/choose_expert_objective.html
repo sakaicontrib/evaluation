@@ -4,31 +4,50 @@
 	<head>
 		<title rsf:id="page-title">Expert Items - Choose Objective</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<!--<link  href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<link  href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<link  href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />-->
+         <script type="text/javascript"> 
+		$(document).ready(function() { 
+			$.facebox.setHeader($(".portletBody .titleHeader"));
+			$('a[rel*=facebox]').facebox();
+			var opt = {
+				beforeSend: function(){
+					var img = '<img src="/library/image/sakai/spinner.gif"/>';
+					$('.act .active').attr('disabled','disabled');
+					$('.act .active').parent().append(img);
+				},
+				success: function(){
+					$(document).trigger('close.facebox');
+				}
+			};
+			//$('[id=form-branch::insert-items-form]').ajaxForm(opt);
+		}); 
+   
+</script> 
 	</head>
 	
 	<body>
 		<div class="portletBody">
-
-           <div class="navIntraTool">
-               <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-               <a rsf:id="summary-link" href="summary.html">Summary</a>
-               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
-               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+        
+       <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
+<!-- <div class="navIntraTool">
+               <a rsf:id="administrate-link" rel="facebox" href="administrate.html">Administrate</a>
+               <a rsf:id="summary-link" rel="facebox" href="summary.html">Summary</a>
+               <a rsf:id="control-evaluations-link" rel="facebox" href="control_evaluations.html">My Evaluations</a>
+               <a rsf:id="control-templates-link" rel="facebox" href="control_templates.html">My Templates</a>
+               <a rsf:id="control-items-link" rel="facebox" href="control_items.html">My Items</a>
+               <a rsf:id="control-scales-link" rel="facebox" href="control_scales.html">My Scales</a>
            </div>
 			
 			<ul class="breadCrumb">
-				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-				<li><a rsf:id="modify-template" href="template_modify.html">Template</a></li>
+				<li><a rsf:id="summary-link" rel="facebox" href="summary.html">Summary</a></li>
+				<li><a rsf:id="modify-template" rel="facebox" href="template_modify.html">Template</a></li>
 				<li rsf:id="expert-items">Expert Items:</li>
-				<li><a rsf:id="expert-items-category-link" href="choose_expert_category.html">Category</a></li>
+				<li><a rsf:id="expert-items-category-link" rel="facebox" href="choose_expert_category.html">Category</a></li>
 				<li rsf:id="expert-items-objective"  class="lastCrumb" >Objective</li>
-			</ul>
+			</ul>-->
 			
 			
 			<div rsf:id="message-for:*" class="alertMessage">
@@ -43,7 +62,7 @@
 				</div>	
 				<div class=" med-noncur-step">
 					<span>
-						<a rsf:id="choose-category-1-link" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
+						<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
 					</span>
 				</div>	
 				<div class=" med-cur-step">	
@@ -69,7 +88,7 @@
 			<!-- //gsilver: need to come up with a min-width for this table -->
 			<!-- //gsilver:if this list has no items - omit, as it will not validate -->
 			
-			<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:auto">
+			<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%">
 				<caption rsf:id="objective-list-summary" class="skip">Column 1 has links used to select objectives, Column 2 has information about these objectives</caption>
 				<thead>
 					<tr>
@@ -81,7 +100,7 @@
 					<tr rsf:id="expert-objective-list:">
 						<td>
 							<h5>
-								<a rsf:id="objective-title-link" href="choose_expert_items.html">objective title</a>
+								<a rsf:id="objective-title-link" rel="facebox" href="choose_expert_items.html">objective title</a>
 							</h5>	
 						</td>
 						<td rsf:id="objective-description">
@@ -90,7 +109,7 @@
 					</tr>
 					<tr rsf:id="expert-objective-list:">
 						<td>
-							<a rsf:id="objective-title-link" href="choose_expert_items.html">objective title 2</a>
+							<a rsf:id="objective-title-link" rel="facebox" href="choose_expert_items.html">objective title 2</a>
 						</td>
 						<td>
 							<span rsf:id="objective-description">This is the objective description for the expert objective which I expect will be quite long and involved and will explain to the user what items are in this objective and what it is good for</span>
@@ -107,7 +126,7 @@
 			</div>
 			
 			<div rsf:id="form-branch:">
-				<form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
+				<form rsf:id="insert-items-form" id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
 					<p class="instruction">	
 						<span rsf:id="items">Items</span> :
 						<span rsf:id="items-instructions">Check the items you want to use in your template and click the Insert button at the bottom</span>
@@ -116,7 +135,7 @@
 					<!-- //gsilver: need to come up with a min-width for this table -->
 					<!-- //gsilver:if this list has no items - omit, as it will not validate -->
 		
-					<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:auto;">
+					<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%;">
 						<caption rsf:id="item-list-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 						<thead>
 							<tr>
@@ -158,7 +177,7 @@
 					</table>
 					<p class="act">
 						<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
-						<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x" style="float:none"> Cancel</a>
+						<a rsf:id="cancel-expert-items" rel="facebox" href="template_modify.html" class="makeButton" accesskey="x" style="float:none" onclick="$(document).trigger('close.facebox')"> Cancel</a>
 					</p>
 				</form>
 			</div>

@@ -10,15 +10,15 @@ function countCheckBox(){
 	var count = 0; //enforce at least 2 check box are checked	
 	var scaleId = "";
 	
-	if (sourceForm && destinationForm) {
-
+	if (sourceForm && destinationForm) {			
 		// look for checkboxes which have IDs of the form "block-12-11" and keep track of the ones that are checked.
 		for (var a=0; a < sourceForm.elements.length; a++) {
 			var target = sourceForm.elements[a];
 			if(target.type == "checkbox"){
 				if(target.checked){
 					count = count +1;
-					if(count == 1){
+						$(target.parentNode.parentNode.parentNode).attr('style', 'background-color:#FFFFCC;');
+						if(count == 1){
 						scaleId = target.id.substring(target.id.indexOf('-')+1,target.id.lastIndexOf('-'));
 						
 						//disable other check box which has different scale id
@@ -26,21 +26,26 @@ function countCheckBox(){
 							 var other = sourceForm.elements[b];
 							 if(other != target && other.type == "checkbox"){
 							 	var otherScaleId= other.id.substring(other.id.indexOf('-')+1,other.id.lastIndexOf('-'));
-							 	//alert("other scaleId ="+otherScaleId);
+                                 //console.log(target.id.indexOf('-')+1);
+                                 //alert("scaleId ="+scaleId);
 							 	if(otherScaleId != scaleId)
 								{
 							 		other.disabled = true;
 									other.parentNode.className='notselectable';  
+									    
 								}	
 							 	else{
 									other.disabled = false;	
-									other.parentNode.className='selectable'; //UI hint of which checkboxes are selectable
+									other.parentNode.className='selectable '; //UI hint of which checkboxes are selectable
+								
 								}
 							 }
 						 }
 								 
 					}
 					
+				}else{
+					$(target.parentNode.parentNode.parentNode).removeAttr('style');
 				}
 			}
 		}
@@ -51,11 +56,12 @@ function countCheckBox(){
 			if (sourceForm.elements[c].type=="checkbox"){
 					sourceForm.elements[c].disabled = false;
 					sourceForm.elements[c].parentNode.className='itemCheckbox'; //UI hint of which checkboxes are selectable
+					
 			}		
 				
 		}
 		submitButton.disabled = true;
-		blockInputs.className="itemOperations";
+		submitButtonBlock.className="itemOperations";
 	}else if(count < 2){ 
 		//alert("select less than 2 items,disable submit button");
 		submitButton.disabled = true;
@@ -90,10 +96,17 @@ function extractSelectedItems(submitButton) {
 		//alert("ids="+destinationForm.templateItemIds.value);
 		
 		if (count < 2) {
-		 	alert("you must select at least 2 items to create a block");
+		 	alert("you must select at least 2 items to create a group");
 		 	return false; 
 		} else {
-			return true;
+			
+			$(submitButton).parent().ajaxSubmit({
+				success: function(msg){
+					$.facebox(msg);
+				}
+		});
+			
+			return false;
 		}
 	}
 

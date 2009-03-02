@@ -4,8 +4,24 @@
  */
 $(document).ready(
 	function () {
+        var siteId = $('#site-id').text();
+        SakaiProject.fckeditor.initializeEditor("item-text", siteId);		
+		$.facebox.grow();
+		$.facebox.setHeader($(".titleHeader"));
+		
+		//$('#blockForm').ajaxForm();
 		
 		var baseId = ""; // "blockPage::";
+		
+		$('#saveBlockAction').click(function() {
+			var list = $("#blockForm > div.itemRow").get();
+			var childIdList = new Array();
+			$('#blockForm input[name*=hidden-item-id]').each(function(){
+				childIdList.push($(this).val());
+			});	
+			$("#ordered-child-ids").val(childIdList.toString());
+			submitForm('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
+		});
 		
 		function $it(id) {
         	return document.getElementById(id);
@@ -21,7 +37,7 @@ $(document).ready(
 			$it(baseId + "saveReorderButton").disabled = true;
 		}
 
-        var sortableIds;
+        //var sortableIds;
         function buildSortableIds() {
         	sortableIds = new Array();
 			var domList = $("div.itemList > div").get();
@@ -33,7 +49,7 @@ $(document).ready(
 				//$(itemSelect).removeClass("orderChanged");
 			}
 		}
-		buildSortableIds();
+		//buildSortableIds();
 		
 		var reorderButtonsExist = false;
 		var saveReorderButton = $it(baseId + "saveReorderButton");
@@ -77,7 +93,7 @@ $(document).ready(
 			
 		}
 		
-		setRadioActions();
+		//setRadioActions();
 		
 		// put original order into the revertOrder trigger
 		var revertOrderButton = $it(baseId + "revertOrderButton");
@@ -97,19 +113,9 @@ $(document).ready(
 		}
 		
 		var saveBlockButton = $it(baseId + "saveBlockAction");
-		saveBlockButton.onclick = function() {
-			flag = "save";
-			var list = $("div.itemTable > div").get();
-			var childIdList = new Array();
-			for (i in list) {
-				if (list[i].id) {
-					childIdList.push($it(list[i].id + "hidden-item-id").value);
-				}
-			}
-			$it(baseId + "ordered-child-ids").value = childIdList.toString();
-		}
 		
-		$("div.itemTable").Sortable(
+		
+		/*$("div.itemTable").Sortable(
 			{
 				accept: 		"itemRow",
 				activeclass: 	"sortableactive",
@@ -131,6 +137,66 @@ $(document).ready(
 				opacity: 		0.5,
 				tolerance:		"intersect"
 			}
-		);
+		);*/
 	}
 );
+
+function submitF(){  
+					//submitForm('#blockForm', 'item-text:1:input', 'modify_block');
+				//var rowId = $(jQuery.facebox.settings.objToUpdate).attr("id");
+				//var thisRow = $(document).find("[id=" + rowId + "]");	
+				alert('sdaf');
+				return false;
+				var d = $('#blockForm').formToArray();
+				var textarea = 'item-text:1:input';
+				var fckVal = function(){
+					if (FCKeditorAPI) {
+						return FCKeditorAPI.GetInstance(textarea).GetHTML(); //Actual editor textarea value
+					}
+					else {
+						alert('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
+						return false;
+					}
+				}	
+				//iterate through returned formToArray elements and replace input value with editor value
+				for (var i = 0; i < d.length; i++) {
+					if ($(d[i]).attr('name') == textarea) {
+						$(d[i]).attr('value',fckVal);
+					}
+				}
+				$.ajax({
+					type: 'POST',
+					url: 'modify_block',
+					data: d,
+					dataType: "html",
+					beforeSend: function(){	
+					//$(thisRow).html('<div class="loading">Refreshing...<img src="/library/image/sakai/spinner.gif"/></div>');
+					//$("#facebox .results").html('<div class="loading">Saving...<img src="/library/image/sakai/spinner.gif"/></div>');
+					//console.log(target + "   -   "+ d);
+					alert('yes!');
+					},
+					error: function(rq, status, e){
+						alert(rq.responseText);
+						alert(status);
+						alert(e);
+						
+					},
+					success: function(msg){
+						return false;/*$(document).trigger('close.facebox');
+						var messageInformation = $(msg).find(".messageInformation").parent().text();
+						var newRowVal = $(msg).find("[id=" + rowId + "]").html();
+						$(thisRow).html(newRowVal);
+						$(thisRow).find(".itemType").append('<span class="highlight">' + messageInformation + '!</span>');
+						if (target == "modify_item") {
+							$(".itemTable").html($(msg).find("#itemTable").html());
+						}
+						$(thisRow).before('<a name="popUpTop"></a>');
+						window.location.href = "#popUpTop"			
+						$('a[name*=popUpTop]').remove();			
+						$('a[rel*=facebox]').facebox();
+						$('a[rel*=remove]').itemRemove();
+						startSort();*/
+						alert('yes!');
+					}
+				});
+     			}

@@ -58,7 +58,7 @@ public class BlockRenderer implements ItemRenderer {
     * This identifies the template component associated with this renderer
     */
    public static final String COMPONENT_ID = "render-block-item:";
-
+   
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
@@ -182,8 +182,9 @@ public class BlockRenderer implements ItemRenderer {
             // get the child item
             EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
             EvalItem childItem = childTemplateItem.getItem();
-
             
+            if(childTemplateItem.getIsCompulsory() == null) childTemplateItem.setIsCompulsory(false);
+           
             // For the radio buttons
             UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
             if (childTemplateItem.renderOption) {

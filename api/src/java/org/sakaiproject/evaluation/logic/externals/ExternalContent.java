@@ -25,4 +25,11 @@ public interface ExternalContent {
     * the file doesn't exist or there are errors.
     */
    public byte[] getFileContent(String abspath);
+   
+   /**
+    * Get the ID referencing to the content collection. 
+    * @param siteId The site ID
+    * @return The content collection ID in the form: "/group/{Site ID}"
+    */
+   public String getContentCollectionId(String siteId);
 }
