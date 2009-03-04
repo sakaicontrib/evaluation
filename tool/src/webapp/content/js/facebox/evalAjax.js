@@ -1,16 +1,6 @@
 /**
- * @author lovemorenalube
-
-	// Fix for FCKeditor value to be submitted with the form. Added by Lovemore Nalube, lovemore.nalube@uct.ac.za
-function txtAreaFck(){
-	this.UpdateEditorFormValue = function(){
-		for ( i = 0; i < parent.frames.length; i++ )
-			if ( parent.frames[i].FCK )
-				parent.frames[i].FCK.UpdateLinkedField();
-	}
-	//alert(FCKeditorAPI.GetInstance('item-text:1:input').GetHTML());
-}
- */
+ * @author lovemore.nalube@uct.ac.za
+ **/
 	var groupableItems;
 	$(document).bind('activateControls.templates', function(){
 		$(document).unbind('activateControls.templates');
@@ -302,16 +292,8 @@ function submitForm(form, textarea, target, btn){
 		btn.parent().parent().find('input').each(function(){
 			$(this).attr('disabled', 'disabled');
 		});
-		
-		
 		FCKeditorAPI.GetInstance(textarea).disabled;
-		
-		
 		btn.parent().append(img);
-		//$(thisRow).html('<div class="loading">Refreshing...<img src="/library/image/sakai/spinner.gif"/></div>');
-		//$("#facebox .results").html('<div class="loading">Saving...<img src="/library/image/sakai/spinner.gif"/></div>');
-		//console.log(target + "   -   "+ d);
-		//return false;
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 		  return false;

@@ -112,12 +112,6 @@
 
 
 .editing {
-background-color:#FFFFFF;
-border:1px solid #44AA44;
-clear:both;
-color:#000000;
-display:block;
-font-size:1em;
-margin:5px 0;
+background-color:#888;
 padding:5px;
 }

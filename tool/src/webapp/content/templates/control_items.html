@@ -8,8 +8,23 @@
 	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 	   <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-	   <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script> 
+<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+<link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="../js/facebox/facebox.js" type="text/javascript"></script>
+<script type="text/javascript" language="JavaScript" src="/library/editor/FCKeditor/fckeditor.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/SakaiRSFWidgets.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/facebox/evalAjax.js"></script>
        <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+	   <script type="text/javascript">
+	   	$(document).ready(function(){
+			$('a[@rel=facebox]').facebox();
+			$('form.inlineForm').ajaxForm({
+				success: function(data) {$.facebox(data);}
+				});
+		});
+		
+	   </script>
 	</head>
 	
 	<body>
@@ -100,11 +115,11 @@
       							<div rsf:id="item-text" class="textPanel indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
       						</td>
       						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
-      							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+      							<a rsf:id="item-remove-link" href="remove_item.html" rel="facebox">Delete</a>
       							<span rsf:id="item-remove-dummy"></span> | 
-      							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+      							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
       							<span rsf:id="item-modify-dummy"></span> | 
-      							<a rsf:id="item-preview-link" href="preview_item.html" target="_blank">Preview</a> |
+      							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
                                 <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
       						</td>
       						<td headers="itemOwner" style="margin:0em 1em;">
@@ -120,11 +135,11 @@
       							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
       						</td>
       						<td class="itemAction"  style="white-space:nowrap">
-      							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+      							<a rsf:id="item-remove-link" href="remove_item.html" rel="facebox">Delete</a>
       							<span rsf:id="item-remove-dummy"></span> |
-      							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+      							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
       							<span rsf:id="item-modify-dummy"></span> |
-      							<a rsf:id="item-preview-link" href="preview_item.html">Preview</a> |
+      							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
                                 <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
       						</td>
       						<td style="margin:0em 1em;">

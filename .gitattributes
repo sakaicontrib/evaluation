@@ -370,24 +370,17 @@ tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/facebox/README.txt -text
 tool/src/webapp/content/js/facebox/b.png -text
-tool/src/webapp/content/js/facebox/bl[!!-~]copy.png -text
 tool/src/webapp/content/js/facebox/bl.png -text
 tool/src/webapp/content/js/facebox/br.png -text
 tool/src/webapp/content/js/facebox/closelabel.gif -text
 tool/src/webapp/content/js/facebox/evalAjax.js -text
 tool/src/webapp/content/js/facebox/facebox.css -text
 tool/src/webapp/content/js/facebox/facebox.js -text
-tool/src/webapp/content/js/facebox/facebox_og.js -text
 tool/src/webapp/content/js/facebox/loading.gif -text
 tool/src/webapp/content/js/facebox/tl.png -text
 tool/src/webapp/content/js/facebox/tr.png -text
 tool/src/webapp/content/js/fastxmlpull.js -text
-tool/src/webapp/content/js/fluid/Fluid.js -text
-tool/src/webapp/content/js/fluid/InlineEdit.css -text
-tool/src/webapp/content/js/fluid/InlineEdit.js -text
-tool/src/webapp/content/js/fluid/Undo.js -text
 tool/src/webapp/content/js/jquery-1.2.6.js -text
 tool/src/webapp/content/js/jquery.form.js -text
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id

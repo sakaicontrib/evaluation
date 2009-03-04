@@ -9,18 +9,26 @@
 $(document).ready(function() {
     var siteId = $('#site-id').text();
     SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-    if($('#expert-desc').length > 0)
-        SakaiProject.fckeditor.initializeEditor("expert-desc", siteId);
+    //if($('input[@name=show-item-expert::expert-desc]').length > 0)
+        //SakaiProject.fckeditor.initializeEditor("show-item-expert::expert-desc", siteId);
     if($.facebox.settings.objToUpdate == "block"){
 		$('#facebox .content .navPanel').hide();	
 		$('#facebox .content fieldset').hide();
-		$('#facebox .content form > div').not('.evalEditorSmall').not('.act').hide();
+		//$('#facebox .content form > div').not('.evalEditorSmall').not('.act').hide();
 	}
 	$.facebox.grow();
 	$.facebox.setHeader($(".portletBody .titleHeader"));
-	$('.act .submit').bind('click',function(){
-		submitForm('#item-form', 'item-text', 'modify_item', $(this));
-	});
+	if($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1){
+		$('.act .submit').bind('click',function(){
+			submitForm('#item-form', 'item-text', 'modify_item', $(this));
+		});
+	}else{
+		var button = $('<input type="submit" class="active" accesskey="s"/>');
+		button
+			.attr('name', $('.act .submit').attr('name'))
+			.val($('.act .submit').val());
+		$('.act .submit').replaceWith(button);
+	}
 }); 
 </script> 
 
@@ -161,7 +169,7 @@ $(document).ready(function() {
 				<span rsf:id="expert-desc-instruction" class="instruction">this text describes the appropriate usage of this item for template authors</span>
 				</p>
 				<div  class="evalEditorSmall">
-					<div>setValue
+					<div>
 						<textarea rsf:id="expert-desc" name="expert-desc-dummy" cols="80" rows="5"></textarea>
 					</div>
 				</div>	

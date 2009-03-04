@@ -9,8 +9,8 @@
 			 // prepare the form when the DOM is ready 
 $(document).ready(function() { 
 	var options = {
-	     beforeSubmit: function(formArray, jqForm) {
-	      	if (formArray.length == 0) {
+	     beforeSubmit: function() {
+	      	if (!$('#basic-form input[@name=title]').val()) {
 	            alert('Please enter a title.');
 	            return false;
 		       }
@@ -18,7 +18,7 @@ $(document).ready(function() {
 		},
 		success: function(msg){
 			$(document).trigger('close.facebox');
-			if ($('h3.templatesControl').length > 0) {  //check if element exists
+			if ($('#itemList').length == 0) {  //check if element exists
 				var frame = parent.document.getElementById(window.name);
 				frame.src = $(msg).find('form tr:eq(1) .itemAction a:eq(0)').attr('href');
 			}
@@ -32,13 +32,6 @@ $(document).ready(function() {
 	$.facebox.grow();
 	$.facebox.setHeader($(".portletBody .titleHeader"));
 }); 
-			
-			function validateForm(){  
-				if(document.form1.title.value == "")
-					return false;
-				return true;
-			}   
-			   
 		</script>
 	</head>
 	

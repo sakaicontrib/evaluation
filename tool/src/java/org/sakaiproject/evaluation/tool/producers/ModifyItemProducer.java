@@ -393,9 +393,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
          UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
          UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
-         UIInput expertDesc = UIInput.make(showItemExpert, "expert-desc:", itemOTP + "expertDescription");
-         //richTextEvolver.evolveTextInput( expertDesc );			
-      }
+         UIInput expertDesc = UIInput.make(showItemExpert, "expert-desc", itemOTP + "expertDescription");
+         }
 
       // Check to see if should show ITEM display hints
       boolean showItemDisplayHints = true;
