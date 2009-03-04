@@ -4,10 +4,6 @@
 <head>
 <title rsf:id="page-title">Remove Item</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 <body>
 
@@ -45,8 +41,8 @@
  
   <div class="act">
     <form rsf:id="remove-item-form" action="modify_template_items.html" method="post" class="inlineForm act" id="delete-form">
-      <input rsf:id="remove-item-command-link" type="button" value="Yes" class="active submit" accesskey="s"/>
-      <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" />
+      <input rsf:id="remove-item-command-link" type="submit" value="Yes" class="active submit" accesskey="s"/>
+      <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
       &nbsp;
     </form>
   </div>

@@ -332,16 +332,16 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("general.command.preview"), 
                   new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) );
 
-            //if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
+            if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
                // if it is a block item
-            //   BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
-            //   UIInternalLink.make(itemBranch, "modify-row-item", target);
-            //} else {
-               // it is a non-block item
+               BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
+               UIInternalLink.make(itemBranch, "modify-row-item", target);
+            } else {
+                //it is a non-block item
                ViewParameters target = new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
                      templateItem.getItem().getClassification(), templateId, templateItem.getId());
                UIInternalLink.make(itemBranch, "modify-row-item", target);
-           // }
+           }
 
             if(TemplateItemUtils.isBlockParent(templateItem)){
             //UIInternalLink.make(itemBranch,	"remove-row-item-unblock", 
