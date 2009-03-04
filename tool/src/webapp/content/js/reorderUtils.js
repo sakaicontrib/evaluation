@@ -270,7 +270,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                                 ui.item.parents('.itemRow').eq(0).children('input[name=*hidden-item-num]').eq(0).val(currentOrder);
 
                                 $('form[name=modify_form_rows]').ajaxSubmit({
-                                    success: function() {
+                                    success: function(d) {
                                         if ((type != null) && (type == "simple")) {
                                             $(document).trigger('activateControls.templateItems');
                                             ui.item.parents('.itemRow').effect('highlight', 1500);
@@ -278,10 +278,8 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                                                 $(this).remove();
                                             });
                                         } else {
-                                            $(document).trigger('block.triggerChildrenSort', [ui]);
-											ui.item.parents('.itemTableBlock').find('div.itemRowBlock:hidden').each(function(){
-												$(this).remove();
-												});
+                                            $('#itemList').html($(d).find('#itemList').html());
+                                            $(document).trigger('list.triggerSort', [ui]);
                                             $(document).trigger('activateControls.templateItems', ['skipSelection']);
                                             $(document).trigger('close.facebox');
                                             ui.item.parents('.itemTableBlock').effect('highlight', 3500);
