@@ -112,6 +112,8 @@
 
 
 .editing {
-background-color:#888;
-padding:5px;
+background:#FFFFCC none repeat scroll 0 0;
+border:1px solid #FFDD77;
+margin:0.3em 0;
+padding:4px;
 }
