@@ -107,6 +107,10 @@ public interface EvalSettings {
     */
    public static final String ENABLE_ADMINISTRATING_BOX = "ENABLE_ADMINISTRATING_BOX:java.lang.Boolean";
    /**
+    * CONSTANT: Is the box showing the Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
+    */
+   public static final String ENABLE_RESPONSES_BOX = "ENABLE_RESPONSES_BOX:java.lang.Boolean";
+   /**
     * Enable evaluation taker comments on all non-text answerable items, this is configured
     * on a per item basis, and will disable all comments if turned off
     */
@@ -238,6 +242,11 @@ public interface EvalSettings {
    public static final String ENABLE_SINGLE_EMAIL = "ENABLE_SINGLE_EMAIL:java.lang.Boolean";
    
    /**
+    * CONSTANT: Send an email confirmation that a response to an evaluation was submitted (Instructors might require proof). - {@link Boolean}, default False
+    */
+   public static final String ENABLE_SUBMISSION_CONFIRMATION_EMAIL = "ENABLE_SUBMISSION_CONFIRMATION_EMAIL:java.lang.Boolean";
+   
+   /**
     * CONSTANT: The Date of the next single email reminder  - {@link String}, 
     * default is null
     */
@@ -262,7 +271,7 @@ public interface EvalSettings {
     * CONSTANT: Are servers allowed to send email that has been queued for delivery? - {@link Boolean}, default True
     */
    public static final String EMAIL_SEND_QUEUED_ENABLED = "EMAIL_SEND_QUEUED_ENABLED:java.lang.Boolean";
-   
+
    /**
     * CONSTANT: Email delivery options: EvalConstants.MAIL_DELIVERY_OPTION_NONE|EMAIL_DELIVERY_OPTION_SEND|EMAIL_DELIVERY_OPTION_LOG - {@link String}, 
     * default EMAIL_DELIVERY_OPTION_SEND
@@ -326,6 +335,7 @@ public interface EvalSettings {
       ENABLE_ITEM_COMMENTS,
       ENABLE_NOT_AVAILABLE,
       ENABLE_SINGLE_EMAIL,
+      ENABLE_SUBMISSION_CONFIRMATION_EMAIL,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
       ENABLE_SUMMARY_SITES_BOX,

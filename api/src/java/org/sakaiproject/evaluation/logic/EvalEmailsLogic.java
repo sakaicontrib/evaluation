@@ -109,5 +109,13 @@ public interface EvalEmailsLogic {
     * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
+   
+   /**
+    * Send confirmation to a user that an evaluation has been submitted (might be required by Instructor)
+    * @param evalId the id of an EvalEvaluation object
+    
+    * @return the email address of the user
+    */
+   public String sendEvalSubmissionConfirmationEmail(Long evalId);
 
 }

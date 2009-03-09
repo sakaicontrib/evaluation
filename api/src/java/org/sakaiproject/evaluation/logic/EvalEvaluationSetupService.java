@@ -93,6 +93,14 @@ public interface EvalEvaluationSetupService {
     * @return a List of {@link EvalEvaluation} objects
     */
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial);
+   
+   /**
+    * Get all evaluations in which this user is being evaluated
+    * 
+    * @param userId the internal user id (not username)
+    * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
+    */
+   public List<EvalEvaluation> getEvaluationsForInstructor(String userId);
 
    /**
     * Get all evaluations that can be taken by this user,

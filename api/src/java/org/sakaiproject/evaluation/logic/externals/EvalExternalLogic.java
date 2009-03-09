@@ -145,6 +145,11 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     * @return the value of the configuration setting or the default value if none can be found
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
-
+   
+   /**
+    * Get the title given to the evaluation tool
+    * @return tool title
+    */
+   public String getEvalToolTitle();
 
 }

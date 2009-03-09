@@ -39,6 +39,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -976,6 +977,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    public EvalEmailTemplate getEmailTemplate(Long emailTemplateId) {
       EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
       return emailTemplate;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConfirmationEmailTemplate()
+    */
+   public EvalEmailTemplate getConfirmationEmailTemplate() {
+	   EvalEmailTemplate template = null;
+	   try {
+		   template = dao.findBySearch(EvalEmailTemplate.class, new Search("type", EvalConstants.EMAIL_TEMPLATE_SUBMITTED)).get(0);
+	   }
+	   catch(IndexOutOfBoundsException e) {
+		   //no template found
+	   }
+	   return template;
    }
 
    // PERMISSIONS

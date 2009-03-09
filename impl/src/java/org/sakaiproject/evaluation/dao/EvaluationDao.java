@@ -103,7 +103,7 @@ public interface EvaluationDao extends CompleteGenericDao {
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds,
          Boolean activeOnly, Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults);
-
+   
    /**
     * Get a set of evaluations based on the owner and their groups
     * 
@@ -309,27 +309,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @return an array of evaluation ids
     */
 	public Long[] getActiveEvaluationIdsByAvailableEmailSent(Boolean availableEmailSent); 
-	
-	/**
-	 * Get ids of items that were copied from an item
-	 * @param itemId the item copied
-	 * @return a list of ids empty if none found
-	 */
-	public List<Long> getIdsOfCopiesOfItem(Long itemId);
-	
-	/**
-	 * Get ids of templates that were copied from a template
-	 * @param templateId the template copied
-	 * @return a list of ids empty if none found
-	 */
-	public List<Long> getIdsOfCopiesOfTemplate(Long templateId);
-	
-	/**
-	 * Get ids of templateItems that were copied from a templateItem
-	 * @param templateItemId the templateItem copied
-	 * @return a list of ids empty if none found
-	 */
-	public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId);
 
    /**
     * Get adhoc groups for a user and permission, 
@@ -425,13 +404,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    public boolean isUsedTemplate(Long templateId);
    
-   /**
-    * TODO - is isUsedTemplate correct?
-    * @param templateId
-    * @return true if this template is used in any evalautions
-    */
-   public boolean isUsedTemplateCopyOf(Long templateId);
-
    /**
     * Allows a lock to be obtained that is system wide,
     * this is primarily for ensuring something runs on a single server only in a cluster<br/>

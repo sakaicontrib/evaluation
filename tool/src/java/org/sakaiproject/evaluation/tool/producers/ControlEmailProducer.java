@@ -174,6 +174,10 @@ public class ControlEmailProducer implements ViewComponentProducer {
 		// log email To: addresses
 		AdministrateProducer.makeBoolean(form, "log-recipients",
 				EvalSettings.LOG_EMAIL_RECIPIENTS);
+		
+		//send evaluation submitter an email receipt of submission
+		AdministrateProducer.makeBoolean(form, "send-submitted",
+				EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
 
 		// Save Settings button
 		UICommand.make(form, "saveSettings", UIMessage

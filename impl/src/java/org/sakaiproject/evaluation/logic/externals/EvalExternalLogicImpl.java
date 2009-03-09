@@ -85,6 +85,7 @@ import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
+import org.sakaiproject.tool.api.Tool;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.user.api.User;
@@ -292,6 +293,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       }
       return false;
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getEvalToolTitle()
+    */
+   public String getEvalToolTitle() {
+	   String toolTitle = EvalConstants.EVAL_TOOL_TITLE;
+	   //Tool tool = toolManager.getCurrentTool();
+	   //String toolTitle = tool.getTitle();
+	   return toolTitle;
+   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
@@ -331,7 +343,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       EvalUser user = makeInvalidUser(userId, null);
       if (isUserAnonymous(userId)) {
          user = makeAnonymousUser(userId);
-      } else {
+      }
+      else {
          try {
             User sakaiUser = userDirectoryService.getUser(userId);
             user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
@@ -1284,5 +1297,4 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	    }
 	    return emailSettings;
    }
-
 }

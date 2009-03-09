@@ -138,6 +138,24 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		user.displayName = EvalConstants.USER_TYPE_INVALID;
 		return user;
 	}
+	
+	/**
+	 * INTERNAL METHOD<br/>
+	 * Generate a user for whom a name is unavailable, with fields filled out correctly
+	 * This is useful if, for example, an Instructor hasn't got a campus id
+	 * 
+	 * @param userId a dummy string given that user's userId is not known
+	 * @return user with name set to an informative string (e.g. Instructor Name Unavailable)
+	 */
+	protected EvalUser makeNameUnavailableUser(String userId) {
+		if (userId == null) {
+			userId = "invalid:";
+		}
+		EvalUser user = new EvalUser(userId, EvalConstants.USER_TYPE_INVALID, null);
+		user.displayName = userId;
+		user.username = userId;
+		return user;
+	}
 
 	/**
 	 * INTERNAL METHOD<br/>
@@ -180,12 +198,18 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
 	public EvalUser getEvalUserById(String userId) {
 		EvalUser user = null;
-		EvalUser eu = getEvalUserOrNull(userId);
-		if (eu != null) {
-			user = eu;
+		//catch the infrequent case that a user in the eval group has no known user id
+		if(userId != null && userId.endsWith(EvalConstants.USER_TYPE_NAME_UNAVAILABLE)) {
+			user = makeNameUnavailableUser(userId);
 		}
-		if (user == null) {
-			user = makeInvalidUser(userId, null);
+		else {
+			EvalUser eu = getEvalUserOrNull(userId);
+			if (eu != null) {
+				user = eu;
+			}
+			if (user == null) {
+				user = makeInvalidUser(userId, null);
+			}
 		}
 		return user;
 	}

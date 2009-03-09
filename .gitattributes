@@ -246,6 +246,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewAssignedEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEvalProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -421,6 +422,7 @@ tool/src/webapp/content/templates/modify_item.html -text svn_keywords=Date+Revis
 tool/src/webapp/content/templates/modify_scale.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_template.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_template_items.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/preview_assigned_eval.html -text
 tool/src/webapp/content/templates/preview_email.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_eval.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_item.html -text svn_keywords=Date+Revision+Author+URL+Id

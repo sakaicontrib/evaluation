@@ -270,6 +270,10 @@ public class EvalConstants {
     * EvalUser class: External user, this user comes in via a provider or from Sakai
     */
    public final static String USER_TYPE_EXTERNAL = "External";
+   /**
+    * EvalUser class: Name Unavailable type, may be used if user provider information is unavailable
+    */
+   public final static String USER_TYPE_NAME_UNAVAILABLE = "Name Unavailable";
 
 
    /**
@@ -543,6 +547,12 @@ public class EvalConstants {
     * used when the evaluation results are ready to view
     */
    public static final String EMAIL_TEMPLATE_RESULTS = "Results";
+   /**
+    * EmailTemplate type setting:
+    * This identifies a template as the "evaluation submitted template",
+    * used as a confirmation message when the evaluation is submitted
+    */
+   public static final String EMAIL_TEMPLATE_SUBMITTED = "Submitted";
    /**
     * EmailTemplate type setting:
     * This identifies a template as the one-email-per-user evaluation-is-available template,

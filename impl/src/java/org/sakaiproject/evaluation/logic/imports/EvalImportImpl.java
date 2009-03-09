@@ -309,17 +309,6 @@ public class EvalImportImpl implements EvalImport {
 						updateItemProperties(element, item, messages);
 						authoringService.saveItem(item, userId);
 						itemsUpdated++;
-
-						//update copies
-						List<Long> itemIds = authoringService.getIdsOfCopiesOfItem(item.getId());
-						if(!itemIds.isEmpty()) {
-							for(Long itemId : itemIds ) {
-								item = authoringService.getItemById(itemId);
-								updateItemProperties(element, item, messages);
-								authoringService.saveItem(item, userId);
-								itemsUpdated++;
-							}
-						}
 						if((itemsUpdated % 100) == 0) {
 							externalLogic.setSessionActive();
 						}
@@ -445,47 +434,6 @@ public class EvalImportImpl implements EvalImport {
 								idsToSkip.add(ti.getId());
 							}
 							templateItemsSaved = templateItemsSaved + allTemplateItems.size();
-							
-							//if the template is being used, there are also copies of template, item, template item
-							//TODO isUsedTemplate found no EvalEvaluations because the template_fk was a copy of the original template id
-							if(authoringService.isUsedTemplateCopyOf(template.getId())) {
-								//copies of the template
-								templatesIds = authoringService.getIdsOfCopiesOfTemplate(template.getId());
-								List toDelete = new ArrayList();
-								for(Long templateId:templatesIds) {
-									if (authoringService.canModifyTemplate(externalLogic.getCurrentUserId(), templateId)) {
-										template = authoringService.getTemplateById(templateId);
-										setTemplateProperties(element, template);
-										authoringService.saveTemplate(template, userId);
-										templatesUpdated++;
-										templateItemSet = template.getTemplateItems();
-										toDelete.clear();
-										for(EvalTemplateItem ti : templateItemSet) {
-											if(authoringService.canControlTemplateItem(externalLogic.getCurrentUserId(), ti.getId())) {
-												toDelete.add(new Long(ti.getId()));
-											}
-										}
-										Long delete;
-										for(Object id:toDelete) {
-											delete = (Long)id;
-											// remove the templateItem and update all linkages
-											authoringService.deleteTemplateItem(delete, externalLogic.getCurrentUserId());
-										}
-										int index = allTemplateItems.size();
-										Long templateItemIds[] = new Long[index];
-										for(int i = 0; i < index; i++) {
-											templateItemIds[i] = allTemplateItems.get(i).getId();
-										}
-										
-										//save and link copies of template items and items to copy of template
-										newTemplateItemIds = authoringService.copyTemplateItems(templateItemIds, template.getOwner(), true, template.getId(), true);
-										templateItemsSaved = templateItemsSaved + newTemplateItemIds.length;
-									}
-									else {
-										log.warn("user with id '" + userId + "' cannot modify EvalTemplate with eid '" + eid + "'.");
-									}
-								}
-							}
 							if((templatesUpdated % 100)  == 0 ) {
 								externalLogic.setSessionActive();
 							}
@@ -1603,13 +1551,6 @@ public class EvalImportImpl implements EvalImport {
 			eid = element.getChildText("EID");
 			String state = EvalConstants.EVALUATION_STATE_PARTIAL;
 			EvalTemplate addedTemplate = null;
-			eid = element.getChildText("EID");
-			if (eid == null || "".equals(eid)) {
-				log
-						.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
-				messages
-						.add("EvalEvaluation was not saved/updated in the database, because eid was missing.");
-			}
 			String title = element.getChildText("TITLE");
 			String owner = element.getChildText("OWNER");
 			Date startDate = getDate(element.getChildText("START_DATE"));

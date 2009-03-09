@@ -15,8 +15,10 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +40,7 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalLock;
 import org.sakaiproject.evaluation.model.EvalQueuedEmail;
+import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 
@@ -91,7 +94,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	      this.externalLogic = externalLogic;
    }
 
-
    // INIT method
    public void init() {
       log.debug("Init");
@@ -141,8 +143,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    }
 
    /**
-    * Send email from a holding table using locks to create non-overlapping
-    * sets of emails, to avoid servers sending duplicates of email in the holding table.
+    * Send email from a holding table EVAL_QUEUED_EMAIL using locks to create non-overlapping
+    * sets of emails (to avoid servers sending duplicates of email in the holding table).
     */
    protected void initiateSendEmailTimer() {
 	   //hold lock for 48 hr so it isn't taken by another server before being released
@@ -173,23 +175,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         		 return;
         	 }
         	 
-        	 //TODO just use settings.get() where needed
-           	 /*  single email settings
-        	  * 0 FROM_EMAIL_ADDRESS
-        	  * 1 EMAIL_DELIVERY_OPTION
-        	  * 2 LOG_EMAIL_RECIPIENTS
-        	  * 3 EMAIL_BATCH_SIZE
-        	  * 4 EMAIL_WAIT_INTERVAL
-        	  * 5 LOG_PROGRESS_EVERY
-        	  */
-        	 Object[] mailSettings = new Object[6];
-        	 mailSettings = getSingleEmailSettings();
-        	 String from = (String)mailSettings[0];
-        	 String deliveryOption = (String)mailSettings[1];
-        	 Boolean logEmailRecipients = (Boolean)mailSettings[2];
-        	 Integer batch = (Integer)mailSettings[3];
-        	 Integer wait = (Integer)mailSettings[4];
-        	 Integer every = (Integer)mailSettings[5];
+        	 String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+        	 String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+        	 Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+        	 Integer batch = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
+        	 Integer wait = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
+        	 Integer every = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
         	 
         	 int numProcessed = 0;
         	 
@@ -202,7 +193,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         			 log.info(serverId + " runSendEmailTask.run(): EMAIL_SEND_QUEUED_ENABLED is false so quitting. "); 
         		 return;
         	 }
-        	 
         	 
         	//is there something to do?
         	 if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
@@ -245,6 +235,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                	 * 		 This would defeat the purpose of a server holding a lock while processing a batch of email. We set the 
                	 * 		 repeatInterval to a very high value and refresh the lock by obtaining it periodically until the TimerTask
                	 * 		 processing has finished as a precaution against the server losing its lock before finishing.
+               	 * 		 TODO: CT-798 TQ: server id as holder of lock prevents re-obtaining lock after restart
                	 */
            		Boolean lockObtained = dao.obtainLock(lockName, serverId, holdLock);
                 // only execute the code if we have an exclusive lock
@@ -702,7 +693,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	   Set<Long> emailTemplateIds = null;
 	   EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 	   if(EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER.equals(type)) {
-		  emailTemplateId = evaluation.getReminderEmailTemplate().getId();
+		   emailTemplateId = evaluation.getReminderEmailTemplate().getId();
 	   }
 	   else if(EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE.equals(type)) {
 		   emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
@@ -721,7 +712,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    }
 
    /**
-    * Send one email per email template used for the active evaluations for a user
+    * Dispatch one email per email template used for user's active evaluations 
+    * based on EvalSettings.EMAIL_DELIVERY_OPTION (log, send, none).
     * 
     * @param uniqueIds the Sakai identities of the users to be notified
     * @param subjectConstant the email subject template
@@ -737,22 +729,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				log.info("EvalEmailLogicImpl.sendEvalSingleEmail(): there are " + uniqueIds.size()
 						+ " unique user ids in the single email queue.");
 		}
-		/*  single email settings
-			0 FROM_EMAIL_ADDRESS
-			1 EMAIL_DELIVERY_OPTION
-			2 LOG_EMAIL_RECIPIENTS
-			3 EMAIL_BATCH_SIZE
-			4 EMAIL_WAIT_INTERVAL
-			5 LOG_PROGRESS_EVERY
-		*/
-		Object[] mailSettings = new Object[6];
-		mailSettings = getSingleEmailSettings();
-		String from = (String)mailSettings[0];
-		String deliveryOption = (String)mailSettings[1];
-		Boolean logEmailRecipients = (Boolean)mailSettings[2];
-		Integer batch = (Integer)mailSettings[3];
-		Integer wait = (Integer)mailSettings[4];
-		Integer every = (Integer)mailSettings[5];
+
+		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+		Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+		Integer batch = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
+		Integer wait = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
+		Integer every = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
 		
 		// check there is something to do
 		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
@@ -775,7 +758,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		// a random starting number
 		if(sets > 0)
 			start = new Random().nextInt(sets);
-
+		
 		// uniqueIds are user ids
 		for (String s : uniqueIds) {
 			try {
@@ -786,7 +769,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				earliestDueDate = evaluationService.getEarliestDueDate(s);
 				replacementValues.put("EarliestEvalDueDate", earliestDueDate);
 				replacementValues.put("HelpdeskEmail", from);
-				replacementValues.put("EvalToolTitle", EvalConstants.EVAL_TOOL_TITLE);
+				//deprecated: EvalConstants.EVAL_TOOL_TITLE
+				replacementValues.put("EvalToolTitle", externalLogic.getEvalToolTitle());
 				replacementValues.put("EvalSite", EvalConstants.EVALUATION_TOOL_SITE);
 				replacementValues.put("EvalCLE", EvalConstants.EVALUATION_CLE);
 
@@ -805,12 +789,23 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					
 					String lockName = EvalConstants.EMAIL_LOCK_PREFIX + selectEmailSet(start, sets).toString();
 					start++;
-					//deprecated String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-					//queue an email
-					String emailAddress = queueOutgoingEmail(from, s, subject, message, lockName);
-					sentToAddresses.add(emailAddress);
-
+					
+					//dispatch email using delivery option
+					if(EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
+						String emailAddress = queueOutgoingEmail(s, subject, message, lockName);
+						sentToAddresses.add(emailAddress);
+					}
+					else if(EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+						String emailAddress = logOutgoingEmail(from, s, subject, message, lockName);
+						sentToAddresses.add(emailAddress);
+					}
+					else if (EvalConstants.EMAIL_DELIVERY_NONE.equals(deliveryOption)) {
+						if(log.isInfoEnabled())
+							log.info("Evaluation email delivery option is " + deliveryOption + ".");
+					}
+					
 			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
+					//deprecated String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
 			         
 			        // handle throttling email delivery and logging progress
 					numProcessed = logEmailsProcessed(batch, wait, every, numProcessed, "queued");
@@ -833,6 +828,66 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return (String[]) sentToAddresses.toArray(new String[] {});
 	}
    
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalSubmissionConfirmationEmail(java.lang.Long)
+    */
+	public String sendEvalSubmissionConfirmationEmail(Long evaluationId) {
+		String to = null;
+		String message = null;
+		String subject = null;
+		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+		String[] sentTo = new String[]{};
+		if(!EvalConstants.EMAIL_DELIVERY_NONE.equals(deliveryOption)) {
+			Boolean  sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+			try {
+				EvalUser user = externalLogic.getEvalUserById(externalLogic.getCurrentUserId());
+				if(user != null && sendConfirmation.booleanValue()) {
+					EvalEmailTemplate template = null;
+					Map<String, String> replacementValues = new HashMap<String, String>();
+					String[] sendTo = new String[]{user.email};
+					String name = user.displayName;
+					String toolName = externalLogic.getEvalToolTitle();
+					EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+					String evalTitle = eval.getTitle();
+					Date date = new Date();
+					String timeStamp = SettingsLogicUtils.getStringFromDate(date);
+					replacementValues.put("UserName", name);
+					replacementValues.put("EvalToolTitle", externalLogic.getEvalToolTitle());
+					replacementValues.put("EvalTitle", evalTitle);
+					replacementValues.put("TimeStamp", timeStamp);
+					//get the template
+					template = getConfirmationEmailTemplate();
+					if(template != null) {
+						//make the substitutions
+						message = makeEmailMessage(template.getMessage(),
+								replacementValues);
+						subject = makeEmailMessage(template.getSubject(),
+								replacementValues);
+						to = user.email;
+						if(EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+							if(log.isInfoEnabled()) {
+								log.info("Submission Confirmation\nTo: " + to + 
+										"\nFrom: " + from + "\nSubject: " + subject + "\nMessage:\n" + message + "\n\n");
+							}
+						}
+						else if (EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
+							sentTo = externalLogic.sendEmailsToAddresses(from, sendTo, subject, message, true);
+						}
+						else {
+							log.error(this + ".sendEvalSubmissionConfirmationEmail(): invalid delivery option: " + deliveryOption);
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				log.error(this + ".sendEvalSubmissionConfirmationEmail(): " + e);
+			}
+		}
+		return to;
+	}
+	
    /**
     * There are 0 - EVAL_CONFIG.EMAIL_LOCKS_SIZE sets to select from.
     * @param start
@@ -856,13 +911,23 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @param lock
     * @return
     */
-   private String queueOutgoingEmail(String from, String toUserId, String subject, String message, String lock)  {
+   private String queueOutgoingEmail(String toUserId, String subject, String message, String lock)  {
 	   EvalUser recipient = externalLogic.getEvalUserById(toUserId);
 	   EvalQueuedEmail email = new EvalQueuedEmail(lock, message, subject, recipient.email);
 	   dao.save(email);
 	   if(log.isDebugEnabled())
 		   log.debug("EvalEmailLogicImpl.queueOutgoingEmail(): saved to the the notification holding table: " + email.toString());
-	   return recipient.email;
+	   return email.getToAddress();
+   }
+   
+   private String logOutgoingEmail(String from, String toUserId, String subject, String message, String lock) {
+	   EvalUser recipient = externalLogic.getEvalUserById(toUserId);
+	   EvalQueuedEmail email = new EvalQueuedEmail(lock, message, subject, recipient.email);
+	   if(log.isInfoEnabled()) {
+		   log.info("To: " + email.getToAddress() + " From: " + from + " Subject: " + email.getSubject());
+		   log.info("Lock: " + email.getLock() + " Message: " + email.getMessage());
+	   }
+	   return email.getToAddress();
    }
    
    /**
@@ -988,47 +1053,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		return numProcessed;
 	}
-   
-   /**
-    * Get email settings used with single email option
-    * 
-    * @param from
-    * @param deliveryOption
-    * @param logEmailRecipients
-    * @param batch
-    * @param wait
-    * @param modulo
-    */
-   private Object[] getSingleEmailSettings() {
-	   Object[] emailSettings = new Object[6];
-		emailSettings[0] = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-	    if (emailSettings[0] == null) {
-	         throw new IllegalStateException("Could not get a from email address from system settings or the evaluation");
-	    }
-	    emailSettings[1] = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
-	    if (emailSettings[1] == null) {
-	         throw new IllegalStateException("Could not get the delivery option from system settings or the evaluation");
-	    }
-	    emailSettings[2] = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-	    if (emailSettings[2] == null) {
-	         throw new IllegalStateException("Could not get logging of email recipients from system settings or the evaluation");
-	    }
-	    emailSettings[3] = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
-	    if (emailSettings[3] == null) {
-	         throw new IllegalStateException("Could not get batch size system settings or the evaluation");
-	    }
-	    emailSettings[4] = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
-	    if (emailSettings[4] == null) {
-	         throw new IllegalStateException("Could not get a wait value from system settings or the evaluation");
-	    }
-	    emailSettings[5] = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
-	    if (emailSettings[5] == null) {
-	         throw new IllegalStateException("Could not get a logging interval from system settings or the evaluation");
-	    }
-	    return emailSettings;
-   }
-
-
+ 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalReminderNotifications(java.lang.Long, java.lang.String)
     */
@@ -1287,6 +1312,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
 
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+   }
+   
+   public EvalEmailTemplate getConfirmationEmailTemplate() {
+	   EvalEmailTemplate template = null;
+	   template = evaluationService.getConfirmationEmailTemplate();
+	   return template;
    }
 
    /**

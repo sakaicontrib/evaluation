@@ -314,6 +314,8 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       makeBoolean(form, "general-enable-administrating-box", EvalSettings.ENABLE_ADMINISTRATING_BOX);
       makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+      makeBoolean(form, "general-enable-responses-summary", EvalSettings.ENABLE_RESPONSES_BOX);
+      
       makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
       makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
 

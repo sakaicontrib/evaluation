@@ -136,6 +136,7 @@ public class PreloadDataImpl {
 
          saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
          saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
+         saveConfig(EvalSettings.ENABLE_RESPONSES_BOX, false);
          saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
          saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
          saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
@@ -170,9 +171,9 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.EMAIL_SEND_QUEUED_START_INTERVAL, 1); //minutes
          saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0); //no throttle
          saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);//send by default
-         
          saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
          saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL, false);
+         saveConfig(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL, false);
          
          // Default batch performance metrics settings
          saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);
@@ -227,6 +228,10 @@ public class PreloadDataImpl {
          dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER, 
         		 EvalEmailConstants.SINGLE_EMAIL_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.SINGLE_EMAIL_REMINDER_DEFAULT_TEXT, 
         		 EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER));
+         //submission confirmation template
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_SUBMITTED, 
+        		 EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_TEXT, 
+        		 EvalConstants.EMAIL_TEMPLATE_SUBMITTED));
  
          log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }

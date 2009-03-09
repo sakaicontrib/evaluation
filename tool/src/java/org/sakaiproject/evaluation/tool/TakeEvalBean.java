@@ -20,6 +20,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
@@ -50,6 +52,16 @@ public class TakeEvalBean {
    public void setCommonLogic(EvalCommonLogic commonLogic) {
       this.commonLogic = commonLogic;
    }
+   
+   private EvalEmailsLogic emailsLogic;
+   public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
+      this.emailsLogic = emailsLogic;
+   }
+   
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+      this.settings = settings;
+   }
 
    private TargettedMessageList messages;
    public void setMessages(TargettedMessageList messages) {
@@ -75,6 +87,9 @@ public class TakeEvalBean {
       messages.addMessage( new TargettedMessage("evaluations.take.message",
             new Object[] { eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) }, 
             TargettedMessage.SEVERITY_INFO));
+      if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL)).booleanValue()) {
+    	  emailsLogic.sendEvalSubmissionConfirmationEmail(eval.getId());
+      }
       return "success";
    }
 

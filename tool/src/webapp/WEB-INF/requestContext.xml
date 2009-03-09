@@ -39,6 +39,10 @@
         <property name="responseBeanLocator" ref="responseBeanLocator" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="emailsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+        <property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="messages" ref="targettedMessageList" />
     </bean>
 
@@ -564,6 +568,24 @@
 
     <!-- TAKE EVALUATION -->
     <bean class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="itemRenderer"
+            ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+        <property name="externalHierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="localResponsesLogic" ref="localResponsesLogic" />
+        <property name="messages" ref="targettedMessageList" />
+        <property name="locale" ref="requestLocale" />
+    </bean>
+    
+       <bean class="org.sakaiproject.evaluation.tool.producers.PreviewAssignedEvalProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"

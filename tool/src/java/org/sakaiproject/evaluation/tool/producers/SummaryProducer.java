@@ -257,6 +257,95 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		} else {
 		   UIMessage.make(tofill, "evaluationsNone", "summary.evaluations.none");
 		}
+		
+		
+		/*
+		 * for the instructor's view of responses submitted and assigned evaluations listing box
+		 */
+		Boolean showResponsesBox = (Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX);
+		boolean previewAssigned = false;
+		if(showResponsesBox != null && showResponsesBox == true) {
+			
+			List<EvalEvaluation> evals = evaluationSetupService.getEvaluationsForInstructor(currentUserId);
+			if (evals != null && !evals.isEmpty()) {
+				// build an array of evaluation ids
+				Long[] evalIds = new Long[evals.size()];
+				for (int i=0; i<evals.size(); i++) {
+					evalIds[i] = ((EvalEvaluation) evals.get(i)).getId();
+				}
+				Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
+				if (! evals.isEmpty()) {
+					UIBranchContainer evalResponsesBC = UIBranchContainer.make(tofill, "evalResponsesBox:");
+					
+					UIForm evalResponsesForm = UIForm.make(evalResponsesBC , "evalResponsesForm");
+					
+					UIMessage.make(evalResponsesForm, "evalresponses-header-title","summary.header.title");
+					UIMessage.make(evalResponsesForm, "evalresponses-header-status", "summary.header.status");
+					UIMessage.make(evalResponsesForm, "evalresponses-header-date", "summary.header.date");
+					UIMessage.make(evalResponsesForm, "evalresponses-header-responses", "summary.header.responses");
+					
+					for (Iterator<EvalEvaluation> iter = evals.iterator(); iter.hasNext();) {
+						EvalEvaluation eval = (EvalEvaluation) iter.next();
+						
+						if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState()) ||
+								EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState()) ||
+								EvalConstants.EVALUATION_STATE_ACTIVE.equals(eval.getState()) ||
+								EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(eval.getState())) {
+						    previewAssigned = true;
+							UIBranchContainer evalrow = UIBranchContainer.make(evalResponsesForm,
+									"evalResponsesList:", eval.getId().toString() );
+			
+							Date displayDate = null;
+							String evalState = evaluationService.updateEvaluationState(eval.getId());
+				            int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
+				            int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
+				            String responses = (new Integer(responsesCount)).toString() + " of " + (new Integer(enrollmentsCount)).toString();
+							
+				            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
+				               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_ACTIVE);
+				               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+				            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
+				               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+				               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+				            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
+				               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_CLOSED);
+				               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+				            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
+				               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+				               UIMessage.make(evalrow, "evalResponsesStatus", "summary.status." + evalState);
+				            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
+				               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+				            } else {
+				               displayDate = eval.getStartDate();
+				            }
+				            List<EvalGroup> groups = evalGroups.get(eval.getId());
+				            for(Iterator<EvalGroup> i = groups.iterator(); i.hasNext();) {
+				            	EvalGroup group = i.next();
+					            UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", 
+					                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
+					                     new EvalViewParameters(PreviewAssignedEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));//view params
+					            UIOutput.make(evalrow, "evalResponsesStatus", eval.getState());
+					            UIMessage.make(evalrow, "evalResponsesDateLabel", "summary.label." + evalState);
+					            UIOutput.make(evalrow, "evalResponsesDate", df.format(displayDate));
+					            UIOutput.make(evalrow, "evalResponsesDisplay", responses);
+				            }
+				            if(!previewAssigned) {
+				            	UIMessage.make(evalResponsesForm, "InstructorEvaluationsNone", "summary.be.evaluated.none");
+				            	//<p rsf:id="InstructorEvaluationsNone" class="instruction indnt2">There are no evaluations in which you may be evaluated</p>
+				            	//summary.be.evaluated.none=There are no evaluations in which you may be evaluated at present
+				            }
+				            else {
+								UIMessage.make(evalResponsesForm, "summary-responses-evaltitle","summary.responses.evaltitle");
+								UIMessage.make(evalResponsesForm, "summary-responses-state", "summary.responses.state");
+								UIMessage.make(evalResponsesForm, "summary-responses-date", "summary.responses.date");
+								UIMessage.make(evalResponsesForm, "summary-responses-responses", "summary.responses.responses");
+				            }
+						}
+					}
+				}
+			}
+			
+		}//instructor's view of responses submitted and assigned evaluations
 
 		/*
 		 * for the evaluations admin box

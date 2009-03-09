@@ -1023,15 +1023,19 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       // get all templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
       assertNotNull(l);
-      assertEquals(10, l.size());
+      assertEquals(11, l.size());
+      
+ 
 
       // get only default templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
       assertNotNull(l);
-      assertEquals(7, l.size());
+      assertEquals(8, l.size());
       for (EvalEmailTemplate emailTemplate : l) {
          assertNotNull(emailTemplate.getDefaultType());
       }
+      
+      
 
       // get only non-default templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, false);
@@ -1040,7 +1044,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       for (EvalEmailTemplate emailTemplate : l) {
          assertNull(emailTemplate.getDefaultType());
       }
-
+      
       // get specific type of template only
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, null);
       assertNotNull(l);
@@ -1048,18 +1052,19 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       for (EvalEmailTemplate emailTemplate : l) {
          assertEquals(EvalConstants.EMAIL_TEMPLATE_REMINDER, emailTemplate.getType());
       }
-
+    
       // should only get the default
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, true);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertNotNull(l.get(0).getDefaultType());
       assertEquals(EvalConstants.EMAIL_TEMPLATE_REMINDER, l.get(0).getType());
-
+     
       // should only get the non defaults
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, false);
       assertNotNull(l);
       assertEquals(2, l.size());
+     
 
       // TODO check permissions for non-admin
 

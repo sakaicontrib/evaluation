@@ -51,7 +51,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalItem</value>
                 <value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalLock</value>
-               <value>org.sakaiproject.evaluation.model.EvalQueuedEmail</value>
+                <value>org.sakaiproject.evaluation.model.EvalQueuedEmail</value>
                 <value>org.sakaiproject.evaluation.model.EvalResponse</value>
                 <value>org.sakaiproject.evaluation.model.EvalScale</value>
                 <value>org.sakaiproject.evaluation.model.EvalTags</value>

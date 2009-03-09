@@ -28,7 +28,6 @@ public class ImportBean {
 	
 	private static Log log = LogFactory.getLog(ImportBean.class);
 	
-	//injection
 	private EvalImportLogic evalImportLogic;
 	public void setEvalImportLogic(EvalImportLogic evalImportLogic) {
 		this.evalImportLogic = evalImportLogic;

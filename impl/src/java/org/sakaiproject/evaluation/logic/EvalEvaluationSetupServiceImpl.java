@@ -612,7 +612,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       return evaluation;
    }
-
    
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial) {
@@ -649,7 +648,28 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       return l;
    }
+   
 
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForInstructor(java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean)
+    */
+   public List<EvalEvaluation> getEvaluationsForInstructor(String userId) {
+	   List<EvalGroup> beEvaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+	   
+	   String[] evalGroupIds = new String[beEvaluatedGroups.size()];
+	   for (int i=0; i<beEvaluatedGroups.size(); i++) {
+		   EvalGroup c = (EvalGroup) beEvaluatedGroups.get(i);
+		   evalGroupIds[i] = c.evalGroupId;
+	   }
+	   
+	   // get the evaluations
+	   List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, null, true, null, 0, 0 );
+   
+   	return evals;
+   }
+
+   
 
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
@@ -1342,6 +1362,5 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
       }
    }
-
 
 }

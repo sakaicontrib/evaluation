@@ -376,7 +376,10 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		}
 		return "------";
 	}
-
+	
+	public String getEvalToolTitle() {
+		return "Evaluation System";
+	}
 
     public String getUserId(String username) {
         if ( EvalTestDataLoad.ADMIN_USER_NAME.equals(username) ) {

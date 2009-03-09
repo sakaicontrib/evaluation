@@ -399,8 +399,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return evals;
 
    }
-
-
+   
    /**
     * Get a set of evaluations based on the owner and their groups
     * 
@@ -973,56 +972,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return l.toArray(new Long[] {});
 	}
 	
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfItem(java.lang.Long)
-	 */
-	public List<Long> getIdsOfCopiesOfItem(Long itemId) {
-		String hqlQuery = "select item.id from EvalItem item where item.copyOf = " + itemId.toString() + " ";
-		List<Long> l = new ArrayList<Long>();
-		try {
-			l = getHibernateTemplate().find(hqlQuery);
-		} catch (DataAccessException e) {
-         // this may appear to be a swallowed error, but it is actually intended behavior
-         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
-		}
-		return l;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfTemplate(java.lang.Long)
-	 */
-	public List<Long> getIdsOfCopiesOfTemplate(Long templateId) {
-		String hqlQuery = "select template.id from EvalTemplate template where template.copyOf = " + templateId.toString() + " ";
-		List<Long> l = new ArrayList<Long>();
-		try {
-			l = getHibernateTemplate().find(hqlQuery);
-		} catch (DataAccessException e) {
-         // this may appear to be a swallowed error, but it is actually intended behavior
-         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
-      }
-      return l;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getIdsOfCopiesOfTemplateItem(java.lang.Long)
-	 */
-	public List<Long> getIdsOfCopiesOfTemplateItem(Long templateItemId) {
-		String hqlQuery = "select templateItem.id from EvalTemplateItem templateItem where templateItem.copyOf = " + templateItemId.toString() + " ";
-		List<Long> l = new ArrayList<Long>();
-		try {
-			l = getHibernateTemplate().find(hqlQuery);
-		} catch (DataAccessException e) {
-         // this may appear to be a swallowed error, but it is actually intended behavior
-         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
-		}
-		return l;
-	}
-
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isEvaluationWithState(java.lang.String)
@@ -1387,21 +1336,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    public boolean isUsedTemplate(Long templateId) {
       log.debug("templateId: " + templateId);
       String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + templateId + "'";
-      if (count(hqlQuery) > 0) {
-         // this is used by something
-         return true;
-      }
-      return false;
-   }
-   
-   /**
-    * TODO: is isUsedTemplate correct?
-    * @param templateId
-    * @return true if this template is used in any evalautions
-    */
-   public boolean isUsedTemplateCopyOf(Long templateId) {
-      log.debug("templateId: " + templateId);
-      String hqlQuery = "from EvalEvaluation as eval where eval.template.copyOf = '" + templateId + "'";
       if (count(hqlQuery) > 0) {
          // this is used by something
          return true;

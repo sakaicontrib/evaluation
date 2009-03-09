@@ -470,10 +470,17 @@ public interface EvalEvaluationService {
    /**
     * Get an email template for an eval by external id, will always return an email template
     * 
-    * @param eid the exteernal id of the email template
+    * @param eid the external id of the email template
     * @return the email template identified by this eid
     */
    public EvalEmailTemplate getEmailTemplateByEid(String eid);
+   
+   /**
+    * Get an email template for submission confirmation email
+    * 
+    * @return the email template identified by this eid
+    */
+   public EvalEmailTemplate getConfirmationEmailTemplate();
 
    /**
     * Get an email template by its unique id

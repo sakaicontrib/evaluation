@@ -153,6 +153,14 @@ public class EvalExternalLogicStubTest extends TestCase {
 		Assert.assertEquals(2, l.size());
 
 	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getToolTitle()}.
+	 */
+	public void testGetEvalToolTitle() {
+		String title = external.getEvalToolTitle();
+		Assert.assertNotNull(title);
+	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
