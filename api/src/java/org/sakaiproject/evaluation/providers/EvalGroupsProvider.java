@@ -51,15 +51,22 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 public interface EvalGroupsProvider {
 
 	/**
-	 * Permission: User can be evaluated for any eval group they have this permission in
+	 * Permission: User will be evaluated for any eval group they have this permission in,
+	 * they will appear in the listing as an instructor and will be able to view report results
 	 */
 	public final static String PERM_BE_EVALUATED = "provider.be.evaluated";
 	/**
 	 * Permission: User can take an evaluation for any eval group they have this permission in
 	 */
 	public final static String PERM_TAKE_EVALUATION = "provider.take.evaluation";
+    /**
+     * Permission: User can assign evaluations to any groups they have this permission in,
+     * it means they can see the groups in the listing when assigning the eval to users via groups
+     */
+    public final static String PERM_ASSIGN_EVALUATION = "provider.assign.eval";
 	/**
-	 * Permission: User is marked as a TA in a section/course
+	 * Permission: User is marked as a TA in a section/course and will be treated as such,
+	 * this is a special case permission
 	 * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
 	 */
 	public final static String PERM_TA_ROLE = "provider.role.ta";

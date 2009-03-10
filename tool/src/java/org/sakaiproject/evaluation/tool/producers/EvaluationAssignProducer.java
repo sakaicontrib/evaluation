@@ -192,7 +192,16 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
         Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
 
-        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+        // get the groups that this user is allowed to assign evals to
+        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_ASSIGN_EVALUATION);
+
+        // for backwards compatibility we will pull the list of groups the user is being evaluated in as well and merge it in
+        List<EvalGroup> beEvalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+        for (EvalGroup evalGroup : beEvalGroups) {
+            if (! evalGroups.contains(evalGroup)) {
+                evalGroups.add(evalGroup);
+            }
+        }
 
         if (evalGroups.size() > 0) {
             Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();

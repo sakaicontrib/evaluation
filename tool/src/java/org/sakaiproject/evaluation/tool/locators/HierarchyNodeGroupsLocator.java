@@ -59,6 +59,7 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
         
         Map<String, Boolean> togo = delivered.get(name);
         if (togo == null) {
+            // FIXME Should this really use the hardcoded "admin" user id?
             List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
             Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(name);
             Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();

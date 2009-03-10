@@ -604,7 +604,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
            userId = null;
        } else {
            if (showNotOwned) {
-               // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
+               // Get the list of all eval groups which the user has be-evaluated, not just the ones we own
                List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
                if (evaluatedGroups.size() > 0) {
                    evalGroupIds = new String[evaluatedGroups.size()];

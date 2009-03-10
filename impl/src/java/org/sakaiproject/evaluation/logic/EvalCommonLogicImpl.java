@@ -370,6 +370,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (evalGroupsProvider != null) {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
+                    || EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)
                     || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
                 List eg = evalGroupsProvider.getEvalGroupsForUser(userId, translatePermission(permission));

@@ -87,7 +87,8 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
-        List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
+        // NOTE was hardcoded admin user id, changed to currentUserId
+        List<EvalGroup> evalGroups = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 
         Collections.sort(evalGroups, new Comparator<EvalGroup>() {
             public int compare(final EvalGroup e1, final EvalGroup e2) {

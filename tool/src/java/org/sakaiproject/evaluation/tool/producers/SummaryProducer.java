@@ -412,16 +412,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title");
 
             UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated");
-            List<EvalGroup> evaluatedContexts = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
-            if (evaluatedContexts.size() > 0) {
-                for (int i = 0; i < evaluatedContexts.size(); i++) {
+            List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+            if (evaluatedGroups.size() > 0) {
+                for (int i = 0; i < evaluatedGroups.size(); i++) {
                     if (i > maxGroupsToDisplay) {
-                        UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluatedContexts.size()
+                        UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluatedGroups.size()
                                 - maxGroupsToDisplay) });
                         break;
                     }
                     UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i + "");
-                    EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
+                    EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
                     UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title);
                 }
             } else {
@@ -429,16 +429,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             }
 
             UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate");
-            List<EvalGroup> evaluateContexts = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
-            if (evaluateContexts.size() > 0) {
-                for (int i = 0; i < evaluateContexts.size(); i++) {
+            List<EvalGroup> evaluateGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
+            if (evaluateGroups.size() > 0) {
+                for (int i = 0; i < evaluateGroups.size(); i++) {
                     if (i > maxGroupsToDisplay) {
-                        UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluateContexts.size()
+                        UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluateGroups.size()
                                 - maxGroupsToDisplay) });
                         break;
                     }
                     UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i + "");
-                    EvalGroup c = (EvalGroup) evaluateContexts.get(i);
+                    EvalGroup c = (EvalGroup) evaluateGroups.get(i);
                     UIOutput.make(evaluateBC, "evaluateListTitle", c.title);
                 }
             } else {
