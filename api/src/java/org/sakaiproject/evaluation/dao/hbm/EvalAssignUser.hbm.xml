@@ -30,5 +30,15 @@
         <property name="status" type="java.lang.String" index="eval_asgnuser_status">
             <column name="ASSIGN_STATUS" not-null="true" length="255" />
         </property>
+        <!-- linking fields -->
+        <property name="assignHierarchyId" type="java.lang.Long">
+            <column name="ASSIGN_HIERARCHY_ID" />
+        </property>
+        <property name="assignGroupId" type="java.lang.Long">
+            <column name="ASSIGN_GROUP_ID" />
+        </property>
+        <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_USER_EVALUATION_FKC" lazy="proxy" fetch="select">
+            <column name="EVALUATION_FK" not-null="true"/>
+        </many-to-one>
     </class>
 </hibernate-mapping>
