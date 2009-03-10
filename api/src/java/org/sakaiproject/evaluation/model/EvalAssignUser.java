@@ -90,12 +90,12 @@ public class EvalAssignUser implements java.io.Serializable {
     protected String evalGroupId;
     /**
      * the type of the assignment, will be like instructor, TA, or student depending on how this
-     * assignment participates
+     * assignment participates, uses the constants {@link #TYPE_ASSISTANT}, {@link #TYPE_EVALUATEE}, {@link #TYPE_EVALUATOR}
      */
     protected String type;
     /**
      * the status of the assignment, active OR deleted for example, deleted assignments are ignored
-     * for all processing and only kept for records
+     * for all processing and only kept for records, uses the constants {@link #STATUS_LINKED}, {@link #STATUS_REMOVED}, {@link #STATUS_UNLINKED}
      */
     protected String status;
     /**
@@ -115,38 +115,41 @@ public class EvalAssignUser implements java.io.Serializable {
 
     /**
      * Minimal constructor, sets the type automatically to eval taker (student), 
-     * all records are created with a default status of active
+     * all records are created with a default status of active,
+     * makes the current user the owner
      * 
-     * @param owner the owner of this assignment
-     * @param userId the internal user id (not username)
-     * @param evalGroupId the group id of the associated group
+     * @param evaluation the evaluation to create the assignment for
+     * @param userId the user which is being assigned, should be the internal id (not the username)
+     * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
      */
-    public EvalAssignUser(String owner, String userId, String evalGroupId) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.owner = owner;
-        this.userId = userId;
-        this.evalGroupId = evalGroupId;
-        this.status = "active"; // TODO
+    public EvalAssignUser(EvalEvaluation evaluation, String userId, String evalGroupId) {
+        this(evaluation, userId, evalGroupId, null, null, null);
     }
 
     /**
      * Full constructor
-     * @param owner
-     * @param userId
-     * @param evalGroupId
-     * @param type
-     * @param status use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
+     * 
+     * @param evaluation the evaluation to create the assignment for
+     * @param userId the user which is being assigned, should be the internal id (not the username)
+     * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
+     * @param owner (OPTIONAL) will be assigned to the current user if not set
+     * @param type (OPTIONAL) use a constant like {@link #TYPE_EVALUATEE} or {@value #TYPE_EVALUATOR}
+     * @param status (OPTIONAL) use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
      */
-    public EvalAssignUser(String owner, String userId, String evalGroupId, String type, String status) {
+    public EvalAssignUser(EvalEvaluation evaluation, String userId, String evalGroupId, String owner, String type, String status) {
         super();
+        if (userId == null || "".equals(userId)
+                || evalGroupId == null || "".equals(evalGroupId)
+                || evaluation == null) {
+            throw new IllegalArgumentException("userId, evalGroupId, and evaluation all must be set and not null");
+        }
         if (this.lastModified == null) {
             this.lastModified = new Date();
         }
-        this.owner = owner;
         this.userId = userId;
         this.evalGroupId = evalGroupId;
+        this.evaluation = evaluation;
+        this.owner = owner;
         try {
             validateStatus(status);
         } catch (IllegalArgumentException e) {
@@ -182,6 +185,7 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setOwner(String owner) {
+        validateNotEmpty(owner, "owner");
         this.owner = owner;
     }
 
@@ -198,6 +202,7 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setUserId(String userId) {
+        validateNotEmpty(userId, "userId");
         this.userId = userId;
     }
 
@@ -206,7 +211,32 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setEvalGroupId(String evalGroupId) {
+        validateNotEmpty(evalGroupId, "evalGroupId");
         this.evalGroupId = evalGroupId;
+    }
+
+    public EvalEvaluation getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(EvalEvaluation evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public Long getAssignGroupId() {
+        return assignGroupId;
+    }
+
+    public void setAssignGroupId(Long assignGroupId) {
+        this.assignGroupId = assignGroupId;
+    }
+
+    public Long getAssignHierarchyId() {
+        return assignHierarchyId;
+    }
+
+    public void setAssignHierarchyId(Long assignHierarchyId) {
+        this.assignHierarchyId = assignHierarchyId;
     }
 
     public String getStatus() {
@@ -227,20 +257,23 @@ public class EvalAssignUser implements java.io.Serializable {
         this.type = type;
     }
 
+    // validation methods
+
+    public static void validateNotEmpty(String str, String name) {
+        if (str == null || "".equals(str)) {
+            throw new IllegalArgumentException(name + " cannot be null or empty string");
+        }
+    }
 
     public static void validateStatus(String status) {
-        if (status == null || "".equals(status)) {
-            throw new IllegalArgumentException("status cannot be null or empty string");
-        }
+        validateNotEmpty(status, "status");
         if (! STATUS_LINKED.equals(status) && ! STATUS_UNLINKED.equals(status) && ! STATUS_REMOVED.equals(status) ) {
             throw new IllegalArgumentException("status must match one of the STATUS constants in EvalAssignUser");
         }
     }
 
     public static void validateType(String type) {
-        if (type == null || "".equals(type)) {
-            throw new IllegalArgumentException("type cannot be null or empty string");
-        }
+        validateNotEmpty(type, "type");
         if (! TYPE_ASSISTANT.equals(type) && ! TYPE_EVALUATEE.equals(type) && ! TYPE_EVALUATOR.equals(type) ) {
             throw new IllegalArgumentException("type must match one of the TYPE constants in EvalAssignUser");
         }

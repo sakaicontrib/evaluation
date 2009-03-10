@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -227,7 +228,27 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return userIds;
     }
 
-    public int countParticipantsForEval(Long evaluationId) {
+    public EvalAssignUser getAssignUserByEid(String eid) {
+        EvalAssignUser eau = null;
+        if (eid != null) {
+            eau = dao.findOneBySearch(EvalAssignUser.class, new Search("eid", eid));
+        }
+        return eau;
+    }
+
+    public EvalAssignUser getAssignUserById(Long assignUserId) {
+        EvalAssignUser eau = (EvalAssignUser) dao.findById(EvalAssignUser.class, assignUserId);
+        return eau;
+    }
+
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String evalGroupId,
+            String typeConstant, String includeConstant) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not Implemented Yet");
+    }
+
+    public int countParticipantsForEval(Long evaluationId, String evalGroupId) {
+        // TODO handle the evalGroupId
         int totalEnrollments = 0;
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         if (! EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
@@ -236,8 +257,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
             for (int i=0; i<groups.size(); i++) {
                 EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
-                String evalGroupId = eac.getEvalGroupId();
-                int enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+                String egid = eac.getEvalGroupId();
+                int enrollmentCount = commonLogic.countUserIdsForEvalGroup(egid, EvalConstants.PERM_TAKE_EVALUATION);
                 totalEnrollments = totalEnrollments + enrollmentCount;
             }
         }

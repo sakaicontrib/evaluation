@@ -576,7 +576,7 @@ public class EvalUtils {
      * used for getting the response rate of an <em>active</em> or <em>closed</em> evaluation. This includes
      * the percentage. The string will typically look something like 11% ( 3 / 98 )<br/>
      * Get the counts from {@link EvalDeliveryService#countResponses(Long, String, Boolean)} and
-     * {@link EvalEvaluationService#countParticipantsForEval(Long)}
+     * {@link EvalEvaluationService#countParticipantsForEval(Long, String)}
      * 
      * @param responsesCount number of responses
      * @param enrollmentsCount number of total enrollments or 0 if unknown

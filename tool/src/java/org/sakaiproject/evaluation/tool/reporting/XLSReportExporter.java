@@ -106,7 +106,7 @@ public class XLSReportExporter implements ReportExporter {
 
       // calculate the response rate
       int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-      int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+      int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
 
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
