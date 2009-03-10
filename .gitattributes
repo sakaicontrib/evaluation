@@ -70,6 +70,7 @@ api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=D
 api/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalAssignUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalConfig.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalEmailTemplate.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalEvaluation.java -text svn_keywords=Date+Revision+Author+URL+Id

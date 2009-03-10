@@ -13,6 +13,7 @@
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignUser.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
@@ -43,6 +44,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalAnswer</value>
                 <value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
+                <value>org.sakaiproject.evaluation.model.EvalAssignUser</value>
                 <value>org.sakaiproject.evaluation.model.EvalConfig</value>
                 <value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
                 <value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
