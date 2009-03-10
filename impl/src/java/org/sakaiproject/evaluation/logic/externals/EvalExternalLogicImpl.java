@@ -822,6 +822,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          return EvalGroupsProvider.PERM_TAKE_EVALUATION;
       } else if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
          return EvalGroupsProvider.PERM_BE_EVALUATED;
+      } else if (EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)) {
+          return EvalGroupsProvider.PERM_ASSIGN_EVALUATION;
+      } else if (EvalConstants.PERM_TA_ROLE.equals(permission)) {
+          return EvalGroupsProvider.PERM_TA_ROLE;
       }
       return "UNKNOWN";
    }

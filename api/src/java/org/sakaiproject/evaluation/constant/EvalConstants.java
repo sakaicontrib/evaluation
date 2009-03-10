@@ -237,11 +237,14 @@ public class EvalConstants {
      */
     public final static String PERM_WRITE_TEMPLATE = "eval.write.template";
     /**
-     * Permission: User can create, update, delete evaluations for any evalGroupId they have this permission in
+     * Permission: User can assign evaluations to any groups they have this permission in,
+     * it means they can see the groups in the listing when assigning the eval to users via groups<br/>
+     * NOTE: users cannot create evals unless they have this permission in at least one site
      */
     public final static String PERM_ASSIGN_EVALUATION = "eval.assign.evaluation";
     /**
-     * Permission: User can be evaluated for any group they have this permission in
+     * Permission: User can be evaluated for any group they have this permission in,
+     * NOTE: this used to be combined with {@link #PERM_EVALUATE_GROUP}
      */
     public final static String PERM_BE_EVALUATED = "eval.be.evaluated";
     /**
@@ -249,7 +252,9 @@ public class EvalConstants {
      */
     public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
     /**
-     * Permission: User is marked as a TA in a section/course
+     * SPECIAL CASE
+     * Permission: User is marked as a TA in a section/course,
+     * this is using the permission which was defined by the Sakai sections stuff
      * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
      */
     public final static String PERM_TA_ROLE = "section.role.ta";
