@@ -300,7 +300,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             // calculate the response rate
             int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
             UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", 
                   new Object[] { responseString } );
@@ -358,7 +358,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             // calculate the response rate
             int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
             UIOutput.make(evaluationRow, "closed-eval-response-rate", responseString );

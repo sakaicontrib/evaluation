@@ -88,7 +88,7 @@ public class PDFReportExporter implements ReportExporter {
 
         // calculate the response rate
         int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
 
         String groupNames = responseAggregator.getCommaSeparatedGroupNames(groupIds);
 

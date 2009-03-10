@@ -367,7 +367,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                     UIOutput.make(evalrow, "evalAdminDate", df.format(evalViewableOn(eval)));
 
                     int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
-                    int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
+                    int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), null);
                     int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                     if (responsesNeeded == 0) {
                         UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), new ReportParameters(

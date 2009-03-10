@@ -376,14 +376,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       int count = 0;
 
       // check active returns all enrollments count
-      count = evaluationService.countParticipantsForEval(etdl.evaluationClosed.getId());
+      count = evaluationService.countParticipantsForEval(etdl.evaluationClosed.getId(), null);
       assertEquals(3, count);
 
-      count = evaluationService.countParticipantsForEval(etdl.evaluationActive.getId());
+      count = evaluationService.countParticipantsForEval(etdl.evaluationActive.getId(), null);
       assertEquals(1, count);
 
       // check anon returns 0
-      count = evaluationService.countParticipantsForEval(etdl.evaluationActiveUntaken.getId());
+      count = evaluationService.countParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null);
       assertEquals(0, count);
    }
 
