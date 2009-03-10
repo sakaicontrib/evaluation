@@ -24,11 +24,19 @@ import java.util.Date;
 public class EvalAssignUser implements java.io.Serializable {
 
     /**
-     * STATUS: indicates the assignment is active and in use, this is the default state
+     * STATUS: indicates the assignment is active and in use and should be synchronized if the related
+     * assign groups/hierarchy nodes change, all assignments related to groups are created in this state, 
+     * this is the default state
      */
-    public static String STATUS_ACTIVE = "active";
+    public static String STATUS_LINKED = "linked";
     /**
-     * STATUS: indicates the assignment is removed and no longer will be used or considered
+     * STATUS: indicates the assignment was changed and should no longer be synchronized,
+     * all "adhoc" assignments should be created in this state
+     */
+    public static String STATUS_UNLINKED = "unlinked";
+    /**
+     * STATUS: indicates the assignment is removed and no longer will be used or considered,
+     * no synchronization happens when this is the state 
      */
     public static String STATUS_REMOVED = "removed";
 
@@ -68,6 +76,11 @@ public class EvalAssignUser implements java.io.Serializable {
      */
     protected String owner;
     /**
+     * The evaluation that this user is assigned to
+     * (just access evaluation.id to avoid lazy loading the entire evaluation)
+     */
+    protected EvalEvaluation evaluation;
+    /**
      * The internal user id of the user belonging to this assignment record
      */
     protected String userId;
@@ -85,6 +98,14 @@ public class EvalAssignUser implements java.io.Serializable {
      * for all processing and only kept for records
      */
     protected String status;
+    /**
+     * This will be non-null if this assignment is linked to a group, it will be the id of the {@link EvalAssignGroup}
+     */
+    protected Long assignGroupId;
+    /**
+     * This will be non-null if this assignment is linked to a hierarchy node, it will be the id of the {@link EvalAssignHierarchy}
+     */
+    protected Long assignHierarchyId;
 
     // Constructors
 
@@ -116,7 +137,7 @@ public class EvalAssignUser implements java.io.Serializable {
      * @param userId
      * @param evalGroupId
      * @param type
-     * @param status use a constant {@link #STATUS_ACTIVE} or {@link #STATUS_REMOVED}
+     * @param status use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
      */
     public EvalAssignUser(String owner, String userId, String evalGroupId, String type, String status) {
         super();
@@ -129,7 +150,7 @@ public class EvalAssignUser implements java.io.Serializable {
         try {
             validateStatus(status);
         } catch (IllegalArgumentException e) {
-            type = STATUS_ACTIVE;
+            type = STATUS_LINKED;
         }
         this.status = status;
         try {
@@ -211,7 +232,7 @@ public class EvalAssignUser implements java.io.Serializable {
         if (status == null || "".equals(status)) {
             throw new IllegalArgumentException("status cannot be null or empty string");
         }
-        if (! STATUS_ACTIVE.equals(status) && ! STATUS_REMOVED.equals(status) ) {
+        if (! STATUS_LINKED.equals(status) && ! STATUS_UNLINKED.equals(status) && ! STATUS_REMOVED.equals(status) ) {
             throw new IllegalArgumentException("status must match one of the STATUS constants in EvalAssignUser");
         }
     }
