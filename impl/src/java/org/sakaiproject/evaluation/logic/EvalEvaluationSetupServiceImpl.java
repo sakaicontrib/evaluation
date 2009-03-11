@@ -726,6 +726,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
 
+    // USER ASSIGNMENTS
 
     public void deleteUserAssignments(Long... userAssignmentIds) {
         // TODO Auto-generated method stub

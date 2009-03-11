@@ -224,7 +224,7 @@ public interface EvalEvaluationService {
      * leave this null to include takers from the entire evaluation
      * @param includeConstant a constant to indicate what users should be retrieved, EVAL_INCLUDE_* from {@link EvalConstants}
      * @return a set of userIds (internal IDs)
-     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String)} instead
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String)}
      */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId, String includeConstant);
 
