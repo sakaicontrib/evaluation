@@ -201,6 +201,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return trueState;
     }
 
+
+    // USER ASSIGNMENTS
+
+
+    /**
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String)}
+     */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId,
             String includeConstant) {
         EvalUtils.validateEmailIncludeConstant(includeConstant);
