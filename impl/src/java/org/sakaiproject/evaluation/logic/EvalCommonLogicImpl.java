@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogicImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -344,7 +345,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-                count += evalGroupsProvider.countEvalGroupsForUser(userId, translatePermission(permission));
+                count += evalGroupsProvider.countEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
             }
         }
 
@@ -373,7 +374,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                     || EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)
                     || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-                List eg = evalGroupsProvider.getEvalGroupsForUser(userId, translatePermission(permission));
+                List eg = evalGroupsProvider.getEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
                 for (Iterator iter = eg.iterator(); iter.hasNext();) {
                     EvalGroup c = (EvalGroup) iter.next();
                     c.type = EvalConstants.GROUP_TYPE_PROVIDED;
@@ -436,7 +437,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                         || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                         || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
                     log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
-                    userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission)) );
+                    userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, 
+                            EvalExternalLogicImpl.translatePermission(permission)) );
                 }
             }
         }
@@ -473,7 +475,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", evalGroupId: " + evalGroupId);
-                if ( evalGroupsProvider.isUserAllowedInGroup(userId, translatePermission(permission), evalGroupId) ) {
+                if ( evalGroupsProvider.isUserAllowedInGroup(userId, EvalExternalLogicImpl.translatePermission(permission), evalGroupId) ) {
                     return true;
                 }
             }
@@ -624,21 +626,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
 
     // protected internal
-
-    /**
-     * Simple method to translate one constant into another
-     * (this allows the provider to have no dependency on the model)
-     * @param permission a PERM constant from {@link EvalConstants}
-     * @return the translated constant from {@link EvalGroupsProvider}
-     */
-    protected String translatePermission(String permission) {
-        if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
-            return EvalGroupsProvider.PERM_TAKE_EVALUATION;
-        } else if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
-            return EvalGroupsProvider.PERM_BE_EVALUATED;
-        }
-        return "UNKNOWN";
-    }
 
     /**
      * @param text string to make MD5 hash from
