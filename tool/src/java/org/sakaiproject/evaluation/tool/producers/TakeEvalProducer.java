@@ -375,7 +375,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // add in the TA list if there are any TAs
                 Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
                 if (taEnabled.booleanValue()) {
-                    Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TA_ROLE);
+                    Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
                     if (teachingAssistants.size() > 0) {
                         associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
                     }

@@ -377,6 +377,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             evaluation.setBlankResponsesAllowed( systemBlankResponses );
         }
 
+        Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        if (enableSelection) {
+            // if not set then inherit from the eval
+            if (evaluation.getInstructorSelection() == null || "".equals(evaluation.getInstructorSelection())) {
+                evaluation.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
+            }
+            if (evaluation.getAssistantSelection() == null || "".equals(evaluation.getAssistantSelection())) {
+                evaluation.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
+            }
+        } else {
+            // set to defaults
+            evaluation.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
+            evaluation.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
+        }
+
         // TODO - disabled for now
         //      String systemInstructorOpt = (String) settings.get( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE );
         //      if ( systemInstructorOpt == null ) {
@@ -1258,6 +1273,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         //            }
         //         }
         //      }
+        // selections
+        Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        if (enableSelection) {
+            // if not set then inherit from the eval
+            if (eah.getInstructorSelection() == null || "".equals(eah.getInstructorSelection())) {
+                eah.setInstructorSelection(eval.getInstructorSelection());
+            }
+            if (eah.getAssistantSelection() == null) {
+                eah.setAssistantSelection(eval.getAssistantSelection());
+            }
+        } else {
+            // set to defaults
+            eah.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
+            eah.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
+        }
     }
 
 

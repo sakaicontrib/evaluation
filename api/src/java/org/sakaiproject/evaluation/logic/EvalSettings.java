@@ -312,6 +312,11 @@ public interface EvalSettings {
      */
     public static final String EVALUATION_TIME_TO_WAIT_SECS = "EVALUATION_TIME_TO_WAIT_SECS:java.lang.Integer";
     
+    /**
+     * If this is enabled then users will be able to see and choose the instructor and assistant selection
+     * choices in the eval settings and eval assign views, otherwise the default is used
+     */
+    public static final String ENABLE_INSTRUCTOR_ASSISTANT_SELECTION = "ENABLE_INSTRUCTOR_ASSISTANT_SELECTION:java.lang.Boolean";
 
 
     /**
@@ -334,6 +339,7 @@ public interface EvalSettings {
         ENABLE_EVAL_REOPEN,
         ENABLE_EVAL_RESPONSE_REMOVAL,
         ENABLE_IMPORTING,
+        ENABLE_INSTRUCTOR_ASSISTANT_SELECTION,
         ENABLE_ITEM_COMMENTS,
         ENABLE_LIST_OF_TAKERS_EXPORT,
         ENABLE_NOT_AVAILABLE,
