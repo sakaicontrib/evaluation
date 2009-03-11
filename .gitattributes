@@ -194,6 +194,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text svn_keyw
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en_GB.properties -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_pt_BR.properties -text
+tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_ru.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn_keywords=Date+Revision+Author+URL+Id
