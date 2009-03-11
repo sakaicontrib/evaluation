@@ -548,7 +548,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             viewDate = dueDate;
         }
         replacementValues.put("EvalResultsDate", viewDate);
-        replacementValues.put("EvalGroupTitle", group.title);
+        // https://bugs.caret.cam.ac.uk/browse/CTL-1505 - no titles for empty or adhoc groups
+        if (group == null || group.title == null || EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
+            replacementValues.put("EvalGroupTitle", "");
+        } else if (EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
+            replacementValues.put("EvalGroupTitle", "Adhoc Group");
+        } else {
+            replacementValues.put("EvalGroupTitle", group.title);
+        }
 
         // ensure that the if-then variables are set to false if they are unset
         if (! replacementValues.containsKey("ShowAddItemsText")) {
