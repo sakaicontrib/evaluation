@@ -71,7 +71,7 @@ public class TakeEvalBean {
          } else {
              messageKey = "takeeval.user.cannot.save.reponse";
          }
-         messages.addMessage( new TargettedMessage(messageKey, e) );
+         messages.addMessage( new TargettedMessage(messageKey) );
          return "failure";
       }
       messages.addMessage( new TargettedMessage("evaluations.take.message",
