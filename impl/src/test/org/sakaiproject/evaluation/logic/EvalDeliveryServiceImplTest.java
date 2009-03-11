@@ -94,7 +94,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
             false, null, 
             EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
             etdl.templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
-            EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
       evaluationDao.save(evaluationClosedTwo);
 
       // Evaluation Active (ends today), viewable tomorrow
@@ -104,7 +104,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
             false, null, 
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null,
             etdl.templateUnused, null, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
-            Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
       evaluationDao.save(evaluationActiveTwo);
 
       EvalAssignGroup assign1 = new EvalAssignGroup( EvalTestDataLoad.MAINT_USER_ID, 

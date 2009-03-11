@@ -111,7 +111,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
             false, null, 
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
             etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
-            EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
       evaluationDao.save( evalUnLocked );
 
    }
@@ -1314,7 +1314,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
                      false, null, 
                      EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
                      etdl.templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
-                     EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null),
+                     EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null),
                true
          );
          fail("Should have thrown an exception");

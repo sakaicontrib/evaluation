@@ -343,7 +343,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (evalGroupsProvider != null) {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
-                    || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
+                    || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
                 count += evalGroupsProvider.countEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
             }
@@ -372,7 +372,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)
-                    || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
+                    || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
                 List eg = evalGroupsProvider.getEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
                 for (Iterator iter = eg.iterator(); iter.hasNext();) {
@@ -435,7 +435,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             if (evalGroupsProvider != null) {
                 if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                         || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
-                        || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
+                        || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
                     log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
                     userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, 
                             EvalExternalLogicImpl.translatePermission(permission)) );
@@ -473,7 +473,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (evalGroupsProvider != null) {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
-                    || EvalConstants.PERM_TA_ROLE.equals(permission) ) {
+                    || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
                 log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", evalGroupId: " + evalGroupId);
                 if ( evalGroupsProvider.isUserAllowedInGroup(userId, EvalExternalLogicImpl.translatePermission(permission), evalGroupId) ) {
                     return true;

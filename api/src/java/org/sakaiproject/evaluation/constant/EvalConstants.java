@@ -253,11 +253,11 @@ public class EvalConstants {
     public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
     /**
      * SPECIAL CASE
-     * Permission: User is marked as a TA in a section/course,
+     * Permission: User is marked as an assistant in a section/course/group,
      * this is using the permission which was defined by the Sakai sections stuff
      * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
      */
-    public final static String PERM_TA_ROLE = "section.role.ta";
+    public final static String PERM_ASSISTANT_ROLE = "section.role.ta";
 
 
     /**

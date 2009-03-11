@@ -653,7 +653,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          } catch (AddressException e) {
             if (deferExceptions) {
                exceptionTracker += e.getMessage() + " :: ";
-               log.error("Invalid to address: " + email + ", skipping...", e);
+               log.error("Invalid to address: " + email + ", skipping..." + e);
                continue;
             } else {
                // die here since we were unable to find this user at all
@@ -824,7 +824,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          return EvalGroupsProvider.PERM_BE_EVALUATED;
       } else if (EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)) {
           return EvalGroupsProvider.PERM_ASSIGN_EVALUATION;
-      } else if (EvalConstants.PERM_TA_ROLE.equals(permission)) {
+      } else if (EvalConstants.PERM_ASSISTANT_ROLE.equals(permission)) {
           return EvalGroupsProvider.PERM_TA_ROLE;
       }
       return "UNKNOWN";
