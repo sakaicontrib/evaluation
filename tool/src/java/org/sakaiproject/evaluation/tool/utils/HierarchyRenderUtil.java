@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -143,6 +142,7 @@ public class HierarchyRenderUtil {
         // Node Metadata
         UIOutput.make(tableRow, "node-metadata-cell");
         UIInput.make(tableRow, "node-id-input", null, node.id);
+/** http://jira.sakaiproject.org/jira/browse/EVALSYS-631
         if (node.parentNodeIds.size() > 0) {
             // TODO In the future there might be multiple parents...
             for (Iterator<String> itr = node.parentNodeIds.iterator(); itr.hasNext();) {
@@ -151,6 +151,8 @@ public class HierarchyRenderUtil {
         } else {
             UIInput.make(tableRow, "parant-id-input", null, "NO_PARENT");
         }
+**/
+
         // not rendering the node-select cell right now
         //UIOutput.make(tableRow, "node-select-cell");
 
