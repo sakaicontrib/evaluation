@@ -247,7 +247,7 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 	float: left;
 	padding-left: 1em
 }
-.scaleTitleLine .itemAction{ text-align: right; float: right; padding: 0 }
+.scaleTitleLine .itemAction{ text-align: right; padding: 0 }
 .idealScalePoint{ clear: both; padding: 0; text-align: right }
 /*PART 4 end*/
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
