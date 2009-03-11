@@ -1,5 +1,5 @@
 * text=auto !eol
-/ svnc_bugtraq_003awarnifnoissue=true svnc_bugtraq_003aurl svnc_bugtraq_003anumber=false svnc_bugtraq_003amessage svnc_bugtraq_003alabel=JIRA+Issue+Key svnc_bugtraq_003aappend=false
+/ svnc_bugtraq_003anumber=false svnc_bugtraq_003amessage
 /.classpath -text svn_keywords=Date+Revision+Author+URL+Id
 /.project -text svn_keywords=Date+Revision+Author+URL+Id
 /.springBeans -text
