@@ -174,60 +174,65 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         List<EvalTemplateItem> allItems = 
             authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
 
-        // Get the sorted list of all nodes for this set of template items
-        List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
-
-        // make the TI data structure
-        Map<String, List<String>> associates = new HashMap<String, List<String>>();
-        associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-
-        // add in the TA list if it is enabled
-        Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
-        if (taEnabled.booleanValue()) {
-            List<String> teachingAssistants = new ArrayList<String>();
-            instructors.add("fake1");
-            instructors.add("fake2");
-            associates.put(EvalConstants.ITEM_CATEGORY_TA, teachingAssistants);
-        }
-
-        TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
-
-        // loop through the TIGs and handle each associated category
-        for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-            UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
-            // handle printing the category header
-            if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
-                UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
-            } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                String instructorName = tig.associateId.equals("fake2") ? "Steven Githens" : "Aaron Zeckoski";
-                UIMessage.make(categorySectionBranch, "categoryHeader", 
-                        "takeeval.instructor.questions.header", new Object[] { instructorName });
-            } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
-                String instructorName = tig.associateId.equals("fake2") ? "Andy Thornton" : "Antranig Basman";
-                UIMessage.make(categorySectionBranch, "categoryHeader", 
-                        "takeeval.ta.questions.header", new Object[] { instructorName });
+        if (allItems.isEmpty()) {
+            // this is an empty template so just display some ugly message
+            UIMessage.make(tofill, "noItemsToShow", "no.list.items");   
+        } else {
+            // Get the sorted list of all nodes for this set of template items
+            List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
+    
+            // make the TI data structure
+            Map<String, List<String>> associates = new HashMap<String, List<String>>();
+            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
+    
+            // add in the TA list if it is enabled
+            Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
+            if (taEnabled.booleanValue()) {
+                List<String> teachingAssistants = new ArrayList<String>();
+                instructors.add("fake1");
+                instructors.add("fake2");
+                associates.put(EvalConstants.ITEM_CATEGORY_TA, teachingAssistants);
             }
-
-            // loop through the hierarchy node groups
-            for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
-                // render a node title
-                if (hng.node != null) {
-                    // Showing the section title is system configurable via the administrate view
-                    Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
-                    if (showHierSectionTitle) {
-                        UIBranchContainer nodeTitleBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:nodeSection");
-                        UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
-                    }
+    
+            TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+    
+            // loop through the TIGs and handle each associated category
+            for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+                UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
+                // handle printing the category header
+                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
+                    UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
+                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+                    String instructorName = tig.associateId.equals("fake2") ? "Steven Githens" : "Aaron Zeckoski";
+                    UIMessage.make(categorySectionBranch, "categoryHeader", 
+                            "takeeval.instructor.questions.header", new Object[] { instructorName });
+                } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                    String instructorName = tig.associateId.equals("fake2") ? "Andy Thornton" : "Antranig Basman";
+                    UIMessage.make(categorySectionBranch, "categoryHeader", 
+                            "takeeval.ta.questions.header", new Object[] { instructorName });
                 }
-
-                List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
-                for (int i = 0; i < dtis.size(); i++) {
-                    DataTemplateItem dti = dtis.get(i);
-                    UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
-                    if (i % 2 == 1) {
-                        nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+    
+                // loop through the hierarchy node groups
+                for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
+                    // render a node title
+                    if (hng.node != null) {
+                        // Showing the section title is system configurable via the administrate view
+                        Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+                        if (showHierSectionTitle) {
+                            UIBranchContainer nodeTitleBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:nodeSection");
+                            UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
+                        }
                     }
-                    renderItemPrep(nodeItemsBranch, dti, eval);
+    
+                    List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
+                    for (int i = 0; i < dtis.size(); i++) {
+                        DataTemplateItem dti = dtis.get(i);
+                        UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
+                        if (i % 2 == 1) {
+                            nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                        }
+                        renderItemPrep(nodeItemsBranch, dti, eval);
+                    }
                 }
             }
         }
