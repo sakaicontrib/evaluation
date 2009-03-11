@@ -20,6 +20,7 @@ $(document).ready(function() {
 	$.facebox.setHeader($(".portletBody .titleHeader"));
 	if($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1){
 		$('.act .submit').bind('click',function(){
+            // put validation check here
 			submitForm('#item-form', 'item-text', 'modify_item', $(this));
 		});
 	}else{
