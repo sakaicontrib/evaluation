@@ -189,16 +189,19 @@ public interface EvalEvaluationService {
      * <br/> Uses the current user for permissions checks
      * 
      * @param evaluationId the unique id of an {@link EvalEvaluation} object
-     * @param evalGroupId (OPTIONAL) the internal unique ID for an evalGroup,
+     * @param evalGroupId (OPTIONAL) the internal unique ID for an evalGroup to limit participants returned,
      * leave this null to include participants from the entire evaluation
-     * @param typeConstant (OPTIONAL) a constant to indicate which types of assignment participants to include,
+     * @param assignTypeConstant (OPTIONAL) a constant to indicate which types of assignment participants to include,
      * use the TYPE_* constants from {@link EvalAssignUser}, default is to include all types of assignments
+     * @param assignStatusConstant (OPTIONAL) a constant to indicate which status of assignment participants to include,
+     * use the STATUS_* constants from {@link EvalAssignUser}, 
+     * default is to include {@link EvalAssignUser#STATUS_LINKED} and {@link EvalAssignUser#STATUS_UNLINKED}
      * @param includeConstant (OPTIONAL) a constant to indicate what users should be retrieved, 
      * EVAL_INCLUDE_* from {@link EvalConstants}, default is {@link EvalConstants#EVAL_INCLUDE_ALL} if left null,
      * NOTE that this will filter users to evaluators automatically
      * @return the list of user assignments ({@link EvalAssignUser} objects)
      */
-    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String evalGroupId, String typeConstant, String includeConstant);
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String evalGroupId, String assignTypeConstant, String assignStatusConstant, String includeConstant);
 
     /**
      * Gets the total count of participants for an evaluation <br/>

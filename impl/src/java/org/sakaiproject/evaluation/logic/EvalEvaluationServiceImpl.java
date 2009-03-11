@@ -242,7 +242,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     }
 
     public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String evalGroupId,
-            String typeConstant, String includeConstant) {
+            String assignTypeConstant, String assignStatusConstant, String includeConstant) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Implemented Yet");
     }

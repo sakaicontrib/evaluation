@@ -817,7 +817,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * @param permission a PERM constant from {@link EvalConstants}
     * @return the translated constant from {@link EvalGroupsProvider}
     */
-   protected String translatePermission(String permission) {
+   public static String translatePermission(String permission) {
       if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
          return EvalGroupsProvider.PERM_TAKE_EVALUATION;
       } else if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
