@@ -191,9 +191,8 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 			}
 		}
 
-		// create the cancel link
-		UIInternalLink.make(tofill, "cancel-expert-items", UIMessage.make("expert.items.cancel"), 
-				new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+		// create the cancel button
+		UIMessage.make(tofill, "cancel-button", "expert.items.cancel");
 
 		// create the Insert Items button
 		UICommand addItemsCommand = UICommand.make(form, "insert-items-command", UIMessage.make("expert.items.insert"), //$NON-NLS-1$
