@@ -248,6 +248,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             groupableItems.push(object);
         }
     });
+    updateControlItemsTotal();
 });
 
 (function($) {
@@ -435,6 +436,23 @@ var options_choose_existing_items_html_search = {
         $("a[rel*=facebox]").facebox();
     }
 };
+
+//Update the Control Items total in dom
+function updateControlItemsTotal(){
+    var tNum = $('#itemList > div.itemRow:visible').get().length;
+    $('[id=level-header-number]').text(tNum);
+    var takeEvalLink = '<a title="'+$('[id=begin_eval_link]').text()+'" href="evaluation_create?reOpening=false&amp;templateId='+$('input[name*=templateId]').val()+'">'+$('[id=begin_eval_link]').text()+'</a>';
+    if(tNum==0){
+        $('[id=begin_eval_link]').replaceWith('<span id="begin_eval_link">'+$('[id=begin_eval_link]').text()+'</sapn>');
+    } else{
+        $('span[@id=begin_eval_link]').each(function(){
+            console.log(this.tagName.toLowerCase());
+           if(this.tagName.toLowerCase() == 'span'){
+               $('[id=begin_eval_link]').replaceWith(takeEvalLink);
+           }
+        });
+    }
+}
 
 
 /* Script adapted from: www.jtricks.com
@@ -683,13 +701,14 @@ var options_choose_existing_items_html_search = {
             $(that).parent().parent().effect('highlight', {}, 1000).fadeOut(500, function() {
                 $(document).trigger('block.triggerChildrenSort', [$(this)]);
                 $(this).remove();
+                updateControlItemsTotal();
             });
             return false;
-            //do more stuff here
         }
         if (options.ref == 'eval-templateitem') {
             $(that).parent().parent().parent().parent().effect('highlight', {}, 1000).fadeOut(500, function() {
                 $(this).remove();
+                updateControlItemsTotal();
                 var list = $("#itemList > div").get();
                 for (var i = 0; i < list.length; i++) {
                     if (list[i].id) {

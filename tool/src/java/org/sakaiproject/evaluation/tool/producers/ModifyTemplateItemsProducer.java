@@ -242,8 +242,10 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
       // TODO - this should be the actual level and not some made up string
       String currentLevel = "Current";
-      UIMessage.make(tofill, "level-header", "modifytemplate.level.header", 
-            new String[] {currentLevel, new Integer(templateItemsList.size()).toString(), });			
+      UIMessage.make(tofill, "level-header-level", "modifytemplate.level.header.level", 
+              new String[] {currentLevel});			
+      UIOutput.make(tofill, "level-header-number", new Integer(templateItemsList.size()).toString() );			
+      UIMessage.make(tofill, "level-header-items", "modifytemplate.level.header.items");			
 
       UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header");
       UIOutput.make(tofill, "title", template.getTitle());
