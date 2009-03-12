@@ -121,8 +121,7 @@ function startSort() {
                     } else {
 
                         var confirmMsg = '\
-                                          <div> Are you sure? \
-			                </div> \
+                                         <div class="" style="font-weight: bold;">Are you sure?</div><br />\
 			                <div class="footer"> \
 			                  <input type="button" name="blockChildConfirm" msg="yes" accesskey="s" value="Yes"/>  |  \
 			                  <a href="#" name="blockChildConfirm" msg="no">Cancel</a>  \
