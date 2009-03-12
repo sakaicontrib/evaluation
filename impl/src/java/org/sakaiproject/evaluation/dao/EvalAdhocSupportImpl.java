@@ -26,6 +26,9 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.genericdao.api.search.Order;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 
 
 /**
@@ -79,13 +82,11 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @param username the unique login name
     * @return the adhoc user or null if not found
     */
-   @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByUsername(String username) {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
-         List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
-               new String[] {"username"}, 
-               new Object[] {username});
+         List<EvalAdhocUser> users = dao.findBySearch(EvalAdhocUser.class,
+                 new Search("username", username) );
          if (users.size() > 0) {
             user = users.get(0);
          }
@@ -99,13 +100,11 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @param email the unique email address
     * @return the adhoc user or null if not found
     */
-   @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByEmail(String email) {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
-         List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
-               new String[] {"email"}, 
-               new Object[] {email});
+         List<EvalAdhocUser> users = dao.findBySearch(EvalAdhocUser.class, 
+                 new Search("email", email) );
          if (users.size() > 0) {
             user = users.get(0);
          }
@@ -149,7 +148,6 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * empty set return no users, null returns all users
     * @return a list of adhoc users which match the ids
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids) {
       List<EvalAdhocUser> users = new ArrayList<EvalAdhocUser>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
@@ -157,9 +155,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
             users = dao.findAll(EvalAdhocUser.class);
          } else {
             if (ids.length > 0) {
-               users = dao.findByProperties(EvalAdhocUser.class, 
-                     new String[] {"id"}, 
-                     new Object[] {ids});
+               users = dao.findBySearch(EvalAdhocUser.class, new Search("id", ids) );
             }
          }
       }
@@ -300,15 +296,12 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @param userId internal user id (not username)
     * @return the list of all adhoc groups that this user owns
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
       List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
-         groups = dao.findByProperties(EvalAdhocGroup.class, 
-               new String[] {"owner"}, 
-               new Object[] {userId},
-               new int[] {EvaluationDao.EQUALS},
-               new String[] {"title"});
+         groups = dao.findBySearch(EvalAdhocGroup.class, new Search(
+                 new Restriction("owner", userId), 
+                 new Order("title") ) );
       }
       return groups;
    }
