@@ -164,9 +164,8 @@ public class ExpertCategoryProducer implements ViewComponentProducer, ViewParams
          }
       }
 
-      // create the cancel link
-      UIInternalLink.make(tofill, "cancel-expert-items", UIMessage.make("expert.items.cancel"), 
-            new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+      // create the cancel button
+      UIMessage.make(tofill, "cancel-button", "expert.items.cancel");
    }
 
    /* (non-Javadoc)

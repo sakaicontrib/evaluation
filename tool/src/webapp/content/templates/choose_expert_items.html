@@ -82,7 +82,7 @@
         <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->            
         <p class="act">
             <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-            <a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none" onclick="$(document).trigger('close.facebox'); return false;">Cancel</a>         
+            <input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />	         
         </p>    
       
 			
@@ -128,7 +128,7 @@
 
 		<p class="act">
 			<input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-			<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton" accesskey="x"  style="float:none" onclick="$(document).trigger('close.facebox'); return false;">Cancel</a>			
+			<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />	
 		</p>	
 		
 		</form>
