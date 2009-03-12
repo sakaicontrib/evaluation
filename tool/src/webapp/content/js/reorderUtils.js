@@ -5,11 +5,12 @@
  * Update: Functions have been exposed to enable startSort() to be accessible by custom plugins - lovemore.nalube@uct.ac.za
  **/
 var sortableIds = new Array();
-buildSortableIds();
 $(document).ready(
         function () {
 			startSort();
             $(document).trigger('activateControls.templateItems');
+            buildSortableIds();
+
         }
         );
 
@@ -19,7 +20,20 @@ function $it(id) {
 
 function enableOrderButtons() {
 	try {
-		$("#revertOrderButton").attr('disabled', false);
+		$("#revertOrderButton")
+                .attr('disabled', false)
+                // put original order into the revertOrder trigger
+                .bind('click', function() {
+                    disableOrderButtons();
+                    for (var i = sortableIds.length - 1; i > 0; --i) {
+                        var thisitem = $it(sortableIds[i]);
+                        var previtem = $it(sortableIds[i - 1]);
+                        previtem.parentNode.removeChild(previtem);
+                        thisitem.parentNode.insertBefore(previtem, thisitem);
+                        setIndex(thisitem.id, i);
+                    }
+                    setIndex(sortableIds[0], 0);
+                });
 		$("#saveReorderButton").attr('disabled', false);
 		$("#orderInputs").attr("class","itemOperationsEnabled");
 	}catch(e){}
@@ -33,14 +47,18 @@ function disableOrderButtons() {
 	}catch(e){}
 }
 function buildSortableIds() {
-    var sortableIds = new Array();
-    var domList = $("div.itemList > div").get();
-    for (var i = 0; i < domList.length; i++) {
-        sortableIds.push(domList[i].id);
-        var itemSelect = $it(domList[i].id + "item-select-selection");
-        $(itemSelect).removeClass("orderChanged");
+    //var sortableIds = new Array();
+    $("#itemList > div.itemRow").each(function(){
+       sortableIds.push($(this).attr('id'));
+    });
+    console.log(sortableIds.toString());
+    //var domList = $("div.itemList > div.itemRow").get();
+    //for (var i = 0; i < domList.length; i++) {
+    //    sortableIds.push(domList[i].id);
+    //    var itemSelect = $it(domList[i].id + "item-select-selection");
+    //    $(itemSelect).removeClass("orderChanged");
 
-    }
+   // }
 }
 
 function setIndex(itemId, newindex) {
@@ -53,18 +71,7 @@ function setIndex(itemId, newindex) {
 	}
 }
 
-// put original order into the revertOrder trigger
-$("#revertOrderButton").click = function() {
-    disableOrderButtons();
-    for (var i = sortableIds.length - 1; i > 0; --i) {
-        var thisitem = $it(sortableIds[i]);
-        var previtem = $it(sortableIds[i - 1]);
-        previtem.parentNode.removeChild(previtem);
-        thisitem.parentNode.insertBefore(previtem, thisitem);
-        setIndex(thisitem.id, i);
-    }
-    setIndex(sortableIds[0], 0);
-};
+
 
 
 function startSort() {
