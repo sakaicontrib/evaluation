@@ -34,6 +34,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -91,29 +92,36 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
       boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
       boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+            
+      TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+      boolean editing = (evalViewParams.templateId == null)? false:true;
 
       /*
        * top links here
        */
-      UIInternalLink.make(tofill, "summary-link", 
+      if (!editing) {
+    	  UIOutput.make(tofill, "js-jquery");
+
+    	  UIBranchContainer topLinks = UIBranchContainer.make(tofill,"top-links:");
+      UIInternalLink.make(topLinks, "summary-link", 
             UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
       if (userAdmin) {
-         UIInternalLink.make(tofill, "administrate-link", 
+         UIInternalLink.make(topLinks, "administrate-link", 
                UIMessage.make("administrate.page.title"),
                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-scales-link",
+         UIInternalLink.make(topLinks, "control-scales-link",
                UIMessage.make("controlscales.page.title"),
                new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
       }
 
       if (createTemplate) {
-         UIInternalLink.make(tofill, "control-templates-link",
+         UIInternalLink.make(topLinks, "control-templates-link",
                UIMessage.make("controltemplates.page.title"), 
                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 	  if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-	     UIInternalLink.make(tofill, "control-items-link",
+	     UIInternalLink.make(topLinks, "control-items-link",
 		   UIMessage.make("controlitems.page.title"), 
 		   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 	  }
@@ -123,18 +131,17 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
       }
 
       if (beginEvaluation) {
-         UIInternalLink.make(tofill, "control-evaluations-link",
+         UIInternalLink.make(topLinks, "control-evaluations-link",
                UIMessage.make("controlevaluations.page.title"),
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
       }
-	   
-		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+      }
 
 		UIMessage.make(tofill, "template-title-desc-title", "modifytemplatetitledesc.page.title");
 
 		// setup the OTP binding strings
 		String templateOTPBinding = null;
-		if (evalViewParams.templateId != null) {
+		if (editing) {
 			templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId;
 		} else {
 			templateOTPBinding = "templateBeanLocator." + TemplateBeanLocator.NEW_1;
@@ -197,8 +204,10 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 
       UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
             "#{templateBBean.updateTemplateTitleDesc}");
-
-		UIMessage.make(form, "cancel-button", "general.cancel.button");
+      if (editing) 
+		UIMessage.make(form, "cancel-button-lightbox", "general.cancel.button");
+      else
+    	  UIMessage.make(form, "cancel-button", "general.cancel.button"); 
 	}
 
 	/* (non-Javadoc)
@@ -214,7 +223,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 	@SuppressWarnings("unchecked")
    public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase(new TemplateViewParameters(ControlTemplatesProducer.VIEW_ID, null)));
+		togo.add(new NavigationCase(new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null)));
 		return togo;
 	}
 

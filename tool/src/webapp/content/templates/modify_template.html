@@ -1,98 +1,122 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title rsf:id="template-title-desc-title">Edit Template Title/Desc.</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<script type="text/javascript">
-			
-			 // prepare the form when the DOM is ready 
-$(document).ready(function() { 
-	var options = {
-	     beforeSubmit: function() {
-	      	if (!$('#basic-form input[@name=title]').val()) {
-	            alert('Please enter a title.');
-	            return false;
-		       }
-			   $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');		    
-		},
-		success: function(msg){
-			$(document).trigger('close.facebox');
-			if ($('#itemList').length == 0) {  //check if element exists
-				var frame = parent.document.getElementById(window.name);
-				frame.src = $(msg).find('form tr:eq(1) .itemAction a:eq(0)').attr('href');
-			}
-			else {
-				$('h3.viewNav > span#title').text($(msg).find('td[headers*=title] span:eq(0)').text())
-				$('h3.viewNav').parent().effect("highlight", {}, 2500);
-			}
-		}
-	};
-    $('#basic-form').ajaxForm(options); 
-	$.facebox.grow();
-	$.facebox.setHeader($(".portletBody .titleHeader"));
-}); 
-		</script>
-	</head>
-	
-	<body>
-		<div class="portletBody">
-<!--
-           <div class="navIntraTool">
-               <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-               <a rsf:id="summary-link" href="summary.html">Summary</a>
-               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
-               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
-           </div>
-			
-			<div>
-				<ul class="breadCrumb">
-					<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li>	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li><li class="lastCrumb" rsf:id="template-title-desc-title">Edit Template Title/Desc.</li>
-				</ul>
-			</div>
-		-->
-		<h2 class="titleHeader" rsf:id="template-title-desc-title">Edit Template Title/Desc.</h2>
-			
-			<div rsf:id="message-for:*" class="alertMessage">
-				<ul style="margin:0px;">
-					<li>Message for user here</li>
-				</ul>
-			</div>
-			
-			<form rsf:id="basic-form" method="post" id="">
-				<p class="shorttext">
-					<label rsf:id="title-header" for="title">Title</label>
-					<input name="title" rsf:id="title" type="text" value="" maxlength="250" size="50" id="title"/>
-				</p>                                        
-			
-				<div class="longtext">
-					<label rsf:id="description-header" class="block" for="description"  >Description</label>
-					<textarea rsf:id="description"  id="description"  name="description" cols="60" rows="3"></textarea>
-					<p class="instruction textPanelFooter" rsf:id="description-note">
-						For you or other admins. Place notes or comments about this template here.
-					</p>
-				</div>
-			
-				<p rsf:id="showSharingOptions:" class="longtext">
-					<label rsf:id="sharing-note" class="block"  for="showSharingOptions:::sharing-selection">
-						Sharing level
-					</label>	
-					<select rsf:id="sharing" id="sharing">
-						<option>Sharing option 1</option>
-						<option>Sharing option 2</option>
-					</select>
-				</p>
-		
-				<div rsf:id="sharingValueToDisplay" style="font-weight:bold;margin-top:0.5em;"></div>
-				
-				<p class="act">
-					<input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active"  />
-					<input type="button" value="Cancel" onclick="$(document).trigger('close.facebox');return false;" rsf:id="cancel-button"  accesskey="x" />					
-				</p>	
-			</form>
-			
-		</div>
-	</body>
+<head>
+    <title rsf:id="template-title-desc-title">Edit Template Title/Desc.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- No need to call these css and js if page is in a lightbox -->
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet"
+          media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript"
+            src="/library/js/headscripts.js"></script>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
+    <script rsf:id="js-jquery" type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script>
+
+    <script type="text/javascript">
+       // prepare the form when the DOM is ready
+        $(document).ready(function() {
+
+            if($('input.cancelButtonLightbox').length == 0) { //check if page is in a lightbox
+                //Page not in Lightbox
+                //bind cancel btn action
+                $('input.cancelButton').bind("click", function() {
+                    javascript:history.go(-1);
+                    return false;
+                });
+            }
+            else {
+                var title = "";
+                var o = {
+                    beforeSubmit: function() {
+                        title = $('#basic-form input[@name=title]').val();
+                        if (!title) {
+                            alert('Please enter a title.');
+                            return false;
+                        }
+                        $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');
+                    },
+                    success: function(msg) {
+                        $('h3.viewNav > span#title').text(title)
+                        $(document).trigger('close.facebox');
+                        $('h3.viewNav').parent().effect("highlight", {}, 2500);
+                    }
+                };
+                $.facebox.setHeader($(".portletBody .titleHeader"));
+                $.facebox.grow();
+                $('#basic-form').ajaxForm(o);
+                $('input.cancelButtonLightbox').bind("click", function() {
+                    $(document).trigger('close.facebox');
+                });
+
+            }
+        });
+    </script>
+</head>
+
+<body>
+<div class="portletBody">
+    <div rsf:id="top-links:">
+        <div class="navIntraTool">
+            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+            <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+            <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+            <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+            <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+        </div>
+
+        <div>
+            <ul class="breadCrumb">
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+                <li><a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li>
+                <li class="lastCrumb" rsf:id="template-title-desc-title">Edit Template Title/Desc.</li>
+            </ul>
+        </div>
+    </div>
+    <h2 rsf:id="msg=modifytemplatetitledesc.page.title" class="titleHeader">Add/Modify Item</h2>
+
+    <div rsf:id="message-for:*" class="alertMessage">
+        <ul style="margin:0px;">
+            <li>Message for user here</li>
+        </ul>
+    </div>
+
+    <form rsf:id="basic-form" id="basic-form" method="post">
+        <p class="shorttext">
+            <label rsf:id="title-header" for="title">Title</label>
+            <input name="title" rsf:id="title" type="text" value="" maxlength="250" size="50" id="title"/>
+        </p>
+
+        <div class="longtext">
+            <label rsf:id="description-header" class="block" for="description">Description</label>
+            <textarea rsf:id="description" id="description" name="description" cols="70" rows="3"></textarea>
+
+            <p class="instruction textPanelFooter" rsf:id="description-note">
+                For you or other admins. Place notes or comments about this template here.
+            </p>
+        </div>
+
+        <p rsf:id="showSharingOptions:" class="longtext">
+            <label rsf:id="sharing-note" class="block" for="showSharingOptions:::sharing-selection">
+                Sharing level
+            </label>
+            <select rsf:id="sharing" id="sharing">
+                <option>Sharing option 1</option>
+                <option>Sharing option 2</option>
+            </select>
+        </p>
+
+        <div rsf:id="sharingValueToDisplay" style="font-weight:bold;margin-top:0.5em;"></div>
+
+        <p class="act">
+            <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active"/>
+            <input type="button" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x"/>
+            <input type="button" value="Cancel" class="cancelButtonLightbox" rsf:id="cancel-button-lightbox"
+                   accesskey="x"/>
+        </p>
+    </form>
+
+</div>
+</body>
 </html>
