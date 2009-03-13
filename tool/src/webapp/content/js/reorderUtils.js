@@ -163,12 +163,12 @@ function startSort() {
             update: function(e, ui) {
                 $(document).trigger('block.triggerChildrenSort', [ui]);
                 if (ui.item.parents('.itemTableBlock').find('.itemBlockSave').length == 0) {
-                    var saveAction = ' <a class="itemBlockSave highlight" href="#saveAction"> [Save new order for grouped items]</a>';
+                    var saveAction = '<a class="itemBlockSave highlight" href="#saveAction">Save new order for grouped items</a>';
                     $(saveAction).appendTo(ui.item.parents('.itemTableBlock').children('.instruction').eq(0));
                     ui.item.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
                     ui.item.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
-                        $(document).trigger('block.triggerChildrenSort', [ui]);
-                        $(this).html(' Saving... <img src="' + $.facebox.settings.loadingImage + '"/>');
+                        $(document).trigger('block.triggerChildrenSort', [ui]);   
+                        $(this).html('Saving... <img src="' + $.facebox.settings.loadingImage + '"/>');
                         ui.item.parents('.itemTableBlock').sortable('disable');
                         $(document).trigger('block.saveReorder', [ui,"simple"]);
                         ui.item.parents('.itemTableBlock').sortable('enable');
