@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -121,6 +122,22 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Note that if a method is overloaded you should include the arguments in the
     * test name like so: testMethodClassInt (for method(Class, int);
     */
+
+   public void testValidateDao() {
+       assertNotNull(evaluationDao);
+       List<EvalTemplate> templates = evaluationDao.findAll(EvalTemplate.class);
+       assertNotNull( templates );
+       assertTrue(templates.size() > 4);
+       List<EvalAssignUser> assignUsers = evaluationDao.findAll(EvalAssignUser.class);
+       assertNotNull( assignUsers );
+       assertTrue(assignUsers.size() > 20);
+   }
+   
+   public void testGetEvalsWithoutUserAssignments() {
+       List<EvalEvaluation> evals = evaluationDao.getEvalsWithoutUserAssignments();
+       assertNotNull(evals);
+       assertTrue(evals.size() > 0);
+   }
 
    public void testGetSharedEntitiesForUser() {
       List<EvalTemplate> l = null;

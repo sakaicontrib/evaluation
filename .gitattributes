@@ -465,6 +465,7 @@ tool/src/webapp/content/templates/modify_block.html -text svn_keywords=Date+Revi
 tool/src/webapp/content/templates/modify_email.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node_groups.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/modify_hierarchy_node_perms.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_scale.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_template.html -text svn_keywords=Date+Revision+Author+URL+Id

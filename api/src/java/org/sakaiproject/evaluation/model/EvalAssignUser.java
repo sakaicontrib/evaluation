@@ -17,7 +17,12 @@ package org.sakaiproject.evaluation.model;
 import java.util.Date;
 
 /**
- * This represents an assigned user in an evaluation
+ * This represents an assigned user in an evaluation,
+ * It is effectively a read-only record once it has been persisted so the only way
+ * to change it is to remove it and create a new one, the user/evaluation/group
+ * cannot be changed after it has been saved <br/>
+ * Only the status and type can be modified once this object has been persisted,
+ * attempts to set the other fields will have no effect on the object <br/>
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -77,35 +82,43 @@ public class EvalAssignUser implements java.io.Serializable {
     protected String owner;
     /**
      * The evaluation that this user is assigned to
-     * (just access evaluation.id to avoid lazy loading the entire evaluation)
+     * (just access evaluation.id to avoid lazy loading the entire evaluation),
+     * this is properly set by the service methods so do not try to set this when you
+     * create this object, it is best to leave it null or whatever it already is <br/>
+     * cannot be changed once it is set
      */
     protected EvalEvaluation evaluation;
     /**
-     * The internal user id of the user belonging to this assignment record
+     * The internal user id of the user belonging to this assignment record,
+     * cannot be changed once it is set
      */
     protected String userId;
     /**
-     * the eval group id which this assignment relates to
+     * the eval group id which this assignment relates to,
+     * cannot be changed once it is set
      */
     protected String evalGroupId;
+
+    /**
+     * This is non-persistent, it will track when the status changes, true means changed
+     */
+    public boolean typeChanged = false;
     /**
      * the type of the assignment, will be like instructor, TA, or student depending on how this
      * assignment participates, uses the constants {@link #TYPE_ASSISTANT}, {@link #TYPE_EVALUATEE}, {@link #TYPE_EVALUATOR}
      */
     protected String type;
+
     /**
      * the status of the assignment, active OR deleted for example, deleted assignments are ignored
      * for all processing and only kept for records, uses the constants {@link #STATUS_LINKED}, {@link #STATUS_REMOVED}, {@link #STATUS_UNLINKED}
      */
     protected String status;
     /**
-     * This will be non-null if this assignment is linked to a group, it will be the id of the {@link EvalAssignGroup}
+     * This will be non-null if this assignment is linked to a group, it will be the id of the {@link EvalAssignGroup},
+     * cannot be changed once it is set
      */
     protected Long assignGroupId;
-    /**
-     * This will be non-null if this assignment is linked to a hierarchy node, it will be the id of the {@link EvalAssignHierarchy}
-     */
-    protected Long assignHierarchyId;
 
     // Constructors
 
@@ -118,46 +131,41 @@ public class EvalAssignUser implements java.io.Serializable {
      * all records are created with a default status of active,
      * makes the current user the owner
      * 
-     * @param evaluation the evaluation to create the assignment for
      * @param userId the user which is being assigned, should be the internal id (not the username)
      * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
      */
-    public EvalAssignUser(EvalEvaluation evaluation, String userId, String evalGroupId) {
-        this(evaluation, userId, evalGroupId, null, null, null);
+    public EvalAssignUser(String userId, String evalGroupId) {
+        this(userId, evalGroupId, null, null, null);
     }
 
     /**
      * Full constructor
      * 
-     * @param evaluation the evaluation to create the assignment for
      * @param userId the user which is being assigned, should be the internal id (not the username)
      * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
      * @param owner (OPTIONAL) will be assigned to the current user if not set
      * @param type (OPTIONAL) use a constant like {@link #TYPE_EVALUATEE} or {@value #TYPE_EVALUATOR}
      * @param status (OPTIONAL) use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
      */
-    public EvalAssignUser(EvalEvaluation evaluation, String userId, String evalGroupId, String owner, String type, String status) {
+    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
         super();
-        if (userId == null || "".equals(userId)
-                || evalGroupId == null || "".equals(evalGroupId)
-                || evaluation == null) {
-            throw new IllegalArgumentException("userId, evalGroupId, and evaluation all must be set and not null");
+        if (userId == null || "".equals(userId) ) {
+            throw new IllegalArgumentException("userId must be set and not null");
         }
         if (this.lastModified == null) {
             this.lastModified = new Date();
         }
         this.userId = userId;
         this.evalGroupId = evalGroupId;
-        this.evaluation = evaluation;
         this.owner = owner;
         try {
             validateStatus(status);
         } catch (IllegalArgumentException e) {
-            type = STATUS_LINKED;
+            status = STATUS_LINKED;
         }
         this.status = status;
         try {
-            validateType(status);
+            validateType(type);
         } catch (IllegalArgumentException e) {
             type = TYPE_EVALUATOR;
         }
@@ -202,8 +210,10 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setUserId(String userId) {
-        validateNotEmpty(userId, "userId");
-        this.userId = userId;
+        if (this.userId == null) {
+            validateNotEmpty(userId, "userId");
+            this.userId = userId;
+        }
     }
 
     public String getEvalGroupId() {
@@ -211,16 +221,27 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setEvalGroupId(String evalGroupId) {
-        validateNotEmpty(evalGroupId, "evalGroupId");
-        this.evalGroupId = evalGroupId;
+        if (this.evalGroupId == null) {
+            this.evalGroupId = evalGroupId;
+        }
     }
 
     public EvalEvaluation getEvaluation() {
         return evaluation;
     }
 
+    /**
+     * @return the evaluation id OR null if no eval is associated yet,
+     * this will avoid the lazy loading of the entire eval
+     */
+    public Long getEvaluationId() {
+        return evaluation == null ? null : evaluation.getId();
+    }
+
     public void setEvaluation(EvalEvaluation evaluation) {
-        this.evaluation = evaluation;
+        if (this.evaluation == null) {
+            this.evaluation = evaluation;
+        }
     }
 
     public Long getAssignGroupId() {
@@ -228,15 +249,9 @@ public class EvalAssignUser implements java.io.Serializable {
     }
 
     public void setAssignGroupId(Long assignGroupId) {
-        this.assignGroupId = assignGroupId;
-    }
-
-    public Long getAssignHierarchyId() {
-        return assignHierarchyId;
-    }
-
-    public void setAssignHierarchyId(Long assignHierarchyId) {
-        this.assignHierarchyId = assignHierarchyId;
+        if (this.assignGroupId == null) {
+            this.assignGroupId = assignGroupId;
+        }
     }
 
     public String getStatus() {
@@ -255,6 +270,7 @@ public class EvalAssignUser implements java.io.Serializable {
     public void setType(String type) {
         validateType(type);
         this.type = type;
+        this.typeChanged = true;
     }
 
     // validation methods
@@ -265,6 +281,11 @@ public class EvalAssignUser implements java.io.Serializable {
         }
     }
 
+    /**
+     * Validate the status constant
+     * @param status
+     * @throws IllegalArgumentException if the status is null or not one of the valid constants
+     */
     public static void validateStatus(String status) {
         validateNotEmpty(status, "status");
         if (! STATUS_LINKED.equals(status) && ! STATUS_UNLINKED.equals(status) && ! STATUS_REMOVED.equals(status) ) {
@@ -272,11 +293,58 @@ public class EvalAssignUser implements java.io.Serializable {
         }
     }
 
+    /**
+     * Validate the type constant
+     * @param type
+     * @throws IllegalArgumentException if the type is null or not one of the valid constants
+     */
     public static void validateType(String type) {
         validateNotEmpty(type, "type");
         if (! TYPE_ASSISTANT.equals(type) && ! TYPE_EVALUATEE.equals(type) && ! TYPE_EVALUATOR.equals(type) ) {
             throw new IllegalArgumentException("type must match one of the TYPE constants in EvalAssignUser");
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        if (id == null) {
+            result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+            result = prime * result + ((evalGroupId == null) ? 0 : evalGroupId.hashCode());
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
+        } else {
+            result = prime * result + id.hashCode();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EvalAssignUser other = (EvalAssignUser) obj;
+        if (id == null) {
+            if ( userId.equals(other.userId)
+                    && type.equals(other.type) 
+                    && (evalGroupId == null ? other.evalGroupId == null : evalGroupId.equals(other.evalGroupId)) ) {
+                return false;
+            }
+        } else {
+            if (!id.equals(other.id)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "UA:id="+id+":eval="+getEvaluationId()+":user="+userId+":group="+evalGroupId+":type="+type+":status="+status+":"+super.toString();
     }
 
 }

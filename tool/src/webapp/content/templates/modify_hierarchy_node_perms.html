@@ -1,0 +1,70 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title rsf:id="msg=modifynodeperm.page.title">Hierarchy Node Perms</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+  </head>
+  
+  <body>
+    <div class="portletBody">
+
+      <h3 rsf:id="msg=modifynodeperm.page.title">Hierarchy Node Perms</h3>
+
+      <div rsf:id="message-for:*" class="alertMessage">
+         <ul style="margin:0px;">
+            <li>Message for user here</li>
+         </ul>
+      </div>
+
+      <div rsf:id="node-info" style="font-size:1.1em;">Node title (nodeId)</div>
+      <p class="instruction" rsf:id="msg=modifynodeperm.instructions">
+      	Page Instructions: Enter usernames or emails in the box and then select the permissions to apply to the users
+      </p>
+
+      <form rsf:id="perms-form" method="post">
+        <div>
+            <p>Click the <b>X</b> by a user name to remove their permissions from this node</p>
+            <table width="95%">
+              <thead>
+                  <th rsf:id="msg=modifynodeperm.members.name.header" width="20%">User Name</th>
+                  <th rsf:id="permission-header:" width="10%">Perm Name</th>
+              </thead>
+              <tr rsf:id="member-row:" style="color:#666">
+             	  <td><span rsf:id="user-name">adz20 (aaron@caret.cam.ac.uk)</span> <input type="submit" rsf:id="remove-member" value="X"/></td>
+                  <td align="center"><input rsf:id="permission:" type="checkbox" value="X"/></td>
+              </tr>
+            </table>
+            <p>
+                <input rsf:id="save-button" type="submit" value="Save permissions changes" />
+            </p>
+        </div>
+
+        <div>
+          <span rsf:id="msg=modifynodeperm.add.perms.header">Check the permissions you want to add for the new users.</span><br/>
+          <label rsf:id="msg=modifynodeperm.add.perms.choose" for="add-member-permission">Choose the permission to apply to new members:</label>
+          <select id="add-member-permission">
+            <option value="view" selected="selected">View Results</option>
+            <option value="write">Write Evals</option>
+            <option value="read">Read Evals</option>
+          </select>
+          <br/>
+          <span rsf:id="msg=modifynodeperm.usernames.header">Paste or type the usernames/emails of the people you want to add permissions for this node. One username/email per line.</span><br/>
+          <textarea rsf:id="add-members-input" rows="4" cols="80"></textarea>
+		  <p>
+          	<input rsf:id="save-button" type="submit" value="Save new users and permissions"/>
+          </p>
+        </div>
+	  </form>
+
+      <a href="#" rsf:id="return-link">Return to Evaluation Wizard</a>
+    </div>
+  </body>
+</html>

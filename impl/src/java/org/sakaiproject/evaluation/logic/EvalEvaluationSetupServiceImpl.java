@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -115,7 +117,18 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
     // INIT method
     public void init() {
-        log.debug("Init");
+        log.debug("INIT");
+        // update evaluation user assignments for evals with none yet (migration code)
+        List<EvalEvaluation> evals = dao.getEvalsWithoutUserAssignments();
+        if (! evals.isEmpty()) {
+            log.info("Creating user assignments for "+evals.size()+" evals with none yet (auto-migration), may take awhile for a large number of evaluations");
+            int counter = 0;
+            for (EvalEvaluation evaluation : evals) {
+                List<Long> l = synchronizeUserAssignmentsForced(evaluation, null, false);
+                counter += l.size();
+            }
+            log.info("Synchronized "+counter+" user assignments for "+evals.size()+" evals (auto-migration)");
+        }
         // run a timer which ensures that evaluation states are kept up to date
         initiateUpdateStateTimer();
     }
@@ -459,18 +472,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         if ( securityChecks.canUserRemoveEval(userId, evaluation) ) {
 
-            // remove associated AssignGroups
-            List<EvalAssignGroup> acs = dao.findBySearch(EvalAssignGroup.class, 
-                    new Search("evaluation.id", evaluationId) );
-            Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
-            dao.deleteSet(assignGroupSet);
-
-            // remove associated assigned hierarchy nodes
-            List<EvalAssignHierarchy> ahs = dao.findBySearch(EvalAssignHierarchy.class, 
-                    new Search("evaluation.id", evaluationId) );
-            Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
-            dao.deleteSet(assignHierSet);
-
             EvalEmailTemplate available = evaluation.getAvailableEmailTemplate();
             EvalEmailTemplate reminder = evaluation.getReminderEmailTemplate();
 
@@ -481,7 +482,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // check for related responses and answers
             List<Long> responseIds = dao.getResponseIds(evaluation.getId(), null, null, null);
             if (responseIds.size() > 0) {
-                // cannot remove this evaluation, there are responses, we will just set the state to deleted
+                // cannot remove this evaluation or assignments, there are responses, we will just set the state to deleted
                 evaluation.setState(EvalConstants.EVALUATION_STATE_DELETED);
                 // clear email templates
                 evaluation.setAvailableEmailTemplate(null);
@@ -492,6 +493,25 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // old method was to actually remove data
                 // dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
             } else {
+                // no responses so cleanup all the assignments
+                // remove associated AssignGroups
+                List<EvalAssignGroup> acs = dao.findBySearch(EvalAssignGroup.class, 
+                        new Search("evaluation.id", evaluationId) );
+                Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
+                dao.deleteSet(assignGroupSet);
+
+                // remove associated assigned hierarchy nodes
+                List<EvalAssignHierarchy> ahs = dao.findBySearch(EvalAssignHierarchy.class, 
+                        new Search("evaluation.id", evaluationId) );
+                Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
+                dao.deleteSet(assignHierSet);
+
+                // remove associated assigned users
+                List<EvalAssignUser> eus = dao.findBySearch(EvalAssignUser.class, 
+                        new Search("evaluation.id", evaluationId) );
+                Set<EvalAssignUser> eusSet = new HashSet<EvalAssignUser>(eus);
+                dao.deleteSet(eusSet);
+
                 // remove the evaluation and copied template since there are no responses
                 removeTemplate = true;
                 dao.delete(evaluation);
@@ -743,21 +763,304 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
     // USER ASSIGNMENTS
 
-    public void deleteUserAssignments(Long... userAssignmentIds) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Implemented Yet");
+    public void deleteUserAssignments(Long evaluationId, Long... userAssignmentIds) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId must be set");
+        }
+        if (userAssignmentIds != null 
+                && userAssignmentIds.length > 0) {
+            // get an eval from the id
+            EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+            // check permissions
+            if ( securityChecks.checkRemoveAssignments(null, null, eval) ) {
+                dao.deleteSet(EvalAssignUser.class, userAssignmentIds);
+            }
+        }
+    }
+
+    public void saveUserAssignments(Long evaluationId, EvalAssignUser... assignUsers) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId must be set");
+        }
+        if (assignUsers != null 
+                && assignUsers.length > 0) {
+            // get an eval from the id
+            EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+            saveEvalAssignUsers(eval, assignUsers);
+        }
+    }
+
+    public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId must be set");
+        }
+        // quick eval state check
+        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+        String state = EvalUtils.getEvaluationState(eval, false);
+        if (EvalUtils.checkStateAfter(state, EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
+            throw new IllegalStateException("Cannot synchronize evaluation ("+evaluationId+") which is in the "+state+" state");
+        }
+        boolean removeAllowed = false;
+        if (EvalUtils.checkStateBefore(state, EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
+            removeAllowed = true;
+        }
+        return synchronizeUserAssignmentsForced(eval, evalGroupId, removeAllowed);
+    }
+
+    /**
+     * Special method which skips the evaluation state checks,
+     * this is mostly needed to allow us to force an update at any time <br/>
+     * Synchronizes all the user assignments with the assigned groups for this evaluation <br/>
+     * This will fail if it is run after the evaluation closes. If it is run before the evaluation starts then the
+     * synchronization is complete, the synchronization cannot remove any users which have already responded 
+     * to the evaluation
+     * <br/> Always run as an admin for permissions handling
+     * 
+     * @param evaluation the evaluation to do assignment updates for
+     * @param evalGroupId (OPTIONAL) the internal group id of an eval group,
+     * this will cause the synchronize to only affect the assignments related to this group
+     * @param removeAllowed if true then will remove assignments as well, otherwise only adds
+     * @return the list of {@link EvalAssignUser} ids changed during the synchronization (created, updated, deleted),
+     * NOTE: deleted {@link EvalAssignUser} will not be able to be retrieved
+     */
+    public List<Long> synchronizeUserAssignmentsForced(EvalEvaluation evaluation, 
+            String evalGroupId, boolean removeAllowed) {
+        Long evaluationId = evaluation.getId();
+        String currentUserId = commonLogic.getCurrentUserId();
+        if (currentUserId == null) {
+            currentUserId = EvalExternalLogic.ADMIN_USER_ID;
+        }
+        ArrayList<Long> changedUserAssignments = new ArrayList<Long>();
+        // now the syncing logic
+        HashSet<Long> assignUserToRemove = new HashSet<Long>();
+        HashSet<EvalAssignUser> assignUserToSave = new HashSet<EvalAssignUser>();
+        // get all user assignments for this evaluation (and possibly limit by group)
+        String[] limitGroupIds = null;
+        if (evalGroupId != null) {
+            limitGroupIds = new String[] {evalGroupId};
+        }
+        List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null);
+        HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<String>();
+        HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<String, List<EvalAssignUser>>();
+        for (EvalAssignUser evalAssignUser : assignedUsers) {
+            if (EvalAssignUser.STATUS_UNLINKED.equals(evalAssignUser.getType()) 
+                    || EvalAssignUser.STATUS_REMOVED.equals(evalAssignUser.getType())) {
+                String key = makeEvalAssignUserKey(evalAssignUser, false, false);
+                assignUserUnlinkedRemovedKeys.add(key);
+            }
+            String egid = evalAssignUser.getEvalGroupId();
+            if (egid != null) {
+                if (EvalAssignUser.STATUS_LINKED.equals(evalAssignUser.getType())) {
+                    List<EvalAssignUser> l = groupIdLinkedAssignedUsersMap.get(egid);
+                    if (l == null) {
+                        l = new ArrayList<EvalAssignUser>();
+                        groupIdLinkedAssignedUsersMap.put(egid, l);
+                    }
+                    l.add(evalAssignUser);
+                }
+            }
+        }
+        List<EvalAssignGroup> assignedGroups;
+        if (evalGroupId == null) {
+            // get all the assigned groups for this evaluation
+            Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
+            assignedGroups = m.get(evaluationId);
+        } else {
+            // only dealing with a single assign group (or possibly none if invalid)
+            assignedGroups = new ArrayList<EvalAssignGroup>();
+            Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
+            if (assignGroupId != null) {
+                EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(assignGroupId);
+                assignedGroups.add(assignGroup);
+            }
+        }
+        // iterate through all assigned groups (may have been limited to one only)
+        for (EvalAssignGroup evalAssignGroup : assignedGroups) {
+            Long assignGroupId = evalAssignGroup.getId();
+            String egid = evalAssignGroup.getEvalGroupId();
+            // get all the users who currently have permission for this group
+            Set<String> currentEvaluated = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_BE_EVALUATED);
+            Set<String> currentAssistants = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_ASSISTANT_ROLE);
+            Set<String> currentTakers = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_TAKE_EVALUATION);
+            HashSet<String> currentAll = new HashSet<String>();
+            currentAll.addAll(currentEvaluated);
+            currentAll.addAll(currentAssistants);
+            currentAll.addAll(currentTakers);
+            /* Resolve the current permissions against the existing assignments,
+             * this should only change linked records but should respect unlinked and removed records by not
+             * adding a record where one already exists for the given user/group combo,
+             * any linked records which do not exist anymore should be trashed if the status is right,
+             * any missing records should be added if the evaluation is still active or better
+             */
+            List<EvalAssignUser> linkedUserAssignsInThisGroup = groupIdLinkedAssignedUsersMap.get(egid);
+            if (linkedUserAssignsInThisGroup == null) {
+                // this group has not been assigned yet
+                linkedUserAssignsInThisGroup = new ArrayList<EvalAssignUser>();
+            }
+            // filter out all linked user assignments which match exactly with the existing ones
+            for (Iterator<EvalAssignUser> iterator = linkedUserAssignsInThisGroup.iterator(); iterator.hasNext();) {
+                EvalAssignUser evalAssignUser = iterator.next();
+                String type = evalAssignUser.getType();
+                String userId = evalAssignUser.getUserId();
+                if (EvalAssignUser.TYPE_EVALUATEE.equals(type)) {
+                    if (currentEvaluated.contains(userId)) {
+                        currentEvaluated.remove(userId);
+                        iterator.remove();
+                    }
+                } else if (EvalAssignUser.TYPE_ASSISTANT.equals(type)) {
+                    if (currentAssistants.contains(userId)) {
+                        currentAssistants.remove(userId);
+                        iterator.remove();
+                    }
+                } else if (EvalAssignUser.TYPE_EVALUATOR.equals(type)) {
+                    if (currentTakers.contains(userId)) {
+                        currentTakers.remove(userId);
+                        iterator.remove();
+                    }
+                } else {
+                    throw new IllegalStateException("Do not recognize this user assignment type: " + type);
+                }
+            }
+            // any remaining linked user assignments should be removed if not unlinked
+            for (EvalAssignUser evalAssignUser : linkedUserAssignsInThisGroup) {
+                if (evalAssignUser.getId() != null) {
+                    String key = makeEvalAssignUserKey(evalAssignUser, false, false);
+                    if (! assignUserUnlinkedRemovedKeys.contains(key)) {
+                        assignUserToRemove.add(evalAssignUser.getId());
+                    }
+                }
+            }
+            // any remaining current set items need to be added if they are not unlinked/removed
+            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentEvaluated, egid, 
+                    EvalAssignUser.TYPE_EVALUATEE, assignGroupId, assignUserUnlinkedRemovedKeys) );
+            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentAssistants, egid, 
+                    EvalAssignUser.TYPE_ASSISTANT, assignGroupId, assignUserUnlinkedRemovedKeys) );
+            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentTakers, egid, 
+                    EvalAssignUser.TYPE_EVALUATOR, assignGroupId, assignUserUnlinkedRemovedKeys) );
+        }
+
+        // now handle the actual persistent updates and log them
+        String message = "Synchronized user assignments for eval ("+evaluationId+") with "+assignedGroups.size()+" assigned groups";
+        if (assignUserToRemove.isEmpty() && assignUserToSave.isEmpty()) {
+            message += ": no changes to the user assignments ("+assignedUsers.size()+")";
+        } else {
+            if (! assignUserToSave.isEmpty()) {
+                for (EvalAssignUser evalAssignUser : assignUserToSave) {
+                    setAssignUserDefaults(evalAssignUser, evaluation, currentUserId);
+                }
+                dao.saveSet(assignUserToSave);
+                message += ": created the following assignments: " + assignUserToSave;
+                for (EvalAssignUser evalAssignUser : assignUserToSave) {
+                    changedUserAssignments.add( evalAssignUser.getId() );
+                }
+            }
+            if (removeAllowed 
+                    && ! assignUserToRemove.isEmpty()) {
+                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
+                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
+                message += ": removed the following assignments: " + assignUserToRemove;
+                changedUserAssignments.addAll( assignUserToRemove );
+            }
+        }
+        log.info(message);
+        return changedUserAssignments;
     }
 
 
-    public void saveUserAssignments(EvalAssignUser... assignUsers) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Implemented Yet");
+    /**
+     * Creates the EvalAssignUsers based on userIds, evalGroupId, type,
+     * will only create ones which do not have a matching key in matchingUserGroupKeys 
+     * @return the set of newly created EvalAssignUsers
+     */
+    private Set<EvalAssignUser> makeUserAssignmentsFromUserIdSet(Set<String> userIds, String evalGroupId, 
+            String typeConstant, Long assignGroupId, Set<String> matchingUserGroupKeys) {
+        HashSet<EvalAssignUser> eaus = new HashSet<EvalAssignUser>();
+        for (String userId : userIds) {
+            EvalAssignUser evalAssignUser = new EvalAssignUser(userId, evalGroupId, null, typeConstant, EvalAssignUser.STATUS_LINKED);
+            evalAssignUser.setAssignGroupId(assignGroupId);
+            String key = makeEvalAssignUserKey(evalAssignUser, false, false);
+            if (! matchingUserGroupKeys.contains(key)) {
+                eaus.add(evalAssignUser);
+            }
+        }
+        return eaus;
     }
 
+    /**
+     * Makes a mapping key which will allow EvalAssignUser to be placed into a map
+     * @param evalAssignUser the EAU to make the key from, should not be null
+     * @param includeEvaluationId if true then includes the evalId in the key, otherwise it is not part of it
+     * @param includeType if true then includes the type in the key, otherwise it is not part of it
+     * @return the key (will not be null)
+     */
+    private String makeEvalAssignUserKey(EvalAssignUser evalAssignUser, boolean includeType, boolean includeEvaluationId) {
+        if (evalAssignUser == null) {
+            throw new IllegalArgumentException("evalAssignUser cannot be null");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(evalAssignUser.getUserId());
+        sb.append(":");
+        sb.append(evalAssignUser.getEvalGroupId());
+        if (includeType) {
+            sb.append(":");
+            sb.append(evalAssignUser.getType());
+        }
+        if (includeEvaluationId && evalAssignUser.getEvaluationId() != null) {
+            sb.append(":");
+            sb.append(evalAssignUser.getEvaluationId());
+        }
+        return sb.toString();
+    }
 
-    public List<EvalAssignUser> synchronizeUserAssignments(Long evaluationId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Implemented Yet");
+    /**
+     * This method can be called internally to avoid looking up the evaluation again
+     * @param eval
+     * @param assignUsers
+     */
+    protected void saveEvalAssignUsers(EvalEvaluation eval, EvalAssignUser... assignUsers) {
+        // check permissions
+        if ( securityChecks.checkCreateAssignments(null, eval) ) {
+            String currentUserId = commonLogic.getCurrentUserId();
+            HashSet<EvalAssignUser> eauSet = new HashSet<EvalAssignUser>();
+            for (EvalAssignUser evalAssignUser : assignUsers) {
+                evalAssignUser.setLastModified( new Date() );
+                // switch over to unlinked if the status changes
+                if (evalAssignUser.typeChanged) {
+                    evalAssignUser.setStatus(EvalAssignUser.STATUS_UNLINKED);
+                }
+                setAssignUserDefaults(evalAssignUser, eval, currentUserId);
+                eauSet.add(evalAssignUser);
+            }
+            // save all of the user assignments
+            dao.saveSet(eauSet);
+        }
+    }
+
+    /**
+     * Set the default values on assign user objects before they are saved
+     * @param evalAssignUser
+     * @param eval
+     * @param currentUserId
+     * @throws IllegalArgumentException if inputs are null
+     */
+    protected void setAssignUserDefaults(EvalAssignUser evalAssignUser, EvalEvaluation eval,
+            String currentUserId) {
+        if (evalAssignUser == null || eval == null || currentUserId == null) {
+            throw new IllegalArgumentException("inputs cannot be null");
+        }
+        evalAssignUser.setEvaluation(eval);
+        if ( evalAssignUser.getOwner() == null || "".equals(evalAssignUser.getOwner()) ) {
+            evalAssignUser.setOwner(currentUserId);
+        }
+        // link to the assign groups based on the groupId
+        if (evalAssignUser.getAssignGroupId() == null
+                && evalAssignUser.getEvalGroupId() != null) {
+            String evalGroupId = evalAssignUser.getEvalGroupId();
+            Long evaluationId = eval.getId();
+            Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
+            evalAssignUser.setAssignGroupId(assignGroupId);
+            evalAssignUser.setStatus(EvalAssignUser.STATUS_LINKED);
+        }
     }
 
 
@@ -781,7 +1084,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         // check if this evaluation can be modified
         String userId = commonLogic.getCurrentUserId();
-        if (securityChecks.checkCreateAssignGroup(userId, eval)) {
+        if (securityChecks.checkCreateAssignments(userId, eval)) {
 
             // first we have to get all the assigned hierarchy nodes for this eval
             Set<String> nodeIdsSet = new HashSet<String>();
@@ -899,6 +1202,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     + evaluationId + ")");
             List<EvalAssignHierarchy> results = new ArrayList<EvalAssignHierarchy>(nodeAssignments);
             results.addAll(groupAssignments);
+
+            // sync all the user assignments after the groups are saved
+            synchronizeUserAssignments(evaluationId, null);
+
             return results;
         }
 
@@ -945,6 +1252,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             dao.deleteMixedSet(new Set[] {eahs, groups});
             log.info("User (" + userId + ") deleted existing hierarchy assignments ("
                     + ArrayUtils.arrayToString(assignHierarchyIds) + ") and groups ("+groupListing.toString()+")");
+
+            // sync all the user assignments after the groups are saved
+            synchronizeUserAssignments(evaluationId, null);
+
             return;
 
         }
@@ -963,17 +1274,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // set the date modified
         assignGroup.setLastModified( new Date() );
 
-        EvalEvaluation eval = assignGroup.getEvaluation();
-        if (eval == null || eval.getId() == null) {
-            throw new IllegalStateException("Evaluation (" + eval.getId() + ") is not set or not saved for assignGroup (" + 
+        if (assignGroup.getEvaluation() == null || assignGroup.getEvaluation().getId() == null) {
+            throw new IllegalStateException("Evaluation is not set or not saved for assignGroup (" + 
                     assignGroup.getId() + "), evalgroupId: " + assignGroup.getEvalGroupId() );
         }
+        EvalEvaluation eval = getEvaluationOrFail(assignGroup.getEvaluation().getId());
 
-        setDefaults(eval, assignGroup); // set the defaults before saving
+        setDefaults(eval, assignGroup); // set the group defaults before saving
 
         if (assignGroup.getId() == null) {
             // creating new AC
-            if (securityChecks.checkCreateAssignGroup(userId, eval)) {
+            if (securityChecks.checkCreateAssignments(userId, eval)) {
                 // check for duplicate AC first
                 if ( checkRemoveDuplicateAssignGroup(assignGroup) ) {
                     throw new IllegalStateException("Duplicate mapping error, there is already an assignGroup that defines a link from evalGroupId: " + 
@@ -992,6 +1303,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
                 log.info("User ("+userId+") created a new assignGroup ("+assignGroup.getId()+"), " +
                         "linked evalGroupId ("+assignGroup.getEvalGroupId()+") with eval ("+eval.getId()+")");
+
+                // sync the user assignments related to this assign group
+                synchronizeUserAssignments(eval.getId(), assignGroup.getEvalGroupId());
             }
         } else {
             // updating an existing AG
@@ -1017,7 +1331,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             dao.save(assignGroup);
             log.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
         }
-
     }
 
     /* (non-Javadoc)
@@ -1037,9 +1350,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("Cannot find evaluation with this id: " + assignGroup.getEvaluation().getId());         
         }
 
-        if ( securityChecks.checkRemoveAssignGroup(userId, assignGroup, eval) ) {
+        if ( securityChecks.checkRemoveAssignments(userId, assignGroup, eval) ) {
             dao.delete(assignGroup);
             log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
+
+            // also need to remove any user assignments related to this group
+            List<EvalAssignUser> assignedUsers = dao.findBySearch(EvalAssignUser.class, new Search( new Restriction[] {
+                    new Restriction("assignGroupId", assignGroupId),
+                    new Restriction("status", EvalAssignUser.STATUS_UNLINKED, Restriction.NOT_EQUALS)
+            }));
+            Set<EvalAssignUser> assignedUsersSet = new HashSet<EvalAssignUser>(assignedUsers);
+            dao.deleteSet( assignedUsersSet );
+            log.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
+
             return;
         }
 
@@ -1160,6 +1483,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
     /**
+     * Get the evaluation or throw an illegal argument exception
      * @param evaluationId
      * @return
      */

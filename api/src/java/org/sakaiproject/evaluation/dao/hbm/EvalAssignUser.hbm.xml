@@ -31,9 +31,6 @@
             <column name="ASSIGN_STATUS" not-null="true" length="255" />
         </property>
         <!-- linking fields -->
-        <property name="assignHierarchyId" type="java.lang.Long">
-            <column name="ASSIGN_HIERARCHY_ID" />
-        </property>
         <property name="assignGroupId" type="java.lang.Long">
             <column name="ASSIGN_GROUP_ID" />
         </property>

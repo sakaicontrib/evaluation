@@ -133,6 +133,16 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         }
     }
 
+    /*  SELECT * FROM eval_evaluation as EVAL
+        LEFT join eval_assign_user as AU on EVAL.ID = AU.EVALUATION_FK 
+        WHERE AU.ID IS NULL
+     */
+    @SuppressWarnings("unchecked")
+    public List<EvalEvaluation> getEvalsWithoutUserAssignments() {
+        String hql = "select eval from EvalAssignUser eau right join eau.evaluation eval where eau.id is null";
+        List<EvalEvaluation> evals = (List<EvalEvaluation>) executeHqlQuery(hql, new Object[] {}, 0, 0);
+        return evals;
+    }
 
     /**
      * Construct the HQL to do the sharing query based on sharing constants and userId

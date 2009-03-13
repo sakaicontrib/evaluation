@@ -517,7 +517,6 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     * TESTING method:
     * Provides a way to determine the number of emails sent via this mock service since the service started up
     * or the counter was reset, reset the counter using {@link #resetEmailsSentCounter()}
-    * @return
     */
    public int getNumEmailsSent() {
       return emailsSentCounter;
