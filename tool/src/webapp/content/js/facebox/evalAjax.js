@@ -4,10 +4,11 @@
 
 $(document).bind('activateControls.templates', function() {
     $(document).unbind('activateControls.templates');
-    $('a[rel*=templateRemove]').itemRemove({
+    $('a[rel=templateRemove]').itemRemove({
         ref:    'eval-template',
         id:        "$(this).parent().parent().attr('rowId')",
-        row:     "tr[rowId='+opts.id+']"
+        row:     "tr[rowId='+opts.id+']" ,
+        text:   '$(this).parent().parent().find("span.templateTitle:eq(0)").text()'
     });
     $('a[rel=facebox]').facebox();
 });
@@ -17,17 +18,20 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     //$(document).unbind('activateControls.templateItems');
     $('a[rel=remove]').itemRemove({
         ref:    'eval-templateitem',
-        id:        '$(this).attr("templateitemid")'
+        id:     '$(this).attr("templateitemid")',
+        text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'    
     });
     $('a[rel=childRemove]').itemRemove({
         ref:    'eval-templateitem',
         id:        '$(this).attr("templateitemid")',
-        itemType: 'blockChild'
+        itemType: 'blockChild',
+        text:   '$(this).parents("div.itemRowBlock").eq(0).find("span.text:visible").text()'
     });
     $('a[rel=unblock]').itemRemove({
         ref:    'eval-templateitem',
         id:        '$(this).attr("templateitemid")',
-        itemType: 'block'
+        itemType: 'block',
+        text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
     });
     $('a[rel=facebox]').facebox();
     $('a[rel=faceboxGrid]').facebox();
@@ -263,17 +267,10 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         });
     };
     function blockChildControls(that) {
-        //var controls = '<span class="childControls"> [ <a href="#"> Edit</a> | <a href="#"> Delete</a> ]</span>';
-        //that.append(controls);
         that.bind('click', function() {
-            //	that.find('.childControls').hide();
             that.parent().parent().find('span').eq(1).click();
             return false;
         });
-        //that.find('.childControls').find('a').eq(1).bind('click', function(){
-        //	confirm('Are u sure, really sure??');
-        //	return false;
-        //});
     }
 
 })(jQuery);
@@ -295,8 +292,7 @@ function submitForm(form, textarea, target, btn) {
     }
     catch(e) {
         alert('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
-        //console.log(e.description);
-    }
+       }
 
     //iterate through returned formToArray elements and replace input value with editor value
     for (var i = 0; i < d.length; i++) {
@@ -304,8 +300,6 @@ function submitForm(form, textarea, target, btn) {
             $(d[i]).attr('value', fckVal);
         }
     }
-    //console.info(textarea);
-    //console.info(fckVal);
     $.ajax({
         type: 'POST',
         url: target,
@@ -387,8 +381,8 @@ function submitForm(form, textarea, target, btn) {
 
 }
 
-function truncateTextDo(string) {
-    trunc = string.substring(0, 150);
+function truncateTextDo(string, number) {
+    trunc = string.substring(0, (number==null)?150:number);
     trunc = trunc.replace(/\w+$/, '');
     return trunc;
 }
@@ -477,6 +471,8 @@ function updateControlItemsTotal(){
             $(this).click(function() {
                 var opts = $.extend(defaults, options);
                 opts.id = eval(opts.id);
+                var t = eval(opts.text);
+                opts.text = t.length > 20 ? truncateTextDo(t, 20)+"...": eval(t);
                 show_hide_box(this, opts);
                 that = this;
                 return false;
@@ -491,10 +487,10 @@ function updateControlItemsTotal(){
 
     function move_box(an, box, options)
     {
-        var cleft = -100;
+        var cleft = -140;
 
         if ((options.itemType == "blockChild") && ($.browser.msie)) {
-            cleft = -250;
+            cleft = -290;
         }
 
         var ctop = -25;
@@ -559,7 +555,7 @@ function updateControlItemsTotal(){
                 $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#fff');
 
         var href = an.href;
-        var width = 120;
+        var width = 150;
         // only apply to IE
 
         var height = 0;
@@ -603,14 +599,15 @@ function updateControlItemsTotal(){
         // boxdiv.style.textAlign = 'right';
         boxdiv.style.padding = '4px';
         boxdiv.style.background = '#FFFFFF';
+        $(boxdiv).addClass('act');
         $(boxdiv).hide();
         document.body.appendChild(boxdiv);
 
         var offset = 0;
         var content = '\
-<h4 style="font-weight: bold;" class="">Are you sure?</h4>\
+<div class="" style="font-weight: bold;">Delete item: </div><div>"'+ options.text +'"</div>\
 <div class="" style="float: right;">\
-					<input type="button" value="Yes" accesskey="s" class="removeItemConfirmYes"/>\
+					<input type="button" value="Delete" accesskey="s" class="removeItemConfirmYes active"/>\
 					<input type="button" value="Cancel" accesskey="x" class="closeImage"/>\
 	</div>\
 	';
