@@ -47,7 +47,7 @@ function disableOrderButtons() {
 	}catch(e){}
 }
 function buildSortableIds() {
-   	$("#itemList > div.itemRow").each(function(){
+    $("#itemList > div.itemRow").each(function(){
        sortableIds.push($(this).attr('id'));
     });
 }
