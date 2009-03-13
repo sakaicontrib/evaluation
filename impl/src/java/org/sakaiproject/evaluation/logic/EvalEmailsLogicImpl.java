@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -322,7 +323,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
             String evalGroupId = group.evalGroupId;
 
-            Set<String> userIdsSet = evaluationService.getUserIdsTakingEvalInGroup(evaluationId, evalGroupId, includeConstant);
+            String[] limitGroupIds = null;
+            if (evalGroupId != null) {
+                limitGroupIds = new String[] {evalGroupId};
+            }
+
+            HashSet<String> userIdsSet = new HashSet<String>();
+            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, null, includeConstant);
+            for (EvalAssignUser evalAssignUser : participants) {
+                userIdsSet.add( evalAssignUser.getUserId() );
+            }
+
             if (userIdsSet.size() > 0) {
                 // turn the set into an array
                 String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
@@ -487,7 +498,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
             String evalGroupId = group.evalGroupId;
 
-            Set<String> userIdsSet = evaluationService.getUserIdsTakingEvalInGroup(evaluationId, evalGroupId, includeConstant);
+            String[] limitGroupIds = null;
+            if (evalGroupId != null) {
+                limitGroupIds = new String[] {evalGroupId};
+            }
+
+            HashSet<String> userIdsSet = new HashSet<String>();
+            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, null, includeConstant);
+            for (EvalAssignUser evalAssignUser : participants) {
+                userIdsSet.add( evalAssignUser.getUserId() );
+            }
+
+            //Set<String> userIdsSet = evaluationService.getUserIdsTakingEvalInGroup(evaluationId, evalGroupId, includeConstant);
             if (userIdsSet.size() > 0) {
                 // turn the set into an array
                 String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});

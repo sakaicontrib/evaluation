@@ -158,9 +158,11 @@ public interface EvalEvaluationSetupService {
      * Most of the time it will be easier to assign users by assigning a group or hierarchy node,
      * <br/> Always run as the current user for permissions checks
      * 
+     * @param evaluationId the id of an {@link EvalEvaluation} object,
+     * this will replace any existing evaluation which is set in the objects
      * @param assignUsers the user assignments to save or update
      */
-    public void saveUserAssignments(EvalAssignUser... assignUsers);
+    public void saveUserAssignments(Long evaluationId, EvalAssignUser... assignUsers);
 
     /**
      * Directly remove user assignments from an evaluation,
@@ -168,23 +170,27 @@ public interface EvalEvaluationSetupService {
      * otherwise the assignments are permanently removed
      * <br/> Always run as the current user for permissions checks
      * 
+     * @param evaluationId the id of an {@link EvalEvaluation} object
      * @param userAssignmentIds all the ids of {@link EvalAssignUser} objects to remove
      */
-    public void deleteUserAssignments(Long... userAssignmentIds);
+    public void deleteUserAssignments(Long evaluationId, Long... userAssignmentIds);
 
     /**
-     * Synchronizes all the user assignments with the assigned groups and hierarchy nodes for this evaluation <br/>
+     * Synchronizes all the user assignments with the assigned groups for this evaluation <br/>
      * This will fail if it is run after the evaluation closes. If it is run before the evaluation starts then the
      * synchronization is complete, the synchronization cannot remove any users which have already responded 
      * to the evaluation
-     * <br/> Always run as the current user for permissions checks
+     * <br/> Always run as an admin for permissions handling
      * 
      * @param evaluationId the id of an {@link EvalEvaluation} object
-     * @return the list of all updated or created {@link EvalAssignUser} objects, 
-     * this includes ones which were marked as removed or actually removed 
-     * (thus there may be objects which are no longer valid as persistent entities in the return)
+     * @param evalGroupId (OPTIONAL) the internal group id of an eval group,
+     * this will cause the synchronize to only affect the assignments related to this group
+     * @return the list of {@link EvalAssignUser} ids changed during the synchronization (created, updated, deleted),
+     * NOTE: deleted {@link EvalAssignUser} will not be able to be retrieved
+     * @throws IllegalArgumentException if the evaluationId is invalid
+     * @throws IllegalStateException if the evaluation state is invalid for synchronizing (closed or later)
      */
-    public List<EvalAssignUser> synchronizeUserAssignments(Long evaluationId);
+    public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId);
 
 
     // ASSIGNMENTS - HIERARCHY

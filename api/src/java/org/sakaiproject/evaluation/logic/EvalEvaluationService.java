@@ -39,6 +39,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
  */
 public interface EvalEvaluationService {
 
+    public static final String STATUS_ANY = "*";
+
     // EVALUATIONS
 
     /**
@@ -189,31 +191,34 @@ public interface EvalEvaluationService {
      * <br/> Uses the current user for permissions checks
      * 
      * @param evaluationId the unique id of an {@link EvalEvaluation} object
-     * @param evalGroupId (OPTIONAL) the internal unique ID for an evalGroup to limit participants returned,
-     * leave this null to include participants from the entire evaluation
+     * @param evalGroupIds an array of unique IDs for eval groups, 
+     * if this is null or empty then results include participants from the entire evaluation,
+     * NOTE: these ids are not validated
      * @param assignTypeConstant (OPTIONAL) a constant to indicate which types of assignment participants to include,
-     * use the TYPE_* constants from {@link EvalAssignUser}, default is to include all types of assignments
+     * use the TYPE_* constants from {@link EvalAssignUser}, default (null) is to include all types of assignments
      * @param assignStatusConstant (OPTIONAL) a constant to indicate which status of assignment participants to include,
-     * use the STATUS_* constants from {@link EvalAssignUser}, 
-     * default is to include {@link EvalAssignUser#STATUS_LINKED} and {@link EvalAssignUser#STATUS_UNLINKED}
+     * use the STATUS_* constants from {@link EvalAssignUser}, to include users with any status use {@link #STATUS_ANY}, 
+     * default (null) is to include {@link EvalAssignUser#STATUS_LINKED} and {@link EvalAssignUser#STATUS_UNLINKED},
      * @param includeConstant (OPTIONAL) a constant to indicate what users should be retrieved, 
-     * EVAL_INCLUDE_* from {@link EvalConstants}, default is {@link EvalConstants#EVAL_INCLUDE_ALL} if left null,
-     * NOTE that this will filter users to evaluators automatically
+     * EVAL_INCLUDE_* from {@link EvalConstants}, default (null) is {@link EvalConstants#EVAL_INCLUDE_ALL},
+     * <b>NOTE</b>: if this is non-null it will filter users to type {@link EvalAssignUser#TYPE_EVALUATOR} automatically
+     * regardless of what the assignTypeConstant is set to
      * @return the list of user assignments ({@link EvalAssignUser} objects)
      */
-    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String evalGroupId, String assignTypeConstant, String assignStatusConstant, String includeConstant);
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant);
 
     /**
-     * Gets the total count of participants for an evaluation <br/>
-     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String)} <br/>
+     * Gets the total count of evaluator participants for an evaluation (will not include evaluatee or assistants) <br/>
+     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String, String)} <br/>
      * <b>NOTE:</b> always returns 0 if the evaluation is anonymous
      *
      * @param evaluationId the id of an {@link EvalEvaluation} object
-     * @param evalGroupId (OPTIONAL) the internal unique ID for an evalGroup,
-     * leave this null to include participants from the entire evaluation
+     * @param evalGroupIds an array of unique IDs for eval groups, 
+     * if this is null or empty then results include participants from the entire evaluation,
+     * NOTE: these ids are not validated
      * @return total number of participants which are taking this evaluation (unless anonymous, then 0)
      */
-    public int countParticipantsForEval(Long evaluationId, String evalGroupId);
+    public int countParticipantsForEval(Long evaluationId, String[] evalGroupIds);
 
     /**
      * Get the list of users who are taking an evaluation in a specific group
