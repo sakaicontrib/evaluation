@@ -8,9 +8,9 @@ $(document).bind('activateControls.templates', function() {
         ref:    'eval-template',
         id:        "$(this).parent().parent().attr('rowId')",
         row:     "tr[rowId='+opts.id+']" ,
-        text:   '$(this).parent().parent().find("span.templateTitle:eq(0)").text()'
+        text:   '$(this).parent().parent().find("span.templateTitle").text()'
     });
-    $('a[rel=facebox]').facebox();
+    $('a[rel=facebox]').facebox(); 
 });
 
 $(document).bind('activateControls.templateItems', function(e, opt) {
@@ -472,7 +472,7 @@ function updateControlItemsTotal(){
                 var opts = $.extend(defaults, options);
                 opts.id = eval(opts.id);
                 var t = eval(opts.text);
-                opts.text = t.length > 20 ? truncateTextDo(t, 20)+"...": eval(t);
+                opts.text = (t != null && t.length > 20) ? truncateTextDo(t, 20)+"...": t;
                 show_hide_box(this, opts);
                 that = this;
                 return false;
