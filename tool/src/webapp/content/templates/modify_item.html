@@ -14,7 +14,7 @@ $(document).ready(function() {
     if($.facebox.settings.objToUpdate == "block"){
 		$('#facebox .content .navPanel').hide();	
 		$('#facebox .content fieldset').hide();
-		//$('#facebox .content form > div').not('.evalEditorSmall').not('.act').hide();
+        $('div[@id=show-item-scale::]').hide();
 	}
 	$.facebox.grow();
 	$.facebox.setHeader($(".portletBody .titleHeader"));
@@ -25,9 +25,8 @@ $(document).ready(function() {
 		});
 	}else{
 		var button = $('<input type="submit" class="active" accesskey="s"/>');
-		button
-			.attr('name', $('.act .submit').attr('name'))
-			.val($('.act .submit').val());
+		button.attr('name', $('.act .submit').attr('name'))
+			    .val($('.act .submit').val());
 		$('.act .submit').replaceWith(button);
 	}
 }); 
@@ -42,20 +41,7 @@ $(document).ready(function() {
 		
 	
 		<div class="portletBody">
-            <!--<div class="navIntraTool">
-               <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-               <a rsf:id="summary-link" href="summary.html">Summary</a>
-               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
-               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
-            </div>
-
-			<ul class="breadCrumb">
-				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-items-breadcrumb" href="control_items.html">My Items</a></li><li rsf:id="modify-template-items"><a rsf:id="payload-component" href="modify_template_items.html">Modify Template</a></li><li class="lastCrumb" rsf:id="page-title">Modify Item</li>
-			</ul>						
-			-->
-			<div rsf:id="message-for:*" class="alertMessage">
+            <div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
 				</ul>
@@ -95,7 +81,7 @@ $(document).ready(function() {
 
 			</div>
 
-			<div rsf:id="show-item-scale:" class="longtext">
+			<div rsf:id="show-item-scale:" id="" class="longtext">
 				<label rsf:id="msg=modifyitem.item.scale.header" class="block" for="show-item-scale:::item-scale-list-selection">Scale:</label>
                 <span rsf:id="item-scale-current"></span>
 				<select rsf:id="item-scale-list" id="item-scale-list">
@@ -257,7 +243,7 @@ $(document).ready(function() {
 			</fieldset>
 			<div class="act">
 				<input rsf:id="save-item-action" type="button" value="Save item" class="active submit" accesskey="s" />
-				<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />					
+				<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
 			</div> 
 			</form>
 		</div>

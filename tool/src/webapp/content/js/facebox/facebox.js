@@ -1,9 +1,9 @@
 /*
- * Facebox (for jQuery)
+ * Facebox (for jQuery) edited by Lovemore.nalube@uct.ac.za
+ * - DO NOT UPGRADE THIS PLUGIN. THERE IS CUSTOMIZED CODE HERE
+ *
  * version: 1.2 (05/05/2008)
  * @requires jQuery v1.2 or later
- *
- * Examples at http://famspam.com/facebox/
  *
  * Licensed under the MIT:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -107,8 +107,7 @@
       $('#facebox .content').append(data)
       $('#facebox .loading').remove()
       $('#facebox .body').children().fadeIn('fast')
-      //$('#facebox').css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
-	  frameGrow()
+      frameGrow()
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
 	  $(document).trigger('resize.facebox')
     },
@@ -127,29 +126,16 @@
 			$("#facebox .titleHeader").remove();
 		$(obj).clone(true).insertBefore($("#facebox .header .close"));
 		$(obj).remove();
-		//alert(obj.html());
-		//$("#facebox .header .active").val(obj);
-		//$(obj).clone(true).insertBefore($("#facebox .close"));
-		//$("#facebox .header .active").click(function(){
-			//alert(form);
-			//$(form).trigger('click');
-			//return false;
-		//});
-		//$("#facebox .btn").replaceWith(obj.clone() +"rgsf");
 	},
 	
 	setBtn: function(obj, form){
 		var btn = '<input type="button" class="active" accesskey="s" />';
 		$(btn).insertBefore($("#facebox .close"));
 		$("#facebox .header .active").val(obj);
-		//$(obj).clone(true).insertBefore($("#facebox .close"));
 		$("#facebox .header .active").click(function(){
-			//alert(form);
 			$(form).trigger('click');
-			//return false;
 		});
-		//$("#facebox .btn").replaceWith(obj.clone() +"rgsf");
-	},
+		},
 	
 	showResponse: function(entityCat, id){
 		fillActionResponse(entityCat, id);
@@ -174,17 +160,8 @@
 		
       $.facebox.loading(true)
 
-      // support for rel="facebox.inline_popup" syntax, to add a class
-      // also supports deprecated "facebox[.inline_popup]" syntax
       var klass = this.rel.match(/facebox\[?\.(\w+)\]?/)
       if (klass) klass = klass[1]
-	
-	//if the save box is active, prompt for save or cancel
-			//if(confirm("change has been made")){
-				 //fillFaceboxFromHref(this.href, klass)
-	     	//	 return false
-			//}else
-			//jQuery(document).trigger('close.facebox');
 		if ($('#orderInputs').attr('class') == "itemOperationsEnabled"){
 			jQuery.facebox($.facebox.settings.confirmBox(this.href));
 			//alert();
@@ -254,9 +231,7 @@
     var windowHeight
     if (top.self.innerHeight) {	// all except Explorer
         windowHeight = top.self.innerHeight;
-        //alert(windowHeight);
-        //alert(parent.self.innerHeight);
-    } else if (top.document.documentElement && top.document.documentElement.clientHeight) { // Explorer 6 Strict Mode
+        } else if (top.document.documentElement && top.document.documentElement.clientHeight) { // Explorer 6 Strict Mode
       windowHeight = top.document.documentElement.clientHeight;
     } else if (top.document.body) { // other Explorers
       windowHeight = top.document.body.clientHeight;
@@ -349,18 +324,11 @@
 		cache: false,
 		dataType: "xml",
 	    success: function(xml){
-			/*if (entityCat == "eval-template") {
-				$(entityCat, xml).each(function(){
-					$(".viewNav #title").html($("title", this).text());
-					$(".templateDesc").html($("description", this).text());
-					$(".viewNav").parent().Highlight(250, "#eeeeee");
-				});
-			}*/			
 			if (entityCat == "eval-item") {
 				$(entityCat, xml).each(function(){
 					if (par) {
 						$(par).children(".itemLine2").children(".itemText").html($("itemText", this).text());
-						$(par).Highlight(250, "#eeeeee");
+						$(par).highlight(250, "#eeeeee");
 					}
 				});
 			}
@@ -379,18 +347,12 @@
 						newRow.find('td:eq(0) span:eq(0)').html($("title", this).text());
 						
 						newRow.prependTo($('form tbody'))
-						//$(par).children(".itemLine2").children(".itemText").html($("itemText", this).text());
-						//$(par).Highlight(250, "#eeeeee");
-						
 					}
 				});
 			}
 			}
 	     });
 
-	//$.getJSON(entityURL, function(json){
-  	// alert("JSON Data: " + json.eval-template[0].title);
- 	//}); 
  	
   }
   
@@ -406,19 +368,13 @@
 	function frameShrink(){
 	  		var frame = parent.document.getElementById(window.name);
 			$(frame).height(parent.document.body.scrollHeight - 150);
-	  		//alert(frame.body.scrollHeight);
-	 		//alert(parent.document.body.scrollHeight);
-	
-	}
+	  	}
 	
 	function frameGrow(){
 		try {
 			var frame = parent.document.getElementById(window.name);
 			//if(parent.document.body.scrollHeight  this.document.body.scrollHeight)
 			$(frame).height(parent.document.body.scrollHeight + 120);
-		//alert(frame.body.scrollHeight);
-		//alert(parent.document.body.scrollHeight);
-		//setTimeout("frameShrink('"+frame+"')",1);
 		}catch(e){}
 	
 	}
