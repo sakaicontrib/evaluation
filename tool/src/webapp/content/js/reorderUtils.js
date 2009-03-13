@@ -47,18 +47,9 @@ function disableOrderButtons() {
 	}catch(e){}
 }
 function buildSortableIds() {
-    //var sortableIds = new Array();
-    $("#itemList > div.itemRow").each(function(){
+   	$("#itemList > div.itemRow").each(function(){
        sortableIds.push($(this).attr('id'));
     });
-    console.log(sortableIds.toString());
-    //var domList = $("div.itemList > div.itemRow").get();
-    //for (var i = 0; i < domList.length; i++) {
-    //    sortableIds.push(domList[i].id);
-    //    var itemSelect = $it(domList[i].id + "item-select-selection");
-    //    $(itemSelect).removeClass("orderChanged");
-
-   // }
 }
 
 function setIndex(itemId, newindex) {
