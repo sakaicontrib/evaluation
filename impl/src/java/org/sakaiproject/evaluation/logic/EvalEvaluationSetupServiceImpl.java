@@ -41,6 +41,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -810,10 +811,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     /**
      * Special method which skips the evaluation state checks,
      * this is mostly needed to allow us to force an update at any time <br/>
-     * Synchronizes all the user assignments with the assigned groups for this evaluation <br/>
-     * This will fail if it is run after the evaluation closes. If it is run before the evaluation starts then the
-     * synchronization is complete, the synchronization cannot remove any users which have already responded 
-     * to the evaluation
+     * Synchronizes all the user assignments with the assigned groups for this evaluation
      * <br/> Always run as an admin for permissions handling
      * 
      * @param evaluation the evaluation to do assignment updates for
@@ -829,6 +827,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         String currentUserId = commonLogic.getCurrentUserId();
         if (currentUserId == null) {
             currentUserId = EvalExternalLogic.ADMIN_USER_ID;
+        } else {
+            // check anon and use admin instead
+            EvalUser user = commonLogic.getEvalUserById(currentUserId);
+            if (EvalUser.USER_TYPE_ANONYMOUS.equals(user.type)
+                    || EvalUser.USER_TYPE_INVALID.equals(user.type)
+                    || EvalUser.USER_TYPE_UNKNOWN.equals(user.type)) {
+                currentUserId = EvalExternalLogic.ADMIN_USER_ID;
+            }
         }
         ArrayList<Long> changedUserAssignments = new ArrayList<Long>();
         // now the syncing logic
