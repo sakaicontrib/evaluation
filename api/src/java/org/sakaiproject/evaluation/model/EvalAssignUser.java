@@ -344,7 +344,7 @@ public class EvalAssignUser implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "UA:id="+id+":eval="+getEvaluationId()+":user="+userId+":group="+evalGroupId+":type="+type+":status="+status+":"+super.toString();
+        return "id="+id+":eval="+getEvaluationId()+":user="+userId+":group="+evalGroupId+":type="+type+":status="+status;
     }
 
 }

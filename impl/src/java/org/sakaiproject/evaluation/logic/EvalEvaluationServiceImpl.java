@@ -345,70 +345,59 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public boolean isEvalGroupValidForEvaluation(String evalGroupId, Long evaluationId) {
         // grab the evaluation itself first
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+        boolean valid = checkEvalGroupValidForEval(eval, evalGroupId, true);
+        return valid;
+    }
 
-        // check the evaluation state
-        String state = EvalUtils.getEvaluationState(eval, false);
-        if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
-                ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
-            //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
-            return false;
-        } 
+
+    /**
+     * Checks the state is valid for taking and also that the group is valid
+     * @param eval the evaluation
+     * @param evalGroupId the group id (null is always false)
+     * @param includeStateCheck if true then also check the state of the eval is valid for taking
+     * @return true if the group is valid for this eval
+     */
+    private boolean checkEvalGroupValidForEval(EvalEvaluation eval, String evalGroupId, boolean includeStateCheck) {
+        boolean valid = false;
+        if (includeStateCheck) {
+            // check the evaluation state
+            String state = EvalUtils.getEvaluationState(eval, false);
+            if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
+                    ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
+                //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
+                valid = false;
+            } else {
+                valid = true;
+            }
+        }
 
         if (evalGroupId != null) {
             // TODO note that this could be more efficient if there was an index on groupId and instructorApproval and a count was used
             // check that the evalGroupId is valid for this evaluation
             List<EvalAssignGroup> ags = dao.findBySearch(EvalAssignGroup.class, 
                     new Search( new Restriction[] {
-                            new Restriction("evaluation.id", evaluationId),
+                            new Restriction("evaluation.id", eval.getId()),
                             new Restriction("evalGroupId", evalGroupId)
                     } ) );
             if (ags.size() <= 0) {
                 //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
-                return false;
+                valid = false;
             } else {
                 // make sure instructor approval is true
                 EvalAssignGroup eag = ags.get(0);
                 if (! eag.getInstructorApproval().booleanValue() ) {
                     //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
-                    return false;
+                    valid = false;
+                } else {
+                    valid = true;
                 }
             }
         }
-
-        return true;
-
+        return valid;
     }
 
 
     // PERMISSIONS
-
-    public boolean canBeginEvaluation(String userId) {
-        log.debug("Checking begin eval for: " + userId);
-        boolean isAdmin = commonLogic.isUserAdmin(userId);
-        if ( isAdmin && (dao.countAll(EvalTemplate.class) > 0) ) {
-            // admin can access all templates and create an evaluation if 
-            // there is at least one template
-            return true;
-        }
-        Boolean instructorAllowedCreateEvals = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
-        if (instructorAllowedCreateEvals != null && instructorAllowedCreateEvals) {
-            if ( commonLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
-                log.debug("User has permission to assign evaluation in at least one group");
-                /*
-                 * TODO - this check needs to be more robust at some point
-                 * currently we are ignoring shared and visible templates - AZ
-                 */
-                int count = dao.countSharedEntitiesForUser(EvalTemplate.class, userId, 
-                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE}, 
-                        null, null, null, new String[] {"notEmpty"});
-                if (count > 0 ) {
-                    // if they can access at least one template with an item then they can create an evaluation
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId) {
         log.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
@@ -529,6 +518,34 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                     }
                 }
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canBeginEvaluation(String userId) {
+        log.debug("Checking begin eval for: " + userId);
+        boolean isAdmin = commonLogic.isUserAdmin(userId);
+        if ( isAdmin && (dao.countAll(EvalTemplate.class) > 0) ) {
+            // admin can access all templates and create an evaluation if 
+            // there is at least one template
+            return true;
+        }
+        Boolean instructorAllowedCreateEvals = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
+        if (instructorAllowedCreateEvals != null && instructorAllowedCreateEvals) {
+            if ( commonLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
+                log.debug("User has permission to assign evaluation in at least one group");
+                /*
+                 * TODO - this check needs to be more robust at some point
+                 * currently we are ignoring shared and visible templates - AZ
+                 */
+                int count = dao.countSharedEntitiesForUser(EvalTemplate.class, userId, 
+                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE}, 
+                        null, null, null, new String[] {"notEmpty"});
+                if (count > 0 ) {
+                    // if they can access at least one template with an item then they can create an evaluation
+                    return true;
+                }
             }
         }
         return false;
