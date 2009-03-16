@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
 
 
@@ -38,6 +39,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalDeliveryServiceImpl deliveryService;
    protected EvalSettings settings;
+   protected EvalEvaluationSetupServiceImpl evaluationSetupService; // needed to load up evals before test
 
    private EvalEvaluation evaluationClosedTwo;
    private EvalEvaluation evaluationActiveTwo;
@@ -64,6 +66,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       }
 
       // setup the mock objects if needed
+      MockExternalHierarchyLogic hierarchyLogic = new MockExternalHierarchyLogic();
 
       // create the other needed logic impls
       EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
@@ -72,11 +75,27 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       authoringServiceImpl.setSettings(settings);
       authoringServiceImpl.setSecurityChecks(securityChecks);
 
+      EvalEmailsLogicImpl emailsLogic = new EvalEmailsLogicImpl();
+      emailsLogic.setCommonLogic(commonLogic);
+      emailsLogic.setEvaluationService(evaluationService);
+      emailsLogic.setSettings(settings);
+
+      evaluationSetupService = new EvalEvaluationSetupServiceImpl();
+      evaluationSetupService.setAuthoringService(authoringServiceImpl);
+      evaluationSetupService.setCommonLogic(commonLogic);
+      evaluationSetupService.setDao(evaluationDao);
+      evaluationSetupService.setEmails(emailsLogic);
+      evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() );
+      evaluationSetupService.setEvaluationService(evaluationService);
+      evaluationSetupService.setHierarchyLogic(hierarchyLogic);
+      evaluationSetupService.setSecurityChecks(securityChecks);
+      evaluationSetupService.setSettings(settings);
+
       // create and setup the object to be tested
       deliveryService = new EvalDeliveryServiceImpl();
       deliveryService.setDao(evaluationDao);
       deliveryService.setCommonLogic(commonLogic);
-      deliveryService.setHierarchyLogic( new MockExternalHierarchyLogic() );
+      deliveryService.setHierarchyLogic( hierarchyLogic );
       deliveryService.setEvaluationService(evaluationService);
       deliveryService.setSettings(settings);
       deliveryService.setAuthoringService( authoringServiceImpl );
@@ -110,8 +129,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       EvalAssignGroup assign1 = new EvalAssignGroup( EvalTestDataLoad.MAINT_USER_ID, 
             EvalTestDataLoad.SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActiveTwo);
-      evaluationDao.save(assign1);
-
+      evaluationSetupService.saveAssignGroup(assign1, EvalTestDataLoad.MAINT_USER_ID);
    }
 
 

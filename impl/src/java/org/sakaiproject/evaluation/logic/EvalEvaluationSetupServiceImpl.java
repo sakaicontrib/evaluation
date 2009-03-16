@@ -845,7 +845,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (evalGroupId != null) {
             limitGroupIds = new String[] {evalGroupId};
         }
-        List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null);
+        List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null, null);
         HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<String>();
         HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<String, List<EvalAssignUser>>();
         for (EvalAssignUser evalAssignUser : assignedUsers) {

@@ -155,8 +155,17 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     private String resultsSharing;
 
+    /**
+     * Should never be null,
+     * if true then blank responses are allowed,
+     * if false then all answers must be completed
+     */
     private Boolean blankResponsesAllowed;
 
+    /**
+     * Should never be null,
+     * if true then responses may be changed during active eval period
+     */
     private Boolean modifyResponsesAllowed;
 
     private Boolean unregisteredAllowed;
