@@ -205,7 +205,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     // USER ASSIGNMENTS
 
     /**
-     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String)}
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String)}
      */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId,
             String includeConstant) {
@@ -248,7 +248,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     }
 
     public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds,
-            String assignTypeConstant, String assignStatusConstant, String includeConstant) {
+            String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId) {
         // validate eval and arguments
         getEvaluationOrFail(evaluationId);
         // create the search
@@ -269,6 +269,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         } else {
             EvalAssignUser.validateStatus(assignStatusConstant);
             search.addRestriction( new Restriction("status", assignStatusConstant) );
+        }
+        if (userId != null && ! "".equals(userId)) {
+            search.addRestriction( new Restriction("userId", userId) );
         }
         boolean includeFilterUsers = false;
         Set<String> userFilter = null;
@@ -303,15 +306,15 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             // filter the results based on the userFilter
             for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
                 EvalAssignUser evalAssignUser = iterator.next();
-                String userId = evalAssignUser.getUserId();
+                String uid = evalAssignUser.getUserId();
                 if (includeFilterUsers) {
                     // only include users in the filter
-                    if (! userFilter.contains(userId)) {
+                    if (! userFilter.contains(uid)) {
                         iterator.remove();
                     }
                 } else {
                     // exclude all users in the filter
-                    if (userFilter.contains(userId)) {
+                    if (userFilter.contains(uid)) {
                         iterator.remove();
                     }
                 }
@@ -345,22 +348,22 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public boolean isEvalGroupValidForEvaluation(String evalGroupId, Long evaluationId) {
         // grab the evaluation itself first
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-        boolean valid = checkEvalGroupValidForEval(eval, evalGroupId, true);
+        boolean valid = false;
+        if (checkEvalStateValidForTaking(eval)) {
+            valid = checkEvalGroupValidForEval(eval, evalGroupId);
+        }
         return valid;
     }
 
-
     /**
-     * Checks the state is valid for taking and also that the group is valid
-     * @param eval the evaluation
-     * @param evalGroupId the group id (null is always false)
-     * @param includeStateCheck if true then also check the state of the eval is valid for taking
-     * @return true if the group is valid for this eval
+     * Checks if the state of an evaluation is valid for taking it
+     * @param eval an eval (cannot be null)
+     * @return true if state is valid OR fale if not
      */
-    private boolean checkEvalGroupValidForEval(EvalEvaluation eval, String evalGroupId, boolean includeStateCheck) {
+    private boolean checkEvalStateValidForTaking(EvalEvaluation eval) {
         boolean valid = false;
-        if (includeStateCheck) {
-            // check the evaluation state
+        // check the evaluation state
+        if (eval != null) {
             String state = EvalUtils.getEvaluationState(eval, false);
             if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
                     ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
@@ -370,27 +373,46 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 valid = true;
             }
         }
+        return valid;
+    }
 
-        if (evalGroupId != null) {
-            // TODO note that this could be more efficient if there was an index on groupId and instructorApproval and a count was used
-            // check that the evalGroupId is valid for this evaluation
-            List<EvalAssignGroup> ags = dao.findBySearch(EvalAssignGroup.class, 
-                    new Search( new Restriction[] {
-                            new Restriction("evaluation.id", eval.getId()),
-                            new Restriction("evalGroupId", evalGroupId)
-                    } ) );
-            if (ags.size() <= 0) {
-                //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
+    /**
+     * Checks that the group is valid for this evaluation
+     * @param eval the evaluation
+     * @param evalGroupId (OPTIONAL) the group id, if not set then do a check to make sure at least one group is set and valid
+     * @param includeStateCheck if true then also check the state of the eval is valid for taking
+     * @return true if the group is valid for this eval
+     */
+    private boolean checkEvalGroupValidForEval(EvalEvaluation eval, String evalGroupId) {
+        if (eval == null) {
+            throw new IllegalArgumentException("eval must be set and cannot be null");
+        }
+        boolean valid = false;
+        String userId = commonLogic.getCurrentUserId();
+        Long evaluationId = eval.getId();
+        if ( commonLogic.isUserAdmin(userId) ) {
+            // admin trumps being in a group
+            valid = true;
+        } else {
+            Search search = new Search(
+                    new Restriction[] {
+                            new Restriction("evaluation.id", evaluationId),
+                            new Restriction("instructorApproval", Boolean.TRUE)
+                    });
+            if (evalGroupId == null) {
+                // no groupId is supplied so do a simpler check
+                // make sure at least one group is valid for this eval
+            } else {
+                // check that the evalGroupId is valid for this evaluation
+                search.addRestriction( new Restriction("evalGroupId", evalGroupId) );
+            }
+            // do the count based on the search
+            long count = dao.countBySearch(EvalAssignGroup.class, search);
+            if (count <= 0l) {
+                // no valid groups
                 valid = false;
             } else {
-                // make sure instructor approval is true
-                EvalAssignGroup eag = ags.get(0);
-                if (! eag.getInstructorApproval().booleanValue() ) {
-                    //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
-                    valid = false;
-                } else {
-                    valid = true;
-                }
+                valid = true;
             }
         }
         return valid;
@@ -405,122 +427,94 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         // grab the evaluation itself first
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
-        // check the evaluation state
-        String state = EvalUtils.getEvaluationState(eval, false);
-        if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
-                ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
-            log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
-            return false;
-        }
-
-        if (evalGroupId != null) {
-            // check that the evalGroupId is valid for this evaluation
-            List<EvalAssignGroup> ags = dao.findBySearch(EvalAssignGroup.class, new Search(
-                    new Restriction[] {
-                            new Restriction("evaluation.id", evaluationId),
-                            new Restriction("evalGroupId", evalGroupId)
-                    }) );
-            if (ags.size() <= 0) {
-                log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
-                return false;
+        boolean allowed = false;
+        if (checkEvalStateValidForTaking(eval)) {
+            // valid state
+            if (checkEvalGroupValidForEval(eval, evalGroupId) ) {
+                // valid group (or at least some groups are valid for this eval)
+                if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl()) ) {
+                    // if this is anonymous then group membership does not matter
+                    allowed = true;
+                } else if ( EvalConstants.EVALUATION_AUTHCONTROL_KEY.equals(eval.getAuthControl()) ) {
+                    // if this uses a key then only the key matters
+                    // TODO add key check
+                    allowed = false;
+                } else if ( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl()) ) {
+                    if (commonLogic.isUserAdmin(userId) ) {
+                        // short circuit the attempt to lookup every group in the system for the admin
+                        allowed = true;
+                    } else {
+                        if (evalGroupId == null) {
+                            // if no groupId is supplied then simply check to see if the user is in any of the groups assigned,
+                            // hopefully this is faster than checking if the user has the right permission in every group -AZ
+                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, userId);
+                            if (! userAssigns.isEmpty()) {
+                                HashSet<String> egids = new HashSet<String>();
+                                for (EvalAssignUser evalAssignUser : userAssigns) {
+                                    if (evalAssignUser.getEvalGroupId() != null) {
+                                        evalAssignUser.getEvalGroupId();
+                                    }
+                                }
+                                String[] evalGroupIds = egids.toArray(new String[egids.size()]);
+                                long count = dao.countBySearch(EvalAssignGroup.class, new Search(
+                                        new Restriction[] {
+                                                new Restriction("evaluation.id", evaluationId),
+                                                new Restriction("instructorApproval", Boolean.TRUE),
+                                                new Restriction("evalGroupId", evalGroupIds)
+                                        }) );
+                                if (count > 0l) {
+                                    // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
+                                    allowed = true;
+                                } else {
+                                    allowed = false;
+                                }
+                            }
+                        } else {
+                            // check the user permissions
+                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, userId);
+                            if (userAssigns.isEmpty()) {
+                                log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
+                                allowed = false;
+                            } else {
+                                // check if the eval allows multiple submissions
+                                if (eval.getModifyResponsesAllowed() != null &&
+                                        eval.getModifyResponsesAllowed() == Boolean.FALSE) {
+                                    // cannot modify responses
+                                    // check if the user already took this evaluation for this group
+                                    EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
+                                    if (response != null) {
+                                        // user already has a response saved for this evaluation and evalGroupId
+                                        log.info("User (" + userId + ") cannot take evaluation (" + evaluationId 
+                                                + ") again in this group (" + evalGroupId 
+                                                + "), completed response exists ("+response.getId()+") from " 
+                                                + response.getEndTime() + " and this evaluation does not allow multiple attempts");
+                                        allowed = false;
+                                    } else {
+                                        // multiple responses ok
+                                        allowed = true;
+                                    }
+                                } else {
+                                    // multiple responses ok
+                                    allowed = true;
+                                }
+                            }
+                        } // evalgroupid null
+                    } // is admin
+                } // auth type
             } else {
-                // make sure instructor approval is true
-                EvalAssignGroup eag = ags.get(0);
-                if (! eag.getInstructorApproval().booleanValue() ) {
-                    log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
-                    return false;
+                // invalid group
+                if (evalGroupId == null) {
+                    log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + "), there are no enabled groups assigned");
+                } else {
+                    log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") with group ("+evalGroupId+"), group disabled or user not a member");
                 }
             }
         } else {
-            // no groupId is supplied so do a simpler check
-            log.info("No evalGroupId supplied, doing abbreviated check for evalId=" + evaluationId + ", userId=" + userId);
-            if ( commonLogic.isUserAdmin(userId) ) {
-                // admin trumps being in a group
-                log.info("ADMIN take eval permission override: User (" + userId + "), evaluation (" + evaluationId + "), evalGroupId (" + evalGroupId + ")");
-                return true;
-            }
-
-            // make sure at least one group is valid for this eval
-            long count = dao.countBySearch(EvalAssignGroup.class, new Search(
-                    new Restriction[] {
-                            new Restriction("evaluation.id", evaluationId),
-                            new Restriction("instructorApproval", Boolean.TRUE)
-                    }) );
-            if (count <= 0l) {
-                // no valid groups
-                log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), there are no assigned groups which have been instructor approved");
-                return false;
-            }
+            // invalid state
+            String state = EvalUtils.getEvaluationState(eval, false);
+            log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
         }
-
-        if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl()) ) {
-            // if this is anonymous then group membership does not matter
-            return true;
-        } else if ( EvalConstants.EVALUATION_AUTHCONTROL_KEY.equals(eval.getAuthControl()) ) {
-            // if this uses a key then only the key matters
-            // TODO add key check
-            return false;
-        } else if ( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl()) ) {
-            if (evalGroupId == null) {
-                if (commonLogic.isUserAdmin(userId) ) {
-                    // short circuit the attempt to lookup every group in the system for the admin
-                    return true;
-                }
-
-                // if no groupId is supplied then simply check to see if the user is in any of the groups assigned,
-                // hopefully this is faster than checking if the user has the right permission in every group -AZ
-                List<EvalGroup> userEvalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
-                if (userEvalGroups.size() > 0) {
-                    // only try to do this check if there is at least one userEvalGroup
-                    String[] evalGroupIds = new String[userEvalGroups.size()];
-                    for (int i=0; i<userEvalGroups.size(); i++) {
-                        EvalGroup group = (EvalGroup) userEvalGroups.get(i);
-                        evalGroupIds[i] = group.evalGroupId;
-                    }
-
-                    long count = dao.countBySearch(EvalAssignGroup.class, new Search(
-                            new Restriction[] {
-                                    new Restriction("evaluation.id", evaluationId),
-                                    new Restriction("instructorApproval", Boolean.TRUE),
-                                    new Restriction("evalGroupId", evalGroupIds)
-                            }) );
-                    if (count > 0l) {
-                        // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
-                        return true;
-                    }
-                }
-            } else {
-                // check the user permissions
-                if ( commonLogic.isUserAdmin(userId) ) {
-                    // need to short circuit the checks below because the count is not the real count when does as an admin
-                    return true;
-                } else {
-                    if (! commonLogic.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, evalGroupId) ) {
-                        log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
-                        return false;
-                    }
-                }
-
-                // check if the user already took this evaluation (count completed responses)
-                int evalResponsesForUser = countResponses(userId, new Long[] {evaluationId}, new String[] {evalGroupId}, true);
-                if (evalResponsesForUser > 0) {
-                    // user already has a response saved for this evaluation and evalGroupId
-                    if (eval.getModifyResponsesAllowed() == null || 
-                            eval.getModifyResponsesAllowed().booleanValue() == false) {
-                        // user cannot modify existing responses
-                        EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
-                        if (response == null) response = new EvalResponse(); // avoid a null pointer exception
-                        log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again " +
-                                "in this evalGroupId (" + evalGroupId + "), " +
-                                "completed response exists ("+response.getId()+") from " + response.getEndTime() +
-                        " and this evaluation does not allow multiple attempts");
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+        return allowed;
     }
 
     public boolean canBeginEvaluation(String userId) {

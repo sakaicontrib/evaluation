@@ -94,6 +94,18 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null");
             log.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
         }
+        count = countBySearch(EvalEvaluation.class, new Search("modifyResponsesAllowed","", Restriction.NULL) );
+        if (count > 0) {
+            int counter = 0;
+            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.modifyResponsesAllowed = false where eval.modifyResponsesAllowed is null");
+            log.info("Updated " + counter + " EvalEvaluation.modifyResponsesAllowed fields from null to default");
+        }
+        count = countBySearch(EvalEvaluation.class, new Search("blankResponsesAllowed","", Restriction.NULL) );
+        if (count > 0) {
+            int counter = 0;
+            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null");
+            log.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
+        }
         // fix up all the selection nulls
         count = countBySearch(EvalEvaluation.class, new Search("instructorSelection","", Restriction.NULL) );
         if (count > 0) {

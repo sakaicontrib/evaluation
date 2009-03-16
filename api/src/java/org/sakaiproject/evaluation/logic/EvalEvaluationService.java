@@ -203,13 +203,15 @@ public interface EvalEvaluationService {
      * EVAL_INCLUDE_* from {@link EvalConstants}, default (null) is {@link EvalConstants#EVAL_INCLUDE_ALL},
      * <b>NOTE</b>: if this is non-null it will filter users to type {@link EvalAssignUser#TYPE_EVALUATOR} automatically
      * regardless of what the assignTypeConstant is set to
+     * @param userId (OPTIONAL) limit the returned assignments to those for this user,
+     * will return assignments for any user if this is null
      * @return the list of user assignments ({@link EvalAssignUser} objects)
      */
-    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant);
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId);
 
     /**
      * Gets the total count of evaluator participants for an evaluation (will not include evaluatee or assistants) <br/>
-     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String, String)} <br/>
+     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String, String, String)} <br/>
      * <b>NOTE:</b> always returns 0 if the evaluation is anonymous
      *
      * @param evaluationId the id of an {@link EvalEvaluation} object
@@ -229,7 +231,7 @@ public interface EvalEvaluationService {
      * leave this null to include takers from the entire evaluation
      * @param includeConstant a constant to indicate what users should be retrieved, EVAL_INCLUDE_* from {@link EvalConstants}
      * @return a set of userIds (internal IDs)
-     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String)}
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String)}
      */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId, String includeConstant);
 
