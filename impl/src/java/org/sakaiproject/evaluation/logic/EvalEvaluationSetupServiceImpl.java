@@ -642,20 +642,23 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             userId = null;
         } else {
             if (showNotOwned) {
-                // Get the list of all eval groups which the user has be-evaluated, not just the ones we own
-                List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
-                if (evaluatedGroups.size() > 0) {
-                    evalGroupIds = new String[evaluatedGroups.size()];
-                    for (int i = 0; i < evaluatedGroups.size(); i++) {
-                        EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
-                        evalGroupIds[i] = c.evalGroupId;
+                // get the list of all assignments where this user is instructor
+                List<EvalAssignUser> userEvaluateeAssignments = evaluationService.getParticipantsForEval(
+                        null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, userId);
+                HashSet<String> egidSet = new HashSet<String>();
+                for (EvalAssignUser evalAssignUser : userEvaluateeAssignments) {
+                    if (evalAssignUser.getEvalGroupId() != null) {
+                        egidSet.add(evalAssignUser.getEvalGroupId());
                     }
+                }
+                if (!egidSet.isEmpty()) {
+                    // create array of all assigned groupIds where this user is instructor
+                    evalGroupIds = egidSet.toArray(new String[egidSet.size()]);
                 }
             }
         }
 
         List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0, includePartial);
-
         return l;
     }
 

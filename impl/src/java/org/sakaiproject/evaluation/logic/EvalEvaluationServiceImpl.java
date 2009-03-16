@@ -249,10 +249,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
     public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds,
             String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId) {
+        if (evaluationId == null && (userId == null || "".equals(userId)) ) {
+            throw new IllegalArgumentException("At least one of the following must be set: evaluationId, userId");
+        }
         // validate eval and arguments
         getEvaluationOrFail(evaluationId);
         // create the search
-        Search search = new Search("evaluation.id", evaluationId);
+        Search search = new Search();
+        if (evaluationId != null) {
+            search.addRestriction( new Restriction("evaluation.id", evaluationId) );
+        }
         if (evalGroupIds != null && evalGroupIds.length > 0) {
             search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
         }

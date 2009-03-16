@@ -188,10 +188,14 @@ public interface EvalEvaluationService {
      * can filter the results to only include some of the participants,
      * this should be used in all cases where  <br/>
      * Will not include any assignments with {@link EvalAssignUser#STATUS_REMOVED}
+     * <br/>
+     * You must include at least one of the following (non-null):
+     * evaluationId OR userId
      * <br/> Uses the current user for permissions checks
      * 
-     * @param evaluationId the unique id of an {@link EvalEvaluation} object
-     * @param evalGroupIds an array of unique IDs for eval groups, 
+     * @param evaluationId (OPTIONAL) the unique id of an {@link EvalEvaluation} object,
+     * if this is null then assignments from any evaluation are returned
+     * @param evalGroupIds (OPTIONAL) an array of unique IDs for eval groups, 
      * if this is null or empty then results include participants from the entire evaluation,
      * NOTE: these ids are not validated
      * @param assignTypeConstant (OPTIONAL) a constant to indicate which types of assignment participants to include,
@@ -206,6 +210,7 @@ public interface EvalEvaluationService {
      * @param userId (OPTIONAL) limit the returned assignments to those for this user,
      * will return assignments for any user if this is null
      * @return the list of user assignments ({@link EvalAssignUser} objects)
+     * @throws IllegalArgumentException if all inputs are null or the inputs are invalid
      */
     public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId);
 
