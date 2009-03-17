@@ -329,7 +329,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
 
             HashSet<String> userIdsSet = new HashSet<String>();
-            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, null, includeConstant, null);
+            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, null, includeConstant, null);
             for (EvalAssignUser evalAssignUser : participants) {
                 userIdsSet.add( evalAssignUser.getUserId() );
             }
@@ -504,7 +504,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
 
             HashSet<String> userIdsSet = new HashSet<String>();
-            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, null, includeConstant, null);
+            List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, null, includeConstant, null);
             for (EvalAssignUser evalAssignUser : participants) {
                 userIdsSet.add( evalAssignUser.getUserId() );
             }

@@ -238,6 +238,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     }
 
     public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId) {
+        if (evaluationId == null || userId == null || evalGroupId == null) {
+            throw new IllegalArgumentException("inputs must all be set");
+        }
         EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
         if (evaluation == null) {
             throw new IllegalArgumentException("Invalid evaluation, cannot find evaluation: " + evaluationId);
@@ -266,7 +269,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         return response;
     }
 
-    public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, Boolean completed) {
+    public List<EvalResponse> getEvaluationResponsesForUser(String userId, Long[] evaluationIds, Boolean completed) {
         log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
 
         if (evaluationIds.length <= 0) {

@@ -34,10 +34,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -48,6 +50,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
@@ -143,6 +146,149 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             counter += getHibernateTemplate().bulkUpdate("update EvalAssignGroup eval set eval.assistantSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.assistantSelection is null");
             log.info("Updated " + counter + " EvalAssignGroup.assistantSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
         }
+    }
+
+    /**
+     * Get the list of all participants for an evaluation,
+     * can limit it to a single group which is assigned to the evaluation and
+     * can filter the results to only include some of the participants,
+     * this should be used in all cases where  <br/>
+     * Will not include any assignments with {@link EvalAssignUser#STATUS_REMOVED}
+     * <br/>
+     * You must include at least one of the following (non-null):
+     * evaluationId OR userId
+     * <br/> Uses the current user for permissions checks
+     * 
+     * @param evaluationId (OPTIONAL) the unique id of an {@link EvalEvaluation} object,
+     * if this is null then assignments from any evaluation are returned
+     * @param userId (OPTIONAL) limit the returned assignments to those for this user,
+     * will return assignments for any user if this is null
+     * @param evalGroupIds (OPTIONAL) an array of unique IDs for eval groups, 
+     * if this is null or empty then results include participants from the entire evaluation,
+     * NOTE: these ids are not validated
+     * @param assignTypeConstant (OPTIONAL) a constant to indicate which types of assignment participants to include,
+     * use the TYPE_* constants from {@link EvalAssignUser}, default (null) is to include all types of assignments
+     * @param assignStatusConstant (OPTIONAL) a constant to indicate which status of assignment participants to include,
+     * use the STATUS_* constants from {@link EvalAssignUser}, to include users with any status use {@link #STATUS_ANY}, 
+     * default (null) is to include {@link EvalAssignUser#STATUS_LINKED} and {@link EvalAssignUser#STATUS_UNLINKED},
+     * @param includeConstant (OPTIONAL) a constant to indicate what users should be retrieved, 
+     * EVAL_INCLUDE_* from {@link EvalConstants}, default (null) is {@link EvalConstants#EVAL_INCLUDE_ALL},
+     * <b>NOTE</b>: if this is non-null it will filter users to type {@link EvalAssignUser#TYPE_EVALUATOR} automatically
+     * regardless of what the assignTypeConstant is set to
+     * @param evalStateConstant (OPTIONAL) this is the state of the evals to limit the results to,
+     * this should be one of the EVALUATION_STATE_* constants (e.g. {@link EvalConstants#EVALUATION_STATE_ACTIVE}),
+     * if null then evaluations with any state are included
+     * @return the list of user assignments ({@link EvalAssignUser} objects)
+     * @throws IllegalArgumentException if all inputs are null or the inputs are invalid
+     */
+    @SuppressWarnings("unchecked")
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String userId,
+            String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, 
+            String includeConstant, String evalStateConstant) {
+        // validate arguments
+        if (evaluationId == null && (userId == null || "".equals(userId)) ) {
+            throw new IllegalArgumentException("At least one of the following must be set: evaluationId, userId");
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        String joinHQL = "";
+
+        String evalHQL = "";
+        if (evaluationId != null) {
+            params.put("evalId", evaluationId);
+            evalHQL = " and eau.evaluation.id = :evalId";
+        }
+        String evalStateHQL = "";
+        if (evalStateConstant != null) {
+            EvalUtils.validateStateConstant(evalStateConstant);
+            params.put("evalStateConstant", evalStateConstant);
+            evalStateHQL = " and eval.state = :evalStateConstant";
+            joinHQL = " join eau.evaluation eval";
+        }
+        String groupsHQL = "";
+        if (evalGroupIds != null && evalGroupIds.length > 0) {
+            params.put("evalGroupIds", evalGroupIds);
+            groupsHQL = " and eau.evalGroupId in (:evalGroupIds)";
+        }
+        String assignTypeHQL = "";
+        if (assignTypeConstant != null 
+                && includeConstant == null) {
+            // only set this if the includeConstant is not set
+            EvalAssignUser.validateType(assignTypeConstant);
+            params.put("assignType", assignTypeConstant);
+            assignTypeHQL = " and eau.type = :assignType";
+        }
+        String assignStatusHQL = "";
+        if (assignStatusConstant == null) {
+            params.put("assignStatus", EvalAssignUser.STATUS_REMOVED);
+            assignStatusHQL = " and eau.status <> :assignStatus";
+        } else if (EvalEvaluationService.STATUS_ANY.equals(assignStatusConstant)) {
+            // no restriction needed in this case
+        } else {
+            EvalAssignUser.validateStatus(assignStatusConstant);
+            params.put("assignStatus", assignStatusConstant);
+            assignStatusHQL = " and eau.status = :assignStatus";
+        }
+        String userHQL = "";
+        if (userId != null && ! "".equals(userId)) {
+            params.put("userId", userId);
+            userHQL = " and eau.userId = :userId";
+        }
+        boolean includeFilterUsers = false;
+        Set<String> userFilter = null;
+        if (includeConstant != null) {
+            EvalUtils.validateEmailIncludeConstant(includeConstant);
+            String[] groupIds = new String[] {};
+            if (evalGroupIds != null && evalGroupIds.length > 0) {
+                groupIds = evalGroupIds;
+            }
+            // force the results to only include eval takers
+            params.put("assignType", EvalAssignUser.TYPE_EVALUATOR);
+            assignTypeHQL = " and eau.type = :assignType";
+            // now set up the filter
+            if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
+                // get all users who have NOT responded
+                userFilter = getResponseUserIds(evaluationId, groupIds);
+                includeFilterUsers = false;
+            } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
+                // get all users who have responded
+                userFilter = getResponseUserIds(evaluationId, groupIds);
+                includeFilterUsers = true;
+            } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
+                // do nothing
+            } else {
+                throw new IllegalArgumentException("Unknown includeConstant: " + includeConstant);
+            }
+        }
+
+        // get the assignments based on the search/HQL
+        String hql = "select eau from EvalAssignUser eau "+joinHQL+" where 1=1 "+evalHQL+userHQL+evalStateHQL+assignStatusHQL+assignTypeHQL+groupsHQL
+            +" order by eau.id";
+//        System.out.println("*** QUERY: " + hql + " :PARAMS:" + params);
+        List<EvalAssignUser> results = (List<EvalAssignUser>) executeHqlQuery(hql, params, 0, 0);
+        List<EvalAssignUser> assignments = new ArrayList<EvalAssignUser>( results );
+
+        // This code is potentially expensive but there is not really a better way to handle it -AZ
+        if (userFilter != null && ! userFilter.isEmpty()) {
+            // filter the results based on the userFilter
+            for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
+                EvalAssignUser evalAssignUser = iterator.next();
+                String uid = evalAssignUser.getUserId();
+                if (includeFilterUsers) {
+                    // only include users in the filter
+                    if (! userFilter.contains(uid)) {
+                        iterator.remove();
+                    }
+                } else {
+                    // exclude all users in the filter
+                    if (userFilter.contains(uid)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+        return assignments;
     }
 
     /*  SELECT * FROM eval_evaluation as EVAL
@@ -429,6 +575,127 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         return evals;
 
     }
+
+
+    /**
+     * Returns all evaluations which the given user can take,
+     * can also include anonymous evaluations and filter on active/approved
+     * 
+     * @param userId the internal user id for the user who we are checking evals they can take
+     * @param activeOnly if true, only include active evaluations, 
+     * if false only include inactive (inqueue, graceperiod, closed, viewable), 
+     * if null, include all evaluations (except partial and deleted)
+     * @param approvedOnly if true, include the evaluations for groups which have been instructor approved only,
+     * if false, include evals for groups which have not been approved only,
+     * if null, include approved and unapproved,
+     * NOTE: you should not include unapproved when displaying evaluations to users to take or sending emails
+     * @param includeAnonymous if true, only include evaluations authcontrol = anon, 
+     * if false, include any evaluations with authcontrol != anon,
+     * if null, include all evaluations regardless of authcontrol
+     * @return a List of EvalEvaluation objects sorted by due date, title, and id
+     */
+    @SuppressWarnings("unchecked")
+    public List<EvalEvaluation> getEvalsUserCanTake(String userId, Boolean activeOnly,
+            Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults) {
+        if (userId == null || "".equals(userId)) {
+            throw new IllegalArgumentException("userId cannot be null or blank");
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        /**
+        String anonymousHQL = "";
+        if (includeAnonymous != null) {
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+            if (includeAnonymous) {
+                anonymousHQL += "or eval.authControl = :authControl";
+            } else {
+                anonymousHQL += "and eval.authControl <> :authControl";            
+            }
+        }
+
+        String approvedHQL = "";
+        if (approvedOnly != null) {
+//            "select eval from EvalAssignUser eau right join eau.evaluation eval where eau.id is null"
+            String groupsHQL = " and (eval.id in (select distinct assign.evaluation.id from EvalAssignGroup as assign " 
+                + "where assign.evalGroupId in (:evalGroupIds)" + approvedHQL + ")" + anonymousHQL + ")";
+//            params.put("evalGroupIds", evalGroupIds);
+
+            approvedHQL = " and assign.instructorApproval = :approval ";
+            if (approvedOnly) {
+                params.put("approval", true);
+            } else {
+                params.put("approval", false);
+            }
+        }
+         **/
+
+        String activeHQL = "";
+        if (activeOnly != null) {
+            if (activeOnly) {
+                activeHQL = " and eval.state = :activeState";
+                params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
+            } else {
+                activeHQL = " and (eval.state = :queueState or eval.state = :graceState or eval.state = :closedState or eval.state = :viewState)";
+                params.put("queueState", EvalConstants.EVALUATION_STATE_INQUEUE);
+                params.put("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+                params.put("closedState", EvalConstants.EVALUATION_STATE_CLOSED);
+                params.put("viewState", EvalConstants.EVALUATION_STATE_VIEWABLE);
+            }
+        } else {
+            // need to filter out the partial and deleted state evals
+            activeHQL = " and eval.state <> :partialState and eval.state <> :deletedState";
+            params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
+            params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
+        }
+
+        params.put("userId", userId);
+        params.put("assignUserType", EvalAssignUser.TYPE_EVALUATOR);
+        String userAssignHQL = " eau.type = :assignUserType and eau.userId = :userId";
+
+        String userAssignAuthHQL = "";
+        if (includeAnonymous == null) {
+            // include all
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+            userAssignAuthHQL = " and (("+userAssignHQL+" and eval.authControl <> :authControl) or eval.authControl = :authControl)";
+        } else {
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+            if (includeAnonymous) {
+                // only anon
+                userAssignAuthHQL = " and eval.authControl = :authControl";
+            } else {
+                // only not anon
+                userAssignAuthHQL = " and " + userAssignHQL + " and eval.authControl <> :authControl";            
+            }
+        }
+
+        /* THIS IS THE ORIGINAL SQL
+         * 
+        SELECT distinct(eval.id), eval.* FROM eval_evaluation eval
+        left join eval_assign_user eau on eau.EVALUATION_FK = eval.ID and eau.ASSIGN_TYPE = 'evaluator' and eau.USER_ID='f17f9a9c-1ac2-48de-ae33-d6f904bbb0c7'
+        left join eval_assign_group eag on eag.EVALUATION_FK = eval.ID and eag.INSTRUCTOR_APPROVAL = true
+        where eval.STATE = 'active' and ((eval.AUTH_CONTROL <> 'NONE'
+        and eau.GROUP_ID = eag.group_id) OR eval.AUTH_CONTROL = 'NONE')
+         */
+
+        String hql = "select distinct eval from EvalAssignUser eau "
+            + "right join eau.evaluation eval "
+            + "where 1=1 "+activeHQL+userAssignAuthHQL
+            + " order by eval.dueDate, eval.title, eval.id";
+        System.out.println("*** QUERY: " + hql + " :PARAMS:" + params);
+
+        List<EvalEvaluation> evals = (List<EvalEvaluation>) executeHqlQuery(hql, params, startResult, maxResults);
+
+        // TODO populate the assign groups
+        
+
+        // sort the evals remaining
+        Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
+
+        return evals;
+    }
+
+
 
 
     /**

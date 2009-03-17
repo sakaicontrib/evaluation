@@ -159,21 +159,21 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#getEvaluationResponsesForUser(java.lang.String, java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
       List<Long> ids = null;
 
       // retrieve one response for a normal user in one eval
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, true );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.response1.getId() ));
 
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, true );
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -181,7 +181,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response3.getId() ));
 
       // retrieve all responses for a normal user in one eval
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -190,7 +190,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // retrieve all responses for a normal user in mutliple evals
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(4, l.size());
@@ -201,30 +201,30 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // attempt to retrieve all responses
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null );
       assertNotNull(l);
       assertEquals(4, l.size());
 
       // attempt to retrieve all incomplete responses (there are none)
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, false );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // attempt to retrieve results for user that has no responses
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.MAINT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // test that admin can fetch all results for evaluationSetupService
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(6, l.size());
@@ -236,7 +236,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response5.getId() ));
       assertTrue(ids.contains( etdl.response6.getId() ));
 
-      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -246,7 +246,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // check that empty array causes failure
       try {
-         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] {}, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -255,7 +255,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid IDs cause failure
       try {
-         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -263,7 +263,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponsesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] { etdl.evaluationViewable.getId(), EvalTestDataLoad.INVALID_LONG_ID }, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {

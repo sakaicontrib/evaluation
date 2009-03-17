@@ -174,6 +174,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
         /*
          * for the evaluations taking box
+         * FIXME - this is really inefficient
          */
         List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
         UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
@@ -191,7 +192,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             // now fetch all the information we care about for these evaluations
             // at once (for speed)
 
-            List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
+            List<EvalResponse> evalResponses = deliveryService.getEvaluationResponsesForUser(currentUserId, evalIds, true);
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) itEvals.next();
