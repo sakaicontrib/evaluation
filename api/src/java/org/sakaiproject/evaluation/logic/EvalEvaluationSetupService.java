@@ -117,20 +117,19 @@ public interface EvalEvaluationSetupService {
     public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial);
 
     /**
-     * Get all evaluations that can be taken by this user,
+     * Get all evaluations that can be taken by this user (includes optional evalGroups info),
      * can include only active and only untaken if desired
      * 
      * @param userId the acting user, normally the current user, internal user id (not username)
      * @param activeOnly if true, only include active evaluations, 
      * if false only include inactive (inqueue, graceperiod, closed, viewable), 
      * if null, include all evaluations (except partial and deleted)
-     * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
-     * if false, include only evaluations which have already been taken,
-     * if null, include all evaluations<br/>
-     * <b>WARNING:</b> Does not take groups into account and only looks at the evaluation as a whole
-     * @param includeAnonymous if true, include assigned and anonymous evaluations (only anonymous evals if evalGroupIds is null), 
+     * @param untakenOnly if true, include only the evaluations which have NOT been taken (for at least one group this user has access to), 
+     * if false, include only evaluations which have already been taken (for at least one group this user has access to),
+     * if null, include all evaluations
+     * @param includeAnonymous if true, include both assigned and anonymous evaluations, 
      * if false, only include assigned evals which are not also anonymous,
-     * if null include only assigned evaluations
+     * if null include any assigned evaluations (regardless of the anon or not)
      * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
      */
     public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);

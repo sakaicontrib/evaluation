@@ -30,7 +30,6 @@ import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
@@ -39,7 +38,6 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -644,7 +642,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (showNotOwned) {
                 // get the list of all assignments where this user is instructor
                 List<EvalAssignUser> userEvaluateeAssignments = evaluationService.getParticipantsForEval(
-                        null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, userId);
+                        null, userId, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
                 HashSet<String> egidSet = new HashSet<String>();
                 for (EvalAssignUser evalAssignUser : userEvaluateeAssignments) {
                     if (evalAssignUser.getEvalGroupId() != null) {
@@ -667,13 +665,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
      */
     public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
-        List<EvalGroup> takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
-
-        String[] evalGroupIds = new String[takeGroups.size()];
-        for (int i=0; i<takeGroups.size(); i++) {
-            EvalGroup c = (EvalGroup) takeGroups.get(i);
-            evalGroupIds[i] = c.evalGroupId;
+        if (userId == null) {
+            throw new IllegalArgumentException("userId must be set");
         }
+
+        String[] evalGroupIds = getGroupIdsForUserToEvaluate(userId, (activeOnly == null ? false : true) );
 
         // get the evaluations
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
@@ -718,6 +714,32 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
 
+    /**
+     * Method which retrieves the groupIds for all groups in which this user has
+     * an assignment of type evaluator
+     * @param userId the userId of the user (must not be null)
+     * @param activeOnly if true then only include active ones, otherwise include all
+     * @return the array of all groupIds OR null if the user has permission in none
+     */
+    private String[] getGroupIdsForUserToEvaluate(String userId, boolean activeOnly) {
+        String[] evalGroupIds = null;
+        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(null, userId, null, 
+                EvalAssignUser.TYPE_EVALUATOR, null, null, 
+                (activeOnly ? EvalConstants.EVALUATION_STATE_ACTIVE : null) );
+        HashSet<String> egidSet = new HashSet<String>();
+        for (EvalAssignUser evalAssignUser : userAssignments) {
+            if (evalAssignUser.getEvalGroupId() != null) {
+                egidSet.add(evalAssignUser.getEvalGroupId());
+            }
+        }
+        if (!egidSet.isEmpty()) {
+            // create array of all assigned groupIds where this user is instructor
+            evalGroupIds = egidSet.toArray(new String[egidSet.size()]);
+        }
+        return evalGroupIds;
+    }
+
+
     // CATEGORIES
 
     public String[] getEvalCategories(String userId) {
@@ -729,7 +751,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
 
-    @SuppressWarnings("unchecked")
     public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId) {
         log.debug("evalCategory: " + evalCategory + ", userId: " + userId );
 
@@ -745,13 +766,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     new Order("startDate") ) );
         } else {
             // get all evals for a specific user for a category
-            List takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
-
-            String[] evalGroupIds = new String[takeGroups.size()];
-            for (int i=0; i<takeGroups.size(); i++) {
-                EvalGroup c = (EvalGroup) takeGroups.get(i);
-                evalGroupIds[i] = c.evalGroupId;
-            }
+            //List takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+            String[] evalGroupIds = getGroupIdsForUserToEvaluate(userId, true);
 
             // this sucks for efficiency -AZ
             List<EvalEvaluation> l = dao.getEvaluationsByEvalGroups( evalGroupIds, true, true, true, 0, 0 ); // only get active for users
@@ -848,7 +864,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (evalGroupId != null) {
             limitGroupIds = new String[] {evalGroupId};
         }
-        List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null, null);
+        List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null, null);
         HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<String>();
         HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<String, List<EvalAssignUser>>();
         for (EvalAssignUser evalAssignUser : assignedUsers) {

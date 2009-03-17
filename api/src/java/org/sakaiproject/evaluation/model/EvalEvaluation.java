@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -224,6 +225,14 @@ public class EvalEvaluation implements java.io.Serializable {
      * This is ignored if it is null<br/>
      */
     public Boolean useViewDate;
+
+    /**
+     * This is an optional listing of eval groups for this evaluation,
+     * if this is non-null and has been set then the groups contained are relevant to service method used
+     * to retrieve the evaluations, typically this would include the groups assigned to this eval which
+     * are accessible to the current user
+     */
+    protected List<EvalAssignGroup> evalAssignGroups;
 
     // Constructors
 
@@ -604,4 +613,16 @@ public class EvalEvaluation implements java.io.Serializable {
         this.assistantSelection = assistantSelection;
     }
 
+    /**
+     * NON_PERSISTENT list of assign groups for this eval, may be limited by user
+     * @return the evalAssignGroups, will be NULL if the groups were not populated, will be empty if populated but none are set
+     */
+    public List<EvalAssignGroup> getEvalAssignGroups() {
+        return evalAssignGroups;
+    }
+    
+    public void setEvalAssignGroups(List<EvalAssignGroup> evalAssignGroups) {
+        this.evalAssignGroups = evalAssignGroups;
+    }
+    
 }

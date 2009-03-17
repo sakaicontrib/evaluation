@@ -195,6 +195,8 @@ public interface EvalEvaluationService {
      * 
      * @param evaluationId (OPTIONAL) the unique id of an {@link EvalEvaluation} object,
      * if this is null then assignments from any evaluation are returned
+     * @param userId (OPTIONAL) limit the returned assignments to those for this user,
+     * will return assignments for any user if this is null
      * @param evalGroupIds (OPTIONAL) an array of unique IDs for eval groups, 
      * if this is null or empty then results include participants from the entire evaluation,
      * NOTE: these ids are not validated
@@ -207,16 +209,17 @@ public interface EvalEvaluationService {
      * EVAL_INCLUDE_* from {@link EvalConstants}, default (null) is {@link EvalConstants#EVAL_INCLUDE_ALL},
      * <b>NOTE</b>: if this is non-null it will filter users to type {@link EvalAssignUser#TYPE_EVALUATOR} automatically
      * regardless of what the assignTypeConstant is set to
-     * @param userId (OPTIONAL) limit the returned assignments to those for this user,
-     * will return assignments for any user if this is null
+     * @param evalStateConstant (OPTIONAL) this is the state of the evals to limit the results to,
+     * this should be one of the EVALUATION_STATE_* constants (e.g. {@link EvalConstants#EVALUATION_STATE_ACTIVE}),
+     * if null then evaluations with any state are included
      * @return the list of user assignments ({@link EvalAssignUser} objects)
      * @throws IllegalArgumentException if all inputs are null or the inputs are invalid
      */
-    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId);
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String userId, String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, String includeConstant, String evalStateConstant);
 
     /**
      * Gets the total count of evaluator participants for an evaluation (will not include evaluatee or assistants) <br/>
-     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String, String, String)} <br/>
+     * Convenience method related to {@link #getParticipantsForEval(Long, String, String, String, String, String, String)} <br/>
      * <b>NOTE:</b> always returns 0 if the evaluation is anonymous
      *
      * @param evaluationId the id of an {@link EvalEvaluation} object
@@ -236,7 +239,7 @@ public interface EvalEvaluationService {
      * leave this null to include takers from the entire evaluation
      * @param includeConstant a constant to indicate what users should be retrieved, EVAL_INCLUDE_* from {@link EvalConstants}
      * @return a set of userIds (internal IDs)
-     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String)}
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String, String)}
      */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId, String includeConstant);
 

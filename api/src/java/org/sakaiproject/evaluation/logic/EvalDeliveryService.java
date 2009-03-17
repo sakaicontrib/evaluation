@@ -90,7 +90,7 @@ public interface EvalDeliveryService {
     * if null then return all responses
     * @return a List of EvalResponse objects
     */
-   public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, Boolean completed);
+   public List<EvalResponse> getEvaluationResponsesForUser(String userId, Long[] evaluationIds, Boolean completed);
 
    /**
     * Count the number of responses for an evaluation,

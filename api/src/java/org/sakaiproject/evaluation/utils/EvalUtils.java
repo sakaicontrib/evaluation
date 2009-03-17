@@ -179,6 +179,28 @@ public class EvalUtils {
         return value;
     }
 
+    /**
+     * Checks if a string is a valid stateConstant
+     * 
+     * @param stateConstant one of the EVALUATION_STATE_* constants (e.g. {@link EvalConstants#EVALUATION_STATE_ACTIVE}),
+     * @return true if this constant is valid
+     * @throws IllegalArgumentException if the constant is not one of the ones from {@link EvalConstants}
+     */
+    public static boolean validateStateConstant(String stateConstant) {
+        if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_CLOSED.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_DELETED.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_INQUEUE.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_PARTIAL.equals(stateConstant) ||
+                EvalConstants.EVALUATION_STATE_VIEWABLE.equals(stateConstant)) {
+            // all is ok
+        } else {
+            throw new IllegalArgumentException("Invalid sharing constant ("+stateConstant+"), " +
+            "must be one of EvalConstants.EVALUATION_STATE_*");
+        }
+        return true;
+    }
 
     /**
      * Checks if a sharing constant is valid or null

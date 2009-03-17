@@ -205,7 +205,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     // USER ASSIGNMENTS
 
     /**
-     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String)}
+     * @deprecated use {@link #getParticipantsForEval(Long, String, String, String, String, String, String)}
      */
     public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId,
             String includeConstant) {
@@ -247,17 +247,23 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return eau;
     }
 
-    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String[] evalGroupIds,
-            String assignTypeConstant, String assignStatusConstant, String includeConstant, String userId) {
+    public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String userId,
+            String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, 
+            String includeConstant, String evalStateConstant) {
+        // validate arguments
         if (evaluationId == null && (userId == null || "".equals(userId)) ) {
             throw new IllegalArgumentException("At least one of the following must be set: evaluationId, userId");
         }
-        // validate eval and arguments
-        getEvaluationOrFail(evaluationId);
+        /**
         // create the search
         Search search = new Search();
         if (evaluationId != null) {
+            // getEvaluationOrFail(evaluationId); // took out eval fetch for now
             search.addRestriction( new Restriction("evaluation.id", evaluationId) );
+        }
+        if (evalStateConstant != null) {
+            EvalUtils.validateStateConstant(evalStateConstant);
+            search.addRestriction( new Restriction("evaluation.state", evalStateConstant) );
         }
         if (evalGroupIds != null && evalGroupIds.length > 0) {
             search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
@@ -326,6 +332,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 }
             }
         }
+        **/
+        // this is handled in the DAO now
+        List<EvalAssignUser> assignments = dao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
         return assignments;
     }
 
@@ -453,7 +462,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                         if (evalGroupId == null) {
                             // if no groupId is supplied then simply check to see if the user is in any of the groups assigned,
                             // hopefully this is faster than checking if the user has the right permission in every group -AZ
-                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, userId);
+                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
                             if (! userAssigns.isEmpty()) {
                                 HashSet<String> egids = new HashSet<String>();
                                 for (EvalAssignUser evalAssignUser : userAssigns) {
@@ -477,7 +486,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                             }
                         } else {
                             // check the user permissions
-                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, userId);
+                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
                             if (userAssigns.isEmpty()) {
                                 log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
                                 allowed = false;

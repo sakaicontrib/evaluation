@@ -90,7 +90,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 		UIOutput.make(tofill, "eval-category", evalCategory);
 		UIMessage.make(tofill, "eval-category-instructions", "showevalcategory.evaluation.instructions");
 
-		// show the list of evaluationSetupService
+		// show the list of evaluations
 		List<EvalEvaluation> evals = evaluationSetupService.getEvaluationsByCategory(evalCategory, null);
 		if (evals.size() > 0) {
 			// get an array of evaluation ids
