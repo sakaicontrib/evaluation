@@ -82,44 +82,6 @@
                   </div>
                 </fieldset>
 
-	   			<fieldset rsf:id="selectInstructorTA:" class="visibleFS">
-                    <legend rsf:id="msg=evalsettings.selection.header">Instructor / Teaching Assistant selection:</legend>
-                    <div class="shorttext">
-                        <span rsf:id="msg=evalsettings.selection.instruction" class="instruction">
-                            These options control which Instructor and Teaching Assistant questions are repeated in the evaluation.
-                      </span>
-                    </div>
-                    
-                    <h4 rsf:id="msg=evalsettings.selection.header.instructor">Instructor questions:</h4>
-					<span rsf:id="selectionRadioInstructors" />
-                    <div rsf:id="selectInstructorsChoice:">
-                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
-                      <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
-	                </div>
-                    <div rsf:id="selectInstructorsChoice:">
-                       <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
-                       <label rsf:id="radioLabel" for="radio2">Respondents select one instructor to evaluate</label>
-	                </div>
-                    <div rsf:id="selectInstructorsChoice:">
-                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio3" value="radio3"/>
-                      <label rsf:id="radioLabel" for="radio3">Respondents may select multiple instructors to evaluate</label>
-	                </div>
-                    <h4 rsf:id="msg=evalsettings.selection.header.ta">Teaching Assistant questions:</h4>  
-					<span rsf:id="selectionRadioTAs" />                  
-                    <div rsf:id="selectTAsChoice:">
-                      <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio4" value="radio4" checked="checked" />
-                      <label rsf:id="radioLabel" for="radio4">Respondents evaluate all TAs included in the evaluation</label>
-	                </div>
-	                <div rsf:id="selectTAsChoice:">
-	                  <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio5" value="radio5" />
-	                  <label rsf:id="radioLabel" for="radio5">Respondents select one TA to evaluate</label>
-	                </div>
-	                <div rsf:id="selectTAsChoice:">
-	                  <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio6" value="radio6" />
-	                  <label rsf:id="radioLabel" for="radio6">Respondents may select multiple TAs to evaluate</label>
-	                </div>
-	            </fieldset>
-
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.dates.header">Evaluation Dates:</legend>
                         <div class="shorttext">
@@ -269,6 +231,44 @@
 						<span rsf:id="instructorOptLabel" style="font-weight:bold;"></span>
 					</p>
 				</fieldset>
+
+                <fieldset rsf:id="selectInstructorTA:" class="visibleFS">
+                    <legend rsf:id="msg=evalsettings.selection.header">Instructor / Teaching Assistant selection:</legend>
+                    <div class="shorttext">
+                        <span rsf:id="msg=evalsettings.selection.instruction" class="instruction">
+                            These options control which Instructor and Teaching Assistant questions are repeated in the evaluation.
+                      </span>
+                    </div>
+                    
+                    <h4 rsf:id="msg=evalsettings.selection.header.instructor">Instructor questions:</h4>
+                    <span rsf:id="selectionRadioInstructors" />
+                    <div rsf:id="selectInstructorsChoice:">
+                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
+                      <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
+                    </div>
+                    <div rsf:id="selectInstructorsChoice:">
+                       <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
+                       <label rsf:id="radioLabel" for="radio2">Respondents select one instructor to evaluate</label>
+                    </div>
+                    <div rsf:id="selectInstructorsChoice:">
+                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio3" value="radio3"/>
+                      <label rsf:id="radioLabel" for="radio3">Respondents may select multiple instructors to evaluate</label>
+                    </div>
+                    <h4 rsf:id="msg=evalsettings.selection.header.ta">Teaching Assistant questions:</h4>  
+                    <span rsf:id="selectionRadioTAs" />                  
+                    <div rsf:id="selectTAsChoice:">
+                      <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio4" value="radio4" checked="checked" />
+                      <label rsf:id="radioLabel" for="radio4">Respondents evaluate all TAs included in the evaluation</label>
+                    </div>
+                    <div rsf:id="selectTAsChoice:">
+                      <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio5" value="radio5" />
+                      <label rsf:id="radioLabel" for="radio5">Respondents select one TA to evaluate</label>
+                    </div>
+                    <div rsf:id="selectTAsChoice:">
+                      <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio6" value="radio6" />
+                      <label rsf:id="radioLabel" for="radio6">Respondents may select multiple TAs to evaluate</label>
+                    </div>
+                </fieldset>
 
 				<fieldset rsf:id="showEvalExtras:" class="visibleFS">
 					<legend rsf:id="msg=evalsettings.extra.settings.header">Evaluation Extras:</legend>
