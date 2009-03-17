@@ -4,21 +4,12 @@
 	<head>
 		<title rsf:id="remove-template-title">Remove Template</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
-	<script language="JavaScript">
-		$(document).ready(function(){
-			var row = 'tr[rowId='+$('.inlineForm input[name*=templateId]').val()+']';
-			$('.inlineForm').ajaxForm({
-				beforeSend: function(){
-					 $("#facebox .body").html('<div class="loading"><img src="/library/image/sakai/spinner.gif"/></div>');
-				},
-				success: function(){
-					$(document).trigger('close.facebox');
-					$(row).effect("highlight", {}, 2000).fadeOut('normal');
-				}
-			});
-		});
-	</script>
 	<body>
 		<div class="portletBody">
 			<div rsf:id="message-for:*" class="alertMessage">
@@ -39,7 +30,7 @@
 					<form rsf:id="remove-template-form" method="post" class="inlineForm">
 						<input rsf:id="remove-template-button" type="submit" value="Remove Template" class="active" accesskey="s" />
 					</form>
-					<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="$(document).trigger('close.facebox');" accesskey="x"/>	
+					<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x"/>	
 				</div>	
 			</div>
 		

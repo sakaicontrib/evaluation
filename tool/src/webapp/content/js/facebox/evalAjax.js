@@ -2,17 +2,6 @@
  * @author lovemorenalube
  **/
 
-$(document).bind('activateControls.templates', function() {
-    $(document).unbind('activateControls.templates');
-    $('a[rel=templateRemove]').itemRemove({
-        ref:    'eval-template',
-        id:        "$(this).parent().parent().attr('rowId')",
-        row:     "tr[rowId='+opts.id+']" ,
-        text:   '$(this).parent().parent().find("span.templateTitle").text()'
-    });
-    $('a[rel=facebox]').facebox(); 
-});
-
 $(document).bind('activateControls.templateItems', function(e, opt) {
     var groupableItems = new Array();
     //$(document).unbind('activateControls.templateItems');
@@ -717,9 +706,6 @@ function updateControlItemsTotal(){
             //do more stuff here
         }
 
-        if (options.ref == 'eval-template') {
-            $('tr[rowId=' + options.id + ']').effect('highlight', {}, 1000).fadeOut('normal');
-        }
         return false;
     }
 
