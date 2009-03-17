@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -57,6 +58,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
@@ -296,8 +298,36 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                   new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
          }
       }
-
-
+      
+      // EVALUATION INSTRUCTOR/TA SELECTION
+      if((Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)){
+      // radio buttons for the INSTRUCTOR selection options
+      UIBranchContainer selectFieldSet = UIBranchContainer.make(form, "selectInstructorTA:");
+      String[] selectValues = new String[] {EvalAssignHierarchy.SELECTION_ALL,EvalAssignHierarchy.SELECTION_ONE, EvalAssignHierarchy.SELECTION_MULTIPLE};
+      UISelect selectInstructors = UISelect.make(selectFieldSet, "selectionRadioInstructors", 
+    		  selectValues, 
+            new String[] {"evalsettings.selection.instructor.all","evalsettings.selection.instructor.one","evalsettings.selection.instructor.many"},
+            evaluationOTP + "instructorSelection", null).setMessageKeys();
+      String selectInstructorsId = selectInstructors.getFullID();
+      for (int i = 0; i < selectValues.length; ++i) {
+         UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectInstructorsChoice:", i + "");
+         UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", selectInstructorsId, i);
+         UISelectLabel.make(radiobranch, "radioLabel", selectInstructorsId, i)
+         .decorate( new UILabelTargetDecorator(choice) );
+         }
+      // radio buttons for the TA selection options
+      UISelect selectTAs = UISelect.make(selectFieldSet, "selectionRadioTAs", 
+    		  selectValues, 
+            new String[] {"evalsettings.selection.ta.all","evalsettings.selection.ta.one","evalsettings.selection.ta.many"},
+            evaluationOTP + "assistantSelection", null).setMessageKeys();
+      String selectTAsId = selectTAs.getFullID();
+      for (int i = 0; i < selectValues.length; ++i) {
+         UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectTAsChoice:", i + "");
+         UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", selectTAsId, i);
+         UISelectLabel.make(radiobranch, "radioLabel", selectTAsId, i)
+         .decorate( new UILabelTargetDecorator(choice) );}
+      }
+      
       // EVALUATION DATES
 
       Date today = new Date();

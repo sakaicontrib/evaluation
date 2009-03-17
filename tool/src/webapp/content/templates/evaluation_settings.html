@@ -82,7 +82,7 @@
                   </div>
                 </fieldset>
 
-	   			<fieldset class="visibleFS">
+	   			<fieldset rsf:id="selectInstructorTA:" class="visibleFS">
                     <legend rsf:id="msg=evalsettings.selection.header">Instructor / Teaching Assistant selection:</legend>
                     <div class="shorttext">
                         <span rsf:id="msg=evalsettings.selection.instruction" class="instruction">
@@ -91,30 +91,32 @@
                     </div>
                     
                     <h4 rsf:id="msg=evalsettings.selection.header.instructor">Instructor questions:</h4>
-                    <div>
-                      <input type="radio" name="radio" id="radio" value="radio" />
-                      <label rsf:id="msg=evalsettings.selection.instructor.all" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
+					<span rsf:id="selectionRadioInstructors" />
+                    <div rsf:id="selectInstructorsChoice:">
+                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
+                      <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
 	                </div>
-                    <div>
-                       <input type="radio" name="radio" id="radio2" value="radio2" />
-                       <label rsf:id="msg=evalsettings.selection.instructor.one" for="radio2">Respondents select one instructor to evaluate</label>
+                    <div rsf:id="selectInstructorsChoice:">
+                       <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
+                       <label rsf:id="radioLabel" for="radio2">Respondents select one instructor to evaluate</label>
 	                </div>
-                    <div>
-                      <input type="radio" name="radio" id="radio3" value="radio3" />
-                      <label rsf:id="msg=evalsettings.selection.instructor.many" for="radio3">Respondents may select multiple instructors to evaluate</label>
+                    <div rsf:id="selectInstructorsChoice:">
+                      <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio3" value="radio3"/>
+                      <label rsf:id="radioLabel" for="radio3">Respondents may select multiple instructors to evaluate</label>
 	                </div>
-                    <h4 rsf:id="msg=evalsettings.selection.header.ta">Teaching Assistant questions:</h4>                    
-                    <div>
-                      <input type="radio" name="radio2" id="radio4" value="radio4" />
-                      <label rsf:id="msg=evalsettings.selection.ta.all" for="radio4">Respondents evaluate all TAs included in the evaluation</label>
+                    <h4 rsf:id="msg=evalsettings.selection.header.ta">Teaching Assistant questions:</h4>  
+					<span rsf:id="selectionRadioTAs" />                  
+                    <div rsf:id="selectTAsChoice:">
+                      <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio4" value="radio4" checked="checked" />
+                      <label rsf:id="radioLabel" for="radio4">Respondents evaluate all TAs included in the evaluation</label>
 	                </div>
-	                <div>
-	                  <input type="radio" name="radio2" id="radio5" value="radio5" />
-	                  <label rsf:id="msg=evalsettings.selection.ta.one" for="radio5">Respondents select one TA to evaluate</label>
+	                <div rsf:id="selectTAsChoice:">
+	                  <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio5" value="radio5" />
+	                  <label rsf:id="radioLabel" for="radio5">Respondents select one TA to evaluate</label>
 	                </div>
-	                <div>
-	                  <input type="radio" name="radio2" id="radio6" value="radio6" />
-	                  <label rsf:id="msg=evalsettings.selection.ta.many" for="radio6">Respondents may select multiple TAs to evaluate</label>
+	                <div rsf:id="selectTAsChoice:">
+	                  <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio6" value="radio6" />
+	                  <label rsf:id="radioLabel" for="radio6">Respondents may select multiple TAs to evaluate</label>
 	                </div>
 	            </fieldset>
 
