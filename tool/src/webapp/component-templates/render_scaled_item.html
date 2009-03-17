@@ -144,6 +144,12 @@
 			
 			<!-- DIV tag for Stepped Display -->
 			<div rsf:id="steppedDisplay:">
+				<!--[if IE 7]>
+					<style type="text/css">
+						td.exclude input {padding:0px;margin:4px;}
+					</style>
+				<![endif]-->
+
 				<table border="0" cellspacing="0" cellpadding="0" width="99%">
 					<tr>
 						<td>
@@ -198,7 +204,7 @@
 					</tr>
 				
 					<tr>
-						<td>
+						<td class="exclude">
 							<table border="0" cellspacing="0" cellpadding="0" width="100%">
 								<tr>
 									<td width="90%" valign="top">
@@ -206,9 +212,9 @@
 											<div rsf:id="itemText"  style="display:inline" class="label">Stepped item text here</div>
 									</td>
 									<td width="2%" valign="top">
-										<input rsf:id="na-input" type="radio" name="block1" id="choiceNA" style="width:28px;padding:0px;margin:4px 0px;" />&nbsp;
+										<input rsf:id="na-input" type="radio" name="block1" id="choiceNA"  />
 									</td>
-									<td width="5%" nowrap="nowrap" valign="top" style="height:28px">
+									<td width="5%" nowrap="nowrap" valign="top" style="height:28px" >
 										<span rsf:id="dummyRadio" />
 										<div rsf:id="coloredChoicesBranch:" style="width:100%;position:relative;">
 											<div style="width:100%;display:block;position:absolute;z-index:5;">
@@ -217,16 +223,16 @@
 				
 											<!-- For correct spacing there are 2 sets of radio buttons, this is the one for colored spacing -->
 											<div style="width:100%;display:block;position:absolute;z-index:6;background-color:transparent;">
-												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice1" style="width:28px;padding:0px;margin:4px 0px;" /></span>
-												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice2" style="width:28px;padding:0px;margin:4px 0px;" /></span>
-												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice3" style="width:28px;padding:0px;margin:4px 0px;" /></span>
+												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice1"  /></span>
+												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice2"  /></span>
+												<span rsf:id="scaleOptionColored:"><input rsf:id="radioValueColored" type="radio" name="block1" id="choice3"  /></span>
 											</div>
 										</div>
 				
 										<!-- This is the real set of radio buttons -->
-										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1"  id="choice1" style="width:28px;padding:0px;margin:4px 0px;" /></span>
-										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1" id="choice2" style="width:28px;padding:0px;margin:4px 0px;" /></span>
-										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1" id="choice3" style="width:28px;padding:0px;margin:4px 0px;" /></span>
+										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1"  id="choice1"  /></span>
+										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1" id="choice2"  /></span>
+										<span rsf:id="scaleOption:"><input rsf:id="radioValue" type="radio" name="block1" id="choice3"  /></span>
 									</td>
 								</tr>
 							</table>
