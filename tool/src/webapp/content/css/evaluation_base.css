@@ -334,6 +334,22 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 .steppedRowContainer tr:hover{ background: #eee }
 .steppedRowContainer tr:hover td{ border-bottom: 1px solid #000 }
 .steppedRowContainer tr:hover td.exclude{ border: none }
+
+
+/*
+remove input width in template and use these instead
+*/
+.scaleCell span {}
+.scaleCell span img {}
+.steppedRowContainer td.exclude span span{}
+td.exclude input {padding:0px;margin:4px 10px 4px 4px;}
+body:first-of-type  td.exclude input {padding:0px;margin:4px 12px 4px 4px;}
+span.topLabel {}
+
+/*
+remove input width in template and use these instead
+*/
+
 .steppedRowContainer td{
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc
@@ -361,6 +377,9 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 .alertMessage ul{ padding: 0; margin: 0; list-style: none }
 .alertMessage ul li{ padding: 0; margin: 0; list-style: none }
 
+/*
+.label {outline:1px solid lime !important;width:40%;}
+*/
 .validFail{ /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/}
 .validFail .label{ color: #b11; font-weight: bold }
 .validFail label{ color: #000 !important }
