@@ -189,8 +189,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
             if (taEnabled.booleanValue()) {
                 List<String> teachingAssistants = new ArrayList<String>();
-                instructors.add("fake1");
-                instructors.add("fake2");
+                teachingAssistants.add("fake1");
+                teachingAssistants.add("fake2");
                 associates.put(EvalConstants.ITEM_CATEGORY_TA, teachingAssistants);
             }
     
@@ -203,13 +203,13 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                     UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                 } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                    String instructorName = tig.associateId.equals("fake2") ? "Steven Githens" : "Aaron Zeckoski";
+                    String instructorName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.instructor.questions.header", new Object[] { instructorName });
                 } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
-                    String instructorName = tig.associateId.equals("fake2") ? "Andy Thornton" : "Antranig Basman";
+                    String assistantName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
-                            "takeeval.ta.questions.header", new Object[] { instructorName });
+                            "takeeval.ta.questions.header", new Object[] { assistantName });
                 }
     
                 // loop through the hierarchy node groups
