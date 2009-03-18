@@ -122,22 +122,24 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 continue; // skip processing for invalid groups
             }
 
-            Set<String> userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                    EvalConstants.PERM_BE_EVALUATED);
+            List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                    new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+            Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
+
             // add in the owner or remove them based on the setting
             if (includeOwner) {
-                userIdsSet.add(eval.getOwner());
+                instructors.add(eval.getOwner());
             } else {
-                if (userIdsSet.contains(eval.getOwner())) {
-                    userIdsSet.remove(eval.getOwner());
+                if (instructors.contains(eval.getOwner())) {
+                    instructors.remove(eval.getOwner());
                 }
             }
 
             // skip ahead if there is no one to send to
-            if (userIdsSet.size() == 0) continue;
+            if (instructors.size() == 0) continue;
 
             // turn the set into an array
-            String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+            String[] toUserIds = (String[]) instructors.toArray(new String[] {});
             if (log.isDebugEnabled()) {
                 log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
                         + EvalConstants.EMAIL_TEMPLATE_CREATED + " notification to for new evaluation ("
@@ -189,22 +191,25 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             EvalAssignGroup assignGroup = assignGroups.get(i);
             EvalGroup group = commonLogic.makeEvalGroupObject(assignGroup.getEvalGroupId());
             if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
-                //notify students
-                userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                        EvalConstants.PERM_TAKE_EVALUATION);
+                // notify eval takers
+                List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                        new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                userIdsSet = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
                 studentNotification = true;
             } else {
                 //instructor may opt-in or opt-out
                 if (assignGroup.getInstructorApproval().booleanValue()) {
-                    //instructor has opted-in, notify students
-                    userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                            EvalConstants.PERM_TAKE_EVALUATION);
+                    // instructor has opted-in, notify students
+                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                            new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                    userIdsSet = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
                     studentNotification = true;
                 } else {
                     if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
                         // instructor has not opted-in, notify instructors
-                        userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                                EvalConstants.PERM_BE_EVALUATED);
+                        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                                new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+                        userIdsSet = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
                         studentNotification = false;
                     } else {
                         userIdsSet = new HashSet<String>();
@@ -268,9 +273,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         String from = getFromEmailOrFail(eval);
         EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, evaluationId);
 
-        //get student ids
-        Set<String> userIdsSet = commonLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                EvalConstants.PERM_TAKE_EVALUATION);
+        // get evaluator ids
+        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+        Set<String> userIdsSet = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
         if (userIdsSet.size() > 0) {
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 
@@ -430,16 +436,20 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 if (includeAdmins && 
                         evalAssignGroup.getInstructorsViewResults().booleanValue() &&
                         jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)) {
-                    userIdsSet.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupId,
-                            EvalConstants.PERM_BE_EVALUATED));
+                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                            new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+                    Set<String> userIds = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
+                    userIdsSet.addAll(userIds);
                 }
 
                 //at present, includeEvaluatees is always true
                 if (includeEvaluatees && 
                         evalAssignGroup.getStudentsViewResults().booleanValue() &&
                         jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS)) {
-                    userIdsSet.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupId,
-                            EvalConstants.PERM_TAKE_EVALUATION));
+                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                            new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                    Set<String> userIds = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
+                    userIdsSet.addAll(userIds);
                 }
             }
 
