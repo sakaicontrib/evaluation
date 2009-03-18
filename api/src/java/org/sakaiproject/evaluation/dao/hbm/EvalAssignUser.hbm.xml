@@ -30,6 +30,9 @@
         <property name="status" type="java.lang.String" index="eval_asgnuser_status">
             <column name="ASSIGN_STATUS" not-null="true" length="255" />
         </property>
+        <property name="listOrder" type="integer">
+            <column name="LIST_ORDER" not-null="true" />
+        </property>
         <!-- linking fields -->
         <property name="assignGroupId" type="java.lang.Long">
             <column name="ASSIGN_GROUP_ID" />

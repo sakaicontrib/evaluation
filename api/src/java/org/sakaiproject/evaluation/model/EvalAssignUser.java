@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -119,6 +120,12 @@ public class EvalAssignUser implements java.io.Serializable {
      * cannot be changed once it is set
      */
     protected Long assignGroupId;
+    /**
+     * This stores a specific ordering for this assignment when listing it,
+     * note that by default the order is 0 which means list in id order,
+     * use the {@link AssignComparatorByOrder} to order things
+     */
+    protected int listOrder;
 
     // Constructors
 
@@ -273,6 +280,14 @@ public class EvalAssignUser implements java.io.Serializable {
         this.typeChanged = true;
     }
 
+    public int getListOrder() {
+        return listOrder;
+    }
+
+    public void setListOrder(int listOrder) {
+        this.listOrder = listOrder;
+    }
+
     // validation methods
 
     public static void validateNotEmpty(String str, String name) {
@@ -345,6 +360,37 @@ public class EvalAssignUser implements java.io.Serializable {
     @Override
     public String toString() {
         return "id="+id+":eval="+getEvaluationId()+":user="+userId+":group="+evalGroupId+":type="+type+":status="+status;
+    }
+
+    /**
+     * This comparator will put the user assignments in a list in the correct list order
+     * using the list order operator, 0 (default) puts the item at the end of the list
+     */
+    public static class AssignComparatorByOrder implements Comparator<EvalAssignUser> {
+        public static final long serialVersionUID = 31L;
+        public int compare(EvalAssignUser item0, EvalAssignUser item1) {
+            int compare = 0;
+            if (item0.listOrder == item1.listOrder
+                    || (item0.listOrder <= 0 && item1.listOrder <= 0) ) {
+                // use id instead
+                if (item0.id != null && item1.id != null) {
+                    item0.id.compareTo(item1.id);
+                } else {
+                    // use userId
+                    item0.userId.compareTo(item1.userId);
+                }
+            } else if (item0.listOrder > 0 && item1.listOrder > 0) {
+                // ordering set for both
+                compare = item0.listOrder - item1.listOrder;
+            } else if (item0.listOrder <= 0) {
+                // ordering set for one only
+                compare = -1;
+            } else if (item1.listOrder <= 0) {
+                // ordering set for one only
+                compare = 1;
+            }
+            return compare;
+        }
     }
 
 }
