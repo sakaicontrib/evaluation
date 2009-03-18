@@ -35,49 +35,49 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class TakeEvalBean {
 
-   private static Log log = LogFactory.getLog(TakeEvalBean.class);
+    private static Log log = LogFactory.getLog(TakeEvalBean.class);
 
-   public EvalEvaluation eval;
-   public String evalGroupId;
-   public Date startDate;
+    public EvalEvaluation eval;
+    public String evalGroupId;
+    public Date startDate;
 
-   private ResponseBeanLocator responseBeanLocator;
-   public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
-      this.responseBeanLocator = responseBeanLocator;
-   }
+    private ResponseBeanLocator responseBeanLocator;
+    public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
+        this.responseBeanLocator = responseBeanLocator;
+    }
 
-   private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   private TargettedMessageList messages;
-   public void setMessages(TargettedMessageList messages) {
-      this.messages = messages;
-   }
+    private TargettedMessageList messages;
+    public void setMessages(TargettedMessageList messages) {
+        this.messages = messages;
+    }
 
-   public String submitEvaluation() {
-      log.debug("submit evaluation");
-      try {
-         responseBeanLocator.saveAll(eval, evalGroupId, startDate);
-      } catch (ResponseSaveException e) {
-         String messageKey = "unknown.caps";
-         if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
-            messageKey = "takeeval.user.must.answer.all.exception";
-         } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {
-            messageKey = "takeeval.user.blank.response.exception";
-         } else if (ResponseSaveException.TYPE_CANNOT_TAKE_EVAL.equals(e.type)) {
-            messageKey = "takeeval.user.cannot.take.now.exception";
-         } else {
-             messageKey = "takeeval.user.cannot.save.reponse";
-         }
-         messages.addMessage( new TargettedMessage(messageKey) );
-         return "failure";
-      }
-      messages.addMessage( new TargettedMessage("evaluations.take.message",
-            new Object[] { eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) }, 
-            TargettedMessage.SEVERITY_INFO));
-      return "success";
-   }
+    public String submitEvaluation() {
+        log.debug("submit evaluation");
+        try {
+            responseBeanLocator.saveAll(eval, evalGroupId, startDate);
+        } catch (ResponseSaveException e) {
+            String messageKey = "unknown.caps";
+            if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
+                messageKey = "takeeval.user.must.answer.all.exception";
+            } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {
+                messageKey = "takeeval.user.blank.response.exception";
+            } else if (ResponseSaveException.TYPE_CANNOT_TAKE_EVAL.equals(e.type)) {
+                messageKey = "takeeval.user.cannot.take.now.exception";
+            } else {
+                messageKey = "takeeval.user.cannot.save.reponse";
+            }
+            messages.addMessage( new TargettedMessage(messageKey) );
+            return "failure";
+        }
+        messages.addMessage( new TargettedMessage("evaluations.take.message",
+                new Object[] { eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) }, 
+                TargettedMessage.SEVERITY_INFO));
+        return "success";
+    }
 
 }

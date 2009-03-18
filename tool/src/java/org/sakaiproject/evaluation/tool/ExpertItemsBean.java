@@ -35,63 +35,63 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
  */
 public class ExpertItemsBean {
 
-	private static Log log = LogFactory.getLog(ExpertItemsBean.class);
+    private static Log log = LogFactory.getLog(ExpertItemsBean.class);
 
-	public Map<String, Boolean> selectedIds = new HashMap<String, Boolean>();
-	public Long templateId;
+    public Map<String, Boolean> selectedIds = new HashMap<String, Boolean>();
+    public Long templateId;
 
-	private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
 
-	public ExpertItemsBean() { }
+    public ExpertItemsBean() { }
 
-	/**
-	 * Creates templateItems to add items to a template
-	 * @return the status location
-	 */
-	public String processActionAddItems() {
-		log.debug("in process action add items, selectedItems=" + selectedIds.size());
+    /**
+     * Creates templateItems to add items to a template
+     * @return the status location
+     */
+    public String processActionAddItems() {
+        log.debug("in process action add items, selectedItems=" + selectedIds.size());
 
-		String currentUserId = commonLogic.getCurrentUserId();
-		String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
-		String hierarchyNodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
+        String currentUserId = commonLogic.getCurrentUserId();
+        String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
+        String hierarchyNodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
-		EvalTemplate template = authoringService.getTemplateById(templateId);
-		if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
-			// TODO change the level and node based on current settings
-		   hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
-			hierarchyNodeId = currentUserId;
-		}
+        EvalTemplate template = authoringService.getTemplateById(templateId);
+        if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
+            // TODO change the level and node based on current settings
+            hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
+            hierarchyNodeId = currentUserId;
+        }
 
-		for (Iterator<String> iter = selectedIds.keySet().iterator(); iter.hasNext(); ) {
-			Long itemId = new Long(iter.next());
-			EvalItem item = authoringService.getItemById(itemId);
-			if (item == null) {
-				log.error("Invalid item id: " + itemId);
-				continue;
-			}
-			log.debug("Checking to add item:" + itemId);
-			if (selectedIds.get(itemId.toString()) == Boolean.TRUE) {
-			   // make the template item based on the item and default settings
-				EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);
-				templateItem.setOwner(currentUserId);
-				templateItem.setTemplate(template);
-				templateItem.setHierarchyLevel(hierarchyLevel);
-				templateItem.setHierarchyNodeId(hierarchyNodeId);
-				// save the template item
-				authoringService.saveTemplateItem(templateItem, currentUserId);
-				log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
-			}
-		}
+        for (Iterator<String> iter = selectedIds.keySet().iterator(); iter.hasNext(); ) {
+            Long itemId = new Long(iter.next());
+            EvalItem item = authoringService.getItemById(itemId);
+            if (item == null) {
+                log.error("Invalid item id: " + itemId);
+                continue;
+            }
+            log.debug("Checking to add item:" + itemId);
+            if (selectedIds.get(itemId.toString()) == Boolean.TRUE) {
+                // make the template item based on the item and default settings
+                EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);
+                templateItem.setOwner(currentUserId);
+                templateItem.setTemplate(template);
+                templateItem.setHierarchyLevel(hierarchyLevel);
+                templateItem.setHierarchyNodeId(hierarchyNodeId);
+                // save the template item
+                authoringService.saveTemplateItem(templateItem, currentUserId);
+                log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
+            }
+        }
 
-		return "success";
-	}
+        return "success";
+    }
 
 }
