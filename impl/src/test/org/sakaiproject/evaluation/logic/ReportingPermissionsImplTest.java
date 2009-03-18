@@ -96,32 +96,32 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
       // check for active eval
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationActive.getId(), 
-            null, EvalTestDataLoad.MAINT_USER_ID, true);
+            EvalTestDataLoad.MAINT_USER_ID, null, true);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign1.getEvalGroupId()) );
 
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationActive.getId(), 
-            null, EvalTestDataLoad.MAINT_USER_ID, false);
+            EvalTestDataLoad.MAINT_USER_ID, null, false);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
       // check for closed eval
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationClosed.getId(), 
-            null, EvalTestDataLoad.MAINT_USER_ID, true);
+            EvalTestDataLoad.MAINT_USER_ID, null, true);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign3.getEvalGroupId()) );
 
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationClosed.getId(), 
-            null, EvalTestDataLoad.USER_ID, false);
+            EvalTestDataLoad.USER_ID, null, false);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign4.getEvalGroupId()) );
 
       // check eval with no groups
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationNew.getId(), 
-            null, EvalTestDataLoad.ADMIN_USER_ID, false);
+            EvalTestDataLoad.ADMIN_USER_ID, null, false);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
@@ -135,12 +135,12 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
 
       eval = evaluationService.getEvaluationById(etdl.evaluationClosed.getId());
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.MAINT_USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign3.getEvalGroupId()) );
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign4.getEvalGroupId()) );
@@ -148,11 +148,11 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, false);
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.MAINT_USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
@@ -163,11 +163,11 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       eval.setInstructorViewResults(false);
       eval.setStudentViewResults(false);
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.MAINT_USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
@@ -175,23 +175,23 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       eval.setInstructorViewResults(true);
       eval.setStudentViewResults(true);
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.MAINT_USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(0, evalGroupIds.size());
 
       // set the state so it can be viewed
       eval.setState(EvalConstants.EVALUATION_STATE_VIEWABLE);
       
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.MAINT_USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign3.getEvalGroupId()) );
 
-      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, null, EvalTestDataLoad.USER_ID, null);
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.USER_ID, null);
       assertNotNull(evalGroupIds);
       assertEquals(1, evalGroupIds.size());
       assertTrue( evalGroupIds.contains(etdl.assign4.getEvalGroupId()) );
