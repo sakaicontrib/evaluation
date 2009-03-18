@@ -1181,22 +1181,23 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * a subset (the same size or smaller) of the input
      * 
      * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param permissionConstant a permission constant which is 
-     * {@link EvalConstants#PERM_BE_EVALUATED} for instructors/evaluatees OR
-     * {@link EvalConstants#PERM_TAKE_EVALUATION} for students/evaluators,
+     * @param assignTypeConstant an assign type constant which is 
+     * {@link EvalAssignUser#TYPE_EVALUATEE} for instructors/evaluatees OR
+     * {@link EvalAssignUser#TYPE_EVALUATOR} for students/evaluators,
      * other permissions will return no results
      * @param evalGroupIds the unique eval group ids associated with this evaluation, 
      * can be null or empty to get all ids for this evaluation
      * @return a set of eval group ids which allow viewing by the specified permission
      */
-    public Set<String> getViewableEvalGroupIds(Long evaluationId, String permissionConstant, String[] evalGroupIds) {
-        if (evaluationId == null || permissionConstant == null) {
-            throw new IllegalArgumentException("evaluationId and permissionConstant both must not be null");
+    public Set<String> getViewableEvalGroupIds(Long evaluationId, String assignTypeConstant, String[] evalGroupIds) {
+        if (evaluationId == null || assignTypeConstant == null) {
+            throw new IllegalArgumentException("evaluationId and assignTypeConstant both must not be null");
         }
+        EvalAssignUser.validateType(assignTypeConstant);
         String permCheck = null;
-        if (EvalConstants.PERM_BE_EVALUATED.equals(permissionConstant)) {
+        if (EvalAssignUser.TYPE_EVALUATEE.equals(assignTypeConstant)) {
             permCheck = "instructorsViewResults";
-        } else if (EvalConstants.PERM_TAKE_EVALUATION.equals(permissionConstant)) {
+        } else if (EvalAssignUser.TYPE_EVALUATOR.equals(assignTypeConstant)) {
             permCheck = "studentsViewResults";
         }
 
@@ -1205,12 +1206,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             Map<String, Object> params = new HashMap<String, Object>();
             String groupsHQL = "";
             if (evalGroupIds != null && evalGroupIds.length > 0) {
-                groupsHQL = " and ag.evalGroupId in (:evalGroupIds) ";
+                groupsHQL = " and eag.evalGroupId in (:evalGroupIds) ";
                 params.put("evalGroupIds", evalGroupIds);
             }
             params.put("evaluationId", evaluationId);
-            String hql = "SELECT ag.evalGroupId from EvalAssignGroup as ag where ag.evaluation.id = :evaluationId "
-                + " and ag."+permCheck+" = true " + groupsHQL;
+            params.put("assignTypeConstant", assignTypeConstant);
+            String hql = "SELECT eag.evalGroupId from EvalAssignGroup eag where eag.evaluation.id = :evaluationId "
+                + " and eag.evalGroupId in (select distinct eau.evalGroupId from EvalAssignUser eau " +
+                		"where eau.evaluation.id = :evaluationId and eau.type = :assignTypeConstant)"
+                + " and eag."+permCheck+" = true " + groupsHQL;
             List<?> results = executeHqlQuery(hql, params, 0, 0);
             // put the results into a set and convert them to strings
             for (Object object : results) {
