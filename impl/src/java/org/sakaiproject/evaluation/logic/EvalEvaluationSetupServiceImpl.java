@@ -56,6 +56,7 @@ import org.sakaiproject.genericdao.api.search.Search;
 /**
  * Implementation for EvalEvaluationSetupService
  * (Note for developers - do not modify this without permission from the author)<br/>
+ * Modified all the uses of perms to the new user assignments
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
