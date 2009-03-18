@@ -30,30 +30,30 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class EvalActionResultInterceptor implements ActionResultInterceptor {
 
-   private EvaluationBeanLocator evaluationBeanLocator;
-   public void setEvaluationBeanLocator(EvaluationBeanLocator evaluationBeanLocator) {
-      this.evaluationBeanLocator = evaluationBeanLocator;
-   }
+    private EvaluationBeanLocator evaluationBeanLocator;
+    public void setEvaluationBeanLocator(EvaluationBeanLocator evaluationBeanLocator) {
+        this.evaluationBeanLocator = evaluationBeanLocator;
+    }
 
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
-    */
-   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
-      // for evaluation creation
-      if (incoming instanceof EvalViewParameters
-            && result.resultingView instanceof EvalViewParameters) {
-         EvalViewParameters in = (EvalViewParameters) incoming;
-         EvalViewParameters outgoing = (EvalViewParameters) result.resultingView;
-         if (in.evaluationId != null) {
-            outgoing.evaluationId = in.evaluationId;
-         } else {
-            EvalEvaluation eval = (EvalEvaluation) evaluationBeanLocator.locateBean(EvaluationBeanLocator.NEW_1);
-            if (eval != null) {
-               outgoing.evaluationId = eval.getId();
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+     */
+    public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+        // for evaluation creation
+        if (incoming instanceof EvalViewParameters
+                && result.resultingView instanceof EvalViewParameters) {
+            EvalViewParameters in = (EvalViewParameters) incoming;
+            EvalViewParameters outgoing = (EvalViewParameters) result.resultingView;
+            if (in.evaluationId != null) {
+                outgoing.evaluationId = in.evaluationId;
+            } else {
+                EvalEvaluation eval = (EvalEvaluation) evaluationBeanLocator.locateBean(EvaluationBeanLocator.NEW_1);
+                if (eval != null) {
+                    outgoing.evaluationId = eval.getId();
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
 }

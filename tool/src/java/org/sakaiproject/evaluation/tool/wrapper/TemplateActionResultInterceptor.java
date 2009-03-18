@@ -32,35 +32,34 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class TemplateActionResultInterceptor implements ActionResultInterceptor {
 
-   private TemplateBeanLocator templateBeanLocator;
-   public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
-      this.templateBeanLocator = templateBeanLocator;
-   }
+    private TemplateBeanLocator templateBeanLocator;
+    public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
+        this.templateBeanLocator = templateBeanLocator;
+    }
 
+    /* Standard semantics - if there was an incoming ID, outgoing will be the same
+     * if incoming is blank, and OTP bean contains a new entity, outgoing will be
+     * the new entity. - antranig
+     */
 
-   /* Standard semantics - if there was an incoming ID, outgoing will be the same
-    * if incoming is blank, and OTP bean contains a new entity, outgoing will be
-    * the new entity. - antranig
-    */
-
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
-    */
-   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
-      // for template creation
-      if (incoming instanceof TemplateViewParameters
-            && result.resultingView instanceof TemplateViewParameters) {
-         TemplateViewParameters ineval = (TemplateViewParameters) incoming;
-         TemplateViewParameters outgoing = (TemplateViewParameters) result.resultingView;
-         if (ineval.templateId != null) {
-            outgoing.templateId = ineval.templateId;
-         } else {
-            EvalTemplate template = (EvalTemplate) templateBeanLocator.locateBean(TemplateBeanLocator.NEW_1);
-            if (template != null) {
-               outgoing.templateId = template.getId();
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+     */
+    public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+        // for template creation
+        if (incoming instanceof TemplateViewParameters
+                && result.resultingView instanceof TemplateViewParameters) {
+            TemplateViewParameters ineval = (TemplateViewParameters) incoming;
+            TemplateViewParameters outgoing = (TemplateViewParameters) result.resultingView;
+            if (ineval.templateId != null) {
+                outgoing.templateId = ineval.templateId;
+            } else {
+                EvalTemplate template = (EvalTemplate) templateBeanLocator.locateBean(TemplateBeanLocator.NEW_1);
+                if (template != null) {
+                    outgoing.templateId = template.getId();
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
 }

@@ -26,16 +26,16 @@ import uk.org.ponder.util.RunnableInvoker;
  */
 public class ModelAccessWrapperInvoker implements RunnableInvoker {
 
-   public EvalDaoInvoker daoInvoker;
-   public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
-      this.daoInvoker = daoInvoker;
-   }
+    public EvalDaoInvoker daoInvoker;
+    public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
+        this.daoInvoker = daoInvoker;
+    }
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.util.RunnableInvoker#invokeRunnable(java.lang.Runnable)
-	 */
-	public void invokeRunnable(Runnable toinvoke) {
-	   daoInvoker.invokeTransactionalAccess(toinvoke);
-	}
+    /* (non-Javadoc)
+     * @see uk.org.ponder.util.RunnableInvoker#invokeRunnable(java.lang.Runnable)
+     */
+    public void invokeRunnable(Runnable toinvoke) {
+        daoInvoker.invokeTransactionalAccess(toinvoke);
+    }
 
 }
