@@ -43,80 +43,79 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  */
 public class HierarchyNodeLocator implements WriteableBeanLocator {
 
-   public static final String NEW_PREFIX = "new-";
-   public static String NEW_1 = NEW_PREFIX + "1";
+    public static final String NEW_PREFIX = "new-";
+    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalCommonLogic external;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   public void setExternal(EvalCommonLogic external) {
-      this.external = external;
-   }
+    private ExternalHierarchyLogic hierarchyLogic;
 
-   private ExternalHierarchyLogic hierarchyLogic;
+    public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
+        this.hierarchyLogic = hierarchyLogic;
+    }
 
-   public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
-      this.hierarchyLogic = hierarchyLogic;
-   }
+    public Map<String, EvalHierarchyNode> delivered = new HashMap<String, EvalHierarchyNode>();
 
-   public Map<String, EvalHierarchyNode> delivered = new HashMap<String, EvalHierarchyNode>();
+    public Object locateBean(String name) {
+        checkSecurity();
 
-   public Object locateBean(String name) {
-      checkSecurity();
+        EvalHierarchyNode togo = delivered.get(name);
+        if (togo == null) {
+            if (name.startsWith(NEW_PREFIX)) {
+                togo = new EvalHierarchyNode();
+            } else {
+                togo = hierarchyLogic.getNodeById(name);
+            }
+            delivered.put(name, togo);
+        }
+        return togo;
+    }
 
-      EvalHierarchyNode togo = delivered.get(name);
-      if (togo == null) {
-         if (name.startsWith(NEW_PREFIX)) {
-            togo = new EvalHierarchyNode();
-         } else {
-            togo = hierarchyLogic.getNodeById(name);
-         }
-         delivered.put(name, togo);
-      }
-      return togo;
-   }
+    public void saveAll() {
+        checkSecurity();
 
-   public void saveAll() {
-      checkSecurity();
-      
-      for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-          String key = (String) it.next();
-          EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
-          if (key.startsWith(HierarchyNodeLocator.NEW_PREFIX)) {
-              String[] parts = key.split("-");
-              EvalHierarchyNode newNode = hierarchyLogic.addNode(parts[1]);
-              hierarchyLogic.updateNodeData(newNode.id, node.title, node.description);
-          }
-          else {
-              hierarchyLogic.updateNodeData(node.id, node.title, node.description);
-          }
-      }
-  }
+        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+            String key = it.next();
+            EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
+            if (key.startsWith(HierarchyNodeLocator.NEW_PREFIX)) {
+                String[] parts = key.split("-");
+                EvalHierarchyNode newNode = hierarchyLogic.addNode(parts[1]);
+                hierarchyLogic.updateNodeData(newNode.id, node.title, node.description);
+            }
+            else {
+                hierarchyLogic.updateNodeData(node.id, node.title, node.description);
+            }
+        }
+    }
 
-   /*
-    * Currently only administrators can use this functionality.
-    */
-   private void checkSecurity() {
-      String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
+    /*
+     * Currently only administrators can use this functionality.
+     */
+    private void checkSecurity() {
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this locator");
-      }
-   }
+        if (!userAdmin) {
+            // Security check and denial
+            throw new SecurityException("Non-admin users may not access this locator");
+        }
+    }
 
-   public boolean remove(String id) {
-      checkSecurity();
-      hierarchyLogic.removeNode(id);
-      return true;
-   }
+    public boolean remove(String id) {
+        checkSecurity();
+        hierarchyLogic.removeNode(id);
+        return true;
+    }
 
-   /* Not going to use this for now.
-    * 
-    */
-   public void set(String arg0, Object arg1) {
-      checkSecurity();
-      // TODO Auto-generated method stub
+    /* Not going to use this for now.
+     * 
+     */
+    public void set(String arg0, Object arg1) {
+        checkSecurity();
+        // TODO Auto-generated method stub
 
-   }
+    }
 }
