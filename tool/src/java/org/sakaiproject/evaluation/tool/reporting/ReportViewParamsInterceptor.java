@@ -18,26 +18,25 @@ import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
  */
 public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
 
-   private CurrentViewableReports curViewableReports;
-   public void setCurrentViewableReports(CurrentViewableReports cur) {
-      this.curViewableReports = cur;
-   }
+    private CurrentViewableReports curViewableReports;
+    public void setCurrentViewableReports(CurrentViewableReports cur) {
+        this.curViewableReports = cur;
+    }
 
-   public AnyViewParameters adjustViewParameters(ViewParameters incoming) {
-      AnyViewParameters togo = incoming;
+    public AnyViewParameters adjustViewParameters(ViewParameters incoming) {
+        AnyViewParameters togo = incoming;
 
-      if (ReportChooseGroupsProducer.VIEW_ID.equals(incoming.viewID)) {
-         ReportParameters params = (ReportParameters) incoming;
-         curViewableReports.populate(params.evaluationId);
-         if (curViewableReports.getViewableGroupIDs().length <= 1) {
-            ReportParameters viewReports = (ReportParameters) params.copyBase();
-            viewReports.viewID = ReportsViewingProducer.VIEW_ID;
-            viewReports.groupIds = curViewableReports.getViewableGroupIDs();
-            togo = new RedirectViewParameters(viewReports);
-         }
-      }
-      
-      return togo;
-   }
+        if (ReportChooseGroupsProducer.VIEW_ID.equals(incoming.viewID)) {
+            ReportParameters params = (ReportParameters) incoming;
+            curViewableReports.populate(params.evaluationId);
+            if (curViewableReports.getViewableGroupIDs().length <= 1) {
+                ReportParameters viewReports = (ReportParameters) params.copyBase();
+                viewReports.viewID = ReportsViewingProducer.VIEW_ID;
+                viewReports.groupIds = curViewableReports.getViewableGroupIDs();
+                togo = new RedirectViewParameters(viewReports);
+            }
+        }
+        return togo;
+    }
 
 }

@@ -28,6 +28,7 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * @author Steven Githens
  */
 public class HierarchyTreeNodeSelectRenderer {
+
     private ExternalHierarchyLogic hierarchyLogic;
     public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
        this.hierarchyLogic = logic;
