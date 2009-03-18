@@ -39,6 +39,7 @@ import org.sakaiproject.user.api.UserDirectoryService;
  * 
  * @author rwellis
  * FIXME rwellis, please use generics in all collections in this class -AZ
+ * FIXME rwellis, please fix injections and non-threadsafe as indicated below -AZ
  */
 public class EvalImportJobImpl implements EvalImportJob{
 	
