@@ -733,7 +733,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    
    // GROUP ASSIGNMENTS
 
-   @SuppressWarnings("unchecked")
    public void testSaveAssignGroup() {
 
       // test adding evalGroupId to inqueue eval
@@ -743,8 +742,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
       // check save worked
-      List<EvalAssignGroup> l = evaluationDao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
+      List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
+              new Search("evaluation.id", etdl.evaluationNew.getId()) );
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(l.contains(eacNew));
@@ -757,8 +756,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.saveAssignGroup(eacActive, EvalTestDataLoad.MAINT_USER_ID);
 
       // check save worked
-      l = evaluationDao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, new Object[] {etdl.evaluationActive.getId()});
+      l = evaluationDao.findBySearch(EvalAssignGroup.class, 
+              new Search("evaluation.id", etdl.evaluationActive.getId()) );
       assertNotNull(l);
       assertEquals(2, l.size());
       assertTrue(l.contains(eacActive));
@@ -881,7 +880,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
     */
-   @SuppressWarnings("unchecked")
    public void testDeleteAssignGroup() {
       // save some ACs to test removing
       EvalAssignGroup eac1 = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
@@ -894,8 +892,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationDao.save(eac2);
 
       // check save worked
-      List<EvalAssignGroup> l = evaluationDao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
+      List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
+            new Search("evaluation.id", etdl.evaluationNew.getId()) );
       assertNotNull(l);
       assertEquals(2, l.size());
       assertTrue(l.contains(eac1));
@@ -908,8 +906,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.deleteAssignGroup( etdl.assign8.getId(), EvalTestDataLoad.MAINT_USER_ID );
 
       // check save worked
-      l = evaluationDao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
+      l = evaluationDao.findBySearch(EvalAssignGroup.class, 
+              new Search("evaluation.id", etdl.evaluationNew.getId()) );
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(! l.contains(eac1));
