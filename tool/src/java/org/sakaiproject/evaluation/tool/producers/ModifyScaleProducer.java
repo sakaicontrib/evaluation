@@ -53,167 +53,167 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-   public static final String VIEW_ID = "modify_scale";
-   public String getViewID() {
-      return VIEW_ID;
-   }
+    public static final String VIEW_ID = "modify_scale";
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-   private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
-   }
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+        this.evaluationService = evaluationService;
+    }
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
 
-   private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
-   public void setBoundedDynamicListInputEvolver(BoundedDynamicListInputEvolver boundedDynamicListInputEvolver) {
-      this.boundedDynamicListInputEvolver = boundedDynamicListInputEvolver;
-   }
+    private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
+    public void setBoundedDynamicListInputEvolver(BoundedDynamicListInputEvolver boundedDynamicListInputEvolver) {
+        this.boundedDynamicListInputEvolver = boundedDynamicListInputEvolver;
+    }
 
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-       this.evalSettings = evalSettings;
-   }
-
-   
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-    */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-
-      // local variables used in the render logic
-      String currentUserId = commonLogic.getCurrentUserId();
-      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-
-      /*
-       * top links here
-       */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      if (userAdmin) {
-         UIInternalLink.make(tofill, "administrate-link", 
-               UIMessage.make("administrate.page.title"),
-               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-scales-link",
-               UIMessage.make("controlscales.page.title"),
-               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-      }
-
-      if (createTemplate) {
-         UIInternalLink.make(tofill, "control-templates-link",
-               UIMessage.make("controltemplates.page.title"), 
-               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-	  if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-	     UIInternalLink.make(tofill, "control-items-link",
-		   UIMessage.make("controlitems.page.title"), 
-		   new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-	  }
-      } else {
-         throw new SecurityException("User attempted to access " + 
-               VIEW_ID + " when they are not allowed");
-      }
-
-      if (beginEvaluation) {
-         UIInternalLink.make(tofill, "control-evaluations-link",
-               UIMessage.make("controlevaluations.page.title"),
-            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-      }
-
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this page");
-      }
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
 
-      EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
-      Long scaleId = evalScaleParams.scaleId;
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+     */
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      String scaleOTP = "scaleBeanLocator.";
-      if (scaleId == null) {
-         // new scale
-         scaleOTP += ScaleBeanLocator.NEW_1 + ".";
-      } else {
-         scaleOTP += scaleId + ".";
-      }
+        // local variables used in the render logic
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+        boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+        boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
-      UIForm form = UIForm.make(tofill, "basic-form");
+        /*
+         * top links here
+         */
+        UIInternalLink.make(tofill, "summary-link", 
+                UIMessage.make("summary.page.title"), 
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInput.make(form, "scale-title", scaleOTP + "title");
+        if (userAdmin) {
+            UIInternalLink.make(tofill, "administrate-link", 
+                    UIMessage.make("administrate.page.title"),
+                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+            UIInternalLink.make(tofill, "control-scales-link",
+                    UIMessage.make("controlscales.page.title"),
+                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        }
 
-      // use the logic layer method to determine if scales can be controlled
-      if (scaleId != null && 
-            authoringService.canRemoveScale(currentUserId, scaleId)) {
-         UIInternalLink.make(form, "scale-remove-link", 
-               UIMessage.make("modifyscale.remove.scale.link"), 
-               new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
-      }
+        if (createTemplate) {
+            UIInternalLink.make(tofill, "control-templates-link",
+                    UIMessage.make("controltemplates.page.title"), 
+                    new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+            if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+                UIInternalLink.make(tofill, "control-items-link",
+                        UIMessage.make("controlitems.page.title"), 
+                        new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+            }
+        } else {
+            throw new SecurityException("User attempted to access " + 
+                    VIEW_ID + " when they are not allowed");
+        }
 
-      boundedDynamicListInputEvolver.setLabels(
-            UIMessage.make("modifyscale.remove.scale.option.button"), 
-            UIMessage.make("modifyscale.add.scale.option.button"));
-      boundedDynamicListInputEvolver.setMinimumLength(2);
-      boundedDynamicListInputEvolver.setMaximumLength(40);
+        if (beginEvaluation) {
+            UIInternalLink.make(tofill, "control-evaluations-link",
+                    UIMessage.make("controlevaluations.page.title"),
+                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+        }
 
-      UIInputMany modifypoints = UIInputMany.make(form, 
-            "modify-scale-points:", scaleOTP + "options");
-      boundedDynamicListInputEvolver.evolve(modifypoints);
+        if (!userAdmin) {
+            // Security check and denial
+            throw new SecurityException("Non-admin users may not access this page");
+        }
 
-      UISelect radios = UISelect.make(form, "scaleIdealRadio", 
-            EvalToolConstants.scaleIdealValues, 
-            EvalToolConstants.scaleIdealLabels, 
-            scaleOTP + "ideal").setMessageKeys();
-      radios.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 
-      String selectID = radios.getFullID();
-      for (int i = 0; i < EvalToolConstants.scaleIdealValues.length; ++i) {
-         UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
-         UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
-         UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
-         UILabelTargetDecorator.targetLabel(label, choice);
-      }
+        EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
+        Long scaleId = evalScaleParams.scaleId;
 
-      if (userAdmin) {
-         UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
-         UISelect.make(sharingBranch, "scale-sharing", 
-               EvalToolConstants.SHARING_VALUES, 
-               EvalToolConstants.SHARING_LABELS_PROPS, 
-               scaleOTP + "sharing").setMessageKeys();
-      }
+        String scaleOTP = "scaleBeanLocator.";
+        if (scaleId == null) {
+            // new scale
+            scaleOTP += ScaleBeanLocator.NEW_1 + ".";
+        } else {
+            scaleOTP += scaleId + ".";
+        }
 
-      // command buttons
-      UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
-      UICommand.make(form, "scale-add-modify-save-button", 
-            UIMessage.make("modifyscale.save.scale.button"), "templateBBean.saveScaleAction");
+        UIForm form = UIForm.make(tofill, "basic-form");
 
-   }
+        UIInput.make(form, "scale-title", scaleOTP + "title");
 
-   /* 
-    * (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
-    */
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List togo = new ArrayList();
-      togo.add(new NavigationCase("success", new SimpleViewParameters(ControlScalesProducer.VIEW_ID)));
-      return togo;
-   }
+        // use the logic layer method to determine if scales can be controlled
+        if (scaleId != null && 
+                authoringService.canRemoveScale(currentUserId, scaleId)) {
+            UIInternalLink.make(form, "scale-remove-link", 
+                    UIMessage.make("modifyscale.remove.scale.link"), 
+                    new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
+        }
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-    */
-   public ViewParameters getViewParameters() {
-      return new EvalScaleParameters();
-   }
+        boundedDynamicListInputEvolver.setLabels(
+                UIMessage.make("modifyscale.remove.scale.option.button"), 
+                UIMessage.make("modifyscale.add.scale.option.button"));
+        boundedDynamicListInputEvolver.setMinimumLength(2);
+        boundedDynamicListInputEvolver.setMaximumLength(40);
+
+        UIInputMany modifypoints = UIInputMany.make(form, 
+                "modify-scale-points:", scaleOTP + "options");
+        boundedDynamicListInputEvolver.evolve(modifypoints);
+
+        UISelect radios = UISelect.make(form, "scaleIdealRadio", 
+                EvalToolConstants.scaleIdealValues, 
+                EvalToolConstants.scaleIdealLabels, 
+                scaleOTP + "ideal").setMessageKeys();
+        radios.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
+
+        String selectID = radios.getFullID();
+        for (int i = 0; i < EvalToolConstants.scaleIdealValues.length; ++i) {
+            UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
+            UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
+            UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
+            UILabelTargetDecorator.targetLabel(label, choice);
+        }
+
+        if (userAdmin) {
+            UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
+            UISelect.make(sharingBranch, "scale-sharing", 
+                    EvalToolConstants.SHARING_VALUES, 
+                    EvalToolConstants.SHARING_LABELS_PROPS, 
+                    scaleOTP + "sharing").setMessageKeys();
+        }
+
+        // command buttons
+        UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
+        UICommand.make(form, "scale-add-modify-save-button", 
+                UIMessage.make("modifyscale.save.scale.button"), "templateBBean.saveScaleAction");
+
+    }
+
+    /* 
+     * (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+     */
+    @SuppressWarnings("unchecked")
+    public List reportNavigationCases() {
+        List togo = new ArrayList();
+        togo.add(new NavigationCase("success", new SimpleViewParameters(ControlScalesProducer.VIEW_ID)));
+        return togo;
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+     */
+    public ViewParameters getViewParameters() {
+        return new EvalScaleParameters();
+    }
 }

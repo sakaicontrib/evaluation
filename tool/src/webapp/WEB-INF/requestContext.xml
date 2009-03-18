@@ -217,13 +217,13 @@
 
     <bean
         class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
 
     <bean
         class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
     
@@ -245,7 +245,7 @@
 
     <!-- HIERARCHY - Views for Controlling and Administering the Hierarchy -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
         <property name="evalSettings" 
@@ -255,7 +255,7 @@
     <bean
         class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
 	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
@@ -264,7 +264,7 @@
     <bean
         class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
 	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
@@ -336,17 +336,14 @@
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-		<property name="developerHelperService"
-            ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="hierarchyNodeSelectorRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
     </bean>
@@ -354,8 +351,6 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
     </bean>
@@ -379,7 +374,6 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
         <property name="hierarchyNodeSelectorRenderer"
@@ -437,7 +431,7 @@
 
     <!-- SCALES -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
@@ -561,7 +555,7 @@
     <!-- EMAIL TEMPLATES -->
     <bean
         class="org.sakaiproject.evaluation.tool.producers.ControlEmailTemplatesProducer">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />

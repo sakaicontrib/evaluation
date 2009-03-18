@@ -27,33 +27,31 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class ImportErrorProducer implements 
-ViewComponentProducer, 
-ViewParamsReporter, 
-NavigationCaseReporter
-{
-	
-	/**
-	 * This is used for navigation within the system.
-	 */
-	public static final String VIEW_ID = "import_error";
-	public String getViewID() {
-		return VIEW_ID;
-	}
+public class ImportErrorProducer implements ViewComponentProducer, ViewParamsReporter,
+        NavigationCaseReporter {
 
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * This is used for navigation within the system.
+     */
+    public static final String VIEW_ID = "import_error";
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-	public ViewParameters getViewParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+            ComponentChecker checker) {
+        // TODO Auto-generated method stub
+    }
 
-	public List reportNavigationCases() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public ViewParameters getViewParameters() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List reportNavigationCases() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

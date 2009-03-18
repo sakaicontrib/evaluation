@@ -55,9 +55,9 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         return VIEW_ID;
     }
 
-    private EvalCommonLogic external;
-    public void setExternal(EvalCommonLogic external) {
-        this.external = external;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
     }
 
     // pulling the spring app context, bad bad -AZ
@@ -73,8 +73,8 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         String warningMessage = "";
-        String currentUserId = external.getCurrentUserId();
-        boolean userAdmin = external.isUserAdmin(currentUserId);
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         if (! userAdmin) {
             // Security check and denial
             throw new SecurityException("Non-admin users may not access this page");
@@ -98,7 +98,7 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
             warningMessage += " No evalGroupId set";
             UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
-            String title = external.getDisplayTitle(evalGroupId);
+            String title = commonLogic.getDisplayTitle(evalGroupId);
             if ("--------".equals(title)) {
                 warningMessage += " Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null";
                 UIOutput.make(tofill, "warning-message", warningMessage);
@@ -107,11 +107,11 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         }
         String userId = currentUserId;
         if (username == null || username.equals("")) {
-            username = external.getUserUsername(userId);
+            username = commonLogic.getUserUsername(userId);
             warningMessage += " No username set: using current user";
             UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
-            userId = external.getUserId(username);
+            userId = commonLogic.getUserId(username);
             if (userId == null) {
                 warningMessage += " Invalid username ("+username+"): cannot find id, setting to current user id";
                 UIOutput.make(tofill, "warning-message", warningMessage);
