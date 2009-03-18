@@ -372,6 +372,7 @@ tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
+tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/facebox/b.png -text
 tool/src/webapp/content/js/facebox/bl.png -text

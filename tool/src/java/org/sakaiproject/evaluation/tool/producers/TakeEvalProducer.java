@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -56,6 +58,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -66,7 +69,13 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UICSSDecorator;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
+import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -392,6 +401,47 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         }
                     }
                 }
+                Boolean selectEnabled = (Boolean) evalSettings.get(evalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+                String instructorsSel = eval.getInstructorSelection();
+                if(selectEnabled && instructors.size()>0){
+                	List<String> v = new ArrayList<String>();
+                    List<String> l = new ArrayList<String>();
+                    Iterator<String> inst = instructors.iterator();
+                	if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_ALL)){
+                		
+                	}
+					if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
+						UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-multiple:");
+						//UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "select-instructors-multiple-form", "");
+		                    while(inst.hasNext()){
+	                    	EvalUser user = commonLogic.getEvalUserById( inst.next().toString() );
+	                        UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, "select-instructors-multiple-row:");
+	                        UIOutput checkBranch = UIOutput.make(row, "select-instructors-multiple-label", user.displayName);	                        
+	                        UIBoundBoolean b = UIBoundBoolean.make(row, "select-instructors-multiple-box", Boolean.FALSE);
+	                        // we have to force the id so the JS block checking can work
+		                    b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
+		                    // have to force the target id so that the label for works 
+		                    UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
+		                    uild.targetFullID = user.userId;
+		                    checkBranch.decorators = new DecoratorList( uild );
+		                    // tooltip
+		                    // b.decorators.add( new UITooltipDecorator( UIMessage.make("select-instructors-multiple-label") ) );
+	                        }
+		                    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");     
+					}
+					if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_ONE)){
+		                    while(inst.hasNext()){
+		                    	EvalUser user = commonLogic.getEvalUserById( inst.next().toString() );
+		                        v.add(user.userId);
+		                        l.add(user.displayName);
+		                      }
+		                    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-one:");
+		                    UIOutput.make(showSwitchGroup, "select-instructors-one-header");
+		                    UISelect.make(showSwitchGroup, "select-instructors-one-list", v.toArray(new String[v.size()]), l.toArray(new String[l.size()]),  "#{evalUserId}");
+		                    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");             
+					}
+				}
+
 
                 // loop through the TIGs and handle each associated category
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
@@ -401,12 +451,24 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                     } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                        UIMessage.make(categorySectionBranch, "categoryHeader", 
+                        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.instructor.questions.header", new Object[] { user.displayName });
+                        categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "instructorBranch"}));
+                        if(!instructorsSel.equals(EvalAssignHierarchy.SELECTION_ALL)){
+                        	Map<String, String> css = new HashMap<String, String>();
+                        	css.put("display", "none");
+                        	categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                        }
                     } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                        UIMessage.make(categorySectionBranch, "categoryHeader", 
+                        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.ta.questions.header", new Object[] { user.displayName });
+                        categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "taBranch"}));
+                        if(!instructorsSel.equals(EvalAssignHierarchy.SELECTION_ALL)){
+                        	Map<String, String> css = new HashMap<String, String>();
+                        	css.put("display", "none");
+                        	categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                        }
                     }
 
                     // loop through the hierarchy node groups

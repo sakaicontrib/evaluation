@@ -28,7 +28,7 @@
    */
 
   $.extend($.facebox, {
-    settings: {
+    defaults: {
       opacity      : 0.1,
       overlay      : true,
       loadingImage : '/library/image/sakai/spinner.gif',
@@ -85,7 +85,7 @@
 		$('#saveReorderButton').click()
       $('#facebox .content').empty()
       $('#facebox .body').children().hide().end().
-        append('<div class="loading">LOADING...<br /><br /><img src="'+$.facebox.settings.loadingImage+'"/></div>')
+        append('<div class="loading">LOADING...<br /><br /><img src="'+$.facebox.defaults.loadingImage+'"/></div>')
 
       $('#facebox').css({
         top:	getPageScroll()[1] + (getPageHeight() / 500)
@@ -170,7 +170,7 @@
 	
 	if($(this).attr("rel") == "faceboxGrid"){
 		$(this).parent().parent().parent().parent().attr("class","editing");
-		$.facebox.settings.objToUpdate = $(this).parent().parent().parent();
+		$.facebox.defaults.objToUpdate = $(this).parent().parent().parent();
 	}
 		
       $.facebox.loading(true)
@@ -187,7 +187,7 @@
 			//}else
 			//jQuery(document).trigger('close.facebox');
 		if ($('#orderInputs').attr('class') == "itemOperationsEnabled"){
-			jQuery.facebox($.facebox.settings.confirmBox(this.href));
+			jQuery.facebox($.facebox.defaults.confirmBox(this.href));
 			//alert();
 			return false;
 		}else{
@@ -209,21 +209,21 @@
   function init(settings) {
     
 
-    if ($.facebox.settings.inited) return true
-    else $.facebox.settings.inited = true
+    if ($.facebox.defaults.inited) return true
+    else $.facebox.defaults.inited = true
 
     $(document).trigger('init.facebox')
     makeCompatible()
 
-    var imageTypes = $.facebox.settings.imageTypes.join('|')
-    $.facebox.settings.imageTypesRegexp = new RegExp('\.' + imageTypes + '$', 'i')
+    var imageTypes = $.facebox.defaults.imageTypes.join('|')
+    $.facebox.defaults.imageTypesRegexp = new RegExp('\.' + imageTypes + '$', 'i')
 
-    if (settings) $.extend($.facebox.settings, settings)
-    $('body').append($.facebox.settings.faceboxHtml)
+    if (settings) $.extend($.facebox.defaults, settings)
+    $('body').append($.facebox.defaults.faceboxHtml)
 
     var preload = [ new Image(), new Image() ]
-    preload[0].src = $.facebox.settings.closeImage
-    preload[1].src = $.facebox.settings.loadingImage
+    preload[0].src = $.facebox.defaults.closeImage
+    preload[1].src = $.facebox.defaults.loadingImage
 
     $('#facebox').find('.b:first, .bl, .br, .tl, .tr').each(function() {
       preload.push(new Image())
@@ -231,7 +231,7 @@
     })
 
     $('#facebox .close').click($.facebox.close)
-    $('#facebox .close_image').attr('src', $.facebox.settings.closeImage)
+    $('#facebox .close_image').attr('src', $.facebox.defaults.closeImage)
   }
   
   // getPageScroll() by quirksmode.com
@@ -267,7 +267,7 @@
 
   // Backwards compatibility
   function makeCompatible() {
-    var $s = $.facebox.settings
+    var $s = $.facebox.defaults
 
     $s.loadingImage = $s.loading_image || $s.loadingImage
     $s.closeImage = $s.close_image || $s.closeImage
@@ -288,7 +288,7 @@
       $.facebox.reveal($(target).clone().show(), klass)
 
     // image
-    } else if (href.match($.facebox.settings.imageTypesRegexp)) {
+    } else if (href.match($.facebox.defaults.imageTypesRegexp)) {
       fillFaceboxFromImage(href, klass)
     // ajax
     } else {
@@ -309,7 +309,7 @@
   }
 
   function skipOverlay() {
-    return $.facebox.settings.overlay == false || $.facebox.settings.opacity === null 
+    return $.facebox.defaults.overlay == false || $.facebox.defaults.opacity === null
   }
 
   function showOverlay() {
@@ -319,7 +319,7 @@
       $("body").append('<div id="facebox_overlay" class="facebox_hide"></div>')
 
     $('#facebox_overlay').hide().addClass("facebox_overlayBG")
-      .css('opacity', $.facebox.settings.opacity)
+      .css('opacity', $.facebox.defaults.opacity)
       //.click(function() { $(document).trigger('close.facebox') })
       .fadeIn('fast')
     return false
@@ -338,9 +338,8 @@
   }
   
   function fillActionResponse(entityCat,id, templateOwner){
-  	//alert(entityCat);
-	if (entityCat == "eval-item") {
-		var par = $.facebox.settings.objToUpdate;
+  	if (entityCat == "eval-item") {
+		var par = $.facebox.defaults.objToUpdate;
 		var id = $(par).children(".itemLine2").children("[name=rowItemId]").html();
 	}
 		
@@ -350,13 +349,6 @@
 		cache: false,
 		dataType: "xml",
 	    success: function(xml){
-			/*if (entityCat == "eval-template") {
-				$(entityCat, xml).each(function(){
-					$(".viewNav #title").html($("title", this).text());
-					$(".templateDesc").html($("description", this).text());
-					$(".viewNav").parent().Highlight(250, "#eeeeee");
-				});
-			}*/
 			if (entityCat == "eval-item") {
 				$(entityCat, xml).each(function(){
 					if (par) {
@@ -380,19 +372,11 @@
 						newRow.find('td:eq(0) span:eq(0)').html($("title", this).text());
 						
 						newRow.prependTo($('form tbody'))
-						//$(par).children(".itemLine2").children(".itemText").html($("itemText", this).text());
-						//$(par).Highlight(250, "#eeeeee");
-
-					}
+						}
 				});
 			}
 			}
 	     });
-
-	//$.getJSON(entityURL, function(json){
-  	// alert("JSON Data: " + json.eval-template[0].title);
- 	//});
- 	
   }
   
   function resetClasses(){
@@ -407,9 +391,6 @@
 	function frameShrink(){
 	  		var frame = parent.document.getElementById(window.name);
 			$(frame).height(parent.document.body.scrollHeight - 150);
-	  		//alert(frame.body.scrollHeight);
-	 		//alert(parent.document.body.scrollHeight);
-
 	}
 	
 	function frameGrow(){
@@ -417,9 +398,6 @@
 			var frame = parent.document.getElementById(window.name);
 			//if(parent.document.body.scrollHeight  this.document.body.scrollHeight)
 			$(frame).height(parent.document.body.scrollHeight + 120);
-		//alert(frame.body.scrollHeight);
-		//alert(parent.document.body.scrollHeight);
-		//setTimeout("frameShrink('"+frame+"')",1);
 		}catch(e){}
 	
 	}
@@ -439,8 +417,7 @@
       $('#facebox .body').css('width',660);
       $('#facebox .header').eq(0).show();
     })
-  	//frameShrink()
-	return false
+  	return false
   })
  
 
