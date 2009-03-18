@@ -17,8 +17,6 @@ package org.sakaiproject.evaluation.logic;
 import java.util.Date;
 
 import org.sakaiproject.evaluation.model.EvalConfig;
-import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-
 
 /**
  * Test case for EvaluationSettingsImpl
