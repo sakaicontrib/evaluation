@@ -166,7 +166,7 @@
 
     <bean id="hierNodeLocator"
         class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
@@ -174,7 +174,7 @@
 
     <bean id="hierNodeGroupsLocator"
         class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocator">
-        <property name="external"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
