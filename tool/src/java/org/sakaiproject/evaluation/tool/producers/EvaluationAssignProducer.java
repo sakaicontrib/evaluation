@@ -192,6 +192,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
         Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
 
+        // NOTE: this is the one place where the perms should be used instead of user assignments (there are no assignments yet) -AZ
+
         // get the groups that this user is allowed to assign evals to
         List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_ASSIGN_EVALUATION);
 

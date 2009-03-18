@@ -18,9 +18,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,102 +41,102 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class ControlImportProducer implements 
-	ViewComponentProducer, 
-	ViewParamsReporter, 
-	NavigationCaseReporter
-	{
-	
-	private static Log log = LogFactory.getLog(ControlImportProducer.class);
-	
-	//helper tool
-	public static final String HELPER = "sakai.filepicker";
-	
-	/**
-	 * This is used for navigation within the system.
-	 */
-	public static final String VIEW_ID = "control_import";
+public class ControlImportProducer implements ViewComponentProducer, ViewParamsReporter,
+        NavigationCaseReporter {
 
-	public String getViewID() {
-		return VIEW_ID;
-	}
-	
-	// Spring injection 
-	private EvalCommonLogic commonLogic;
-	public void setCommonLogic(EvalCommonLogic commonLogic) {
-		this.commonLogic = commonLogic;
-	}
-	
-	private SessionManager sessionManager;
+    // helper tool
+    public static final String HELPER = "sakai.filepicker";
 
-    
-	public void setSessionManager(SessionManager sessionManager) {
-		this.sessionManager = sessionManager;
-	}
-	
-	private EvalSettings evalSettings;
-	public void setEvalSettings(EvalSettings evalSettings) {
-	    this.evalSettings=evalSettings;
-	}
+    /**
+     * This is used for navigation within the system.
+     */
+    public static final String VIEW_ID = "control_import";
 
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-      String currentUserId = commonLogic.getCurrentUserId();
-      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+    // Spring injection
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this page");
-      }
+    private SessionManager sessionManager;
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
 
-      /*
-       * top links here
-       */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
-      UIInternalLink.make(tofill, "administrate-link", 
-            UIMessage.make("administrate.page.title"),
-            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-scales-link",
-            UIMessage.make("controlscales.page.title"),
-            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+            ComponentChecker checker) {
 
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-          UIInternalLink.make(tofill, "control-items-link",
-                  UIMessage.make("controlitems.page.title"), 
-                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-      }
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-		//parameters for helper
-		ToolSession toolSession = sessionManager.getCurrentToolSession();
-		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_TITLE_TEXT, "XML File Data Import");
-		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_INSTRUCTION_TEXT, "Please select an XML data file from which to read data.");
-		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_MAX_ATTACHMENTS, FilePickerHelper.CARDINALITY_SINGLE);
-		//rsf:id helper-id
-		UIOutput.make(tofill, HelperViewParameters.HELPER_ID, HELPER);
-		//rsf:id helper-binding method binding
-		UICommand.make(tofill, HelperViewParameters.POST_HELPER_BINDING, "#{importBean.process}");
-	}
+        if (!userAdmin) {
+            // Security check and denial
+            throw new SecurityException("Non-admin users may not access this page");
+        }
 
-	public List reportNavigationCases() {
-		List l = new ArrayList();
-		l.add(new NavigationCase("importing", new SimpleViewParameters(AdministrateProducer.VIEW_ID)));
-		//TODO intercepter to configure display of error message?
-		l.add(new NavigationCase("no-reference", new SimpleViewParameters(ImportErrorProducer.VIEW_ID)));
-		l.add(new NavigationCase("permission-exception", new SimpleViewParameters(ImportErrorProducer.VIEW_ID)));
-		l.add(new NavigationCase("idunused-exception", new SimpleViewParameters(ImportErrorProducer.VIEW_ID)));
-		l.add(new NavigationCase("type-exception", new SimpleViewParameters(ImportErrorProducer.VIEW_ID)));
-		l.add(new NavigationCase("exception", new SimpleViewParameters(ImportErrorProducer.VIEW_ID)));
-		return l;
-	}
+        /*
+         * top links here
+         */
+        UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-	public ViewParameters getViewParameters() {
-		return new HelperViewParameters();
-	}
+        UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"),
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-scales-link", UIMessage
+                .make("controlscales.page.title"), new SimpleViewParameters(
+                ControlScalesProducer.VIEW_ID));
+
+        UIInternalLink.make(tofill, "control-templates-link", UIMessage
+                .make("controltemplates.page.title"), new SimpleViewParameters(
+                ControlTemplatesProducer.VIEW_ID));
+        if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+            UIInternalLink.make(tofill, "control-items-link", UIMessage
+                    .make("controlitems.page.title"), new SimpleViewParameters(
+                    ControlItemsProducer.VIEW_ID));
+        }
+
+        // parameters for helper
+        ToolSession toolSession = sessionManager.getCurrentToolSession();
+        toolSession.setAttribute(FilePickerHelper.FILE_PICKER_TITLE_TEXT, "XML File Data Import");
+        toolSession.setAttribute(FilePickerHelper.FILE_PICKER_INSTRUCTION_TEXT,
+                "Please select an XML data file from which to read data.");
+        toolSession.setAttribute(FilePickerHelper.FILE_PICKER_MAX_ATTACHMENTS,
+                FilePickerHelper.CARDINALITY_SINGLE);
+        // rsf:id helper-id
+        UIOutput.make(tofill, HelperViewParameters.HELPER_ID, HELPER);
+        // rsf:id helper-binding method binding
+        UICommand.make(tofill, HelperViewParameters.POST_HELPER_BINDING, "#{importBean.process}");
+    }
+
+    @SuppressWarnings("unchecked")
+    public List reportNavigationCases() {
+        List l = new ArrayList();
+        l.add(new NavigationCase("importing",
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID)));
+        // TODO intercepter to configure display of error message?
+        l.add(new NavigationCase("no-reference", new SimpleViewParameters(
+                ImportErrorProducer.VIEW_ID)));
+        l.add(new NavigationCase("permission-exception", new SimpleViewParameters(
+                ImportErrorProducer.VIEW_ID)));
+        l.add(new NavigationCase("idunused-exception", new SimpleViewParameters(
+                ImportErrorProducer.VIEW_ID)));
+        l.add(new NavigationCase("type-exception", new SimpleViewParameters(
+                ImportErrorProducer.VIEW_ID)));
+        l.add(new NavigationCase("exception", new SimpleViewParameters(
+                        ImportErrorProducer.VIEW_ID)));
+        return l;
+    }
+
+    public ViewParameters getViewParameters() {
+        return new HelperViewParameters();
+    }
 }
-

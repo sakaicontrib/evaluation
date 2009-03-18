@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -32,9 +33,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
     public static final String VIEW_ID = "modify_hierarchy_node_groups";
 
-    private EvalCommonLogic external;
-    public void setExternal(EvalCommonLogic external) {
-        this.external = external;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
     }
 
     private ExternalHierarchyLogic hierarchyLogic;
@@ -52,8 +53,8 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
     }
 
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-        String currentUserId = external.getCurrentUserId();
-        boolean userAdmin = external.isUserAdmin(currentUserId);
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         if (!userAdmin) {
             // Security check and denial
@@ -87,8 +88,9 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
-        // NOTE was hardcoded admin user id, changed to currentUserId
-        List<EvalGroup> evalGroups = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+
+        // NOTE: This appears to be a legitimate use of the the perms check - maybe should use the user assignments? -AZ
+        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(EvalExternalLogic.ADMIN_USER_ID, EvalConstants.PERM_BE_EVALUATED);
 
         Collections.sort(evalGroups, new Comparator<EvalGroup>() {
             public int compare(final EvalGroup e1, final EvalGroup e2) {

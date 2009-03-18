@@ -16,9 +16,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 public class AdministrateReportingProducer implements ViewComponentProducer {
     public static final String VIEW_ID = "administrate_reporting";
     
-    private EvalCommonLogic external;
-    public void setExternal(EvalCommonLogic external) {
-        this.external = external;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
     }
     
     public String getViewID() {
@@ -26,8 +26,8 @@ public class AdministrateReportingProducer implements ViewComponentProducer {
     }
 
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-        String currentUserId = external.getCurrentUserId();
-        boolean userAdmin = external.isUserAdmin(currentUserId);
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         if (!userAdmin) {
             // Security check and denial

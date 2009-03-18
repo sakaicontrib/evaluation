@@ -23,20 +23,17 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
      * This is used for navigation within the system.
      */
     public static final String VIEW_ID = "administrate_email";
-
     public String getViewID() {
         return VIEW_ID;
     }
 
     // Spring injection 
     private EvalCommonLogic commonLogic;
-
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
 
     private EvalSettings evalSettings;
-
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;
     }

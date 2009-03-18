@@ -18,66 +18,66 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class ControlHierarchyProducer implements ViewComponentProducer {
 
-   public static final String VIEW_ID = "control_hierarchy";
-   public String getViewID() {
-      return VIEW_ID;
-   }
+    public static final String VIEW_ID = "control_hierarchy";
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-   private EvalCommonLogic external;
-   public void setExternal(EvalCommonLogic external) {
-      this.external = external;
-   }
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   private HierarchyRenderUtil hierUtil;
-   public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
-      hierUtil = util;
-   }
-   
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-       this.evalSettings = evalSettings;
-   }
+    private HierarchyRenderUtil hierUtil;
+    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
+        hierUtil = util;
+    }
 
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
-      String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this page");
-      }
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-      /*
-       * top links here
-       */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        if (!userAdmin) {
+            // Security check and denial
+            throw new SecurityException("Non-admin users may not access this page");
+        }
 
-      UIInternalLink.make(tofill, "administrate-link", 
-            UIMessage.make("administrate.page.title"),
-            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-scales-link",
-            UIMessage.make("controlscales.page.title"),
-            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        /*
+         * top links here
+         */
+        UIInternalLink.make(tofill, "summary-link", 
+                UIMessage.make("summary.page.title"), 
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-          UIInternalLink.make(tofill, "control-items-link",
-                  UIMessage.make("controlitems.page.title"), 
-                  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-      }
+        UIInternalLink.make(tofill, "administrate-link", 
+                UIMessage.make("administrate.page.title"),
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-scales-link",
+                UIMessage.make("controlscales.page.title"),
+                new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
-      // start rendering the hierarchy controls
-      hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:", false, false, false);
+        UIInternalLink.make(tofill, "control-templates-link",
+                UIMessage.make("controltemplates.page.title"), 
+                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+            UIInternalLink.make(tofill, "control-items-link",
+                    UIMessage.make("controlitems.page.title"), 
+                    new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        }
 
-      // done rendering the hierarchy controls
-      UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
-            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        // start rendering the hierarchy controls
+        hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:", false, false, false);
 
-   }
+        // done rendering the hierarchy controls
+        UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+
+    }
 
 }
