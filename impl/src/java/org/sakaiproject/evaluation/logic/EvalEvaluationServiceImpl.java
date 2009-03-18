@@ -527,7 +527,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         }
         Boolean instructorAllowedCreateEvals = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
         if (instructorAllowedCreateEvals != null && instructorAllowedCreateEvals) {
-            if ( commonLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
+            // check if this user has the assign evals permission in any groups
+            int permCount = commonLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION);
+            if ( permCount > 0 ) {
                 log.debug("User has permission to assign evaluation in at least one group");
                 /*
                  * TODO - this check needs to be more robust at some point
