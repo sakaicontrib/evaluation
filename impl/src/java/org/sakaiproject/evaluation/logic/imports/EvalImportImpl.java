@@ -590,9 +590,9 @@ public class EvalImportImpl implements EvalImport {
 					evalAssignGroup = evaluationService.getAssignGroupByEid(eid);
 					
 					//TODO remove: testing
-					String evalGroupId = element.getChildText("PROVIDER_ID");
-					Set userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-					userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+//					String evalGroupId = element.getChildText("PROVIDER_ID");
+//					Set userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+//					userIds = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 					//TODO remove: testing
 					
 					if(evalAssignGroup == null) {

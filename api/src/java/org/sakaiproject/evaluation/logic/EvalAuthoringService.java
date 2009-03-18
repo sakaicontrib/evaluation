@@ -246,7 +246,10 @@ public interface EvalAuthoringService {
     * template items cannot be removed from locked templates,
     * use {@link #canControlTemplateItem(String, Long)} to check if a
     * user has permissions and avoid possible exceptions<br/>
-    * <b>Note:</b> This does not remove the associated item
+    * Handles the removal of a templateItem, includes security check and 
+    * takes care of reordering or other items in the template<br/>
+    * Blocks: splits up the block and removes the parent item if a block parent is selected for removal <br/>
+    * Also attempts to remove the associated item if it is no longer being used <br/>
     * 
     * @param templateItemId the id of an EvalTemplateItem object
     * @param userId the internal user id (not username)
