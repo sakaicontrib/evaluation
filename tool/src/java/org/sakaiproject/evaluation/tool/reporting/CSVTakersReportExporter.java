@@ -21,19 +21,23 @@ import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 import au.com.bytecode.opencsv.CSVWriter;
 
+/**
+ * 
+ * @author Steven Githens
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ */
 public class CSVTakersReportExporter implements ReportExporter {
 
     private static Log log = LogFactory.getLog(ReportExporterBean.class);
 
     private static final char DELIMITER = ',';
-    private EvalCommonLogic commonLogic;
 
+    private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
 
     private MessageLocator messageLocator;
-
     public void setMessageLocator(MessageLocator locator) {
         this.messageLocator = locator;
     }
