@@ -77,7 +77,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $('#addGroupItemSave').attr('disabled', 'disabled');
             });
             $('#addGroupItemSave').bind('click', function() {
-                var img = '<img src="' + $.facebox.settings.loadingImage + '"/>';
+                var img = '<img src="' + $.facebox.defaults.loadingImage + '"/>';
                 $(this).attr('disabled', 'disabled');
                 $(this).next('input').attr('disabled', 'disabled');
                 $(img).insertAfter($(this).next('input'));
@@ -100,7 +100,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $(document).trigger('list.triggerSort');
                 //$(document).trigger('activateControls.templateItems');
                 $.facebox('\
-                                                  <div><img src="' + $.facebox.settings.loadingImage + '"/>  Saving... \
+                                                  <div><img src="' + $.facebox.defaults.loadingImage + '"/>  Saving... \
 			                </div> \
 			                <div class="footer"> \
 			                   Please do not close this window.  \
@@ -167,7 +167,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     $('a[rel=childEdit]').click(function() {
         var url = 'modify_item?templateItemId=' + $(this).parent().parent().find('input[name*=hidden-item-id]').val() + '&templateId=' + $('input[name*=templateId]').val() + '&itemClassification=Block';
         $.facebox({ ajax: url });
-        $.facebox.settings.objToUpdate = "block";
+        $.facebox.defaults.objToUpdate = "block";
         return false;
     });
     //$('a[rel=childEdit]').blockChildControls();
@@ -266,7 +266,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
 
 function submitForm(form, textarea, target, btn) {
-    var rowId = $(jQuery.facebox.settings.objToUpdate).attr("id");
+    var rowId = $(jQuery.facebox.defaults.objToUpdate).attr("id");
     var thisRow = $(document).find("[id=" + rowId + "]");
     var img = '<img src="/library/image/sakai/spinner.gif"/>';
     var templateItemId = $(form).find('input[@name*=templateItemId]').attr('value');
@@ -324,12 +324,12 @@ function submitForm(form, textarea, target, btn) {
                 dataType: 'xml',
                 cache: false,
                 beforeSend: function() {
-                    $(jQuery.facebox.settings.objToUpdate).find('.itemText span').html(img);
+                    $(jQuery.facebox.defaults.objToUpdate).find('.itemText span').html(img);
                 },
                 success: function(msg) {
                     var realText = $(msg).find('itemText').text();
                     var shortText = null;
-                    var that = $(jQuery.facebox.settings.objToUpdate).find('.itemText').eq(0);
+                    var that = $(jQuery.facebox.defaults.objToUpdate).find('.itemText').eq(0);
 
                     if (realText.length > 150) {
                         that.realText = '<h4 class="itemText"><span>' + realText + '</span><a class="less" href="#">less<\/a></h4>';

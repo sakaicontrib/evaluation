@@ -127,7 +127,7 @@ function startSort() {
                         $('#facebox .body [name*=blockChildConfirm]').click(function() {
                             if ($(this).attr('msg') == 'yes') {
                                 $.facebox('\
-                                                  <div><img src="' + $.facebox.settings.loadingImage + '"/>  Saving... \
+                                                  <div><img src="' + $.facebox.defaults.loadingImage + '"/>  Saving... \
 			                </div> \
 			                <div class="footer"> \
 			                   Please do not close this window.  \
@@ -168,7 +168,7 @@ function startSort() {
                     ui.item.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
                     ui.item.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
                         $(document).trigger('block.triggerChildrenSort', [ui]);   
-                        $(this).html('Saving... <img src="' + $.facebox.settings.loadingImage + '"/>');
+                        $(this).html('Saving... <img src="' + $.facebox.defaults.loadingImage + '"/>');
                         ui.item.parents('.itemTableBlock').sortable('disable');
                         $(document).trigger('block.saveReorder', [ui,"simple"]);
                         ui.item.parents('.itemTableBlock').sortable('enable');

@@ -11,7 +11,7 @@ $(document).ready(function() {
     SakaiProject.fckeditor.initializeEditor("item-text", siteId);
     //if($('input[@name=show-item-expert::expert-desc]').length > 0)
         //SakaiProject.fckeditor.initializeEditor("show-item-expert::expert-desc", siteId);
-    if($.facebox.settings.objToUpdate == "block"){
+    if($.facebox.defaults.objToUpdate == "block"){
 		$('#facebox .content .navPanel').hide();	
 		$('#facebox .content fieldset').hide();
         $('div[@id=show-item-scale::]').hide();
