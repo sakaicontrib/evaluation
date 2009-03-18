@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -174,7 +175,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
         /*
          * for the evaluations taking box
-         * FIXME - this is really inefficient
+         * http://jira.sakaiproject.org/jira/browse/EVALSYS-618
+         * Changed this to reduce the load on the services and make this load faster
          */
         List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
         UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
@@ -185,13 +187,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
             }
 
-            // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
-            // Map<Long, List<EvalGroup>> evalGroups =
-            // evaluationService.getEvalGroupsForEval(evalIds, false, null);
-            List<EvalGroup> groups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
-            // now fetch all the information we care about for these evaluations
-            // at once (for speed)
-
             List<EvalResponse> evalResponses = deliveryService.getEvaluationResponsesForUser(currentUserId, evalIds, true);
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -200,72 +195,62 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString());
 
                 UIOutput.make(evalrow, "evaluationTitleTitle", EvalUtils.makeMaxLengthString(eval.getTitle(), 70));
-                UIMessage.make(evalrow, "evaluationCourseEvalTitle", "summary.evaluations.courseeval.title");
-                UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title");
-                UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title");
 
-                // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
-                // List<EvalGroup> groups = evalGroups.get(eval.getId());
-                for (int j = 0; j < groups.size(); j++) {
-                    EvalGroup group = (EvalGroup) groups.get(j);
+                for (EvalAssignGroup eag : eval.getEvalAssignGroups()) {
+                    EvalGroup group = commonLogic.makeEvalGroupObject(eag.getEvalGroupId());
                     if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
                         continue; // skip processing for invalid groups
                     }
 
-                    // http://jira.sakaiproject.org/jira/browse/EVALSYS-588
-                    // if (commonLogic.isUserAllowedInEvalGroup(currentUserId,
-                    // EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
-                    // check that the user can take evaluations in this
-                    // evalGroupId
-                    if (evaluationService.isEvalGroupValidForEvaluation(group.evalGroupId, eval.getId())) {
-                        String groupId = group.evalGroupId;
-                        String title = EvalUtils.makeMaxLengthString(group.title, 50);
-                        String status = "unknown.caps";
+                    String groupId = group.evalGroupId;
+                    String title = EvalUtils.makeMaxLengthString(group.title, 50);
+                    String status = "unknown.caps";
 
-                        // find the object in the list matching the evalGroupId
-                        // and evalId,
-                        // leave as null if not found -AZ
-                        EvalResponse response = null;
-                        for (int k = 0; k < evalResponses.size(); k++) {
-                            EvalResponse er = (EvalResponse) evalResponses.get(k);
-                            if (groupId.equals(er.getEvalGroupId()) && eval.getId().equals(er.getEvaluation().getId())) {
-                                response = er;
-                                break;
-                            }
+                    // find the object in the list matching the evalGroupId and evalId,
+                    // leave as null if not found -AZ
+                    EvalResponse response = null;
+                    for (int k = 0; k < evalResponses.size(); k++) {
+                        EvalResponse er = (EvalResponse) evalResponses.get(k);
+                        if (groupId.equals(er.getEvalGroupId()) 
+                                && eval.getId().equals(er.getEvaluation().getId())) {
+                            response = er;
+                            break;
                         }
-
-                        if (groupId.equals(currentGroup)) {
-                            // TODO - do something when the evalGroupId matches
-                        }
-
-                        UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", groupId);
-
-                        // set status
-                        if (response != null && response.getEndTime() != null) {
-                            // there is a response for this eval/group
-                            status = "summary.status.completed";
-                            if (eval.getModifyResponsesAllowed().booleanValue()) {
-                                // can modify responses so show the link still
-                                // take eval link when pending
-                                UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, new EvalViewParameters(TakeEvalProducer.VIEW_ID,
-                                        eval.getId(), response.getId(), groupId));
-                            } else {
-                                // show title only when completed and cannot
-                                // modify
-                                UIOutput.make(evalcourserow, "evaluationCourseLink_disabled", title);
-                            }
-                        } else {
-                            // no response yet for this eval/group
-                            // take eval link when pending
-                            UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, new EvalViewParameters(TakeEvalProducer.VIEW_ID, eval.getId(),
-                                    groupId));
-                            status = "summary.status.pending";
-                        }
-                        UIMessage.make(evalcourserow, "evaluationCourseStatus", status);
-                        // moved down here as requested by UI design
-                        UIOutput.make(evalcourserow, "evaluationStartDate", df.format(eval.getStartDate()));
-                        UIOutput.make(evalcourserow, "evaluationDueDate", df.format(eval.getDueDate()));
                     }
+
+                    if (groupId.equals(currentGroup)) {
+                        // TODO - do something when the evalGroupId matches
+                    }
+
+                    UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", groupId);
+
+                    // set status
+                    if (response != null && response.getEndTime() != null) {
+                        // there is a response for this eval/group
+                        status = "summary.status.completed";
+                        if (eval.getModifyResponsesAllowed().booleanValue()) {
+                            // can modify responses so show the link still
+                            // take eval link when pending
+                            UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+                                    new EvalViewParameters(TakeEvalProducer.VIEW_ID,
+                                    eval.getId(), response.getId(), groupId));
+                        } else {
+                            // show title only when completed and cannot
+                            // modify
+                            UIOutput.make(evalcourserow, "evaluationCourseLink_disabled", title);
+                        }
+                    } else {
+                        // no response yet for this eval/group
+                        // take eval link when pending
+                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+                                new EvalViewParameters(TakeEvalProducer.VIEW_ID, eval.getId(),
+                                groupId));
+                        status = "summary.status.pending";
+                    }
+                    UIMessage.make(evalcourserow, "evaluationCourseStatus", status);
+                    // moved down here as requested by UI design
+                    UIOutput.make(evalcourserow, "evaluationStartDate", df.format(eval.getStartDate()));
+                    UIOutput.make(evalcourserow, "evaluationDueDate", df.format(eval.getDueDate()));
                 }
             }
         } else {
