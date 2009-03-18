@@ -17,10 +17,13 @@ package org.sakaiproject.evaluation.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +38,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
@@ -647,6 +651,28 @@ public class EvalUtils {
         }
         Date dueDate = eval.getDueDate() != null ? eval.getDueDate() : new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7));
         return dueDate;
+    }
+
+    /**
+     * Converts a collection of user assignments into a set of userIds,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param userAssignments a collection of user assignments
+     * @return the set of all userIds
+     */
+    public static Set<String> getUserIdsFromUserAssignments(Collection<EvalAssignUser> userAssignments) {
+        Set<String> s;
+        if (userAssignments == null) {
+            s = new HashSet<String>(0);
+        } else {
+            s = new LinkedHashSet<String>(userAssignments.size()); // maintain order
+            for (EvalAssignUser evalAssignUser : userAssignments) {
+                if (evalAssignUser.getEvalGroupId() != null) {
+                    s.add(evalAssignUser.getUserId());
+                }
+            }
+        }
+        return s;
     }
 
 }

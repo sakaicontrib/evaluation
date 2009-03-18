@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -146,7 +147,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                         hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
                     }
 
-                    Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                            new String[] {evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+                    Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
 
                     // get a list of the valid templateItems for this evaluation
                     List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
@@ -160,7 +163,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                     // add in the TA list if there are any TAs
                     Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
                     if (taEnabled.booleanValue()) {
-                        Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
+                        List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                                new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
+                        Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
                         if (teachingAssistants.size() > 0) {
                             associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
                         }
@@ -464,7 +469,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         // get the instructors for this evaluation
-        Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                new String[] {evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+        Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
 
         // get all items for this evaluation
         List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
@@ -476,7 +483,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         // add in the TA list if there are any TAs
         Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
         if (taEnabled.booleanValue()) {
-            Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
+            List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                    new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
+            Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
             if (teachingAssistants.size() > 0) {
                 associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
             }
