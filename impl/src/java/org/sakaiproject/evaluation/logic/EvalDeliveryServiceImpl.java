@@ -126,6 +126,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             if (response.getAnswers() != null && !response.getAnswers().isEmpty()) {
                 checkAnswersValidForEval(response);
             } else {
+                // there are no answers
                 if (response.getEndTime() != null) {
                     // the response is complete (submission of an evaluation) and not just creating the empty response
                     // check if answers are required to be filled in
@@ -133,53 +134,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                     if (unansweredAllowed == null) {
                         unansweredAllowed = response.getEvaluation().getBlankResponsesAllowed();
                     }
-                    if (unansweredAllowed.booleanValue() == false) {
+                    if (! unansweredAllowed) {
                         // all items must be completed so die if they are not
                         throw new ResponseSaveException("User submitted a blank response and there are required answers", 
                                 ResponseSaveException.TYPE_BLANK_RESPONSE);
-                    }
-
-                    // are the answers that must be filled in
-                    // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
-                    List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
-                    String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
-                    for (int i = 0; i < hierarchyNodes.size(); i++) {
-                        hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
-                    }
-
-                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
-                            new String[] {evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
-                    Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
-
-                    // get a list of the valid templateItems for this evaluation
-                    List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-                            instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
-
-
-                    // make the TI data structure and get the flat list of DTIs
-                    Map<String, List<String>> associates = new HashMap<String, List<String>>();
-                    associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));  
-
-                    // add in the assistant list if there are any
-                    Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-                    if (taEnabled.booleanValue()) {
-                        List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
-                                new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
-                        Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
-                        if (teachingAssistants.size() > 0) {
-                            associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
-                        }
-                    }
-
-                    TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
-                    List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
-
-                    for (DataTemplateItem dti : allDTIs) {
-                        if (dti.isRequired(unansweredAllowed.booleanValue())) {
-                            // required item must be completed so die if it is not
-                            throw new ResponseSaveException("User submitted a blank response and there are required answers2", 
-                                    ResponseSaveException.TYPE_BLANK_RESPONSE);
-                        }
                     }
                 }
                 response.setAnswers(new HashSet());
@@ -481,11 +439,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
 
         // add in the TA list if there are any TAs
+        List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
+        Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
         Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-        if (taEnabled.booleanValue()) {
-            List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
-                    new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
-            Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
+        if (taEnabled) {
             if (teachingAssistants.size() > 0) {
                 associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
             }
@@ -529,15 +487,18 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                         + answer.getTemplateItem().getId());
             }
 
-            //if the author has specified this as a compulsory question
-            log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().getIsCompulsory());
-            log.debug("numeric " + answer.getNumeric() + " text: " + answer.getText() );
+            // if the author has specified this as a compulsory question
+            if (log.isDebugEnabled()) {
+                log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().getIsCompulsory());
+                log.debug("numeric " + answer.getNumeric() + " text: " + answer.getText() );
+            }
             if (answer.getNumeric() == null && answer.getText() == null &&  answer.getTemplateItem().getIsCompulsory() ) {
-                log.debug("answer for " + answer.getTemplateItem().getId() + "has not been answered ");
+                if (log.isDebugEnabled()) {
+                    log.debug("answer for " + answer.getTemplateItem().getId() + "has not been answered ");
+                }
                 throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
                         + answer.getTemplateItem().getId());
             }
-
 
             // make sure the item and template item are available for this answer
             if (answer.getTemplateItem() == null || answer.getTemplateItem().getItem() == null) {
