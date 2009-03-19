@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,6 +39,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -252,9 +252,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             evalGroups[i] = commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
                         }
                     } else {
-                        evalGroups = EvalUtils.getGroupsInCommon(
-                                commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
-                                m.get(evaluationId) );
+                        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, currentUserId, null, 
+                                EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                        Set<String> evalGroupIds = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
+                        List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(evalGroupIds, commonLogic);
+                        evalGroups = EvalUtils.getGroupsInCommon(groups, m.get(evaluationId) );
                     }
                     for (int i = 0; i < evalGroups.length; i++) {
                         EvalGroup group = evalGroups[i];
@@ -328,9 +330,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 }
 
                 // fill in group title
+                EvalGroup evalGroup = commonLogic.makeEvalGroupObject( evalGroupId );
                 UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
                 UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
-                UIOutput.make(groupTitle, "group-title", commonLogic.getDisplayTitle(evalGroupId) );
+                UIOutput.make(groupTitle, "group-title", evalGroup.title );
 
                 // show instructions if not null
                 if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
@@ -364,7 +367,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // BEGIN the complex task of rendering the evaluation items
 
                 // get the instructors for this evaluation
-                Set<String> instructors = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+                List<EvalAssignUser> instAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                        new String[] {evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+                Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(instAssignments);
 
                 // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
                 List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
@@ -382,9 +387,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
 
                 // add in the TA list if there are any TAs
+                Set<String> teachingAssistants = new HashSet<String>(0);
                 Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
-                if (taEnabled.booleanValue()) {
-                    Set<String> teachingAssistants = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
+                if (taEnabled) {
+                    List<EvalAssignUser> assistAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+                            new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
+                    teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(assistAssignments);
                     if (teachingAssistants.size() > 0) {
                         associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
                     }

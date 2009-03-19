@@ -32,6 +32,7 @@ import java.util.UUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -345,34 +346,6 @@ public class EvalUtils {
         return (int) difference;
     }
 
-
-
-
-
-    /**
-     * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
-     * merges the groups in common and then returns an array of the common groups,
-     * comparison is on the evalGroupId
-     * 
-     * @param evalGroups a list of {@link EvalGroup}
-     * @param assignGroups a list of {@link EvalAssignGroup}
-     * @return an array of the groups that are in common between the 2 lists
-     */
-    public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
-        List<EvalGroup> groups = new ArrayList<EvalGroup>();
-        for (int i=0; i<evalGroups.size(); i++) {
-            EvalGroup group = (EvalGroup) evalGroups.get(i);
-            for (int j=0; j<assignGroups.size(); j++) {
-                EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(j);
-                if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
-                    groups.add(group);
-                    break;
-                }
-            }
-        }
-        return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
-    }
-
     /**
      * Creates a unique title for an adhoc scale
      * @return a unique scale title
@@ -653,12 +626,38 @@ public class EvalUtils {
         return dueDate;
     }
 
+
+
+    /**
+     * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
+     * merges the groups in common and then returns an array of the common groups,
+     * comparison is on the evalGroupId
+     * 
+     * @param evalGroups a list of {@link EvalGroup}
+     * @param assignGroups a list of {@link EvalAssignGroup}
+     * @return an array of the groups that are in common between the 2 lists
+     */
+    public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
+        List<EvalGroup> groups = new ArrayList<EvalGroup>();
+        for (int i=0; i<evalGroups.size(); i++) {
+            EvalGroup group = (EvalGroup) evalGroups.get(i);
+            for (int j=0; j<assignGroups.size(); j++) {
+                EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(j);
+                if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
+                    groups.add(group);
+                    break;
+                }
+            }
+        }
+        return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
+    }
+
     /**
      * Converts a collection of user assignments into a set of userIds,
      * simple convenience method to avoid writing the same code over and over
      * 
      * @param userAssignments a collection of user assignments
-     * @return the set of all userIds
+     * @return the set of all unique userIds in the assignments
      */
     public static Set<String> getUserIdsFromUserAssignments(Collection<EvalAssignUser> userAssignments) {
         Set<String> s;
@@ -667,12 +666,52 @@ public class EvalUtils {
         } else {
             s = new LinkedHashSet<String>(userAssignments.size()); // maintain order
             for (EvalAssignUser evalAssignUser : userAssignments) {
-                if (evalAssignUser.getEvalGroupId() != null) {
+                if (evalAssignUser.getUserId() != null) {
                     s.add(evalAssignUser.getUserId());
                 }
             }
         }
         return s;
+    }
+
+    /**
+     * Converts a collection of user assignments into a set of evalGroupIds,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param userAssignments a collection of user assignments
+     * @return the set of all unique groupIds in the assignments
+     */
+    public static Set<String> getGroupIdsFromUserAssignments(Collection<EvalAssignUser> userAssignments) {
+        Set<String> s;
+        if (userAssignments == null) {
+            s = new HashSet<String>(0);
+        } else {
+            s = new LinkedHashSet<String>(userAssignments.size()); // maintain order
+            for (EvalAssignUser evalAssignUser : userAssignments) {
+                if (evalAssignUser.getEvalGroupId() != null) {
+                    s.add(evalAssignUser.getEvalGroupId());
+                }
+            }
+        }
+        return s;
+    }
+
+    /**
+     * Creates eval groups from groupIds
+     * 
+     * @param evalGroupIds a collection of evalGroupId (unique ids for eval groups)
+     * @param commonLogic the common logic service
+     * @return the list of EvalGroup objects for the given collection of evalGroupIds
+     */
+    public static List<EvalGroup> makeGroupsFromGroupsIds(Collection<String> evalGroupIds, EvalCommonLogic commonLogic) {
+        List<EvalGroup> l = new ArrayList<EvalGroup>();
+        if (evalGroupIds != null && evalGroupIds.size() > 0) {
+            for (String evalGroupId : evalGroupIds) {
+                EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
+                l.add(group);
+            }
+        }
+        return l;
     }
 
 }
