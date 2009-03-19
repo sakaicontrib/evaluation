@@ -70,8 +70,7 @@ public class ScaledRenderer implements ItemRenderer {
 
       String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
       boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA().booleanValue();
-
-      Boolean evalAnswerReqired = new Boolean(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED));
+      boolean evalAnswerReqired = evalProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ? Boolean.valueOf(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED)) : false;
       
       if (EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(scaleDisplaySetting) ||
             EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
@@ -79,7 +78,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
          if (templateItem.renderOption) {
             compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
         	 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -163,7 +162,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -230,7 +229,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
          if (templateItem.renderOption) {
             stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! safeBool(evalAnswerReqired.booleanValue()) ) {
+         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
         	 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 

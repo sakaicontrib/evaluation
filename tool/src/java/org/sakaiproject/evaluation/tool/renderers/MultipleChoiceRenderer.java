@@ -44,107 +44,107 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 @SuppressWarnings("deprecation")
 public class MultipleChoiceRenderer implements ItemRenderer {
 
-   /**
-    * This identifies the template component associated with this renderer
-    */
-   public static final String COMPONENT_ID = "render-multiplechoice-item:";
+    /**
+     * This identifies the template component associated with this renderer
+     */
+    public static final String COMPONENT_ID = "render-multiplechoice-item:";
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
-    */
-   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
-      UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
+     */
+    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
+        UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
-      if (displayNumber <= 0) displayNumber = 0;
-      // this if is here because giving an RSF input control a null binding AND a null initial value causes a failure
-      String initValue = null;
-      if (bindings[0] == null) initValue = "";
+        if (displayNumber <= 0) displayNumber = 0;
+        // this if is here because giving an RSF input control a null binding AND a null initial value causes a failure
+        String initValue = null;
+        if (bindings[0] == null) initValue = "";
 
-      EvalScale scale = templateItem.getItem().getScale();
-      String[] scaleOptions = scale.getOptions();
-      int optionCount = scaleOptions.length;
-      String scaleValues[] = new String[optionCount];
-      String scaleLabels[] = new String[optionCount];
+        EvalScale scale = templateItem.getItem().getScale();
+        String[] scaleOptions = scale.getOptions();
+        int optionCount = scaleOptions.length;
+        String scaleValues[] = new String[optionCount];
+        String scaleLabels[] = new String[optionCount];
 
-      String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-      boolean usesNA = templateItem.getUsesNA().booleanValue();
-      Boolean evalAnswerReqired = new Boolean(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED));
-      
-      if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
-            EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
-    	  	UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
-         if (templateItem.renderOption) {
-            fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (safeBool(templateItem.getIsCompulsory())  && ! safeBool(evalAnswerReqired.booleanValue())) {
-        	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
-         }
+        String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
+        boolean usesNA = templateItem.getUsesNA().booleanValue();
+        boolean evalAnswerReqired = evalProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ? Boolean.valueOf(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED)) : false;
 
-         for (int count = 0; count < optionCount; count++) {
-            scaleValues[count] = new Integer(count).toString();
-            scaleLabels[count] = scaleOptions[count];	
-         }
+        if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
+                EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
+            UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
+            if (templateItem.renderOption) {
+                fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            } else if (safeBool(templateItem.getIsCompulsory())  && ! evalAnswerReqired) {
+                fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+            }
 
-         UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
-         UIVerbatim.make(fullFirst, "itemText", templateItem.getItem().getItemText());
+            for (int count = 0; count < optionCount; count++) {
+                scaleValues[count] = new Integer(count).toString();
+                scaleLabels[count] = scaleOptions[count];	
+            }
 
-         // display next row
-         UIBranchContainer radiobranchFullRow = UIBranchContainer.make(container, "nextrow:", displayNumber+"");
+            UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
+            UIVerbatim.make(fullFirst, "itemText", templateItem.getItem().getItemText());
 
-         String containerId;
-         if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ) {
-            containerId = "fullDisplay:";
-         } else if ( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting) ) {
-            containerId = "verticalDisplay:";
-         } else {
-            throw new RuntimeException("Invalid scaleDisplaySetting (this should not be possible): " + scaleDisplaySetting);
-         }
+            // display next row
+            UIBranchContainer radiobranchFullRow = UIBranchContainer.make(container, "nextrow:", displayNumber+"");
 
-         UIBranchContainer displayContainer = UIBranchContainer.make(radiobranchFullRow, containerId);
+            String containerId;
+            if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ) {
+                containerId = "fullDisplay:";
+            } else if ( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting) ) {
+                containerId = "verticalDisplay:";
+            } else {
+                throw new RuntimeException("Invalid scaleDisplaySetting (this should not be possible): " + scaleDisplaySetting);
+            }
 
-         if (usesNA) {
-            scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
-            scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
-         }
+            UIBranchContainer displayContainer = UIBranchContainer.make(radiobranchFullRow, containerId);
 
-         UISelect radios = UISelect.make(displayContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
-         String selectID = radios.getFullID();
+            if (usesNA) {
+                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
+                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
+            }
 
-         if (disabled) {
-            radios.selection.willinput = false;
-            radios.selection.fossilize = false;
-         }
+            UISelect radios = UISelect.make(displayContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+            String selectID = radios.getFullID();
 
-         int scaleLength = scaleValues.length;
-         int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
-         for (int j = 0; j < limit; ++j) {
-            UIBranchContainer radiobranchNested = 
-               UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
-            UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
-            UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j).decorate( new UILabelTargetDecorator(choice) );
-         }
+            if (disabled) {
+                radios.selection.willinput = false;
+                radios.selection.fossilize = false;
+            }
 
-         if (usesNA) {
-            UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
-            radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
-            UISelectChoice choice = UISelectChoice.make(radiobranch3, "itemNA", selectID, scaleLength - 1);
-            UIMessage.make(radiobranch3, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice) );
-         }
+            int scaleLength = scaleValues.length;
+            int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
+            for (int j = 0; j < limit; ++j) {
+                UIBranchContainer radiobranchNested = 
+                    UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
+                UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
+                UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j).decorate( new UILabelTargetDecorator(choice) );
+            }
 
-      } else {
-         throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
-      }
+            if (usesNA) {
+                UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
+                radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
+                UISelectChoice choice = UISelectChoice.make(radiobranch3, "itemNA", selectID, scaleLength - 1);
+                UIMessage.make(radiobranch3, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice) );
+            }
 
-      // render the item comment
-      ItemRendererImpl.renderCommentBlock(container, templateItem, bindings);
+        } else {
+            throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
+        }
 
-      return container;
-   }
+        // render the item comment
+        ItemRendererImpl.renderCommentBlock(container, templateItem, bindings);
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
-    */
-   public String getRenderType() {
-      return EvalConstants.ITEM_TYPE_MULTIPLECHOICE;
-   }
+        return container;
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
+     */
+    public String getRenderType() {
+        return EvalConstants.ITEM_TYPE_MULTIPLECHOICE;
+    }
 
 }

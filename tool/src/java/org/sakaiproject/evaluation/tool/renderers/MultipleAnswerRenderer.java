@@ -75,14 +75,15 @@ public class MultipleAnswerRenderer implements ItemRenderer {
 
       String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
       boolean usesNA = templateItem.getUsesNA().booleanValue();
-      Boolean evalAnswerReqired = new Boolean(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED));  
+      boolean evalAnswerReqired = evalProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ? Boolean.valueOf(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED)) : false;
+
       if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
             EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (safeBool(templateItem.getIsCompulsory())  && ! safeBool(evalAnswerReqired.booleanValue())) {
+         } else if (safeBool(templateItem.getIsCompulsory())  && ! evalAnswerReqired) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 

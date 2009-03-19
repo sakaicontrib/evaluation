@@ -41,54 +41,52 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class PreviewItemProducer implements ViewComponentProducer, ViewParamsReporter {
 
-   public static final String VIEW_ID = "preview_item";
-   public String getViewID() {
-      return VIEW_ID;
-   }
+    public static final String VIEW_ID = "preview_item";
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
 
-   private ItemRenderer itemRenderer;
-   public void setItemRenderer(ItemRenderer itemRenderer) {
-      this.itemRenderer = itemRenderer;
-   }
+    private ItemRenderer itemRenderer;
+    public void setItemRenderer(ItemRenderer itemRenderer) {
+        this.itemRenderer = itemRenderer;
+    }
 
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-    */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+     */
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
-      // get templateItem to preview from VPs
-      ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
-      EvalTemplateItem templateItem = null;
-      if (previewItemViewParams.templateItemId != null) {
-         templateItem = authoringService.getTemplateItemById(previewItemViewParams.templateItemId);
-      } else if (previewItemViewParams.itemId != null) {
-         EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
-         templateItem = TemplateItemUtils.makeTemplateItem(item);
-      } else {
-         throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
-      }
+        // get templateItem to preview from VPs
+        ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
+        EvalTemplateItem templateItem = null;
+        if (previewItemViewParams.templateItemId != null) {
+            templateItem = authoringService.getTemplateItemById(previewItemViewParams.templateItemId);
+        } else if (previewItemViewParams.itemId != null) {
+            EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
+            templateItem = TemplateItemUtils.makeTemplateItem(item);
+        } else {
+            throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
+        }
 
-      // use the renderer evolver
-//    use the renderer evolver to show the item
-      Map evalProps  = new HashMap<String, String>();
-      Boolean answerRequired = false;
-      itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, evalProps);
+        // use the renderer evolver to show the item
+        Map<String, String> evalProps  = new HashMap<String, String>();
+        itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, evalProps);
 
-      // render the close button
-      UIMessage.make(tofill, "close-button", "general.close.window.button");
-   }
+        // render the close button
+        UIMessage.make(tofill, "close-button", "general.close.window.button");
+    }
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-    */
-   public ViewParameters getViewParameters() {
-      return new ItemViewParameters();
-   }
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+     */
+    public ViewParameters getViewParameters() {
+        return new ItemViewParameters();
+    }
 
 }
