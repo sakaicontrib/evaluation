@@ -401,45 +401,49 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         }
                     }
                 }
-                Boolean selectEnabled = (Boolean) evalSettings.get(evalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+
+                // SELECTION Code - added by lovenalube
+                Boolean selectEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorsSel = eval.getInstructorSelection();
-                if(selectEnabled && instructors.size()>0){
+                if (selectEnabled && instructors.size( ) >0) {
+                    // TODO rename these (what does v mean?) and ONLY create them when they are used
                 	List<String> v = new ArrayList<String>();
                     List<String> l = new ArrayList<String>();
-                    Iterator<String> inst = instructors.iterator();
-                	if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_ALL)){
-                		
-                	}
-					if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
-						UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-multiple:");
-						//UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "select-instructors-multiple-form", "");
-		                    while(inst.hasNext()){
-	                    	EvalUser user = commonLogic.getEvalUserById( inst.next().toString() );
-	                        UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, "select-instructors-multiple-row:");
-	                        UIOutput checkBranch = UIOutput.make(row, "select-instructors-multiple-label", user.displayName);	                        
-	                        UIBoundBoolean b = UIBoundBoolean.make(row, "select-instructors-multiple-box", Boolean.FALSE);
-	                        // we have to force the id so the JS block checking can work
-		                    b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
-		                    // have to force the target id so that the label for works 
-		                    UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
-		                    uild.targetFullID = user.userId;
-		                    checkBranch.decorators = new DecoratorList( uild );
-		                    // tooltip
-		                    // b.decorators.add( new UITooltipDecorator( UIMessage.make("select-instructors-multiple-label") ) );
-	                        }
-		                    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");     
-					}
-					if(instructorsSel.equals(EvalAssignHierarchy.SELECTION_ONE)){
-		                    while(inst.hasNext()){
-		                    	EvalUser user = commonLogic.getEvalUserById( inst.next().toString() );
-		                        v.add(user.userId);
-		                        l.add(user.displayName);
-		                      }
-		                    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-one:");
-		                    UIOutput.make(showSwitchGroup, "select-instructors-one-header");
-		                    UISelect.make(showSwitchGroup, "select-instructors-one-list", v.toArray(new String[v.size()]), l.toArray(new String[l.size()]),  "#{evalUserId}");
-		                    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");             
-					}
+                    // Iterator<String> inst = instructors.iterator(); // TODO don't create iterator that is not always used
+                	if (instructorsSel.equals(EvalAssignHierarchy.SELECTION_ALL)) {
+                		// nothing special to do in all case
+                	} else if (instructorsSel.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
+                	    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-multiple:");
+                	    //UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "select-instructors-multiple-form", "");
+                	    for (String userId : instructors) {
+                	        EvalUser user = commonLogic.getEvalUserById( userId );
+                	        UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, "select-instructors-multiple-row:");
+                	        UIOutput checkBranch = UIOutput.make(row, "select-instructors-multiple-label", user.displayName);	                        
+                	        UIBoundBoolean b = UIBoundBoolean.make(row, "select-instructors-multiple-box", Boolean.FALSE);
+                	        // we have to force the id so the JS block checking can work
+                	        b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
+                	        // have to force the target id so that the label for works 
+                	        UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
+                	        uild.targetFullID = user.userId;
+                	        checkBranch.decorators = new DecoratorList( uild );
+                	        // tooltip
+                	        // b.decorators.add( new UITooltipDecorator( UIMessage.make("select-instructors-multiple-label") ) );
+                	    }
+                	    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");     
+					} else if (instructorsSel.equals(EvalAssignHierarchy.SELECTION_ONE)) {
+					    // TODO use the more efficient method: commonLogic.getEvalUsersByIds(userIds);
+					    for (String userId : instructors) {
+					        EvalUser user = commonLogic.getEvalUserById( userId );
+					        v.add(user.userId);
+					        l.add(user.displayName);
+					    }
+					    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "select-instructors-one:");
+					    UIOutput.make(showSwitchGroup, "select-instructors-one-header");
+					    UISelect.make(showSwitchGroup, "select-instructors-one-list", v.toArray(new String[v.size()]), l.toArray(new String[l.size()]),  "#{evalUserId}");
+					    UIMessage.make(showSwitchGroup, "select-instructors-one-button", "takeeval.switch.group.button");             
+					} else {
+                        throw new IllegalStateException("Invalid selection option ("+instructorsSel+"): do not know how to handle this");
+                    }
 				}
 
 
@@ -451,6 +455,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                     } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
+                        // TODO header variable is unused, what does the code you added do, put in comments!
                         UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.instructor.questions.header", new Object[] { user.displayName });
                         categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "instructorBranch"}));
@@ -461,6 +466,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         }
                     } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
+                        // TODO header variable is unused, what does the code you added do, put in comments!
                         UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.ta.questions.header", new Object[] { user.displayName });
                         categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "taBranch"}));
