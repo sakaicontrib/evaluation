@@ -319,6 +319,10 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		return currentUserId;
 	}
 
+	public String getAdminUserId() {
+	    return EvalTestDataLoad.ADMIN_USER_ID;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
 	 */

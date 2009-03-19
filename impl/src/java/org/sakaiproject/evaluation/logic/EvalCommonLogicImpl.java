@@ -53,6 +53,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     private static Log log = LogFactory.getLog(EvalCommonLogicImpl.class);
 
+    /**
+     * default admin user id
+     */
+    public static final String ADMIN_USER_ID = "admin";
+
     public static String UNKNOWN_TITLE = "--------"; 
 
     private EvalExternalLogic externalLogic;
@@ -93,6 +98,9 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return externalLogic.getCurrentUserId();
     }
 
+    public String getAdminUserId() {
+        return externalLogic.getAdminUserId();
+    }
 
     /**
      * INTERNAL METHOD<br/>

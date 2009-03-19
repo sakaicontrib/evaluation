@@ -31,8 +31,6 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalEmail, ExternalSecurity, 
       ExternalContent, ExternalScheduler, ExternalTextUtils, ExternalComponents, ExternalEntities {
 
-   public static final String ADMIN_USER_ID = "admin";
-
    // EVAL USER retrieval
 
    /**

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -90,7 +89,7 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
 
         // NOTE: This appears to be a legitimate use of the the perms check - maybe should use the user assignments? -AZ
-        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(EvalExternalLogic.ADMIN_USER_ID, EvalConstants.PERM_BE_EVALUATED);
+        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getAdminUserId(), EvalConstants.PERM_BE_EVALUATED);
 
         Collections.sort(evalGroups, new Comparator<EvalGroup>() {
             public int compare(final EvalGroup e1, final EvalGroup e2) {

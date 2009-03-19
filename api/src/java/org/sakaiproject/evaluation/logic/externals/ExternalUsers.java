@@ -27,42 +27,48 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
  */
 public interface ExternalUsers {
 
-   /**
-    * Get the user id (not username) of the current user if there is one,
-    * if not then return an anonymous user id generated with a timestamp and prefix
-    * 
-    * @return the internal unique user id of the current user (not username) or anon id
-    */
-   public String getCurrentUserId();
+    /**
+     * Get the user id (not username) of the current user if there is one,
+     * if not then return an anonymous user id generated with a timestamp and prefix
+     * 
+     * @return the internal unique user id of the current user (not username) or anon id
+     */
+    public String getCurrentUserId();
 
-   /**
-    * Check if a user is anonymous or identified
-    * @param userId the internal user id (not username)
-    * @return true if we know who this user is, false otherwise
-    */
-   public boolean isUserAnonymous(String userId);
+    /**
+     * This allows us to get a super admin userID for special permissions checks or admin operations
+     * @return the userId of the super admin
+     */
+    public String getAdminUserId();
 
-   /**
-    * @param username the login name for the user
-    * @return the internal user id (not username) or null if not found
-    */
-   public String getUserId(String username);
+    /**
+     * Check if a user is anonymous or identified
+     * @param userId the internal user id (not username)
+     * @return true if we know who this user is, false otherwise
+     */
+    public boolean isUserAnonymous(String userId);
 
-   /**
-    * @param userId the internal user id (not username)
-    * @return the username or default text "------" if it cannot be found
-    */
-   public String getUserUsername(String userId);
+    /**
+     * @param username the login name for the user
+     * @return the internal user id (not username) or null if not found
+     */
+    public String getUserId(String username);
+
+    /**
+     * @param userId the internal user id (not username)
+     * @return the username or default text "------" if it cannot be found
+     */
+    public String getUserUsername(String userId);
 
 
-   // LOCALE
+    // LOCALE
 
-   /**
-    * Get the locale for a user
-    * 
-    * @param userId the internal user id (not username)
-    * @return the Locale for this user based on their preferences
-    */
-   public Locale getUserLocale(String userId);
+    /**
+     * Get the locale for a user
+     * 
+     * @param userId the internal user id (not username)
+     * @return the Locale for this user based on their preferences
+     */
+    public Locale getUserLocale(String userId);
 
 }
