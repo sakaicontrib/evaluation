@@ -282,9 +282,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         // if the eval is already gone then we are not concerned with a security check
         if (evaluationService.checkEvaluationExists(evaluationId)) {
             // check perms if this evaluation exists
-            String userId = commonLogic.getCurrentUserId();
+            String userId = commonLogic.getAdminUserId(); // commonLogic.getCurrentUserId(); // use admin for this 
             if (! evaluationService.canControlEvaluation(userId, evaluationId)) {
-                throw new SecurityException("User ("+userId+") not allowed to remove sceduled jobs for evaluation: " + evaluationId);
+                throw new SecurityException("User ("+userId+") not allowed to remove scheduled jobs for evaluation: " + evaluationId);
             }
         }
 
@@ -516,7 +516,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             return; // FIXME throw exceptions or AT LEAST log warnings here
         }
 
-        String userId = commonLogic.getCurrentUserId();
+        String userId = commonLogic.getAdminUserId(); // commonLogic.getCurrentUserId(); // use admin for this 
         if (evaluationService.canControlEvaluation(userId, evaluationId)) {
             deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_REMINDER);
         }

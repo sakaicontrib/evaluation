@@ -173,7 +173,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                                 // purge out partial evaluations older than the partial purge time
                                 if (evaluation.getLastModified().getTime() < partialPurgeTime) {
                                     log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
-                                    deleteEvaluation(evaluation.getId(), EvalCommonLogic.ADMIN_USER_ID);
+                                    deleteEvaluation(evaluation.getId(), commonLogic.getAdminUserId());
                                 }
                             } else {
                                 String currentEvalState = evaluation.getState();
@@ -846,14 +846,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         Long evaluationId = evaluation.getId();
         String currentUserId = commonLogic.getCurrentUserId();
         if (currentUserId == null) {
-            currentUserId = EvalExternalLogic.ADMIN_USER_ID;
+            currentUserId = commonLogic.getAdminUserId();
         } else {
             // check anon and use admin instead
             EvalUser user = commonLogic.getEvalUserById(currentUserId);
             if (EvalUser.USER_TYPE_ANONYMOUS.equals(user.type)
                     || EvalUser.USER_TYPE_INVALID.equals(user.type)
                     || EvalUser.USER_TYPE_UNKNOWN.equals(user.type)) {
-                currentUserId = EvalExternalLogic.ADMIN_USER_ID;
+                currentUserId = commonLogic.getAdminUserId();
             }
         }
         ArrayList<Long> changedUserAssignments = new ArrayList<Long>();
