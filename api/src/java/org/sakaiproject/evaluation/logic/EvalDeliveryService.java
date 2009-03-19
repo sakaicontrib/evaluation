@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -51,6 +52,9 @@ public interface EvalDeliveryService {
     * 
     * @param response the response object to save, should be filled with answers
     * @param userId the internal user id (not username)
+    * @throws IllegalArgumentException if the inputs are invalid
+    * @throws SecurityException if the user cannot save a response
+    * @throws ResponseSaveException with information about the reason why the response could not be saved
     */
    public void saveResponse(EvalResponse response, String userId);
 
