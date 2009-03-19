@@ -454,26 +454,24 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
         List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
 
-        Set<Long> answerableTemplateItemIds = new HashSet<Long>();
-
-        //does the eval allow empty answers
+        // see if this eval allows blank responses
         Boolean unansweredAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
         if (unansweredAllowed == null) {
-            unansweredAllowed = eval.getBlankResponsesAllowed();
+           unansweredAllowed = eval.getBlankResponsesAllowed();
         }
         if (unansweredAllowed == null) {
-            unansweredAllowed = true; // default to skipping the check
+           unansweredAllowed = true; // default to skipping the check
         }
 
+        Set<Long> answerableTemplateItemIds = new HashSet<Long>();
         Set<String> requiredAnswerKeys = new HashSet<String>();
-
         for (DataTemplateItem dti : allDTIs) {
-            if (dti.isAnswerable()) {
-                answerableTemplateItemIds.add(dti.templateItem.getId());
-            }
-            if (dti.isRequired(unansweredAllowed.booleanValue())) {
-                requiredAnswerKeys.add(dti.getKey());
-            }
+           if (dti.isAnswerable()) {
+              answerableTemplateItemIds.add(dti.templateItem.getId());
+           }
+           if (dti.isRequired()) {
+              requiredAnswerKeys.add(dti.getKey());
+           }
         }
 
         // check the answers
@@ -487,6 +485,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                         + answer.getTemplateItem().getId());
             }
 
+            // FIXME - this is not going to work, need to change it
             // if the author has specified this as a compulsory question
             if (log.isDebugEnabled()) {
                 log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().getIsCompulsory());
@@ -566,20 +565,20 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         // check if required answers are filled in
-        //      if (! unansweredAllowed) {
-        // all items must be completed so die if they are not
+        if (! unansweredAllowed) {
+           // all items must be completed so die if they are not
 
-        // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
-        requiredAnswerKeys.removeAll(answeredAnswerKeys);
-        if (requiredAnswerKeys.size() > 0) {
-            throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
+           // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
+           requiredAnswerKeys.removeAll(answeredAnswerKeys);
+           if (requiredAnswerKeys.size() > 0) {
+              throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
                     + " answers for required items (received "+answeredAnswerKeys.size()+" answers) for this evaluation"
                     + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
                     + " :: missing keys=" + ArrayUtils.arrayToString(requiredAnswerKeys.toArray(new String[] {})) 
                     + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
                     requiredAnswerKeys.toArray(new String[] {}) );
+           }
         }
-        //    }
 
         return true;
     }
