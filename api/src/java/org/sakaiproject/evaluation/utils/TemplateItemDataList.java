@@ -546,7 +546,7 @@ public class TemplateItemDataList {
       /**
        * @return true if this item is required (i.e. must be answered),
        * false otherwise
-       * @see TemplateItemUtils#isRequired(EvalTemplateItem)
+       * @see TemplateItemUtils#isRequired(EvalTemplateItem, boolean)
        */
       public boolean isRequired(boolean allowsEmptyResponses) {
          return TemplateItemUtils.isRequired(this.templateItem, allowsEmptyResponses);
