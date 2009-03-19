@@ -64,55 +64,46 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
     private final int maxGroupsToDisplay = 5;
 
     public static final String VIEW_ID = "summary";
-
     public String getViewID() {
         return VIEW_ID;
     }
 
     private EvalCommonLogic commonLogic;
-
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
 
     private EvalAuthoringService authoringService;
-
     public void setAuthoringService(EvalAuthoringService authoringService) {
         this.authoringService = authoringService;
     }
 
     private EvalEvaluationService evaluationService;
-
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
     }
 
     private EvalEvaluationSetupService evaluationSetupService;
-
     public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
         this.evaluationSetupService = evaluationSetupService;
     }
 
     private EvalDeliveryService deliveryService;
-
     public void setDeliveryService(EvalDeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
 
     private EvalSettings settings;
-
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
     }
 
     private EvalBeanUtils evalBeanUtils;
-
     public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
         this.evalBeanUtils = evalBeanUtils;
     }
 
     private Locale locale;
-
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
@@ -150,10 +141,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         if (createTemplate) {
             UIInternalLink.make(tofill, "control-templates-link", UIMessage.make("controltemplates.page.title"), new SimpleViewParameters(
                     ControlTemplatesProducer.VIEW_ID));
-	      if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-		    UIInternalLink
-			    .make(tofill, "control-items-link", UIMessage.make("controlitems.page.title"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-		}
+            if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+                UIInternalLink
+                .make(tofill, "control-items-link", UIMessage.make("controlitems.page.title"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+            }
         }
 
         if (beginEvaluation) {
@@ -233,7 +224,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                             // take eval link when pending
                             UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
                                     new EvalViewParameters(TakeEvalProducer.VIEW_ID,
-                                    eval.getId(), response.getId(), groupId));
+                                            eval.getId(), response.getId(), groupId));
                         } else {
                             // show title only when completed and cannot
                             // modify
@@ -244,7 +235,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                         // take eval link when pending
                         UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
                                 new EvalViewParameters(TakeEvalProducer.VIEW_ID, eval.getId(),
-                                groupId));
+                                        groupId));
                         status = "summary.status.pending";
                     }
                     UIMessage.make(evalcourserow, "evaluationCourseStatus", status);
@@ -390,14 +381,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
          */
         Boolean enableSitesBox = (Boolean) settings.get(EvalSettings.ENABLE_SUMMARY_SITES_BOX);
         if (enableSitesBox) {
-            // only show this if we cannot find our location OR if the option is
-            // forced to on
+            // only show this if we cannot find our location OR if the option is forced to on
             String NO_ITEMS = "no.list.items";
 
             UIBranchContainer contextsBC = UIBranchContainer.make(tofill, "siteListingBox:");
             UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title");
 
             UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated");
+            // NOTE: OK usage of perms here
             List<EvalGroup> evaluatedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
             if (evaluatedGroups.size() > 0) {
                 for (int i = 0; i < evaluatedGroups.size(); i++) {
@@ -415,6 +406,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             }
 
             UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate");
+            // NOTE: OK usage of perms here
             List<EvalGroup> evaluateGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
             if (evaluateGroups.size() > 0) {
                 for (int i = 0; i < evaluateGroups.size(); i++) {
