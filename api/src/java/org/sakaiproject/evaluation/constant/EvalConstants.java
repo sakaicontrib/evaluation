@@ -415,10 +415,10 @@ public class EvalConstants {
     public static final String ITEM_CATEGORY_INSTRUCTOR = "Instructor";
     /**
      * Item category (category) setting:
-     * This item is in the TA category and will be repeated
-     * for each user who is marked as a TA
+     * This item is in the assistant (teaching/lab) category and will be repeated
+     * for each user who is marked as an assistant
      */
-    public static final String ITEM_CATEGORY_TA = "TeachingAssistant";
+    public static final String ITEM_CATEGORY_ASSISTANT = "Assistant";
     /**
      * Item category (category) setting:
      * This item is in the environment category and will be repeated
@@ -436,7 +436,7 @@ public class EvalConstants {
     public static final String[] ITEM_CATEGORY_ORDER = {
         ITEM_CATEGORY_COURSE,
         ITEM_CATEGORY_INSTRUCTOR,
-        ITEM_CATEGORY_TA,
+        ITEM_CATEGORY_ASSISTANT,
         ITEM_CATEGORY_ENVIRONMENT
     };
 

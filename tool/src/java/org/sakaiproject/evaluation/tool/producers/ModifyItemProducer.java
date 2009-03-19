@@ -475,10 +475,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 String[] categoryValues = EvalToolConstants.ITEM_CATEGORY_VALUES; 
                 String[] categoryLabels = EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS;
                 // add in the TA category if enabled
-                Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+                Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                 if ( enableTA.booleanValue() ) {
-                    categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_TA);
-                    categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_TA_LABEL);
+                    categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_ASSISTANT);
+                    categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_ASSISTANT_LABEL);
                 }
                 UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
                         categoryValues, categoryLabels,

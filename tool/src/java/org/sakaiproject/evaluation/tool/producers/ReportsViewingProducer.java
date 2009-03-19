@@ -218,7 +218,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                     if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                         UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.course");
                     } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)
-                            || EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                            || EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                         EvalUser user = instructorIdtoEvalUser.get( tig.associateId );
                         UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "viewreport.itemlist.instructor", new Object[] { user.displayName });

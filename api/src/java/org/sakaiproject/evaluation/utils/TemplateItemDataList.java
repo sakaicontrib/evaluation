@@ -790,7 +790,7 @@ public class TemplateItemDataList {
 
    /**
     * A helper method to get the list of unique TA userIds 
-    * for the {@link EvalConstants#ITEM_CATEGORY_TA} type item answers from the list of answers<br/>
+    * for the {@link EvalConstants#ITEM_CATEGORY_ASSISTANT} type item answers from the list of answers<br/>
     * <b>NOTE:</b> Use getEvalUsersByIds(String[]) from commonLogic to turn this into a set of EvalUsers if needed
     * 
     * @param answers a list of {@link EvalAnswer}
@@ -799,7 +799,7 @@ public class TemplateItemDataList {
    public static Set<String> getTeachingAssistantsForAnswers(List<EvalAnswer> answers) {
       Set<String> userIds = new HashSet<String>();
       for (EvalAnswer answer: answers) {
-         if (EvalConstants.ITEM_CATEGORY_TA.equals(answer.getAssociatedType())) {
+         if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(answer.getAssociatedType())) {
             if (! EvalUtils.isBlank(answer.getAssociatedId())) {
                userIds.add(answer.getAssociatedId());
             }
