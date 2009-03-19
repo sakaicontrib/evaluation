@@ -66,64 +66,53 @@
 		   </div>
 
 			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
-			
+			<div rsf:id="msg=takeeval.selection.warn" id="evalSelectWarn" style="display:none;">You are removing an already selected person. Are you sure?</div>
 			
 			
 			<!-- Selector for ONE instructor -->
-			<div rsf:id="select-instructors-one:" class="navPanel"  rel="evalInstructorSelector">
-				<div class="viewNav">
-					<label for="select-instructors-one-list"> Select Instructor to evaluate:</label>
-						<select rsf:id="select-instructors-one-list">
-							<option selected="selected">Group 1</option>
-							<option>Group 2</option>
-							<option>Group 3</option>
+			<div rsf:id="select-instructor-one:" class="navPanel"  rel="evalInstructorSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.instructors.header.one" for="select-instructor-one-list"> Select Instructor to evaluate:</legend>
+						<select rsf:id="select-instructor-one-list">
+							<option selected="selected">Person 1</option>
+							<option>Person 2</option>
+							<option>Person 3</option>
 						</select>
-						<input rsf:id="select-instructors-one-button" type="button" value="Select" />
-					</div>	
+                     <input rsf:id="select-button" type="button" value="Select" />
+				</fieldset>
 			</div>
-			<!-- Selector for ONE TA 
-			<div rsf:id="show-switch-group:" class="navPanel" rel="evalTaSelector">
-				<div class="viewNav">
-					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
-					<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
-						<select rsf:id="switch-group-list">
-							<option selected="selected">Group 1</option>
-							<option>Group 2</option>
-							<option>Group 3</option>
-						</select>
-						<input rsf:id="switch-group-button" type="submit" value="Switch" />
-					</form>
-				</div>	
-			</div>-->
-
 			<!-- Selector for MULTIPLE Instructors -->
-			<div rsf:id="select-instructors-multiple:" class="navPanel" rel="evalInstructorSelector">
-				<div class="viewNav">
-					<div> Select Instructors to evaluate:</div>
-					<div rsf:id="select-instructors-multiple-row:">
-						<input rsf:id="select-instructors-multiple-box" type="checkbox" />
-						<label rsf:id="select-instructors-multiple-label" for="select-instructors-multiple-selection"> Lovemore Nalube</label>
+			<div rsf:id="select-instructor-multiple:" class="navPanel" rel="evalInstructorSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.instructors.header.multiple"> Select Instructors to evaluate:</legend>
+					<div rsf:id="select-instructor-multiple-row:">
+						<input rsf:id="select-instructor-multiple-box" type="checkbox" />
+						<label rsf:id="select-instructor-multiple-label" for="select-instructor-multiple-selection"> Lovemore Nalube</label>
 					</div>
-					<input type="button" value="Select" />
-				</div>
+				</fieldset>
 			</div>
-			<!-- Selector for MULTIPLE TAs 
-			<div rsf:id="show-switch-group:" class="navPanel" rel="evalTaSelector">
-				<div class="viewNav">
-					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
-					<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
-						<select rsf:id="switch-group-list">
-							<option selected="selected">Group 1</option>
-							<option>Group 2</option>
-							<option>Group 3</option>
-						</select>
-						<input rsf:id="switch-group-button" type="submit" value="Switch" />
-					</form>
-				</div>	
-			</div>-->
+            <!-- Selector for ONE TA -->
+                        <div rsf:id="select-tas-one:" class="navPanel"  rel="evalTaSelector">
+                            <fieldset class="itemListNew">
+                                <legend rsf:id="msg=takeeval.selection.ta.header.one" for="select-tas-one-list"> Select TA to evaluate:</legend>
+                                    <select rsf:id="select-tas-one-list">
+                                        <option selected="selected">Person 1</option>
+                                        <option>Person 2</option>
+                                    </select>
+                                <input rsf:id="select-button" type="button" value="Select" />
+                            </fieldset>
+                        </div>
 
-
-
+						<!-- Selector for MULTIPLE TAs-->
+			<div rsf:id="select-tas-multiple:" class="navPanel" rel="evalTaSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.ta.header.multiple"> Select TAs to evaluate:</legend>
+					<div rsf:id="select-tas-multiple-row:">
+						<input rsf:id="select-tas-multiple-box" type="checkbox" />
+						<label rsf:id="select-tas-multiple-label" for="select-instructor-multiple-selection"> Lovemore Nalube</label>
+					</div>
+				</fieldset>
+			</div>
 
 			<div rsf:id="form-branch:">
 				<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
