@@ -231,21 +231,41 @@ public class TemplateItemUtils {
         return answerableItemsList;
     }
 
-
     /**
-     * Check if templateItem is required (must be answered by a user taking an evaluation) or not
+     * Check if a templateItem is required (must be answered by a user taking an evaluation
+     * which does not allow blank responses) or not,
+     * this is not checking against the evaluation settings and is only checking
+     * the settings for this template item
      * <b>NOTE</b> use {@link #getRequiredTemplateItems(List)} to do a large set
+     * 
      * @param templateItem a templateItem persistent object
      * @return true if the item is required, false otherwise
      */
-    public static boolean isRequired(EvalTemplateItem templateItem, boolean surveyAllowsEmpty) {
+    public static boolean isRequired(EvalTemplateItem templateItem) {
+       // all answerable items that are not textual are required
+       boolean result = false;
+       if (isAnswerable(templateItem)) {
+          String type = getTemplateItemType(templateItem);
+          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+             result = false;
+          } else if ( safeBool(templateItem.getIsCompulsory()) ) {
+              result = true;
+          } else {
+             result = true;
+          }
+       }
+       return result;
+    }
+
+/***
+    public static boolean isRequired(EvalTemplateItem templateItem, boolean evalAllowsEmpty) {
         // all answerable items that are not textual are required 
         boolean result = false;
         if (isAnswerable(templateItem)) {
             String type = getTemplateItemType(templateItem);
             if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
                 result = false;
-            } else if (! safeBool(templateItem.getIsCompulsory()) && surveyAllowsEmpty) {
+            } else if (! safeBool(templateItem.getIsCompulsory()) && evalAllowsEmpty) {
                 result = false;
             } else {
 
@@ -254,21 +274,25 @@ public class TemplateItemUtils {
         }
         return result;
     }
+***/
 
     /**
      * Get the list of all templateItems which are required (must be answered),
-     * this will include any scaled items or items which are part of a block (but not a block parent)
+     * this will include any scaled items or items which are part of a block (but not a block parent),
+     * this is not checking against the evaluation settings and is only checking
+     * the settings for this template item
+     * 
      * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
      * @return a List of {@link EvalTemplateItem} objects
      */
-    public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList, boolean surveyAllowsEmptyRepsonces) {       
+    public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
         List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
         for (int i=0; i<orderedItems.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-            if (! isRequired(templateItem, surveyAllowsEmptyRepsonces)) {
+            if (! isRequired(templateItem)) {
                 continue;
             }
             requiredItemsList.add(templateItem);
