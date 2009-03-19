@@ -4,9 +4,9 @@
 	<head>
 		<title rsf:id="page-title">Take Evaluation</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
 		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="-1" />
-        <meta http-equiv="Cache-Control" content="no-store" />
 		<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
 
@@ -17,8 +17,9 @@
 
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
-	
-	<body rsf:id="scr=sakai-body">
+
+    <!-- supposedly firefox will not cache any pages with unload handlers -->
+    <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
 		<div class="portletBody">
 
 			<div class="textPanel"> 			
@@ -160,8 +161,8 @@
 	</body>
 <!-- need this at the bottom to convince IE to not cache -->
 <head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="-1" />
-    <meta http-equiv="Cache-Control" content="no-store" />
 </head>
 </html>
