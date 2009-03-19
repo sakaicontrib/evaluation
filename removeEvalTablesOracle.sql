@@ -14,6 +14,7 @@ drop table EVAL_TAGS;
 drop table EVAL_TAGS_META;
 drop table EVAL_TRANSLATION;
 drop table EVAL_ASSIGN_GROUP;
+drop table EVAL_ASSIGN_USER;
 drop table EVAL_ANSWER;
 drop table EVAL_RESPONSE;
 drop table EVAL_TEMPLATEITEM;
