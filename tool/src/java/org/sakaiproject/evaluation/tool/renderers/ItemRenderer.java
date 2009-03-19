@@ -31,7 +31,7 @@ import uk.org.ponder.rsf.components.UIJointContainer;
  */
 public interface ItemRenderer {
 
-	public static final String EVAL_PROP_ANSWER_REQUIRED="evalAnswersRequired";
+	public static final String EVAL_PROP_ANSWER_REQUIRED = "evalAnswersRequired";
 	
 	/**
 	 * Renders an item correctly in a view based on the type and the settings stored within it<br/>

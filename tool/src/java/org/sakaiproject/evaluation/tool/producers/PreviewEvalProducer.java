@@ -180,11 +180,11 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         } else {
             // Get the sorted list of all nodes for this set of template items
             List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
-    
+
             // make the TI data structure
             Map<String, List<String>> associates = new HashMap<String, List<String>>();
             associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-    
+
             // add in the TA list if it is enabled
             Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
             if (taEnabled.booleanValue()) {
@@ -193,9 +193,9 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 teachingAssistants.add("fake2");
                 associates.put(EvalConstants.ITEM_CATEGORY_TA, teachingAssistants);
             }
-    
+
             TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
-    
+
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
                 UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
@@ -211,7 +211,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.ta.questions.header", new Object[] { assistantName });
                 }
-    
+
                 // loop through the hierarchy node groups
                 for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                     // render a node title
@@ -223,7 +223,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                             UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
                         }
                     }
-    
+
                     List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
                     for (int i = 0; i < dtis.size(); i++) {
                         DataTemplateItem dti = dtis.get(i);
@@ -262,10 +262,11 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         // render the item
         Map<String, String> evalProps  = new HashMap<String, String>();
         Boolean answerRequired = true;
-        if (eval.getBlankResponsesAllowed()!=null && eval.getBlankResponsesAllowed().booleanValue())
+        if (eval.getBlankResponsesAllowed() != null 
+                && eval.getBlankResponsesAllowed()) {
             answerRequired = false;
-        evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
-
+            evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
+        }
         itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true, evalProps);
 
         // increment the display number

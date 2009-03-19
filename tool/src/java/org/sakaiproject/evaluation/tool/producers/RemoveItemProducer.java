@@ -14,9 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -53,152 +51,148 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class RemoveItemProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
-   public static final String VIEW_ID = "remove_item";
-   public String getViewID() {
-      return VIEW_ID;
-   }
+    public static final String VIEW_ID = "remove_item";
+    public String getViewID() {
+        return VIEW_ID;
+    }
+
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
+
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
+
+    private ItemRenderer itemRenderer;
+    public void setItemRenderer(ItemRenderer itemRenderer) {
+        this.itemRenderer = itemRenderer;
+    }
+
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
 
-   private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+     */
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
+        UIMessage.make(tofill, "page-title", "removeitem.page.title");
 
-   private ItemRenderer itemRenderer;
-   public void setItemRenderer(ItemRenderer itemRenderer) {
-      this.itemRenderer = itemRenderer;
-   }
+        UIInternalLink.make(tofill, "summary-link", 
+                UIMessage.make("summary.page.title"), 
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-templates-link",
+                UIMessage.make("controltemplates.page.title"), 
+                new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+            UIInternalLink.make(tofill, "control-items-link",
+                    UIMessage.make("controlitems.page.title"), 
+                    new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        }
 
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-       this.evalSettings = evalSettings;
-   }
+        // get templateItem to preview from VPs
+        ItemViewParameters itemViewParams = (ItemViewParameters) viewparams;
+        EvalTemplateItem templateItem = null;
+        EvalItem item = null;
+        if (itemViewParams.templateItemId != null) {
+            templateItem = authoringService.getTemplateItemById(itemViewParams.templateItemId);
+        } else if (itemViewParams.itemId != null) {
+            item = authoringService.getItemById(itemViewParams.itemId);
+            templateItem = TemplateItemUtils.makeTemplateItem(item);
+        } else {
+            throw new IllegalArgumentException("Must have itemId or templateItemId to do removal");
+        }
 
+        if (templateItem == null) {
+            throw new IllegalStateException("Unable to retrieve a templateItem using item=" + 
+                    itemViewParams.itemId + " and templateItem=" + itemViewParams.templateItemId);
+        }
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-    */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+        String beanBinding = "templateBBean.";
+        String actionBinding = "deleteItemAction";
 
-      UIMessage.make(tofill, "page-title", "removeitem.page.title");
-
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-	  if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-	  UIInternalLink.make(tofill, "control-items-link",
-		UIMessage.make("controlitems.page.title"), 
-		new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-	  }
-
-      // get templateItem to preview from VPs
-      ItemViewParameters itemViewParams = (ItemViewParameters) viewparams;
-      EvalTemplateItem templateItem = null;
-      EvalItem item = null;
-      if (itemViewParams.templateItemId != null) {
-         templateItem = authoringService.getTemplateItemById(itemViewParams.templateItemId);
-      } else if (itemViewParams.itemId != null) {
-         item = authoringService.getItemById(itemViewParams.itemId);
-         templateItem = TemplateItemUtils.makeTemplateItem(item);
-      } else {
-         throw new IllegalArgumentException("Must have itemId or templateItemId to do removal");
-      }
-
-      if (templateItem == null) {
-         throw new IllegalStateException("Unable to retrieve a templateItem using item=" + 
-               itemViewParams.itemId + " and templateItem=" + itemViewParams.templateItemId);
-      }
-
-      String beanBinding = "templateBBean.";
-      String actionBinding = "deleteItemAction";
-
-      int displayNum = 1;
-      String itemOTPBinding = null;
-      if (item == null) {
-         // we are removing a template item
-         itemOTPBinding = "templateItemWBL."+templateItem.getId();
-         UIInternalLink.make(tofill, "items-templates-link", 
-               UIMessage.make("modifytemplate.page.title"), 
-               new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId() ) );
-         UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId()));
-         UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.templateitem.confirmation",
-               new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
-         if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-            UIMessage.make(tofill, "remove-item-block-text", "removeitem.block.text");
-         }
-         if (templateItem.getDisplayOrder() != null) {
-            displayNum = templateItem.getDisplayOrder();
-         }
-      } else {
-         // we are removing an item
-         itemOTPBinding = "itemWBL."+item.getId();
-         UIInternalLink.make(tofill, "items-templates-link", 
-               UIMessage.make("controlitems.page.title"), 
-               new SimpleViewParameters(ControlItemsProducer.VIEW_ID) );
-         UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-         UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.item.confirmation");
-
-         // in use message
-         List<EvalTemplate> templates = authoringService.getTemplatesUsingItem(item.getId());
-         if (templates.size() > 0) {
-            actionBinding = "hideItemAction";
-            UIBranchContainer inUseBranch = UIBranchContainer.make(tofill, "inUse:");
-            UIMessage.make(inUseBranch, "inUseWarning", "removeitem.inuse.warning", new Object[] {templates.size()});
-            for (EvalTemplate template : templates) {
-               UIBranchContainer itemsBranch = UIBranchContainer.make(inUseBranch, "items:");
-               UIMessage.make(itemsBranch, "itemInfo", "removeitem.inuse.info", new Object[] {template.getId(), 
-                     commonLogic.getEvalUserById(template.getOwner()).displayName, template.getTitle()});
+        int displayNum = 1;
+        String itemOTPBinding = null;
+        if (item == null) {
+            // we are removing a template item
+            itemOTPBinding = "templateItemWBL."+templateItem.getId();
+            UIInternalLink.make(tofill, "items-templates-link", 
+                    UIMessage.make("modifytemplate.page.title"), 
+                    new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId() ) );
+            UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId()));
+            UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.templateitem.confirmation",
+                    new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
+            if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+                UIMessage.make(tofill, "remove-item-block-text", "removeitem.block.text");
             }
-         }
-      }
+            if (templateItem.getDisplayOrder() != null) {
+                displayNum = templateItem.getDisplayOrder();
+            }
+        } else {
+            // we are removing an item
+            itemOTPBinding = "itemWBL."+item.getId();
+            UIInternalLink.make(tofill, "items-templates-link", 
+                    UIMessage.make("controlitems.page.title"), 
+                    new SimpleViewParameters(ControlItemsProducer.VIEW_ID) );
+            UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+            UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.item.confirmation");
 
-      // use the renderer evolver to show the item
-      Map evalProps  = new HashMap<String, String>();
-      Boolean answerRequired = false;
-      evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
-      itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true, evalProps);
+            // in use message
+            List<EvalTemplate> templates = authoringService.getTemplatesUsingItem(item.getId());
+            if (templates.size() > 0) {
+                actionBinding = "hideItemAction";
+                UIBranchContainer inUseBranch = UIBranchContainer.make(tofill, "inUse:");
+                UIMessage.make(inUseBranch, "inUseWarning", "removeitem.inuse.warning", new Object[] {templates.size()});
+                for (EvalTemplate template : templates) {
+                    UIBranchContainer itemsBranch = UIBranchContainer.make(inUseBranch, "items:");
+                    UIMessage.make(itemsBranch, "itemInfo", "removeitem.inuse.info", new Object[] {template.getId(), 
+                            commonLogic.getEvalUserById(template.getOwner()).displayName, template.getTitle()});
+                }
+            }
+        }
 
-      UIForm form = UIForm.make(tofill, "remove-item-form");
+        // use the renderer evolver to show the item
+        itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true, null);
 
-      if (item == null) {
-         // removing TI so just use the OTP deletion binding
-         UICommand removeButton = UICommand.make(form, "remove-item-command-link", 
-               UIMessage.make("removeitem.remove.item.button"));
-         removeButton.parameters.add(new UIDeletionBinding(itemOTPBinding));
-      } else {
-         // removing or hiding an item
-         UICommand deleteCommand = UICommand.make(form, "remove-item-command-link", 
-               UIMessage.make("removeitem.remove.item.button"), beanBinding + actionBinding);
-         deleteCommand.parameters.add(new UIELBinding(beanBinding + "itemId", item.getId()));
-      }
+        UIForm form = UIForm.make(tofill, "remove-item-form");
 
-   }
+        if (item == null) {
+            // removing TI so just use the OTP deletion binding
+            UICommand removeButton = UICommand.make(form, "remove-item-command-link", 
+                    UIMessage.make("removeitem.remove.item.button"));
+            removeButton.parameters.add(new UIDeletionBinding(itemOTPBinding));
+        } else {
+            // removing or hiding an item
+            UICommand deleteCommand = UICommand.make(form, "remove-item-command-link", 
+                    UIMessage.make("removeitem.remove.item.button"), beanBinding + actionBinding);
+            deleteCommand.parameters.add(new UIELBinding(beanBinding + "itemId", item.getId()));
+        }
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-    */
-   public ViewParameters getViewParameters() {
-      return new ItemViewParameters();
-   }
+    }
 
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
-    */
-   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
-      ItemViewParameters itemViewParams = (ItemViewParameters) incoming;
-      if (itemViewParams.templateItemId != null) {
-         result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, itemViewParams.templateId);
-      } else if (itemViewParams.itemId != null) {
-         result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);			
-      }
-   }
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+     */
+    public ViewParameters getViewParameters() {
+        return new ItemViewParameters();
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+     */
+    public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+        ItemViewParameters itemViewParams = (ItemViewParameters) incoming;
+        if (itemViewParams.templateItemId != null) {
+            result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, itemViewParams.templateId);
+        } else if (itemViewParams.itemId != null) {
+            result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);			
+        }
+    }
 
 }

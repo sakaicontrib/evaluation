@@ -43,63 +43,62 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 @SuppressWarnings("deprecation")
 public class TextRenderer implements ItemRenderer {
 
-	/**
-	 * This identifies the template component associated with this renderer
-	 */
-	public static final String COMPONENT_ID = "render-text-item:";
+    /**
+     * This identifies the template component associated with this renderer
+     */
+    public static final String COMPONENT_ID = "render-text-item:";
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
-	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
+     */
+    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
 
-		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
-      if (templateItem.renderOption) {
-         container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-      } else if (safeBool(templateItem.getIsCompulsory())) {
-    	  container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
-      }
+        UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
+        if (templateItem.renderOption) {
+            container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+        } else if (safeBool(templateItem.getIsCompulsory())) {
+            container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+        }
 
+        if (displayNumber <= 0) displayNumber = 0;
+        String initValue = null;
+        if (bindings[0] == null) initValue = "";
 
-		if (displayNumber <= 0) displayNumber = 0;
-		String initValue = null;
-		if (bindings[0] == null) initValue = "";
+        String naBinding = null;
+        if (bindings.length > 1) {
+            naBinding = bindings[1];
+        }
+        Boolean naInit = null;
+        if (naBinding == null) naInit = Boolean.FALSE;
 
-      String naBinding = null;
-      if (bindings.length > 1) {
-         naBinding = bindings[1];
-      }
-      Boolean naInit = null;
-      if (naBinding == null) naInit = Boolean.FALSE;
+        UIOutput.make(container, "itemNum", displayNumber+"" );
+        UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText());
 
-		UIOutput.make(container, "itemNum", displayNumber+"" );
-		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText());
+        if ( templateItem.getUsesNA().booleanValue() ) {
+            UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
+            branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") ); // must match the existing CSS class
+            UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
+            UIMessage.make(branchNA, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(checkbox) );
+        }
 
-      if ( templateItem.getUsesNA().booleanValue() ) {
-         UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
-         branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") ); // must match the existing CSS class
-         UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
-         UIMessage.make(branchNA, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(checkbox) );
-      }
+        UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-2$
 
-		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-2$
+        Map<String, String> attrmap = new HashMap<String, String>();
+        attrmap.put("rows", templateItem.getDisplayRows().toString());
+        // disabling the textbox is undesireable -AZ
+        //		if (disabled) {
+        //			attrmap.put("disabled", "true"); //$NON-NLS-2$		
+        //		}
+        textarea.decorators = new DecoratorList( new UIFreeAttributeDecorator(attrmap) );
 
-		Map<String, String> attrmap = new HashMap<String, String>();
-		attrmap.put("rows", templateItem.getDisplayRows().toString());
-		// disabling the textbox is undesireable -AZ
-//		if (disabled) {
-//			attrmap.put("disabled", "true"); //$NON-NLS-2$		
-//		}
-		textarea.decorators = new DecoratorList( new UIFreeAttributeDecorator(attrmap) );
+        return container;
+    }
 
-		return container;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
-	 */
-	public String getRenderType() {
-		return EvalConstants.ITEM_TYPE_TEXT;
-	}
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
+     */
+    public String getRenderType() {
+        return EvalConstants.ITEM_TYPE_TEXT;
+    }
 
 }
