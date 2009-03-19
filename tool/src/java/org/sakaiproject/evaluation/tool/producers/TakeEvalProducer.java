@@ -388,13 +388,13 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
                 // add in the TA list if there are any TAs
                 Set<String> teachingAssistants = new HashSet<String>(0);
-                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
+                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                 if (taEnabled) {
                     List<EvalAssignUser> assistAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                             new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
                     teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(assistAssignments);
                     if (teachingAssistants.size() > 0) {
-                        associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+                        associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
                     }
                 }
 
@@ -472,7 +472,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         	css.put("display", "none");
                         	categorySectionBranch.decorators.add(new UICSSDecorator(css));
                         }
-                    } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                    } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         // TODO header variable is unused, what does the code you added do, put in comments!
                         UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 

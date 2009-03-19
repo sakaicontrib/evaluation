@@ -122,7 +122,7 @@ public class RenderingUtils {
             categoryMessage = "modifyitem.course.category";
         } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(categoryConstant) ) {
             categoryMessage = "modifyitem.instructor.category";
-        } else if ( EvalConstants.ITEM_CATEGORY_TA.equals(categoryConstant) ) {
+        } else if ( EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(categoryConstant) ) {
             categoryMessage = "modifyitem.ta.category";
         } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(categoryConstant) ) {
             categoryMessage = "modifyitem.environment.category";

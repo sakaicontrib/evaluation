@@ -120,8 +120,8 @@ public class EvalToolConstants {
         "modifyitem.instructor.category"
     };
 
-    public static String ITEM_CATEGORY_TA = EvalConstants.ITEM_CATEGORY_TA;
-    public static String ITEM_CATEGORY_TA_LABEL = "modifyitem.ta.category";
+    public static String ITEM_CATEGORY_ASSISTANT = EvalConstants.ITEM_CATEGORY_ASSISTANT;
+    public static String ITEM_CATEGORY_ASSISTANT_LABEL = "modifyitem.ta.category";
 
     /**
      * Email Settings: Page pulldown constants for email processing type

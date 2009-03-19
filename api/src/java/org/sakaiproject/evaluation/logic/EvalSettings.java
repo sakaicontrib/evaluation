@@ -292,9 +292,9 @@ public interface EvalSettings {
     public static final String DISABLE_QUESTION_BLOCKS = "DISABLE_QUESTION_BLOCKS:java.lang.Boolean";
 
     /**
-     * If this is enabled then the TA category will be a valid choice
+     * If this is enabled then the assistant category will be a valid choice
      */
-    public static final String ENABLE_TA_CATEGORY = "ENABLE_TA_CATEGORY:java.lang.Boolean";
+    public static final String ENABLE_ASSISTANT_CATEGORY = "ENABLE_ASSISTANT_CATEGORY:java.lang.Boolean";
 
     /**
      * If this is true then the admin email address is used when sending eval emails,
@@ -347,7 +347,7 @@ public interface EvalSettings {
         ENABLE_PDF_REPORT_EXPORT,
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
         ENABLE_SUMMARY_SITES_BOX,
-        ENABLE_TA_CATEGORY,
+        ENABLE_ASSISTANT_CATEGORY,
         ENABLE_XLS_REPORT_EXPORT,
         EVAL_USE_DATE_TIME,
         EVAL_USE_SAME_VIEW_DATES,

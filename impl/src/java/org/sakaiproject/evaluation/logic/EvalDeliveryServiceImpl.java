@@ -139,8 +139,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                                 ResponseSaveException.TYPE_BLANK_RESPONSE);
                     }
 
-                    //are the answers that must be filled in
-                    //Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
+                    // are the answers that must be filled in
+                    // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
                     List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
                     String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
                     for (int i = 0; i < hierarchyNodes.size(); i++) {
@@ -156,18 +156,18 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                             instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
 
 
-                    //make the TI data structure and get the flat list of DTIs
+                    // make the TI data structure and get the flat list of DTIs
                     Map<String, List<String>> associates = new HashMap<String, List<String>>();
                     associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));  
 
-                    // add in the TA list if there are any TAs
-                    Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+                    // add in the assistant list if there are any
+                    Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                     if (taEnabled.booleanValue()) {
                         List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                                 new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
                         Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
                         if (teachingAssistants.size() > 0) {
-                            associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+                            associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
                         }
                     }
 
@@ -481,13 +481,13 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
 
         // add in the TA list if there are any TAs
-        Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_TA_CATEGORY);
+        Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         if (taEnabled.booleanValue()) {
             List<EvalAssignUser> taAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                     new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
             Set<String> teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(taAssignments);
             if (teachingAssistants.size() > 0) {
-                associates.put(EvalConstants.ITEM_CATEGORY_TA, new ArrayList<String>(teachingAssistants));
+                associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
             }
         }
 
@@ -570,6 +570,13 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                                 + answer.getTemplateItem().getId());
                     }
                     answer.setAssociatedType(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(answer.getTemplateItem().getCategory())) {
+                    if (answer.getAssociatedId() == null) {
+                        throw new IllegalArgumentException(
+                                "assistant answers must have the associated field filled in with the assistant userId, for templateItem: "
+                                + answer.getTemplateItem().getId());
+                    }
+                    answer.setAssociatedType(EvalConstants.ITEM_CATEGORY_ASSISTANT);
                 } else if (EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(answer.getTemplateItem().getCategory())) {
                     if (answer.getAssociatedId() == null) {
                         throw new IllegalArgumentException(

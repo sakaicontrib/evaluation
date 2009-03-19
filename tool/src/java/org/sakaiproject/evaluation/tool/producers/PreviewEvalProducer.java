@@ -186,12 +186,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
 
             // add in the TA list if it is enabled
-            Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_TA_CATEGORY);
+            Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
             if (taEnabled.booleanValue()) {
                 List<String> teachingAssistants = new ArrayList<String>();
                 teachingAssistants.add("fake1");
                 teachingAssistants.add("fake2");
-                associates.put(EvalConstants.ITEM_CATEGORY_TA, teachingAssistants);
+                associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, teachingAssistants);
             }
 
             TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
@@ -206,7 +206,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                     String instructorName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.instructor.questions.header", new Object[] { instructorName });
-                } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                     String assistantName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.ta.questions.header", new Object[] { assistantName });

@@ -351,7 +351,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-importing",  EvalSettings.ENABLE_IMPORTING);
         makeBoolean(form, "general-disable-item-bank", EvalSettings.DISABLE_ITEM_BANK);
         makeBoolean(form, "general-disable-question-blocks", EvalSettings.DISABLE_QUESTION_BLOCKS);
-        makeBoolean(form, "general-enable-ta-category", EvalSettings.ENABLE_TA_CATEGORY);
+        makeBoolean(form, "general-enable-ta-category", EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         makeBoolean(form, "general-enable-selections", EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
         // Save settings button
         // NB no action now required
