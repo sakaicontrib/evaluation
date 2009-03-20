@@ -61,23 +61,16 @@ public class EvalAssignHierarchy implements java.io.Serializable {
      * EvalAssignHierarchy eah)
      */
     public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.owner = owner;
-        this.nodeId = nodeId;
-        this.evaluation = evaluation;
+        this(owner, nodeId, evaluation, null, null, null, null, null);
     }
 
     /** 
      * full constructor
      */
-    public EvalAssignHierarchy(String owner, String nodeId, Boolean instructorApproval,
-            Boolean instructorsViewResults, Boolean studentsViewResults, EvalEvaluation evaluation, 
+    public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation,
+            Boolean instructorApproval, Boolean instructorsViewResults, Boolean studentsViewResults, 
             String instructorSelection, String assistantSelection) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
+        this.lastModified = new Date();
         this.owner = owner;
         this.nodeId = nodeId;
         this.instructorApproval = instructorApproval;

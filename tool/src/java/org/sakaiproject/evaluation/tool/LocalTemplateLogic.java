@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -60,9 +59,9 @@ public class LocalTemplateLogic {
    }
 
    public EvalTemplate newTemplate() {
-      EvalTemplate currTemplate = new EvalTemplate(new Date(), 
-            commonLogic.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
-            null, "private", Boolean.FALSE);
+      EvalTemplate currTemplate = new EvalTemplate(commonLogic.getCurrentUserId(), 
+            EvalConstants.TEMPLATE_TYPE_STANDARD, null, 
+            "private", Boolean.FALSE);
       currTemplate.setDescription(""); // Note- somehow gives DataIntegrityViolation if null
       return currTemplate;
    }
@@ -96,9 +95,9 @@ public class LocalTemplateLogic {
       // TODO - this should respect the current level the user is at
 
       // TODO currently creating a fake template (newTemplate()) so the bind does not fail, this should supposedly use a defunneler
-      EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
-            commonLogic.getCurrentUserId(), newTemplate(), newItem(), null, 
-            EvalToolConstants.ITEM_CATEGORY_VALUES[0], level, nodeId);
+      EvalTemplateItem newTemplateItem = new EvalTemplateItem( commonLogic.getCurrentUserId(), 
+            newTemplate(), newItem(), null, EvalToolConstants.ITEM_CATEGORY_VALUES[0], 
+            level, nodeId);
       newTemplateItem.setUsesNA(new Boolean(false));
       return newTemplateItem;
    }
@@ -170,8 +169,8 @@ public class LocalTemplateLogic {
    }
 
    public EvalItem newItem() {
-      EvalItem newItem = new EvalItem(new Date(), commonLogic.getCurrentUserId(), "", 
-            EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
+      EvalItem newItem = new EvalItem(commonLogic.getCurrentUserId(), "", EvalConstants.SHARING_PRIVATE, 
+            "", Boolean.FALSE);
       newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
       newItem.setScale(newScale()); // create a holder for a new scale which will get overwritten or cleared out if not used
       return newItem;
@@ -214,9 +213,9 @@ public class LocalTemplateLogic {
    }
 
    public EvalScale newScale() {
-      EvalScale currScale = new EvalScale(new Date(), 
-            commonLogic.getCurrentUserId(), null, 
-            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
+      EvalScale currScale = new EvalScale(commonLogic.getCurrentUserId(), 
+            null, EvalConstants.SCALE_MODE_SCALE, 
+            EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
       currScale.setOptions(EvalToolConstants.defaultInitialScaleValues);
       currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
       return currScale;

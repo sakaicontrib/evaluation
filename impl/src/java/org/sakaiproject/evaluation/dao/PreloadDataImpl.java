@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.dao;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -189,7 +188,7 @@ public class PreloadDataImpl {
     }
 
     private void saveConfig(String key, String value) {
-        dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
+        dao.save(new EvalConfig(SettingsLogicUtils.getName(key), value));
     }
 
     /**
@@ -294,9 +293,9 @@ public class PreloadDataImpl {
      * @return a persisted {@link EvalScale}
      */
     private EvalScale saveScale(String title, String ideal, String[] options) {
-        EvalScale scale = new EvalScale(new Date(), ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, 
-                EvalConstants.SHARING_PUBLIC, Boolean.TRUE,
-                "", ideal, options, Boolean.FALSE);
+        EvalScale scale = new EvalScale(ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, 
+                Boolean.TRUE, "",
+                ideal, options, Boolean.FALSE);
         dao.save(scale);
         return scale;
     }
@@ -393,24 +392,24 @@ public class PreloadDataImpl {
     }
 
     private EvalItem saveScaledExpertItem(String text, String description, String expertDescription, EvalScale scale, String category) {
-        EvalItem item = new EvalItem(new Date(), ADMIN_OWNER, 
-                text, description, EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED,
-                Boolean.TRUE, expertDescription, scale, null, Boolean.FALSE, false, 
+        EvalItem item = new EvalItem(ADMIN_OWNER, text, 
+                description, EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, Boolean.TRUE,
+                expertDescription, scale, null, Boolean.FALSE, false, false, 
                 null, EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED, category, Boolean.FALSE);
         dao.save(item);
         return item;
     }
 
     private EvalItemGroup saveObjectiveGroup(String title, String description, Set<EvalItem> items, EvalItemGroup parentGroup) {
-        EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
-                title, description, Boolean.TRUE, parentGroup, items);
+        EvalItemGroup group = new EvalItemGroup(ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, title,
+                description, Boolean.TRUE, parentGroup, items);
         dao.save( group );
         return group;
     }
 
     private EvalItemGroup saveCategoryGroup(String title, String description, Set<EvalItem> items) {
-        EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-                title, description, Boolean.TRUE, null, items);
+        EvalItemGroup group = new EvalItemGroup(ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_CATEGORY, title,
+                description, Boolean.TRUE, null, items);
         dao.save( group );
         return group;
     }

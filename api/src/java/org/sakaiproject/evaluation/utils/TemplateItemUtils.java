@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -300,7 +299,7 @@ public class TemplateItemUtils {
           String type = getTemplateItemType(templateItem);
           if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
              result = false;
-          } else if ( safeBool(templateItem.getIsCompulsory()) ) {
+          } else if ( safeBool(templateItem.isCompulsory()) ) {
               result = true;
           }
        }
@@ -482,8 +481,8 @@ public class TemplateItemUtils {
             throw new IllegalArgumentException("Cannot create template item from null item");
         }
 
-        EvalTemplateItem templateItem = new EvalTemplateItem(item.getLastModified(), item.getOwner(), null, item,
-                new Integer(0), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+        EvalTemplateItem templateItem = new EvalTemplateItem(item.getOwner(), null, item, new Integer(0),
+                item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
 
         templateItem.setUsesNA(item.getUsesNA() == null ? Boolean.FALSE : item.getUsesNA());
 
@@ -524,13 +523,13 @@ public class TemplateItemUtils {
      */
     public static EvalTemplateItem makeCopyOfTemplateItem(EvalTemplateItem original, EvalTemplate toTemplate,
             String ownerId, boolean hidden) {
-        EvalTemplateItem copy = new EvalTemplateItem(new Date(), ownerId, toTemplate, original.getItem(), original.getDisplayOrder(),
-                original.getCategory(), original.getHierarchyLevel(), original.getHierarchyNodeId(), original.getDisplayRows(),
-                original.getScaleDisplaySetting(), original.getUsesNA(), original.getUsesComment(), null, null, original.getResultsSharing());
+        EvalTemplateItem copy = new EvalTemplateItem(ownerId, toTemplate, original.getItem(), original.getDisplayOrder(), original.getCategory(),
+                original.getHierarchyLevel(), original.getHierarchyNodeId(), original.getDisplayRows(), original.getScaleDisplaySetting(),
+                original.getUsesNA(), original.getUsesComment(), false, null, null, original.getResultsSharing());
         // set the other copy fields correctly
         copy.setCopyOf(original.getId());
         copy.setHidden(hidden);
-        copy.setIsCompulsory(original.getIsCompulsory());
+        copy.setCompulsory(original.isCompulsory());
         return copy;
     }
 

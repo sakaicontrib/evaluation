@@ -83,7 +83,7 @@ public class MultipleAnswerRenderer implements ItemRenderer {
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if (safeBool(templateItem.getIsCompulsory())  && ! evalAnswerReqired) {
+         } else if (safeBool(templateItem.isCompulsory())  && ! evalAnswerReqired) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 

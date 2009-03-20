@@ -71,6 +71,11 @@
         <property name="scaleDisplaySetting" type="java.lang.String">
             <column name="SCALE_DISPLAY_SETTING" length="255" />
         </property>
+        <!-- should this item be compulsory (must be answered) -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="compulsory" type="java.lang.Boolean">
+            <column name="COMPULSORY"/>
+        </property>
         <!-- used to determine the category of the item (course, instructor, etc.) -->
         <!-- (this is a hint only and used when making the templateItem) -->
         <property name="category" type="java.lang.String">
@@ -89,9 +94,6 @@
         <!-- Allows for linking this data to evals automatically when they are created -->
         <property name="autoUseTag" type="java.lang.String">
             <column name="AUTO_USE_TAG" length="255" />
-        </property>
-        <property name="isCompulsory" type="java.lang.Boolean">
-        	<column name="COMPULSORY"/>
         </property>
     </class>
 </hibernate-mapping>

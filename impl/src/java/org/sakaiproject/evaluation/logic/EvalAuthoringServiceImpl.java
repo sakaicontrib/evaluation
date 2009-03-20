@@ -399,8 +399,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
             }
 
-            if (item.getIsCompulsory() == null) 
-                item.setIsCompulsory(false);
+            if (item.isCompulsory() == null) 
+                item.setCompulsory(false);
             // cleanup for XSS scripting and strings
             item.setItemText( commonLogic.cleanupUserStrings(item.getItemText()) );
             item.setDescription( commonLogic.cleanupUserStrings(item.getDescription()) );
@@ -1470,9 +1470,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             if (newTitle == null || newTitle.length() == 0) {
                 newTitle = original.getTitle() + " (copy)";
             }
-            EvalScale copy = new EvalScale(new Date(), ownerId, newTitle, original.getMode(), 
-                    EvalConstants.SHARING_PRIVATE, false, null, original.getIdeal(), 
-                    ArrayUtils.copy(original.getOptions()), false);
+            EvalScale copy = new EvalScale(ownerId, newTitle, original.getMode(), EvalConstants.SHARING_PRIVATE, 
+                    false, null, original.getIdeal(), ArrayUtils.copy(original.getOptions()), 
+                    false);
             copy.setCopyOf(original.getId());
             copy.setHidden(hidden);
             copiedScales.add(copy);
@@ -1503,9 +1503,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
         Set<EvalItem> copiedItems = new HashSet<EvalItem>();
         for (EvalItem original : items) {
-            EvalItem copy = new EvalItem(new Date(), ownerId, original.getItemText(), original.getDescription(),
-                    EvalConstants.SHARING_PRIVATE, original.getClassification(), false, null, null, null, original.getUsesNA(),
-                    original.getUsesComment(), original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
+            EvalItem copy = new EvalItem(ownerId, original.getItemText(), original.getDescription(), EvalConstants.SHARING_PRIVATE,
+                    original.getClassification(), false, null, null, null, original.getUsesNA(), original.getUsesComment(),
+                    false, original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
             if (original.getScale() != null) {
                 // This could be more efficient if we stored up the scaleIds and mapped them 
                 // and then copied them all at once and then reassigned them but the code would be a lot harder to read
@@ -1521,7 +1521,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             }
             copy.setCopyOf(original.getId());
             copy.setHidden(hidden);
-            copy.setIsCompulsory(original.getIsCompulsory());
+            copy.setCompulsory(original.isCompulsory());
             copiedItems.add(copy);
         }
         dao.saveSet(copiedItems);
@@ -1684,9 +1684,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         if (newTitle == null || newTitle.length() == 0) {
             newTitle = original.getTitle() + " (copy)";
         }
-        EvalTemplate copy = new EvalTemplate(new Date(), ownerId, original.getType(), 
-                newTitle, original.getDescription(), EvalConstants.SHARING_PRIVATE, 
-                false, null, null, false, false);
+        EvalTemplate copy = new EvalTemplate(ownerId, original.getType(), newTitle, 
+                original.getDescription(), EvalConstants.SHARING_PRIVATE, false, 
+                null, null, false, false);
         // set the other copy fields
         copy.setCopyOf(original.getId());
         copy.setHidden(hidden);

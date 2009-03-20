@@ -56,7 +56,7 @@ public class TextRenderer implements ItemRenderer {
         UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
         if (templateItem.renderOption) {
             container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-        } else if (safeBool(templateItem.getIsCompulsory())) {
+        } else if (safeBool(templateItem.isCompulsory())) {
             container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
         }
 
