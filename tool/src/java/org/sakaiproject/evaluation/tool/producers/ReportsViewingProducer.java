@@ -180,7 +180,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             Long templateId = evaluation.getTemplate().getId();
 
             // Fetch most of all the data and metadata with the ultra TIDL object
-            TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, reportViewParams.groupIds);
+            TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluationId, reportViewParams.groupIds);
 
             List<EvalTemplateItem> allTemplateItems = tidl.getAllTemplateItems();
 

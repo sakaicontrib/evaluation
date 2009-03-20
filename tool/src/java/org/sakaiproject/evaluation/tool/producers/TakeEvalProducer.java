@@ -35,7 +35,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -366,39 +365,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
                 // BEGIN the complex task of rendering the evaluation items
 
-                // get the instructors for this evaluation
-                List<EvalAssignUser> instAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
-                        new String[] {evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
-                Set<String> instructors = EvalUtils.getUserIdsFromUserAssignments(instAssignments);
-
-                // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
-                List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
-                String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
-                for (int i = 0; i < hierarchyNodes.size(); i++) {
-                    hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
-                }
-
-                // get all items for this evaluation
-                List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-                        instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
-
                 // make the TI data structure and get the flat list of DTIs
-                Map<String, List<String>> associates = new HashMap<String, List<String>>();
-                associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
-                
-                // add in the TA list if there are any TAs
-                Set<String> teachingAssistants = new HashSet<String>(0);
-                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-                if (taEnabled) {
-                    List<EvalAssignUser> assistAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
-                            new String[] {evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, null, null, null);
-                    teachingAssistants = EvalUtils.getUserIdsFromUserAssignments(assistAssignments);
-                    if (teachingAssistants.size() > 0) {
-                        associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
-                    }
-                }
-
-                TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+                TemplateItemDataList tidl = new TemplateItemDataList(evaluationId, evalGroupId,
+                        evaluationService, authoringService, hierarchyLogic, null);
+                Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+                Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
 
                 // loop through all DTIs and flag items that were missing
                 if (! missingKeys.isEmpty()) {
@@ -414,53 +385,55 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 Boolean selectEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 Map<String, String> selectorType = new HashMap<String, String>();
                 selectorType.put("instructor", eval.getInstructorSelection());
+                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                 if(taEnabled)
-                	selectorType.put("tas", eval.getAssistantSelection());
+                    selectorType.put("tas", eval.getAssistantSelection());
                 Iterator<String> selector = selectorType.keySet().iterator(); 
                 while(selector.hasNext()){
-                	String selectKey = (String) selector.next();   	
-                	String selectValue = (String) selectorType.get(selectKey);
-                	String uiTag = "select-"+selectKey;
-                	Set<String> selectCategory = new HashSet<String>();
-                	if(selectKey.equals("instructor"))
-                		selectCategory = instructors;
-                	else if(selectKey.equals("tas"))
-                		selectCategory = teachingAssistants;
-	                //We render the selection controls if there are at least two Instructors/TAs
-	                if (selectEnabled && selectCategory.size( ) >1) {
-	                    if (selectValue.equals(EvalAssignHierarchy.SELECTION_ALL)) {
-	                		// nothing special to do in all case
-	                	} else if (selectValue.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
-	                	    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-multiple:");
-	                	    for (String userId : selectCategory) {
-	                	        EvalUser user = commonLogic.getEvalUserById( userId );
-	                	        UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
-	                	        UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
-	                	        UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box", Boolean.FALSE);
-	                	        // we have to force the id so the JS block checking can work
-	                	        b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
-	                	        // have to force the target id so that the label for works 
-	                	        UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
-	                	        uild.targetFullID = user.userId;
-	                	        checkBranch.decorators = new DecoratorList( uild );
-	                	      } 
-	                	  } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_ONE)) {
-						    List<String> value = new ArrayList<String>();
-						    List<String> label = new ArrayList<String>();
-						    for(EvalUser user: commonLogic.getEvalUsersByIds(selectCategory.toArray(new String[selectCategory.size()]))){
-						    	value.add(user.userId);
-						        label.add(user.displayName);  
-						    }
-						    UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-one:");
-						    UIOutput.make(showSwitchGroup, uiTag+"-one-header");
-						    UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),  "{evalUserId}");
-						    UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
-						    } else {
-	                        throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
-	                    }
-					}
+                    String selectKey = (String) selector.next();   	
+                    String selectValue = (String) selectorType.get(selectKey);
+                    String uiTag = "select-"+selectKey;
+                    Set<String> selectUserIds = new HashSet<String>();
+                    if(selectKey.equals("instructor"))
+                        selectUserIds = instructorIds;
+                    else if(selectKey.equals("tas"))
+                        selectUserIds = assistantIds;
+                    //We render the selection controls if there are at least two Instructors/TAs
+                    if (selectEnabled && selectUserIds.size( ) >1) {
+                        if (selectValue.equals(EvalAssignHierarchy.SELECTION_ALL)) {
+                            // nothing special to do in all case
+                        } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
+                            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-multiple:");
+                            for (String userId : selectUserIds) {
+                                EvalUser user = commonLogic.getEvalUserById( userId );
+                                UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
+                                UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
+                                UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box", Boolean.FALSE);
+                                // we have to force the id so the JS block checking can work
+                                b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
+                                // have to force the target id so that the label for works 
+                                UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
+                                uild.targetFullID = user.userId;
+                                checkBranch.decorators = new DecoratorList( uild );
+                            } 
+                        } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_ONE)) {
+                            List<String> value = new ArrayList<String>();
+                            List<String> label = new ArrayList<String>();
+                            for(EvalUser user: commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]))){
+                                value.add(user.userId);
+                                label.add(user.displayName);  
+                            }
+                            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-one:");
+                            UIOutput.make(showSwitchGroup, uiTag+"-one-header");
+                            UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),  "{evalUserId}");
+                            UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
+                        } else {
+                            throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
+                        }
+                    }
                 }
 
+                // LOVEMORE from UCT, do not put any code below this line! -AZ
 
                 // loop through the TIGs and handle each associated category
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
@@ -475,22 +448,22 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         //support for JS: add display name to title attribute of legend and hide category items 
                         header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title", user.displayName));
                         categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "instructorBranch"}));
-                        if(!eval.getInstructorSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || instructors.size() <2){
-                        	Map<String, String> css = new HashMap<String, String>();
-                        	css.put("display", "none");
-                        	categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                        if(!eval.getInstructorSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || instructorIds.size() <2){
+                            Map<String, String> css = new HashMap<String, String>();
+                            css.put("display", "none");
+                            categorySectionBranch.decorators.add(new UICSSDecorator(css));
                         }
                     } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.ta.questions.header", new Object[] { user.displayName });
-                      //support for JS: add display name to title attribute of legend and hide category items 
+                        //support for JS: add display name to title attribute of legend and hide category items 
                         header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title", user.displayName));   
                         categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "taBranch"}));
-                        if(!eval.getAssistantSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || teachingAssistants.size()<2){
-                        	Map<String, String> css = new HashMap<String, String>();
-                        	css.put("display", "none");
-                        	categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                        if(!eval.getAssistantSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || assistantIds.size()<2){
+                            Map<String, String> css = new HashMap<String, String>();
+                            css.put("display", "none");
+                            categorySectionBranch.decorators.add(new UICSSDecorator(css));
                         }
                     }
 

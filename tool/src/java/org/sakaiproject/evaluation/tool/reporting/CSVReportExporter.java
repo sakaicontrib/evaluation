@@ -53,8 +53,7 @@ public class CSVReportExporter implements ReportExporter {
         CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
 
         // 1 Make TIDL
-        TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation,
-                groupIds);
+        TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation.getId(), groupIds);
 
         // 2 get DTIs for this eval from tidl
         List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);

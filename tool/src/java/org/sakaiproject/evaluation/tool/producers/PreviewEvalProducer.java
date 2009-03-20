@@ -31,7 +31,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -164,12 +163,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
         }
 
-
-        // make up 2 fake instructors for this evaluation (to show the instructor added items)
-        List<String> instructors = new ArrayList<String>();
-        instructors.add("fake1");
-        instructors.add("fake2");
-
         // get all items for this template
         List<EvalTemplateItem> allItems = 
             authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
@@ -179,7 +172,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             UIMessage.make(tofill, "noItemsToShow", "no.list.items");   
         } else {
             // Get the sorted list of all nodes for this set of template items
-            List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
+            List<EvalHierarchyNode> hierarchyNodes = TemplateItemDataList.makeEvalNodesList(allItems, hierarchyLogic);
+
+            // make up 2 fake instructors for this evaluation (to show the instructor added items)
+            List<String> instructors = new ArrayList<String>();
+            instructors.add("fake1");
+            instructors.add("fake2");
 
             // make the TI data structure
             Map<String, List<String>> associates = new HashMap<String, List<String>>();

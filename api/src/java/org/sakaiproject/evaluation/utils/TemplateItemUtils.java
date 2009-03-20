@@ -244,17 +244,17 @@ public class TemplateItemUtils {
      * @return true if the item is requireable, false otherwise
      */
     public static boolean isRequireable(EvalTemplateItem templateItem) {
-       // all answerable items that are not textual are requireable
-       boolean result = false;
-       if (isAnswerable(templateItem)) {
-          String type = getTemplateItemType(templateItem);
-          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
-             result = false;
-          } else {
-             result = true;
-          }
-       }
-       return result;
+        // all answerable items that are not textual are requireable
+        boolean result = false;
+        if (isAnswerable(templateItem)) {
+            String type = getTemplateItemType(templateItem);
+            if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+                result = false;
+            } else {
+                result = true;
+            }
+        }
+        return result;
     }
 
     /**
@@ -293,17 +293,17 @@ public class TemplateItemUtils {
      * @return true if the item is compulsory, false otherwise
      */
     public static boolean isCompulsory(EvalTemplateItem templateItem) {
-       // all answerable items that are not textual are required
-       boolean result = false;
-       if (isAnswerable(templateItem)) {
-          String type = getTemplateItemType(templateItem);
-          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
-             result = false;
-          } else if ( safeBool(templateItem.isCompulsory()) ) {
-              result = true;
-          }
-       }
-       return result;
+        // all answerable items that are not textual are required
+        boolean result = false;
+        if (isAnswerable(templateItem)) {
+            String type = getTemplateItemType(templateItem);
+            if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+                result = false;
+            } else if ( safeBool(templateItem.isCompulsory()) ) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     /**
