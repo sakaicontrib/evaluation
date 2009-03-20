@@ -561,4 +561,9 @@ public String getContentCollectionId(String siteId) {
 	return null;
 }
 
+public void setSessionUser(String arg0, String arg1) {
+	// TODO Auto-generated method stub
+	
+}
+
 }
