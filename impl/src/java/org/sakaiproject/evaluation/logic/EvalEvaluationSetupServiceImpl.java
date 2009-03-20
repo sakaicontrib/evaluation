@@ -644,12 +644,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // get the list of all assignments where this user is instructor
                 List<EvalAssignUser> userEvaluateeAssignments = evaluationService.getParticipantsForEval(
                         null, userId, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
-                HashSet<String> egidSet = new HashSet<String>();
-                for (EvalAssignUser evalAssignUser : userEvaluateeAssignments) {
-                    if (evalAssignUser.getEvalGroupId() != null) {
-                        egidSet.add(evalAssignUser.getEvalGroupId());
-                    }
-                }
+                Set<String> egidSet = EvalUtils.getGroupIdsFromUserAssignments(userEvaluateeAssignments);
                 if (!egidSet.isEmpty()) {
                     // create array of all assigned groupIds where this user is instructor
                     evalGroupIds = egidSet.toArray(new String[egidSet.size()]);
@@ -727,12 +722,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(null, userId, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, 
                 (activeOnly ? EvalConstants.EVALUATION_STATE_ACTIVE : null) );
-        HashSet<String> egidSet = new HashSet<String>();
-        for (EvalAssignUser evalAssignUser : userAssignments) {
-            if (evalAssignUser.getEvalGroupId() != null) {
-                egidSet.add(evalAssignUser.getEvalGroupId());
-            }
-        }
+        Set<String> egidSet = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
         if (!egidSet.isEmpty()) {
             // create array of all assigned groupIds where this user is instructor
             evalGroupIds = egidSet.toArray(new String[egidSet.size()]);

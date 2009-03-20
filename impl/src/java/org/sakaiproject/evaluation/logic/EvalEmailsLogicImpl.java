@@ -334,11 +334,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 limitGroupIds = new String[] {evalGroupId};
             }
 
-            HashSet<String> userIdsSet = new HashSet<String>();
             List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, null, includeConstant, null);
-            for (EvalAssignUser evalAssignUser : participants) {
-                userIdsSet.add( evalAssignUser.getUserId() );
-            }
+            Set<String> userIdsSet = EvalUtils.getUserIdsFromUserAssignments(participants);
 
             if (userIdsSet.size() > 0) {
                 // turn the set into an array
