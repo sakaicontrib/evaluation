@@ -133,7 +133,7 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
               EvalAssignUser.TYPE_EVALUATOR, null, null, null);
       for (EvalAssignUser evalAssignUser : userAssignments) {
           String groupId = evalAssignUser.getEvalGroupId();
-          if (groupIdToEAUList.containsKey(groupId)) {
+          if (! groupIdToEAUList.containsKey(groupId)) {
               groupIdToEAUList.put(groupId, new ArrayList<EvalAssignUser>());
           }
           groupIdToEAUList.get(groupId).add(evalAssignUser);
