@@ -76,7 +76,6 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
-import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -444,9 +443,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 	                	        UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
 	                	        uild.targetFullID = user.userId;
 	                	        checkBranch.decorators = new DecoratorList( uild );
-	                	        // tooltip
-	                	        //b.decorators.add( new UITooltipDecorator( UIMessage.make(uiTag+"-multiple-label") ) );
-	                	    } 
+	                	      } 
 	                	  } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_ONE)) {
 						    List<String> value = new ArrayList<String>();
 						    List<String> label = new ArrayList<String>();
