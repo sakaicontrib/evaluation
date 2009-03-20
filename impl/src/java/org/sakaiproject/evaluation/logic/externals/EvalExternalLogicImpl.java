@@ -1005,12 +1005,4 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return ret;
     }
 
-	public void setSessionUser(String userId, String userEid) {
-		Session session = sessionManager.getCurrentSession();
-		session.setUserId(userId);
-		session.setUserEid(userEid);
-		
-		
-	}
-
 }

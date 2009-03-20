@@ -23,7 +23,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -68,17 +67,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     }
 
 
-    protected EvalExternalLogic evalExternalLogic;
-    public void setEvalExternalLogic(EvalExternalLogic evalExternalLogic) {
-		this.evalExternalLogic = evalExternalLogic;
-	}
 
-    protected EvalCommonLogic evalCommonLogic;
-    public void setEvalCommonLogic(EvalCommonLogic evalCommonLogic) {
-		this.evalCommonLogic = evalCommonLogic;
-	}
-
-	/**
+    /**
      * Check whether the job type is valid
      * 
      * @param jobType
@@ -148,8 +138,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         String evalState = evaluationService.returnAndFixEvalState(eval, true);
         Date now = new Date();
 
-        evalExternalLogic.setSessionUser(evalCommonLogic.getAdminUserId(), evalCommonLogic.getAdminUserId());
-        
         // dispatch to send email and/or schedule jobs based on jobType
         if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
             // if opt-in, opt-out, or questions addable, notify instructors
@@ -229,8 +217,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
         }
 
-        evalExternalLogic.setSessionUser(null, null);
-        
     }
 
 
