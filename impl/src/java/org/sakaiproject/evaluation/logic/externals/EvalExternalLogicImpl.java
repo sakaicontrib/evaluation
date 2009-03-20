@@ -624,6 +624,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEmail#sendEmailsToAddresses(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, boolean)
+     */
     public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions) {
         String exceptionTracker = null;
 
@@ -662,7 +665,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @param message
      * @param deferExceptions
      * @param exceptionTracker
-     * @return
+     * @return an array of all email addresses that were sent to
      */
     private String[] sendEmails(InternetAddress fromAddress, List<String> toEmails, String subject,
             String message, boolean deferExceptions, String exceptionTracker) {
@@ -676,7 +679,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } catch (AddressException e) {
                 if (deferExceptions) {
                     exceptionTracker += e.getMessage() + " :: ";
-                    log.error("Invalid to address: " + email + ", skipping...");
+                    log.error("Invalid to address (" + email + "), skipping it, error:("+e+")...");
                     if (log.isDebugEnabled()) {
                     	e.printStackTrace();
                     }
