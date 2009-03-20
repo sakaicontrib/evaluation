@@ -219,9 +219,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         if (templateItemsList.isEmpty()) {
             UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
         } else {
-            UIInternalLink.make(tofill, "begin_eval_link", UIMessage.make("modifytemplate.begin.eval.link"), 
-                    new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null, templateId))
-                    .decorate( new UITooltipDecorator(UIMessage.make("modifytemplate.begin.eval.link.title")) );
+            UIInternalLink evalLink = UIInternalLink.make(tofill, "begin_eval_link", UIMessage.make("modifytemplate.begin.eval.link"), 
+                    new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null, templateId));
+            evalLink.decorators = new DecoratorList( new UITooltipDecorator(UIMessage.make("modifytemplate.begin.eval.link.title")));
         }
 
         // TODO - this should be the actual level and not some made up string
