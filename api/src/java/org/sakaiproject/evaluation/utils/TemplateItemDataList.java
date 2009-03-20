@@ -401,7 +401,7 @@ public class TemplateItemDataList {
          // place answer in responseAnswersMap
          Long responseId = answer.getResponse().getId();
          if (responseAnswersMap.containsKey(responseId)) {
-            responseAnswersMap.get(responseId).put(key, answer);            
+            responseAnswersMap.get(responseId).put(key, answer);
          } else {
             Map<String,EvalAnswer> keyAnswerMap = new HashMap<String, EvalAnswer>();
             keyAnswerMap.put(key, answer);
@@ -544,12 +544,21 @@ public class TemplateItemDataList {
       }
 
       /**
-       * @return true if this item is required (i.e. must be answered),
+       * @return true if this item is requireable (i.e. must be answered if eval settings stipulate),
        * false otherwise
-       * @see TemplateItemUtils#isRequired(EvalTemplateItem)
+       * @see TemplateItemUtils#isRequireable(EvalTemplateItem)
        */
       public boolean isRequired() {
-         return TemplateItemUtils.isRequired(this.templateItem);
+         return TemplateItemUtils.isRequireable(this.templateItem);
+      }
+
+      /**
+       * @return true if this item is compulsory (i.e. must be answered),
+       * false otherwise
+       * @see TemplateItemUtils#isCompulsory(EvalTemplateItem)
+       */
+      public boolean isCompulsory() {
+         return TemplateItemUtils.isCompulsory(this.templateItem);
       }
 
       /**

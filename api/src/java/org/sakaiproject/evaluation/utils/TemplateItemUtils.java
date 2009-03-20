@@ -232,16 +232,68 @@ public class TemplateItemUtils {
     }
 
     /**
-     * Check if a templateItem is required (must be answered by a user taking an evaluation
+     * Check if a templateItem can be required (must be answered by a user taking an evaluation
      * which does not allow blank responses) or not,
+     * all answerable items that are not textual are requireable,
      * this is not checking against the evaluation settings and is only checking
-     * the settings for this template item
-     * <b>NOTE</b> use {@link #getRequiredTemplateItems(List)} to do a large set
+     * the settings for this template item,
+     * does not include compulsory check
+     * <br/>
+     * <b>NOTE</b> use {@link #getRequireableTemplateItems(List)} to do a large set
      * 
      * @param templateItem a templateItem persistent object
-     * @return true if the item is required, false otherwise
+     * @return true if the item is requireable, false otherwise
      */
-    public static boolean isRequired(EvalTemplateItem templateItem) {
+    public static boolean isRequireable(EvalTemplateItem templateItem) {
+       // all answerable items that are not textual are requireable
+       boolean result = false;
+       if (isAnswerable(templateItem)) {
+          String type = getTemplateItemType(templateItem);
+          if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+             result = false;
+          } else {
+             result = true;
+          }
+       }
+       return result;
+    }
+
+    /**
+     * Get the list of all templateItems which are requireable (must be answered is eval settings stipulate),
+     * this will include any scaled items or items which are part of a block (but not a block parent),
+     * this is not checking against the evaluation settings and is only checking
+     * the settings for this template item
+     * 
+     * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+     * @return a List of {@link EvalTemplateItem} objects
+     * @see #isRequireable(EvalTemplateItem)
+     */
+    public static List<EvalTemplateItem> getRequireableTemplateItems(List<EvalTemplateItem> templateItemsList) {       
+        List<EvalTemplateItem> requireableItemsList = new ArrayList<EvalTemplateItem>();
+
+        List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
+
+        for (int i=0; i<orderedItems.size(); i++) {
+            EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
+            if (! isRequireable(templateItem)) {
+                continue;
+            }
+            requireableItemsList.add(templateItem);
+        }
+        return requireableItemsList;
+    }
+
+    /**
+     * Check if a templateItem is compulsory (must be answered by a user taking an evaluation) or not,
+     * this is checking the compulsory settings for this template item,
+     * all answerable items that are marked as compulsory are included
+     * <br/>
+     * <b>NOTE</b> use {@link #getCompulsoryTemplateItems(List)} to do a large set
+     * 
+     * @param templateItem a templateItem persistent object
+     * @return true if the item is compulsory, false otherwise
+     */
+    public static boolean isCompulsory(EvalTemplateItem templateItem) {
        // all answerable items that are not textual are required
        boolean result = false;
        if (isAnswerable(templateItem)) {
@@ -250,56 +302,34 @@ public class TemplateItemUtils {
              result = false;
           } else if ( safeBool(templateItem.getIsCompulsory()) ) {
               result = true;
-          } else {
-             result = true;
           }
        }
        return result;
     }
 
-/***
-    public static boolean isRequired(EvalTemplateItem templateItem, boolean evalAllowsEmpty) {
-        // all answerable items that are not textual are required 
-        boolean result = false;
-        if (isAnswerable(templateItem)) {
-            String type = getTemplateItemType(templateItem);
-            if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
-                result = false;
-            } else if (! safeBool(templateItem.getIsCompulsory()) && evalAllowsEmpty) {
-                result = false;
-            } else {
-
-                return true;
-            }
-        }
-        return result;
-    }
-***/
-
     /**
-     * Get the list of all templateItems which are required (must be answered),
-     * this will include any scaled items or items which are part of a block (but not a block parent),
-     * this is not checking against the evaluation settings and is only checking
-     * the settings for this template item
+     * Get the list of all templateItems which are compulsory (must be answered),
+     * this will include any scaled items or items which are part of a block (but not a block parent)
      * 
      * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
      * @return a List of {@link EvalTemplateItem} objects
+     * @see #isCompulsory(EvalTemplateItem)
      */
-    public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
-        List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
+    public static List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList) {       
+        List<EvalTemplateItem> compulsoryItemsList = new ArrayList<EvalTemplateItem>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
         for (int i=0; i<orderedItems.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-            if (! isRequired(templateItem)) {
+            if (! isCompulsory(templateItem)) {
                 continue;
             }
-            requiredItemsList.add(templateItem);
+            compulsoryItemsList.add(templateItem);
         }
-
-        return requiredItemsList;
+        return compulsoryItemsList;
     }
+
 
     // BLOCKS
 
