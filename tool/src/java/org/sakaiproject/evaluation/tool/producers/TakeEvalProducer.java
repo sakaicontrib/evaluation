@@ -369,7 +369,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 TemplateItemDataList tidl = new TemplateItemDataList(evaluationId, evalGroupId,
                         evaluationService, authoringService, hierarchyLogic, null);
                 Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
-                Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+                Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
 
                 // loop through all DTIs and flag items that were missing
                 if (! missingKeys.isEmpty()) {
