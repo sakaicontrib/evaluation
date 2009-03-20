@@ -256,21 +256,21 @@ public class TemplateItemUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isRequired(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isRequireable(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testIsRequired() {
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem1U) );
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem2B) );
-      assertTrue( TemplateItemUtils.isRequired(etdl.templateItem3A) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem5U) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem6UU) );
-      assertFalse( TemplateItemUtils.isRequired(etdl.templateItem9B) );
+      assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem1U) );
+      assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem2B) );
+      assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem3A) );
+      assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem5U) );
+      assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem6UU) );
+      assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem9B) );
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getRequiredTemplateItems(java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getRequireableTemplateItems(java.util.List)}.
     */
    public void testGetRequiredTemplateItems() {
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
@@ -281,7 +281,7 @@ public class TemplateItemUtilsTest extends TestCase {
       itemList.add(etdl.templateItem5U);
 
       List<EvalTemplateItem> list = null;
-      list = TemplateItemUtils.getRequiredTemplateItems(itemList);
+      list = TemplateItemUtils.getRequireableTemplateItems(itemList);
       assertNotNull(list);
       assertEquals(2, list.size());
       assertEquals(etdl.templateItem1U, list.get(0));
