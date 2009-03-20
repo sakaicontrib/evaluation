@@ -100,13 +100,4 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
 
 
-   //Sessions
-   
-   /**
-    * Set the current session user - needed by secheduled jobs to avoid
-    * Permission exceptions
-    * @param the userid can be null
-    * @param the users eid can be null
-    */
-   public void setSessionUser(String userId, String userEid);
 }
