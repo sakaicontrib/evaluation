@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 
 /**
@@ -117,12 +118,12 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
         evaluationDao.save(evaluationClosedTwo);
 
-        // Evaluation Active (ends today), viewable tomorrow
+        // Evaluation Active Two (ends today), viewable tomorrow, all requireable items are required
         evaluationActiveTwo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
                 EvalTestDataLoad.MAINT_USER_ID, "Eval active two", null, 
-                etdl.yesterday, etdl.today, etdl.today, etdl.tomorrow, false, null,
-                false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null,
+                etdl.yesterday, etdl.today, etdl.today, etdl.tomorrow, false, null, false, null, 
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
+                EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null,
                 etdl.templateUnused, null, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
                 Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
         evaluationDao.save(evaluationActiveTwo);
@@ -132,13 +133,13 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 evaluationActiveTwo, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         evaluationSetupService.saveAssignGroup(assign2, EvalTestDataLoad.MAINT_USER_ID);
 
-        // Evaluation Active (ends today), viewable tomorrow
+        // Evaluation Active Three (ends today), viewable tomorrow, only compulsory items are required
         evaluationActiveThree = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
-                EvalTestDataLoad.MAINT_USER_ID, "Eval active two", null, 
-                etdl.yesterday, etdl.today, etdl.today, etdl.tomorrow, false, null,
-                false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null,
-                etdl.templateUnused, null, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
+                EvalTestDataLoad.MAINT_USER_ID, "Eval active three", null, 
+                etdl.yesterday, etdl.today, etdl.today, etdl.tomorrow, false, null, false, null, 
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
+                EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null,
+                etdl.templateUnused, null, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE,
                 Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null, null);
         evaluationDao.save(evaluationActiveThree);
 
@@ -586,7 +587,8 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
         // force the system setting to be cleared so the eval setting takes over
         settings.set(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, null);
 
-        // test saving a response without all required answers (eval set to all required)
+
+        // test saving a response without all required answers (eval set to all required, TI_1_1 is required)
         EvalResponse responseRequired = new EvalResponse( EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
                 evaluationActiveTwo, new Date());
         responseRequired.setEndTime( new Date() );
@@ -599,14 +601,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
         } catch (ResponseSaveException e) {
             assertNotNull(e);
             assertEquals(ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS, e.type);
+            assertEquals(1, e.missingItemAnswerKeys.length);
+            String aKey = TemplateItemUtils.makeTemplateItemAnswerKey(etdl.templateItem1U.getId(), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalTestDataLoad.MAINT_USER_ID);
+            assertEquals(aKey, e.missingItemAnswerKeys[0]);
         }
         assertNull(responseRequired.getId());
         assertNull(RA_3_3.getId());
 
-        // test saving a response without all compulsory items
-        // TODO
-
-        // test saving with course related instead of instructor related item
+        // test saving with course related instead of instructor related item (invalid item)
         EvalAnswer RA_1_1 = new EvalAnswer( responseRequired, etdl.templateItem1U, etdl.item1, null, null, 2 );
         responseRequired.getAnswers().add( RA_1_1 );
         try {
@@ -630,6 +632,37 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
         assertNotNull(responseRequired.getId());
         assertNotNull(RA_1_1.getId());
         assertNotNull(RA_3_3.getId());
+
+
+        // test saving a response without all compulsory items (TI_1_1 is compulsory)
+        EvalResponse responseCompulsory = new EvalResponse( EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
+                evaluationActiveThree, new Date() );
+        responseCompulsory.setEndTime( new Date() );
+        responseCompulsory.setAnswers( new HashSet<EvalAnswer>() );
+        EvalAnswer CA_3_3 = new EvalAnswer( responseCompulsory, etdl.templateItem3U, etdl.item3, null, null, 2 );
+        responseCompulsory.getAnswers().add( CA_3_3 );
+        try {
+            deliveryService.saveResponse( responseCompulsory, EvalTestDataLoad.USER_ID);
+            fail("Should have thrown exception");
+        } catch (ResponseSaveException e) {
+            assertNotNull(e);
+            assertEquals(ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS, e.type);
+            assertEquals(1, e.missingItemAnswerKeys.length);
+            String aKey = TemplateItemUtils.makeTemplateItemAnswerKey(etdl.templateItem1U.getId(), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalTestDataLoad.MAINT_USER_ID);
+            assertEquals(aKey, e.missingItemAnswerKeys[0]);
+        }
+        assertNull(responseCompulsory.getId());
+        assertNull(CA_3_3.getId());
+
+        // now make sure we can save it if we add in the required stuff
+        EvalAnswer CA_1_1 = new EvalAnswer( responseCompulsory, etdl.templateItem1U, etdl.item1, 
+                EvalTestDataLoad.MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, 2 );
+        responseCompulsory.getAnswers().add( CA_1_1 );
+        responseCompulsory.setEndTime( new Date() );
+        deliveryService.saveResponse( responseCompulsory, EvalTestDataLoad.USER_ID);
+        assertNotNull(responseCompulsory.getId());
+        assertNotNull(CA_1_1.getId());
+        assertNotNull(CA_3_3.getId());
 
 
         // TODO - cannot do this test until hibernate issue resolved
