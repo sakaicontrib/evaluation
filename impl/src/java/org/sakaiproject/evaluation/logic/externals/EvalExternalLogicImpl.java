@@ -676,7 +676,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } catch (AddressException e) {
                 if (deferExceptions) {
                     exceptionTracker += e.getMessage() + " :: ";
-                    log.error("Invalid to address: " + email + ", skipping..." + e);
+                    log.error("Invalid to address: " + email + ", skipping...");
+                    if (log.isDebugEnabled()) {
+                    	e.printStackTrace();
+                    }
                     continue;
                 } else {
                     // die here since we were unable to find this user at all
