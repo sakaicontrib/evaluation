@@ -1,20 +1,13 @@
 package org.sakaiproject.evaluation.tool.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
@@ -56,11 +49,6 @@ public class EvalResponseAggregatorUtil {
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
-    }
-
-    private EvalSettings evalSettings;
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
     }
 
 
@@ -279,44 +267,16 @@ public class EvalResponseAggregatorUtil {
 
 
     /**
-     * Does the preparation work for getting the TIDL.  At the moment, this is basically
-     * everything from ReportsViewingProducer before it started iterating through
-     * the template data items.  Looking into making this the same for all the reporting
-     * formats.
-     * Requires access to the authoring, delivery, and hierarchy services
+     * Does the preparation work for getting the TIDL.  this is just a passthrough to 
+     * {@link TemplateItemDataList#TemplateItemDataList(Long, String[], EvalAuthoringService, EvalDeliveryService, ExternalHierarchyLogic)} 
      * 
-     * @param eval
+     * @param evaluationId
      * @param groupIds
      * @return a TIDL which is built for the given eval and group ids
      */
-    public TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
-        List<EvalTemplateItem> allTemplateItems = 
-            authoringService.getTemplateItemsForTemplate(eval.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
-
-        // get all the answers
-        List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
-
-        // get the list of all instructors for this report and put the user objects for them into a map
-        Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
-
-        // Get the sorted list of all nodes for this set of template items
-        List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
-
-        // make the TI data structure
-        Map<String, List<String>> associates = new HashMap<String, List<String>>();
-        associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
-
-        // add in the TA list if there are any TAs
-        Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-        if (taEnabled.booleanValue()) {
-            Set<String> teachingAssistants = TemplateItemDataList.getTeachingAssistantsForAnswers(answers);
-            if (teachingAssistants.size() > 0) {
-                associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(teachingAssistants));
-            }
-        }
-
-        TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
-
+    public TemplateItemDataList prepareTemplateItemDataStructure(Long evaluationId, String[] groupIds) {
+        TemplateItemDataList tidl = new TemplateItemDataList(evaluationId, groupIds,
+                authoringService, deliveryService, hierarchyLogic);
         return tidl;
     }
 

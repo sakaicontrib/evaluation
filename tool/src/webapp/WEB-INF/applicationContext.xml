@@ -277,8 +277,6 @@
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings"
-            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="messageLocator" ref="messageLocator" />
     </bean>
 

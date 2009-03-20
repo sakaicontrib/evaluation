@@ -120,8 +120,7 @@ public class PDFReportExporter implements ReportExporter {
         displayNumber = 0;
 
         // 1 Make TIDL
-        TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation,
-                groupIds);
+        TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation.getId(), groupIds);
 
         // Loop through the major group types: Course Questions, Instructor Questions, etc.
         int renderedItemCount = 0;
