@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -58,11 +56,6 @@ public class CSVReportExporter implements ReportExporter {
         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation,
                 groupIds);
 
-        // 1.5 get instructor info
-        Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
-        Map<String, EvalUser> instructorIdtoEvalUser = responseAggregator
-                .getInstructorsInformation(instructorIds);
-
         // 2 get DTIs for this eval from tidl
         List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);
 
@@ -76,8 +69,10 @@ public class CSVReportExporter implements ReportExporter {
             questionTextRow.add(commonLogic.makePlainTextFromHTML(dti.templateItem.getItem()
                     .getItemText()));
             if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
-                questionCatRow.add(messageLocator.getMessage("reporting.spreadsheet.instructor",
-                        instructorIdtoEvalUser.get(dti.associateId).displayName));
+                EvalUser user = commonLogic.getEvalUserById( dti.associateId );
+                String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
+                        new Object[] {user.displayName} );
+                questionCatRow.add( instructorMsg );
             } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
                 questionCatRow.add(messageLocator.getMessage("reporting.spreadsheet.course"));
             } else {

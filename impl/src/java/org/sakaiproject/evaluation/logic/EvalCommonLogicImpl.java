@@ -171,11 +171,13 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     public String getUserUsername(String userId) {
         String username = "------";
-        EvalUser user = getEvalUserOrNull(userId);
-        if (user != null) {
-            username = user.username;
-        } else {
-            username = externalLogic.getUserUsername(userId);
+        if (userId != null) {
+            EvalUser user = getEvalUserOrNull(userId);
+            if (user != null) {
+                username = user.username;
+            } else {
+                username = externalLogic.getUserUsername(userId);
+            }
         }
         return username;
     }
@@ -183,9 +185,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     public EvalUser getEvalUserById(String userId) {
         EvalUser user = null;
-        EvalUser eu = getEvalUserOrNull(userId);
-        if (eu != null) {
-            user = eu;
+        if (userId != null) {
+            EvalUser eu = getEvalUserOrNull(userId);
+            if (eu != null) {
+                user = eu;
+            }
         }
         if (user == null) {
             user = makeInvalidUser(userId, null);

@@ -13,7 +13,6 @@ import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -278,22 +277,6 @@ public class EvalResponseAggregatorUtil {
         return togo;
     }
 
-
-    /**
-     * Convenience method to build a Set of instructor ID's and a Map of their 
-     * EvalUsers which you will probably always need when formatting a report.
-     * 
-     * @param instructorIds a set of internal user ids
-     * @return the map of userId -> {@link EvalUser}
-     */
-    public Map<String, EvalUser> getInstructorsInformation(Set<String> instructorIds) {
-        Map<String, EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
-        List<EvalUser> instructors = commonLogic.getEvalUsersByIds(instructorIds.toArray(new String[] {}));
-        for (EvalUser evalUser : instructors) {
-            instructorIdtoEvalUser.put(evalUser.userId, evalUser);
-        }
-        return instructorIdtoEvalUser;
-    }
 
     /**
      * Does the preparation work for getting the TIDL.  At the moment, this is basically
