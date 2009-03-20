@@ -685,7 +685,7 @@ public class TemplateItemDataList {
          * false otherwise
          * @see TemplateItemUtils#isRequireable(EvalTemplateItem)
          */
-        public boolean isRequired() {
+        public boolean isRequireable() {
             return TemplateItemUtils.isRequireable(this.templateItem);
         }
 
