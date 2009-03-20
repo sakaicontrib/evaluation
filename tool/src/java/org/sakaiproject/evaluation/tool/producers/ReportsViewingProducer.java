@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -201,11 +200,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                 UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
                         new String[] { responseAggregator.getCommaSeparatedGroupNames(reportViewParams.groupIds) });
 
-
-                // get the list of all instructors for this report and put the user objects for them into a map
-                Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(tidl.getAnswers());
-                Map<String, EvalUser> instructorIdtoEvalUser = responseAggregator.getInstructorsInformation(instructorIds);
-
                 int renderedItemCount = 0;
                 // loop through the TIGs and handle each associated category
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
@@ -219,7 +213,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                         UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.course");
                     } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)
                             || EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                        EvalUser user = instructorIdtoEvalUser.get( tig.associateId );
+                        EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "viewreport.itemlist.instructor", new Object[] { user.displayName });
                     }
