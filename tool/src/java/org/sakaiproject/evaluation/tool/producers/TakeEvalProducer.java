@@ -415,7 +415,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 Boolean selectEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 Map<String, String> selectorType = new HashMap<String, String>();
                 selectorType.put("instructor", eval.getInstructorSelection());
-                selectorType.put("tas", eval.getAssistantSelection());
+                if(taEnabled)
+                	selectorType.put("tas", eval.getAssistantSelection());
                 Iterator<String> selector = selectorType.keySet().iterator(); 
                 while(selector.hasNext()){
                 	String selectKey = (String) selector.next();   	
@@ -445,7 +446,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 	                	        checkBranch.decorators = new DecoratorList( uild );
 	                	        // tooltip
 	                	        //b.decorators.add( new UITooltipDecorator( UIMessage.make(uiTag+"-multiple-label") ) );
-	                	    }
+	                	    } 
 	                	  } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_ONE)) {
 						    List<String> value = new ArrayList<String>();
 						    List<String> label = new ArrayList<String>();
@@ -482,7 +483,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         	css.put("display", "none");
                         	categorySectionBranch.decorators.add(new UICSSDecorator(css));
                         }
-                    } else if (EvalConstants.ITEM_CATEGORY_TA.equals(tig.associateType)) {
+                    } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                         EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                         UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
                                 "takeeval.ta.questions.header", new Object[] { user.displayName });
