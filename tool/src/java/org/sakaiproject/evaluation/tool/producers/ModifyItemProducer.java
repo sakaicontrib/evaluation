@@ -187,7 +187,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         String displayRows = null; // the number of rows to display for the text area
         Boolean usesNA = null; // whether or not the item uses the N/A option
         Boolean usesComment = null; // whether or not the item uses the comment option
-        Boolean isCompulsory = null; //whether or no this question must be answered
+        Boolean compulsory = null; //whether or no this question must be answered
         Long scaleId = null; // this holds the current scale id if there is one
 
         // now we validate the incoming view params
@@ -228,7 +228,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
             usesNA = item.getUsesNA();
             usesComment = item.getUsesComment();
-            isCompulsory = safeBool(item.isCompulsory());
+            compulsory = safeBool(item.isCompulsory());
             // if this is locked then we should probably be failing at this point
             itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
             if (item.getScale() != null) {
@@ -252,7 +252,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
             usesNA = templateItem.getUsesNA();
             usesComment = templateItem.getUsesComment();
-            isCompulsory = safeBool(templateItem.isCompulsory());
+            compulsory = safeBool(templateItem.isCompulsory());
             itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
             if (templateItem.getItem().getScale() != null) {
                 currentScale = templateItem.getItem().getScale();
@@ -460,7 +460,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                     Boolean selectOptionsCompulsory = true;
                     if (selectOptionsCompulsory) {
                         UIBranchContainer showComp = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCompulsory:");
-                        UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + ".isCompulsory", isCompulsory);
+                        UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + "compulsory", compulsory);
                         UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header")
                         .decorate( new UILabelTargetDecorator(bb) );
                     }
