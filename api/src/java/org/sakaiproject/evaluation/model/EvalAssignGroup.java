@@ -33,43 +33,26 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.owner = owner;
-        this.evalGroupId = evalGroupId;
-        this.evalGroupType = evalGroupType;
-        this.evaluation = evaluation;
+        this(owner, evalGroupId, evalGroupType, evaluation, null, null, null, null, null, null);
     }
 
     /**
      * REQUIRED constructor
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
-            Boolean instructorApproval, Boolean instructorsViewResults,
-            Boolean studentsViewResults, EvalEvaluation evaluation) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.owner = owner;
-        this.evalGroupId = evalGroupId;
-        this.evalGroupType = evalGroupType;
-        this.instructorApproval = instructorApproval;
-        this.instructorsViewResults = instructorsViewResults;
-        this.studentsViewResults = studentsViewResults;
-        this.evaluation = evaluation;
+            EvalEvaluation evaluation, Boolean instructorApproval,
+            Boolean instructorsViewResults, Boolean studentsViewResults) {
+        this(owner, evalGroupId, evalGroupType, evaluation, instructorApproval, instructorsViewResults, studentsViewResults, null, null, null);
     }
 
     /**
      * full constructor
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
-            Boolean instructorApproval, Boolean instructorsViewResults,
-            Boolean studentsViewResults, EvalEvaluation evaluation, String nodeId,
+            EvalEvaluation evaluation, Boolean instructorApproval,
+            Boolean instructorsViewResults, Boolean studentsViewResults, String nodeId,
             String instructorSelection, String assistantSelection) {
-        if (this.lastModified == null) {
-            lastModified = new Date();
-        }
+        this.lastModified = new Date();
         this.owner = owner;
         this.evalGroupId = evalGroupId;
         this.evalGroupType = evalGroupType;

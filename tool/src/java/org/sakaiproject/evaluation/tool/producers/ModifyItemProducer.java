@@ -228,7 +228,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
             usesNA = item.getUsesNA();
             usesComment = item.getUsesComment();
-            isCompulsory = safeBool(item.getIsCompulsory());
+            isCompulsory = safeBool(item.isCompulsory());
             // if this is locked then we should probably be failing at this point
             itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
             if (item.getScale() != null) {
@@ -252,7 +252,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
             usesNA = templateItem.getUsesNA();
             usesComment = templateItem.getUsesComment();
-            isCompulsory = safeBool(templateItem.getIsCompulsory());
+            isCompulsory = safeBool(templateItem.isCompulsory());
             itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
             if (templateItem.getItem().getScale() != null) {
                 currentScale = templateItem.getItem().getScale();

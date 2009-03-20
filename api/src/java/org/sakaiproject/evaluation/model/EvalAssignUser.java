@@ -156,11 +156,9 @@ public class EvalAssignUser implements java.io.Serializable {
      */
     public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
         super();
+        this.lastModified = new Date();
         if (userId == null || "".equals(userId) ) {
             throw new IllegalArgumentException("userId must be set and not null");
-        }
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
         }
         this.userId = userId;
         this.evalGroupId = evalGroupId;

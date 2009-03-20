@@ -218,7 +218,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 }) );
         if (responses.isEmpty()) {
             // create a new response and save it
-            response = new EvalResponse(new Date(), userId, evalGroupId, new Date(), evaluation);
+            response = new EvalResponse(userId, evalGroupId, evaluation, new Date());
             saveResponse(response, userId);
         } else {
             if (responses.size() == 1) {
@@ -488,10 +488,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             // FIXME - this is not going to work, need to change it
             // if the author has specified this as a compulsory question
             if (log.isDebugEnabled()) {
-                log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().getIsCompulsory());
+                log.debug(" checking answer " + answer.getTemplateItem().getId() + " which has a compulsory of " +  answer.getTemplateItem().isCompulsory());
                 log.debug("numeric " + answer.getNumeric() + " text: " + answer.getText() );
             }
-            if (answer.getNumeric() == null && answer.getText() == null &&  answer.getTemplateItem().getIsCompulsory() ) {
+            if (answer.getNumeric() == null && answer.getText() == null &&  answer.getTemplateItem().isCompulsory() ) {
                 if (log.isDebugEnabled()) {
                     log.debug("answer for " + answer.getTemplateItem().getId() + "has not been answered ");
                 }

@@ -663,8 +663,8 @@ public class EvalImportImpl implements EvalImport {
 			String sharing = element.getChildText("SHARING");
 			String expertDescription = element.getChildText("EXPERTDESCR");
 			Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
-			EvalTemplate template = new EvalTemplate(new Date(), owner, type, title, description,  sharing, expert,
-					expertDescription, templateItems, locked, false);
+			EvalTemplate template = new EvalTemplate(owner, type, title, description, sharing,  expert, expertDescription,
+					templateItems, locked, false);
 			template.setEid(eid);
 			return template;
 		}
@@ -790,9 +790,9 @@ public class EvalImportImpl implements EvalImport {
 			}
 			//new templateItem
 			EvalTemplateItem evalTemplateItem = 
-				new EvalTemplateItem(new Date(), owner,	
-						template, item, displayOrder, itemCategory, level, nodeId,
-						displayRows, scaleDisplaySetting, usesNA, false, blockParent,
+				new EvalTemplateItem(owner, template,	
+						item, displayOrder, itemCategory, level, nodeId, displayRows,
+						scaleDisplaySetting, usesNA, false, false, blockParent,
 						blockId, resultsSharing);
 			evalTemplateItem.setEid(eid);
 			return evalTemplateItem;
@@ -937,7 +937,7 @@ public class EvalImportImpl implements EvalImport {
 			String ideal = element.getChildText("IDEAL");
 			
 			//new scale
-			EvalScale scale = new EvalScale(new Date(), owner, title, EvalConstants.SCALE_MODE_SCALE, sharing, expert, expertDescription, ideal, choices,locked);	
+			EvalScale scale = new EvalScale(owner, title, EvalConstants.SCALE_MODE_SCALE, sharing, expert, expertDescription, ideal, choices, locked);	
 			scale.setEid(eid);
 			return scale;
 		}
@@ -1058,8 +1058,8 @@ public class EvalImportImpl implements EvalImport {
 			Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 	
 			//new item
-			EvalItem item = new EvalItem(new Date(), currentUserId, itemText, description, sharing, classification, expert,
-					expertDescription, scale, templateItems, usesNA, false, displayRows, scaleDisplaySetting, 
+			EvalItem item = new EvalItem(currentUserId, itemText, description, sharing, classification, expert, expertDescription,
+					scale, templateItems, usesNA, false, false, displayRows, scaleDisplaySetting, 
 					category, locked);
 			
 			item.setEid(eid);
@@ -1171,7 +1171,7 @@ public class EvalImportImpl implements EvalImport {
 			
 			//new EvalAssignGroup
 			EvalAssignGroup evalAssignGroup = new EvalAssignGroup(owner, providerId, groupType,
-					instructorApproval, instructorsViewResults, studentsViewResults, evaluation);
+					evaluation, instructorApproval, instructorsViewResults, studentsViewResults);
 			evalAssignGroup.setEid(eid);
 			return evalAssignGroup;
 		}

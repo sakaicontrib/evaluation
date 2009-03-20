@@ -12,138 +12,133 @@ import java.util.Set;
  */
 public class EvalResponse implements java.io.Serializable {
 
-   // Fields
+    // Fields
 
-   private Long id;
+    private Long id;
 
-   private Date lastModified;
+    private Date lastModified;
 
-   private String owner;
+    private String owner;
 
-   private String evalGroupId;
+    private String evalGroupId;
 
-   private Date startTime;
+    private Date startTime;
 
-   private Date endTime;
+    private Date endTime;
 
-   private Set<EvalAnswer> answers = new HashSet<EvalAnswer>(0);
+    private Set<EvalAnswer> answers = new HashSet<EvalAnswer>(0);
 
-   private EvalEvaluation evaluation;
+    private EvalEvaluation evaluation;
 
-   /**
-    * This holds a comment for the users response to this eval,
-    * i.e. this would be the comment for the evaluation itself from this user
-    */
-   private String comment;
+    /**
+     * This holds a comment for the users response to this eval,
+     * i.e. this would be the comment for the evaluation itself from this user
+     */
+    private String comment;
 
-   /**
-    * This is a special variable we are using to keep track of whether this response was
-    * complete when it was loaded from the database, if it is true then it is/was complete,
-    * if it is false then it was not complete<br/>
-    * <b>WARNING:</b> Do NOT modify this value yourself, it should only be changed internally in the DAO
-    */
-   public boolean complete = false;
+    /**
+     * This is a special variable we are using to keep track of whether this response was
+     * complete when it was loaded from the database, if it is true then it is/was complete,
+     * if it is false then it was not complete<br/>
+     * <b>WARNING:</b> Do NOT modify this value yourself, it should only be changed internally in the DAO
+     */
+    public boolean complete = false;
 
-   // Constructors
+    // Constructors
 
-   /** default constructor */
-   public EvalResponse() {
-   }
+    /** default constructor */
+    public EvalResponse() {
+    }
 
-   /** minimal constructor */
-   public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime,
-         EvalEvaluation evaluation) {
-      this.lastModified = lastModified;
-      this.owner = owner;
-      this.evalGroupId = evalGroupId;
-      this.startTime = startTime;
-      this.evaluation = evaluation;
-   }
+    /** minimal constructor */
+    public EvalResponse(String owner, String evalGroupId, EvalEvaluation evaluation, Date startTime) {
+        this(owner, evalGroupId, evaluation, startTime, null, null);
+    }
 
-   /** full constructor */
-   public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, Date endTime,
-         Set<EvalAnswer> answers, EvalEvaluation evaluation) {
-      this.lastModified = lastModified;
-      this.owner = owner;
-      this.evalGroupId = evalGroupId;
-      this.startTime = startTime;
-      this.endTime = endTime;
-      this.answers = answers;
-      this.evaluation = evaluation;
-   }
+    /** full constructor */
+    public EvalResponse(String owner, String evalGroupId, EvalEvaluation evaluation, Date startTime, Date endTime,
+            Set<EvalAnswer> answers) {
+        this.lastModified = new Date();
+        this.owner = owner;
+        this.evalGroupId = evalGroupId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.answers = answers;
+        this.evaluation = evaluation;
+    }
 
-   public Set<EvalAnswer> getAnswers() {
-      return answers;
-   }
+    public Set<EvalAnswer> getAnswers() {
+        return answers;
+    }
 
-   public void setAnswers(Set<EvalAnswer> answers) {
-      this.answers = answers;
-   }
+    public void setAnswers(Set<EvalAnswer> answers) {
+        this.answers = answers;
+    }
 
-   public Date getEndTime() {
-      return endTime;
-   }
+    public Date getEndTime() {
+        return endTime;
+    }
 
-   public void setEndTime(Date endTime) {
-      this.endTime = endTime;
-   }
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 
-   public String getEvalGroupId() {
-      return evalGroupId;
-   }
+    public String getEvalGroupId() {
+        return evalGroupId;
+    }
 
-   public void setEvalGroupId(String evalGroupId) {
-      this.evalGroupId = evalGroupId;
-   }
+    public void setEvalGroupId(String evalGroupId) {
+        this.evalGroupId = evalGroupId;
+    }
 
-   public EvalEvaluation getEvaluation() {
-      return evaluation;
-   }
+    public EvalEvaluation getEvaluation() {
+        return evaluation;
+    }
 
-   public void setEvaluation(EvalEvaluation evaluation) {
-      this.evaluation = evaluation;
-   }
+    public void setEvaluation(EvalEvaluation evaluation) {
+        this.evaluation = evaluation;
+    }
 
-   public Long getId() {
-      return id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public Date getLastModified() {
-      return lastModified;
-   }
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-   public void setLastModified(Date lastModified) {
-      this.lastModified = lastModified;
-   }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-   public String getOwner() {
-      return owner;
-   }
+    public String getOwner() {
+        return owner;
+    }
 
-   public void setOwner(String owner) {
-      this.owner = owner;
-   }
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-   public Date getStartTime() {
-      return startTime;
-   }
+    public Date getStartTime() {
+        return startTime;
+    }
 
-   public void setStartTime(Date startTime) {
-      this.startTime = startTime;
-   }
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
-   
-   public String getComment() {
-      return comment;
-   }
 
-   
-   public void setComment(String comment) {
-      this.comment = comment;
-   }
+    public String getComment() {
+        return comment;
+    }
+
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
 }

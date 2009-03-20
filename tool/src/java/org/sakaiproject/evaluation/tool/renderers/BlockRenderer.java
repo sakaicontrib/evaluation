@@ -184,13 +184,13 @@ public class BlockRenderer implements ItemRenderer {
                 EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
                 EvalItem childItem = childTemplateItem.getItem();
 
-                if(childTemplateItem.getIsCompulsory() == null) childTemplateItem.setIsCompulsory(false);
+                if(childTemplateItem.isCompulsory() == null) childTemplateItem.setCompulsory(false);
 
                 // For the radio buttons
                 UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
                 if (childTemplateItem.renderOption) {
                     childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-                } else if (safeBool(childTemplateItem.getIsCompulsory())  && ! evalAnswerReqired) {
+                } else if (safeBool(childTemplateItem.isCompulsory())  && ! evalAnswerReqired) {
                     childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
                 }
                 if (colored) {

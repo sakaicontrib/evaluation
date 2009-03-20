@@ -737,8 +737,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test adding evalGroupId to inqueue eval
       EvalAssignGroup eacNew = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
-            EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-            etdl.evaluationNew);
+            EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
+            Boolean.FALSE);
       evaluationSetupService.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
       // check save worked
@@ -751,8 +751,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // test adding evalGroupId to active eval
       EvalAssignGroup eacActive = new EvalAssignGroup(EvalConstants.GROUP_TYPE_SITE, 
             EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
-            Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-            etdl.evaluationActive);
+            etdl.evaluationActive, Boolean.FALSE, Boolean.TRUE, 
+            Boolean.FALSE);
       evaluationSetupService.saveAssignGroup(eacActive, EvalTestDataLoad.MAINT_USER_ID);
 
       // check save worked
@@ -785,8 +785,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
-               EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-               etdl.evaluationNew),
+               EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
+               Boolean.FALSE),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (RuntimeException e) {
@@ -797,8 +797,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
-               EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-               etdl.evaluationActive),
+               EvalConstants.GROUP_TYPE_SITE, etdl.evaluationActive, Boolean.FALSE, Boolean.TRUE, 
+               Boolean.FALSE),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (RuntimeException e) {
@@ -809,8 +809,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
-               EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-               etdl.evaluationNew), 
+               EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
+               Boolean.FALSE), 
                EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
       } catch (RuntimeException e) {
@@ -821,8 +821,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
-               EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-               etdl.evaluationViewable), 
+               EvalConstants.GROUP_TYPE_SITE, etdl.evaluationViewable, Boolean.FALSE, Boolean.TRUE, 
+               Boolean.FALSE), 
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (RuntimeException e) {
@@ -883,11 +883,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    public void testDeleteAssignGroup() {
       // save some ACs to test removing
       EvalAssignGroup eac1 = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
-            EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-            etdl.evaluationNew);
+            EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
+            Boolean.FALSE);
       EvalAssignGroup eac2 = new EvalAssignGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE2_REF, 
-            EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
-            etdl.evaluationNew);
+            EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
+            Boolean.FALSE);
       evaluationDao.save(eac1);
       evaluationDao.save(eac2);
 
@@ -973,14 +973,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertNotNull(eah.getStudentsViewResults());
 
       // make sure it does not wipe existing settings
-      eah = new EvalAssignGroup("az", "eag1", "Site", false, false, false, etdl.evaluationActive);
+      eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, false, false, false);
       evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
 // TODO - temporary disable
 //      assertEquals(Boolean.FALSE, eah.getInstructorApproval());
       assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
       assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
 
-      eah = new EvalAssignGroup("az", "eag1", "Site", true, true, true, etdl.evaluationActive);
+      eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, true, true, true);
       evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
       assertEquals(Boolean.TRUE, eah.getInstructorApproval());
       assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());

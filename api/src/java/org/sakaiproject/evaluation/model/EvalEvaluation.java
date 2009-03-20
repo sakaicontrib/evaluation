@@ -245,17 +245,7 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     public EvalEvaluation(String type, String owner, String title, Date startDate, String state,
             String resultsSharing, Integer reminderDays, EvalTemplate template) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.type = type;
-        this.owner = owner;
-        this.title = title;
-        this.startDate = startDate;
-        this.state = state;
-        this.resultsSharing = resultsSharing;
-        this.reminderDays = reminderDays;
-        this.template = template;
+        this(type, owner, title, null, startDate, null, null, null, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null, null);
     }
 
     /**
@@ -264,20 +254,7 @@ public class EvalEvaluation implements java.io.Serializable {
     public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
             Date stopDate, Date viewDate, String state, String resultsSharing,
             Integer reminderDays, EvalTemplate template) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
-        this.type = type;
-        this.owner = owner;
-        this.title = title;
-        this.startDate = startDate;
-        this.stopDate = stopDate;
-        this.dueDate = dueDate;
-        this.viewDate = viewDate;
-        this.state = state;
-        this.resultsSharing = resultsSharing;
-        this.reminderDays = reminderDays;
-        this.template = template;
+        this(type, owner, title, null, startDate, dueDate, stopDate, viewDate, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null, null);
     }
 
     /**
@@ -292,9 +269,7 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
             String authControl, String evalCategory, String instructorSelection, String assistantSelection) {
-        if (this.lastModified == null) {
-            this.lastModified = new Date();
-        }
+        this.lastModified = new Date();
         this.type = type;
         this.owner = owner;
         this.title = title;

@@ -152,7 +152,7 @@ public class EvalSettingsImpl implements EvalSettings {
       // create a new setting if needed or update an existing one
       String value = settingValue.toString();
       if (c == null) {
-         c = new EvalConfig(new Date(), name, value);
+         c = new EvalConfig(name, value);
       } else {
          c.setLastModified(new Date());
          c.setValue(value);
@@ -202,7 +202,7 @@ public class EvalSettingsImpl implements EvalSettings {
                configCache.put(name, new Null());
             } else {
                // make the object non-persistent by copying it
-               config = new EvalConfig(config.getLastModified(), name, config.getValue());
+               config = new EvalConfig(name, config.getValue());
                configCache.put(name, config); // update the cache
             }
          }
@@ -220,7 +220,7 @@ public class EvalSettingsImpl implements EvalSettings {
       List<EvalConfig> l = dao.findAll(EvalConfig.class);
       for (EvalConfig config : l) {
          // copy the values to avoid putting persistent objects in the cache
-         config = new EvalConfig(config.getLastModified(), config.getName(), config.getValue());
+         config = new EvalConfig(config.getName(), config.getValue());
          configCache.put(config.getName(), config);
       }
    }

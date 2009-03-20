@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import java.util.Date;
 
 import org.sakaiproject.evaluation.model.EvalConfig;
 
@@ -61,8 +60,8 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 	// run this before each test starts and as part of the transaction
 	protected void onSetUpInTransaction() {
 		// create test objects
-		config1 = new EvalConfig(new Date(), TEST_NAME1, TEST_VALUE1);
-		config3 = new EvalConfig(new Date(), TEST_NAME3, TEST_VALUE3);
+		config1 = new EvalConfig(TEST_NAME1, TEST_VALUE1);
+		config3 = new EvalConfig(TEST_NAME3, TEST_VALUE3);
 
 		// preload additional data if desired
 		evaluationDao.save(config1);

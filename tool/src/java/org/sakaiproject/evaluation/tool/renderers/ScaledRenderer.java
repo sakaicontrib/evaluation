@@ -78,7 +78,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
          if (templateItem.renderOption) {
             compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
+         } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
         	 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -162,7 +162,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
          if (templateItem.renderOption) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
+         } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
@@ -229,7 +229,7 @@ public class ScaledRenderer implements ItemRenderer {
          UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
          if (templateItem.renderOption) {
             stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-         } else if ( safeBool(templateItem.getIsCompulsory()) && ! evalAnswerReqired) {
+         } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
         	 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 

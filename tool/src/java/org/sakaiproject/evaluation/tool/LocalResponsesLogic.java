@@ -59,8 +59,8 @@ public class LocalResponsesLogic {
      */
     public EvalResponse newResponse() {
         log.debug("Creating a new response");
-        EvalResponse togo = new EvalResponse(new Date(), 
-                commonLogic.getCurrentUserId(), new String(), new Date(), null);
+        EvalResponse togo = new EvalResponse(commonLogic.getCurrentUserId(), 
+                new String(), null, new Date());
         togo.setEndTime(new Date()); // TODO - I don't think this will work
         return togo;
     }

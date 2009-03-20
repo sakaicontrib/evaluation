@@ -61,6 +61,10 @@
         <property name="usesComment" type="java.lang.Boolean">
             <column name="USES_COMMENT" />
         </property>
+        <!-- should this item be compulsory (must be answered) -->
+        <property name="compulsory" type="java.lang.Boolean">
+            <column name="COMPULSORY"/>
+        </property>
         <!-- is this item the parent item for a block -->
         <property name="blockParent" type="java.lang.Boolean">
             <column name="BLOCK_PARENT" />
@@ -86,9 +90,6 @@
         <!-- means this item was added to the eval as a result of an auto use insertion -->
         <property name="autoUseInsertionTag" type="java.lang.String">
             <column name="AUTO_USE_INSERT_TAG" length="255" />
-        </property>
-                <property name="isCompulsory" type="java.lang.Boolean">
-        	<column name="COMPULSORY"/>
         </property>
     </class>
 </hibernate-mapping>
