@@ -141,7 +141,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $('input[name=addGroupItemCheckbox]').bind('click', function() {
                     var c = 0;
                     $('input[name=addGroupItemCheckbox]').each(function() {
-                        if ($(this).attr('checked') == true) {
+                        if ($(this).attr('checked')) {
                             c++;
                         }
                     });
@@ -424,16 +424,18 @@ var options_choose_existing_items_html_search = {
 function updateControlItemsTotal(){
     var tNum = $('#itemList > div.itemRow:visible').get().length;
     $('[id=level-header-number]').text(tNum);
-    var takeEvalLink = '<a title="'+$('[id=begin_eval_link]').text()+'" href="evaluation_create?reOpening=false&amp;templateId='+$('input[name*=templateId]').val()+'">'+$('[id=begin_eval_link]').text()+'</a>';
+    var dummyLink = $('span[id=begin-eval-dummylink]');
+    var link = $('a[id=begin_eval_link]');
+    var title = dummyLink.length!=0?dummyLink.text():link.text();
+    var takeEvalLink = '<a id="begin_eval_link" title="'+title+'" href="evaluation_create?reOpening=false&amp;templateId='+$('input[name*=templateId]').val()+'">'+title+'</a>';
     if(tNum==0){
-        $('[id=begin_eval_link]').replaceWith('<span id="begin_eval_link">'+$('[id=begin_eval_link]').text()+'</sapn>');
+        if(link.length!=0){
+            link.replaceWith('<span id="begin-eval-dummylink">'+link.text()+'</span>');
+        }
     } else{
-        $('span[@id=begin_eval_link]').each(function(){
-            console.log(this.tagName.toLowerCase());
-           if(this.tagName.toLowerCase() == 'span'){
-               $('[id=begin_eval_link]').replaceWith(takeEvalLink);
-           }
-        });
+        if(dummyLink.length!=0){
+            dummyLink.replaceWith(takeEvalLink);
+        }
     }
 }
 
