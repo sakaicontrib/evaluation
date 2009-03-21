@@ -24,6 +24,12 @@
         <property name="startTime" type="java.util.Date">
             <column name="START_TIME" not-null="true" />
         </property>
+        <property name="comment" type="text">
+            <column name="COMMENT_RESPONSE" />
+        </property>
+        <property name="selectionsCode" type="text">
+            <column name="SELECTIONS_CODE" />
+        </property>
         <!-- This is the time when this response was submitted -->
         <property name="endTime" type="java.util.Date">
             <column name="END_TIME" not-null="false" />
@@ -39,8 +45,5 @@
         <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="RESPONSE_EVALUATION_FKC" lazy="proxy" fetch="select" not-null="true">
             <column name="EVALUATION_FK" not-null="true" unique-key="uniqueOwnerGroupEval" />
         </many-to-one>
-        <property name="comment" type="text">
-            <column name="COMMENT_RESPONSE" />
-        </property>
     </class>
 </hibernate-mapping>
