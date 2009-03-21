@@ -967,21 +967,21 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertNull(eah.getInstructorApproval());
       assertNull(eah.getInstructorsViewResults());
       assertNull(eah.getStudentsViewResults());
-      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
       assertNotNull(eah.getInstructorApproval());
       assertNotNull(eah.getInstructorsViewResults());
       assertNotNull(eah.getStudentsViewResults());
 
       // make sure it does not wipe existing settings
       eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, false, false, false);
-      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
 // TODO - temporary disable
 //      assertEquals(Boolean.FALSE, eah.getInstructorApproval());
       assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
       assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
 
       eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, true, true, true);
-      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
       assertEquals(Boolean.TRUE, eah.getInstructorApproval());
       assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
       assertEquals(Boolean.TRUE, eah.getStudentsViewResults());

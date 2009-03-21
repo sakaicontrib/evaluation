@@ -1143,7 +1143,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // set the settings to null to allow the defaults to override correctly
                 EvalAssignHierarchy eah = new EvalAssignHierarchy(userId, nodeId, eval);
                 // fill in defaults and the values from the evaluation
-                setDefaults(eval, eah);
+                setAssignmentDefaults(eval, eah);
                 nodeAssignments.add(eah);
             }
 
@@ -1296,7 +1296,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }
         EvalEvaluation eval = getEvaluationOrFail(assignGroup.getEvaluation().getId());
 
-        setDefaults(eval, assignGroup); // set the group defaults before saving
+        setAssignmentDefaults(eval, assignGroup); // set the group defaults before saving
 
         if (assignGroup.getId() == null) {
             // creating new AC
@@ -1552,7 +1552,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             EvalAssignGroup eag = new EvalAssignGroup(userId, evalGroupId, type, eval);
             eag.setNodeId(nodeId);
             // fill in defaults and the values from the evaluation
-            setDefaults(eval, eag);
+            setAssignmentDefaults(eval, eag);
             groupAssignments.add(eag);
         }
         return groupAssignments;
@@ -1562,10 +1562,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * Ensures that the settings for assignments are correct based on the system settings and the evaluation settings,
      * also ensures that none of them are null
      * 
-     * @param eval the evaluation associated with this assginment
+     * @param eval the evaluation associated with this assignment
      * @param eah the assignment object (persistent or non)
      */
-    protected void setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
+    protected void setAssignmentDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
         // setInstructorsViewResults
         if (eah.getInstructorsViewResults() == null) {
             Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);

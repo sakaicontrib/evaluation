@@ -7,7 +7,7 @@
 	<classpathentry excluding="**" kind="src" output="impl/m2-target/test-classes" path="pack/src/webapp/WEB-INF"/>
 	<classpathentry kind="src" output="tool/m2-target/classes" path="tool/src/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="m2-target/classes"/>
 </classpath>
