@@ -46,12 +46,9 @@
         <property name="nodeId" type="java.lang.String" index="eval_assign_group_nodeid">
             <column name="NODE_ID" length="255" />
         </property>
-        <!-- for storing the instructor/assistant selection code -->
-        <property name="instructorSelection" type="java.lang.String">
-            <column name="INSTRUCTOR_SELECTION" length="255" />
-        </property>
-        <property name="assistantSelection" type="java.lang.String">
-            <column name="ASSISTANT_SELECTION" length="255" />
+        <!-- for storing the instructor/assistant/etc. selection code -->
+        <property name="selectionSettings" type="java.lang.String">
+            <column name="SELECTION_SETTINGS" length="2000" />
         </property>
     </class>
 </hibernate-mapping>

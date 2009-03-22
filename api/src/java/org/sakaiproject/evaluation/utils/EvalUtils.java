@@ -714,4 +714,43 @@ public class EvalUtils {
         return l;
     }
 
+    /**
+     * Handles the selection option check for an eval assign group in a standard way to ensure the
+     * checks are always handled in the same way,
+     * make sure you check that {@link EvalSettings#ENABLE_INSTRUCTOR_ASSISTANT_SELECTION} is enabled
+     * before bothering to check these settings as they should not be respected if the setting is disabled
+     * 
+     * @param selectionTypeConstant the selection type constant to check for a given assign group/eval and
+     * see if the option is set (e.g. {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT})
+     * @param assignGroup (OPTIONAL) the assign group for this eval, this should be set but it does not have to be
+     * @param eval (OPTIONAL) the eval, you can use this if there is no assign group available
+     * but the correct way to check is to use the assigngroup
+     * @return the selection option constant (e.g. default is {@link EvalAssignGroup#SELECTION_OPTION_ALL})
+     * @throws IllegalArgumentException if the selectionTypeConstant is null
+     */
+    public static String getSelectionSetting(String selectionTypeConstant, EvalAssignGroup assignGroup, EvalEvaluation eval) {
+        if (selectionTypeConstant == null || "".equals(selectionTypeConstant)) {
+            throw new IllegalArgumentException("Selection type constant must not be null");
+        }
+        if (assignGroup == null && eval == null) {
+            throw new IllegalArgumentException("assignGroup and eval cannot both be null");
+        }
+        
+        String selectionSetting = EvalAssignGroup.SELECTION_OPTION_ALL;
+        if (assignGroup != null) {
+            Map<String, String> m = assignGroup.getSelectionOptions();
+            String s = m.get(selectionTypeConstant);
+            if (s != null) {
+                selectionSetting = s;
+            }
+        } else if (eval != null) {
+            Map<String, String> m = eval.getSelectionOptions();
+            String s = m.get(selectionTypeConstant);
+            if (s != null) {
+                selectionSetting = s;
+            }
+        }
+        return selectionSetting;
+    }
+
 }

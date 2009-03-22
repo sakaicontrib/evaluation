@@ -1,17 +1,31 @@
 
 package org.sakaiproject.evaluation.model;
 
-// Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
-
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * This is the assignment of a group to an evaluation and is how we know that the group should be
  * taking an eval<br/>
  * <b>NOTE:</b> the nodeId will be set to the id of the node which caused this group to be added if
  * it was added that way, it will be null if the group was assigned directly
+ * 
+ * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
 public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Serializable {
+
+    public static final String SELECTION_OPTION_ALL = "all";
+    public static final String SELECTION_OPTION_ONE = "one";
+    public static final String SELECTION_OPTION_MULTIPLE = "multiple";
+
+    public static final String SELECTION_TYPE_INSTRUCTOR = EvalConstants.ITEM_CATEGORY_INSTRUCTOR;
+    public static final String SELECTION_TYPE_ASSISTANT = EvalConstants.ITEM_CATEGORY_ASSISTANT;
+    public static final String SELECTION_TYPE_ENVIRONMENT = EvalConstants.ITEM_CATEGORY_ENVIRONMENT;
 
     // Fields
 
@@ -20,6 +34,16 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     private String evalGroupId;
 
     private String evalGroupType;
+
+    /**
+     * An encoded string which indicates the stored selection settings for this assignment,
+     * null indicates that there are no selection settings stored and to use {@link #SELECTION_OPTION_ALL} 
+     * (the default which indicates no selections),
+     * this is inherited from the evaluation it is associated with <br/>
+     * use {@link EvalUtils#getSelectionSetting(String, EvalAssignGroup, EvalEvaluation)} to check
+     * this setting in a standard way
+     */
+    protected String selectionSettings;
 
     // Constructors
 
@@ -33,7 +57,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation) {
-        this(owner, evalGroupId, evalGroupType, evaluation, null, null, null, null, null, null);
+        this(owner, evalGroupId, evalGroupType, evaluation, null, null, null, null, null);
     }
 
     /**
@@ -42,7 +66,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation, Boolean instructorApproval,
             Boolean instructorsViewResults, Boolean studentsViewResults) {
-        this(owner, evalGroupId, evalGroupType, evaluation, instructorApproval, instructorsViewResults, studentsViewResults, null, null, null);
+        this(owner, evalGroupId, evalGroupType, evaluation, instructorApproval, instructorsViewResults, studentsViewResults, null, null);
     }
 
     /**
@@ -51,7 +75,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation, Boolean instructorApproval,
             Boolean instructorsViewResults, Boolean studentsViewResults, String nodeId,
-            String instructorSelection, String assistantSelection) {
+            String selectionSettings) {
         this.lastModified = new Date();
         this.owner = owner;
         this.evalGroupId = evalGroupId;
@@ -61,9 +85,137 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
         this.studentsViewResults = studentsViewResults;
         this.evaluation = evaluation;
         this.nodeId = nodeId;
-        this.instructorSelection = instructorSelection;
-        this.assistantSelection = assistantSelection;
+        this.selectionSettings = selectionSettings;
     }
+
+    /**
+     * Validates that the selection option is valid and not null or empty
+     * @param selectionOption must be one of the constants like {@link #SELECTION_OPTION_ALL} (the default)
+     */
+    public static void validateSelectionOption(String selectionOption) {
+        if (selectionOption == null || "".equals(selectionOption)) {
+            throw new IllegalArgumentException("Selection option must not be null or empty string");
+        }
+        if (! selectionOption.equals(SELECTION_OPTION_ALL) 
+                && ! selectionOption.equals(SELECTION_OPTION_MULTIPLE) 
+                && ! selectionOption.equals(SELECTION_OPTION_ONE)) {
+            throw new IllegalArgumentException("Selection type must equal one of the SELECTION_OPTION constants in EvalAssignGroup");
+        }
+    }
+
+    /**
+     * Validates that the selection type is valid and not null or empty
+     * @param selectionType must be one of the constants like {@link #SELECTION_TYPE_INSTRUCTOR}
+     */
+    public static void validateSelectionType(String selectionType) {
+        if (selectionType == null || "".equals(selectionType)) {
+            throw new IllegalArgumentException("Selection type must not be null or empty string");
+        }
+        if (! selectionType.equals(SELECTION_TYPE_INSTRUCTOR) 
+                && ! selectionType.equals(SELECTION_TYPE_ASSISTANT) 
+                && ! selectionType.equals(SELECTION_TYPE_ENVIRONMENT)) {
+            throw new IllegalArgumentException("Selection type must equal one of the SELECTION_TYPE constants in EvalAssignGroup");
+        }
+    }
+
+
+    /**
+     * Get the selections out of this response (decoded),
+     * this is a map of selection type constants like 
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * to ids (typically userIds)
+     * 
+     * @return the selections as type constant => selection ids (e.g. {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} => instructorIds)
+     */
+    public Map<String, String> getSelectionOptions() {
+        return decodeSelectionSettings(this.selectionSettings);
+    }
+
+    /**
+     * Sets the selections to store for a specific category type:
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * Can also clear the values for a type
+     * 
+     * @param selectionType the type constant to store selections for:
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * @param selectionOption one of the constants like {@link #SELECTION_OPTION_ONE},
+     * indicates the selection option to use for this selection type,
+     * if set to null or {@link #SELECTION_OPTION_ALL} then this selection type will be removed from the stored options
+     */
+    public void setSelectionOption(String selectionType, String selectionOption) {
+        Map<String, String> selections = getSelectionOptions();
+        handleSelectionOption(selectionType, selectionOption, selections);
+        setSelectionSettings( encodeSelectionSettings(selections) );
+    }
+
+    /**
+     * Reduce code duplication
+     * Sets the given selection type and option into the given map,
+     * all params must not be null
+     */
+    public static void handleSelectionOption(String selectionType, String selectionOption,
+            Map<String, String> selections) {
+        EvalAssignGroup.validateSelectionType(selectionType);
+        if (selectionOption == null) {
+            selections.remove(selectionType);
+        } else {
+            EvalAssignGroup.validateSelectionOption(selectionOption);
+            selections.put(selectionType, selectionOption);
+        }
+    }
+
+    /**
+     * Encodes a map into the selectionSettings coded string
+     * @param selections the selections map
+     * @return the selectionSettings code string OR null if the map is null or empty
+     */
+    public static String encodeSelectionSettings(Map<String, String> selections) {
+        String encoded = null;
+        if (selections != null && ! selections.isEmpty()) {
+            // build encoded string {A[1,2,3]}{B[1,2]}
+            StringBuilder sb = new StringBuilder();
+            for (Entry<String, String> entry : selections.entrySet()) {
+                sb.append('{');
+                sb.append(entry.getKey());
+                sb.append(':');
+                sb.append(entry.getValue());
+                sb.append('}');
+            }
+            encoded = sb.toString();
+        }
+        return encoded;
+    }
+
+    /**
+     * Decodes a selectionSettings code string into a map of selections
+     * @param encodedSelections the selectionSettings code string
+     * @return a map of selection setting constants -> selection option constants (empty map if the input is null)
+     */
+    public static Map<String, String> decodeSelectionSettings(String encoded) {
+        Map<String, String> selections;
+        if (encoded != null) {
+            encoded = encoded.trim();
+        }
+        if (encoded == null || "".equals(encoded)) {
+            selections = new HashMap<String, String>(0);
+        } else {
+            selections = new HashMap<String, String>();
+            // remove the outer brackets
+            encoded = encoded.substring(1, encoded.lastIndexOf('}'));
+            // split it
+            String[] parts = encoded.split("\\}\\{");
+            for (String part : parts) {
+                int pos = part.indexOf(':');
+                String key = part.substring(0, pos);
+                String value = part.substring(pos+1, part.length());
+                selections.put(key, value);
+            }
+        }
+        return selections;
+    }
+
+
+    // GETTERS and SETTERS
 
     public String getEid() {
         return this.eid;
@@ -87,6 +239,20 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
     public void setEvalGroupType(String evalGroupType) {
         this.evalGroupType = evalGroupType;
+    }
+
+    public String getSelectionSettings() {
+        return selectionSettings;
+    }
+
+    public void setSelectionSettings(String selectionSettings) {
+        if (selectionSettings != null) {
+            selectionSettings = selectionSettings.trim();
+        }
+        if ("".equals(selectionSettings)) {
+            selectionSettings = null;
+        }
+        this.selectionSettings = selectionSettings;
     }
 
 }

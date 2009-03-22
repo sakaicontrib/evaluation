@@ -299,7 +299,7 @@ public interface EvalEvaluationService {
      * @param evalGroupId the internal unique ID for an evalGroup
      * @return a unique id for an {@link EvalAssignGroup} or null if it cannot be found for this evaluation
      */
-    public Long getAssignGroupId(Long evaluationId, String evalGroupId);
+    public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId);
 
     /**
      * Retrieve a single assign hierarchy item based on its uniqie id

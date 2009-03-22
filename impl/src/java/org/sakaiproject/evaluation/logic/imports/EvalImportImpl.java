@@ -1290,7 +1290,7 @@ public class EvalImportImpl implements EvalImport {
 				stopDate, viewDate, false, studentsDate, false, instructorsDate, state,
 				EvalConstants.SHARING_VISIBLE, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate,
 				reminderEmailTemplate, template, new HashSet(0), blankResponsesAllowed, modifyResponsesAllowed,
-				unregisteredAllowed, locked, authControl, evalCategory, null, null);
+				unregisteredAllowed, locked, authControl, evalCategory, null);
 			evaluation.setEid(eid);
 			return evaluation;
 		}

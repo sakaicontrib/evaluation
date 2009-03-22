@@ -502,30 +502,31 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     }
 
     /**
-     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupId(java.lang.Long, java.lang.String)}.
+     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupByEvalAndGroupId(java.lang.Long, java.lang.String)}.
      */
     public void testGetAssignGroupId() {
         Long assignGroupId = null;
+        EvalAssignGroup eag = null;
 
         // test getting valid items by id
-        assignGroupId = evaluationService.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF );
+        assignGroupId = evaluationService.getAssignGroupByEvalAndGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF ).getId();
         assertNotNull(assignGroupId);
         assertEquals(etdl.assign1.getId(), assignGroupId);
 
-        assignGroupId = evaluationService.getAssignGroupId( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF );
+        assignGroupId = evaluationService.getAssignGroupByEvalAndGroupId( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF ).getId();
         assertNotNull(assignGroupId);
         assertEquals(etdl.assign4.getId(), assignGroupId);
 
         // test invalid evaluation/group mixture returns null
-        assignGroupId = evaluationService.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF );
-        assertNull("Found an id?: " + assignGroupId, assignGroupId);
+        eag = evaluationService.getAssignGroupByEvalAndGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF );
+        assertNull("Found an id?: " + eag, eag);
 
-        assignGroupId = evaluationService.getAssignGroupId( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF );
-        assertNull(assignGroupId);
+        eag = evaluationService.getAssignGroupByEvalAndGroupId( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF );
+        assertNull(eag);
 
         // test get by invalid id returns null
-        assignGroupId = evaluationService.getAssignGroupId( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
-        assertNull(assignGroupId);
+        eag = evaluationService.getAssignGroupByEvalAndGroupId( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+        assertNull(eag);
     }
 
 

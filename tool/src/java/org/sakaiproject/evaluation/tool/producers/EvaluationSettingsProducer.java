@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -302,10 +303,15 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       if((Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)){
       // radio buttons for the INSTRUCTOR selection options
       UIBranchContainer selectFieldSet = UIBranchContainer.make(form, "selectInstructorTA:");
-      String[] selectValues = new String[] {EvalAssignHierarchy.SELECTION_ALL,EvalAssignHierarchy.SELECTION_ONE, EvalAssignHierarchy.SELECTION_MULTIPLE};
+      String[] selectValues = new String[] {
+              EvalAssignGroup.SELECTION_OPTION_ALL,
+              EvalAssignGroup.SELECTION_OPTION_ONE, 
+              EvalAssignGroup.SELECTION_OPTION_MULTIPLE};
       UISelect selectInstructors = UISelect.make(selectFieldSet, "selectionRadioInstructors", 
     		  selectValues, 
-            new String[] {"evalsettings.selection.instructor.all","evalsettings.selection.instructor.one","evalsettings.selection.instructor.many"},
+            new String[] {"evalsettings.selection.instructor.all",
+              "evalsettings.selection.instructor.one",
+              "evalsettings.selection.instructor.many"},
             evaluationOTP + "instructorSelection", null).setMessageKeys();
       String selectInstructorsId = selectInstructors.getFullID();
       for (int i = 0; i < selectValues.length; ++i) {

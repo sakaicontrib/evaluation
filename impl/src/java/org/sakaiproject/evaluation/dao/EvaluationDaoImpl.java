@@ -38,7 +38,6 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -108,43 +107,6 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null");
             log.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
-        }
-        // fix up all the selection nulls
-        count = countBySearch(EvalEvaluation.class, new Search("instructorSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.instructorSelection is null");
-            log.info("Updated " + counter + " EvalEvaluation.instructorSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
-        }
-        count = countBySearch(EvalEvaluation.class, new Search("assistantSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.assistantSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.assistantSelection is null");
-            log.info("Updated " + counter + " EvalEvaluation.assistantSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
-        }
-        count = countBySearch(EvalAssignHierarchy.class, new Search("instructorSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalAssignHierarchy eval set eval.instructorSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.instructorSelection is null");
-            log.info("Updated " + counter + " EvalAssignHierarchy.instructorSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
-        }
-        count = countBySearch(EvalAssignHierarchy.class, new Search("assistantSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalAssignHierarchy eval set eval.assistantSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.assistantSelection is null");
-            log.info("Updated " + counter + " EvalAssignHierarchy.assistantSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
-        }
-        count = countBySearch(EvalAssignGroup.class, new Search("instructorSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalAssignGroup eval set eval.instructorSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.instructorSelection is null");
-            log.info("Updated " + counter + " EvalAssignGroup.instructorSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
-        }
-        count = countBySearch(EvalAssignGroup.class, new Search("assistantSelection","", Restriction.NULL) );
-        if (count > 0) {
-            int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalAssignGroup eval set eval.assistantSelection = "+EvalAssignHierarchy.SELECTION_ALL+" where eval.assistantSelection is null");
-            log.info("Updated " + counter + " EvalAssignGroup.assistantSelection fields from null to default values ("+EvalAssignHierarchy.SELECTION_ALL+")");
         }
     }
 

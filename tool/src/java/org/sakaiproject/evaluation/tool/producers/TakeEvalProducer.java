@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -38,7 +39,6 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -92,6 +92,10 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
+
+    private static final String SELECT_KEY_ASSISTANT = "assistant";
+
+    private static final String SELECT_KEY_INSTRUCTOR = "instructor";
 
     private static Log log = LogFactory.getLog(TakeEvalProducer.class);
 
@@ -381,89 +385,127 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     }
                 }
 
-                // SELECTION Code - added by lovenalube@uct.ac.za
+                // SELECTION Code - EVALSYS-618
                 Boolean selectEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
-                Map<String, String> selectorType = new HashMap<String, String>();
-                selectorType.put("instructor", eval.getInstructorSelection());
-                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-                if(taEnabled)
-                    selectorType.put("tas", eval.getAssistantSelection());
-                Iterator<String> selector = selectorType.keySet().iterator(); 
-                while(selector.hasNext()){
-                    String selectKey = (String) selector.next();   	
-                    String selectValue = (String) selectorType.get(selectKey);
-                    String uiTag = "select-"+selectKey;
-                    Set<String> selectUserIds = new HashSet<String>();
-                    if(selectKey.equals("instructor"))
-                        selectUserIds = instructorIds;
-                    else if(selectKey.equals("tas"))
-                        selectUserIds = assistantIds;
-                    //We render the selection controls if there are at least two Instructors/TAs
-                    if (selectEnabled && selectUserIds.size( ) >1) {
-                        if (selectValue.equals(EvalAssignHierarchy.SELECTION_ALL)) {
-                            // nothing special to do in all case
-                        } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_MULTIPLE)){
-                            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-multiple:");
-                            for (String userId : selectUserIds) {
-                                EvalUser user = commonLogic.getEvalUserById( userId );
-                                UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
-                                UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
-                                UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box", Boolean.FALSE);
-                                // we have to force the id so the JS block checking can work
-                                b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
-                                // have to force the target id so that the label for works 
-                                UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
-                                uild.targetFullID = user.userId;
-                                checkBranch.decorators = new DecoratorList( uild );
-                            } 
-                        } else if (selectValue.equals(EvalAssignHierarchy.SELECTION_ONE)) {
-                            List<String> value = new ArrayList<String>();
-                            List<String> label = new ArrayList<String>();
-                            for(EvalUser user: commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]))){
-                                value.add(user.userId);
-                                label.add(user.displayName);  
+                String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
+                String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
+                if (selectEnabled) {
+                    // only do the selection calculations if it is enabled
+                    EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+                    Map<String, String> selectorType = new HashMap<String, String>();
+                    instructorSelectionOption = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
+                    selectorType.put(SELECT_KEY_INSTRUCTOR, instructorSelectionOption);
+                    Boolean assistantsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                    if (assistantsEnabled) {
+                        assistantSelectionOption = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
+                        selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
+                    }
+
+// Lovemore - OLD code for comparison, delete this once you see what/why I changed it, note the switch from strings to constants -AZ
+//                    selectorType.put("instructor", eval.getInstructorSelection());
+//                    // FIXME findbugs says to use {} when writing if statements
+//                    if(taEnabled)
+//                        selectorType.put("tas", eval.getAssistantSelection());
+
+                    // FIXME seriously, I was not kidding, stop using iterators, change this to a for loop -AZ
+                    Iterator<String> selector = selectorType.keySet().iterator(); 
+                    while(selector.hasNext()){
+                        // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
+                        String selectKey = (String) selector.next();   	
+                        String selectValue = (String) selectorType.get(selectKey);
+                        String uiTag = "select-"+selectKey;
+                        Set<String> selectUserIds = new HashSet<String>();
+                        // FIXME findbugs says to use {} when writing if statements
+                        if(selectKey.equals(SELECT_KEY_INSTRUCTOR))
+                            selectUserIds = instructorIds;
+                        else if(selectKey.equals(SELECT_KEY_ASSISTANT))
+                            selectUserIds = assistantIds;
+                        //We render the selection controls if there are at least two Instructors/TAs
+                        if (selectEnabled && selectUserIds.size( ) >1) {
+                            if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
+                                // nothing special to do in all case
+                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)){
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-multiple:");
+                                for (String userId : selectUserIds) {
+                                    EvalUser user = commonLogic.getEvalUserById( userId );
+                                    UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
+                                    UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
+                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box", Boolean.FALSE);
+                                    // we have to force the id so the JS block checking can work
+                                    b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
+                                    // have to force the target id so that the label for works 
+                                    UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
+                                    uild.targetFullID = user.userId;
+                                    checkBranch.decorators = new DecoratorList( uild );
+                                } 
+                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ONE)) {
+                                List<String> value = new ArrayList<String>();
+                                List<String> label = new ArrayList<String>();
+                                for(EvalUser user: commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]))){
+                                    value.add(user.userId);
+                                    label.add(user.displayName);  
+                                }
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-one:");
+                                UIOutput.make(showSwitchGroup, uiTag+"-one-header");
+                                UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),  "{evalUserId}");
+                                UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
+                            } else {
+                                throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
                             }
-                            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-one:");
-                            UIOutput.make(showSwitchGroup, uiTag+"-one-header");
-                            UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),  "{evalUserId}");
-                            UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
-                        } else {
-                            throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
                         }
                     }
                 }
 
-                // LOVEMORE from UCT, do not put any code below this line! -AZ
-
                 // loop through the TIGs and handle each associated category
+                Boolean useCourseCategoryOnly = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-                    UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
-                    // handle printing the category header
-                    if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
-                        UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
-                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                        EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
-                                "takeeval.instructor.questions.header", new Object[] { user.displayName });
-                        //support for JS: add display name to title attribute of legend and hide category items 
-                        header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title", user.displayName));
-                        categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "instructorBranch"}));
-                        if(!eval.getInstructorSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || instructorIds.size() <2){
-                            Map<String, String> css = new HashMap<String, String>();
-                            css.put("display", "none");
-                            categorySectionBranch.decorators.add(new UICSSDecorator(css));
-                        }
-                    } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                        EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader", 
-                                "takeeval.ta.questions.header", new Object[] { user.displayName });
-                        //support for JS: add display name to title attribute of legend and hide category items 
-                        header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title", user.displayName));   
-                        categorySectionBranch.decorators = new DecoratorList(new UIFreeAttributeDecorator(new String[]{"name", "class"}, new String[]{user.userId, "taBranch"}));
-                        if(!eval.getAssistantSelection().equals(EvalAssignHierarchy.SELECTION_ALL) || assistantIds.size()<2){
-                            Map<String, String> css = new HashMap<String, String>();
-                            css.put("display", "none");
-                            categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                    UIBranchContainer categorySectionBranch = UIBranchContainer.make(form,
+                            "categorySection:");
+                    // only do headers if we are allowed to use categories
+                    if (! useCourseCategoryOnly) {
+                        // handle printing the category header
+                        if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
+                            UIMessage.make(categorySectionBranch, "categoryHeader",
+                                    "takeeval.group.questions.header");
+                        } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+                            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
+                            UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
+                                    "takeeval.instructor.questions.header",
+                                    new Object[] { user.displayName });
+                            // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
+                            // FIXME AAA this code is a duplicate of the code in BBB
+                            header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
+                                    user.displayName));
+                            categorySectionBranch.decorators = new DecoratorList(
+                                    new UIFreeAttributeDecorator(new String[] { "name", "class" },
+                                            new String[] { user.userId, "instructorBranch" }));
+                            // FIXME always compare constants to non-constants, e.g. CONSTANT.equals(variable)
+                            // FIXME I think you meant to do a different comparison here, if there is one option this will still hide it, that is not correct, if there is one option you probably should not show any selection stuff at all
+                            if (! instructorSelectionOption.equals(EvalAssignGroup.SELECTION_OPTION_ALL)
+                                    || instructorIds.size() < 2) {
+                                Map<String, String> css = new HashMap<String, String>();
+                                css.put("display", "none");
+                                categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                            }
+                        } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
+                            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
+                            UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
+                                    "takeeval.ta.questions.header", new Object[] { user.displayName });
+                            // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
+                            // FIXME BBB this code is a duplicate of the code in AAA
+                            header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
+                                    user.displayName));
+                            categorySectionBranch.decorators = new DecoratorList(
+                                    new UIFreeAttributeDecorator(new String[] { "name", "class" },
+                                            new String[] { user.userId, "taBranch" }));
+                            // FIXME always compare constants to non-constants, e.g. CONSTANT.equals(variable)
+                            // FIXME I think you meant to do a different comparison here, if there is one option this will still hide it, that is not correct, if there is one option you probably should not show any selection stuff at all
+                            if (! assistantSelectionOption.equals(EvalAssignGroup.SELECTION_OPTION_ALL)
+                                    || assistantIds.size() < 2) {
+                                Map<String, String> css = new HashMap<String, String>();
+                                css.put("display", "none");
+                                categorySectionBranch.decorators.add(new UICSSDecorator(css));
+                            }
                         }
                     }
 
