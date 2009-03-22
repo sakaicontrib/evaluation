@@ -4,10 +4,12 @@ package org.sakaiproject.evaluation.model;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * Defines an evaluation itself (this is an instance which can be taken by evaluators)
@@ -78,19 +80,12 @@ public class EvalEvaluation implements java.io.Serializable {
     private boolean instructorViewResults;
 
     /**
-     * The key which determines which way to render instructors items in this evaluation (can be
-     * overridden by specific group assignments which will inherit this setting value by default),
-     * use the {@link EvalAssignHierarchy} SELECTION_* constants like
-     * {@link EvalAssignHierarchy#SELECTION_ONE}, default is null (equivalent to all)
+     * An encoded string which indicates the stored selection settings for this evaluation,
+     * null indicates that there are no selection settings stored and to use {@link #SELECTION_OPTION_ALL} 
+     * (the default which indicates no selections),
+     * this is passed down to all assign groups for this evaluation and should be checked there
      */
-    protected String instructorSelection;
-    /**
-     * The key which determines which way to render assistants items in this evaluation (can be
-     * overridden by specific group assignments which will inherit this setting value by default),
-     * use the {@link EvalAssignHierarchy} SELECTION_* constants like
-     * {@link EvalAssignHierarchy#SELECTION_ONE}, default is null (equivalent to all)
-     */
-    protected String assistantSelection;
+    protected String selectionSettings;
 
     /**
      * if {@link #studentViewResults} is true and this is null then students can view results as
@@ -110,6 +105,7 @@ public class EvalEvaluation implements java.io.Serializable {
      * this field directly in most cases<br/>
      * see {@link EvalEvaluationService#updateEvaluationState(Long)} and
      * {@link EvalEvaluationService#returnAndFixEvalState(EvalEvaluation, boolean)}
+     * and {@link EvalUtils#getEvaluationState(EvalEvaluation, boolean)}
      */
     private String state;
 
@@ -245,7 +241,7 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     public EvalEvaluation(String type, String owner, String title, Date startDate, String state,
             String resultsSharing, Integer reminderDays, EvalTemplate template) {
-        this(type, owner, title, null, startDate, null, null, null, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null, null);
+        this(type, owner, title, null, startDate, null, null, null, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null);
     }
 
     /**
@@ -254,7 +250,7 @@ public class EvalEvaluation implements java.io.Serializable {
     public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
             Date stopDate, Date viewDate, String state, String resultsSharing,
             Integer reminderDays, EvalTemplate template) {
-        this(type, owner, title, null, startDate, dueDate, stopDate, viewDate, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null, null);
+        this(type, owner, title, null, startDate, dueDate, stopDate, viewDate, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null);
     }
 
     /**
@@ -268,7 +264,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-            String authControl, String evalCategory, String instructorSelection, String assistantSelection) {
+            String authControl, String evalCategory, String selectionSettings) {
         this.lastModified = new Date();
         this.type = type;
         this.owner = owner;
@@ -298,15 +294,46 @@ public class EvalEvaluation implements java.io.Serializable {
         this.locked = locked;
         this.authControl = authControl;
         this.evalCategory = evalCategory;
-        this.instructorSelection = instructorSelection;
-        this.assistantSelection = assistantSelection;
+        this.selectionSettings = selectionSettings;
     }
 
     @Override
     public String toString() {
         return "eval: [" + this.type + "] " + this.title + " (" + this.id + ") state=" + this.state
-                + " ,start=" + this.startDate + ", due=" + this.dueDate;
+        + " ,start=" + this.startDate + ", due=" + this.dueDate;
     };
+
+
+    /**
+     * Get the selections out of this response (decoded),
+     * this is a map of selection type constants like 
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * to ids (typically userIds)
+     * 
+     * @return the selections as type constant => selection ids (e.g. {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} => instructorIds)
+     */
+    public Map<String, String> getSelectionOptions() {
+        return EvalAssignGroup.decodeSelectionSettings(this.selectionSettings);
+    }
+
+    /**
+     * Sets the selections to store for a specific category type:
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * Can also clear the values for a type
+     * 
+     * @param selectionType the type constant to store selections for:
+     * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
+     * @param selectionOption one of the constants like {@link #SELECTION_OPTION_ONE},
+     * indicates the selection option to use for this selection type,
+     * if set to null or {@link #SELECTION_OPTION_ALL} then this selection type will be removed from the stored options
+     */
+    public void setSelectionOption(String selectionType, String selectionOption) {
+        Map<String, String> selections = getSelectionOptions();
+        EvalAssignGroup.handleSelectionOption(selectionType, selectionOption, selections);
+        setSelectionSettings( EvalAssignGroup.encodeSelectionSettings(selections) );
+    }
+
+    // GETTERS and SETTERS
 
     public String getAuthControl() {
         return authControl;
@@ -572,20 +599,18 @@ public class EvalEvaluation implements java.io.Serializable {
         this.instructorViewResults = instructorViewResults;
     }
 
-    public String getInstructorSelection() {
-        return instructorSelection;
+    public String getSelectionSettings() {
+        return selectionSettings;
     }
 
-    public void setInstructorSelection(String instructorSelection) {
-        this.instructorSelection = instructorSelection;
-    }
-
-    public String getAssistantSelection() {
-        return assistantSelection;
-    }
-
-    public void setAssistantSelection(String assistantSelection) {
-        this.assistantSelection = assistantSelection;
+    public void setSelectionSettings(String selectionSettings) {
+        if (selectionSettings != null) {
+            selectionSettings = selectionSettings.trim();
+        }
+        if ("".equals(selectionSettings)) {
+            selectionSettings = null;
+        }
+        this.selectionSettings = selectionSettings;
     }
 
     /**
@@ -595,9 +620,9 @@ public class EvalEvaluation implements java.io.Serializable {
     public List<EvalAssignGroup> getEvalAssignGroups() {
         return evalAssignGroups;
     }
-    
+
     public void setEvalAssignGroups(List<EvalAssignGroup> evalAssignGroups) {
         this.evalAssignGroups = evalAssignGroups;
     }
-    
+
 }

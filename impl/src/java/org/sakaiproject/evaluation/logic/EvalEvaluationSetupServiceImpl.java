@@ -301,6 +301,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 throw new SecurityException("User ("+userId+") attempted to create evaluation without permissions");
             }
 
+            // force new evals to respect the settings
+            Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+            if (! enableSelection) {
+                // force it to null
+                evaluation.setSelectionSettings(null);
+            }
+
         } else {
             // updating existing evaluation
 
@@ -388,21 +395,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         } else {
             evaluation.setBlankResponsesAllowed( systemBlankResponses );
-        }
-
-        Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
-        if (enableSelection) {
-            // if not set then inherit from the eval
-            if (evaluation.getInstructorSelection() == null || "".equals(evaluation.getInstructorSelection())) {
-                evaluation.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
-            }
-            if (evaluation.getAssistantSelection() == null || "".equals(evaluation.getAssistantSelection())) {
-                evaluation.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
-            }
-        } else {
-            // set to defaults
-            evaluation.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
-            evaluation.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
         }
 
         // TODO - disabled for now
@@ -884,9 +876,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         } else {
             // only dealing with a single assign group (or possibly none if invalid)
             assignedGroups = new ArrayList<EvalAssignGroup>();
-            Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
-            if (assignGroupId != null) {
-                EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(assignGroupId);
+            EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+            if (assignGroup != null) {
                 assignedGroups.add(assignGroup);
             }
         }
@@ -1073,8 +1064,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 && evalAssignUser.getEvalGroupId() != null) {
             String evalGroupId = evalAssignUser.getEvalGroupId();
             Long evaluationId = eval.getId();
-            Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
-            evalAssignUser.setAssignGroupId(assignGroupId);
+            EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+            if (assignGroup != null) {
+                evalAssignUser.setAssignGroupId(assignGroup.getId());
+            }
             evalAssignUser.setStatus(EvalAssignUser.STATUS_LINKED);
         }
     }
@@ -1566,6 +1559,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @param eah the assignment object (persistent or non)
      */
     protected void setAssignmentDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
+        if (eval == null || eah == null) {
+            throw new IllegalArgumentException("eval ("+eval+") and assigment ("+eah+") must not be null");
+        }
         // setInstructorsViewResults
         if (eah.getInstructorsViewResults() == null) {
             Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
@@ -1614,19 +1610,18 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         //         }
         //      }
         // selections
-        Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
-        if (enableSelection) {
-            // if not set then inherit from the eval
-            if (eah.getInstructorSelection() == null || "".equals(eah.getInstructorSelection())) {
-                eah.setInstructorSelection(eval.getInstructorSelection());
+        if (eah instanceof EvalAssignGroup) {
+            EvalAssignGroup eag = (EvalAssignGroup) eah;
+            Boolean enableSelection = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+            if (enableSelection) {
+                // if not set then inherit from the eval
+                if (eag.getSelectionSettings() == null || "".equals(eag.getSelectionSettings())) {
+                    eag.setSelectionSettings(eval.getSelectionSettings());
+                }
+            } else {
+                // set to defaults
+                eag.setSelectionSettings(null);
             }
-            if (eah.getAssistantSelection() == null) {
-                eah.setAssistantSelection(eval.getAssistantSelection());
-            }
-        } else {
-            // set to defaults
-            eah.setInstructorSelection(EvalAssignHierarchy.SELECTION_ALL);
-            eah.setAssistantSelection(EvalAssignHierarchy.SELECTION_ALL);
         }
     }
 

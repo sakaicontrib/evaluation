@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -209,8 +210,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                 UIOutput.make(groupRow, "groupTitle", group.title);
                 if (evaluationId != null) {
                     // only add in this link if the evaluation exists
-                    Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
-                    if (assignGroupId != null) {
+                    EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+                    if (assignGroup != null) {
+                        Long assignGroupId = assignGroup.getId();
                         UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                                 commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                     }
@@ -254,8 +256,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                     UIOutput.make(groupRow, "groupTitle", group.title);
                     if (evaluationId != null) {
                         // only add in this link if the evaluation exists
-                        Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
-                        if (assignGroupId != null) {
+                        EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+                        if (assignGroup != null) {
+                            Long assignGroupId = assignGroup.getId();
                             UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                                     commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                         }

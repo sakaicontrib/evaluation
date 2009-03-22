@@ -35,12 +35,5 @@
         <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_HIER_EVALUATION_FKC" lazy="proxy" fetch="select">
             <column name="EVALUATION_FK" not-null="true"/>
         </many-to-one>
-        <!-- for storing the instructor/assistant selection code -->
-        <property name="instructorSelection" type="java.lang.String">
-            <column name="INSTRUCTOR_SELECTION" length="255" />
-        </property>
-        <property name="assistantSelection" type="java.lang.String">
-            <column name="ASSISTANT_SELECTION" length="255" />
-        </property>
     </class>
 </hibernate-mapping>

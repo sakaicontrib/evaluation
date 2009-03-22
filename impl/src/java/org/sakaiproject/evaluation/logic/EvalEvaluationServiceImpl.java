@@ -313,7 +313,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 }
             }
         }
-        **/
+         **/
         // this is handled in the DAO now
         List<EvalAssignUser> assignments = dao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
         return assignments;
@@ -592,18 +592,18 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return eag;
     }
 
-    public Long getAssignGroupId(Long evaluationId, String evalGroupId) {
+    public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId) {
         log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
-        Long agid = null;
+        if (evaluationId == null
+                || evalGroupId == null || "".equals(evalGroupId)) {
+            throw new IllegalArgumentException("evaluationId and evalGroupId must not be null");
+        }
         EvalAssignGroup assignGroup = dao.findOneBySearch(EvalAssignGroup.class, new Search(
                 new Restriction[] {
                         new Restriction("evaluation.id", evaluationId),
                         new Restriction("evalGroupId", evalGroupId)
                 }) );
-        if (assignGroup != null) {
-            agid = assignGroup.getId();
-        }
-        return agid;
+        return assignGroup;
     }
 
     public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
