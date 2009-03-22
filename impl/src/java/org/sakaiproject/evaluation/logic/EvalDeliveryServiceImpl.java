@@ -15,9 +15,12 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +29,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
@@ -419,6 +423,43 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         Long evaluationId = eval.getId();
         String evalGroupId = response.getEvalGroupId();
 
+        // EVALSYS-618 - handle the special case of instructor/assistant selections
+        boolean selectionsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        HashMap<String, Set<String>> typeToIdsFilter = new HashMap<String, Set<String>>();
+        if (selectionsEnabled) {
+            // check the selections are valid for the response and handle required items in a special way
+            EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+            Map<String, String> selectionOptions = assignGroup.getSelectionOptions();
+            if (! selectionOptions.isEmpty()) {
+                // validate the selections for the response against the assign group
+                Map<String, String[]> selections = response.getSelections();
+                if (selections.isEmpty()) {
+                    throw new IllegalArgumentException("Selections are invalid for this evaluation ("+evaluationId+") and group ("+evalGroupId+"): "
+                    		+ " no selections in the response, but this assign group ("+assignGroup+") requires them: " + selectionOptions);
+                }
+                if (! selectionOptions.keySet().equals(selections.keySet())) {
+                    throw new IllegalArgumentException("Selections are invalid for this evaluation ("+evaluationId+") and group ("+evalGroupId+"): "
+                            + " selections in the response ("+response+") do not match the selections in the assign group ("+assignGroup+"): "
+                            + selectionOptions.keySet()+" != "+selections.keySet());
+                }
+                // expose the map of selection type => selection Ids so we can filter required items out
+                for (Entry<String, String[]> entry : selections.entrySet()) {
+                    HashSet<String> s = new HashSet<String>();
+                    String[] ids = entry.getValue();
+                    for (String id : ids) {
+                        s.add(id);
+                    }
+                    typeToIdsFilter.put(entry.getKey(), s);
+                }
+            } else {
+                // clear the selections code, they are not used for this assign group
+                response.setSelectionsCode(null);
+            }
+        } else {
+            // system setting disabled so clear them
+            response.setSelectionsCode(null);
+        }
+
         // see if this eval allows blank responses
         boolean requireNonBlankAnswerableItemsForEval = false; // default to skipping the check
         if (checkRequiredAnswers) {
@@ -447,14 +488,32 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 answerableTemplateItemIds.add(dti.templateItem.getId());
             }
             if (checkRequiredAnswers) {
+                boolean required = false;
                 if (requireNonBlankAnswerableItemsForEval) {
                     // all items which can be answered must be
-                    if (dti.isRequireable()) {
-                        requiredAnswerKeys.add(dti.getKey());
-                    }
+                    required = dti.isRequireable();
                 } else {
                     // only items marked as compulsory must be answered
-                    if (dti.isCompulsory()) {
+                    required = dti.isCompulsory();
+                }
+                // if the item is required then add it to the required keys listing
+                if (required) {
+                    boolean filteredOut = false;
+                    if (selectionsEnabled 
+                            && typeToIdsFilter.size() > 0) {
+                        /* Do a selection filter check here,
+                         * Only include dtis where the associateType is not matched OR
+                         * (the associateType is matched AND the id is also matched)
+                         */
+                        Set<String> ids = typeToIdsFilter.get(dti.associateType);
+                        if (ids != null) {
+                            // check the id as well
+                            if (! ids.contains(dti.associateId)) {
+                                filteredOut = true;
+                            }
+                        }
+                    }
+                    if (! filteredOut) {
                         requiredAnswerKeys.add(dti.getKey());
                     }
                 }

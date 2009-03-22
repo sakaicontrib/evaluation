@@ -120,12 +120,16 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
 
     /**
-     * Get the selections out of this response (decoded),
+     * Get the selection settings out of this assign group (decoded),
      * this is a map of selection type constants like 
      * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}
-     * to ids (typically userIds)
+     * to selection option constant like {@link #SELECTION_OPTION_ONE}, 
+     * this will be empty of no selection options are set for this assign group,
+     * otherwise this will contain the selection options which are set only 
+     * (not set should be assumed to mean the default: {@link EvalAssignGroup#SELECTION_OPTION_ALL}) <br/>
+     * use the {@link EvalUtils#getSelectionSetting(String, EvalAssignGroup, EvalEvaluation)} method to make comparison easier and more standard
      * 
-     * @return the selections as type constant => selection ids (e.g. {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} => instructorIds)
+     * @return the selections as type constant => option constant (e.g. {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} => {@link EvalAssignGroup#SELECTION_OPTION_ONE}) if any are set
      */
     public Map<String, String> getSelectionOptions() {
         return decodeSelectionSettings(this.selectionSettings);
@@ -166,7 +170,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
     /**
      * Encodes a map into the selectionSettings coded string
-     * @param selections the selections map
+     * @param selections the selections map (type -> option)
      * @return the selectionSettings code string OR null if the map is null or empty
      */
     public static String encodeSelectionSettings(Map<String, String> selections) {

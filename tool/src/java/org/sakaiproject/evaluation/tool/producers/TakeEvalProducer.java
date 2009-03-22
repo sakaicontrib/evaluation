@@ -94,7 +94,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
     private static final String SELECT_KEY_ASSISTANT = "assistant";
-
     private static final String SELECT_KEY_INSTRUCTOR = "instructor";
 
     private static Log log = LogFactory.getLog(TakeEvalProducer.class);
@@ -386,10 +385,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 }
 
                 // SELECTION Code - EVALSYS-618
-                Boolean selectEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+                Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
-                if (selectEnabled) {
+                if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
                     EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
                     Map<String, String> selectorType = new HashMap<String, String>();
@@ -421,7 +420,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         else if(selectKey.equals(SELECT_KEY_ASSISTANT))
                             selectUserIds = assistantIds;
                         //We render the selection controls if there are at least two Instructors/TAs
-                        if (selectEnabled && selectUserIds.size( ) >1) {
+                        if (selectionsEnabled && selectUserIds.size( ) >1) {
                             if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                                 // nothing special to do in all case
                             } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)){
