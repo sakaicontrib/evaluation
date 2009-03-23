@@ -312,7 +312,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             new String[] {"evalsettings.selection.instructor.all",
               "evalsettings.selection.instructor.one",
               "evalsettings.selection.instructor.many"},
-            evaluationOTP + "instructorSelection", null).setMessageKeys();
+            evaluationOTP + "instructorSelection", selectValues[0]).setMessageKeys();
       String selectInstructorsId = selectInstructors.getFullID();
       for (int i = 0; i < selectValues.length; ++i) {
          UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectInstructorsChoice:", i + "");
@@ -324,7 +324,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       UISelect selectTAs = UISelect.make(selectFieldSet, "selectionRadioTAs", 
     		  selectValues, 
             new String[] {"evalsettings.selection.ta.all","evalsettings.selection.ta.one","evalsettings.selection.ta.many"},
-            evaluationOTP + "assistantSelection", null).setMessageKeys();
+            evaluationOTP + "assistantSelection", selectValues[0]).setMessageKeys();
       String selectTAsId = selectTAs.getFullID();
       for (int i = 0; i < selectValues.length; ++i) {
          UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectTAsChoice:", i + "");
