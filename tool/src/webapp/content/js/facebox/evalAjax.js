@@ -271,7 +271,6 @@ function submitForm(form, textarea, target, btn) {
     var img = '<img src="/library/image/sakai/spinner.gif"/>';
     var templateItemId = $(form).find('input[@name*=templateItemId]').attr('value');
     var entityUrl = '/direct/eval-templateitem/' + templateItemId + '.xml';
-    //console.log('templateItemId' + templateItemId);
     var d = $(form).formToArray();
     var fckVal = null;
     try {
@@ -280,9 +279,17 @@ function submitForm(form, textarea, target, btn) {
         }
     }
     catch(e) {
-        alert('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
+        console.log('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
+        return false;
        }
-
+ //Validate text
+    $('#facebox').append('<div id="fckEditorVal" style="display:none">'+fckVal+'</div>');
+    var str = $('#fckEditorVal');
+    if(str.text()==""|| str.text()==null){
+        alert('You must fill in the title.');
+        return false;
+}
+    str.remove();
     //iterate through returned formToArray elements and replace input value with editor value
     for (var i = 0; i < d.length; i++) {
         if ($(d[i]).attr('name') == textarea) {
@@ -295,6 +302,7 @@ function submitForm(form, textarea, target, btn) {
         data: d,
         dataType: "html",
         beforeSend: function() {
+            
             btn.parent().parent().find('input').each(function() {
                 $(this).attr('disabled', 'disabled');
             });
