@@ -379,7 +379,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     for (DataTemplateItem dti : tidl.getFlatListOfDataTemplateItems(true)) {
                         if (missingKeys.contains(dti.getKey())) {
                             // flag this template item for invalidated rendering if it was missing
-                            dti.templateItem.renderOption = true;
+                            dti.templateItem.renderInvalid = true;
                         }
                     }
                 }

@@ -87,10 +87,10 @@ public class EvalTemplateItem implements java.io.Serializable {
     // NON-persistent fields
 
     /**
-     * If this is set to true then this item should be rendered differently,
+     * If this is set to true then this item should be rendered to indicate a validation failure,
      * typically used to indicate validation failure for this item
      */
-    public boolean renderOption = false;
+    public boolean renderInvalid = false;
 
     /**
      * If this is a block parent then this can hold the list of child items,
