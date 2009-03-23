@@ -93,7 +93,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
-    private static final String SELECT_KEY_ASSISTANT = "ta";  //Avoid breaking javascript library. TODO:Change library to use 'assistant' EVALSYS-671
+    private static final String SELECT_KEY_ASSISTANT = "assistant";
     private static final String SELECT_KEY_INSTRUCTOR = "instructor";
 
     private static Log log = LogFactory.getLog(TakeEvalProducer.class);
