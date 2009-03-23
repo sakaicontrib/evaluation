@@ -93,7 +93,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
-    private static final String SELECT_KEY_ASSISTANT = "assistant";
+    private static final String SELECT_KEY_ASSISTANT = "ta";  //Avoid breaking javascript library. TODO:Change library to use 'assistant' EVALSYS-671
     private static final String SELECT_KEY_INSTRUCTOR = "instructor";
 
     private static Log log = LogFactory.getLog(TakeEvalProducer.class);
@@ -400,12 +400,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
 
-// Lovemore - OLD code for comparison, delete this once you see what/why I changed it, note the switch from strings to constants -AZ
-//                    selectorType.put("instructor", eval.getInstructorSelection());
-//                    // FIXME findbugs says to use {} when writing if statements
-//                    if(taEnabled)
-//                        selectorType.put("tas", eval.getAssistantSelection());
-
                     // FIXME seriously, I was not kidding, stop using iterators, change this to a for loop -AZ
                     Iterator<String> selector = selectorType.keySet().iterator(); 
                     while(selector.hasNext()){
@@ -415,10 +409,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         String uiTag = "select-"+selectKey;
                         Set<String> selectUserIds = new HashSet<String>();
                         // FIXME findbugs says to use {} when writing if statements
-                        if(selectKey.equals(SELECT_KEY_INSTRUCTOR))
+                        if(selectKey.equals(SELECT_KEY_INSTRUCTOR)){
                             selectUserIds = instructorIds;
-                        else if(selectKey.equals(SELECT_KEY_ASSISTANT))
+                        }
+                        else if(selectKey.equals(SELECT_KEY_ASSISTANT)){
                             selectUserIds = assistantIds;
+                            }
                         //We render the selection controls if there are at least two Instructors/TAs
                         if (selectionsEnabled && selectUserIds.size( ) >1) {
                             if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
