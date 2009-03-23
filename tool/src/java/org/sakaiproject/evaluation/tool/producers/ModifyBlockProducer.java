@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -245,11 +246,19 @@ NavigationCaseReporter {
                 // show all category choices so the user can choose, default is course category
                 UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
                 UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
+                String[] categoryValues = EvalToolConstants.ITEM_CATEGORY_VALUES; 
+                String[] categoryLabels = EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS;
+                // add in the TA category if enabled
+                Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                if ( enableTA.booleanValue() ) {
+                    categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_ASSISTANT);
+                    categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_ASSISTANT_LABEL);
+                }
                 UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
-                        EvalToolConstants.ITEM_CATEGORY_VALUES, 
-                        EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS,
+                		categoryValues, 
+                		categoryLabels,
                         itemPath + ".category").setMessageKeys();
-                for (int i = 0; i < EvalToolConstants.ITEM_CATEGORY_VALUES.length; i++) {
+                for (int i = 0; i < categoryValues.length; i++) {
                     UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
                     UISelectChoice choice = UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
                     UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i)
