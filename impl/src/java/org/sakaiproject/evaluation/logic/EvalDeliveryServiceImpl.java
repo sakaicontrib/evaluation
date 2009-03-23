@@ -603,12 +603,13 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
                 requiredAnswerKeys.removeAll(answeredAnswerKeys);
                 if (requiredAnswerKeys.size() > 0) {
+                    String[] reqAnsKeysArray = requiredAnswerKeys.toArray(new String[requiredAnswerKeys.size()]);
                     throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
                             + " answers for required items (received "+answeredAnswerKeys.size()+" answers) for this evaluation"
                             + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
-                            + " :: missing keys=" + ArrayUtils.arrayToString(requiredAnswerKeys.toArray(new String[] {})) 
-                            + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
-                            requiredAnswerKeys.toArray(new String[] {}) );
+                            + " :: missing keys=" + ArrayUtils.arrayToString(reqAnsKeysArray) 
+                            + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[answeredAnswerKeys.size()])), 
+                            reqAnsKeysArray );
                 }
             }
         }
