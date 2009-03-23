@@ -160,7 +160,8 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     public static void handleSelectionOption(String selectionType, String selectionOption,
             Map<String, String> selections) {
         EvalAssignGroup.validateSelectionType(selectionType);
-        if (selectionOption == null) {
+        if (selectionOption == null 
+                || SELECTION_OPTION_ALL.equals(selectionOption)) {
             selections.remove(selectionType);
         } else {
             EvalAssignGroup.validateSelectionOption(selectionOption);
