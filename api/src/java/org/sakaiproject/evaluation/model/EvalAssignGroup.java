@@ -39,9 +39,9 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
      * An encoded string which indicates the stored selection settings for this assignment,
      * null indicates that there are no selection settings stored and to use {@link #SELECTION_OPTION_ALL} 
      * (the default which indicates no selections),
-     * this is inherited from the evaluation it is associated with <br/>
-     * use {@link EvalUtils#getSelectionSetting(String, EvalAssignGroup, EvalEvaluation)} to check
-     * this setting in a standard way
+     * this is inherited from the evaluation it is associated with  <br/>
+     * <b>WARNING:</b> getting and setting this value directly should not be done,
+     * use the {@link #setSelectionOption(String, String)} and {@link #getSelectionOptions()} methods
      */
     protected String selectionSettings;
 
@@ -204,15 +204,19 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
             selections = new HashMap<String, String>(0);
         } else {
             selections = new HashMap<String, String>();
-            // remove the outer brackets
-            encoded = encoded.substring(1, encoded.lastIndexOf('}'));
-            // split it
-            String[] parts = encoded.split("\\}\\{");
-            for (String part : parts) {
-                int pos = part.indexOf(':');
-                String key = part.substring(0, pos);
-                String value = part.substring(pos+1, part.length());
-                selections.put(key, value);
+            try {
+                // remove the outer brackets
+                encoded = encoded.substring(1, encoded.lastIndexOf('}'));
+                // split it
+                String[] parts = encoded.split("\\}\\{");
+                for (String part : parts) {
+                    int pos = part.indexOf(':');
+                    String key = part.substring(0, pos);
+                    String value = part.substring(pos+1, part.length());
+                    selections.put(key, value);
+                }
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException("Invalid encoded string supplied ("+encoded+"): must be generated using the encodeSelectionSettings method: " + e, e);
             }
         }
         return selections;
@@ -250,13 +254,28 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     }
 
     public void setSelectionSettings(String selectionSettings) {
+        selectionSettings = validSelectionSettings(selectionSettings);
+        this.selectionSettings = selectionSettings;
+    }
+
+    /**
+     * Validates that a selection settings string is valid and cleans it up if needed
+     * @param selectionSettings an encoded selection settings string
+     * @return the valid selection settings string OR null (which is still valid)
+     * @throws IllegalArgumentException is the string is invalid
+     */
+    public static String validSelectionSettings(String selectionSettings) {
         if (selectionSettings != null) {
             selectionSettings = selectionSettings.trim();
         }
         if ("".equals(selectionSettings)) {
             selectionSettings = null;
         }
-        this.selectionSettings = selectionSettings;
+        if (selectionSettings != null) {
+            // just try to decode it to make sure it is valid
+            decodeSelectionSettings(selectionSettings);
+        }
+        return selectionSettings;
     }
 
 }

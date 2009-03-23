@@ -83,7 +83,9 @@ public class EvalEvaluation implements java.io.Serializable {
      * An encoded string which indicates the stored selection settings for this evaluation,
      * null indicates that there are no selection settings stored and to use {@link #SELECTION_OPTION_ALL} 
      * (the default which indicates no selections),
-     * this is passed down to all assign groups for this evaluation and should be checked there
+     * this is passed down to all assign groups for this evaluation and should be checked there <br/>
+     * <b>WARNING:</b> getting and setting this value directly should not be done,
+     * use the {@link #setSelectionOption(String, String)} and {@link #getSelectionOptions()} methods
      */
     protected String selectionSettings;
 
@@ -608,12 +610,7 @@ public class EvalEvaluation implements java.io.Serializable {
     }
 
     public void setSelectionSettings(String selectionSettings) {
-        if (selectionSettings != null) {
-            selectionSettings = selectionSettings.trim();
-        }
-        if ("".equals(selectionSettings)) {
-            selectionSettings = null;
-        }
+        selectionSettings = EvalAssignGroup.validSelectionSettings(selectionSettings);
         this.selectionSettings = selectionSettings;
     }
 

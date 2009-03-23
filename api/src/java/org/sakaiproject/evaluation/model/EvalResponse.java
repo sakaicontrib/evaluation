@@ -158,16 +158,20 @@ public class EvalResponse implements java.io.Serializable {
             selections = new HashMap<String, String[]>(0);
         } else {
             selections = new HashMap<String, String[]>();
-            // remove the outer brackets
-            encoded = encoded.substring(1, encoded.lastIndexOf('}'));
-            // split it
-            String[] parts = encoded.split("\\}\\{");
-            for (String part : parts) {
-                int pos = part.indexOf('[');
-                String key = part.substring(0, pos);
-                String arrayStr = part.substring(pos+1, part.lastIndexOf(']'));
-                String[] value = arrayStr.split(",");
-                selections.put(key, value);
+            try {
+                // remove the outer brackets
+                encoded = encoded.substring(1, encoded.lastIndexOf('}'));
+                // split it
+                String[] parts = encoded.split("\\}\\{");
+                for (String part : parts) {
+                    int pos = part.indexOf('[');
+                    String key = part.substring(0, pos);
+                    String arrayStr = part.substring(pos+1, part.lastIndexOf(']'));
+                    String[] value = arrayStr.split(",");
+                    selections.put(key, value);
+                }
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException("Invalid encoded string supplied ("+encoded+"): must be generated using the encodeSelections method: " + e, e);
             }
         }
         return selections;
@@ -252,13 +256,28 @@ public class EvalResponse implements java.io.Serializable {
     }
 
     public void setSelectionsCode(String selectionsCode) {
+        selectionsCode = validateSelectionsCode(selectionsCode);
+        this.selectionsCode = selectionsCode;
+    }
+
+    /**
+     * Validates that a selections code string is valid and cleans it up if needed
+     * @param selectionsCode an encoded selections string
+     * @return the valid selections code string OR null (which is still valid)
+     * @throws IllegalArgumentException is the string is invalid
+     */
+    public static String validateSelectionsCode(String selectionsCode) {
         if (selectionsCode != null) {
             selectionsCode = selectionsCode.trim();
         }
         if ("".equals(selectionsCode)) {
             selectionsCode = null;
         }
-        this.selectionsCode = selectionsCode;
+        if (selectionsCode != null) {
+            // just try to decode it to make sure it is valid
+            decodeSelections(selectionsCode);
+        }
+        return selectionsCode;
     }
 
 }
