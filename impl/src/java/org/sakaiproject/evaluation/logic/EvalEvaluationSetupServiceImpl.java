@@ -847,18 +847,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (evalGroupId != null) {
             limitGroupIds = new String[] {evalGroupId};
         }
+        // all users assigned to this eval (and group if specified)
         List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null, null);
+        // keys of all assignments which are unlinked or removed
         HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<String>();
+        // all assignments which are linked (groupId => assignments)
         HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<String, List<EvalAssignUser>>();
         for (EvalAssignUser evalAssignUser : assignedUsers) {
-            if (EvalAssignUser.STATUS_UNLINKED.equals(evalAssignUser.getType()) 
-                    || EvalAssignUser.STATUS_REMOVED.equals(evalAssignUser.getType())) {
+            if (EvalAssignUser.STATUS_UNLINKED.equals(evalAssignUser.getStatus()) 
+                    || EvalAssignUser.STATUS_REMOVED.equals(evalAssignUser.getStatus())) {
                 String key = makeEvalAssignUserKey(evalAssignUser, false, false);
                 assignUserUnlinkedRemovedKeys.add(key);
             }
             String egid = evalAssignUser.getEvalGroupId();
             if (egid != null) {
-                if (EvalAssignUser.STATUS_LINKED.equals(evalAssignUser.getType())) {
+                if (EvalAssignUser.STATUS_LINKED.equals(evalAssignUser.getStatus())) {
                     List<EvalAssignUser> l = groupIdLinkedAssignedUsersMap.get(egid);
                     if (l == null) {
                         l = new ArrayList<EvalAssignUser>();
@@ -1020,7 +1023,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
     /**
-     * This method can be called internally to avoid looking up the evaluation again
+     * This method can be called internally to avoid looking up the evaluation again,
+     * will check to ensure it does not recreate an existing user assignment
      * @param eval
      * @param assignUsers
      */
@@ -1028,6 +1032,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // check permissions
         if ( securityChecks.checkCreateAssignments(null, eval) ) {
             String currentUserId = commonLogic.getCurrentUserId();
+            // create the set of user assignments for this eval
+            List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(eval.getId(), null, null, null, EvalEvaluationService.STATUS_ANY, null, null);
+            HashMap<String, EvalAssignUser> assignedKeysToEAUs = new HashMap<String, EvalAssignUser>();
+            for (EvalAssignUser evalAssignUser : assignedUsers) {
+                String key = makeEvalAssignUserKey(evalAssignUser, true, false);
+                assignedKeysToEAUs.put(key, evalAssignUser);
+            }
+
+            // now create the set of all assignments to save (only save the ones that do not already exist though)
             HashSet<EvalAssignUser> eauSet = new HashSet<EvalAssignUser>();
             for (EvalAssignUser evalAssignUser : assignUsers) {
                 evalAssignUser.setLastModified( new Date() );
@@ -1036,6 +1049,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     evalAssignUser.setStatus(EvalAssignUser.STATUS_UNLINKED);
                 }
                 setAssignUserDefaults(evalAssignUser, eval, currentUserId);
+                String key = makeEvalAssignUserKey(evalAssignUser, true, false);
+                if (assignedKeysToEAUs.containsKey(key)) {
+                    EvalAssignUser existing = assignedKeysToEAUs.get(key);
+                    if (! existing.getId().equals(evalAssignUser.getId())) {
+                        // trying to save an assignment over top of one that exists already
+                        log.warn("Found an user assignment that matches an existing one so it will not be saved: " + evalAssignUser);
+                        continue; // SKIP
+                    }
+                }
                 eauSet.add(evalAssignUser);
             }
             // save all of the user assignments

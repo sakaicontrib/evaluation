@@ -15,10 +15,10 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -35,7 +35,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
 
    protected EvaluationDao evaluationDao;
    protected EvalCommonLogic commonLogic;
-   protected EvalExternalLogic externalLogic;
+   protected MockEvalExternalLogic externalLogic;
    protected EvalTestDataLoad etdl;
 
    protected String[] getConfigLocations() {
@@ -54,7 +54,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
          throw new NullPointerException("DAO could not be retrieved from spring context");
       }
 
-      externalLogic = (EvalExternalLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
+      externalLogic = (MockEvalExternalLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
       if (externalLogic == null) {
          throw new NullPointerException("externalLogic could not be retrieved from spring context");
       }
