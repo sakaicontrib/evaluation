@@ -72,6 +72,11 @@ public class CSVReportExporter implements ReportExporter {
                 String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
                         new Object[] {user.displayName} );
                 questionCatRow.add( instructorMsg );
+            } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(dti.associateType)) {
+                EvalUser user = commonLogic.getEvalUserById( dti.associateId );
+                String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                        new Object[] {user.displayName} );
+                questionCatRow.add( assistantMsg );
             } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
                 questionCatRow.add(messageLocator.getMessage("reporting.spreadsheet.course"));
             } else {
