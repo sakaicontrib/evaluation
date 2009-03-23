@@ -163,15 +163,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          public void run() {
         	 
         	 String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
-        	 // 0 (never)
+        	 // setting of 0 (never)
         	 if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)).intValue() == 0 ) {
-        		 if(log.isWarnEnabled())
-        			 log.warn("EvalEmailLogicImpl.initiateSendEmailTimer(): EMAIL_SEND_QUEUED_REPEAT_INTERVAL is 0 so quitting. "); 
+        		 if(log.isInfoEnabled())
+        			 log.info(this + ".initiateSendEmailTimer(): EMAIL_SEND_QUEUED_REPEAT_INTERVAL = 0: quit. "); 
         		 return;
         	 }
         	 if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)).intValue() == 0 ) {
-        		 if(log.isWarnEnabled())
-        			 log.warn("EvalEmailLogicImpl.initiateSendEmailTimer():  EMAIL_SEND_QUEUED_START_INTERVAL is 0 so quitting. "); 
+        		 if(log.isInfoEnabled())
+        			 log.info(this + ".initiateSendEmailTimer():  EMAIL_SEND_QUEUED_START_INTERVAL = 0: quit. "); 
         		 return;
         	 }
         	 
@@ -184,52 +184,52 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         	 
         	 int numProcessed = 0;
         	 
-      		 if(log.isInfoEnabled())
-    			 log.info(serverId + " is beginning runSendEmailTask.run() ");
+      		 if(log.isDebugEnabled())
+    			 log.debug(serverId + " is beginning runSendEmailTask.run() ");
         	 
         	 //is the enabling flag true?
         	 if(!(((Boolean)settings.get(EvalSettings.EMAIL_SEND_QUEUED_ENABLED))).booleanValue()) {
-        		 if(log.isInfoEnabled())
-        			 log.info(serverId + " runSendEmailTask.run(): EMAIL_SEND_QUEUED_ENABLED is false so quitting. "); 
+        		 if(log.isDebugEnabled())
+        			 log.debug(serverId + " runSendEmailTask.run(): EMAIL_SEND_QUEUED_ENABLED is false so quitting. "); 
         		 return;
         	 }
         	 
         	//is there something to do?
         	 if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
         	 	&& !logEmailRecipients.booleanValue()) {
-        	 if (log.isWarnEnabled())
-        	 	log.warn(serverId + " runSendEmailTask.run(): EMAIL_DELIVERY_NONE and no logging of email recipients. " +
+        	 if (log.isDebugEnabled())
+        	 	log.debug(serverId + " runSendEmailTask.run(): EMAIL_DELIVERY_NONE and no logging of email recipients. " +
         	 			" There is no work to do so quitting.");
         	 	return;
         	 }
-        	 if(log.isInfoEnabled())
-        		log.info(serverId + " runSendEmailTask.run(): checking if server holds a lock. ");
+        	 if(log.isDebugEnabled())
+        		log.debug(serverId + " runSendEmailTask.run(): checking if server holds a lock. ");
         	
         	//have I got an email_lock? if so, quit (one run() per server at a time)
         	List<EvalLock> locks = dao.obtainLocksForHolder(EvalConstants.EMAIL_LOCK_PREFIX, serverId);
         	if(locks != null && !locks.isEmpty()) {
-              	if(log.isInfoEnabled()) {
-            		log.info(serverId + " runSendEmailTask.run(): server has a lock so is quitting. ");
+              	if(log.isDebugEnabled()) {
+            		log.debug(serverId + " runSendEmailTask.run(): server has a lock: quitting. ");
             		for(EvalLock lock:locks) {
-            			log.info(serverId + " has lock: " + lock.getName() + ".");
+            			log.debug(serverId + " has lock: " + lock.getName() + ".");
             		}
               	}
               	return;
         	}
-           	if(log.isInfoEnabled())
-        		log.info(serverId +" runSendEmailTask.run(): server has no locks so is continuing. ");
+           	if(log.isDebugEnabled())
+        		log.debug(serverId +" runSendEmailTask.run(): server has no locks: continuing. ");
            	
            	List<Long> emailIds = new ArrayList<Long>();
            	EvalQueuedEmail email = null;
            	
            	//try these locks
            	List<String> lockNames = dao.getQueuedEmailLocks();
-          	if(log.isInfoEnabled())
-        		log.info(serverId + " runSendEmailTask.run(): server found " + lockNames.size() + " lock names" +
+          	if(log.isDebugEnabled())
+        		log.debug(serverId + " runSendEmailTask.run(): server found " + lockNames.size() + " lock names" +
         				" in the queued notification table. ");
            	for(String lockName: lockNames) {
-            	if(log.isInfoEnabled())
-            		log.info(serverId + " runSendEmailTask.run(): server is trying to obtain lock " + lockName + ". ");
+            	if(log.isDebugEnabled())
+            		log.debug(serverId + " runSendEmailTask.run(): server is trying to obtain lock " + lockName + ". ");
              	/*
                	 * Note: Another server may acquire the lock if the repeatInterval is shorter than the TimerTask's processing time. 
                	 * 		 This would defeat the purpose of a server holding a lock while processing a batch of email. We set the 
@@ -241,24 +241,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // only execute the code if we have an exclusive lock
                 if (lockObtained != null && lockObtained) {
                 	//process notifications for this lock and then quit
-                   	if(log.isInfoEnabled())
-                		log.info(serverId + " runSendEmailTask.run(): server obtained lock " + lockName + ". ");
+                   	if(log.isDebugEnabled())
+                		log.debug(serverId + " runSendEmailTask.run(): server obtained lock " + lockName + ". ");
                    	emailIds.clear();
                 	//claim the emails associated with this lock
                    	emailIds = dao.getQueuedEmailByLockName(lockName);
+                   	//metric logging
                   	if(metric.isInfoEnabled())
                 		metric.info(serverId + " metric runSendEmailTask.run(): server claimed " + emailIds.size() + " queued notifications. ");
                   	boolean deferExceptions = true;
                   	for(Long id: emailIds) {
                   		email = dao.findById(EvalQueuedEmail.class, id);
-                     	if(log.isInfoEnabled())
+                     	if(log.isDebugEnabled())
                     		log.debug(serverId + " runSendEmailTask.run(): retrieved queued notification " + email.toString() + ". ");
                      	//TODO: see CT-719 for an array version of send, which should be faster
                      	//send one email and delete from holding table for loss-less restart behavior
                      	String[] to = new String[]{email.getToAddress()};
                   		commonLogic.sendEmailsToAddresses(from, to, email.getSubject(), email.getMessage(), deferExceptions);
-                  		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_LOG))
+                  		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_LOG)) {
+                  			//log email
                 		   log.info(serverId + " runSendEmailTask.run() sent notification: " + email.toString());
+                  		}
                   		dao.delete(email);
                   		if(log.isDebugEnabled())
                 		   log.debug(serverId + " runSendEmailTask.run(): server deleted notification from the email holding table: " +
@@ -268,25 +271,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                   		numProcessed = logEmailsProcessed(batch, wait, every, numProcessed, "sent");
                   	}
                   	dao.releaseLock(lockName, serverId);
-                  	if(log.isInfoEnabled())
-                		log.info(serverId + " runSendEmailTask.run(): server released lock " + lockName + ". ");
+                  	if(log.isDebugEnabled())
+                		log.debug(serverId + " runSendEmailTask.run(): server released lock " + lockName + ". ");
                   	break;
                 }
                 else {
-                  	if(log.isInfoEnabled())
-                		log.info(serverId + " runSendEmailTask.run(): server didn't obtained lock "
+                  	if(log.isDebugEnabled())
+                		log.debug(serverId + " runSendEmailTask.run(): server didn't obtained lock "
                 				+ lockName + ". Try to obtain the next lock. ");
                 }
            	}
-          	if(log.isInfoEnabled())
-        		log.info(serverId + " runSendEmailTask.run(): done sending any notifications. ");
+          	if(log.isDebugEnabled())
+        		log.debug(serverId + " runSendEmailTask.run(): done sending any notifications. ");
          }
       };
 
       // now we need to obtain a lock and then run the task if we have it
       Timer timer = new Timer(true);
-      log.info("Initializing checking for queued email, first run in " + (startDelay/1000) + " seconds " +
+      if(log.isDebugEnabled()) {
+    	  log.debug("Initializing checking for queued email, first run in " + (startDelay/1000) + " seconds " +
       		"and subsequent runs will happen every " + (repeatInterval/1000) + " seconds after that. ");
+      }
       timer.schedule(runSendEmailTask, startDelay, repeatInterval);
    }
 
