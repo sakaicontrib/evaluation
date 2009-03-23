@@ -18,7 +18,7 @@ $(document).ready(function() {
         css:{
             activeCheckbox: {background:'#eee'}
         },
-        type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = ta
+        type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
         debug: false,
         fields: ['input', 'select', 'textarea'] //Array of fields in the form
     }
@@ -40,7 +40,7 @@ $(document).ready(function() {
                 log("Active code type is: " + variables.options.type);
                 switch (variables.options.type) {
                     case 0: return "instructor";break;
-                    case 1: return "ta";break;
+                    case 1: return "assistant";break;
                 }
             } ,
             shownQuestions: function() {
@@ -72,7 +72,7 @@ $(document).ready(function() {
                 var temp;
                 if (that.attr('name').search(/instructor/i) != -1)
                     temp = 0;
-                else if (that.attr('name').search(/tas/i) != -1)
+                else if (that.attr('name').search(/assistant/i) != -1)
                     temp = 1;
                 variables.options.type = temp;
                 log("Active type is: " + variables.get.typeOfBranch());
