@@ -50,7 +50,6 @@ public class ResponseBeanLocator implements BeanLocator {
          }
          else {
             togo = localResponsesLogic.getResponseById(path);
-            System.out.println("togo:"+togo);
          }
          delivered.put(path, togo);
       }
