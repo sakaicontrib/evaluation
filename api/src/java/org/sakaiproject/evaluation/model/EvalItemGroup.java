@@ -53,7 +53,9 @@ public class EvalItemGroup implements java.io.Serializable {
         this.description = description;
         this.expert = expert;
         this.parent = parent;
-        this.groupItems = groupItems;
+        if (groupItems != null) {
+            this.groupItems = groupItems;
+        }
     }
 
     public String getDescription() {

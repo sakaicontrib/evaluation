@@ -94,7 +94,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public void saveResponse(EvalResponse response, String userId) {
         log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
 
@@ -140,7 +139,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                                 ResponseSaveException.TYPE_BLANK_RESPONSE);
                     }
                 }
-                response.setAnswers(new HashSet());
+                if (response.getAnswers() == null) {
+                    response.setAnswers(new HashSet<EvalAnswer>());
+                }
             }
 
             // save everything in one transaction
