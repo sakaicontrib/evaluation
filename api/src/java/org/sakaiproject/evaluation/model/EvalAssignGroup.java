@@ -254,7 +254,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     }
 
     public void setSelectionSettings(String selectionSettings) {
-        selectionSettings = validSelectionSettings(selectionSettings);
+        selectionSettings = validateSelectionSettings(selectionSettings);
         this.selectionSettings = selectionSettings;
     }
 
@@ -264,11 +264,11 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
      * @return the valid selection settings string OR null (which is still valid)
      * @throws IllegalArgumentException is the string is invalid
      */
-    public static String validSelectionSettings(String selectionSettings) {
+    public static String validateSelectionSettings(String selectionSettings) {
         if (selectionSettings != null) {
             selectionSettings = selectionSettings.trim();
         }
-        if ("".equals(selectionSettings)){
+        if ("".equals(selectionSettings)) {
             selectionSettings = null;
         }
         if (selectionSettings != null) {
