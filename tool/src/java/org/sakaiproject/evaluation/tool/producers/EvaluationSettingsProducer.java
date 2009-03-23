@@ -120,8 +120,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
    public void setLocale(Locale locale) {
       this.locale = locale;
    }
+   
 
-   /* (non-Javadoc)
+/* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -148,7 +149,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
       DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
       DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
-
+      
       /*
        * top links here
        */
@@ -307,12 +308,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
               EvalAssignGroup.SELECTION_OPTION_ALL,
               EvalAssignGroup.SELECTION_OPTION_ONE, 
               EvalAssignGroup.SELECTION_OPTION_MULTIPLE};
+      String savedSettingInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, null, evaluation);
       UISelect selectInstructors = UISelect.make(selectFieldSet, "selectionRadioInstructors", 
     		  selectValues, 
             new String[] {"evalsettings.selection.instructor.all",
               "evalsettings.selection.instructor.one",
               "evalsettings.selection.instructor.many"},
-            evaluationOTP + "instructorSelection", selectValues[0]).setMessageKeys();
+            actionBean + "selectionInstructors", savedSettingInstructor).setMessageKeys();
       String selectInstructorsId = selectInstructors.getFullID();
       for (int i = 0; i < selectValues.length; ++i) {
          UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectInstructorsChoice:", i + "");
@@ -321,10 +323,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
          .decorate( new UILabelTargetDecorator(choice) );
          }
       // radio buttons for the TA selection options
+      String savedAssistantInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, null, evaluation);
       UISelect selectTAs = UISelect.make(selectFieldSet, "selectionRadioTAs", 
     		  selectValues, 
             new String[] {"evalsettings.selection.ta.all","evalsettings.selection.ta.one","evalsettings.selection.ta.many"},
-            evaluationOTP + "assistantSelection", selectValues[0]).setMessageKeys();
+            actionBean + "selectionAssistants", savedAssistantInstructor).setMessageKeys();
       String selectTAsId = selectTAs.getFullID();
       for (int i = 0; i < selectValues.length; ++i) {
          UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectTAsChoice:", i + "");

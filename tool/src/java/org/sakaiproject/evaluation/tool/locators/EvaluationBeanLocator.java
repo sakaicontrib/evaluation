@@ -17,13 +17,17 @@ package org.sakaiproject.evaluation.tool.locators;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.TakeEvalBean;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
@@ -33,6 +37,7 @@ import uk.org.ponder.beanutil.BeanLocator;
  * @author Will Humphries (whumphri@vt.edu)
  */
 public class EvaluationBeanLocator implements BeanLocator {
+	private static Log log = LogFactory.getLog(EvaluationBeanLocator.class);
 
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
@@ -76,7 +81,7 @@ public class EvaluationBeanLocator implements BeanLocator {
       return togo;
    }
 
-   public void saveAll() {
+   public void saveAll(Map<String, String> selectionSettings) {
       for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
          String key = it.next();
          EvalEvaluation evaluation = delivered.get(key);
@@ -85,6 +90,12 @@ public class EvaluationBeanLocator implements BeanLocator {
          }
          // fix up all the dates before saving
          evalBeanUtils.fixupEvaluationDates(evaluation);
+         //fix selection settings too
+         if(selectionSettings != null && selectionSettings.size()>0){
+         for (Entry<String, String> selection : selectionSettings.entrySet()) {
+             evaluation.setSelectionOption(selection.getKey(), selection.getValue());
+         	}
+         }
          evaluationSetupService.saveEvaluation(evaluation, commonLogic.getCurrentUserId(), false);
       }
    }

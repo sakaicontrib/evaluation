@@ -268,12 +268,12 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
         if (selectionSettings != null) {
             selectionSettings = selectionSettings.trim();
         }
-        if ("".equals(selectionSettings)) {
+        if ("".equals(selectionSettings)){
             selectionSettings = null;
         }
         if (selectionSettings != null) {
             // just try to decode it to make sure it is valid
-            decodeSelectionSettings(selectionSettings);
+        	decodeSelectionSettings(selectionSettings);
         }
         return selectionSettings;
     }

@@ -16,12 +16,15 @@ package org.sakaiproject.evaluation.tool;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -31,6 +34,7 @@ import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -51,9 +55,11 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class SetupEvalBean {
+	
+	private static Log log = LogFactory.getLog(SetupEvalBean.class);
 
    private final String EVENT_EVAL_REOPENED = "eval.evaluation.reopened";
-
+   
    /**
     * This should be set to true while we are creating an evaluation
     */
@@ -87,6 +93,15 @@ public class SetupEvalBean {
     * the selected hierarchy nodes to bind to this evaluation when creating it
     */
    public String[] selectedHierarchyNodeIDs = new String[] {};
+   
+   /**
+    * the selected option (eg. for TAs and Instructors) in this evaluation. see {@link EvalEvaluation.selectionSettings}
+    */
+   public Map<String, String> selectionOptions = new HashMap<String, String>();
+   /**
+    * selection value to populate {@link SetupEvalBean.selectionOptions}
+    */
+   public String selectionInstructors, selectionAssistants;
 
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -256,7 +271,8 @@ public class SetupEvalBean {
 
       // save the new evaluation
       try {
-         evaluationBeanLocator.saveAll();
+    	  setSelectionOptions();
+         evaluationBeanLocator.saveAll(selectionOptions);
       } catch (BlankRequiredFieldException e) {
          messages.addMessage( new TargettedMessage(e.messageKey, 
                new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
@@ -278,8 +294,9 @@ public class SetupEvalBean {
          }
       }
 
-      try {
-         evaluationBeanLocator.saveAll();
+      try { 
+    	  setSelectionOptions();
+         evaluationBeanLocator.saveAll(selectionOptions);
       } catch (BlankRequiredFieldException e) {
          messages.addMessage( new TargettedMessage(e.messageKey, 
                new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
@@ -402,6 +419,17 @@ public class SetupEvalBean {
       }
       String[] selectedHierarchyNodeIds = hierNodeIdList.toArray(new String[] {});
       return selectedHierarchyNodeIds;
+   }
+   
+   /**
+    * Create {@link Map} object to inject into Eval and set Selection Options
+    * eg.for {@link EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR} and {@link EvalAssignGroup.SELECTION_TYPE_ASSISTANT}
+    * @return selectionOptions {@link Map}
+    */
+   private Map<String, String> setSelectionOptions(){
+	   selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, selectionInstructors);
+	   selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, selectionAssistants);
+	   return selectionOptions; 
    }
 
 
