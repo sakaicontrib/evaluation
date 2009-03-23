@@ -19,13 +19,13 @@
             <column name="OWNER" not-null="true" length="255" />
         </property>
         <property name="userId" type="java.lang.String" index="eval_asgnuser_userid">
-            <column name="USER_ID" not-null="true" length="255" />
+            <column name="USER_ID" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
         </property>
         <property name="evalGroupId" type="java.lang.String" index="eval_asgnuser_groupid">
-            <column name="GROUP_ID" not-null="true" length="255" />
+            <column name="GROUP_ID" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
         </property>
         <property name="type" type="java.lang.String" index="eval_asgnuser_type">
-            <column name="ASSIGN_TYPE" not-null="true" length="255" />
+            <column name="ASSIGN_TYPE" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
         </property>
         <property name="status" type="java.lang.String" index="eval_asgnuser_status">
             <column name="ASSIGN_STATUS" not-null="true" length="255" />
@@ -38,7 +38,7 @@
             <column name="ASSIGN_GROUP_ID" />
         </property>
         <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_USER_EVALUATION_FKC" lazy="proxy" fetch="select">
-            <column name="EVALUATION_FK" not-null="true"/>
+            <column name="EVALUATION_FK" not-null="true" unique-key="uniqueEvalUserGroupType" />
         </many-to-one>
     </class>
 </hibernate-mapping>
