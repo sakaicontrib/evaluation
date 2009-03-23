@@ -8,7 +8,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     $('a[rel=remove]').itemRemove({
         ref:    'eval-templateitem',
         id:     '$(this).attr("templateitemid")',
-        text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'    
+        text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
     });
     $('a[rel=childRemove]').itemRemove({
         ref:    'eval-templateitem',
@@ -281,15 +281,16 @@ function submitForm(form, textarea, target, btn) {
     catch(e) {
         console.log('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
         return false;
-       }
- //Validate text
-    $('#facebox').append('<div id="fckEditorVal" style="display:none">'+fckVal+'</div>');
+    }
+    //Validate text
+    $('#facebox').append('<div id="fckEditorVal" style="display:none">' + fckVal + '</div>');
     var str = $('#fckEditorVal');
-    if(str.text()==""|| str.text()==null){
+    if (str.text() == "" || str.text() == null || str.text() == 'null') {
         alert('You must fill in the title.');
+        str.remove();
         return false;
-}
-    str.remove();
+    }
+
     //iterate through returned formToArray elements and replace input value with editor value
     for (var i = 0; i < d.length; i++) {
         if ($(d[i]).attr('name') == textarea) {
@@ -302,20 +303,13 @@ function submitForm(form, textarea, target, btn) {
         data: d,
         dataType: "html",
         beforeSend: function() {
-            
+
             btn.parent().parent().find('input').each(function() {
                 $(this).attr('disabled', 'disabled');
             });
-
-
             FCKeditorAPI.GetInstance(textarea).disabled;
-
-
             btn.parent().append(img);
-            //$(thisRow).html('<div class="loading">Refreshing...<img src="/library/image/sakai/spinner.gif"/></div>');
-            //$("#facebox .results").html('<div class="loading">Saving...<img src="/library/image/sakai/spinner.gif"/></div>');
-            //console.log(target + "   -   "+ d);
-            //return false;
+
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             return false;
@@ -349,7 +343,6 @@ function submitForm(form, textarea, target, btn) {
                             that.hide();
                             $('<h4 class="itemText"><span>' + $('#realText').text() + '</span><a class="less" href="#">less<\/a></h4>').insertAfter(that);
                         } catch(e) {
-                            //console.log(e.description);
                         }
                         $('.more').bind('click', function() {
                             $(this).parent().toggle();
@@ -362,9 +355,6 @@ function submitForm(form, textarea, target, btn) {
                             $(this).parent().parent().find('.itemText').eq(0).toggle();
                             return false;
                         });
-                        //console.log(shortText);
-
-
                     } else {
                         that.find('span').html(realText);
                     }
@@ -379,7 +369,7 @@ function submitForm(form, textarea, target, btn) {
 }
 
 function truncateTextDo(string, number) {
-    trunc = string.substring(0, (number==null)?150:number);
+    trunc = string.substring(0, (number == null) ? 150 : number);
     trunc = trunc.replace(/\w+$/, '');
     return trunc;
 }
@@ -429,19 +419,19 @@ var options_choose_existing_items_html_search = {
 };
 
 //Update the Control Items total in dom
-function updateControlItemsTotal(){
+function updateControlItemsTotal() {
     var tNum = $('#itemList > div.itemRow:visible').get().length;
     $('[id=level-header-number]').text(tNum);
     var dummyLink = $('span[id=begin-eval-dummylink]');
     var link = $('a[id=begin_eval_link]');
-    var title = dummyLink.length!=0?dummyLink.text():link.text();
-    var takeEvalLink = '<a id="begin_eval_link" title="'+title+'" href="evaluation_create?reOpening=false&amp;templateId='+$('input[name*=templateId]').val()+'">'+title+'</a>';
-    if(tNum==0){
-        if(link.length!=0){
-            link.replaceWith('<span id="begin-eval-dummylink">'+link.text()+'</span>');
+    var title = dummyLink.length != 0 ? dummyLink.text() : link.text();
+    var takeEvalLink = '<a id="begin_eval_link" title="' + title + '" href="evaluation_create?reOpening=false&amp;templateId=' + $('input[name*=templateId]').val() + '">' + title + '</a>';
+    if (tNum == 0) {
+        if (link.length != 0) {
+            link.replaceWith('<span id="begin-eval-dummylink">' + link.text() + '</span>');
         }
-    } else{
-        if(dummyLink.length!=0){
+    } else {
+        if (dummyLink.length != 0) {
             dummyLink.replaceWith(takeEvalLink);
         }
     }
@@ -471,7 +461,7 @@ function updateControlItemsTotal(){
                 var opts = $.extend(defaults, options);
                 opts.id = eval(opts.id);
                 var t = eval(opts.text);
-                opts.text = (t != null && t.length > 20) ? truncateTextDo(t, 20)+"...": t;
+                opts.text = (t != null && t.length > 20) ? truncateTextDo(t, 20) + "..." : t;
                 show_hide_box(this, opts);
                 that = this;
                 return false;
@@ -549,9 +539,9 @@ function updateControlItemsTotal(){
         if (!options.itemType)
             options.itemType = 'none';
         if ((options.itemType == "blockChild"))
-                $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#fff');
-         else
-                $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#fff');
+            $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#fff');
+        else
+            $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#fff');
 
         var href = an.href;
         var width = 150;
@@ -602,19 +592,24 @@ function updateControlItemsTotal(){
         $(boxdiv).hide();
         document.body.appendChild(boxdiv);
 
-        var offset = 0;
-        var content = '\
-<div class="" style="font-weight: bold;">Delete item: </div><div>"'+ options.text +'"</div>\
-<div class="" style="float: right;">\
-					<input type="button" value="Delete" accesskey="s" class="removeItemConfirmYes active"/>\
-					<input type="button" value="Cancel" accesskey="x" class="closeImage"/>\
-	</div>\
-	';
-        if (options.itemType == "blockChild")
+        var offset = 0,
+                actionText = options.itemType=='block'?'Ungroup':'Delete';
+        if (options.itemType == "blockChild") {
             $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#ffc');
-        else
+        }
+        else{
             $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#ffc');
-        $(boxdiv).html(content); $('.closeImage').click(function()
+        }
+
+        var content = '\
+                            <div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>\
+                            <div class="" style="float: right;">\
+                            <input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/>\
+                            <input type="button" value="Cancel" accesskey="x" class="closeImage"/>\
+                            </div>\
+                            ';
+        $(boxdiv).html(content);
+        $('.closeImage').click(function()
         {
             show_hide_box(an, options);
         });
