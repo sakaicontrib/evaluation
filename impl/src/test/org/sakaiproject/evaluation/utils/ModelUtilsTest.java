@@ -291,6 +291,19 @@ public class ModelUtilsTest {
         m = eag.getSelectionOptions();
         assertNotNull(m);
         assertEquals(0, m.size());
+
+        // http://jira.sakaiproject.org/jira/browse/EVALSYS-685
+        eag.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_MULTIPLE);
+        eag.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, EvalAssignGroup.SELECTION_OPTION_ALL);
+        m = eag.getSelectionOptions();
+        assertNotNull(m);
+        assertEquals(1, m.size());
+        assertEquals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE, m.get(EvalAssignGroup.SELECTION_TYPE_ASSISTANT));
+
+        eag.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_ALL);
+        m = eag.getSelectionOptions();
+        assertNotNull(m);
+        assertEquals(0, m.size());
     }
 
 }
