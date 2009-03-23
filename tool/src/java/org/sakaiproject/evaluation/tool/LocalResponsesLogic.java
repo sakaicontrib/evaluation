@@ -61,10 +61,6 @@ public class LocalResponsesLogic {
         log.debug("Creating a new response");
         EvalResponse togo = new EvalResponse(commonLogic.getCurrentUserId(), 
                 new String(), null, new Date());
-        // added to try to avoid null answers set issues in RSF
-        if (togo.getAnswers() == null) {
-            togo.setAnswers( new HashSet<EvalAnswer>() );
-        }
         //togo.setEndTime(new Date()); // TODO - I don't think this will work
         return togo;
     }

@@ -73,6 +73,9 @@ public class AnswersBeanLocator implements BeanLocator {
      * @param answers - Set of answers
      */
     public void loadMap(Set<EvalAnswer> answers) {
+        if (answers == null) {
+            throw new IllegalStateException("answers set in the response ("+response+") is null, this should never happen");
+        }
         for (EvalAnswer answer : answers) {
             // decode the various parts of this answer
             EvalUtils.decodeAnswerNA(answer);
