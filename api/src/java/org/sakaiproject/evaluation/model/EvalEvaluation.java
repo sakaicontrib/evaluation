@@ -610,7 +610,7 @@ public class EvalEvaluation implements java.io.Serializable {
     }
 
     public void setSelectionSettings(String selectionSettings) {
-        selectionSettings = EvalAssignGroup.validSelectionSettings(selectionSettings);
+        selectionSettings = EvalAssignGroup.validateSelectionSettings(selectionSettings);
         this.selectionSettings = selectionSettings;
     }
 
