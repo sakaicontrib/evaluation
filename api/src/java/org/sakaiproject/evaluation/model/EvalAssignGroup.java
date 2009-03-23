@@ -176,7 +176,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     public static String encodeSelectionSettings(Map<String, String> selections) {
         String encoded = null;
         if (selections != null && ! selections.isEmpty()) {
-            // build encoded string {A[1,2,3]}{B[1,2]}
+            // build encoded string {instructor:one}{assistant:multiple}
             StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : selections.entrySet()) {
                 sb.append('{');
