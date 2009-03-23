@@ -76,6 +76,13 @@ public class ModelUtilsTest {
         assertEquals(2, m.size());
         assertArrayEquals(new String[] {"A", "B", "C"}, m.get(EvalAssignGroup.SELECTION_TYPE_ASSISTANT));
         assertArrayEquals(new String[] {"becky", "minerva"}, m.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR));
+
+        try {
+            m = EvalResponse.decodeSelections("XXXX");
+            fail("should have failed");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage());
+        }
     }
 
     /**
@@ -204,6 +211,13 @@ public class ModelUtilsTest {
         assertEquals(2, m.size());
         assertEquals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE, m.get(EvalAssignGroup.SELECTION_TYPE_ASSISTANT));
         assertEquals(EvalAssignGroup.SELECTION_OPTION_ONE, m.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR));
+
+        try {
+            m = EvalAssignGroup.decodeSelectionSettings("XXXX");
+            fail("should have failed");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage());
+        }
     }
 
     /**
