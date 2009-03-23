@@ -116,7 +116,9 @@ public class EvalItem implements java.io.Serializable {
         this.expert = expert;
         this.expertDescription = expertDescription;
         this.scale = scale;
-        this.templateItems = templateItems;
+        if (templateItems != null) {
+            this.templateItems = templateItems;
+        }
         this.usesNA = (usesNA == null ? Boolean.FALSE : usesNA); // default to false
         this.usesComment = (usesComment == null ? Boolean.FALSE : usesComment); // default to false
         this.compulsory = (compulsory == null ? Boolean.FALSE : compulsory); // default to false

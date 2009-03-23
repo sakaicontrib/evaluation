@@ -83,7 +83,9 @@ public class EvalTemplate implements java.io.Serializable {
         this.sharing = sharing;
         this.expert = expert;
         this.expertDescription = expertDescription;
-        this.templateItems = templateItems;
+        if (templateItems != null) {
+            this.templateItems = templateItems;
+        }
         this.locked = locked;
         this.hidden = hidden;
     }

@@ -77,7 +77,9 @@ public class EvalResponse implements java.io.Serializable {
         this.evalGroupId = evalGroupId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.answers = answers;
+        if (answers != null) {
+            this.answers = answers;
+        }
         this.evaluation = evaluation;
     }
 
