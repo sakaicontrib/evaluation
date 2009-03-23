@@ -368,21 +368,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
                 // BEGIN the complex task of rendering the evaluation items
 
-                // make the TI data structure and get the flat list of DTIs
+                // make the TI data structure
                 TemplateItemDataList tidl = new TemplateItemDataList(evaluationId, evalGroupId,
                         evaluationService, authoringService, hierarchyLogic, null);
                 Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
                 Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
-
-                // loop through all DTIs and flag items that were missing
-                if (! missingKeys.isEmpty()) {
-                    for (DataTemplateItem dti : tidl.getFlatListOfDataTemplateItems(true)) {
-                        if (missingKeys.contains(dti.getKey())) {
-                            // flag this template item for invalidated rendering if it was missing
-                            dti.templateItem.renderInvalid = true;
-                        }
-                    }
-                }
 
                 // SELECTION Code - EVALSYS-618
                 Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
@@ -523,7 +513,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             if (i % 2 == 1) {
                                 nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                             }
-
+                            if (! missingKeys.isEmpty()) {
+                                if (missingKeys.contains(dti.getKey())) {
+                                    dti.renderInvalid = true;
+                                }
+                            }
                             renderItemPrep(nodeItemsBranch, form, dti, eval);
                         }
                     }
@@ -578,14 +572,18 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             displayIncrement++;
         }
 
-        // render the item
+        // setup the render properties to send along
         Map<String, String> evalProps = new HashMap<String, String>();
         Boolean answerRequired = true;
         if (eval.getBlankResponsesAllowed().booleanValue()) {
             answerRequired = false;
         }
         evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
+        if (dti.renderInvalid) {
+            evalProps.put(ItemRenderer.EVAL_PROP_RENDER_INVALID, Boolean.TRUE.toString());
+        }
 
+        // render the item
         itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, evalProps);
 
         /* increment the item counters, if we displayed 1 item, increment by 1,

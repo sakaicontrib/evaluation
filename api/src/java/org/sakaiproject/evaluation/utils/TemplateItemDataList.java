@@ -636,6 +636,11 @@ public class TemplateItemDataList {
          * blockParentId will be null if this is not a block child
          */
         public Long blockParentId = null;
+        /**
+         * If this is set to true then this item should be rendered to indicate a validation failure
+         * has occurred for this item in the evaluation
+         */
+        public boolean renderInvalid = false;
 
         public DataTemplateItem(EvalTemplateItem templateItem, String associateType,
                 String associateId, EvalHierarchyNode node) {

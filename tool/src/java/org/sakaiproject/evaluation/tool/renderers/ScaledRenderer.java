@@ -76,7 +76,7 @@ public class ScaledRenderer implements ItemRenderer {
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
 
             UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
-            if (templateItem.renderInvalid) {
+            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
             } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
                 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
@@ -159,7 +159,7 @@ public class ScaledRenderer implements ItemRenderer {
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
             UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
-            if (templateItem.renderInvalid) {
+            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
             } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
                 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
@@ -226,7 +226,7 @@ public class ScaledRenderer implements ItemRenderer {
                 EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) ) {
 
             UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
-            if (templateItem.renderInvalid) {
+            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
             } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
                 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class

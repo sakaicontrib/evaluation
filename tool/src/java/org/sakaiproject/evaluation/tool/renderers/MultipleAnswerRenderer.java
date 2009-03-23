@@ -81,7 +81,7 @@ public class MultipleAnswerRenderer implements ItemRenderer {
             EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
-         if (templateItem.renderInvalid) {
+         if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
             fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
          } else if (safeBool(templateItem.isCompulsory())  && ! evalAnswerReqired) {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
