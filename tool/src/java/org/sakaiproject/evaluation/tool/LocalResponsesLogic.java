@@ -61,7 +61,11 @@ public class LocalResponsesLogic {
         log.debug("Creating a new response");
         EvalResponse togo = new EvalResponse(commonLogic.getCurrentUserId(), 
                 new String(), null, new Date());
-        togo.setEndTime(new Date()); // TODO - I don't think this will work
+        // added to try to avoid null answers set issues in RSF
+        if (togo.getAnswers() == null) {
+            togo.setAnswers( new HashSet<EvalAnswer>() );
+        }
+        //togo.setEndTime(new Date()); // TODO - I don't think this will work
         return togo;
     }
 
@@ -87,7 +91,7 @@ public class LocalResponsesLogic {
     public Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(Long responseId) {
         EvalResponse response = responsesLogic.getResponseById(responseId);
         Map<String, EvalAnswer> map;
-        if (response.getAnswers() == null) {
+        if (response.getAnswers() == null || response.getAnswers().isEmpty()) {
             map = new HashMap<String, EvalAnswer>();
         } else {
             map = EvalUtils.getAnswersMapByTempItemAndAssociated(response);
