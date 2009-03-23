@@ -176,6 +176,11 @@ public class XLSReportExporter implements ReportExporter {
                 String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
                         new Object[] {user.displayName});
                 setPlainStringCell(questionCat, instructorMsg );
+            } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(dti.associateType)) {
+                EvalUser user = commonLogic.getEvalUserById( dti.associateId );
+                String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                        new Object[] {user.displayName});
+                setPlainStringCell(questionCat, assistantMsg );
             } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
                 setPlainStringCell(questionCat, messageLocator
                         .getMessage("reporting.spreadsheet.course"));

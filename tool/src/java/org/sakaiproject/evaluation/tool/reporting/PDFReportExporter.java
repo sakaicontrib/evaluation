@@ -134,6 +134,11 @@ public class PDFReportExporter implements ReportExporter {
                 String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
                         new Object[] {user.displayName});
                 evalPDFReportBuilder.addSectionHeader( instructorMsg );
+            } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
+                EvalUser user = commonLogic.getEvalUserById( tig.associateId );
+                String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                        new Object[] {user.displayName});
+                evalPDFReportBuilder.addSectionHeader( assistantMsg );
             } else {
                 evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("unknown.caps"));
             }
