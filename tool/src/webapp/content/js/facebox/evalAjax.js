@@ -290,6 +290,7 @@ function submitForm(form, textarea, target, btn) {
         str.remove();
         return false;
     }
+    if(str.length>0)str.remove();
 
     //iterate through returned formToArray elements and replace input value with editor value
     for (var i = 0; i < d.length; i++) {
