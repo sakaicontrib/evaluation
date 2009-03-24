@@ -7,7 +7,7 @@ $(document).ready(function() {
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
     $(':submit').bind('click', function() {
-        if (instrSel.length != 0) {
+        if (instrSel.find('input[type=checkbox]').length != 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
                 var selectedInstrArray = new Array();
@@ -16,9 +16,11 @@ $(document).ready(function() {
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
-            }
+            }else{
+                   return  error("LECTURER");
+                }
         }
-        if (assSel.length != 0) {
+        if (assSel.find('input[type=checkbox]').length != 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
                 var selectedassistantArray = new Array();
@@ -27,13 +29,14 @@ $(document).ready(function() {
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
-            }
+            }else{
+                    return error("TUTOR");
+                }
         }
         $(this).hide();
         $('input[name=submit_process]').show();
     });
 
-    //TODO: validate selection bfore submitting.
     function error(type){
         alert('Please evaluate at least one '+type+'.');
         return false;
@@ -53,7 +56,7 @@ $(document).ready(function() {
             activeCheckbox: {background:'#eee'}
         },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
-        debug: false,
+        debug: true,
         fields: ['input', 'select', 'textarea'] //Array of fields in the form 
     }
     /**
@@ -215,11 +218,14 @@ $(document).ready(function() {
                         }
                     }
                 });
+                checkValidity(elemId, this,'');
             });
         }
-
+        var elem = that.find('select');
+        $.each(elem.find('option'), function(i, item){
+            checkValidity($(item).val(), item, i);
+        });
         that.find('input[@type=button]').bind('click', function() {
-            var elem = that.find('select:eq(0)');
             variables.set.typeOfBranch(elem);
             if (variables.typeOfSelector.one) {
                 //Working with dropdown
@@ -285,12 +291,11 @@ $(document).ready(function() {
     }
 
     function clearFieldsFor(item) {
+        item.find('div.validFail').removeClass('validFail');
         $.each(variables.options.fields, function(f, field) {
             log("Clearing all " + field.toLowerCase() + " fields.");
             item.find(field.toLowerCase()).each(function() {
                 var t = this.type, tag = this.tagName.toLowerCase();
-                log("Found type: " + t);
-                log("Found tag: " + tag);
                 if (t == 'text' || t == 'password' || tag == 'textarea')
                     this.value = '';
                 else if (t == 'checkbox' || t == 'radio')
@@ -299,6 +304,19 @@ $(document).ready(function() {
                         this.selectedIndex = -1;
             });
         });
+    }
+    function checkValidity(elemId, that, num){
+        log("Examining div with name:"+elemId);
+                if($('div[name='+elemId+']').find('div.validFail').length > 0){
+                    log("Found an invalid item. Showing div now.");
+                    $('div[name='+elemId+']').show();
+                    var t = that.type, tag = that.tagName.toLowerCase();
+                    if(t == 'checkbox'){
+                        that.checked = true;
+                    }else if(tag == 'select'){
+                        that.selectedIndex == (parseInt(num) - 1);
+                    }
+                }
     }
 
     // Debugging
