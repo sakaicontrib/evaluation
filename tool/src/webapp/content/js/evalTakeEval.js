@@ -56,7 +56,7 @@ $(document).ready(function() {
             activeCheckbox: {background:'#eee'}
         },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
-        debug: true,
+        debug: false,
         fields: ['input', 'select', 'textarea'] //Array of fields in the form 
     }
     /**
