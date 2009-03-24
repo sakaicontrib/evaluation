@@ -428,7 +428,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         boolean selectionsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
         HashMap<String, Set<String>> typeToIdsFilter = new HashMap<String, Set<String>>();
         if (selectionsEnabled) {
-            // check the selections are valid for the response and handle required items in a special way
+        	// check the selections are valid for the response and handle required items in a special way
             EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
             Map<String, String> selectionOptions = assignGroup.getSelectionOptions();
             if (! selectionOptions.isEmpty()) {

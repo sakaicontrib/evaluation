@@ -373,7 +373,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         evaluationService, authoringService, hierarchyLogic, null);
                 Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
                 Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
-
+                
                 // SELECTION Code - EVALSYS-618
                 Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
@@ -390,18 +390,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
 
-                    // FIXME seriously, I was not kidding, stop using iterators, change this to a for loop -AZ
-                    Iterator<String> selector = selectorType.keySet().iterator(); 
-                    while(selector.hasNext()){
+                    for(Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();){
                         // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
                         String selectKey = (String) selector.next();   	
                         String selectValue = (String) selectorType.get(selectKey);
                         String uiTag = "select-"+selectKey;
+                        String selectionOTP = "#{takeEvalBean.selection"+selectKey+"Ids}";
                         Set<String> selectUserIds = new HashSet<String>();
-                        // FIXME findbugs says to use {} when writing if statements
                         if(selectKey.equals(SELECT_KEY_INSTRUCTOR)){
                             selectUserIds = instructorIds;
-                        }
+                            }
                         else if(selectKey.equals(SELECT_KEY_ASSISTANT)){
                             selectUserIds = assistantIds;
                             }
@@ -410,12 +408,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                                 // nothing special to do in all case
                             } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)){
-                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-multiple:");
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(formBranch, uiTag+"-multiple:");
                                 for (String userId : selectUserIds) {
                                     EvalUser user = commonLogic.getEvalUserById( userId );
                                     UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
                                     UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
-                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box", Boolean.FALSE);
+                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box",selectionOTP,Boolean.FALSE);
                                     // we have to force the id so the JS block checking can work
                                     b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
                                     // have to force the target id so that the label for works 
@@ -430,9 +428,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                     value.add(user.userId);
                                     label.add(user.displayName);  
                                 }
-                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, uiTag+"-one:");
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(formBranch, uiTag+"-one:");
                                 UIOutput.make(showSwitchGroup, uiTag+"-one-header");
-                                UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),  "{evalUserId}");
+                                UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),selectionOTP);
                                 UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
                             } else {
                                 throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
@@ -444,11 +442,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // loop through the TIGs and handle each associated category
                 Boolean useCourseCategoryOnly = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-                    UIBranchContainer categorySectionBranch = UIBranchContainer.make(form,
+                	UIBranchContainer categorySectionBranch = UIBranchContainer.make(form,
                             "categorySection:");
-                    // only do headers if we are allowed to use categories
+                         // only do headers if we are allowed to use categories
                     if (! useCourseCategoryOnly) {
-                        // handle printing the category header
+                    	// handle printing the category header
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
                             UIMessage.make(categorySectionBranch, "categoryHeader",
                                     "takeeval.group.questions.header");
@@ -464,10 +462,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             categorySectionBranch.decorators = new DecoratorList(
                                     new UIFreeAttributeDecorator(new String[] { "name", "class" },
                                             new String[] { user.userId, "instructorBranch" }));
-                            // FIXME always compare constants to non-constants, e.g. CONSTANT.equals(variable)
-                            // FIXME I think you meant to do a different comparison here, if there is one option this will still hide it, that is not correct, if there is one option you probably should not show any selection stuff at all
-                            if (! instructorSelectionOption.equals(EvalAssignGroup.SELECTION_OPTION_ALL)
-                                    || instructorIds.size() < 2) {
+                            if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(instructorSelectionOption)
+                                    && instructorIds.size() > 1) {
                                 Map<String, String> css = new HashMap<String, String>();
                                 css.put("display", "none");
                                 categorySectionBranch.decorators.add(new UICSSDecorator(css));
@@ -482,11 +478,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                     user.displayName));
                             categorySectionBranch.decorators = new DecoratorList(
                                     new UIFreeAttributeDecorator(new String[] { "name", "class" },
-                                            new String[] { user.userId, "taBranch" }));
-                            // FIXME always compare constants to non-constants, e.g. CONSTANT.equals(variable)
-                            // FIXME I think you meant to do a different comparison here, if there is one option this will still hide it, that is not correct, if there is one option you probably should not show any selection stuff at all
-                            if (! assistantSelectionOption.equals(EvalAssignGroup.SELECTION_OPTION_ALL)
-                                    || assistantIds.size() < 2) {
+                                            new String[] { user.userId, "assistantBranch" }));
+                            if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(assistantSelectionOption)
+                                    && assistantIds.size() > 1) {
                                 Map<String, String> css = new HashMap<String, String>();
                                 css.put("display", "none");
                                 categorySectionBranch.decorators.add(new UICSSDecorator(css));

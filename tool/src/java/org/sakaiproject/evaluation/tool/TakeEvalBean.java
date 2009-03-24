@@ -16,11 +16,14 @@ package org.sakaiproject.evaluation.tool;
 
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
@@ -40,6 +43,28 @@ public class TakeEvalBean {
     public EvalEvaluation eval;
     public String evalGroupId;
     public Date startDate;
+    /**
+     * selection Id values to populate {@link TakeEvalBean.setSelectionOptions}
+     */
+    public String[] selectioninstructorIds;
+    public String[] selectionassistantIds;
+    
+    /**
+     * A {@link Map} of the selection settings to inject into Eval and set further Selection Options
+     * eg.for {@link EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR} and {@link EvalAssignGroup.SELECTION_TYPE_ASSISTANT}
+     * @return selectionOptions {@link Map}
+     */
+    private Map<String, String[]> setSelectionOptions(){
+    	Map<String, String[]> selectionOptions = new HashMap<String, String[]>();
+    	if(selectioninstructorIds!=null){
+    	selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, selectioninstructorIds);
+    	}
+    	if(selectionassistantIds!=null){
+ 	   selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, selectionassistantIds);
+    	}
+ 	   return selectionOptions; 
+    }
+
 
     private ResponseBeanLocator responseBeanLocator;
     public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
@@ -59,7 +84,7 @@ public class TakeEvalBean {
     public String submitEvaluation() {
         log.debug("submit evaluation");
         try {
-            responseBeanLocator.saveAll(eval, evalGroupId, startDate);
+            responseBeanLocator.saveAll(eval, evalGroupId, startDate,setSelectionOptions());
         } catch (ResponseSaveException e) {
             String messageKey = "unknown.caps";
             if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
