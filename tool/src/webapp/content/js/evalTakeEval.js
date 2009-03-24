@@ -2,8 +2,8 @@
  * For the takeEval and preview views
  */
 $(document).ready(function() {
-    $('div[@rel=evalInstructorSelector]').evalSelector({type:0});
-    $('div[@rel=evalTaSelector]').evalSelector({type:1});
+    $('div[@rel=evalinstructorSelector]').evalSelector({type:0});
+    $('div[@rel=evalassistantSelector]').evalSelector({type:1});
 });
 
 (function($) {
@@ -70,9 +70,9 @@ $(document).ready(function() {
         set:{
             typeOfBranch:function(that) {
                 var temp;
-                if (that.attr('name').search(/instructor/i) != -1)
+                if (that.attr('name').search(/instructor/) != -1)
                     temp = 0;
-                else if (that.attr('name').search(/assistant/i) != -1)
+                else if (that.attr('name').search(/assistant/) != -1)
                     temp = 1;
                 variables.options.type = temp;
                 log("Active type is: " + variables.get.typeOfBranch());

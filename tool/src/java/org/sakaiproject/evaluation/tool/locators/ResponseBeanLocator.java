@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -61,7 +62,7 @@ public class ResponseBeanLocator implements BeanLocator {
       return delivered;
    }
 
-   public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate) {
+   public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionSettings) {
       for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
          String key = it.next();
          EvalResponse response = (EvalResponse) delivered.get(key);
@@ -69,6 +70,12 @@ public class ResponseBeanLocator implements BeanLocator {
             // response is new
             response.setEvaluation(eval);
             response.setEvalGroupId(evalGroupId);
+          //fix selection settings
+            if(selectionSettings != null && selectionSettings.size()>0){
+            for (Entry<String, String[]> selection : selectionSettings.entrySet()) {
+            	response.setSelections(selection.getKey(), selection.getValue());
+            	}
+            }
          }
          if (startDate != null) {
             // we have a passed in start date so set the response start date
