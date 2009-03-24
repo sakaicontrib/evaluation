@@ -62,7 +62,7 @@ public class TakeEvalBean {
     	if(selectionassistantIds!=null){
  	   selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, selectionassistantIds);
     	}
- 	   return selectionOptions; 
+    	return selectionOptions; 
     }
 
 

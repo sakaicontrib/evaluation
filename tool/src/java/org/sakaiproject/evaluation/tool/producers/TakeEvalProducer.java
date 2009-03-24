@@ -413,14 +413,15 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                     EvalUser user = commonLogic.getEvalUserById( userId );
                                     UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
                                     UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
-                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box",selectionOTP,Boolean.FALSE);
+                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box",Boolean.FALSE);
                                     // we have to force the id so the JS block checking can work
                                     b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
                                     // have to force the target id so that the label for works 
                                     UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
                                     uild.targetFullID = user.userId;
                                     checkBranch.decorators = new DecoratorList( uild );
-                                } 
+                                }
+                                //form.addParameter(new UIELBinding(selectionOTP, ""));
                             } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ONE)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
@@ -451,40 +452,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             UIMessage.make(categorySectionBranch, "categoryHeader",
                                     "takeeval.group.questions.header");
                         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
-                            UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
-                                    "takeeval.instructor.questions.header",
-                                    new Object[] { user.displayName });
-                            // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
-                            // FIXME AAA this code is a duplicate of the code in BBB
-                            header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
-                                    user.displayName));
-                            categorySectionBranch.decorators = new DecoratorList(
-                                    new UIFreeAttributeDecorator(new String[] { "name", "class" },
-                                            new String[] { user.userId, "instructorBranch" }));
-                            if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(instructorSelectionOption)
-                                    && instructorIds.size() > 1) {
-                                Map<String, String> css = new HashMap<String, String>();
-                                css.put("display", "none");
-                                categorySectionBranch.decorators.add(new UICSSDecorator(css));
-                            }
+                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, instructorIds, instructorSelectionOption);
                         } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
-                            UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
-                                    "takeeval.ta.questions.header", new Object[] { user.displayName });
-                            // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
-                            // FIXME BBB this code is a duplicate of the code in AAA
-                            header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
-                                    user.displayName));
-                            categorySectionBranch.decorators = new DecoratorList(
-                                    new UIFreeAttributeDecorator(new String[] { "name", "class" },
-                                            new String[] { user.userId, "assistantBranch" }));
-                            if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(assistantSelectionOption)
-                                    && assistantIds.size() > 1) {
-                                Map<String, String> css = new HashMap<String, String>();
-                                css.put("display", "none");
-                                categorySectionBranch.decorators.add(new UICSSDecorator(css));
-                            }
+                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, assistantIds, assistantSelectionOption);
                         }
                     }
 
@@ -528,8 +498,36 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             }
         }
     }
-
+    
     /**
+     * Render each group header
+     * @param categorySectionBranch the parent container
+     * @param associateType Assistant or Instructor value
+     * @param associateId userIds for Assistants
+     * @param instructorIds userIds for Instructors
+     * @param selectionOption Selection setting for this user
+     */
+    private void showHeaders(UIBranchContainer categorySectionBranch,
+    		String associateType, String associateId, Set<String> instructorIds, String selectionOption) {
+		EvalUser user = commonLogic.getEvalUserById(associateId);
+        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
+                "takeeval."+associateType+".questions.header",
+                new Object[] { user.displayName });
+        // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
+        header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
+                user.displayName));
+        categorySectionBranch.decorators = new DecoratorList(
+                new UIFreeAttributeDecorator(new String[] { "name", "class" },
+                        new String[] { user.userId, associateType+"Branch" }));
+        if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(selectionOption)
+                && instructorIds.size() > 1) {
+            Map<String, String> css = new HashMap<String, String>();
+            css.put("display", "none");
+            categorySectionBranch.decorators.add(new UICSSDecorator(css));
+        }
+	}
+
+	/**
      * Prepare to render an item, this handles blocks correctly
      * 
      * @param parent the parent container
@@ -666,6 +664,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         bindings[2] = currAnswerOTP + "comment";
         return bindings;
     }
+
 
 
     /* (non-Javadoc)
