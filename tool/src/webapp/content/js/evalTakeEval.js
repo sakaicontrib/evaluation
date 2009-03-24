@@ -32,6 +32,12 @@ $(document).ready(function() {
         $(this).hide();
         $('input[name=submit_process]').show();
     });
+
+    //TODO: validate selection bfore submitting.
+    function error(type){
+        alert('Please evaluate at least one '+type+'.');
+        return false;
+    }
 });
 
 (function($) {
