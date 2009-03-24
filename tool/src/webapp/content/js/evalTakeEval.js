@@ -2,8 +2,36 @@
  * For the takeEval and preview views
  */
 $(document).ready(function() {
-    $('div[@rel=evalinstructorSelector]').evalSelector({type:0});
-    $('div[@rel=evalassistantSelector]').evalSelector({type:1});
+    var instrSel = $('div[@rel=evalinstructorSelector]');
+    var assSel = $('div[@rel=evalassistantSelector]');
+    instrSel.evalSelector({type:0});
+    assSel.evalSelector({type:1});
+    $(':submit').bind('click', function() {
+        if (instrSel.length != 0) {
+            var selectedInstrDomArray = instrSel.find('input:checked').get();
+            if (selectedInstrDomArray.length > 0) {
+                var selectedInstrArray = new Array();
+                $.each(selectedInstrDomArray, function(i, item) {
+                    selectedInstrArray.push($(item).attr('id'));
+                });
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
+            }
+        }
+        if (assSel.length != 0) {
+            var selectedassistantDomArray = assSel.find('input:checked').get();
+            if (selectedassistantDomArray.length > 0) {
+                var selectedassistantArray = new Array();
+                $.each(selectedassistantDomArray, function(i, item) {
+                    selectedassistantArray.push($(item).attr('id'));
+                });
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
+            }
+        }
+        $(this).hide();
+        $('input[name=submit_process]').show();
+    });
 });
 
 (function($) {
@@ -20,7 +48,7 @@ $(document).ready(function() {
         },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
         debug: false,
-        fields: ['input', 'select', 'textarea'] //Array of fields in the form
+        fields: ['input', 'select', 'textarea'] //Array of fields in the form 
     }
     /**
      * Private methods and variables
@@ -70,9 +98,9 @@ $(document).ready(function() {
         set:{
             typeOfBranch:function(that) {
                 var temp;
-                if (that.attr('name').search(/instructor/) != -1)
+                if (that.attr('name').search(/instructor/i) != -1)
                     temp = 0;
-                else if (that.attr('name').search(/assistant/) != -1)
+                else if (that.attr('name').search(/assistant/i) != -1)
                     temp = 1;
                 variables.options.type = temp;
                 log("Active type is: " + variables.get.typeOfBranch());
