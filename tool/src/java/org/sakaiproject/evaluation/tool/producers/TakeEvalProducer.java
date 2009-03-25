@@ -275,7 +275,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             }
 
             if (userCanAccess) {
-                // check if we had a failure during a previous submit and get the missingKeys out if that was the failure
+                // check if we had a failure during a previous submit and get the missingKeys out if there are some
                 Set<String> missingKeys = new HashSet<String>();
                 if (messages.isError() && messages.size() > 0) {
                     for (int i = 0; i < messages.size(); i++) {
@@ -283,12 +283,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         Exception e = message.exception;
                         if (e instanceof ResponseSaveException) {
                             ResponseSaveException rse = (ResponseSaveException) e;
-                            if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(rse.type)) {
-                                if (rse.missingItemAnswerKeys != null
-                                        && rse.missingItemAnswerKeys.length > 0) {
-                                    for (int j = 0; j < rse.missingItemAnswerKeys.length; j++) {
-                                        missingKeys.add(rse.missingItemAnswerKeys[j]);
-                                    }
+                            if (rse.missingItemAnswerKeys != null
+                                    && rse.missingItemAnswerKeys.length > 0) {
+                                for (int j = 0; j < rse.missingItemAnswerKeys.length; j++) {
+                                    missingKeys.add(rse.missingItemAnswerKeys[j]);
                                 }
                             }
                             break;

@@ -639,6 +639,21 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 evaluationActiveThree, new Date() );
         responseCompulsory.setEndTime( new Date() );
         responseCompulsory.setAnswers( new HashSet<EvalAnswer>() );
+
+        // first try with a blank one to make sure it fails
+        try {
+            deliveryService.saveResponse( responseCompulsory, EvalTestDataLoad.USER_ID);
+            fail("Should have thrown exception");
+        } catch (ResponseSaveException e) {
+            assertNotNull(e);
+            assertEquals(ResponseSaveException.TYPE_BLANK_RESPONSE, e.type);
+            assertEquals(1, e.missingItemAnswerKeys.length);
+            String aKey = TemplateItemUtils.makeTemplateItemAnswerKey(etdl.templateItem1U.getId(), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalTestDataLoad.MAINT_USER_ID);
+            assertEquals(aKey, e.missingItemAnswerKeys[0]);
+        }
+        assertNull(responseCompulsory.getId());
+
+        // now try with one answer that is not compulsory (still fail)
         EvalAnswer CA_3_3 = new EvalAnswer( responseCompulsory, etdl.templateItem3U, etdl.item3, null, null, 2 );
         responseCompulsory.getAnswers().add( CA_3_3 );
         try {
