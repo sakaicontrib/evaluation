@@ -593,7 +593,7 @@ public class EvalUtils {
     }
 
     /**
-     * Check if a string is blank,
+     * Check if a string is blank (null, empty, or consisting of whitespace only),
      * if blank then return true
      * 
      * @param value any string
@@ -601,7 +601,7 @@ public class EvalUtils {
      */
     public static boolean isBlank(String value) {
         boolean blank = false;
-        if (value == null) {
+        if (value == null || "".equals(value)) {
             blank = true;
         } else {
             if (value.trim().length() == 0) {

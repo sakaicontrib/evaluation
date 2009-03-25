@@ -16,14 +16,8 @@ package org.sakaiproject.evaluation.tool;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -39,8 +33,6 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class LocalResponsesLogic {
-
-    private static Log log = LogFactory.getLog(LocalResponsesLogic.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -58,7 +50,6 @@ public class LocalResponsesLogic {
      * @return the new response for the current user
      */
     public EvalResponse newResponse() {
-        log.debug("Creating a new response");
         EvalResponse togo = new EvalResponse(commonLogic.getCurrentUserId(), 
                 new String(), null, new Date());
         //togo.setEndTime(new Date()); // TODO - I don't think this will work
@@ -71,7 +62,6 @@ public class LocalResponsesLogic {
      * @return a new answer
      */
     public EvalAnswer newAnswer(EvalResponse response) {
-        log.debug("new answer, Response: " + response.getId());
         EvalAnswer answer = new EvalAnswer(response, null, null);
         return answer;
     }
@@ -115,8 +105,6 @@ public class LocalResponsesLogic {
      */
     public EvalResponse getResponseById(String responseIdString) {
         Long responseId = Long.valueOf(responseIdString);
-        log.info("attempting to fetch response with id:"+responseId);
-
         EvalResponse response = responsesLogic.getResponseById(responseId);
         return response;	       
     }
@@ -126,44 +114,6 @@ public class LocalResponsesLogic {
      * @param response
      */
     public void saveResponse(EvalResponse response) {
-        log.debug("Response: " + response.getId());
-        // strip out answers with no value set
-        Set<EvalAnswer> answers = response.getAnswers();
-        Set<EvalAnswer> newAnswers = new HashSet<EvalAnswer>();
-        for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
-            EvalAnswer answer = it.next();
-
-            // we need to encode the data in the MA array so it can be stored
-            answer.setMultiAnswerCode(EvalUtils.encodeMultipleAnswers(answer.multipleAnswers));
-
-            // need to encode the NA value
-            EvalUtils.encodeAnswerNA(answer);
-
-            if (answer.getNumeric() == null &&
-                    answer.getText() == null &&
-                    answer.getMultiAnswerCode() == null) {
-                // all parts are null so ignore this answer
-            } else {
-                // some parts are not null so do the fixup and store the answer before saving
-                /*
-                 * If the numeric and text fields are left null, batch update will fail when several answers of different types are modified
-                 * This is the error that is triggered within the sakai generic dao: java.sql.BatchUpdateException: Driver can not
-                 * re-execute prepared statement when a parameter has been changed from a streaming type to an intrinsic data type without
-                 * calling clearParameters() first.
-                 */
-                if (answer.getNumeric() == null) {
-                    answer.setNumeric(EvalConstants.NO_NUMERIC_ANSWER);
-                }
-                if (answer.getText() == null) {
-                    answer.setText(EvalConstants.NO_TEXT_ANSWER);
-                }
-                if (answer.getMultiAnswerCode() == null) {
-                    answer.setMultiAnswerCode(EvalConstants.NO_MULTIPLE_ANSWER);
-                }
-                newAnswers.add(answer);
-            }
-        }
-        response.setAnswers(newAnswers);
         responsesLogic.saveResponse(response, commonLogic.getCurrentUserId());
     }
 

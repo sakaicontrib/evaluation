@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -123,7 +124,45 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
             // check to make sure answers are valid for this evaluation
             if (response.getAnswers() == null) {
-                response.setAnswers(new HashSet<EvalAnswer>());
+                response.setAnswers( new HashSet<EvalAnswer>(0) );
+            } else {
+                // cleanup the answers before saving them, this removes empty answers and may end up removing all answers
+                // strip out answers with no value set
+                Set<EvalAnswer> answers = response.getAnswers();
+                for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
+                    EvalAnswer answer = it.next();
+
+                    // we need to encode the data in the MA array so it can be stored
+                    answer.setMultiAnswerCode(EvalUtils.encodeMultipleAnswers(answer.multipleAnswers));
+
+                    // need to encode the NA value
+                    EvalUtils.encodeAnswerNA(answer);
+
+                    // answers cleanup
+                    if (answer.getNumeric() == null &&
+                            EvalUtils.isBlank(answer.getText()) &&
+                            answer.getMultiAnswerCode() == null) {
+                        // all parts are null so ignore this answer
+                        it.remove();
+                    } else {
+                        // some parts are not null so do the fixup and store the answer before saving
+                        /*
+                         * If the numeric and text fields are left null, batch update will fail when several answers of different types are modified
+                         * This is the error that is triggered within the sakai generic dao: java.sql.BatchUpdateException: Driver can not
+                         * re-execute prepared statement when a parameter has been changed from a streaming type to an intrinsic data type without
+                         * calling clearParameters() first.
+                         */
+                        if (answer.getNumeric() == null) {
+                            answer.setNumeric(EvalConstants.NO_NUMERIC_ANSWER);
+                        }
+                        if (EvalUtils.isBlank(answer.getText())) {
+                            answer.setText(EvalConstants.NO_TEXT_ANSWER);
+                        }
+                        if (answer.getMultiAnswerCode() == null) {
+                            answer.setMultiAnswerCode(EvalConstants.NO_MULTIPLE_ANSWER);
+                        }
+                    }
+                }
             }
             checkAnswersValidForEval(response, responseComplete);
 
