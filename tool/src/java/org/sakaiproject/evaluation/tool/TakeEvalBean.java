@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +67,6 @@ public class TakeEvalBean {
         return selectionOptions == null ? new HashMap<String, String[]>(0) : selectionOptions;
     }
 
-
     private ResponseBeanLocator responseBeanLocator;
     public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
         this.responseBeanLocator = responseBeanLocator;
@@ -87,7 +85,7 @@ public class TakeEvalBean {
     public String submitEvaluation() {
         log.debug("submit evaluation");
         try {
-            responseBeanLocator.saveAll(eval, evalGroupId, startDate,setSelectionOptions());
+            responseBeanLocator.saveAll(eval, evalGroupId, startDate, setSelectionOptions());
         } catch (ResponseSaveException e) {
             String messageKey = "unknown.caps";
             if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
@@ -99,11 +97,11 @@ public class TakeEvalBean {
             } else {
                 messageKey = "takeeval.user.cannot.save.reponse";
             }
-            messages.addMessage( new TargettedMessage(messageKey, e) );
+            messages.addMessage(new TargettedMessage(messageKey, e));
             return "failure";
         }
-        messages.addMessage( new TargettedMessage("evaluations.take.message",
-                new Object[] { eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) }, 
+        messages.addMessage(new TargettedMessage("evaluations.take.message", new Object[] {
+                eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) },
                 TargettedMessage.SEVERITY_INFO));
         return "success";
     }

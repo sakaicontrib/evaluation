@@ -33,58 +33,58 @@ import uk.org.ponder.beanutil.BeanLocator;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ResponseBeanLocator implements BeanLocator {
-   public static final String NEW_PREFIX = "new";
-   public static String NEW_1 = NEW_PREFIX +"1";
 
-   private LocalResponsesLogic localResponsesLogic;
-   public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
-      this.localResponsesLogic = localResponsesLogic;
-   }
+    public static final String NEW_PREFIX = "new";
+    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private Map<String, EvalResponse> delivered = new HashMap<String, EvalResponse>();
+    private LocalResponsesLogic localResponsesLogic;
+    public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
+        this.localResponsesLogic = localResponsesLogic;
+    }
 
-   public Object locateBean(String path) {
-      EvalResponse togo = delivered.get(path);
-      if (togo == null) {
-         if (path.startsWith(NEW_PREFIX)) {
-            togo = localResponsesLogic.newResponse();
-         }
-         else {
-            togo = localResponsesLogic.getResponseById(path);
-         }
-         delivered.put(path, togo);
-      }
-      return togo;
-   }
+    private Map<String, EvalResponse> delivered = new HashMap<String, EvalResponse>();
 
-   /** Package-protected access to "dead" list of delivered beans */
-   Map<String, EvalResponse> getDeliveredBeans() {
-      return delivered;
-   }
-
-   public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionSettings) {
-      for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-         String key = it.next();
-         EvalResponse response = (EvalResponse) delivered.get(key);
-         if (response.getId() == null) {
-            // response is new
-            response.setEvaluation(eval);
-            response.setEvalGroupId(evalGroupId);
-          //fix selection settings
-            if(selectionSettings != null && selectionSettings.size()>0){
-            for (Entry<String, String[]> selection : selectionSettings.entrySet()) {
-            	response.setSelections(selection.getKey(), selection.getValue());
-            	}
+    public Object locateBean(String path) {
+        EvalResponse togo = delivered.get(path);
+        if (togo == null) {
+            if (path.startsWith(NEW_PREFIX)) {
+                togo = localResponsesLogic.newResponse();
+            } else {
+                togo = localResponsesLogic.getResponseById(path);
             }
-         }
-         if (startDate != null) {
-            // we have a passed in start date so set the response start date
-            response.setStartTime(startDate);
-         }
-         // saving so set the endTime to now
-         response.setEndTime(new Date());
-         localResponsesLogic.saveResponse(response);
-      }
-   }
+            delivered.put(path, togo);
+        }
+        return togo;
+    }
+
+    /** Package-protected access to "dead" list of delivered beans */
+    Map<String, EvalResponse> getDeliveredBeans() {
+        return delivered;
+    }
+
+    public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionSettings) {
+        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+            String key = it.next();
+            EvalResponse response = (EvalResponse) delivered.get(key);
+            if (response.getId() == null) {
+                // response is new
+                response.setEvaluation(eval);
+                response.setEvalGroupId(evalGroupId);
+                // fix selection settings
+                if (selectionSettings != null && selectionSettings.size() > 0) {
+                    for (Entry<String, String[]> selection : selectionSettings.entrySet()) {
+                        response.setSelections(selection.getKey(), selection.getValue());
+                    }
+                }
+            }
+            if (startDate != null) {
+                // we have a passed in start date so set the response start date
+                response.setStartTime(startDate);
+            }
+            // saving so set the endTime to now
+            response.setEndTime(new Date());
+            localResponsesLogic.saveResponse(response);
+        }
+    }
 
 }
