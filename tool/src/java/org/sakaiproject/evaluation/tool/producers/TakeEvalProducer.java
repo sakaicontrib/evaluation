@@ -375,67 +375,86 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
                 
                 // SELECTION Code - EVALSYS-618
-                Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+                Boolean selectionsEnabled = (Boolean) evalSettings
+                        .get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
-                    EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
+                    EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(
+                            evaluationId, evalGroupId);
                     Map<String, String> selectorType = new HashMap<String, String>();
-                    instructorSelectionOption = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
+                    instructorSelectionOption = EvalUtils.getSelectionSetting(
+                            EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
                     selectorType.put(SELECT_KEY_INSTRUCTOR, instructorSelectionOption);
-                    Boolean assistantsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                    Boolean assistantsEnabled = (Boolean) evalSettings
+                            .get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                     if (assistantsEnabled) {
-                        assistantSelectionOption = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
+                        assistantSelectionOption = EvalUtils.getSelectionSetting(
+                                EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
 
-                    for(Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();){
+                    for (Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();) {
                         // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
-                        String selectKey = (String) selector.next();   	
+                        String selectKey = (String) selector.next();
                         String selectValue = (String) selectorType.get(selectKey);
-                        String uiTag = "select-"+selectKey;
-                        String selectionOTP = "#{takeEvalBean.selection"+selectKey+"Ids}";
+                        String uiTag = "select-" + selectKey;
+                        String selectionOTP = "#{takeEvalBean.selection" + selectKey + "Ids}";
                         Set<String> selectUserIds = new HashSet<String>();
-                        if(selectKey.equals(SELECT_KEY_INSTRUCTOR)){
+                        if (selectKey.equals(SELECT_KEY_INSTRUCTOR)) {
                             selectUserIds = instructorIds;
-                            }
-                        else if(selectKey.equals(SELECT_KEY_ASSISTANT)){
+                        } else if (selectKey.equals(SELECT_KEY_ASSISTANT)) {
                             selectUserIds = assistantIds;
-                            }
-                        //We render the selection controls if there are at least two Instructors/TAs
-                        if (selectionsEnabled && selectUserIds.size( ) >1) {
+                        }
+                        // We render the selection controls if there are at least two
+                        // Instructors/TAs
+                        if (selectionsEnabled && selectUserIds.size() > 1) {
+                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
                             if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                                 // nothing special to do in all case
-                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)){
-                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(formBranch, uiTag+"-multiple:");
+                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
+                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)) {
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(
+                                        formBranch, uiTag + "-multiple:");
                                 for (String userId : selectUserIds) {
-                                    EvalUser user = commonLogic.getEvalUserById( userId );
-                                    UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag+"-multiple-row:");
-                                    UIOutput checkBranch = UIOutput.make(row, uiTag+"-multiple-label", user.displayName);	                        
-                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag+"-multiple-box",Boolean.FALSE);
+                                    EvalUser user = commonLogic.getEvalUserById(userId);
+                                    UIBranchContainer row = UIBranchContainer.make(showSwitchGroup,
+                                            uiTag + "-multiple-row:");
+                                    UIOutput checkBranch = UIOutput.make(row, uiTag
+                                            + "-multiple-label", user.displayName);
+                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag
+                                            + "-multiple-box", Boolean.FALSE);
                                     // we have to force the id so the JS block checking can work
-                                    b.decorators = new DecoratorList( new UIIDStrategyDecorator(user.userId) );
-                                    // have to force the target id so that the label for works 
+                                    b.decorators = new DecoratorList(new UIIDStrategyDecorator(
+                                            user.userId));
+                                    // have to force the target id so that the label for works
                                     UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
                                     uild.targetFullID = user.userId;
-                                    checkBranch.decorators = new DecoratorList( uild );
+                                    checkBranch.decorators = new DecoratorList(uild);
                                 }
-                                //form.addParameter(new UIELBinding(selectionOTP, ""));
+                                // form.addParameter(new UIELBinding(selectionOTP, ""));
+                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
                             } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ONE)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
                                 value.add("default");
-                                label.add("--- Select ---");  // This should get the string equivalent of:"takeeval.selection.dropdown"in the bundle
-                                for(EvalUser user: commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]))){
+                                // This should get the string equivalent of:"takeeval.selection.dropdown"in the bundle
+                                label.add("--- Select ---"); // FIXME not i18n, this should use i18n string
+                                List<EvalUser> users = commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]));
+                                for (EvalUser user : users) {
                                     value.add(user.userId);
-                                    label.add(user.displayName);  
+                                    label.add(user.displayName);
                                 }
-                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(formBranch, uiTag+"-one:");
-                                UIOutput.make(showSwitchGroup, uiTag+"-one-header");
-                                UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),selectionOTP);
-                               } else {
-                                throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
+                                UIBranchContainer showSwitchGroup = UIBranchContainer.make(
+                                        formBranch, uiTag + "-one:");
+                                UIOutput.make(showSwitchGroup, uiTag + "-one-header");
+                                UISelect.make(showSwitchGroup, uiTag + "-one-list", value
+                                        .toArray(new String[value.size()]), label
+                                        .toArray(new String[label.size()]), selectionOTP);
+                            } else {
+                                throw new IllegalStateException("Invalid selection option ("
+                                        + selectValue + "): do not know how to handle this.");
                             }
                         }
                     }
@@ -444,14 +463,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // loop through the TIGs and handle each associated category
                 Boolean useCourseCategoryOnly = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-                	UIBranchContainer categorySectionBranch = UIBranchContainer.make(form,
-                            "categorySection:");
-                         // only do headers if we are allowed to use categories
+                	UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
+                    // only do headers if we are allowed to use categories
                     if (! useCourseCategoryOnly) {
                     	// handle printing the category header
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
-                            UIMessage.make(categorySectionBranch, "categoryHeader",
-                                    "takeeval.group.questions.header");
+                            UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                         	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, instructorIds, instructorSelectionOption);
                         } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
