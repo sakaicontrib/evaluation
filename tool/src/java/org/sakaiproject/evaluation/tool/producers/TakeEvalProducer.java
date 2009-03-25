@@ -425,6 +425,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ONE)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
+                                value.add("default");
+                                label.add("--- Select ---");  // This should get the string equivalent of:"takeeval.selection.dropdown"in the bundle
                                 for(EvalUser user: commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]))){
                                     value.add(user.userId);
                                     label.add(user.displayName);  
@@ -432,8 +434,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(formBranch, uiTag+"-one:");
                                 UIOutput.make(showSwitchGroup, uiTag+"-one-header");
                                 UISelect.make(showSwitchGroup, uiTag+"-one-list", value.toArray(new String[value.size()]), label.toArray(new String[label.size()]),selectionOTP);
-                                UIMessage.make(showSwitchGroup, "select-button", "takeeval.selection.button");
-                            } else {
+                               } else {
                                 throw new IllegalStateException("Invalid selection option ("+selectValue+"): do not know how to handle this.");
                             }
                         }
