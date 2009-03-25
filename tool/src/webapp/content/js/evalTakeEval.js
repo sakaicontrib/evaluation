@@ -10,6 +10,9 @@ $(document).ready(function() {
         if (instrSel.find('input[type=checkbox]').length != 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
+                instrSel.find("fieldset").css({
+            background:'#fff'
+        });
                 var selectedInstrArray = new Array();
                 $.each(selectedInstrDomArray, function(i, item) {
                     selectedInstrArray.push($(item).attr('id'));
@@ -17,12 +20,15 @@ $(document).ready(function() {
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
             }else{
-                   return  error("LECTURER");
+                   return  error("LECTURER", instrSel);
                 }
         }
         if (assSel.find('input[type=checkbox]').length != 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
+                assSel.find("fieldset").css({
+            background:'#fff'
+        });
                 var selectedassistantArray = new Array();
                 $.each(selectedassistantDomArray, function(i, item) {
                     selectedassistantArray.push($(item).attr('id'));
@@ -30,15 +36,48 @@ $(document).ready(function() {
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
             }else{
-                    return error("TUTOR");
+                    return error("TUTOR", assSel);
                 }
+        }
+        if (assSel.find('select').length != 0) {
+            var valid = true;
+           assSel.find('select').each(function(){
+               if(this.selectedIndex == 0){
+                    valid = false;
+               }
+           });
+            if(!valid){
+                 return error("TUTOR", assSel);
+            }else{
+                assSel.find("fieldset").css({
+            background:'#fff'
+        });
+            }
+        }
+        if (instrSel.find('select').length != 0) {
+            var valid = true;
+           instrSel.find('select').each(function(){
+               if(this.selectedIndex == 0){
+                    valid = false;
+               }
+           });
+            if(!valid){
+               return  error("LECTURER", instrSel);
+            } else{
+                instrSel.find("fieldset").css({
+            background:'#fff'
+        });
+            }
         }
         $(this).hide();
         $('input[name=submit_process]').show();
     });
 
-    function error(type){
+    function error(type, that){
         alert('Please evaluate at least one '+type+'.');
+        that.find("fieldset").css({
+            background:'#fee'
+        });
         return false;
     }
 });
@@ -225,7 +264,7 @@ $(document).ready(function() {
         $.each(elem.find('option'), function(i, item){
             checkValidity($(item).val(), item, i);
         });
-        that.find('input[@type=button]').bind('click', function() {
+        elem.bind('change', function() {
             variables.set.typeOfBranch(elem);
             if (variables.typeOfSelector.one) {
                 //Working with dropdown
