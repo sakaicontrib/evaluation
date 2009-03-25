@@ -357,6 +357,7 @@ tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/jquery.charcounter.js -text
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/.project -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/interface/accordion.js -text svn_keywords=Date+Revision+Author+URL+Id
