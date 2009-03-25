@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1451,33 +1452,15 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     // COPYING
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#copyScales(java.lang.Long[], java.lang.String, java.lang.String, boolean)
+     */
     public Long[] copyScales(Long[] scaleIds, String title, String ownerId, boolean hidden) {
-        if (ownerId == null || ownerId.length() == 0) {
-            throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
-        }
         if (scaleIds == null || scaleIds.length == 0) {
             throw new IllegalArgumentException("Invalid scaleIds array, cannot be null or empty");         
         }
 
-        List<EvalScale> scales = dao.findBySearch(EvalScale.class, new Search("id", scaleIds));
-        if (scales.size() != scaleIds.length) {
-            throw new IllegalArgumentException("Invalid scaleIds in the scaleIds array: " + scaleIds);
-        }
-
-        Set<EvalScale> copiedScales = new HashSet<EvalScale>();
-        for (EvalScale original : scales) {
-            String newTitle = title;
-            if (newTitle == null || newTitle.length() == 0) {
-                newTitle = original.getTitle() + " (copy)";
-            }
-            EvalScale copy = new EvalScale(ownerId, newTitle, original.getMode(), EvalConstants.SHARING_PRIVATE, 
-                    false, null, original.getIdeal(), ArrayUtils.copy(original.getOptions()), 
-                    false);
-            copy.setCopyOf(original.getId());
-            copy.setHidden(hidden);
-            copiedScales.add(copy);
-        }
-        dao.saveSet(copiedScales);
+        Set<EvalScale> copiedScales = copyScalesInternal(scaleIds, title, ownerId, hidden);
 
         Long[] copiedIds = new Long[copiedScales.size()];
         int counter = 0;
@@ -1488,43 +1471,50 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         return copiedIds;
     }
 
-    public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden, boolean includeChildren) {
+    /**
+     * Internal method: allows us to get to the set of all copies
+     * @return the set of copies of the scales
+     */
+    private Set<EvalScale> copyScalesInternal(Long[] scaleIds, String title, String ownerId,
+            boolean hidden) {
         if (ownerId == null || ownerId.length() == 0) {
             throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
         }
+
+        Set<EvalScale> copiedScales = new HashSet<EvalScale>();
+        if (scaleIds != null && scaleIds.length > 0) {
+            scaleIds = ArrayUtils.unique(scaleIds);
+            List<EvalScale> scales = dao.findBySearch(EvalScale.class, new Search("id", scaleIds));
+            if (scales.size() != scaleIds.length) {
+                throw new IllegalArgumentException("Invalid scaleIds in the scaleIds array: " + scaleIds);
+            }
+
+            for (EvalScale original : scales) {
+                String newTitle = title;
+                if (newTitle == null || newTitle.length() == 0) {
+                    newTitle = original.getTitle() + " (copy)";
+                }
+                EvalScale copy = new EvalScale(ownerId, newTitle, original.getMode(), EvalConstants.SHARING_PRIVATE, 
+                        false, null, original.getIdeal(), ArrayUtils.copy(original.getOptions()), 
+                        false);
+                copy.setCopyOf(original.getId());
+                copy.setHidden(hidden);
+                copiedScales.add(copy);
+            }
+            dao.saveSet(copiedScales);
+        }
+        return copiedScales;
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#copyItems(java.lang.Long[], java.lang.String, boolean, boolean)
+     */
+    public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden, boolean includeChildren) {
         if (itemIds == null || itemIds.length == 0) {
             throw new IllegalArgumentException("Invalid itemIds array, cannot be null or empty");         
         }
 
-        List<EvalItem> items = dao.findBySearch(EvalItem.class, new Search("id", itemIds));
-        if (items.size() != itemIds.length) {
-            throw new IllegalArgumentException("Invalid itemIds in array: " + itemIds);
-        }
-
-        Set<EvalItem> copiedItems = new HashSet<EvalItem>();
-        for (EvalItem original : items) {
-            EvalItem copy = new EvalItem(ownerId, original.getItemText(), original.getDescription(), EvalConstants.SHARING_PRIVATE,
-                    original.getClassification(), false, null, null, null, original.getUsesNA(), original.getUsesComment(),
-                    false, original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
-            if (original.getScale() != null) {
-                // This could be more efficient if we stored up the scaleIds and mapped them 
-                // and then copied them all at once and then reassigned them but the code would be a lot harder to read
-                EvalScale scale = null;
-                if (includeChildren) {
-                    // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
-                    Long[] scaleIds = copyScales(new Long[] {original.getScale().getId()}, null, ownerId, true);
-                    scale = getScaleById(scaleIds[0]);
-                } else {
-                    scale = original.getScale();
-                }
-                copy.setScale(scale);
-            }
-            copy.setCopyOf(original.getId());
-            copy.setHidden(hidden);
-            copy.setCompulsory(original.isCompulsory());
-            copiedItems.add(copy);
-        }
-        dao.saveSet(copiedItems);
+        Set<EvalItem> copiedItems = copyItemsInternal(itemIds, ownerId, hidden, includeChildren);
 
         Long[] copiedIds = new Long[copiedItems.size()];
         int counter = 0;
@@ -1535,6 +1525,71 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         return copiedIds;
     }
 
+    /**
+     * Internal method: allows us to get to the set of all copies
+     * @return the set of copies of the items
+     */
+    private Set<EvalItem> copyItemsInternal(Long[] itemIds, String ownerId, boolean hidden,
+            boolean includeChildren) {
+        if (ownerId == null || ownerId.length() == 0) {
+            throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
+        }
+
+        Set<EvalItem> copiedItems = new HashSet<EvalItem>();
+        if (itemIds != null && itemIds.length > 0) {
+            itemIds = ArrayUtils.unique(itemIds);
+            List<EvalItem> items = dao.findBySearch(EvalItem.class, new Search("id", itemIds));
+            if (items.size() != itemIds.length) {
+                throw new IllegalArgumentException("Invalid itemIds in array: " + itemIds);
+            }
+
+            for (EvalItem original : items) {
+                EvalItem copy = new EvalItem(ownerId, original.getItemText(), original.getDescription(), EvalConstants.SHARING_PRIVATE,
+                        original.getClassification(), false, null, original.getScale(), null, original.getUsesNA(), original.getUsesComment(),
+                        false, original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
+                // NOTE: no longer copying scales here - EVALSYS-689
+                copy.setCopyOf(original.getId());
+                copy.setHidden(hidden);
+                copy.setCompulsory(original.isCompulsory());
+                copiedItems.add(copy);
+            }
+
+            if (includeChildren) {
+                // make a copy of all Scales and put them into the Items to replace the originals
+                HashSet<Long> scaleIdSet = new HashSet<Long>();
+                for (EvalItem item : copiedItems) {
+                    if (item.getScale() != null) {
+                        Long scaleId = item.getScale().getId();
+                        scaleIdSet.add(scaleId);
+                    }
+                }
+                Long[] scaleIds = scaleIdSet.toArray(new Long[scaleIdSet.size()]);
+                // do the scales copy
+                // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
+                Set<EvalScale> copiedScales = copyScalesInternal(scaleIds, null, ownerId, true);
+                HashMap<Long, EvalScale> originalIdToCopy = new HashMap<Long, EvalScale>(copiedItems.size());
+                for (EvalScale scale : copiedScales) {
+                    originalIdToCopy.put(scale.getCopyOf(), scale);
+                }
+                // insert the copied items into the copied template items (update the foreign keys when we save)
+                for (EvalItem item : copiedItems) {
+                    if (item.getScale() != null) {
+                        Long scaleId = item.getScale().getId(); // original id
+                        EvalScale copy = originalIdToCopy.get(scaleId);
+                        if (copy != null) {
+                            item.setScale(copy);
+                        }
+                    }
+                }
+            }
+            dao.saveSet(copiedItems);
+        }
+        return copiedItems;
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, java.lang.Long, boolean)
+     */
     public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, Long toTemplateId, boolean includeChildren) {
         if (ownerId == null || ownerId.length() == 0) {
             throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");  
@@ -1543,6 +1598,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             throw new IllegalArgumentException("Invalid templateItemIds array, cannot be null or empty");
         }
 
+        templateItemIds = ArrayUtils.unique(templateItemIds);
         EvalTemplate toTemplate = null;
         if (toTemplateId != null) {
             toTemplate = getTemplateById(toTemplateId);
@@ -1583,61 +1639,116 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             itemCount = getItemCountForTemplate(toTemplate.getId()) + 1;
         }
 
+        /* http://bugs.sakaiproject.org/jira/browse/EVALSYS-689
+         * need to track the copied items and scales to avoid copying them more than once
+         */
+        LinkedHashSet<EvalTemplateItem> copiedTemplateItems = new LinkedHashSet<EvalTemplateItem>(templateItemsList.size());
+
+        // shallow copy all block parents first so we can know their new IDs, then later we will update them
+        List<EvalTemplateItem> parentItems = TemplateItemUtils.getParentItems(templateItemsList);
+        HashMap<Long, EvalTemplateItem> parentIdToCopy = new HashMap<Long, EvalTemplateItem>(parentItems.size());
+        if (! parentItems.isEmpty()) {
+            for (EvalTemplateItem original : parentItems) {
+                Long originalBlockParentId = original.getId();
+                List<EvalTemplateItem> childItems = TemplateItemUtils.getChildItems(templateItemsList, originalBlockParentId);
+                if (childItems.size() > 0) {
+                    // only copy this if it has children, lone parents do not get copied
+                    EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden);
+                    parentIdToCopy.put(originalBlockParentId, copy);
+                }
+            }
+            HashSet<EvalTemplateItem> parentItemsToSave = new HashSet<EvalTemplateItem>( parentIdToCopy.values() );
+            dao.saveSet( parentItemsToSave );
+        }
+
         // check for block items
         List<EvalTemplateItem> nonChildItems = TemplateItemUtils.getNonChildItems(templateItemsList);
 
         // iterate though in display order and copy the template items
-        int counter = 0;
         int displayOrder = 0;
-        Long[] copiedIds = new Long[templateItemsList.size()];
         for (EvalTemplateItem original : nonChildItems) {
             templateItemsList.remove(original); // take this out of the list
             if (TemplateItemUtils.isBlockParent(original)) {
                 // this is a block parent so copy it and its children
                 Long originalBlockParentId = original.getId();
-                List<EvalTemplateItem> childItems = TemplateItemUtils.getChildItems(templateItemsList, originalBlockParentId);
-                if (childItems.size() > 0) {
-                    // copy and save the parent only if there are children in this set of items
-                    EvalTemplateItem copyParent = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+                if (parentIdToCopy.containsKey(originalBlockParentId)) {
+                    EvalTemplateItem copyParent = parentIdToCopy.get(originalBlockParentId);
                     copyParent.setDisplayOrder(itemCount + displayOrder); // fix up display order
                     copyParent.setBlockId(null);
                     copyParent.setBlockParent(true);
-                    dao.save(copyParent);
-                    copiedIds[counter++] = copyParent.getId();
+                    //dao.save(copyParent);
+                    copiedTemplateItems.add(copyParent);
                     Long blockParentId = copyParent.getId();
 
                     // loop through and copy all the children and assign them to the parent
+                    List<EvalTemplateItem> childItems = TemplateItemUtils.getChildItems(templateItemsList, originalBlockParentId);
                     for (int j = 0; j < childItems.size(); j++) {
                         EvalTemplateItem child = childItems.get(j);
                         templateItemsList.remove(child); // take this out of the list
                         // copy the child item
-                        EvalTemplateItem copy = copyTemplateItem(child, toTemplate, ownerId, hidden, includeChildren);
+                        EvalTemplateItem copy = copyTemplateItem(child, toTemplate, ownerId, hidden);
                         copy.setDisplayOrder(j); // fix up display order
                         copy.setBlockId(blockParentId);
                         copy.setBlockParent(false);
-                        dao.save(copy);
-                        copiedIds[counter++] = copy.getId();
+                        //dao.save(copy);
+                        copiedTemplateItems.add(copy);
                     }
                 }
             } else {
                 // not a block parent
-                EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+                EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden);
                 copy.setDisplayOrder(itemCount + displayOrder); // fix up display order
-                dao.save(copy);
-                copiedIds[counter++] = copy.getId();
+                //dao.save(copy);
+                copiedTemplateItems.add(copy);
             }
             displayOrder++;
         }
 
-        // now copy any remaining orphaned block children
+        // now copy any remaining orphaned block children into normal items
         for (EvalTemplateItem original : templateItemsList) {
             displayOrder++;
-            EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
-            copy.setDisplayOrder(itemCount + counter); // fix up display order
-            dao.save(copy);
-            copiedIds[counter] = copy.getId();
+            EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden);
+            copy.setDisplayOrder(itemCount + displayOrder); // fix up display order
+            //dao.save(copy);
+            copiedTemplateItems.add(copy);
         }
 
+        if (includeChildren) {
+            // make a copy of all items and put them into the TIs to replace the originals
+            HashSet<Long> itemIdSet = new HashSet<Long>();
+            for (EvalTemplateItem eti : copiedTemplateItems) {
+                if (eti.getItem() != null) {
+                    Long itemId = eti.getItem().getId();
+                    itemIdSet.add(itemId);
+                }
+            }
+            Long[] itemIds = itemIdSet.toArray(new Long[itemIdSet.size()]);
+            // do the items copy
+            Set<EvalItem> copiedItems = copyItemsInternal(itemIds, ownerId, hidden, includeChildren);
+            HashMap<Long, EvalItem> originalIdToCopy = new HashMap<Long, EvalItem>(copiedItems.size());
+            for (EvalItem evalItem : copiedItems) {
+                originalIdToCopy.put(evalItem.getCopyOf(), evalItem);
+            }
+            // insert the copied items into the copied template items (update the foreign keys when we save)
+            for (EvalTemplateItem eti : copiedTemplateItems) {
+                if (eti.getItem() != null) {
+                    Long itemId = eti.getItem().getId(); // original id
+                    EvalItem copy = originalIdToCopy.get(itemId);
+                    if (copy != null) {
+                        eti.setItem(copy);
+                    }
+                }
+            }
+        }
+        // save the template items
+        dao.saveSet(copiedTemplateItems);
+
+        Long[] copiedIds = new Long[copiedTemplateItems.size()];
+        int counter = 0;
+        for (EvalTemplateItem copiedTemplateItem : copiedTemplateItems) {
+            copiedIds[counter] = copiedTemplateItem.getId();
+            counter++;
+        }
         return copiedIds;
     }
 
@@ -1649,19 +1760,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
      * @param toTemplate the template to copy this templateItem to
      * @param ownerId set as the owner of this copy
      * @param hidden if true then the resulting copy will be marked as hidden 
-     * @param includeChildren also make persistent copies of children if true
      * @return the copy of the templateItem (not persisted)
      */
     private EvalTemplateItem copyTemplateItem(EvalTemplateItem original, EvalTemplate toTemplate,
-            String ownerId, boolean hidden, boolean includeChildren) {
+            String ownerId, boolean hidden) {
         EvalTemplateItem copy = TemplateItemUtils.makeCopyOfTemplateItem(original, toTemplate, ownerId, hidden);
-        // copy the item as well if needed
-        if (includeChildren) {
-            // https://bugs.caret.cam.ac.uk/browse/CTL-1531 - hide all the internal things which are copied (do not pass through the hidden variable)
-            Long[] itemIds = copyItems(new Long[] {original.getItem().getId()}, ownerId, true, includeChildren);
-            EvalItem item = getItemById(itemIds[0]);
-            copy.setItem(item);
-        }
         fixUpTemplateItem(copy); // fix up to ensure fields are set correctly
         return copy;
     }
