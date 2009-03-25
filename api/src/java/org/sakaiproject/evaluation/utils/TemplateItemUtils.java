@@ -404,8 +404,7 @@ public class TemplateItemUtils {
 
         for (int i=0; i<templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
-            String type = getTemplateItemType(templateItem);
-            if (EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(type)) {
+            if ( isBlockChild(templateItem) ) {
                 if ( blockParentId.equals(templateItem.getBlockId()) ) {
                     childItemsList.add(templateItem);
                 }
@@ -416,6 +415,30 @@ public class TemplateItemUtils {
         Collections.sort(childItemsList, 
                 new ComparatorsUtils.TemplateItemComparatorByOrder() );
         return childItemsList;
+    }
+
+    /**
+     * Find all block parent items in the list of template items,
+     * filters out all items which are not block parents and returns the block parents in
+     * correct order
+     * 
+     * @param templateItemsList a List of {@link EvalTemplateItem} objects in a template
+     * @return a List of {@link EvalTemplateItem} objects or empty if none found
+     */
+    public static List<EvalTemplateItem> getParentItems(List<EvalTemplateItem> templateItemsList) {
+        List<EvalTemplateItem> parentItems = new ArrayList<EvalTemplateItem>();
+
+        for (int i=0; i<templateItemsList.size(); i++) {
+            EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
+            if (isBlockParent(templateItem) ) {
+                parentItems.add(templateItem);
+            }
+        }
+
+        // fix the order
+        Collections.sort(parentItems, 
+                new ComparatorsUtils.TemplateItemComparatorByOrder() );
+        return parentItems;
     }
 
 
