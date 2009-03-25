@@ -122,27 +122,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
 
             // check to make sure answers are valid for this evaluation
-            if (response.getAnswers() != null && !response.getAnswers().isEmpty()) {
-                checkAnswersValidForEval(response, responseComplete);
-            } else {
-                // there are no answers
-                if (response.getEndTime() != null) {
-                    // the response is complete (submission of an evaluation) and not just creating the empty response
-                    // check if answers are required to be filled in
-                    Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-                    if (unansweredAllowed == null) {
-                        unansweredAllowed = response.getEvaluation().getBlankResponsesAllowed();
-                    }
-                    if (! unansweredAllowed) {
-                        // all items must be completed so die if they are not
-                        throw new ResponseSaveException("User submitted a blank response and there are required answers", 
-                                ResponseSaveException.TYPE_BLANK_RESPONSE);
-                    }
-                }
-                if (response.getAnswers() == null) {
-                    response.setAnswers(new HashSet<EvalAnswer>());
-                }
+            if (response.getAnswers() == null) {
+                response.setAnswers(new HashSet<EvalAnswer>());
             }
+            checkAnswersValidForEval(response, responseComplete);
 
             // save everything in one transaction
 
@@ -604,11 +587,16 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 requiredAnswerKeys.removeAll(answeredAnswerKeys);
                 if (requiredAnswerKeys.size() > 0) {
                     String[] reqAnsKeysArray = requiredAnswerKeys.toArray(new String[requiredAnswerKeys.size()]);
+                    String failureType = ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS;
+                    if (answeredAnswerKeys.isEmpty()) {
+                        failureType = ResponseSaveException.TYPE_BLANK_RESPONSE;
+                    }
                     throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
                             + " answers for required items (received "+answeredAnswerKeys.size()+" answers) for this evaluation"
                             + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
                             + " :: missing keys=" + ArrayUtils.arrayToString(reqAnsKeysArray) 
-                            + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[answeredAnswerKeys.size()])), 
+                            + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[answeredAnswerKeys.size()])),
+                            failureType,
                             reqAnsKeysArray );
                 }
             }

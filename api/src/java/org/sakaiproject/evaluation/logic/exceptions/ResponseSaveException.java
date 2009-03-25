@@ -22,29 +22,42 @@ package org.sakaiproject.evaluation.logic.exceptions;
  */
 public class ResponseSaveException extends RuntimeException {
 
-   public static String TYPE_MISSING_REQUIRED_ANSWERS = "missingRequiredAnswers";
-   public static String TYPE_CANNOT_TAKE_EVAL = "userCannotTakeEval";
-   public static String TYPE_BLANK_RESPONSE = "blankResponse";
-   public static String TYPE_CANNOT_SAVE = "cannotSave";
+    public static String TYPE_MISSING_REQUIRED_ANSWERS = "missingRequiredAnswers";
+    public static String TYPE_CANNOT_TAKE_EVAL = "userCannotTakeEval";
+    public static String TYPE_BLANK_RESPONSE = "blankResponse";
+    public static String TYPE_CANNOT_SAVE = "cannotSave";
 
-   public String type;
-   public String[] missingItemAnswerKeys;
+    public String type;
+    public String[] missingItemAnswerKeys;
 
-   public ResponseSaveException(String message, String type) {
-      super(message);
-      this.type = type;
-   }
+    public ResponseSaveException(String message, String type) {
+        this(message, type, null);
+    }
 
-   /**
-    * Constructor for error where we are missing required answers
-    * 
-    * @param message the message
-    * @param missingItemAnswerKeys and array of itemAnswerKeys
-    */
-   public ResponseSaveException(String message, String[] missingItemAnswerKeys) {
-      super(message);
-      this.type = TYPE_MISSING_REQUIRED_ANSWERS;
-      this.missingItemAnswerKeys = missingItemAnswerKeys;
-   }
+    /**
+     * Constructor for error where we are missing required answers
+     * 
+     * @param message the message
+     * @param missingItemAnswerKeys an array of itemAnswerKeys
+     */
+    public ResponseSaveException(String message, String[] missingItemAnswerKeys) {
+        this(message, null, missingItemAnswerKeys);
+    }
+
+    /**
+     * Constructor to use when we are missing required keys
+     * 
+     * @param message
+     * @param type (OPTIONAL) if null then {@link #TYPE_MISSING_REQUIRED_ANSWERS} is used
+     * @param missingItemAnswerKeys an array of itemAnswerKeys
+     */
+    public ResponseSaveException(String message, String type, String[] missingItemAnswerKeys) {
+        super(message);
+        if (type == null || "".equals(type)) {
+            type = TYPE_MISSING_REQUIRED_ANSWERS;
+        }
+        this.type = type;
+        this.missingItemAnswerKeys = missingItemAnswerKeys;
+    }
 
 }
