@@ -196,9 +196,9 @@ public class BlockRenderer implements ItemRenderer {
 
                 // For the radio buttons
                 UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
-                if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
+                if ( childRenderProps.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
                     childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-                } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+                } else if ( childRenderProps.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                     childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
                 }
                 if (colored) {
