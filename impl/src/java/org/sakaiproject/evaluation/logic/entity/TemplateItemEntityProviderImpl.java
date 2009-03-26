@@ -33,16 +33,19 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, Resolvable, Outputable, Deleteable {
+public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvider,
+        CoreEntityProvider, AutoRegisterEntityProvider, Resolvable, Outputable, Deleteable {
 
     private EvalAuthoringService authoringService;
     public void setAuthoringService(EvalAuthoringService authoringService) {
         this.authoringService = authoringService;
     }
+
     private DeveloperHelperService developerHelperService;
-    public void setDeveloperHelperService(DeveloperHelperService developerHelperService){
+    public void setDeveloperHelperService(DeveloperHelperService developerHelperService) {
         this.developerHelperService = developerHelperService;
     }
+
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
@@ -56,7 +59,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
         boolean exists = false;
         Long templateItemId;
         try {
-            templateItemId = new Long(id);
+            templateItemId = Long.valueOf(id);
             if (authoringService.getTemplateItemById(templateItemId) != null) {
                 exists = true;
             }
@@ -68,41 +71,51 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
     }
 
     public Object getEntity(EntityReference ref) {
-        EvalTemplateItem item = authoringService.getTemplateItemById(new Long(ref.getId()));
-        if(item != null && isAllowedAccessEvalTemplateItem(ref)){
-            return (developerHelperService.cloneBean(item, 1, new String[]{})); 
+        // check if the current user can access this
+        String userRef = developerHelperService.getCurrentUserReference();
+        if (userRef == null) {
+            throw new SecurityException("Anonymous users may not access template items directly, acessing TI: " + ref);
+        }
+        Long templateItemId = getIdFromRef(ref);
+        EvalTemplateItem item = authoringService.getTemplateItemById(templateItemId);
+        if (item != null) {
+            EvalTemplateItem clone = developerHelperService.cloneBean(item, 1, new String[] {});
+            return clone;
         } else {
             throw new IllegalArgumentException("id is invalid.");
         }
     }
 
     public String[] getHandledOutputFormats() {
-        return new String[] {Formats.XML, Formats.JSON};
-    }
-
-    protected boolean isAllowedAccessEvalTemplateItem(EntityReference ref) {
-        // check if the current user can access this
-        String userRef = developerHelperService.getCurrentUserReference();
-        if (userRef == null) {
-            throw new SecurityException("Anonymous users may not view this Eval-item");
-        } else {
-            if (!developerHelperService.isUserAllowedInEntityReference(userRef, "VIEW", ref.getId())) {
-                throw new SecurityException("This Eval-item is not accessible for the current user: " + userRef);
-            }
-        }
-        return true;
+        return new String[] { Formats.XML, Formats.JSON };
     }
 
     public void deleteEntity(EntityReference ref, Map<String, Object> params) {
-        String id = ref.getId();
-        // this check is redundant, nulls never get passed through to this method
-        if (id == null) {
-            throw new IllegalArgumentException("The reference must include an id for deletes (id is currently null)");
-        }
-        Long templateItemId = new Long(ref.getId());
+        Long templateItemId = getIdFromRef(ref);
         String currentUserId = commonLogic.getCurrentUserId();
         // throws SecurityException if not allowed
         authoringService.deleteTemplateItem(templateItemId, currentUserId);
+    }
+
+    /**
+     * Extract a numeric id from the ref if possible
+     * @param ref the entity reference
+     * @return the Long number version of the id
+     * @throws IllegalArgumentException if the number cannot be extracted
+     */
+    protected Long getIdFromRef(EntityReference ref) {
+        Long id = null;
+        String refId = ref.getId();
+        if (refId != null) {
+            try {
+                id = Long.valueOf(refId);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid number found in reference ("+ref+") id: " + e);
+            }
+        } else {
+            throw new IllegalArgumentException("No id in reference ("+ref+") id, cannot extract numeric id");
+        }
+        return id;
     }
 
 }
