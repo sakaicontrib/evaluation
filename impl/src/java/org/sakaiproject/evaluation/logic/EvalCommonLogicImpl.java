@@ -496,7 +496,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return false;
     }
 
-    public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions) {
+    public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String deliveryOption) {
         // handle the list of TO addresses
         List<EvalUser> l = getEvalUsersByIds(toUserIds);
         List<String> toEmails = new ArrayList<String>();
@@ -516,11 +516,28 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             return new String[] {};
         }
 
-        return sendEmailsToAddresses(from, toEmails.toArray(new String[] {}), subject, message, deferExceptions);
+        return sendEmailsToAddresses(from, toEmails.toArray(new String[] {}), subject, message, deferExceptions, deliveryOption);
     }
 
-    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions) {
-        return externalLogic.sendEmailsToAddresses(from, to, subject, message, deferExceptions);
+    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions, String deliveryOption) {
+        if (deliveryOption == null || "".equals(deliveryOption)) {
+            deliveryOption = EvalConstants.EMAIL_DELIVERY_DEFAULT;
+        }
+        if (to == null) {
+            throw new IllegalArgumentException("to cannot be null");
+        }
+
+        String[] emails = to;
+        if (EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
+            emails = externalLogic.sendEmailsToAddresses(from, to, subject, message, deferExceptions);
+        } else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+            for (String email : emails) {
+                log.info("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+            }
+        } else {
+            log.warn("Delivery NONE: No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
+        }
+        return emails;
     }
 
 
@@ -677,9 +694,9 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
 
-public String getContentCollectionId(String siteId) {
-	// TODO Auto-generated method stub
-	return externalLogic.getContentCollectionId(siteId);
-}
+    public String getContentCollectionId(String siteId) {
+        // TODO Auto-generated method stub
+        return externalLogic.getContentCollectionId(siteId);
+    }
 
 }

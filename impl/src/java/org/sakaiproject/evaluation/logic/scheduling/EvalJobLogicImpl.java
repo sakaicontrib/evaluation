@@ -149,15 +149,15 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                 // might not have a due date set
                 scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
             }
-            int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
+            int reminderDays = eval.getReminderDaysInt();
             if (reminderDays != 0) {
                 scheduleReminder(eval.getId());
             }
 
         } else if (EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
-            int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
+            int reminderDays = eval.getReminderDaysInt();
             if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-                    && reminderDays > 0) {
+                    && reminderDays != 0) {
                 if (eval.getDueDate() == null 
                         || eval.getDueDate().after(now)) {
                     sendReminderEmail(evaluationId);
@@ -324,7 +324,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(eval.getState())) {
             // make sure a change in Reminder interval is handled
             removeScheduledReminder(eval.getId());
-            if (eval.getReminderDays().intValue() != 0) {
+            if (eval.getReminderDaysInt() != 0) {
                 scheduleReminder(eval.getId());
             }
 
@@ -482,7 +482,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             EvalScheduledJob job = jobs[0];
 
             Date reminderAt = job.date;
-            int reminderDays = eval.getReminderDays().intValue();
+            int reminderDays = eval.getReminderDaysInt();
             if (reminderDays == 0 
                     || reminderAt.after(EvalUtils.getSafeDueDate(eval))) {
                 // remove reminder
@@ -490,7 +490,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                 if (log.isDebugEnabled())
                     log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date "
                             + job.uuid + "," + job.contextId + "," + job.date);
-            } else if (reminderDays == -1) {
+            } else {
+                // 24 hour special case and normal case (we just trash the existing job and remake it to be safe)
                 if (eval.getDueDate() != null) {
                     // delete the existing job
                     commonLogic.deleteScheduledJob(job.uuid);
@@ -613,7 +614,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         long dueTime = EvalUtils.getSafeDueDate(eval).getTime();
         long available = dueTime - now;
 
-        int reminderDays = eval.getReminderDays().intValue();
+        int reminderDays = eval.getReminderDaysInt();
         if (reminderDays > 0) {
             long interval = (1000 * 60 * 60 * 24) * reminderDays;
             // we'll say the future starts in 15 minutes
@@ -679,7 +680,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     protected void sendReminderEmail(Long evaluationId) {
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-                && eval.getReminderDays().intValue() != 0) {
+                && eval.getReminderDaysInt() != 0) {
             String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
             String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, includeConstant);
             if (log.isDebugEnabled())

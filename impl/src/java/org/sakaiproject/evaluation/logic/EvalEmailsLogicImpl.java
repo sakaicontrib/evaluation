@@ -151,7 +151,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
             log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -242,7 +242,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(currentTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
             log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -287,7 +287,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
             log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -351,7 +351,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
                 // send the actual emails for this evalGroupId
-                String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+                String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
                 log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
@@ -464,7 +464,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
                 // send the actual emails for this evalGroupId
-                String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+                String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
                 log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
@@ -529,7 +529,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 replacementValues.put("HelpdeskEmail", from);
 
                 // send the actual emails for this evalGroupId
-                String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+                String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
                 log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
@@ -627,6 +627,26 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     
     // INTERNAL METHODS
 
+    /**
+     * INTERNAL METHOD<br/>
+     * Send emails to a set of users (can send to a single user
+     * by specifying an array with one item only), gets the email addresses
+     * for the users ids
+     * 
+     * @param from the email address this email appears to come from
+     * @param toUserIds the userIds this message should be sent to
+     * @param subject the message subject
+     * @param message the message to send
+     * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
+     * if false then exceptions are thrown immediately
+     * @return an array of email addresses that this message was sent to
+     */
+    public String[] sendUsersEmails(String from, String[] toUserIds, String subject, String message) {
+        String[] emails;
+        String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+        emails = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, deliveryOption);
+        return emails;
+    }
     /**
      * INTERNAL METHOD<br/>
      * Get an email template by type and evaluationId or fail

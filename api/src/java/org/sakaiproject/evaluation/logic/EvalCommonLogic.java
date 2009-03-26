@@ -16,8 +16,8 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.ExternalContent;
-import org.sakaiproject.evaluation.logic.externals.ExternalEmail;
 import org.sakaiproject.evaluation.logic.externals.ExternalEntities;
 import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.externals.ExternalScheduler;
@@ -38,7 +38,7 @@ import org.sakaiproject.evaluation.model.EvalAdhocUser;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, ExternalEntities, 
-ExternalEmail, ExternalSecurity, ExternalContent, ExternalScheduler, ExternalTextUtils {
+    ExternalSecurity, ExternalContent, ExternalScheduler, ExternalTextUtils {
 
     // Users
 
@@ -96,9 +96,29 @@ ExternalEmail, ExternalSecurity, ExternalContent, ExternalScheduler, ExternalTex
      * @param message the message to send
      * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
      * if false then exceptions are thrown immediately
+     * @param deliveryOption a delivery option constant from the eval constants,
+     * determines what to do with the emails, null is the default: {@link EvalConstants#EMAIL_DELIVERY_SEND}
      * @return an array of email addresses that this message was sent to
      */
-    public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions);
+    public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String deliveryOption);
+
+    /**
+     * Send emails to a set of email addresses (can send to a single address
+     * by specifying an array with one item only)
+     * NOTE: Use {@link #sendEmailsToUsers(String, String[], String, String, boolean)} if you know who the users are
+     * 
+     * @param from the email address this email appears to come from
+     * @param to the email address(es) this message should be sent to
+     * @param subject the message subject
+     * @param message the message to send
+     * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
+     * if false then exceptions are thrown immediately
+     * @param deliveryOption a delivery option constant from the eval constants,
+     * determines what to do with the emails, null is the default: {@link EvalConstants#EMAIL_DELIVERY_SEND}
+     * @return an array of email addresses that this message was sent to
+     * @throws IllegalArgumentException if necessary params are not included
+     */
+    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions, String deliveryOption);
 
     // SERVER
 
