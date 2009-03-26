@@ -11,70 +11,70 @@ $(document).ready(function() {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
                 instrSel.find("fieldset").css({
-            background:'#fff'
-        });
+                    background:'#fff'
+                });
                 var selectedInstrArray = new Array();
                 $.each(selectedInstrDomArray, function(i, item) {
                     selectedInstrArray.push($(item).attr('id'));
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
-            }else{
-                   return  error("LECTURER", instrSel);
-                }
+            } else {
+                return  error("LECTURER", instrSel);
+            }
         }
         if (assSel.find('input[type=checkbox]').length != 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
                 assSel.find("fieldset").css({
-            background:'#fff'
-        });
+                    background:'#fff'
+                });
                 var selectedassistantArray = new Array();
                 $.each(selectedassistantDomArray, function(i, item) {
                     selectedassistantArray.push($(item).attr('id'));
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
-            }else{
-                    return error("TUTOR", assSel);
-                }
+            } else {
+                return error("TUTOR", assSel);
+            }
         }
         if (assSel.find('select').length != 0) {
             var valid = true;
-           assSel.find('select').each(function(){
-               if(this.selectedIndex == 0){
+            assSel.find('select').each(function() {
+                if (this.selectedIndex == 0) {
                     valid = false;
-               }
-           });
-            if(!valid){
-                 return error("TUTOR", assSel);
-            }else{
+                }
+            });
+            if (!valid) {
+                return error("TUTOR", assSel);
+            } else {
                 assSel.find("fieldset").css({
-            background:'#fff'
-        });
+                    background:'#fff'
+                });
             }
         }
         if (instrSel.find('select').length != 0) {
             var valid = true;
-           instrSel.find('select').each(function(){
-               if(this.selectedIndex == 0){
+            instrSel.find('select').each(function() {
+                if (this.selectedIndex == 0) {
                     valid = false;
-               }
-           });
-            if(!valid){
-               return  error("LECTURER", instrSel);
-            } else{
+                }
+            });
+            if (!valid) {
+                return  error("LECTURER", instrSel);
+            } else {
                 instrSel.find("fieldset").css({
-            background:'#fff'
-        });
+                    background:'#fff'
+                });
             }
         }
         $(this).hide();
         $('input[name=submit_process]').show();
     });
 
-    function error(type, that){
-        alert('Please evaluate at least one '+type+'.');
+    function error(type, that) {
+        alert('Please evaluate at least one ' + type + '.');
         that.find("fieldset").css({
             background:'#fee'
         });
@@ -156,6 +156,8 @@ $(document).ready(function() {
             }
         },
         options:null,
+        savedIds:new Array(),
+        that:null,
         foundArray: function() {
             var temp = new Array();
             $.each(variables.questionsToShow, function(s, shown) {
@@ -202,6 +204,7 @@ $(document).ready(function() {
     function init(that, options) {
         //copy options to this class
         variables.options = options;
+        variables.savedIds = $('input#selectedPeopleInResponse').val().replace('[','').replace(']','').split(', ');
         return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;
@@ -218,9 +221,12 @@ $(document).ready(function() {
     function initClassVars() {
         variables.questionsToHide = new Array();
         variables.questionsToShow = new Array();
+        variables.savedIds=new Array();
+        variables.that=null;
     }
 
     function initControls(that) {
+         variables.that=that;
         if (variables.typeOfSelector.multiple) {
             //Working with checkboxes
             that.find('input[type=checkbox]').each(function() {
@@ -257,12 +263,14 @@ $(document).ready(function() {
                         }
                     }
                 });
-                checkValidity(elemId, this,'');
+                checkValidity(elemId, this, '');
+                checkSavedPeople(elemId, this,'','checkbox');
             });
         }
         var elem = that.find('select');
-        $.each(elem.find('option'), function(i, item){
+        $.each(elem.find('option'), function(i, item) {
             checkValidity($(item).val(), item, i);
+            checkSavedPeople($(item).val(), item, i, 'select');
         });
         elem.bind('change', function() {
             variables.set.typeOfBranch(elem);
@@ -344,18 +352,37 @@ $(document).ready(function() {
             });
         });
     }
-    function checkValidity(elemId, that, num){
-        log("Examining div with name:"+elemId);
-                if($('div[name='+elemId+']').find('div.validFail').length > 0){
-                    log("Found an invalid item. Showing div now.");
-                    $('div[name='+elemId+']').show();
-                    var t = that.type, tag = that.tagName.toLowerCase();
-                    if(t == 'checkbox'){
-                        that.checked = true;
-                    }else if(tag == 'select'){
-                        that.selectedIndex == (parseInt(num) - 1);
-                    }
+    function checkValidity(elemId, that, num) {
+        log("Examining div with name:" + elemId);
+        if ($('div[name=' + elemId + ']').find('div.validFail').length > 0) {
+            log("Found an invalid item. Showing div now.");
+            $('div[name=' + elemId + ']').show();
+            var t = that.type, tag = that.tagName.toLowerCase();
+            if (t == 'checkbox') {
+                that.checked = true;
+            } else if (tag == 'select') {
+                that.selectedIndex = (parseInt(num) - 1);
+            }
+        }
+    }
+
+    function checkSavedPeople(elemId, that, num,tag) {
+        var savedIds = variables.savedIds;
+        if (savedIds.length > 0) {
+            for (var i = 0; i < savedIds.length; i++) {
+                if(elemId == savedIds[i]){
+                if (tag == 'checkbox') {
+                    that.checked = true;
                 }
+                    if (tag == 'select') {
+                    variables.that.find('select:eq(0)').each(function(){
+                        this.selectedIndex = (parseInt(num));
+                        });
+
+                }
+                }
+            }
+        }
     }
 
     // Debugging
