@@ -234,11 +234,11 @@ public class EvalEmailConstants {
     */
    public static final String EMAIL_SUBMITTED_DEFAULT_TEXT = 
 	   "Dear ${UserName},\n\n" +
-	   "This message is a confirmation of your ${EvalToolTitle} submission for ${EvalTitle}.\n" +
+	   "This message is a confirmation of your ${EvalToolTitle} submission for ${EvalTitle}.  " +
 	   "It was submitted on ${TimeStamp}.  Thank you for helping the University maintain and improve the quality of its teaching.\n\n" +
 	   "Please save this message for your records.\n\n" +
 	   "Note that all student responses are kept confidential and you may edit your evaluation responses " +
-	   "up until the close date for this evaluation.";
+	   "up until the close date for this evaluation.\n";
    
    /**
     * EmailTemplate subject: Default subject for available single-email-notification 
