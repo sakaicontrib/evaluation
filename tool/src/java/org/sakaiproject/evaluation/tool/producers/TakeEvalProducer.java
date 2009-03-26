@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -493,12 +494,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                             if (i % 2 == 1) {
                                 nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                             }
-                            if (! missingKeys.isEmpty()) {
-                                if (missingKeys.contains(dti.getKey())) {
-                                    dti.renderInvalid = true;
-                                }
-                            }
-                            renderItemPrep(nodeItemsBranch, form, dti, eval);
+                            renderItemPrep(nodeItemsBranch, form, dti, eval, missingKeys);
                         }
                     }
 
@@ -547,10 +543,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      * Prepare to render an item, this handles blocks correctly
      * 
      * @param parent the parent container
-     * @param form the form this item will associate with
-     * @param dti the wrapped template item we will render
+	 * @param form the form this item will associate with
+	 * @param dti the wrapped template item we will render
+	 * @param eval the eval, needed for calculating rendering props
+	 * @param missingKeys the invalid keys, needed for calculating rendering props
      */
-    private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti, EvalEvaluation eval) {
+    private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti, EvalEvaluation eval, Set<String> missingKeys) {
         int displayIncrement = 0; // stores the increment in the display number
         String[] currentAnswerOTP = null; // holds array of bindings for items
         EvalTemplateItem templateItem = dti.templateItem;
@@ -581,18 +579,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         }
 
         // setup the render properties to send along
-        Map<String, String> evalProps = new HashMap<String, String>();
-        Boolean answerRequired = true;
-        if (eval.getBlankResponsesAllowed().booleanValue()) {
-            answerRequired = false;
-        }
-        evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
-        if (dti.renderInvalid) {
-            evalProps.put(ItemRenderer.EVAL_PROP_RENDER_INVALID, Boolean.TRUE.toString());
-        }
-
+        Map<String, Object> renderProps = RenderingUtils.makeRenderProps(dti, eval, missingKeys, null);
         // render the item
-        itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, evalProps);
+        itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, renderProps);
 
         /* increment the item counters, if we displayed 1 item, increment by 1,
          * if we displayed a block, renderedItem has been incremented for each child, increment displayNumber by the number of blockChildren,
