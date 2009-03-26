@@ -236,7 +236,7 @@ public class EvalEmailConstants {
 	   "Dear ${UserName},\n\n" +
 	   "This message is a confirmation of your ${EvalToolTitle} submission for ${EvalTitle}.\n" +
 	   "It was submitted on ${TimeStamp}.  Thank you for helping the University maintain and improve the quality of its teaching.\n\n" +
-	   "Please save this message for your records.  Some instructors may request proof of your ${EvalToolTitle} participation.\n\n" +
+	   "Please save this message for your records.\n\n" +
 	   "Note that all student responses are kept confidential and you may edit your evaluation responses " +
 	   "up until the close date for this evaluation.";
    
