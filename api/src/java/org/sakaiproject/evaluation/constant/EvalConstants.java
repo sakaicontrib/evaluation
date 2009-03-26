@@ -584,11 +584,6 @@ public class EvalConstants {
      * used with the "single-email-per-user" email notification option
      */
     public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER_SUBJECT = "ConsolidatedReminderSubject";
-    /**
-     * Email Delivery option setting:
-     * This value is pre-loaded as the default option for email delivery.
-     */
-    public static final String EMAIL_DELIVERY_DEFAULT = "send";
 
     /**
      * Email Delivery option setting:
@@ -605,6 +600,11 @@ public class EvalConstants {
      * This value prevents email from being sent or logged. Use this value when you want to test safely by disabling sending of email.
      */
     public static final String EMAIL_DELIVERY_NONE = "none";
+    /**
+     * Email Delivery option setting:
+     * This value is pre-loaded as the default option for email delivery.
+     */
+    public static final String EMAIL_DELIVERY_DEFAULT = EMAIL_DELIVERY_SEND;
 
     /**
      * ItemGroup Type: Category (root group type)<br/>

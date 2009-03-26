@@ -114,7 +114,8 @@ public class EvalEvaluation implements java.io.Serializable {
     private String instructorOpt;
 
     /**
-     * the number of days between reminder emails, 0 means emails are disabled
+     * the number of days between reminder emails, 0 or null means emails are disabled,
+     * -1 means send them out 24 hours before the close
      */
     private Integer reminderDays;
 
@@ -453,10 +454,27 @@ public class EvalEvaluation implements java.io.Serializable {
         this.owner = owner;
     }
 
+    /**
+     * @return the reminder days as a number (no NPE),
+     * this will be a 0 if there are no reminders set,
+     * -1 indicates 24 hours before the eval closes
+     * > 0 indicates the number of days between sending each reminder
+     * @see #reminderDays
+     */
+    public int getReminderDaysInt() {
+        return this.getReminderDays() == null ? 0 : this.getReminderDays();
+    }
+
+    /**
+     * @see #reminderDays
+     */
     public Integer getReminderDays() {
         return reminderDays;
     }
 
+    /**
+     * @see #reminderDays
+     */
     public void setReminderDays(Integer reminderDays) {
         this.reminderDays = reminderDays;
     }
