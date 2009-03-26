@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,9 +52,9 @@ public class TextRenderer implements ItemRenderer {
     public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, Object> renderProperties) {
 
         UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
-        if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+        if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
             container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-        } else if (safeBool(templateItem.isCompulsory())) {
+        } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
             container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
         }
 
