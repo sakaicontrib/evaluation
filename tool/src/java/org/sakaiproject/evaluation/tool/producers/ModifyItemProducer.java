@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import static org.sakaiproject.evaluation.utils.TemplateItemUtils.safeBool;
+import static org.sakaiproject.evaluation.utils.EvalUtils.safeBool;
 
 import java.util.List;
 

@@ -299,7 +299,7 @@ public class TemplateItemUtils {
             String type = getTemplateItemType(templateItem);
             if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
                 result = false;
-            } else if ( safeBool(templateItem.isCompulsory()) ) {
+            } else if ( EvalUtils.safeBool(templateItem.isCompulsory()) ) {
                 result = true;
             }
         }
@@ -702,18 +702,6 @@ public class TemplateItemUtils {
         } else {
             throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
         }
-    }
-
-    /**
-     * @param bool takes a Boolean and converts it to a boolean to ensure no null pointer exceptions
-     * @return the boolean value of the Boolean or false if it is null
-     */
-    public static boolean safeBool(Boolean bool) {
-        boolean result = false;
-        if (bool != null) {
-            result = bool.booleanValue();
-        }
-        return result;
     }
 
 }      

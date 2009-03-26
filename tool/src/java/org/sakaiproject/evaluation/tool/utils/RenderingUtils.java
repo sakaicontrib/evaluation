@@ -23,6 +23,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
@@ -130,7 +131,7 @@ public class RenderingUtils {
 
         boolean evalRequiresItems = false;
         if (eval != null) {
-            evalRequiresItems = ! eval.getBlankResponsesAllowed();
+            evalRequiresItems = ! EvalUtils.safeBool(eval.getBlankResponsesAllowed(), true);
         }
         if ( dti.isCompulsory() || (evalRequiresItems && dti.isRequireable()) ) {
             renderProperties.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, Boolean.TRUE);

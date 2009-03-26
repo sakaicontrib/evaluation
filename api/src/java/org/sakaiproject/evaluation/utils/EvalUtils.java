@@ -753,4 +753,29 @@ public class EvalUtils {
         return selectionSetting;
     }
 
+    /**
+     * @param bool takes a Boolean and converts it to a boolean to ensure no null pointer exceptions
+     * @return the boolean value of the Boolean or false if it is null
+     */
+    public static boolean safeBool(Boolean bool) {
+        boolean result = false;
+        if (bool != null) {
+            result = bool.booleanValue();
+        }
+        return result;
+    }
+
+    /**
+     * @param bool takes a Boolean and converts it to a boolean to ensure no null pointer exceptions
+     * @param defaultIfNull if the bool is null then this value is used
+     * @return the boolean value of the Boolean or false if it is null
+     */
+    public static boolean safeBool(Boolean bool, boolean defaultIfNull) {
+        boolean result = defaultIfNull;
+        if (bool != null) {
+            result = bool.booleanValue();
+        }
+        return result;
+    }
+
 }
