@@ -140,14 +140,22 @@ public class RenderingUtils {
 
         if (missingKeys != null && ! missingKeys.isEmpty()) {
             if (missingKeys.contains(dti.getKey())) {
-                dti.renderInvalid = true;
                 renderProperties.put(ItemRenderer.EVAL_PROP_RENDER_INVALID, Boolean.TRUE);
             }
         } else {
             renderProperties.remove(ItemRenderer.EVAL_PROP_RENDER_INVALID);
         }
 
-        // TODO loop through and add in children render props
+        // loop through and add in children render props
+        if (dti.isBlockParent()) {
+            List<DataTemplateItem> children = dti.getBlockChildren();
+            for (DataTemplateItem childDTI : children) {
+                HashMap<String,Object> childRenderProps = new HashMap<String, Object>();
+                RenderingUtils.makeRenderProps(childDTI, eval, missingKeys, childRenderProps);
+                String key = "child-"+childDTI.templateItem.getId();
+                renderProperties.put(key, childRenderProps);
+            }
+        }
 
         return renderProperties;
     }

@@ -636,11 +636,6 @@ public class TemplateItemDataList {
          * blockParentId will be null if this is not a block child
          */
         public Long blockParentId = null;
-        /**
-         * If this is set to true then this item should be rendered to indicate a validation failure
-         * has occurred for this item in the evaluation
-         */
-        public boolean renderInvalid = false;
 
         public DataTemplateItem(EvalTemplateItem templateItem, String associateType,
                 String associateId, EvalHierarchyNode node) {
@@ -656,8 +651,10 @@ public class TemplateItemDataList {
             this.getKey(); // initialize the key
             this.node = node;
             if (TemplateItemUtils.isBlockParent(templateItem)) {
-                blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
+                this.blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
                 this.templateItem.childTemplateItems = new ArrayList<EvalTemplateItem>(blockChildItems); // for rendering
+            } else if (TemplateItemUtils.isBlockChild(templateItem)) {
+                this.blockParentId = templateItem.getBlockId();
             }
             // minor fixups to ensure nulls are filled in
             if (templateItem.getUsesComment() == null) {
@@ -708,6 +705,36 @@ public class TemplateItemDataList {
          */
         public String getAutoInsertionTag() {
             return this.templateItem.getAutoUseInsertionTag();
+        }
+
+        /**
+         * @return true if the contained item is a block parent
+         */
+        public boolean isBlockParent() {
+            return this.blockChildItems != null;
+        }
+
+        /**
+         * @return true if the contained item is a block child
+         */
+        public boolean isBlockChild() {
+            return this.blockParentId != null;
+        }
+
+        /**
+         * Method to generate a list of block children,
+         * this is done on demand though so keep that in mind
+         * 
+         * @return the list of all block children in this DTI as DTIs
+         */
+        public List<DataTemplateItem> getBlockChildren() {
+            ArrayList<DataTemplateItem> children = new ArrayList<DataTemplateItem>();
+            if (this.blockChildItems != null) {
+                for (EvalTemplateItem eti : this.blockChildItems) {
+                    children.add( new DataTemplateItem(eti, this.associateType, this.associateId, this.node) );
+                }
+            }
+            return children;
         }
 
         /**
