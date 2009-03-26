@@ -208,7 +208,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                     String assistantName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
-                            "takeeval.ta.questions.header", new Object[] { assistantName });
+                            "takeeval.assistant.questions.header", new Object[] { assistantName });
                 }
 
                 // loop through the hierarchy node groups
