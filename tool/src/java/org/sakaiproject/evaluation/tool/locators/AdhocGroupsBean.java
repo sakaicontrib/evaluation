@@ -22,6 +22,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * modify_adhoc_groups page.
  * 
  * @author Steven Githens
+ * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
 public class AdhocGroupsBean {
    private static Log log = LogFactory.getLog(AdhocGroupsBean.class);
@@ -59,6 +60,11 @@ public class AdhocGroupsBean {
          throw new SecurityException("Only EvalAdhocGroup owners can change their groups: " + group.getId() + " , " + currentUserId);
       }
 
+      // put the new title in the adhoc group - https://bugs.caret.cam.ac.uk/browse/CTL-1305
+      if (adhocGroupTitle != null && ! "".equals(adhocGroupTitle)) {
+          group.setTitle(adhocGroupTitle);
+      }
+      // save the adhoc group
       updateAdHocGroup(group);
 
       return UPDATED_ADHOCGROUP;
