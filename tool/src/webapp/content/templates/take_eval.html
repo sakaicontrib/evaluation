@@ -22,7 +22,7 @@
 			var charRemFormat = $('#charRemFormat').text();
 			var charMax = $('#charMax').text();
 			if (isNaN(charMax)){
-				charMax=3999
+				charMax=3800
 			}
 			$(".limited").charCounter(charMax, {
 				format: charRemFormat
@@ -38,7 +38,7 @@
 		.highlight{color:red}
 	</style>
 	<span id="charRemFormat" rsf:id="msg=takeeval.textitem.charmax.message" class="skip">%1 chars remaining</span>
-	<span id="charMax" class="skip" rsf:id="msg=takeeval.textitem.charmax">3999</span>
+	<span id="charMax" class="skip" rsf:id="msg=takeeval.textitem.charmax">3800</span>
 
 			<div class="textPanel"> 			
 				<h3 style="display:inline">
@@ -75,7 +75,7 @@
 
 			<div rsf:id="show-eval-instructions:" class="instruction">
 				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
-				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 3999 chars.</span>
+				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 3800 chars.</span>
 			</div>
 
 		   <div rsf:id="show-eval-note:" class="instruction">
@@ -103,9 +103,7 @@
 					</div>
 
 					<div class="act">
-						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active" 
-							onclick="javascript:showNotif('submitnotif','submitEvaluation','evaluationForm');submitform('evaluationForm');" />
-						<span id="submitnotif" style="visibility:hidden"><h5 rsf:id="msg=label.process"  style="display:inline;padding-right:1em">Processing...</h5></span>
+						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"  />
 					</div>
 				</form>
 			</div>
