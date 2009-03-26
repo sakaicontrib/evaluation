@@ -14,8 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +62,8 @@ public class BlockRenderer implements ItemRenderer {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
      */
-    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
+    @SuppressWarnings("unchecked")
+    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, Object> renderProperties) {
 
         // check to make sure we are only dealing with block parents
         if (templateItem.getBlockParent() == null) {
@@ -156,6 +156,12 @@ public class BlockRenderer implements ItemRenderer {
                     UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText());
                     headerText.decorators =
                         new DecoratorList(new UIFreeAttributeDecorator( MapUtil.make("rowspan", (optionCount + 1) + "") ));
+                    // add render markers if they are set for this block parent
+                    if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
+                        rowBranch.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+                    } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+                        rowBranch.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+                    }
                 }
 
                 // Actual label
@@ -175,8 +181,6 @@ public class BlockRenderer implements ItemRenderer {
                 UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
             }
 
-            boolean evalAnswerReqired = evalProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ? Boolean.valueOf(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED)) : false;
-
             // the child items rendering loop
             for (int j = 0; j < childList.size(); j++) {
 
@@ -184,13 +188,17 @@ public class BlockRenderer implements ItemRenderer {
                 EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
                 EvalItem childItem = childTemplateItem.getItem();
 
-                if(childTemplateItem.isCompulsory() == null) childTemplateItem.setCompulsory(false);
+                // get mapping props for the child
+                Map<String, Object> childRenderProps = (Map<String, Object>) renderProperties.get("child-"+childTemplateItem.getId());
+                if (childRenderProps == null) {
+                    childRenderProps = new HashMap<String, Object>(0);
+                }
 
                 // For the radio buttons
                 UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
-                if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+                if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
                     childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-                } else if (safeBool(childTemplateItem.isCompulsory())  && ! evalAnswerReqired) {
+                } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                     childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
                 }
                 if (colored) {

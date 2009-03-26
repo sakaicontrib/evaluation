@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import static org.sakaiproject.evaluation.utils.TemplateItemUtils.*;
-
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -55,7 +53,7 @@ public class ScaledRenderer implements ItemRenderer {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
      */
-    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties) {
+    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, Object> renderProperties) {
         UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
         if (displayNumber <= 0) displayNumber = 0;
@@ -70,15 +68,14 @@ public class ScaledRenderer implements ItemRenderer {
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
         boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA().booleanValue();
-        boolean evalAnswerReqired = evalProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ? Boolean.valueOf(evalProperties.get(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED)) : false;
 
         if (EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
 
             UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
-            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-            } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
+            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                 compact.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
 
@@ -159,9 +156,9 @@ public class ScaledRenderer implements ItemRenderer {
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
             UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
-            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-            } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
+            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
 
@@ -226,9 +223,9 @@ public class ScaledRenderer implements ItemRenderer {
                 EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) ) {
 
             UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
-            if (evalProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
                 stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-            } else if ( safeBool(templateItem.isCompulsory()) && ! evalAnswerReqired) {
+            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                 stepped.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
 

@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -258,14 +259,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         }
 
         // render the item
-        Map<String, String> evalProps  = new HashMap<String, String>();
-        Boolean answerRequired = true;
-        if (eval.getBlankResponsesAllowed() != null 
-                && eval.getBlankResponsesAllowed()) {
-            answerRequired = false;
-            evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
-        }
-        itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true, evalProps);
+        itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true, 
+                RenderingUtils.makeRenderProps(dti, eval, null, null) );
 
         // increment the display number
         displayNumber += displayIncrement;

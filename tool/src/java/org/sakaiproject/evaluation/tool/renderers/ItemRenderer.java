@@ -31,7 +31,13 @@ import uk.org.ponder.rsf.components.UIJointContainer;
  */
 public interface ItemRenderer {
 
+    /**
+     * If this key is present it indicates this item requires an answer
+     */
     public static final String EVAL_PROP_ANSWER_REQUIRED = "evalAnswersRequired";
+    /**
+     * if this key is present it indicates this item was filled out in an invalid way
+     */
     public static final String EVAL_PROP_RENDER_INVALID = "evalRenderInvalid";
 
     /**
@@ -50,9 +56,11 @@ public interface ItemRenderer {
      * simply create an {@link EvalTemplateItem} and wrap the item in it)
      * @param displayNumber the number to display next to this item (if 0 or less then display none)
      * @param disabled if true, then the item is rendered as disabled and cannot be submitted, if false, the item can be submitted
+     * @param renderProperties additional rendering properties to send along (can be null if there are none),
+     * these are used to indicate transient state which should cause a rendering change
      * @return a {@link UIJointContainer} which has been populated correctly
      */
-    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, String> evalProperties);
+    public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, Object> renderProperties);
 
     /**
      * Indicates the type of item this renderer handles
