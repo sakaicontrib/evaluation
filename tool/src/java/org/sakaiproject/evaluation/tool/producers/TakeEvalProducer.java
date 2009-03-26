@@ -346,10 +346,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
                 Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
                 if (studentAllowedLeaveUnanswered == null) {
-                    studentAllowedLeaveUnanswered = eval.getBlankResponsesAllowed();
-                    if (studentAllowedLeaveUnanswered == null) {
-                        studentAllowedLeaveUnanswered = false;
-                    }
+                    studentAllowedLeaveUnanswered = EvalUtils.safeBool(eval.getBlankResponsesAllowed(), false);
                 }
                 // show a warning to the user if all items must be filled in
                 if ( studentAllowedLeaveUnanswered == false ) {

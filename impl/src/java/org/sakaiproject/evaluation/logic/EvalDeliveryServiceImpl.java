@@ -489,7 +489,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             Boolean unansweredAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
             if (unansweredAllowed == null) {
                 // configured per eval
-                unansweredAllowed = eval.getBlankResponsesAllowed();
+                unansweredAllowed = eval.getBlankResponsesAllowed(); // null handled
             }
             if (unansweredAllowed != null) {
                 // convert to easier to understand boolean
