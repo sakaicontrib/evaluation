@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -103,6 +104,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     private static final String ANON_USER_PREFIX = "Anon_User_";
 
     private static final String ADMIN_USER_ID = "admin";
+
+    /**
+     * Add presedence:bulk to mark emails as a type of bulk mail
+     * This allows some email systems to deal with it correctly,
+     * e.g. they won't send OOO replies / vacation messages 
+     */
+    private static final String EMAIL_BULK_FLAG = "Precedence: bulk";
+    private List<String> emailHeaders;
 
     /**
      * This must match the id of the bean which implements {@link EvalScheduledInvocation}
@@ -184,6 +193,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         // register Sakai permissions for this tool
         registerPermissions();
+
+        // email bulk headers - http://bugs.sakaiproject.org/jira/browse/EVALSYS-620
+        emailHeaders = new Vector<String>();
+        emailHeaders.add(EMAIL_BULK_FLAG);
     }
 
 
@@ -692,7 +705,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
         replyTo[0] = fromAddress;
         InternetAddress[] toAddresses = listAddresses.toArray(new InternetAddress[listAddresses.size()]);
-        emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
+        // headers are set globally and used for all emails going out (see top of this file)
+        emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, this.emailHeaders);
 
         if (deferExceptions && exceptionTracker != null) {
             // exceptions occurred so we have to die here
