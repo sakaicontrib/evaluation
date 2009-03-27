@@ -144,6 +144,14 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
     public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId);
 
     /**
+     * Delete the adhoc group by the unique id,
+     * will not fail if the group cannot be found
+     * 
+     * @param adhocGroupId the unique id for an {@link EvalAdhocGroup}
+     */
+    public void deleteAdhocGroup(Long adhocGroupId);
+
+    /**
      * Save this adhoc user,
      * owner and email must be set<br/>
      * This will check to see if this user already exists and will update the existing one

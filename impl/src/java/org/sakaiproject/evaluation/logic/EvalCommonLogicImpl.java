@@ -653,6 +653,19 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         adhocSupportLogic.saveAdhocUser(user);
     }
 
+    public void deleteAdhocGroup(Long adhocGroupId) {
+        EvalAdhocGroup eag = adhocSupportLogic.getAdhocGroupById(adhocGroupId);
+        if (eag != null) {
+            String currentUserId = getCurrentUserId();
+            if (! isUserAdmin(currentUserId)) {
+                if (! currentUserId.equals(eag.getOwner()) ) {
+                    throw new SecurityException("Only the owner or admin can modify this adhoc group ("+eag+"), this is the current user: " + currentUserId);            
+                }
+            }
+            adhocSupportLogic.deleteAdhocGroup(adhocGroupId);
+        }
+    }
+
 
     // protected internal
 
@@ -692,7 +705,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
         return md5;
     }
-
 
     public String getContentCollectionId(String siteId) {
         // TODO Auto-generated method stub

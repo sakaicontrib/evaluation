@@ -32,6 +32,7 @@
 					<li>Message for user here</li>
 				</ul>
 			</div>
+
 			<div id="" rsf:id="nogroups-error" style="display:none" class="alertMessage">You need to select at least one eval group or heirarchy node.</div>
 			
 			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
@@ -104,8 +105,8 @@
 						</span>
 						<span rsf:id="msg=assigneval.page.adhocgroups.title">Assign to an adhoc group.</span>
 					</p>
-					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
-						<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group now.</a>
+					<div rsf:id="adhocgroups-assignment-area" id="adhocgroups-assignment-area">
+						<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group</a>
 						<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
 							<thead>
 								<tr>
@@ -115,16 +116,21 @@
 									<th>
 										<span rsf:id="msg=assigneval.name.header">Title</span>
 									</th>
+                                    <th></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr rsf:id="groups:"> 
-									<td class="attach" >
-										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
+								<tr rsf:id="groups:" id="adhocGroup1:">
+									<td class="attach">
+										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="adhocGroup1:groupTitle" />
 									</td>
 									<td>
-										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
-										<a href="" rsf:id="editGroupLink">edit group</a>
+										<label rsf:id="groupTitle" for="adhocGroup1:groupTitle">group title</label>
+                                    </td>
+                                    <td>
+										<a rsf:id="editGroupLink" href="">edit group</a>
+                                        &nbsp;
+                                        <a rsf:id="deleteGroupLink" id="adhocGroup1:deleteGroupLink" style="display:none;" href="#">delete group</a>
 									</td>
 								</tr>
 							</tbody>
@@ -145,6 +151,18 @@
 		
 		<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
 			EvalSystem.initEvalAssignValidation("eval-assign-form","nogroups-error","confirmAssignCourses");
-		</script>	
+		</script>
+        <script rsf:id="initJSHierarchyToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "hierarchy-assignment-area", null, true);
+        </script>
+        <script rsf:id="initJSGroupsToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "evalgroups-assignment-area");
+        </script>
+        <script rsf:id="initJSAdhocToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "adhocgroups-assignment-area");
+        </script>
+        <script rsf:id="initJavaScriptAdhoc" type="text/javascript" language="JavaScript">
+            EvalSystem.initEvalAssignAdhocDelete(["adhocGroup1:"],"deletedRow");
+        </script>   
 	</body>
 </html>
