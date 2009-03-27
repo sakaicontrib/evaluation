@@ -268,6 +268,12 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       return group;
    }
 
+   public void deleteAdhocGroup(Long adhocGroupId) {
+       if (adhocGroupId != null) {
+           dao.delete(EvalAdhocGroup.class, adhocGroupId);
+       }
+    }
+
    /**
     * Save this adhoc group,
     * owner and title must be set

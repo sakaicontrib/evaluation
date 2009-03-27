@@ -19,6 +19,36 @@ var EvalSystem = function() {
     return value != null ? "#" + value.replace(/:/g, "\\:") : null;
   }
 
+  /**
+   * Creates an adhoc group delete function for a specific link,
+   * this expects to be called by an event handler
+   */
+  function makeAdhocDeleteFunction(deleteLink, adhocArea) {
+	  return function(event) {
+		  var url = deleteLink.attr("href");
+		  $.ajax({
+			  url: url,
+			  type: "DELETE",
+			  dataType: "text",
+			  cache: false,
+			  success: function(data, msg) {
+				  adhocArea.fadeOut(500, function() {
+					  adhocArea.hide(0);
+					  adhocArea.remove();
+				  });
+			  },
+			  error: function(request, msg, errorThrown) {
+				  var status = request.status;
+				  // 404 just means it does not exist which is ok
+				  if (status != "404") {
+					  alert( "Failure: " + status + " :" + msg + " :" + errorThrown + " :" + XMLHttpRequest );
+				  }
+			  }
+		  });
+		  return false;
+	  };
+  }
+
   return {
     
     /**
@@ -54,6 +84,27 @@ var EvalSystem = function() {
         }
         
         submitButton.click( function(event) { onAssignClick(event) } );
+    },
+
+    /**
+     * Handle the setup of all adhoc group delete handlers
+     */
+    initEvalAssignAdhocDelete: function(adhocAreaIds) {
+    	// get all adhoc areas (these will be hidden when the group is deleted)
+    	for (var i = 0; i < adhocAreaIds.length; i++) {
+    		var adhocAreaId = adhocAreaIds[i];
+    		var adhocArea = $(escIdForJquery(adhocAreaId));
+    		var deleteLink = $(escIdForJquery(adhocAreaId + "deleteGroupLink"));
+    		if (adhocArea.length > 0 && !(adhocArea[0] === document)
+    				&& deleteLink.length > 0 && !(deleteLink[0] === document)) {
+    			deleteLink.show(0); // only show the links which actually could be found
+    			var onAdhocDeleteClick = makeAdhocDeleteFunction(deleteLink, adhocArea);
+    			deleteLink.click( onAdhocDeleteClick );
+    		} else {
+    			// failed to find the id given, nothing really to do here
+    			//alert("Failed to find adhoc elements: " + adhocAreaId + " :" + adhocArea + " :" + deleteLink);
+    		}
+    	}
     },
 
     initEvalReportView: function (allCommentsId, allTextResponsesId) {

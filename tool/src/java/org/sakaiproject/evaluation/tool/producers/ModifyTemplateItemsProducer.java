@@ -418,7 +418,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     //	UIOutput.make(branchTextHidden, "item-text-hidden-block");
                 }
 
-                String categoryMessage = RenderingUtils.getCategoryLabelKey(templateItem.getCategory());            UIMessage.make(itemBranch, "item-category", categoryMessage);
+                String categoryMessage = RenderingUtils.getCategoryLabelKey(templateItem.getCategory());            
+                UIMessage.make(itemBranch, "item-category", categoryMessage);
                 UIMessage.make(itemBranch, "item-category-title", "modifytemplate.item.category.title");
 
                 EvalUser owner = commonLogic.getEvalUserById( templateItem.getOwner() );

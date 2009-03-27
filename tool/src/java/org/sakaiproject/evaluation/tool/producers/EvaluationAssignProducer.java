@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.entity.AdhocGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -36,17 +37,17 @@ import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
-import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
-import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -104,11 +105,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     public void setCommonLogic(EvalCommonLogic bean) {
         this.commonLogic = bean;
     }
-
-    /**
-     * Instance Variables for building up rendering information.
-     */
-    private StringBuilder initJS = new StringBuilder();
 
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
@@ -215,11 +211,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             /*
              * Area 1. Selection GUI for Hierarchy Nodes and Evaluation Groups
              */
-
             if (showHierarchy) {
                 UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
 
-                addCollapseControl(hierarchyArea, "hierarchy-assignment-area", "hide-button", "show-button");
+                addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle", 
+                        "hierarchy-assignment-area", "hide-button", "show-button", true);
 
                 hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:", 
                         evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
@@ -238,7 +234,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                 UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
             }
             else {
-                addCollapseControl(evalgroupArea, "evalgroups-assignment-area", "hide-button", "show-button");
+                addCollapseControl(tofill, evalgroupArea, "initJSGroupsToggle", 
+                        "evalgroups-assignment-area", "hide-button", "show-button", false);
             }
 
             String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
@@ -274,19 +271,24 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         /*
          * Area 3: Selection GUI for Adhoc Groups
          */
+        String[] adhocGroupRowIds = new String[] {};
         if (useAdHocGroups) {
             UIBranchContainer adhocGroupsArea = UIBranchContainer.make(form, "use-adhoc-groups-area:");
 
-            addCollapseControl(adhocGroupsArea, "evalgroups-assignment-area", "hide-button", "show-button");
+            UIMessage.make(adhocGroupsArea, "adhoc-groups-deleted", "modifyadhocgroup.group.deleted");
+            addCollapseControl(tofill, adhocGroupsArea, "initJSAdhocToggle", 
+                    "adhocgroups-assignment-area", "hide-button", "show-button", false);
 
             // Table of Existing adhoc groups for selection
             List<EvalAdhocGroup> myAdhocGroups = commonLogic.getAdhocGroupsForOwner(currentUserId);
             if (myAdhocGroups.size() > 0) {
                 UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
 
+                ArrayList<String> adhocGroupRowIdsArray = new ArrayList<String>(myAdhocGroups.size());
                 int count = 0;
                 for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
                     UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
+                    adhocGroupRowIdsArray.add(tableRow.getFullID());
                     if (count % 2 == 0) {
                         tableRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                     }
@@ -303,9 +305,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                     // Link to allow editing an existing group
                     UIInternalLink.make(tableRow, "editGroupLink", UIMessage.make("assigneval.page.adhocgroups.editgrouplink"),
                             new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, adhocGroup.getId(), vsh.getFullURL(evalViewParams)));
-                    
+                    // add delete option - https://bugs.caret.cam.ac.uk/browse/CTL-1310
+                    if (currentUserId.equals(adhocGroup.getOwner()) || commonLogic.isUserAdmin(currentUserId)) {
+                        String deleteLink = commonLogic.getEntityURL(AdhocGroupEntityProvider.ENTITY_PREFIX, 
+                                adhocGroup.getId().toString());
+                        UILink.make(tableRow, "deleteGroupLink", UIMessage.make("general.command.delete"), deleteLink);
+                    }
                     count ++;
                 }
+                adhocGroupRowIds = adhocGroupRowIdsArray.toArray(new String[adhocGroupRowIdsArray.size()]);
             }
             UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
                     new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null, vsh.getFullURL(evalViewParams)));
@@ -323,15 +331,19 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         UIMessage.make(form, "back-button", "general.back.button");
         UIMessage assignButton = UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
 
+        // activate the adhoc groups deletion javascript
+        if (useAdHocGroups) {
+            UIInitBlock.make(tofill, "initJavaScriptAdhoc", "EvalSystem.initEvalAssignAdhocDelete",
+                    new Object[] {adhocGroupRowIds});
+        }
+
         // Error message to be triggered by javascript if users doesn't select anything
         // There is a 'evalgroupselect' class on each input checkbox that the JS 
         // can check for now.
         UIMessage assignErrorDiv = UIMessage.make(tofill, "nogroups-error", "assigneval.invalid.selection");
-        initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initEvalAssignValidation", 
-                new String[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()}));
 
-        // Setup JavaScript for the collapseable sections
-        UIVerbatim.make(tofill, "initJavaScript", initJS.toString());
+        UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.initEvalAssignValidation",
+                new Object[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()});
     }
 
     /**
@@ -373,22 +385,30 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
      * to show and hide, creates the necessary javascript.  The Javascript is
      * appended to the instance variable holding the javascript that will be 
      * rendered at the bottom of the page for javascript initialization.
-     * 
-     * @param tofill
-     * @param areaId
-     * @param hideId
-     * @param showId
      */
-    private void addCollapseControl(UIContainer tofill, String areaId, String hideId,
-            String showId) {
-        UIOutput hideControl = UIOutput.make(tofill, hideId);
-        UIOutput showControl = UIOutput.make(tofill, showId);
+    private void addCollapseControl(UIContainer tofill, UIContainer parent, 
+            String rsfId, String areaId, String hideId, String showId, boolean initialHide) {
+        UIOutput hideControl = UIOutput.make(parent, hideId);
+        UIOutput showControl = UIOutput.make(parent, showId);
+        UIOutput areaDiv = UIOutput.make(parent, areaId);
 
         //makeToggle: function (showId, hideId, areaId, toggleClass, initialHide) {
-        UIOutput areaDiv = UIOutput.make(tofill, areaId);
-        initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.makeToggle", 
-                new String[] { showControl.getFullID(),hideControl.getFullID(),
-                areaDiv.getFullID(),null,"true"}));
+        if (initialHide) {
+            UIInitBlock.make(tofill, rsfId, "EvalSystem.makeToggle",
+                    new Object[] { showControl.getFullID(),
+                    hideControl.getFullID(),
+                    areaDiv.getFullID(), 
+                    null, 
+                    initialHide
+                }
+            );
+        } else {
+            UIInitBlock.make(tofill, rsfId, "EvalSystem.makeToggle",
+                    new Object[] { showControl.getFullID(),
+                    hideControl.getFullID(),
+                    areaDiv.getFullID() }
+            );
+        }
     }
 
     /* (non-Javadoc)

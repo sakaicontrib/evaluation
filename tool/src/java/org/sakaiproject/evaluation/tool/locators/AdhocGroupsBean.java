@@ -29,6 +29,7 @@ public class AdhocGroupsBean {
 
    public static final String SAVED_NEW_ADHOCGROUP = "added-adhoc-group";
    public static final String UPDATED_ADHOCGROUP = "updated-adhoc-group";
+   public static final String DELETED_ADHOCGROUP = "deleted-adhoc-group";
 
    // These three variables are for EL form binding.
    private Long adhocGroupId;
@@ -50,7 +51,10 @@ public class AdhocGroupsBean {
     */
    public String addUsersToAdHocGroup() {
       String currentUserId = commonLogic.getCurrentUserId();
-      EvalAdhocGroup group = commonLogic.getAdhocGroupById(new Long(adhocGroupId));
+      if (adhocGroupId == null) {
+          throw new IllegalArgumentException("Cannot add users to adhoc group without an id, adhocGroupId is null");
+      }
+      EvalAdhocGroup group = commonLogic.getAdhocGroupById( adhocGroupId );
       adhocGroupId = group.getId();
 
       /*
@@ -94,6 +98,19 @@ public class AdhocGroupsBean {
       updateAdHocGroup(group);
 
       return SAVED_NEW_ADHOCGROUP;
+   }
+
+   public String deleteAdHocGroup() {
+       if (adhocGroupId == null) {
+           throw new IllegalArgumentException("Cannot delete adhoc group without an id, adhocGroupId is null");
+       }
+       EvalAdhocGroup group = commonLogic.getAdhocGroupById( adhocGroupId );
+
+       commonLogic.deleteAdhocGroup(adhocGroupId);
+       messages.addMessage(new TargettedMessage("modifyadhocgroup.group.deleted",
+               new Object[] { group.getTitle() }, TargettedMessage.SEVERITY_INFO));
+
+       return DELETED_ADHOCGROUP;
    }
 
    /**

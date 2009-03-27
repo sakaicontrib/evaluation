@@ -145,4 +145,12 @@ public interface EvalAdhocSupport {
     */
    public boolean isUserAllowedInAdhocGroup(String userId, String permissionConstant, String evalGroupId);
 
+   /**
+    * Delete the adhoc group by the unique id,
+    * will not fail if the group cannot be found
+    * 
+    * @param adhocGroupId the unique id for an {@link EvalAdhocGroup}
+    */
+   public void deleteAdhocGroup(Long adhocGroupId);
+
 }

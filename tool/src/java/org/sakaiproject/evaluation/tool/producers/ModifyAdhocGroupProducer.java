@@ -58,25 +58,26 @@ ActionResultInterceptor {
         AdhocGroupParams params = (AdhocGroupParams) viewparams;
         String curUserId = commonLogic.getCurrentUserId();
 
-        boolean newGroup = false;
-        EvalAdhocGroup evalAdhocGroup = null;
+        EvalAdhocGroup evalAdhocGroup;
         if (params.adhocGroupId == null) {
-            newGroup = true;
+            evalAdhocGroup = null;
         } else {
             evalAdhocGroup = commonLogic.getAdhocGroupById(params.adhocGroupId);
-            if (!curUserId.equals(evalAdhocGroup.getOwner())) {
-                throw new SecurityException("Only owners can modify adhocgroups: " + curUserId + " , "
-                        + evalAdhocGroup.getId());
+            if (evalAdhocGroup != null) {
+                if (!curUserId.equals(evalAdhocGroup.getOwner())) {
+                    throw new SecurityException("Only owners can modify adhocgroups: " + curUserId + " , "
+                            + evalAdhocGroup);
+                }
             }
         }
 
         String adhocGroupTitle = "";
-        if (!newGroup) {
+        if (evalAdhocGroup != null) {
             adhocGroupTitle = evalAdhocGroup.getTitle();
         }
 
         // Page Title
-        if (newGroup) {
+        if (evalAdhocGroup == null) {
             UIMessage.make(tofill, "page-title", "modifyadhocgroup.page.title.new");
         } else {
             UIMessage.make(tofill, "page-title", "modifyadhocgroup.page.title.existing",
@@ -90,7 +91,7 @@ ActionResultInterceptor {
          * If this is not a new group, then we render a table containing all the current group
          * members, along with a button on each row to remove that particular member.
          */
-        if (!newGroup) {
+        if (evalAdhocGroup != null) {
             String[] participants = evalAdhocGroup.getParticipantIds();
             if (participants.length > 0) {
                 List<EvalUser> evalUsers = commonLogic.getEvalUsersByIds(participants);
@@ -124,7 +125,7 @@ ActionResultInterceptor {
          * There are two different methods depending on whether this is a new group or not. If it's
          * not, we also attach the Adhoc Group ID to the button.
          */
-        if (newGroup) {
+        if (evalAdhocGroup == null) {
             UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.newsave"),
             "adhocGroupsBean.addNewAdHocGroup");
         } else {
