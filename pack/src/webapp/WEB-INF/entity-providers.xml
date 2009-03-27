@@ -13,8 +13,12 @@
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider"
 			class="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProviderImpl">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
 		<property name="evaluationService"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider"
@@ -39,6 +43,6 @@
 			ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
 		<property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-		</bean>
+    </bean>
 
 </beans>
