@@ -159,7 +159,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      * key = templateItemId + answer.associatedType + answer.associatedId
      */
     Map<String, EvalAnswer> answerMap = new HashMap<String, EvalAnswer>();
-
+    /**
+     * If this is a re-opened response this will contain an {@link EvalResponse}
+     */
+    EvalResponse response;
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -295,17 +298,19 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     }
                 }
 
-                // load up the response if this user has one already
-                if (responseId == null) {
-                    EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
-                    if (response == null) {
-                        // create the initial response if there is not one
+                
+             // load up the response if this user has one already
+				if (responseId == null) {
+					response = evaluationService.getResponseForUserAndGroup(
+							evaluationId, currentUserId, evalGroupId);
+					if (response == null) {
+						// create the initial response if there is not one
                         // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
                         //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
                     } else {
-                        responseId = response.getId();
-                    }
-                }
+						responseId = response.getId();
+					}
+				}
 
                 if (responseId != null) {
                     // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
@@ -375,6 +380,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         .get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
+                Map<String, String[]> savedSelections = new HashMap<String, String[]>();
+				if(response!=null){
+					savedSelections = response.getSelections();
+					}
                 if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
                     EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(
@@ -390,7 +399,24 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
-
+                    if (response != null) {
+						// emit currently selected people into hidden element
+						// for JS use
+						Set<String> savedIds = new HashSet<String>();
+						for (Iterator<String> selector = savedSelections
+								.keySet().iterator(); selector.hasNext();) {
+							String selectKey = (String) selector.next();
+							String[] usersFound = savedSelections
+									.get(selectKey);
+							savedIds.add(usersFound[0]);
+						}
+						UIOutput savedSel = UIOutput
+								.make(formBranch, "selectedPeopleInResponse",
+										savedIds.toString());
+						savedSel.decorators = new DecoratorList(
+								new UIIDStrategyDecorator(
+										"selectedPeopleInResponse"));
+					}
                     for (Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();) {
                         // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
                         String selectKey = (String) selector.next();
@@ -406,11 +432,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         // We render the selection controls if there are at least two
                         // Instructors/TAs
                         if (selectionsEnabled && selectUserIds.size() > 1) {
-                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
-                            if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
+                           if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                                 // nothing special to do in all case
-                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
-                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_MULTIPLE)) {
+                            } else if (EvalAssignGroup.SELECTION_OPTION_MULTIPLE.equals(selectValue)) {
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
                                         formBranch, uiTag + "-multiple:");
                                 for (String userId : selectUserIds) {
@@ -429,13 +453,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                     uild.targetFullID = user.userId;
                                     checkBranch.decorators = new DecoratorList(uild);
                                 }
-                                // form.addParameter(new UIELBinding(selectionOTP, ""));
-                            // FIXME findbugs, always compare constant to variable (e.g. CONSTANT.equals(var)
-                            } else if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ONE)) {
+                              } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
                                 value.add("default");
-                                // This should get the string equivalent of:"takeeval.selection.dropdown"in the bundle
+                                // This should get the string equivalent of:"takeeval.selection.dropdown"
                                 label.add("--- Select ---"); // FIXME not i18n, this should use i18n string
                                 List<EvalUser> users = commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]));
                                 for (EvalUser user : users) {
@@ -466,9 +488,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
                             UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, instructorIds, instructorSelectionOption);
+                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, instructorIds, instructorSelectionOption,savedSelections);
                         } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, assistantIds, assistantSelectionOption);
+                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, assistantIds, assistantSelectionOption,savedSelections);
                         }
                     }
 
@@ -515,25 +537,47 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      * @param associateId userIds for Assistants
      * @param instructorIds userIds for Instructors
      * @param selectionOption Selection setting for this user
+     * @param savedSelections
      */
-    private void showHeaders(UIBranchContainer categorySectionBranch,
-    		String associateType, String associateId, Set<String> instructorIds, String selectionOption) {
+	private void showHeaders(UIBranchContainer categorySectionBranch, String associateType, String associateId,
+			Set<String> instructorIds, String selectionOption, Map<String, String[]> savedSelections) {
 		EvalUser user = commonLogic.getEvalUserById(associateId);
-        UIMessage header = UIMessage.make(categorySectionBranch, "categoryHeader",
-                "takeeval."+associateType+".questions.header",
-                new Object[] { user.displayName });
-        // EVALSYS-618: support for JS: add display name to title attribute of legend and hide category items
-        header.decorators = new DecoratorList(new UIFreeAttributeDecorator("title",
-                user.displayName));
-        categorySectionBranch.decorators = new DecoratorList(
-                new UIFreeAttributeDecorator(new String[] { "name", "class" },
-                        new String[] { user.userId, associateType+"Branch" }));
-        if (! EvalAssignGroup.SELECTION_OPTION_ALL.equals(selectionOption)
-                && instructorIds.size() > 1) {
-            Map<String, String> css = new HashMap<String, String>();
-            css.put("display", "none");
-            categorySectionBranch.decorators.add(new UICSSDecorator(css));
-        }
+		UIMessage header = UIMessage.make(categorySectionBranch,
+				"categoryHeader", "takeeval." + associateType
+						+ ".questions.header",
+				new Object[] { user.displayName });
+		// EVALSYS-618: support for JS: add display name to title attribute of
+		// legend and hide category items
+		header.decorators = new DecoratorList(new UIFreeAttributeDecorator(
+				"title", user.displayName));
+		categorySectionBranch.decorators = new DecoratorList(
+				new UIFreeAttributeDecorator(new String[] { "name", "class" },
+						new String[] { user.userId, associateType + "Branch" }));
+		if (!EvalAssignGroup.SELECTION_OPTION_ALL.equals(selectionOption)
+				&& instructorIds.size() > 1) {
+			Map<String, String> cssHide = new HashMap<String, String>();
+			cssHide.put("display", "none");
+			Map<String, String> cssShow = new HashMap<String, String>();
+			cssShow.put("display", "block");
+			if(response!=null && savedSelections!=null){
+			//we are handling a response
+				int found = 0;
+				for (Iterator<String> selector = savedSelections.keySet().iterator(); selector.hasNext();) {
+					String selectKey = (String) selector.next();
+					String[] usersFound = savedSelections.get(selectKey);
+					if(usersFound[0].equals(user.userId)){
+						found++;
+					}
+					if(found>0){
+					categorySectionBranch.decorators.add(new UICSSDecorator(cssShow));
+				}else{
+					categorySectionBranch.decorators.add(new UICSSDecorator(cssHide));
+				}
+				}
+			}else{
+			categorySectionBranch.decorators.add(new UICSSDecorator(cssHide));
+			}
+		}
 	}
 
 	/**

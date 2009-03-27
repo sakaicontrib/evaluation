@@ -204,8 +204,8 @@ $(document).ready(function() {
     function init(that, options) {
         //copy options to this class
         variables.options = options;
-        variables.savedIds = $('input#selectedPeopleInResponse').val().replace('[','').replace(']','').split(', ');
-        return that.each(function() {
+        var temp = $('input#selectedPeopleInResponse').val();
+        variables.savedIds = temp==null?'':temp.replace('[','').replace(']','').split(', ');return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;
                 log("Found a selector for: " + variables.get.typeOfBranch());
