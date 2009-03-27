@@ -1305,11 +1305,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // set the date modified
         assignGroup.setLastModified( new Date() );
 
-        if (assignGroup.getEvaluation() == null || assignGroup.getEvaluation().getId() == null) {
-            throw new IllegalStateException("Evaluation is not set or not saved for assignGroup (" + 
+        Long evaluationId = assignGroup.getEvaluation() == null ? assignGroup.getEvaluationId() : assignGroup.getEvaluation().getId();
+        if (evaluationId == null) {
+            throw new IllegalStateException("Evaluation or evaluationId is not set or not saved for assignGroup (" + 
                     assignGroup.getId() + "), evalgroupId: " + assignGroup.getEvalGroupId() );
         }
-        EvalEvaluation eval = getEvaluationOrFail(assignGroup.getEvaluation().getId());
+        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+        if (assignGroup.getEvaluation() == null) {
+            assignGroup.setEvaluation(eval);
+        }
 
         setAssignmentDefaults(eval, assignGroup); // set the group defaults before saving
 
