@@ -19,7 +19,7 @@ import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEnt
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 
 /**
- * Implementation for the entity provider for evaluationSetupService
+ * Implementation for the entity provider for evaluations
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

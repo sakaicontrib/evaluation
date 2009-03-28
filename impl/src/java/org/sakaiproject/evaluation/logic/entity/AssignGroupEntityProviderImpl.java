@@ -124,11 +124,11 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
     }
 
     public String[] getHandledOutputFormats() {
-        return new String[] {Formats.JSON, Formats.XML};
+        return new String[] {Formats.JSON, Formats.XML}; // have to not use HTML because it stops the access provider
     }
 
     public String[] getHandledInputFormats() {
-        return new String[] {Formats.HTML, Formats.JSON, Formats.XML};
+        return new String[] {Formats.JSON, Formats.XML}; // have to not use HTML because it stops the access provider
     }
 
     // Added for compatibility with 1.3.3
