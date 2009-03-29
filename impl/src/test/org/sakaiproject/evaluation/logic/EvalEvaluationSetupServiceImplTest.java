@@ -133,10 +133,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         assertNotNull(checkEval);
         assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, partialEval.getState());
 
-        // check that the template was NOT copied
-        assertEquals(etdl.templatePublic.getId(), partialEval.getTemplate().getId());
-        assertFalse(partialEval.getTemplate().isHidden());
-        assertNull(partialEval.getTemplate().getCopyOf());
+        // check that the template WAS copied
+        EvalTemplate partialTemplate = partialEval.getTemplate();
+        assertNotSame(etdl.templatePublic.getId(), partialTemplate.getId());
+        assertEquals(etdl.templatePublic.getId(), partialTemplate.getCopyOf());
+        assertNotNull(partialTemplate.getCopyOf());
+        assertTrue(partialTemplate.isHidden());
 
         // now save the partial eval and complete
         evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, true );
