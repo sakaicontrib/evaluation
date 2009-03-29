@@ -71,52 +71,55 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewPa
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+        ReportParameters reportViewParams = (ReportParameters) viewparams;
+        Long evaluationId = reportViewParams.evaluationId;
+
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
-        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-        boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-        boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-
-        /*
-         * top links here
-         */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                    UIMessage.make("administrate.page.title"),
-                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-        }
-
-        if (createTemplate) {
-            UIInternalLink.make(tofill, "control-templates-link",
-                    UIMessage.make("controltemplates.page.title"), 
-                    new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-            if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-                UIInternalLink.make(tofill, "control-items-link",
-                        UIMessage.make("controlitems.page.title"), 
-                        new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-            }
-        } else {
-            throw new SecurityException("User attempted to access " + 
-                    VIEW_ID + " when they are not allowed");
-        }
-
-        if (beginEvaluation) {
-            UIInternalLink.make(tofill, "control-evaluations-link",
-                    UIMessage.make("controlevaluations.page.title"),
-                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        }
 
         UIMessage.make(tofill, "report-groups-title", "reportgroups.page.title");
 
-        ReportParameters reportViewParams = (ReportParameters) viewparams;
-        Long evaluationId = reportViewParams.evaluationId;
+        if (! reportViewParams.external) {
+            boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+            boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+            boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+            /*
+             * top links here
+             */
+            UIInternalLink.make(tofill, "summary-link", 
+                    UIMessage.make("summary.page.title"), 
+                    new SimpleViewParameters(SummaryProducer.VIEW_ID));
+    
+            if (userAdmin) {
+                UIInternalLink.make(tofill, "administrate-link", 
+                        UIMessage.make("administrate.page.title"),
+                        new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+                UIInternalLink.make(tofill, "control-scales-link",
+                        UIMessage.make("controlscales.page.title"),
+                        new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+            }
+    
+            if (createTemplate) {
+                UIInternalLink.make(tofill, "control-templates-link",
+                        UIMessage.make("controltemplates.page.title"), 
+                        new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+                if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+                    UIInternalLink.make(tofill, "control-items-link",
+                            UIMessage.make("controlitems.page.title"), 
+                            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+                }
+            } else {
+                throw new SecurityException("User attempted to access " + 
+                        VIEW_ID + " when they are not allowed");
+            }
+    
+            if (beginEvaluation) {
+                UIInternalLink.make(tofill, "control-evaluations-link",
+                        UIMessage.make("controlevaluations.page.title"),
+                        new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+            }
+        }
+
         if (evaluationId != null) {
             // get the evaluation from the id
             EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);

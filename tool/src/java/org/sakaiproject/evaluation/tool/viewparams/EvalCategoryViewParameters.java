@@ -14,14 +14,12 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * used for passing a category to the show eval categories view
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalCategoryViewParameters extends SimpleViewParameters {
+public class EvalCategoryViewParameters extends BaseViewParameters {
 
 	/**
 	 * An evaluation category - should match with an evalCategory from an {@link EvalEvaluation} object

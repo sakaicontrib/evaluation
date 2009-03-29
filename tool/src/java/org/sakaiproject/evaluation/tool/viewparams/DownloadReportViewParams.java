@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * This is meant to serve as a base for ViewParameters of different download
  * types that may require their own custom parameters. Ex. CSV, Excel, PDF etc.
@@ -24,7 +22,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Steven Githens
  */
-public class DownloadReportViewParams extends SimpleViewParameters {
+public class DownloadReportViewParams extends BaseViewParameters {
 
 	public Long templateId; 
 	public Long evalId;

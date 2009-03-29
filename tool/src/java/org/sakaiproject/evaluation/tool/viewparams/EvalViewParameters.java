@@ -10,8 +10,6 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * Allows for passing of information needed for previewing templates or evaluations,
  * also for taking evaluations page, also used for controlling evaluations
@@ -19,7 +17,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalViewParameters extends SimpleViewParameters {
+public class EvalViewParameters extends BaseViewParameters {
 
    public Long evaluationId;
    public Long templateId; 

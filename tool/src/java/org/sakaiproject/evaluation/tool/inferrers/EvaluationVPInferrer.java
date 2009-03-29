@@ -94,10 +94,6 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         return togo[0];
     }
 
-    /**
-     * @param reference
-     * @return
-     */
     private ViewParameters inferDefaultViewParametersImpl(String reference) {
         IdEntityReference ep = new IdEntityReference(reference);
         EvalEvaluation evaluation = null;
@@ -120,7 +116,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
             // anonymous evaluation URLs ALWAYS go to the take_eval page
         	log.info("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
-            return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+        	EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+        	vp.external = true;
+        	return vp;
         } else {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
@@ -131,12 +129,16 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // go to the reports view
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         commonLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
-                    return new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
+                    ReportParameters vp = new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
+                    vp.external = true;
+                    return vp;
                 } else {
                     // require auth
 //                    throw new SecurityException("This evaluation/survey is closed and can longer be taken, only survey admins can access this:  User must be authenticated to access this page");
                     // send user to take eval so they will get the closed message
-                    return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                    EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                    vp.external = true;
+                    return vp;
                 }
             }
 
@@ -151,13 +153,17 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                     if (evalGroups.length > 0) {
                         // if we are being evaluated in at least one group in this eval then we can add items
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                        EvalViewParameters vp = new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                        vp.external = true;
+                        return vp;
                     }
                 } else {
                     if (commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                         // those being evaluated get to go to add their own questions
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                        EvalViewParameters vp = new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                        vp.external = true;
+                        return vp;
                     }
                 }
                 // else just require auth
@@ -170,11 +176,15 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // switched to take check first
                 if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
                 	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
-                    return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                	EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                    vp.external = true;
+                    return vp;
                 } else if (currentUserId.equals(evaluation.getOwner()) ||
                         commonLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                     // cannot take, but can preview
-                    return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                    EvalViewParameters vp = new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                    vp.external = true;
+                    return vp;
                 } else {
                     // no longer want to show security exceptions - https://bugs.caret.cam.ac.uk/browse/CTL-1548
                     //throw new SecurityException("User ("+currentUserId+") does not have permission to take or preview this evaluation ("+evaluationId+")");

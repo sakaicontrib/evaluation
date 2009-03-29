@@ -57,7 +57,9 @@ public class ItemVPInferrer implements EntityViewParamsInferrer {
 //    } else {
 //       authoringService.canControlItem(userId, item);
 //    }
-      return new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, templateItemId);
+      ItemViewParameters vp = new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, templateItemId);
+      vp.external = true;
+      return vp;
    }
 
 }

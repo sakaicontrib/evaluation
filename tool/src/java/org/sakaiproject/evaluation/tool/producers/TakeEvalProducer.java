@@ -178,9 +178,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
         UIMessage.make(tofill, "page-title", "takeeval.page.title");
 
-        UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));			
-
         // get passed in get params
         EvalViewParameters evalTakeViewParams = (EvalViewParameters) viewparams;
         Long evaluationId = evalTakeViewParams.evaluationId;
@@ -196,6 +193,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         if (eval == null) {
             throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
+        }
+
+        if (! evalTakeViewParams.external) {
+            UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
+                    new SimpleViewParameters(SummaryProducer.VIEW_ID));
         }
 
         UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");

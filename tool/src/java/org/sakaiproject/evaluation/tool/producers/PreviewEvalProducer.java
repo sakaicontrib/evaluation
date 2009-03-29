@@ -121,9 +121,11 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         EvalEvaluation eval = null;
         EvalTemplate template = null;
 
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        if (! previewEvalViewParams.external) {
+            UIInternalLink.make(tofill, "summary-link", 
+                    UIMessage.make("summary.page.title"), 
+                    new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        }
 
         if (evaluationId == null) {
             // previewing a template
