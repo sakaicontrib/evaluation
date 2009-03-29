@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -61,6 +62,9 @@ public interface EvalEvaluationSetupService {
      * if you want to avoid possible exceptions<br/>
      * Evaluations can be saved with the email templates as null and will use the
      * default templates in this circumstance<br/>
+     * Use {@link EvalBeanUtils#setEvaluationDefaults(EvalEvaluation, String)} to setup
+     * the defaults before attempting to save the evalution to make things easier
+     * (will put the eval into a valid state) <br/>
      * <b>Note:</b> Do NOT attempt to save an evaluation with a null template
      * or a template that contains no items or an exception will result<br/>
      * <b>Note:</b> All evaluations must run with copies of templates.
