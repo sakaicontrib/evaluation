@@ -381,6 +381,8 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
+       <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"

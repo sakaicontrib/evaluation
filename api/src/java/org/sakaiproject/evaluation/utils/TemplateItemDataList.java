@@ -56,6 +56,22 @@ public class TemplateItemDataList {
         return buildFlatDataList(null, null, includeBlockChildren);
     }
 
+    /**
+     * Creates a DataTemplateItem from a given template item id (must be a template item in the TIDL) <br/>
+     * WARNING: this DTI will be out of context because it is being fetched without being in an item group
+     * 
+     * @param templateItemId the unique id of a template item in the TIDL
+     * @return the DataTemplateItem OR null if the template item id cannot be found
+     */
+    public DataTemplateItem getDataTemplateItem(Long templateItemId) {
+        DataTemplateItem dti = null;
+        EvalTemplateItem eti = getTemplateItem(templateItemId);
+        if (eti != null) {
+            dti = new DataTemplateItem(eti, EvalConstants.ITEM_CATEGORY_COURSE, null, null);
+        }
+        return dti;
+    }
+
     private List<TemplateItemGroup> templateItemGroups = null;
     /**
      * @return the list of all {@link TemplateItemGroup}s in this structure
@@ -73,6 +89,22 @@ public class TemplateItemDataList {
      */
     public List<EvalTemplateItem> getAllTemplateItems() {
         return allTemplateItems;
+    }
+
+    /**
+     * Get a template item from the TIDL by its unique id
+     * @param templateItemId the unique id of a template item
+     * @return the template item OR null if none exists in the TIDL with that id
+     */
+    public EvalTemplateItem getTemplateItem(Long templateItemId) {
+        EvalTemplateItem eti = null;
+        for (EvalTemplateItem templateItem : allTemplateItems) {
+            if (templateItem.getId().equals(templateItemId)) {
+                eti = templateItem;
+                break;
+            }
+        }
+        return eti;
     }
 
     private List<EvalHierarchyNode> hierarchyNodes = null;

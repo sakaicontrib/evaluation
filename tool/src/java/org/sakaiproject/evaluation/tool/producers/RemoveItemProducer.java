@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -128,7 +127,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
             UIInternalLink.make(tofill, "cancel-command-link", UIMessage.make("general.cancel.button"), new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateItem.getTemplate().getId()));
             UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.templateitem.confirmation",
                     new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
-            if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+            if (TemplateItemUtils.isBlockParent(templateItem)) {
                 UIMessage.make(tofill, "remove-item-block-text", "removeitem.block.text");
             }
             if (templateItem.getDisplayOrder() != null) {
