@@ -211,6 +211,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     public void saveEvaluation(EvalEvaluation evaluation, String userId, boolean created) {
         log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
 
+        // NOTE: The defaults for the evaluation should be set by calling this when evals are created and before they are saved
+        //EvalBeanUtils.setEvaluationDefaults(togo, EvalConstants.EVALUATION_TYPE_EVALUATION);
+
         // set the date modified
         evaluation.setLastModified( new Date() );
 
