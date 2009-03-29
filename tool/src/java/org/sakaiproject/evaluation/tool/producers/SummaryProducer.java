@@ -134,22 +134,25 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
         if (userAdmin) {
             UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link", UIMessage.make("controlscales.page.title"), new SimpleViewParameters(
-                    ControlScalesProducer.VIEW_ID));
         }
 
         if (createTemplate) {
             UIInternalLink.make(tofill, "control-templates-link", UIMessage.make("controltemplates.page.title"), new SimpleViewParameters(
                     ControlTemplatesProducer.VIEW_ID));
-            if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-                UIInternalLink
-                .make(tofill, "control-items-link", UIMessage.make("controlitems.page.title"), new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+            if (! ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+                UIInternalLink.make(tofill, "control-items-link", UIMessage.make("controlitems.page.title"), 
+                        new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+                UIInternalLink.make(tofill, "control-scales-link", UIMessage.make("controlscales.page.title"), 
+                        new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
             }
         }
 
         if (beginEvaluation) {
-            UIInternalLink.make(tofill, "control-evaluations-link", UIMessage.make("controlevaluations.page.title"), new SimpleViewParameters(
-                    ControlEvaluationsProducer.VIEW_ID));
+            UIInternalLink.make(tofill, "control-evaluations-link", UIMessage.make("controlevaluations.page.title"), 
+                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+            UIInternalLink.make(tofill, "control-emailtemplates-link", UIMessage.make("controlemailtemplates.page.title"),
+                    new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+            // show instructor instructions
             UIMessage.make(tofill, "instructor-instructions", "summary.instructor.instruction");
         }
 
