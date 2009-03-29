@@ -77,15 +77,16 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
         // use a date which is related to the current users locale
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
         EvalCategoryViewParameters ecvp = (EvalCategoryViewParameters) viewparams;
         String evalCategory = ecvp.evalCategory;
 
         // page title
         UIMessage.make(tofill, "page-title", "showevalcategory.page.title", new Object[] {evalCategory});
+
+        if (! ecvp.external) {
+            UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
+                    new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        }
 
         UIOutput.make(tofill, "eval-category", evalCategory);
         UIMessage.make(tofill, "eval-category-instructions", "showevalcategory.evaluation.instructions");

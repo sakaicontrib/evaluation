@@ -14,14 +14,12 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * This is a view parameters class which defines the variables that are passed
  * from one page to another, for a simple view which is centered on a particular
  * EvalTemplate object within the evaluation system.
  */
-public class TemplateViewParameters extends SimpleViewParameters {
+public class TemplateViewParameters extends BaseViewParameters {
 
 	public Long templateId;
 

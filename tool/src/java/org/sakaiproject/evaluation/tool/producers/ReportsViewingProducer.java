@@ -141,7 +141,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             currentViewMode = VIEWMODE_REGULAR;
         }
 
-        renderTopLinks(tofill);
+        if (! reportViewParams.external) {
+            renderTopLinks(tofill);
+        }
 
         UIMessage.make(tofill, "view-report-title", "viewreport.page.title");
 

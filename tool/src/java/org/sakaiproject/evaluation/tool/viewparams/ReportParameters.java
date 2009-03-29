@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * Pass the chosen groups to the view reports page when coming via bread crumbs from essay responses page. 
  * For going staightforward from choose report groups to view reports page, the report bean takes care of it. 
@@ -23,7 +21,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steven Githens
  */
-public class ReportParameters extends SimpleViewParameters {
+public class ReportParameters extends BaseViewParameters {
 
    public Long evaluationId;
    public String[] groupIds;

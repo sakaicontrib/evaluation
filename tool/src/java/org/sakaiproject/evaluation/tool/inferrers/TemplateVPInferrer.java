@@ -49,7 +49,9 @@ public class TemplateVPInferrer implements EntityViewParamsInferrer {
 //		} else {
 //			authoringService.canControlTemplate(userId, templateId);
 //		}
-		return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId);
+		EvalViewParameters vp = new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId);
+		vp.external = true;
+		return vp;
 	}
 
 }

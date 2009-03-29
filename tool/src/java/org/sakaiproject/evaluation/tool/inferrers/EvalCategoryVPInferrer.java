@@ -43,7 +43,9 @@ public class EvalCategoryVPInferrer implements EntityViewParamsInferrer {
 		IdEntityReference ep = new IdEntityReference(reference);
 		String category = ep.id;
 		// TODO - should this possibly authenticate first?
-		return new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, category);
+		EvalCategoryViewParameters vp = new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, category);
+		vp.external = true;
+		return vp;
 	}
 
 }

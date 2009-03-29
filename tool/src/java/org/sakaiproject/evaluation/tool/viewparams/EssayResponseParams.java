@@ -14,13 +14,11 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)
  */
-public class EssayResponseParams extends SimpleViewParameters {
+public class EssayResponseParams extends BaseViewParameters {
 
 	public Long evalId; 
 	public Long itemId;
