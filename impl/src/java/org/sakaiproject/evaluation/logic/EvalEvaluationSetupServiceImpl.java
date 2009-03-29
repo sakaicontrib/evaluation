@@ -268,13 +268,24 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
 
+        boolean isNew = false;
+        if (evaluation.getId() == null) {
+            isNew = true;
+        } else {
+            // should we also see if this eval already exists?
+//            EvalEvaluation evalCheck = evaluationService.getEvaluationById(evaluation.getId());
+//            if (evalCheck == null) {
+//                isNew = true;
+//            }
+        }
+        
+
         // now perform checks depending on whether this is new or existing
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.add(Calendar.MINUTE, -30); // put today a bit in the past (30 minutes)
         Date today = calendar.getTime();
-        if (evaluation.getId() == null) {
+        if (isNew) {
             // creating new evaluation
-
             if (evaluation.getDueDate() != null 
                     && evaluation.getDueDate().before(today)) {
                 throw new InvalidDatesException(
@@ -310,7 +321,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         } else {
             // updating existing evaluation
-
             if (! securityChecks.canUserControlEvaluation(userId, evaluation) ) {
                 throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
             }
@@ -339,9 +349,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }         
         }
 
+        /** OLD WAY / new way is to copy the template when the eval is first saved
         // make sure the template is copied if not in partial state, it is ok to have the original template while in partial state
         if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
-            // this eval is not partial anymore so the template MUST be a hidden copy
+        **/
+        if (isNew) {
+            // copy the template on first time saved - http://jira.sakaiproject.org/jira/browse/EVALSYS-647
             if (template.getCopyOf() == null ||
                     template.isHidden() == false) {
                 // not a hidden copy so make one
@@ -349,14 +362,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
                 evaluation.setTemplate(copy);
                 template = copy; // set the new template to the template variable
-                // alternative is to throw an exception to force the user to do this, but we may as well handle it
-                //            throw new IllegalStateException("This evaluation ("+evaluation.getId()+") is being saved "
-                //            		+ "in a state ("+evalState+") that is after the partial state with "
-                //                  + "a template that has not been copied yet, this is invalid as all evaluations must use copied "
-                //                  + "templates, copy the template using the authoringService.copyTemplate method before saving this eval");
             }
         }
-
+        
         // fill in any default values and nulls here
         if (evaluation.getLocked() == null) {
             evaluation.setLocked( Boolean.FALSE );
