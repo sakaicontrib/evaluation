@@ -15,12 +15,18 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -72,7 +78,15 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
         }
 
         // use the renderer evolver to show the item
-        itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, null);
+        List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
+        templateItems.add(templateItem);
+        if (templateItem.childTemplateItems != null) {
+            templateItems.addAll(templateItem.childTemplateItems);
+        }
+        TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
+        DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
+        itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
+                RenderingUtils.makeRenderProps(dti, null, null, null) );
 
         // render the close button
         UIMessage.make(tofill, "close-button", "general.close.window.button");

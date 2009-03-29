@@ -527,6 +527,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     public EvalTemplateItem getTemplateItemById(Long templateItemId) {
         log.debug("templateItemId:" + templateItemId);
         EvalTemplateItem templateItem = (EvalTemplateItem) dao.findById(EvalTemplateItem.class, templateItemId);
+        if (TemplateItemUtils.isBlockParent(templateItem)) {
+            // get the children
+            List<EvalTemplateItem> children = getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+            templateItem.childTemplateItems = children;
+        }
         return templateItem;
     }
 
