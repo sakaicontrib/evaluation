@@ -19,15 +19,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.TakeEvalBean;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
@@ -37,7 +34,6 @@ import uk.org.ponder.beanutil.BeanLocator;
  * @author Will Humphries (whumphri@vt.edu)
  */
 public class EvaluationBeanLocator implements BeanLocator {
-	private static Log log = LogFactory.getLog(EvaluationBeanLocator.class);
 
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
