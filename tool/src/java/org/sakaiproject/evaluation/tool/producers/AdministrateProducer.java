@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
@@ -58,6 +59,11 @@ public class AdministrateProducer implements ViewComponentProducer {
         this.commonLogic = commonLogic;
     }
 
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+        this.evaluationService = evaluationService;
+    }
+
     private EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;
@@ -72,6 +78,7 @@ public class AdministrateProducer implements ViewComponentProducer {
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+        boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
         if (! userAdmin) {
             // Security check and denial
@@ -92,9 +99,11 @@ public class AdministrateProducer implements ViewComponentProducer {
                 UIMessage.make("summary.page.title"), 
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-        UIInternalLink.make(tofill, "control-evaluations-link",
+        if (beginEvaluation) {
+            UIInternalLink.make(tofill, "control-evaluations-link",
                 UIMessage.make("controlevaluations.page.title"), 
                 new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+        }
 
         UIInternalLink.make(tofill, "control-templates-link",
                 UIMessage.make("controltemplates.page.title"), 

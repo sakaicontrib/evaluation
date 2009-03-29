@@ -54,10 +54,10 @@ public class ControlScalesProducer implements ViewComponentProducer {
     }
 
     private EvalAuthoringService authoringService;
-
     public void setAuthoringService(EvalAuthoringService authoringService) {
         this.authoringService = authoringService;
     }
+
     private EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;

@@ -39,6 +39,7 @@ public class AdministrateReportingProducer implements ViewComponentProducer {
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
         UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"),
                 new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+
         UIMessage.make(tofill, "page-title", "controlreporting.breadcrumb.title");
         
         UIForm form = UIForm.make(tofill, "settings-form");
