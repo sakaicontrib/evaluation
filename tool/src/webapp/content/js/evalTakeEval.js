@@ -2,6 +2,7 @@
  * For the takeEval and preview views
  */
 $(document).ready(function() {
+    
     var instrSel = $('div[@rel=evalinstructorSelector]');
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
@@ -15,7 +16,7 @@ $(document).ready(function() {
                 });
                 var selectedInstrArray = new Array();
                 $.each(selectedInstrDomArray, function(i, item) {
-                    selectedInstrArray.push($(item).attr('id'));
+                    selectedInstrArray.push($(item).val());
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
@@ -31,7 +32,7 @@ $(document).ready(function() {
                 });
                 var selectedassistantArray = new Array();
                 $.each(selectedassistantDomArray, function(i, item) {
-                    selectedassistantArray.push($(item).attr('id'));
+                    selectedassistantArray.push($(item).val());
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
@@ -55,7 +56,7 @@ $(document).ready(function() {
             }
         }
         if (instrSel.find('select').length != 0) {
-            var valid = true;
+            valid = true;
             instrSel.find('select').each(function() {
                 if (this.selectedIndex == 0) {
                     valid = false;
@@ -80,6 +81,9 @@ $(document).ready(function() {
         });
         return false;
     }
+
+
+
 });
 
 (function($) {
@@ -95,13 +99,11 @@ $(document).ready(function() {
             activeCheckbox: {background:'#eee'}
         },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
-        debug: false,
-        fields: ['input', 'select', 'textarea'] //Array of fields in the form 
-    }
+        debug: true,
+        fields: ['input', 'select', 'textarea'] //Array of fields in the form
+    };
     /**
      * Private methods and variables
-     *
-     * @param that Element to be attached to
      */
 
     var variables = {
@@ -113,21 +115,21 @@ $(document).ready(function() {
         questionsToHide: new Array(),
         get:{
             typeOfBranch:function() {
-                log("Active code type is: " + variables.options.type);
+                //log("Active code type is: " + variables.options.type);
                 switch (variables.options.type) {
                     case 0: return "instructor";break;
                     case 1: return "assistant";break;
                 }
             } ,
             shownQuestions: function() {
-                log("Getting questions for type: " + variables.get.typeOfBranch());
+                //log("Getting questions for type: " + variables.get.typeOfBranch());
                 var str = 'div.' + variables.get.typeOfBranch() + 'Branch:visible';
                 var temp = new Array();
                 $.each($(str).get(), function(i, item) {
                     temp.push($(item).attr("name"));
-                    log("Search found: " + $(item).attr("name"));
+                    //log("Search found: " + $(item).attr("name"));
                 });
-                log("Search found total: " + temp.length);
+                //log("Search found total: " + temp.length);
                 return temp;
             },
 
@@ -136,11 +138,11 @@ $(document).ready(function() {
                 that.find('input[@type=checkbox]').each(function() {
                     if (this.checked)checked.push(this);
                 });
-                log("Found " + checked.length + " checked boxes");
+                //log("Found " + checked.length + " checked boxes");
                 return checked;
             } ,
             selectedBoxesBool:function(that) {
-                return variables.get.selectedBoxesArray(that).length > 0
+                return variables.get.selectedBoxesArray(that).length > 0;
             }
         },
         set:{
@@ -151,7 +153,7 @@ $(document).ready(function() {
                 else if (that.attr('name').search(/assistant/i) != -1)
                     temp = 1;
                 variables.options.type = temp;
-                log("Active type is: " + variables.get.typeOfBranch());
+                //log("Active type is: " + variables.get.typeOfBranch());
 
             }
         },
@@ -161,11 +163,11 @@ $(document).ready(function() {
         foundArray: function() {
             var temp = new Array();
             $.each(variables.questionsToShow, function(s, shown) {
-                log("Checking if " + shown + " is already showing in dom. Dom has:" + variables.get.shownQuestions().length + " visible.");
+                //log("Checking if " + shown + " is already showing in dom. Dom has:" + variables.get.shownQuestions().length + " visible.");
                 $.each(variables.get.shownQuestions(), function(h, hidden) {
                     if (shown == hidden) {
                         temp.push(shown);
-                        log("Found visible field: " + shown);
+                        //log("Found visible field: " + shown);
                     }
                 });
             });
@@ -173,15 +175,15 @@ $(document).ready(function() {
         },
         foundBool: function() {
             var temp = variables.foundArray();
-            log("Found " + temp.length + " with IDs: " + temp.toString());
-            return (temp.length > 0)
+            //log("Found " + temp.length + " with IDs: " + temp.toString());
+            return (temp.length > 0);
         },
         foundSplice:function(item) {
             if (variables.foundBool()) {
                 $.each(variables.questionsToShow, function(s, show) {
                     if (show == item) {
                         variables.questionsToShow.splice(parseInt(s), 1);
-                        log("Spliced: " + show + " from selected list.");
+                        //log("Spliced: " + show + " from selected list.");
                         return true;
                     }
                 });
@@ -199,19 +201,38 @@ $(document).ready(function() {
             }
             return visible;
         }
-    }
+    };
 
     function init(that, options) {
+        //Handle reSelecting previous selections
+        $.each(['instructor','assistant'], function(i, type) {
+
+            $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
+                var _id = $(this).val();
+                $('div[name=' + _id + '].' + type + 'Branch').show();
+            });
+
+            var index = 0;
+            $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
+                index = this.selectedIndex;
+              });
+            if (index != 0) {
+                var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
+                $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
+            }
+
+        });
+
         //copy options to this class
         variables.options = options;
         var temp = $('input#selectedPeopleInResponse').val();
         variables.savedIds = temp==null?'':temp.replace('[','').replace(']','').split(', ');return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;
-                log("Found a selector for: " + variables.get.typeOfBranch());
+                //log("Found a selector for: " + variables.get.typeOfBranch());
             } else {
                 variables.typeOfSelector.multiple = true;
-                log("Found a checkbox list for: " + variables.get.typeOfBranch());
+                //log("Found a checkbox list for: " + variables.get.typeOfBranch());
             }
             initControls($(this));
             initClassVars();
@@ -231,45 +252,45 @@ $(document).ready(function() {
             //Working with checkboxes
             that.find('input[type=checkbox]').each(function() {
                 var elem = $(this);
-                var elemId = elem.attr('id');
+                var elemId = elem.val();
                 var elemLabel = elem.parent().find('label').text();
-                log("Attaching event listener for: " + elemLabel + " with id: " + elemId);
+                //log("Attaching event listener for: " + elemLabel + " with id: " + elemId);
                 elem.bind('click', function() {
                     variables.set.typeOfBranch($(this));
                     if (this.checked) {
                         //Fn for Check
                         elem.parent().css('background', variables.options.css.activeCheckbox.background);
-                        log("SELECTED: " + elemLabel + " with id: " + elemId);
+                        //log("SELECTED: " + elemLabel + " with id: " + elemId);
                         if (!variables.isVisible(elemId)) {
                             variables.questionsToShow.push(elemId);
-                            log("ADDED: " + elemLabel + " with id: " + elemId);
+                            //log("ADDED: " + elemLabel + " with id: " + elemId);
                             showQuestions();
                             initClassVars();
                         } else {
-                            log("Person: " + elemLabel + " with id: " + elemId + " is already visible.");
+                            //log("Person: " + elemLabel + " with id: " + elemId + " is already visible.");
                         }
                     }
                     else {
                         this.checked = true;
                         if (variables.isVisible(elemId) && confirmSelection(elemLabel)) {
                             elem.parent().css('background', '');
-                            log("DESELECTED: " + elemLabel + " with id: " + elemId);
+                            //log("DESELECTED: " + elemLabel + " with id: " + elemId);
                             variables.questionsToHide.push(elemId);
                             variables.foundSplice(elemId);
-                            log("DELETED: " + elemLabel + " with id: " + elemId);
+                            //log("DELETED: " + elemLabel + " with id: " + elemId);
                             showQuestions();
                             initClassVars();
                             this.checked = false;
                         }
                     }
                 });
-                checkValidity(elemId, this, '');
+                //checkValidity(elemId, this, '');
                 checkSavedPeople(elemId, this,'','checkbox');
             });
         }
         var elem = that.find('select');
         $.each(elem.find('option'), function(i, item) {
-            checkValidity($(item).val(), item, i);
+            //checkValidity($(item).val(), item, i);
             checkSavedPeople($(item).val(), item, i, 'select');
         });
         elem.bind('change', function() {
@@ -278,12 +299,12 @@ $(document).ready(function() {
                 //Working with dropdown
                 var elemId = elem.val();
                 var render = false;
-                log("Selected guy with id: " + elemId);
+                //log("Selected guy with id: " + elemId);
                 if (variables.get.shownQuestions().length == 0) {
                     render = true;
                 }
                 else if (variables.isVisible(elemId)) {
-                    log("Person with id: " + elemId + " is already visible.");
+                    //log("Person with id: " + elemId + " is already visible.");
                     return false;
                 } else
                 {
@@ -294,7 +315,7 @@ $(document).ready(function() {
                     variables.questionsToHide = variables.get.shownQuestions();
                     variables.questionsToShow = new Array();
                     variables.questionsToShow.push(elemId);
-                    log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
+                    //log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
                     showQuestions();
                     initClassVars();
                 }
@@ -304,7 +325,7 @@ $(document).ready(function() {
 
     function showQuestions() {
         hideQuestions();
-        log("Showing " + variables.questionsToShow.length + " items in dom.");
+        //log("Showing " + variables.questionsToShow.length + " items in dom.");
         $.each(variables.questionsToShow, function(i, item) {
             var tempFound = 0;
             $.each(variables.get.shownQuestions(), function(s, toSkip) {
@@ -315,7 +336,7 @@ $(document).ready(function() {
             if (tempFound == 0) {
                 var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
                 $(str).slideDown('normal', function() {
-                    log("Revealing: " + item)
+                    //log("Revealing: " + item)
                 });
             }
         });
@@ -327,7 +348,7 @@ $(document).ready(function() {
         $.each(temp, function(i, item) {
             var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
             $(str).slideUp('normal', function() {
-                log("WARN: Hiding " + item + " in dom.");
+                //log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
             });
         });
@@ -340,7 +361,7 @@ $(document).ready(function() {
     function clearFieldsFor(item) {
         item.find('div.validFail').removeClass('validFail');
         $.each(variables.options.fields, function(f, field) {
-            log("Clearing all " + field.toLowerCase() + " fields.");
+            //log("Clearing all " + field.toLowerCase() + " fields.");
             item.find(field.toLowerCase()).each(function() {
                 var t = this.type, tag = this.tagName.toLowerCase();
                 if (t == 'text' || t == 'password' || tag == 'textarea')
@@ -353,9 +374,9 @@ $(document).ready(function() {
         });
     }
     function checkValidity(elemId, that, num) {
-        log("Examining div with name:" + elemId);
+        //log("Examining div with name:" + elemId);
         if ($('div[name=' + elemId + ']').find('div.validFail').length > 0) {
-            log("Found an invalid item. Showing div now.");
+            //log("Found an invalid item. Showing div now.");
             $('div[name=' + elemId + ']').show();
             var t = that.type, tag = that.tagName.toLowerCase();
             if (t == 'checkbox') {
@@ -393,4 +414,4 @@ $(document).ready(function() {
             }
         }
     }
-})($)
+})($);

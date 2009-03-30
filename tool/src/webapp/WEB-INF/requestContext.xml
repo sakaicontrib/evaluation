@@ -595,6 +595,7 @@
         <property name="messages" ref="targettedMessageList" />
         <property name="locale" ref="requestLocale" />
         <property name="httpServletResponse" ref="httpServletResponse" />
+        <property name="messageLocator" ref="messageLocator" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
