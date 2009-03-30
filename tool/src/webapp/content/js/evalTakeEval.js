@@ -6,7 +6,7 @@ $(document).ready(function() {
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
-    $(':submit').bind('click', function() {
+    $('[id=form-branch::submitEvaluation]').bind('click', function() {
         if (instrSel.find('input[type=checkbox]').length != 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
@@ -313,7 +313,7 @@ $(document).ready(function() {
                 }
             });
             if (tempFound == 0) {
-                var str = 'div[name=' + item + ']';
+                var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
                 $(str).slideDown('normal', function() {
                     log("Revealing: " + item)
                 });
@@ -325,7 +325,7 @@ $(document).ready(function() {
         var temp = new Array();
         temp = (all && all == 1) ? variables.get.shownQuestions() : variables.questionsToHide;
         $.each(temp, function(i, item) {
-            var str = 'div[@name=' + item + ']';
+            var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
             $(str).slideUp('normal', function() {
                 log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
