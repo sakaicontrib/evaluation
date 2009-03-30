@@ -58,6 +58,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ELReference;
@@ -70,7 +71,10 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UICSSDecorator;
@@ -149,6 +153,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     private Locale locale;
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+    private MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+        this.messageLocator = messageLocator;
     }
 
     private HttpServletResponse httpServletResponse;
@@ -396,6 +404,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 				if(response!=null){
 					savedSelections = response.getSelections();
 					}
+				
                 if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
                     EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(
@@ -443,46 +452,46 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         }
                         // We render the selection controls if there are at least two
                         // Instructors/TAs
-                        if (selectionsEnabled && selectUserIds.size() > 1) {
+                        if (selectUserIds.size() > 0) {
                            if (selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                                 // nothing special to do in all case
+                        	   //form.parameters.add(new UIELBinding(selectionOTP, "all"));
                             } else if (EvalAssignGroup.SELECTION_OPTION_MULTIPLE.equals(selectValue)) {
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
-                                        formBranch, uiTag + "-multiple:");
+                                        form, uiTag + "-multiple:");
+                               // Things for building the UISelect of Assignment Checkboxes
+                                List<String> assLabels = new ArrayList<String>();
+                                List<String> assValues = new ArrayList<String>();
+                                UISelect assSelect = UISelect.makeMultiple(showSwitchGroup, uiTag + "-multiple-holder", new String[] {}, new String[] {}, selectionOTP, new String[] {});
+                                String assSelectID = assSelect.getFullID();
                                 for (String userId : selectUserIds) {
                                     EvalUser user = commonLogic.getEvalUserById(userId);
-                                    UIBranchContainer row = UIBranchContainer.make(showSwitchGroup,
-                                            uiTag + "-multiple-row:");
-                                    UIOutput checkBranch = UIOutput.make(row, uiTag
-                                            + "-multiple-label", user.displayName);
-                                    UIBoundBoolean b = UIBoundBoolean.make(row, uiTag
-                                            + "-multiple-box", Boolean.FALSE);
-                                    // we have to force the id so the JS block checking can work
-                                    b.decorators = new DecoratorList(new UIIDStrategyDecorator(
-                                            user.userId));
-                                    // have to force the target id so that the label for works
-                                    UILabelTargetDecorator uild = new UILabelTargetDecorator(b);
-                                    uild.targetFullID = user.userId;
-                                    checkBranch.decorators = new DecoratorList(uild);
-                                }
-                              } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
+                                    assValues.add(user.userId);
+                                    assLabels.add(user.displayName);
+                                     UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag + "-multiple-row:");
+                                    UISelectChoice choice = UISelectChoice.make(row, uiTag + "-multiple-box", assSelectID, assLabels.size()-1);
+                                    UISelectLabel lb = UISelectLabel.make(row, uiTag + "-multiple-label", assSelectID, assLabels.size()-1);
+                                    UILabelTargetDecorator.targetLabel(lb, choice);
+                                    }
+                                assSelect.optionlist = UIOutputMany.make(assValues.toArray(new String[] {}));
+                                assSelect.optionnames = UIOutputMany.make(assLabels.toArray(new String[] {}));
+                            } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
                                 value.add("default");
-                                // This should get the string equivalent of:"takeeval.selection.dropdown"
-                                label.add("--- Select ---"); // FIXME not i18n, this should use i18n string
+                                label.add(messageLocator.getMessage("takeeval.selection.dropdown"));
                                 List<EvalUser> users = commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]));
                                 for (EvalUser user : users) {
                                     value.add(user.userId);
                                     label.add(user.displayName);
                                 }
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
-                                        formBranch, uiTag + "-one:");
+                                		form, uiTag + "-one:");
                                 UIOutput.make(showSwitchGroup, uiTag + "-one-header");
-                                UISelect.make(showSwitchGroup, uiTag + "-one-list", value
+                                UISelect dropdown = UISelect.make(showSwitchGroup, uiTag + "-one-list", value
                                         .toArray(new String[value.size()]), label
                                         .toArray(new String[label.size()]), selectionOTP);
-                            } else {
+                               } else {
                                 throw new IllegalStateException("Invalid selection option ("
                                         + selectValue + "): do not know how to handle this.");
                             }
@@ -500,9 +509,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
                             UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, instructorIds, instructorSelectionOption,savedSelections);
+                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, instructorIds, instructorSelectionOption,savedSelections);
                         } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType.toLowerCase(), tig.associateId, assistantIds, assistantSelectionOption,savedSelections);
+                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, assistantIds, assistantSelectionOption,savedSelections);
                         }
                     }
 
@@ -555,7 +564,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 			Set<String> instructorIds, String selectionOption, Map<String, String[]> savedSelections) {
 		EvalUser user = commonLogic.getEvalUserById(associateId);
 		UIMessage header = UIMessage.make(categorySectionBranch,
-				"categoryHeader", "takeeval." + associateType
+				"categoryHeader", "takeeval." + associateType.toLowerCase()
 						+ ".questions.header",
 				new Object[] { user.displayName });
 		// EVALSYS-618: support for JS: add display name to title attribute of
@@ -564,31 +573,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 				"title", user.displayName));
 		categorySectionBranch.decorators = new DecoratorList(
 				new UIFreeAttributeDecorator(new String[] { "name", "class" },
-						new String[] { user.userId, associateType + "Branch" }));
+						new String[] { user.userId, associateType.toLowerCase() + "Branch" }));
 		if (!EvalAssignGroup.SELECTION_OPTION_ALL.equals(selectionOption)
-				&& instructorIds.size() > 1) {
+				&& instructorIds.size() > 0) {
 			Map<String, String> cssHide = new HashMap<String, String>();
 			cssHide.put("display", "none");
-			Map<String, String> cssShow = new HashMap<String, String>();
-			cssShow.put("display", "block");
-			if(response!=null && savedSelections!=null){
-			//we are handling a response
-				int found = 0;
-				for (Iterator<String> selector = savedSelections.keySet().iterator(); selector.hasNext();) {
-					String selectKey = (String) selector.next();
-					String[] usersFound = savedSelections.get(selectKey);
-					if(usersFound[0].equals(user.userId)){
-						found++;
-					}
-					if(found>0){
-					categorySectionBranch.decorators.add(new UICSSDecorator(cssShow));
-				}else{
-					categorySectionBranch.decorators.add(new UICSSDecorator(cssHide));
-				}
-				}
-			}else{
 			categorySectionBranch.decorators.add(new UICSSDecorator(cssHide));
-			}
 		}
 	}
 
