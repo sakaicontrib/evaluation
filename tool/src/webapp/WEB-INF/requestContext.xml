@@ -594,6 +594,7 @@
         <property name="localResponsesLogic" ref="localResponsesLogic" />
         <property name="messages" ref="targettedMessageList" />
         <property name="locale" ref="requestLocale" />
+        <property name="httpServletResponse" ref="httpServletResponse" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
@@ -610,6 +611,7 @@
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="messageLocator" ref="messageLocator" />
+        <property name="httpServletResponse" ref="httpServletResponse" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
