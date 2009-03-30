@@ -365,8 +365,26 @@ public class EvalToolConstants {
         "general.public"
     };
 
-    // The downloadable results reporting files have a maximum length, before
-    // they are chopped off.
+    // The downloadable results reporting files have a maximum length, before they are chopped off.
     public static int EVAL_REPORTING_MAX_NAME_LENGTH = 40;
+
+    /**
+     * values for eval mail notification choices
+     */
+    public static String[] EVAL_NOTIFICATION_VALUES = new String[] {
+        EvalConstants.EVAL_INCLUDE_NONTAKERS,
+        EvalConstants.EVAL_INCLUDE_RESPONDENTS,
+        EvalConstants.EVAL_INCLUDE_ALL
+    };
+
+    /**
+     * values for eval mail notification choices
+     */
+    public static String[] EVAL_NOTIFICATION_LABELS_PROPS = {
+        "evalnotify.send.to.non-respond",
+        "evalnotify.send.to.responded",
+        "evalnotify.send.to.all"
+    };
+
 }
 
