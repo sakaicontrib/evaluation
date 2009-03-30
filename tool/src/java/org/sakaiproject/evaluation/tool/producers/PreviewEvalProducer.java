@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -100,12 +102,20 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         this.evalSettings = evalSettings;
     }
 
+    private HttpServletResponse httpServletResponse;
+    public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
+    }
+
     int displayNumber = 1; //  determines the number to display next to each item
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+        // force the headers to expire this - http://jira.sakaiproject.org/jira/browse/EVALSYS-621
+        RenderingUtils.setNoCacheHeaders(httpServletResponse);
 
         String currentUserId = commonLogic.getCurrentUserId();
 

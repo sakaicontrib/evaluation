@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -149,6 +151,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         this.locale = locale;
     }
 
+    private HttpServletResponse httpServletResponse;
+    public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
+    }
+
     Long responseId;
 
     int displayNumber=1;
@@ -169,6 +176,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+        // force the headers to expire this - http://jira.sakaiproject.org/jira/browse/EVALSYS-621
+        RenderingUtils.setNoCacheHeaders(httpServletResponse);
+        
         boolean canAccess = false; // can a user access this evaluation
         boolean userCanAccess = false; // can THIS user take this evaluation
 

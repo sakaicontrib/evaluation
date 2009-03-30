@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
@@ -159,6 +161,40 @@ public class RenderingUtils {
         }
 
         return renderProperties;
+    }
+
+    // NOTE: caching stuff copied from EntityBus project
+
+    public static enum Header {
+        EXPIRES ("Expires"),
+        DATE ("Date"),
+        ETAG ("ETag"),
+        LAST_MODIFIED ("Last-Modified"),
+        CACHE_CONTROL ("Cache-Control");
+
+        private String value;
+        Header(String value) { this.value = value; }
+        @Override
+        public String toString() {
+            return value;
+        }
+    };
+
+    /**
+     * Set the no-cache headers for this response
+     * @param httpServletResponse the servlet response
+     */
+    public static void setNoCacheHeaders(HttpServletResponse res) {
+        long currentTime = System.currentTimeMillis();
+        res.setDateHeader(Header.DATE.toString(), currentTime);
+        res.setDateHeader(Header.EXPIRES.toString(), currentTime + 1000);
+
+        res.setHeader(Header.CACHE_CONTROL.toString(), "no-cache");
+        res.addHeader(Header.CACHE_CONTROL.toString(), "no-store");
+        res.addHeader(Header.CACHE_CONTROL.toString(), "max-age=0");
+        res.addHeader(Header.CACHE_CONTROL.toString(), "must-revalidate");
+        res.addHeader(Header.CACHE_CONTROL.toString(), "private");
+        res.addHeader(Header.CACHE_CONTROL.toString(), "s-maxage=0");
     }
 
 }
