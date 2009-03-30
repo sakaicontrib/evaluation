@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -223,7 +224,7 @@ public class EvalSettingsImpl implements EvalSettings {
             config = new EvalConfig(config.getName(), config.getValue());
             configCache.put(config.getName(), config);
         }
-        System.out.println("INFO: Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
+        log.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
     }
 
     /**
@@ -235,7 +236,7 @@ public class EvalSettingsImpl implements EvalSettings {
     public void clearCacheItem(String settingConstant) {
         String name = SettingsLogicUtils.getName(settingConstant);
         if (configCache.containsKey(name)) {
-            System.out.println("INFO: Resetting config settings cache: cleared single value: " + name);
+            log.info("Resetting config settings cache: cleared single value: " + name);
             configCache.remove(name);
         }
     }

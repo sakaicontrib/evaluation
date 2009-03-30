@@ -364,7 +364,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-selections", EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
         // Save settings button
         // NB no action now required
-        UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);	
+        UICommand.make(form, "saveSettings", UIMessage.make("administrate.save.settings.button"), null);	
     }
 
     /**
