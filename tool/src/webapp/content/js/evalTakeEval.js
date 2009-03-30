@@ -210,6 +210,7 @@ $(document).ready(function() {
             $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
                 var _id = $(this).val();
                 $('div[name=' + _id + '].' + type + 'Branch').show();
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'));
             });
 
             var index = 0;
@@ -219,6 +220,7 @@ $(document).ready(function() {
             if (index != 0) {
                 var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'));
             }
 
         });
@@ -284,7 +286,6 @@ $(document).ready(function() {
                         }
                     }
                 });
-                //checkValidity(elemId, this, '');
                 checkSavedPeople(elemId, this,'','checkbox');
             });
         }
@@ -316,15 +317,15 @@ $(document).ready(function() {
                     variables.questionsToShow = new Array();
                     variables.questionsToShow.push(elemId);
                     //log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
-                    showQuestions();
+                    showQuestions('noFrameExpand');
                     initClassVars();
                 }
             }
         });
     }
 
-    function showQuestions() {
-        hideQuestions();
+    function showQuestions(iframe) {
+        hideQuestions(iframe);
         //log("Showing " + variables.questionsToShow.length + " items in dom.");
         $.each(variables.questionsToShow, function(i, item) {
             var tempFound = 0;
@@ -336,6 +337,7 @@ $(document).ready(function() {
             if (tempFound == 0) {
                 var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
                 $(str).slideDown('normal', function() {
+                    frameGrow($(str).css('height'));
                     //log("Revealing: " + item)
                 });
             }
@@ -348,6 +350,7 @@ $(document).ready(function() {
         $.each(temp, function(i, item) {
             var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
             $(str).slideUp('normal', function() {
+                frameShrink($(str).css('height'));
                 //log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
             });
@@ -373,20 +376,7 @@ $(document).ready(function() {
             });
         });
     }
-    function checkValidity(elemId, that, num) {
-        //log("Examining div with name:" + elemId);
-        if ($('div[name=' + elemId + ']').find('div.validFail').length > 0) {
-            //log("Found an invalid item. Showing div now.");
-            $('div[name=' + elemId + ']').show();
-            var t = that.type, tag = that.tagName.toLowerCase();
-            if (t == 'checkbox') {
-                that.checked = true;
-            } else if (tag == 'select') {
-                that.selectedIndex = (parseInt(num) - 1);
-            }
-        }
-    }
-
+    
     function checkSavedPeople(elemId, that, num,tag) {
         var savedIds = variables.savedIds;
         if (savedIds.length > 0) {
@@ -399,12 +389,23 @@ $(document).ready(function() {
                     variables.that.find('select:eq(0)').each(function(){
                         this.selectedIndex = (parseInt(num));
                         });
-
-                }
+                    }
                 }
             }
         }
     }
+
+    function frameGrow(height){
+		try {
+			var frame = parent.document.getElementById(window.name);
+			$(frame).height(parent.document.body.scrollHeight + parseInt(height.replace('px',''))+20);
+		}catch(e){}
+}
+
+    function frameShrink(height){
+	  		var frame = parent.document.getElementById(window.name);
+			$(frame).height(parent.document.body.scrollHeight - parseInt(height.replace('px','')));
+	}
 
     // Debugging
     function log($obj) {
