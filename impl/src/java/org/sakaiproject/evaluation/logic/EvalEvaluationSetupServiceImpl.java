@@ -896,9 +896,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
         // iterate through all assigned groups (may have been limited to one only)
+        Set<String> evalGroupIdsFromEvals = new HashSet<String>(assignedGroups.size());
         for (EvalAssignGroup evalAssignGroup : assignedGroups) {
             Long assignGroupId = evalAssignGroup.getId();
             String egid = evalAssignGroup.getEvalGroupId();
+            evalGroupIdsFromEvals.add(egid);
             // get all the users who currently have permission for this group
             Set<String> currentEvaluated = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_BE_EVALUATED);
             Set<String> currentAssistants = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_ASSISTANT_ROLE);
@@ -983,6 +985,30 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 changedUserAssignments.addAll( assignUserToRemove );
             }
         }
+
+        // one more specialty check to cleanup orphaned user assignments - EVALSYS-703
+        Set<String> evalGroupIdsFromUsers = groupIdLinkedAssignedUsersMap.keySet();
+        evalGroupIdsFromUsers.removeAll(evalGroupIdsFromEvals);
+        if ( ! evalGroupIdsFromUsers.isEmpty() ) {
+            // there are users assigned to group ids in this eval which are not part of the assigned groups
+            HashSet<Long> orphanedUserAssignments = new HashSet<Long>();
+            for (EvalAssignUser evalAssignUser : assignedUsers) {
+                String egid = evalAssignUser.getEvalGroupId();
+                if (egid != null 
+                        && evalGroupIdsFromUsers.contains(egid)) {
+                    if (EvalAssignUser.STATUS_LINKED.equals(evalAssignUser.getStatus())) {
+                        orphanedUserAssignments.add( evalAssignUser.getId() );
+                    }
+                }
+            }
+            if (! orphanedUserAssignments.isEmpty()) {
+                Long[] orphanedUserAssignmentsArray = orphanedUserAssignments.toArray(new Long[orphanedUserAssignments.size()]);
+                dao.deleteSet(EvalAssignUser.class, orphanedUserAssignmentsArray);
+                message += ": removed the following orphaned user assignments: " + orphanedUserAssignments;
+                changedUserAssignments.addAll( orphanedUserAssignments );
+            }
+        }
+
         log.info(message);
         return changedUserAssignments;
     }
@@ -1205,7 +1231,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             removeAssignGroups.add(assignGroup);
                         }
                     }
-                    dao.deleteSet(removeAssignGroups);
+                    //dao.deleteSet(removeAssignGroups);
+                    // Ensure the user assignments are cleaned up - EVALSYS-703
+                    for (EvalAssignGroup assignGroup : removeAssignGroups) {
+                        deleteAssignGroupInternal(assignGroup);
+                    }
                 }
             }
 
@@ -1246,7 +1276,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             results.addAll(groupAssignments);
 
             // sync all the user assignments after the groups are saved
-            synchronizeUserAssignments(evaluationId, null);
+            synchronizeUserAssignmentsForced(eval, null, ! appendMode);
 
             return results;
         }
@@ -1351,7 +1381,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         "linked evalGroupId ("+assignGroup.getEvalGroupId()+") with eval ("+eval.getId()+")");
 
                 // sync the user assignments related to this assign group
-                synchronizeUserAssignments(eval.getId(), assignGroup.getEvalGroupId());
+                synchronizeUserAssignmentsForced(eval, assignGroup.getEvalGroupId(), false);
             }
         } else {
             // updating an existing AG
@@ -1396,24 +1426,34 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("Cannot find evaluation with this id: " + assignGroup.getEvaluation().getId());         
         }
 
-        if ( securityChecks.checkRemoveAssignments(userId, assignGroup, eval) ) {
-            dao.delete(assignGroup);
-            log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
+        // check and die if not allowed
+        securityChecks.checkRemoveAssignments(userId, assignGroup, eval);
+        // handle the removal
+        deleteAssignGroupInternal(assignGroup);
+    }
 
-            // also need to remove any user assignments related to this group
-            List<EvalAssignUser> assignedUsers = dao.findBySearch(EvalAssignUser.class, new Search( new Restriction[] {
-                    new Restriction("assignGroupId", assignGroupId),
-                    new Restriction("status", EvalAssignUser.STATUS_UNLINKED, Restriction.NOT_EQUALS)
-            }));
-            Set<EvalAssignUser> assignedUsersSet = new HashSet<EvalAssignUser>(assignedUsers);
-            dao.deleteSet( assignedUsersSet );
-            log.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
 
-            return;
+    /**
+     * Internal cleanup and removal of assign groups
+     * @param assignGroup the assigngroup to remove
+     */
+    private void deleteAssignGroupInternal(EvalAssignGroup assignGroup) {
+        if (assignGroup == null) {
+            throw new IllegalArgumentException("assignGroup to remove cannot be null");
         }
+        String userId = commonLogic.getCurrentUserId();
+        Long assignGroupId = assignGroup.getId();
+        dao.delete(assignGroup);
+        log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
 
-        // should not get here so die if we do
-        throw new RuntimeException("User ("+userId+") could NOT delete assign group ("+assignGroup.getId()+")");
+        // also need to remove any user assignments related to this group
+        List<EvalAssignUser> assignedUsers = dao.findBySearch(EvalAssignUser.class, new Search( new Restriction[] {
+                new Restriction("assignGroupId", assignGroupId),
+                new Restriction("status", EvalAssignUser.STATUS_UNLINKED, Restriction.NOT_EQUALS)
+        }));
+        Set<EvalAssignUser> assignedUsersSet = new HashSet<EvalAssignUser>(assignedUsers);
+        dao.deleteSet( assignedUsersSet );
+        log.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
     }
 
     // EMAIL TEMPLATES
