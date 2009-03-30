@@ -350,6 +350,7 @@ tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif svn
 tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-arrow.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-line.gif -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/email-send.png -text svneol=unset#image/png
 tool/src/webapp/content/images/exclamation.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/expanded.gif -text
 tool/src/webapp/content/images/first-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
@@ -464,6 +465,7 @@ tool/src/webapp/content/templates/evaluation_assign_confirm.html -text svn_keywo
 tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/evaluation_create.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_notifications.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/evaluation_responders.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/evaluation_settings.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/import_error.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id

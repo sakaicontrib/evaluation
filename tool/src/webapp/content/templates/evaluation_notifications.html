@@ -17,10 +17,11 @@
                <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
                <a rsf:id="control-items-link" href="control_items.html">My Items</a>
                <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+               <a rsf:id="control-emailtemplates-link" href="control_email_templates.html">My Email Templates</a>
            </div>
 
             <ul class="breadCrumb">
-                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
             </ul>
 
             <div rsf:id="message-for:*" class="alertMessage">
@@ -31,7 +32,7 @@
 
             <h3 rsf:id="msg=evalnotify.page.title">Evaluation Notifications</h3>
 
-			<form rsf:id="emailTemplateForm" name="emailTemplateForm" method="post">
+			<form rsf:id="emailForm" name="emailForm" method="post">
 				<div style="width:80%">
 					<p rsf:id="msg=modifyemail.modify.text.instructions" class="instruction">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
 					<div rsf:id="email_templates_fieldhints" class="highlightPanel" style="background:#eee;">
@@ -57,18 +58,17 @@ ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
                     </textarea>
 				</div>	
                 <div style="width:80%">
-                    <label rsf:id="msg=evalnotify.send.to.list" for="send-to-list">Send message to:</label>
-                    <select rsf:id="send-to-list" id="send-to-list">
+                    <label rsf:id="msg=evalnotify.send.to.list" for="emailSendTo">Send message to:</label>
+                    <select rsf:id="emailSendTo" id="emailSendTo">
                         <option value="send-non-respond" selected="selected">Non-responding participants</option>
                         <option value="send-responded">Responded participants</option>
                         <option value="send-all">All participants</option>
                     </select>
                 </div>
 				<p class="act">
-                    <input rsf:id="saveEmailTemplate" name="saveEmailTemplate" type="submit" value="Send Email" accesskey="s" class="active" />
-					<input rsf:id="resetEmailTemplate" name="resetEmailTemplate" type="submit" value="Reset to default" accesskey="r" class="active" />
-                    <input rsf:id="cancel-button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
-				</p>	
+                    <input rsf:id="emailSubmit" type="submit" value="Send Email" accesskey="s" class="active" />
+                    <input rsf:id="msg=general.cancel.button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
+				</p>
 			</form>
 
 		</div>	
