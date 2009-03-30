@@ -14,6 +14,7 @@ $(document).ready(function() {
     if($.facebox.defaults.objToUpdate == "block"){
 		$('#facebox .content .navPanel').hide();	
 		$('#nonBlockSettings').hide();
+		$('#nonBlockSettings2').hide();
         $('div[@id=show-item-scale::]').hide();
 	}
 	$.facebox.grow();
@@ -220,7 +221,14 @@ $(document).ready(function() {
                     <input rsf:id="item-comment" type="checkbox" id="item-comment" />
                     <label rsf:id="item-comment-header" for="showItemComment:::item-comment">Include comment box</label>
                 </p>
-
+				</div>
+				
+				<!-- Compulsary non/compulsary should be shown in block editing -->
+				    <p rsf:id="showItemCompulsory:" class="checkbox">
+                    <input rsf:id="item-compulsory" type="checkbox" id="item-compulsory" />
+                    <label rsf:id="item-compulsory-header" for="showItemCompulsory:::item-compulsory">Must be answered</label>
+                	</p>
+                <div id="nonBlockSettings2">
 				<div rsf:id="showItemCategory:">
 					<b rsf:id="item-category-header">Category:</b>
 
@@ -236,11 +244,7 @@ $(document).ready(function() {
 				</div>
 				</div>
 				
-					<!-- Compulsary non/compulsary should be shown in block editing -->
-				    <p rsf:id="showItemCompulsory:" class="checkbox">
-                    <input rsf:id="item-compulsory" type="checkbox" id="item-compulsory" />
-                    <label rsf:id="item-compulsory-header" for="showItemCompulsory:::item-compulsory">Must be answered</label>
-                	</p>	
+						
 				
 				<div class="cleaner">&nbsp;</div>
 			</fieldset>
