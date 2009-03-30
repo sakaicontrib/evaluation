@@ -191,9 +191,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     }
 
                     // finally we will reset the system config cache
-                    if (settings instanceof EvalSettingsImpl) {
-                        ((EvalSettingsImpl) settings).resetCache();
-                    }
+                    settings.resetCache(null);
                 }
             }
         };

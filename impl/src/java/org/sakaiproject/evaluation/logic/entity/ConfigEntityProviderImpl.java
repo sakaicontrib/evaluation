@@ -18,8 +18,6 @@ import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.entitybroker.event.EventReceiver;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvalSettingsImpl;
-
 
 /**
  * Allows for detecting changes to the config via events,
@@ -29,9 +27,9 @@ import org.sakaiproject.evaluation.logic.EvalSettingsImpl;
  */
 public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, EventReceiver {
 
-    private EvalSettingsImpl settingsImpl;
-    public void setSettings(EvalSettingsImpl settings) {
-        this.settingsImpl = settings;
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+        this.settings = settings;
     }
 
     public String getEntityPrefix() {
@@ -40,7 +38,7 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
 
     public boolean entityExists(String id) {
         boolean exists = false;
-        if (settingsImpl.get(id) != null) {
+        if (settings.get(id) != null) {
             exists = true;
         }
         return exists;
@@ -56,9 +54,9 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
 
     public void receiveEvent(String eventName, String id) {
         if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
-            settingsImpl.clearCacheItem(id);
+            settings.resetCache(id);
         } else if (EvalSettings.EVENT_SET_MANY_CONFIG.equals(eventName)) {
-            settingsImpl.resetCache();
+            settings.resetCache(null);
         }
     }
 

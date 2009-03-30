@@ -80,7 +80,7 @@ public class EvalSettingsImpl implements EvalSettings {
         }
 
         // initialize the cache
-        resetCache();
+        resetCache(null);
     }
 
     /* (non-Javadoc)
@@ -212,32 +212,29 @@ public class EvalSettingsImpl implements EvalSettings {
     }
 
     /**
-     * clear out the cache and reload all config settings
-     */
-    public void resetCache() {
-        // clear out cache
-        configCache.clear();
-        // reload all cache items
-        List<EvalConfig> l = dao.findAll(EvalConfig.class);
-        for (EvalConfig config : l) {
-            // copy the values to avoid putting persistent objects in the cache
-            config = new EvalConfig(config.getName(), config.getValue());
-            configCache.put(config.getName(), config);
-        }
-        log.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
-    }
-
-    /**
-     * clean out a single item from the cache,
+     * clear out the cache and reload all config settings if the settingConstant is null,
+     * if not null then clean out a single item from the cache,
      * it will be reloaded from the DB the next time someone attempts to fetch it
-     * 
-     * @param settingConstant a setting constant from {@link EvalSettings}
+     * @param settingConstant (OPTIONAL) a setting constant from {@link EvalSettings}
      */
-    public void clearCacheItem(String settingConstant) {
-        String name = SettingsLogicUtils.getName(settingConstant);
-        if (configCache.containsKey(name)) {
-            log.info("Resetting config settings cache: cleared single value: " + name);
-            configCache.remove(name);
+    public void resetCache(String settingConstant) {
+        if (settingConstant == null) {
+            // clear out cache
+            configCache.clear();
+            // reload all cache items
+            List<EvalConfig> l = dao.findAll(EvalConfig.class);
+            for (EvalConfig config : l) {
+                // copy the values to avoid putting persistent objects in the cache
+                config = new EvalConfig(config.getName(), config.getValue());
+                configCache.put(config.getName(), config);
+            }
+            log.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
+        } else {
+            String name = SettingsLogicUtils.getName(settingConstant);
+            if (configCache.containsKey(name)) {
+                log.info("Resetting config settings cache: cleared single value: " + name);
+                configCache.remove(name);
+            }
         }
     }
 
