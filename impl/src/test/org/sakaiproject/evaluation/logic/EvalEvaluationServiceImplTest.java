@@ -97,6 +97,34 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         assertNull(eval);
     }
 
+    public void testCacheRetrievalOfEvals() {
+        System.out.println("CACHE: Testing lots of retrievals in a row");
+        EvalEvaluation eval = null;
+
+        eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+        assertNotNull(eval);
+
+        eval = evaluationService.getEvaluationById(EvalTestDataLoad.INVALID_LONG_ID);
+        assertNull(eval);
+
+        eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+        assertNotNull(eval);
+
+        eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+        assertNotNull(eval);
+
+        eval = evaluationService.getEvaluationById(EvalTestDataLoad.INVALID_LONG_ID);
+        assertNull(eval);
+
+        eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+        assertNotNull(eval);
+
+        eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+        assertNotNull(eval);
+
+        System.out.println("CACHE: Should have been 3 showSQL log lines");
+    }
+
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#checkEvaluationExists(java.lang.Long)}.
      */
