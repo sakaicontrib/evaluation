@@ -21,7 +21,7 @@
            </div>
 
             <ul class="breadCrumb">
-                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"><a rsf:id="evalSettingsLink" href="evaluation_settings.html">Evaluation Settings</a></li>
             </ul>
 
             <div rsf:id="message-for:*" class="alertMessage">
@@ -31,6 +31,12 @@
             </div>
 
             <h3 rsf:id="msg=evalnotify.page.title">Evaluation Notifications</h3>
+            <div>
+                <span rsf:id="notifyEval" style="font-weight: bold; font-size: 1.1em;"><!-- evalnotify.eval.info -->Evaluation Title (Start - Due)</span>
+                <span rsf:id="notifyGroup" style="font-weight: bold;"><!-- evalnotify.group.info -->Group: Title</span>
+                -
+                <a rsf:id="evalRespondersLink" href="evaluation_responders.html">Evaluation Responders</a>
+            </div>
 
 			<form rsf:id="emailForm" name="emailForm" method="post">
 				<div style="width:80%">
@@ -66,7 +72,7 @@ ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
                     </select>
                 </div>
 				<p class="act">
-                    <input rsf:id="emailSubmit" type="submit" value="Send Email" accesskey="s" class="active" />
+                    <input rsf:id="emailSubmit" type="submit" value="Send Emails" accesskey="s" class="active" /><!-- evalnotify.send.emails -->
                     <input rsf:id="msg=general.cancel.button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
 				</p>
 			</form>

@@ -31,14 +31,19 @@
             </div>
 
             <h3 rsf:id="msg=evalresponders.page.title">Evaluation Responders</h3>
-            <div rsf:id="responsesEval" style="font-weight: bold; font-size: 1.1em;"><!-- evalresponders.eval.info -->Responses for Evaluation Title (Start - Due)</div>
-
-            <p rsf:id="noResponses" class="instruction"><!-- evalresponders.no.responses --></p>
-            <div rsf:id="showResponses:">
+            <div>
+                <span rsf:id="responseEval" style="font-weight: bold; font-size: 1.1em;"><!-- evalresponders.eval.info -->Responses for Evaluation Title (Start - Due)</span>
+                <span rsf:id="responseStats" style="font-weight: bold;"><!-- evalresponders.stats -->10/100</span>
                 <a rsf:id="responseEmailLink" href="evalaution_notifications.html"><!-- evalresponders.notifications.link -->Send email message to participants</a>
+            </div>
+
+            <div>
                 <div rsf:id="responseGroups:">
-                    <div rsf:id="responseGroupTitle" style="font-weight: bold;"><!-- evalresponders.group.title -->Group: Title</div>
-                    <p rsf:id="noGroupResponses" class="instruction"><!-- evalresponders.no.responses --></p>
+                    <div>
+                        <span rsf:id="responseGroupTitle" style="font-weight: bold;"><!-- evalresponders.group.title -->Group: Title</span>
+                        <span rsf:id="responseGroupStats" style="font-weight: bold;"><!-- evalresponders.stats -->10/100</span>
+                        <a rsf:id="responseGroupEmailLink" href="evalaution_notifications.html"><!-- evalresponders.notifications.link -->Send email message to participants</a>
+                    </div>
                     <table rsf:id="showGroupResponses:" border="0" cellspacing="0" cellpadding="0" style="width: 90%" class="listHier lines nolines">
                         <thead>
                             <tr>
