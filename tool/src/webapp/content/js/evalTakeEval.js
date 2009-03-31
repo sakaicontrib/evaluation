@@ -82,6 +82,8 @@ $(document).ready(function() {
         return false;
     }
 
+
+
 });
 
 (function($) {
@@ -201,23 +203,28 @@ $(document).ready(function() {
         }
     };
 
-    function renderSelections(type){
-           $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
+    function init(that, options) {
+        //Handle reSelecting previous selections
+        $.each(['instructor','assistant'], function(i, type) {
+
+            $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
                 var _id = $(this).val();
                 $('div[name=' + _id + '].' + type + 'Branch').show();
-                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'));
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'), 'grow');
             });
-             var index = 0;
+
+            var index = 0;
             $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
                 index = this.selectedIndex;
               });
             if (index != 0) {
                 var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
-                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'));
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'), 'grow');
             }
-    }
-    function init(that, options) {
+
+        });
+
         //copy options to this class
         variables.options = options;
         var temp = $('input#selectedPeopleInResponse').val();
@@ -247,7 +254,7 @@ $(document).ready(function() {
             //Working with checkboxes
             that.find('input[type=checkbox]').each(function() {
                 var elem = $(this);
-                                var elemId = elem.val();
+                var elemId = elem.val();
                 var elemLabel = elem.parent().find('label').text();
                 //log("Attaching event listener for: " + elemLabel + " with id: " + elemId);
                 elem.bind('click', function() {
@@ -302,7 +309,7 @@ $(document).ready(function() {
                     return false;
                 } else
                 {
-                    var temp = 'div[name=' + variables.get.shownQuestions()[0] + '].'+variables.get.typeOfBranch()+'Branch';
+                    var temp = 'div[name=' + variables.get.shownQuestions()[0] + ']';
                     render = confirmSelection($(temp).find('legend').attr('title'));
                 }
                 if (render) {
@@ -312,23 +319,9 @@ $(document).ready(function() {
                     //log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
                     showQuestions();
                     initClassVars();
-                }else{
-                    //Reset active person
-                    var selectedindex =0;
-                    $(this).find('option').each(function(i, item){
-                        if($(item).val() == variables.get.shownQuestions()[0]){
-                            selectedindex = i;
-                        }
-                    });
-
-
-                    this.selectedIndex = parseInt(selectedindex);
                 }
             }
         });
-        //Handle reSelecting previous selections
-        renderSelections('instructor');
-        renderSelections('assistant');
     }
 
     function showQuestions() {
@@ -344,7 +337,7 @@ $(document).ready(function() {
             if (tempFound == 0) {
                 var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
                 $(str).slideDown('normal', function() {
-                    frameGrow($(str).css('height'));
+                    frameGrow($(str).css('height'), 'grow');
                     //log("Revealing: " + item)
                 });
             }
@@ -356,6 +349,7 @@ $(document).ready(function() {
         temp = (all && all == 1) ? variables.get.shownQuestions() : variables.questionsToHide;
         $.each(temp, function(i, item) {
             var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
+            frameGrow($(str).css('height'), 'shrink');
             $(str).slideUp('normal', function() {
                 //log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
@@ -401,13 +395,27 @@ $(document).ready(function() {
         }
     }
 
-    function frameGrow(height){
-		try {
-			var frame = parent.document.getElementById(window.name);
-			$(frame).height(parent.document.body.scrollHeight + parseInt(height.replace('px',''))+20);
-		}catch(e){}
-}
-    
+    function frameGrow(height, updown)
+    {
+        var height = height == null?0:parseInt(height.replace('px',''));
+        var frame = parent.document.getElementById(window.name);
+        try{
+        if (frame)
+        {
+            if (updown == 'shrink')
+            {
+                var clientH = document.body.clientHeight - height;
+            }
+            else
+            {
+                var clientH = document.body.clientHeight + height;
+            }
+            $(frame).height(clientH);
+        }
+        }catch(e){}
+    }
+
+
     // Debugging
     function log($obj) {
         if (variables.options.debug) {
