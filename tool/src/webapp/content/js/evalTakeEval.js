@@ -2,7 +2,7 @@
  * For the takeEval and preview views
  */
 $(document).ready(function() {
-    
+
     var instrSel = $('div[@rel=evalinstructorSelector]');
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
@@ -210,7 +210,7 @@ $(document).ready(function() {
             $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
                 var _id = $(this).val();
                 $('div[name=' + _id + '].' + type + 'Branch').show();
-                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'), 'grow');
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             });
 
             var index = 0;
@@ -220,7 +220,7 @@ $(document).ready(function() {
             if (index != 0) {
                 var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
-                frameGrow($('div[name=' + _id + '].' + type + 'Branch').css('height'), 'grow');
+                frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             }
 
         });
@@ -337,7 +337,7 @@ $(document).ready(function() {
             if (tempFound == 0) {
                 var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
                 $(str).slideDown('normal', function() {
-                    frameGrow($(str).css('height'), 'grow');
+                    frameGrow($(str).height(), 'grow');
                     //log("Revealing: " + item)
                 });
             }
@@ -349,7 +349,7 @@ $(document).ready(function() {
         temp = (all && all == 1) ? variables.get.shownQuestions() : variables.questionsToHide;
         $.each(temp, function(i, item) {
             var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
-            frameGrow($(str).css('height'), 'shrink');
+            frameGrow($(str).height(), 'shrink');
             $(str).slideUp('normal', function() {
                 //log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
@@ -397,18 +397,18 @@ $(document).ready(function() {
 
     function frameGrow(height, updown)
     {
-        var height = height == null?0:parseInt(height.replace('px',''));
+        var _height = height == ""?250:parseInt(height);
         var frame = parent.document.getElementById(window.name);
         try{
         if (frame)
         {
             if (updown == 'shrink')
             {
-                var clientH = document.body.clientHeight - height;
+                var clientH = document.body.clientHeight - _height;
             }
             else
             {
-                var clientH = document.body.clientHeight + height;
+                var clientH = document.body.clientHeight + _height;
             }
             $(frame).height(clientH);
         }
