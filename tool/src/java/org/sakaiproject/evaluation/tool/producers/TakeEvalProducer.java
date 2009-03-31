@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,8 +68,6 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInput;
-import uk.org.ponder.rsf.components.UIInputMany;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -185,8 +182,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // force the headers to expire this - http://jira.sakaiproject.org/jira/browse/EVALSYS-621
         RenderingUtils.setNoCacheHeaders(httpServletResponse);
@@ -404,6 +400,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         .get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
+                Map<String, String[]> savedSelections = new HashMap<String, String[]>();
+				if(response!=null){
+					savedSelections = response.getSelections();
+					}
+				
                 if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
                     EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(
@@ -419,42 +420,35 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
-                    // populate currently selected people for a previously saved eval
-                    List<String> savedInstructorSelectedIds = new ArrayList<String>();
-                    List<String> savedAssistantSelectedIds = new ArrayList<String>();
-					if (response != null) {
-						Map<String, String[]> savedSelections = response.getSelections();
-						Iterator<Map.Entry<String, String[]>> selector1 = savedSelections.entrySet().iterator();
-                        while (selector1.hasNext()) {
-                        	Map.Entry<String, String[]> pairs = selector1.next();
-                        	String selectType = (String) pairs.getKey();
-                        	String[] selectArray = pairs.getValue();
-                        	if(selectType.equalsIgnoreCase(SELECT_KEY_INSTRUCTOR)){
-                        		for(int i=0; i < selectArray.length; i++){
-                        			savedInstructorSelectedIds.add(selectArray[i]);
-                        		}
-                        	}else if(selectType.equalsIgnoreCase(SELECT_KEY_ASSISTANT)){
-                        		for(int i=0; i < selectArray.length; i++){
-                        			savedAssistantSelectedIds.add(selectArray[i]);
-                        		}
-                        	}
-                          }
-                    }
-                    Iterator<Map.Entry<String, String>> selector2 = selectorType.entrySet().iterator();
-                    while (selector2.hasNext()) {
-                    	Map.Entry<String, String> pairs = selector2.next();
-                    	String selectKey = (String) pairs.getKey();
-                        String selectValue = (String) pairs.getValue();
+                    if (response != null) {
+						// emit currently selected people into hidden element
+						// for JS use
+						Set<String> savedIds = new HashSet<String>();
+						for (Iterator<String> selector = savedSelections
+								.keySet().iterator(); selector.hasNext();) {
+							String selectKey = (String) selector.next();
+							String[] usersFound = savedSelections
+									.get(selectKey);
+							savedIds.add(usersFound[0]);
+						}
+						UIOutput savedSel = UIOutput
+								.make(formBranch, "selectedPeopleInResponse",
+										savedIds.toString());
+						savedSel.decorators = new DecoratorList(
+								new UIIDStrategyDecorator(
+										"selectedPeopleInResponse"));
+					}
+                    for (Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();) {
+                        // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
+                        String selectKey = (String) selector.next();
+                        String selectValue = (String) selectorType.get(selectKey);
                         String uiTag = "select-" + selectKey;
                         String selectionOTP = "#{takeEvalBean.selection" + selectKey + "Ids}";
                         Set<String> selectUserIds = new HashSet<String>();
-                        List<String> savedSelectedIds = new ArrayList<String>();
                         if (selectKey.equals(SELECT_KEY_INSTRUCTOR)) {
                             selectUserIds = instructorIds;
-                            savedSelectedIds = savedInstructorSelectedIds;
                         } else if (selectKey.equals(SELECT_KEY_ASSISTANT)) {
                             selectUserIds = assistantIds;
-                            savedSelectedIds = savedAssistantSelectedIds;
                         }
                         // We render the selection controls if there are at least two
                         // Instructors/TAs
@@ -466,24 +460,22 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
                                         form, uiTag + "-multiple:");
                                // Things for building the UISelect of Assignment Checkboxes
-                                List<String> assignLabels = new ArrayList<String>();
-                                List<String> assignValues = new ArrayList<String>();
-                                UISelect assSelect = UISelect.makeMultiple(showSwitchGroup, uiTag + "-multiple-holder", new String[] {}, new String[] {}, null, savedSelectedIds.toArray(new String[] {}));
+                                List<String> assLabels = new ArrayList<String>();
+                                List<String> assValues = new ArrayList<String>();
+                                UISelect assSelect = UISelect.makeMultiple(showSwitchGroup, uiTag + "-multiple-holder", new String[] {}, new String[] {}, selectionOTP, new String[] {});
                                 String assSelectID = assSelect.getFullID();
                                 for (String userId : selectUserIds) {
                                     EvalUser user = commonLogic.getEvalUserById(userId);
-                                    assignValues.add(user.userId);
-                                    assignLabels.add(user.displayName);
+                                    assValues.add(user.userId);
+                                    assLabels.add(user.displayName);
                                      UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag + "-multiple-row:");
-                                    UISelectChoice choice = UISelectChoice.make(row, uiTag + "-multiple-box", assSelectID, assignLabels.size()-1);
-                                    UISelectLabel lb = UISelectLabel.make(row, uiTag + "-multiple-label", assSelectID, assignLabels.size()-1);
+                                    UISelectChoice choice = UISelectChoice.make(row, uiTag + "-multiple-box", assSelectID, assLabels.size()-1);
+                                    UISelectLabel lb = UISelectLabel.make(row, uiTag + "-multiple-label", assSelectID, assLabels.size()-1);
                                     UILabelTargetDecorator.targetLabel(lb, choice);
                                     }
-                                assSelect.optionlist = UIOutputMany.make(assignValues.toArray(new String[] {}));
-                                assSelect.optionnames = UIOutputMany.make(assignLabels.toArray(new String[] {}));
-                                assSelect.selection.willinput = false;
-                                assSelect.selection.fossilize = false;
-                             } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
+                                assSelect.optionlist = UIOutputMany.make(assValues.toArray(new String[] {}));
+                                assSelect.optionnames = UIOutputMany.make(assLabels.toArray(new String[] {}));
+                            } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
                                 List<String> value = new ArrayList<String>();
                                 List<String> label = new ArrayList<String>();
                                 value.add("default");
@@ -496,9 +488,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
                                 		form, uiTag + "-one:");
                                 UIOutput.make(showSwitchGroup, uiTag + "-one-header");
-                                UISelect dropdown = UISelect.make(showSwitchGroup, uiTag + "-one-list", value.toArray(new String[value.size()]),
-                                		label.toArray(new String[label.size()]), selectionOTP, savedSelectedIds.size() > 0 ? savedSelectedIds.get(0) : null);
-                                } else {
+                                UISelect dropdown = UISelect.make(showSwitchGroup, uiTag + "-one-list", value
+                                        .toArray(new String[value.size()]), label
+                                        .toArray(new String[label.size()]), selectionOTP);
+                               } else {
                                 throw new IllegalStateException("Invalid selection option ("
                                         + selectValue + "): do not know how to handle this.");
                             }
@@ -516,9 +509,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
                             UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
                         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, instructorIds, instructorSelectionOption);
+                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, instructorIds, instructorSelectionOption,savedSelections);
                         } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, assistantIds, assistantSelectionOption);
+                        	showHeaders(categorySectionBranch, tig.associateType, tig.associateId, assistantIds, assistantSelectionOption,savedSelections);
                         }
                     }
 
@@ -568,7 +561,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      * @param savedSelections
      */
 	private void showHeaders(UIBranchContainer categorySectionBranch, String associateType, String associateId,
-			Set<String> instructorIds, String selectionOption) {
+			Set<String> instructorIds, String selectionOption, Map<String, String[]> savedSelections) {
 		EvalUser user = commonLogic.getEvalUserById(associateId);
 		UIMessage header = UIMessage.make(categorySectionBranch,
 				"categoryHeader", "takeeval." + associateType.toLowerCase()

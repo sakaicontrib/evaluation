@@ -19,7 +19,7 @@ $(document).ready(function() {
                     selectedInstrArray.push($(item).val());
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istringarray#{takeEvalBean.selectioninstructorIds}" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
             } else {
                 return  error("LECTURER", instrSel);
             }
@@ -35,7 +35,7 @@ $(document).ready(function() {
                     selectedassistantArray.push($(item).val());
                 });
                 $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istringarray#{takeEvalBean.selectionassistantIds}" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
             } else {
                 return error("TUTOR", assSel);
             }
