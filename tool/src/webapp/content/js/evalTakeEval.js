@@ -83,7 +83,6 @@ $(document).ready(function() {
     }
 
 
-
 });
 
 (function($) {
@@ -216,7 +215,7 @@ $(document).ready(function() {
             var index = 0;
             $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
                 index = this.selectedIndex;
-              });
+            });
             if (index != 0) {
                 var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
@@ -228,7 +227,8 @@ $(document).ready(function() {
         //copy options to this class
         variables.options = options;
         var temp = $('input#selectedPeopleInResponse').val();
-        variables.savedIds = temp==null?'':temp.replace('[','').replace(']','').split(', ');return that.each(function() {
+        variables.savedIds = temp == null ? '' : temp.replace('[', '').replace(']', '').split(', ');
+        return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;
                 //log("Found a selector for: " + variables.get.typeOfBranch());
@@ -244,12 +244,12 @@ $(document).ready(function() {
     function initClassVars() {
         variables.questionsToHide = new Array();
         variables.questionsToShow = new Array();
-        variables.savedIds=new Array();
-        variables.that=null;
+        variables.savedIds = new Array();
+        variables.that = null;
     }
 
     function initControls(that) {
-         variables.that=that;
+        variables.that = that;
         if (variables.typeOfSelector.multiple) {
             //Working with checkboxes
             that.find('input[type=checkbox]').each(function() {
@@ -283,10 +283,10 @@ $(document).ready(function() {
                             showQuestions();
                             initClassVars();
                             this.checked = false;
-                      }
+                        }
                     }
                 });
-                checkSavedPeople(elemId, this,'','checkbox');
+                checkSavedPeople(elemId, this, '', 'checkbox');
             });
         }
         var elem = that.find('select');
@@ -309,7 +309,7 @@ $(document).ready(function() {
                     return false;
                 } else
                 {
-                    var temp = 'div[name=' + variables.get.shownQuestions()[0] + ']';
+                    var temp = 'div[name=' + variables.get.shownQuestions()[0] + '].' + variables.get.typeOfBranch() + 'Branch';
                     render = confirmSelection($(temp).find('legend').attr('title'));
                 }
                 if (render) {
@@ -335,11 +335,9 @@ $(document).ready(function() {
                 }
             });
             if (tempFound == 0) {
-                var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
-                $(str).slideDown('normal', function() {
-                    frameGrow($(str).height(), 'grow');
-                    //log("Revealing: " + item)
-                });
+                var str = 'div[name=' + item + '].' + variables.get.typeOfBranch() + 'Branch';
+                frameGrow($(str).height(), 'grow');
+                $(str).slideDown('normal');
             }
         });
     }
@@ -348,12 +346,12 @@ $(document).ready(function() {
         var temp = new Array();
         temp = (all && all == 1) ? variables.get.shownQuestions() : variables.questionsToHide;
         $.each(temp, function(i, item) {
-            var str = 'div[name=' + item + '].'+variables.get.typeOfBranch()+'Branch';
-            frameGrow($(str).height(), 'shrink');
+            var str = 'div[name=' + item + '].' + variables.get.typeOfBranch() + 'Branch';
             $(str).slideUp('normal', function() {
                 //log("WARN: Hiding " + item + " in dom.");
                 clearFieldsFor($(this));
             });
+            frameGrow($(str).height(), 'shrink');
         });
     }
 
@@ -376,18 +374,18 @@ $(document).ready(function() {
             });
         });
     }
-    
-    function checkSavedPeople(elemId, that, num,tag) {
+
+    function checkSavedPeople(elemId, that, num, tag) {
         var savedIds = variables.savedIds;
         if (savedIds.length > 0) {
             for (var i = 0; i < savedIds.length; i++) {
-                if(elemId == savedIds[i]){
-                if (tag == 'checkbox') {
-                    that.checked = true;
-                }
+                if (elemId == savedIds[i]) {
+                    if (tag == 'checkbox') {
+                        that.checked = true;
+                    }
                     if (tag == 'select') {
-                    variables.that.find('select:eq(0)').each(function(){
-                        this.selectedIndex = (parseInt(num));
+                        variables.that.find('select:eq(0)').each(function() {
+                            this.selectedIndex = (parseInt(num));
                         });
                     }
                 }
@@ -397,22 +395,23 @@ $(document).ready(function() {
 
     function frameGrow(height, updown)
     {
-        var _height = height == ""?250:parseInt(height);
+        var _height = height == "" ? 250 : parseInt(height);
         var frame = parent.document.getElementById(window.name);
-        try{
-        if (frame)
-        {
-            if (updown == 'shrink')
+        try {
+            if (frame)
             {
-                var clientH = document.body.clientHeight - _height;
+                if (updown == 'shrink')
+                {
+                    var clientH = document.body.clientHeight - _height;
+                }
+                else
+                {
+                    var clientH = document.body.clientHeight + _height;
+                }
+                $(frame).height(clientH);
             }
-            else
-            {
-                var clientH = document.body.clientHeight + _height;
-            }
-            $(frame).height(clientH);
+        } catch(e) {
         }
-        }catch(e){}
     }
 
 
