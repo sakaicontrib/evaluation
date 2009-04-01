@@ -53,6 +53,11 @@ public class EvalUser implements Serializable {
      */
     public String displayName = "--------";
     /**
+     * The sort name of this user
+     * or defaults to username if it cannot be found
+     */
+    public String sortName = "--------";
+    /**
      * The type of this user (use the USER_TYPE constants in {@link EvalConstants})
      */
     public String type = EvalConstants.USER_TYPE_UNKNOWN;
@@ -70,9 +75,18 @@ public class EvalUser implements Serializable {
      * @param email email address for this user if they have one
      */
     public EvalUser(String userId, String type, String email) {
-        this.userId = userId;
-        this.email = email;
-        this.type = type;
+        this(userId, type, email, null, null, null);
+    }
+
+    /**
+     * @param userId the internal user id (not username)
+     * @param type the type of this user (use the USER_TYPE constants in {@link EvalConstants})
+     * @param email email address for this user if they have one
+     * @param username the login name (eid) for the user or default text "------" if it cannot be found
+     * @param displayName the user display name or default text "--------" if it cannot be found
+     */
+    public EvalUser(String userId, String type, String email, String username, String displayName) {
+        this(userId, type, email, username, displayName, null);
     }
 
     /**
@@ -83,13 +97,27 @@ public class EvalUser implements Serializable {
      * @param email email address for this user if they have one
      * @param username the login name (eid) for the user or default text "------" if it cannot be found
      * @param displayName the user display name or default text "--------" if it cannot be found
+     * @param sortName the name to use when sorting users or defaults to username if none set
      */
-    public EvalUser(String userId, String type, String email, String username, String displayName) {
+    public EvalUser(String userId, String type, String email, String username, String displayName, String sortName) {
+        if (userId == null || "".equals(userId)) {
+            throw new IllegalArgumentException("userId cannot be null");
+        }
+        if (type == null || "".equals(type)) {
+            throw new IllegalArgumentException("type cannot be null");
+        }
         this.userId = userId;
-        this.username = username;
-        this.email = email;
-        this.displayName = displayName;
         this.type = type;
+        this.email = email;
+        if (username != null && ! "".equals(username)) {
+            this.username = username;
+        }
+        if (displayName != null && ! "".equals(displayName)) {
+            this.displayName = displayName;
+        }
+        if (sortName != null && ! "".equals(sortName)) {
+            this.sortName = username;
+        }
     }
 
     @Override
