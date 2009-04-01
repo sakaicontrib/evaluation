@@ -174,10 +174,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
      * key = templateItemId + answer.associatedType + answer.associatedId
      */
     Map<String, EvalAnswer> answerMap = new HashMap<String, EvalAnswer>();
-    /**
-     * If this is a re-opened response this will contain an {@link EvalResponse}
-     */
-    EvalResponse response;
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -317,20 +313,20 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         }
                     }
                 }
-
                 
-             // load up the response if this user has one already
-				if (responseId == null) {
-					response = evaluationService.getResponseForUserAndGroup(
-							evaluationId, currentUserId, evalGroupId);
-					if (response == null) {
-						// create the initial response if there is not one
+                // load up the response if this user has one already
+                if (responseId == null) {
+                    // Do NOT attempt to use the response object in this class, you MUST use the various bindings and the locator
+                    EvalResponse response = evaluationService.getResponseForUserAndGroup(
+                            evaluationId, currentUserId, evalGroupId);
+                    if (response == null) {
+                        // create the initial response if there is not one
                         // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
                         //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
                     } else {
-						responseId = response.getId();
-					}
-				}
+                        responseId = response.getId();
+                    }
+                }
 
                 if (responseId != null) {
                     // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
@@ -401,9 +397,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 Map<String, String[]> savedSelections = new HashMap<String, String[]>();
-				if(response!=null){
-					savedSelections = response.getSelections();
-					}
+                // FIXME formatting, 3rd warning
+//				if(response!=null){
+//					savedSelections = response.getSelections();
+//					}
 				
                 if (selectionsEnabled) {
                     // only do the selection calculations if it is enabled
@@ -420,24 +417,24 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
                         selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
                     }
-                    if (response != null) {
-						// emit currently selected people into hidden element
-						// for JS use
-						Set<String> savedIds = new HashSet<String>();
-						for (Iterator<String> selector = savedSelections
-								.keySet().iterator(); selector.hasNext();) {
-							String selectKey = (String) selector.next();
-							String[] usersFound = savedSelections
-									.get(selectKey);
-							savedIds.add(usersFound[0]);
-						}
-						UIOutput savedSel = UIOutput
-								.make(formBranch, "selectedPeopleInResponse",
-										savedIds.toString());
-						savedSel.decorators = new DecoratorList(
-								new UIIDStrategyDecorator(
-										"selectedPeopleInResponse"));
-					}
+//                    if (response != null) {
+//						// emit currently selected people into hidden element
+//						// for JS use
+//						Set<String> savedIds = new HashSet<String>();
+//						for (Iterator<String> selector = savedSelections
+//								.keySet().iterator(); selector.hasNext();) {
+//							String selectKey = (String) selector.next();
+//							String[] usersFound = savedSelections
+//									.get(selectKey);
+//							savedIds.add(usersFound[0]);
+//						}
+//						UIOutput savedSel = UIOutput
+//								.make(formBranch, "selectedPeopleInResponse",
+//										savedIds.toString());
+//						savedSel.decorators = new DecoratorList(
+//								new UIIDStrategyDecorator(
+//										"selectedPeopleInResponse"));
+//					}
                     for (Iterator<String> selector = selectorType.keySet().iterator(); selector.hasNext();) {
                         // FIXME findbugs says that getting keys like this is inefficient, use Map.Entry
                         String selectKey = (String) selector.next();
