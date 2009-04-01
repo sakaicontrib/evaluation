@@ -41,7 +41,7 @@ public class EvalUser implements Serializable {
      * The string which is the username (eid) for this user
      * or default text "------" if it cannot be found
      */
-    public String username = "------";
+    public String username;
     /**
      * The email address for this user if they have one,
      * null if they do not have an email address
@@ -51,12 +51,12 @@ public class EvalUser implements Serializable {
      * The displayable name of this user
      * or default text "--------" if it cannot be found
      */
-    public String displayName = "--------";
+    public String displayName;
     /**
      * The sort name of this user
      * or defaults to username if it cannot be found
      */
-    public String sortName = "--------";
+    public String sortName;
     /**
      * The type of this user (use the USER_TYPE constants in {@link EvalConstants})
      */
@@ -111,12 +111,18 @@ public class EvalUser implements Serializable {
         this.email = email;
         if (username != null && ! "".equals(username)) {
             this.username = username;
+        } else {
+            this.username = "------";
         }
         if (displayName != null && ! "".equals(displayName)) {
             this.displayName = displayName;
+        } else {
+            this.displayName = "--------";
         }
         if (sortName != null && ! "".equals(sortName)) {
-            this.sortName = username;
+            this.sortName = sortName;
+        } else {
+            this.sortName = username != null ? username : userId;
         }
     }
 
