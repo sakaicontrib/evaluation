@@ -236,6 +236,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
 
+            UIInternalLink.make(evaluationRow, "notifications-link", 
+                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
@@ -287,6 +290,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
 
+            UIInternalLink.make(evaluationRow, "notifications-link", 
+                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
@@ -301,9 +307,17 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             // calculate the response rate
             int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
             int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-            UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", 
-                  new Object[] { responseString } );
+
+            if (responsesNeeded == 0) {
+                UIInternalLink.make(evaluationRow, "responders-link", 
+                        UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
+                        new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
+            } else {
+                UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", 
+                        new Object[] { responseString } );
+            }
 
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));
@@ -345,6 +359,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                      new UITooltipDecorator( evaluation.getEvalCategory() ) );
             }
 
+            UIInternalLink.make(evaluationRow, "notifications-link", 
+                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
@@ -359,14 +376,19 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             // calculate the response rate
             int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
             int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
-            UIOutput.make(evaluationRow, "closed-eval-response-rate", responseString );
+            if (responsesNeeded == 0) {
+                UIInternalLink.make(evaluationRow, "responders-link", responseString, 
+                        new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
+            } else {
+                UIOutput.make(evaluationRow, "closed-eval-response-rate", responseString );
+            }
 
             UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation, false)) ) {
-               int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                if ( responsesNeeded == 0 ) {
                   UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
                         UIMessage.make("controlevaluations.eval.report.link"),

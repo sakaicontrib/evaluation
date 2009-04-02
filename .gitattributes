@@ -191,6 +191,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_ke
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/SendEmailsBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/SetupEvalBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -235,6 +236,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirm
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignmentsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationCreateProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationNotificationsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationRespondersProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationSettingsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExistingItemsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertCategoryProducer.java -text svn_keywords=Date+Revision+Author+URL+Id

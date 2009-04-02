@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 
@@ -166,6 +167,13 @@ public class EvalUser implements Serializable {
         } else if (!username.equals(other.username))
             return false;
         return true;
+    }
+
+    public static class SortNameComparator implements Comparator<EvalUser> {
+        public static final long serialVersionUID = 31L;
+        public int compare(EvalUser o1, EvalUser o2) {
+            return o1.sortName.compareTo(o2.sortName);
+        }
     }
 
 }

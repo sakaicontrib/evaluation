@@ -480,7 +480,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEmailMessages(java.lang.String, java.lang.Long, java.lang.String[], java.lang.String)
      */
     public String[] sendEmailMessages(String message, String subject, Long evaluationId, String[] groupIds, String includeConstant) {
-        // FIXME
         EvalUtils.validateEmailIncludeConstant(includeConstant);
         log.debug("message:" + message + ", evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
 
