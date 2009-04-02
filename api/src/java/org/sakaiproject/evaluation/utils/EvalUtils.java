@@ -611,22 +611,6 @@ public class EvalUtils {
         return blank;
     }
 
-    /**
-     * Get a due date from an evaluation and ensure the date is not null,
-     * note that the date will be null when no due date is set yet
-     * 
-     * @param evaluation an evaluation
-     * @return a due date (even if due date is not set the due date will be 7 days from now)
-     */
-    public static Date getSafeDueDate(EvalEvaluation eval) {
-        if (eval == null) {
-            throw new IllegalArgumentException("evaluation must not be null");
-        }
-        Date dueDate = eval.getDueDate() != null ? eval.getDueDate() : new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7));
-        return dueDate;
-    }
-
-
 
     /**
      * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
@@ -735,7 +719,7 @@ public class EvalUtils {
         if (assignGroup == null && eval == null) {
             throw new IllegalArgumentException("assignGroup and eval cannot both be null");
         }
-        
+
         String selectionSetting = EvalAssignGroup.SELECTION_OPTION_ALL;
         if (assignGroup != null) {
             Map<String, String> m = assignGroup.getSelectionOptions();

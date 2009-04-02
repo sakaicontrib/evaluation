@@ -308,6 +308,83 @@ public class EvalEvaluation implements java.io.Serializable {
 
 
     /**
+     * @return the due date in a way which ensures it is not null even if the field is
+     * @see EvalEvaluation#getSafeEvalDate(EvalEvaluation, String)
+     */
+    public Date getSafeDueDate() {
+        return getSafeEvalDate(this, EvalConstants.EVALUATION_STATE_CLOSED);
+    }
+
+    /**
+     * @return the stop date in a way which ensures it is not null even if the field is
+     * @see EvalEvaluation#getSafeEvalDate(EvalEvaluation, String)
+     */
+    public Date getSafeStopDate() {
+        return getSafeEvalDate(this, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+    }
+
+    /**
+     * @return the stop date in a way which ensures it is not null even if the field is
+     * @see EvalEvaluation#getSafeEvalDate(EvalEvaluation, String)
+     */
+    public Date getSafeViewDate() {
+        return getSafeEvalDate(this, EvalConstants.EVALUATION_STATE_VIEWABLE);
+    }
+
+    /**
+     * Gets a date to display to the user depending on the evaluation state requested, 
+     * guarantees to return a date even if the dates are null
+     * 
+     * @param eval an evaluation
+     * @param evalState the state which you want to get the date for,
+     * e.g. EVALUATION_STATE_VIEWABLE would get the view date and EVALUATION_STATE_CLOSED would get the due date
+     * @return a derived date which can be used for display
+     */
+    public static Date getSafeEvalDate(EvalEvaluation eval, String evalState) {
+        if (eval == null) {
+            throw new IllegalArgumentException("evaluation must not be null");
+        }
+        if (eval.getStartDate() == null) {
+            throw new IllegalStateException("This eval ("+eval+") is not safe to pull dates from as the start date is not set yet");
+        }
+        Date date = null;
+        if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
+            if (eval.getViewDate() != null) {
+                date = eval.getViewDate();
+            } else {
+                // defaults to stop date
+                evalState = EvalConstants.EVALUATION_STATE_GRACEPERIOD;
+            }
+        }
+        if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
+            if (eval.getStopDate() != null) {
+                date = eval.getStopDate();
+            } else {
+                // defaults to due date
+                evalState = EvalConstants.EVALUATION_STATE_CLOSED;
+            }
+        }
+        if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
+            if (eval.getDueDate() != null) {
+                date = eval.getDueDate();
+            } else {
+                // make up a due date that is 7 days in the future when there is none
+                Date now = new Date();
+                if (now.after(eval.getStartDate())) {
+                    date = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7));
+                } else {
+                    date = new Date(eval.getStartDate().getTime() + (1000 * 60 * 60 * 24 * 7));
+                }
+            }
+        }
+        if (date == null) {
+            // default to using the start date
+            date = eval.getStartDate();
+        }
+        return date;
+    }
+
+    /**
      * Get the selection settings out of this assign group (decoded),
      * this is a map of selection type constants like 
      * {@link EvalAssignGroup#SELECTION_TYPE_INSTRUCTOR} or {@link EvalAssignGroup#SELECTION_TYPE_ASSISTANT}

@@ -23,7 +23,6 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -124,7 +123,7 @@ public class EvaluationNotificationsProducer implements ViewComponentProducer, V
         UIMessage.make(tofill, "notifyEval", "evalnotify.eval.info", 
             new Object[] {eval.getTitle(), 
                 dateFormat.format(eval.getStartDate()), 
-                dateFormat.format(EvalUtils.getSafeDueDate(eval))} );
+                dateFormat.format(eval.getSafeDueDate())} );
         if (evalGroupId != null) {
             EvalGroup evalGroup = commonLogic.makeEvalGroupObject(evalGroupId);
             UIMessage.make(tofill, "notifyGroup", "evalnotify.group.info", 

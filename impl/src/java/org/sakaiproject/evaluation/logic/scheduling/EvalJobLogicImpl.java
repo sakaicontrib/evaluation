@@ -18,6 +18,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
@@ -26,7 +27,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * Handle job scheduling related to EvalEvaluation state transitions.</br> Dates that have not
@@ -484,7 +484,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             Date reminderAt = job.date;
             int reminderDays = eval.getReminderDaysInt();
             if (reminderDays == 0 
-                    || reminderAt.after(EvalUtils.getSafeDueDate(eval))) {
+                    || reminderAt.after(eval.getSafeDueDate())) {
                 // remove reminder
                 commonLogic.deleteScheduledJob(job.uuid);
                 if (log.isDebugEnabled())
@@ -611,7 +611,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         long startTime = eval.getStartDate().getTime();
         long now = System.currentTimeMillis();
         // due date is one week in the future if it is not set
-        long dueTime = EvalUtils.getSafeDueDate(eval).getTime();
+        long dueTime = eval.getSafeDueDate().getTime();
         long available = dueTime - now;
 
         int reminderDays = eval.getReminderDaysInt();
