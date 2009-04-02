@@ -73,6 +73,12 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
     </bean>
 
+    <bean id="sendEmailsBean" class="org.sakaiproject.evaluation.tool.SendEmailsBean">
+        <property name="emailsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+        <property name="messages" ref="targettedMessageList" />
+    </bean>
+
     <bean id="reportHandlerHook"
         class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
         <property name="viewparams" ref="viewParameters" />
@@ -550,6 +556,24 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="locale" ref="requestLocale" />
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationNotificationsProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="locale" ref="requestLocale" />
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="locale" ref="requestLocale" />
     </bean>
 
