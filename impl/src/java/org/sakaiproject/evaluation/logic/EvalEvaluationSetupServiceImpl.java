@@ -30,6 +30,7 @@ import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
@@ -112,6 +113,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     private EvalJobLogic evalJobLogic;
     public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
         this.evalJobLogic = evalJobLogic;
+    }
+
+    private EvalBeanUtils evalBeanUtils;
+    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+       this.evalBeanUtils = evalBeanUtils;
     }
 
 
@@ -244,48 +250,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }
 
         // test date ordering first (for the dates that are set) - this should be externalized
-        if (evaluation.getDueDate() != null) {
-            if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0) {
-                throw new InvalidDatesException(
-                        "due date (" + evaluation.getDueDate() +
-                        ") must occur after start date (" + 
-                        evaluation.getStartDate() + "), can occur on the same date but not at the same time",
-                "dueDate");
-            }
-
-            if (evaluation.getStopDate() != null) {
-                if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
-                    throw new InvalidDatesException(
-                            "stop date (" + evaluation.getStopDate() +
-                            ") must occur on or after due date (" + 
-                            evaluation.getDueDate() + "), can be identical",
-                    "stopDate");
-                }
-                if (evaluation.getViewDate() != null) {
-                    if (evaluation.getViewDate().compareTo(evaluation.getStopDate()) < 0 ) {
-                        throw new InvalidDatesException(
-                                "view date (" + evaluation.getViewDate() +
-                                ") must occur on or after stop date (" + 
-                                evaluation.getStopDate() + "), can be identical",
-                        "viewDate");
-                    }
-                }
-            }
-
-            if (evaluation.getViewDate() != null) {
-                if (evaluation.getViewDate().compareTo(evaluation.getDueDate()) < 0 ) {
-                    throw new InvalidDatesException(
-                            "view date (" + evaluation.getViewDate() +
-                            ") must occur on or after due date (" + 
-                            evaluation.getDueDate() + "), can be identical",
-                    "viewDate");
-                }
-            }
-        }
+        EvalBeanUtils.validateEvalDates(evaluation);
 
         boolean isNew = false;
         if (evaluation.getId() == null) {
             isNew = true;
+            // assure that all the defaults are set correctly for new evals
+            evalBeanUtils.setEvaluationDefaults(evaluation, null);
         } else {
             // should we also see if this eval already exists?
 //            EvalEvaluation evalCheck = evaluationService.getEvaluationById(evaluation.getId());
@@ -293,7 +264,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 //                isNew = true;
 //            }
         }
-        
+
+        // assure valid date handling but only after the dates are checked during saving
+        evalBeanUtils.fixupEvaluationDates(evaluation);
 
         // now perform checks depending on whether this is new or existing
         Calendar calendar = GregorianCalendar.getInstance();
@@ -610,7 +583,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
         if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
             // set closing date to now
-            Date now = new Date();
+            Calendar cal = new GregorianCalendar();
+            cal.setTime( new Date() );
+            cal.add(Calendar.SECOND, -1);
+            Date now = cal.getTime();
             evaluation.setDueDate(now);
 
             // fix stop and view dates if needed
