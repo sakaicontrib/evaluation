@@ -199,6 +199,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       // create partial evaluations header and listing
       if (partialEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "partial-eval-listing:");
+         if (EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS > 0) {
+             UIMessage.make(evalListing, "partial-cleanup-note", "controlevaluations.partial.cleanup", 
+                     new Object[] {EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS});
+         }
 
          for (int i = 0; i < partialEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) partialEvals.get(i);

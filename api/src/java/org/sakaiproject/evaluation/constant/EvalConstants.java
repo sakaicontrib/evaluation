@@ -154,6 +154,12 @@ public class EvalConstants {
      */
     public static final String EVALUATION_AUTOUSE_INSERTION_AFTER = "After";
 
+    /**
+     * Evaluation partial cleanup days: This is the number of days old a partial eval has to be
+     * before it is cleaned up automatically, set to zero or less to disable partial cleanup
+     */
+    public static final int EVALUATION_PARTIAL_CLEANUP_DAYS = 15;
+
 
     /**
      * Template type: this is a normal type of template created by a user

@@ -138,7 +138,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * it will run every hour and on every server and therefore could increase the load substantially,
      * the other disadvantage is that if an evaluation goes from say active all the way to closed or viewable
      * then this would require a lot of extra logic to handle those cases,
-     * holding off on using this for now -AZ
+     * holding off on the extra logic -AZ
+     * NOTE: uses a DB server lock to ensure that only one server is running this stuff
+     * 
+     * Does the following:
+     * 1) Ensures all evals have the correct state by checking and updating the state as needed
+     * 2) Removes any partially created evals that are older than the constant (15 days)
+     * 3) Resets the eval settings cache
      */
     public static String EVAL_UPDATE_TIMER = "eval_update_timer";
     protected void initiateUpdateStateTimer() {
@@ -163,26 +169,34 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     );
                     if (evals.size() > 0) {
                         log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
-                        // set the partial purge number of days to 5
-                        long partialPurgeTime = System.currentTimeMillis() - (5 * 24 * 60 * 60 * 1000);
+                        // only do partial purge if constant > 0
+                        long partialPurgeTime = -1;
+                        if (EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS > 0) {
+                            // set the partial purge number of days to the constant (15)
+                            partialPurgeTime = System.currentTimeMillis() - 
+                                (EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS * 24l * 60l * 60l * 1000l);
+                        }
+
                         // loop through and update the state of the evals if needed
                         int count = 0;
                         for (EvalEvaluation evaluation : evals) {
                             String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
-                            if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
+                            if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)
+                                    && partialPurgeTime > -1) {
                                 // purge out partial evaluations older than the partial purge time
                                 if (evaluation.getLastModified().getTime() < partialPurgeTime) {
                                     log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
                                     deleteEvaluation(evaluation.getId(), commonLogic.getAdminUserId());
+                                    continue;
                                 }
-                            } else {
-                                String currentEvalState = evaluation.getState();
-                                if (! currentEvalState.equals(evalState) ) {
-                                    evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
-                                    count++;
-                                    // trigger the jobs logic to look at this since the state changed
-                                    evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
-                                }
+                            }
+                            // fix up the state if needed
+                            String currentEvalState = evaluation.getState();
+                            if (! currentEvalState.equals(evalState) ) {
+                                evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
+                                count++;
+                                // trigger the jobs logic to look at this since the state changed
+                                evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
                             }
                         }
                         if (count > 0) {
