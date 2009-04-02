@@ -56,7 +56,10 @@ public class RenderingUtils {
             totalAnswers += responseArray[i];
             totalValue += (weight * responseArray[i]);
         }
-        double weightedAverage = (double)totalValue / (double)totalAnswers; // (double)totalWeight;
+        double weightedAverage = 0.0d;
+        if (totalAnswers == 0) {
+            weightedAverage = (double)totalValue / (double)totalAnswers; // (double)totalWeight;
+        }
         return new AnswersMean(totalAnswers, weightedAverage);
     }
 
@@ -90,6 +93,7 @@ public class RenderingUtils {
             this.mean = mean;
             this.meanText = df.format(mean);
         }
+
     }
 
     /**
