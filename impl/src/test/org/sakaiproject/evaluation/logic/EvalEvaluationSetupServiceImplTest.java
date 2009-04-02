@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
@@ -59,6 +60,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
         }
 
+        EvalBeanUtils evalBeanUtils = (EvalBeanUtils) applicationContext.getBean(EvalBeanUtils.class.getName());
+        if (evalBeanUtils == null) {
+            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+        }
+
         evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
         if (evaluationService == null) {
             throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
@@ -90,6 +96,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
         evaluationSetupService.setEmails(emailsLogicImpl);
         evaluationSetupService.setAuthoringService(authoringServiceImpl);
+        evaluationSetupService.setEvalBeanUtils(evalBeanUtils);
 
     }
 

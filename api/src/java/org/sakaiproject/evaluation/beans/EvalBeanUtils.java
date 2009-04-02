@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -99,7 +100,10 @@ public class EvalBeanUtils {
     /**
      * Sets all the system defaults for this evaluation object
      * and ensures all required fields are correctly set,
-     * use this whenever you create a new evaluation
+     * use this whenever you create a new evaluation <br/>
+     * This is guaranteed to be non-destructive (i.e. it will not replace existing values
+     * but it will fixup any required fields which are nulls to default values),
+     * will force null due date to be non-null but will respect the {@link EvalEvaluation#useDueDate} flag
      * 
      * @param eval an {@link EvalEvaluation} object (can be persisted or new)
      * @param evaluationType a type constant of EvalConstants#EVALUATION_TYPE_*,
@@ -126,50 +130,65 @@ public class EvalBeanUtils {
 
         // make sure the dates are set
         Calendar calendar = new GregorianCalendar();
-        calendar.setTime( new Date() );
+        Date now =  new Date();
+        calendar.setTime( now );
         if (eval.getStartDate() == null) {
-            eval.setStartDate(calendar.getTime());
+            eval.setStartDate(now);
             log.debug("Setting start date to default of: " + eval.getStartDate());
         } else {
             calendar.setTime(eval.getStartDate());
         }
 
-        calendar.add(Calendar.DATE, 1);
-        if (eval.getDueDate() == null) {
-            // default the due date to the end of the start date + 1 day
-            Calendar cal = new GregorianCalendar();
-            cal.setTime(calendar.getTime());
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            eval.setDueDate(cal.getTime());
-            log.debug("Setting due date to default of: " + eval.getDueDate());
-        } else {
-            calendar.setTime(eval.getDueDate());
-        }
-
-        Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
-        if (useStopDate) {
-            // assign stop date to equal due date for now
-            if (eval.getStopDate() == null) {
-                eval.setStopDate(eval.getDueDate());
-                log.debug("Setting stop date to default of: " + eval.getStopDate());
-            }
-        } else {
+        if (eval.useDueDate != null && ! eval.useDueDate) {
+            // allow evals which are open forever
+            eval.setDueDate(null);
             eval.setStopDate(null);
-        }
-
-        Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
-        if (useViewDate) {
-            // assign default view date
-            calendar.add(Calendar.DATE, 1);
-            if (eval.getViewDate() == null) {
-                // default the view date to the today + 2
-                eval.setViewDate(calendar.getTime());
-                log.debug("Setting view date to default of: " + eval.getViewDate());
-            }
-        } else {
             eval.setViewDate(null);
+        } else {
+            // using the due date
+            calendar.add(Calendar.DATE, 1); // +1 day
+            if (eval.getDueDate() == null) {
+                // default the due date to the end of the start date + 1 day
+                Date endOfDay = EvalUtils.getEndOfDayDate( calendar.getTime() );
+                eval.setDueDate( endOfDay );
+                log.debug("Setting due date to default of: " + eval.getDueDate());
+            } else {
+                calendar.setTime(eval.getDueDate());
+            }
+
+            boolean useStopDate;
+            if (eval.useStopDate != null && ! eval.useStopDate) {
+                useStopDate = false;
+            } else {
+                useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+            }
+            if (useStopDate) {
+                // assign stop date to equal due date for now
+                if (eval.getStopDate() == null) {
+                    eval.setStopDate(eval.getDueDate());
+                    log.debug("Setting stop date to default of: " + eval.getStopDate());
+                }
+            } else {
+                eval.setStopDate(null);
+            }
+
+            boolean useViewDate;
+            if (eval.useViewDate != null && ! eval.useViewDate) {
+                useViewDate = false;
+            } else {
+                useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
+            }
+            if (useViewDate) {
+                // assign default view date
+                calendar.add(Calendar.DATE, 1);
+                if (eval.getViewDate() == null) {
+                    // default the view date to the today + 2
+                    eval.setViewDate(calendar.getTime());
+                    log.debug("Setting view date to default of: " + eval.getViewDate());
+                }
+            } else {
+                eval.setViewDate(null);
+            }
         }
 
         // handle the view dates default
@@ -265,13 +284,29 @@ public class EvalBeanUtils {
 
     /**
      * Fixes up the evaluation dates so that the evaluation is assured to save with
-     * valid dates, this should be run whenever the dates of an evaluation are being updated or changed
+     * valid dates, this should be run whenever the dates of an evaluation are being updated or changed <br/>
+     * This is guaranteed to be non-destructive and should only fixup invalid or null fields and dates <br/>
+     * handles setting date fields based on the useDueDate, etc. fields in the evaluation as well <br/>
      * 
      * @param eval an {@link EvalEvaluation} object (can be persisted or new)
      */
     public void fixupEvaluationDates(EvalEvaluation eval) {
-        boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE));
-        boolean useViewDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE));
+        if (eval == null) {
+            throw new IllegalArgumentException("eval must be set to fix dates");
+        }
+        boolean useDueDate = eval.useDueDate != null ? eval.useDueDate : true;
+        boolean useStopDate;
+        if (eval.useStopDate != null && ! eval.useStopDate) {
+            useStopDate = false;
+        } else {
+            useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+        }
+        boolean useViewDate;
+        if (eval.useViewDate != null && ! eval.useViewDate) {
+            useViewDate = false;
+        } else {
+            useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
+        }
         boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME));
         // Getting the system setting that tells what should be the minimum time difference between start date and due date.
         int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
@@ -290,10 +325,30 @@ public class EvalBeanUtils {
             }
         }
 
-        // force the due date to the end of the day if we are using dates only
+        if (! useDueDate) {
+            // null out the due/stop/view dates
+            eval.setDueDate(null);
+            eval.setStopDate(null);
+            eval.setViewDate(null);
+        }
+
+        // ensure the due date comes after the start date
+        if (eval.getDueDate() != null) {
+            if (! eval.getDueDate().after(eval.getStartDate())) {
+                Calendar cal = new GregorianCalendar();
+                cal.setTime(eval.getStartDate());
+                cal.add(Calendar.HOUR, 25);
+                eval.setDueDate(cal.getTime());
+            }
+        }
+
         if (! useDateTime ) {
+            // force the due date to the end of the day if we are using dates only AND eval is not due yet
             if (eval.getDueDate() != null) {
-                eval.setDueDate( EvalUtils.getEndOfDayDate( eval.getDueDate() ) );
+                if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_GRACEPERIOD, false) ) {
+                    log.info("Forcing date to end of day for non null due date: " + eval.getDueDate());
+                    eval.setDueDate( EvalUtils.getEndOfDayDate( eval.getDueDate() ) );
+                }
             }
         }
 
@@ -302,11 +357,10 @@ public class EvalBeanUtils {
             eval.setStopDate(null);
         }
 
-        // set stop date to the due date if not set and in use
-        if (eval.getStopDate() != null) {
-            // force the stop date to the end of the day if we are using dates only
-            if (! useDateTime ) {
-                if (eval.getStopDate() != null) {
+        if (! useDateTime ) {
+            // force the stop date to the end of the day if we are using dates only AND eval is not closed yet
+            if (eval.getStopDate() != null) {
+                if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false) ) {
                     log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
                     eval.setStopDate( EvalUtils.getEndOfDayDate( eval.getStopDate() ) );
                 }
@@ -319,14 +373,28 @@ public class EvalBeanUtils {
         }
 
         if (! useViewDate) {
-            // force view date to null if not in use
-            eval.setViewDate(null);
+            if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_ACTIVE, false) ) {
+                // force view date to null if not in use AND eval is still being created
+                eval.setViewDate(null);
+            }
         }
 
-        if (eval.getViewDate() != null
-                && eval.getViewDate().before(eval.getDueDate())) {
-            // force view date to due date if it is before the due date
-            eval.setViewDate( eval.getDueDate() );
+        if (! useDateTime ) {
+            // force the view date to the end of the day if we are using dates only AND eval is not viewable yet
+            if (eval.getViewDate() != null) {
+                if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, false) ) {
+                    log.info("Forcing date to end of day for non null stop date: " + eval.getViewDate());
+                    eval.setViewDate( EvalUtils.getEndOfDayDate( eval.getViewDate() ) );
+                }
+            }
+        }
+
+        if (eval.getViewDate() != null 
+                && eval.getDueDate() != null) {
+            if (eval.getViewDate().before(eval.getDueDate())) {
+                // force view date to due date if it is before the due date
+                eval.setViewDate( eval.getDueDate() );
+            }
         }
 
         /*
@@ -350,6 +418,53 @@ public class EvalBeanUtils {
         }
         if (! eval.getInstructorViewResults()) {
             eval.setInstructorsDate(null);
+        }
+    }
+
+    /**
+     * Check the dates for an evaluation and throw an exception if they are invalid
+     * (in an improper order)
+     * @param evaluation any evaluation
+     * @throws InvalidDatesException if the dates are invalid
+     */
+    public static void validateEvalDates(EvalEvaluation evaluation) {
+        if (evaluation.getDueDate() != null) {
+            if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0) {
+                throw new InvalidDatesException(
+                        "due date (" + evaluation.getDueDate() +
+                        ") must occur after start date (" + 
+                        evaluation.getStartDate() + "), can occur on the same date but not at the same time",
+                "dueDate");
+            }
+
+            if (evaluation.getStopDate() != null) {
+                if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
+                    throw new InvalidDatesException(
+                            "stop date (" + evaluation.getStopDate() +
+                            ") must occur on or after due date (" + 
+                            evaluation.getDueDate() + "), can be identical",
+                    "stopDate");
+                }
+                if (evaluation.getViewDate() != null) {
+                    if (evaluation.getViewDate().compareTo(evaluation.getStopDate()) < 0 ) {
+                        throw new InvalidDatesException(
+                                "view date (" + evaluation.getViewDate() +
+                                ") must occur on or after stop date (" + 
+                                evaluation.getStopDate() + "), can be identical",
+                        "viewDate");
+                    }
+                }
+            }
+
+            if (evaluation.getViewDate() != null) {
+                if (evaluation.getViewDate().compareTo(evaluation.getDueDate()) < 0 ) {
+                    throw new InvalidDatesException(
+                            "view date (" + evaluation.getViewDate() +
+                            ") must occur on or after due date (" + 
+                            evaluation.getDueDate() + "), can be identical",
+                    "viewDate");
+                }
+            }
         }
     }
 

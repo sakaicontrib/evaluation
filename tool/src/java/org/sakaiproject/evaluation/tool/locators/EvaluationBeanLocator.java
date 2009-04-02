@@ -35,78 +35,87 @@ import uk.org.ponder.beanutil.BeanLocator;
  */
 public class EvaluationBeanLocator implements BeanLocator {
 
-   public static final String NEW_PREFIX = "new";
-   public static String NEW_1 = NEW_PREFIX + "1";
+    public static final String NEW_PREFIX = "new";
+    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
+    }
 
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
-   }
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+        this.evaluationService = evaluationService;
+    }
 
-   private EvalEvaluationSetupService evaluationSetupService;
-   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
-      this.evaluationSetupService = evaluationSetupService;
-   }
+    private EvalEvaluationSetupService evaluationSetupService;
+    public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+        this.evaluationSetupService = evaluationSetupService;
+    }
 
-   private EvalBeanUtils evalBeanUtils;
-   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
-      this.evalBeanUtils = evalBeanUtils;
-   }
+    private EvalBeanUtils evalBeanUtils;
+    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+        this.evalBeanUtils = evalBeanUtils;
+    }
 
+    public Map<String, String> selectionSettings;
 
-   private Map<String, EvalEvaluation> delivered = new HashMap<String, EvalEvaluation>();
+    private Map<String, EvalEvaluation> delivered = new HashMap<String, EvalEvaluation>();
 
-   public Object locateBean(String name) {
-      EvalEvaluation togo = delivered.get(name);
-      if (togo == null) {
-         if (name.startsWith(NEW_PREFIX)) {
-            togo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, commonLogic.getCurrentUserId(),
-                  null, null, EvalConstants.EVALUATION_STATE_PARTIAL, null, null, null);
-            // set the defaults for this newly created evaluation
-            evalBeanUtils.setEvaluationDefaults(togo, EvalConstants.EVALUATION_TYPE_EVALUATION);
-         } else {
-            togo = evaluationService.getEvaluationById(new Long(name));
-         }
-         delivered.put(name, togo);
-      }
-      return togo;
-   }
+    public Object locateBean(String name) {
+        EvalEvaluation togo = delivered.get(name);
+        if (togo == null) {
+            if (name.startsWith(NEW_PREFIX)) {
+                togo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, commonLogic.getCurrentUserId(),
+                        null, null, EvalConstants.EVALUATION_STATE_PARTIAL, null, null, null);
+                // set the defaults for this newly created evaluation
+                evalBeanUtils.setEvaluationDefaults(togo, EvalConstants.EVALUATION_TYPE_EVALUATION);
+            } else {
+                togo = evaluationService.getEvaluationById(new Long(name));
+            }
+            delivered.put(name, togo);
+        }
+        return togo;
+    }
 
-   public void saveAll(Map<String, String> selectionSettings) {
-      for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-         String key = it.next();
-         EvalEvaluation evaluation = delivered.get(key);
-         if (key.startsWith(NEW_PREFIX)) {
-            // could do stuff here
-         }
-         // fix up all the dates before saving
-         evalBeanUtils.fixupEvaluationDates(evaluation);
-         //fix selection settings too
-         if(selectionSettings != null && selectionSettings.size()>0){
-         for (Entry<String, String> selection : selectionSettings.entrySet()) {
-             evaluation.setSelectionOption(selection.getKey(), selection.getValue());
-         	}
-         }
-         evaluationSetupService.saveEvaluation(evaluation, commonLogic.getCurrentUserId(), false);
-      }
-   }
+    public void saveAll() {
+        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+            String key = it.next();
+            EvalEvaluation evaluation = delivered.get(key);
+            if (key.startsWith(NEW_PREFIX)) {
+                // could do stuff here
+            }
+            // fix up all the dates before saving
+            evalBeanUtils.fixupEvaluationDates(evaluation);
+            // fix selection settings too
+            fixUpSelections(evaluation);
+            evaluationSetupService.saveEvaluation(evaluation, commonLogic.getCurrentUserId(), false);
+        }
+    }
 
-   /**
-    * Get the first evaluation that is currently being worked with in this locator,
-    * if there are none then return null, otherwise return the first one
-    * @return an evaluation or null if none
-    */
-   public EvalEvaluation getCurrentEval() {
-      EvalEvaluation eval = null;
-      if (delivered.size() > 0) {
-         eval = delivered.values().iterator().next();
-      }
-      return eval;
-   }
+    /**
+     * Get the first evaluation that is currently being worked with in this locator,
+     * if there are none then return null, otherwise return the first one
+     * @return an evaluation or null if none
+     */
+    public EvalEvaluation getCurrentEval() {
+        EvalEvaluation eval = null;
+        if (delivered.size() > 0) {
+            eval = delivered.values().iterator().next();
+        }
+        return eval;
+    }
+
+    /**
+     * Takes the selection settings map and loads in into the evaluation
+     * @param evaluation an evaluation
+     */
+    private void fixUpSelections(EvalEvaluation evaluation) {
+        if (selectionSettings != null && selectionSettings.size() > 0) {
+            for (Entry<String, String> selection : selectionSettings.entrySet()) {
+                evaluation.setSelectionOption(selection.getKey(), selection.getValue());
+            }
+        }
+    }
 
 }
