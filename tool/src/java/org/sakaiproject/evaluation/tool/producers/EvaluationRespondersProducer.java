@@ -33,7 +33,6 @@ import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -182,7 +181,7 @@ public class EvaluationRespondersProducer implements ViewComponentProducer, View
         UIMessage.make(tofill, "responseEval", "evalresponders.eval.info", 
                 new Object[] {eval.getTitle(), 
                 dateFormat.format(eval.getStartDate()), 
-                dateFormat.format(EvalUtils.getSafeDueDate(eval))} );
+                dateFormat.format(eval.getSafeDueDate())} );
         UIMessage.make(tofill, "responseStats", "evalresponders.stats", 
                 new Object[] {responses.size(), statsAssigned} );
         UIInternalLink.make(tofill, "responseEmailLink", 

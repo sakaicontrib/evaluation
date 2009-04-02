@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -302,11 +301,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
                 UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
-                String evalState = evaluationService.updateEvaluationState(eval.getId());
+                String evalState = evaluationService.returnAndFixEvalState(eval, true);
                 if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
-                    // If we are in the queue we are yet to start -- so say when
-                    // we will
-
+                    // If we are in the queue we are yet to start,
+                    // so say when we will
                     UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.starts");
                     UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getStartDate()));
 
@@ -317,8 +315,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                     if (eval.getDueDate() != null) {
                         UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.due");
                         UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getDueDate()));
-                        // Should probably add something here if there's a grace
-                        // period
+                        // Should probably add something here if there's a grace period
                     } else {
                         UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.nevercloses");
                     }
@@ -329,22 +326,21 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                     // close at some point;
                     // Grace periods never remain open forever
                     UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.gracetill");
-                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getStopDate()));
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getSafeStopDate()));
 
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
                     // if an evaluation is closed then it is not yet viewable
                     // and ViewDate must have been set
                     UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.resultsviewableon");
-                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getViewDate()));
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getSafeViewDate()));
 
                     UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
                 } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
-                    // FIXME if an evaluation is viewable we may want to notify
-                    // if
-                    // there are instructor/student dates
+                    // TODO if an evaluation is viewable we may want to notify
+                    // if there are instructor/student dates
                     UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label.resultsviewablesince");
-                    UIOutput.make(evalrow, "evalAdminDate", df.format(evalViewableOn(eval)));
+                    UIOutput.make(evalrow, "evalAdminDate", df.format(eval.getSafeViewDate()));
 
                     int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), null);
@@ -447,59 +443,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
     }
 
-    /**
-     * Find out when an evaluation became first viewable.
-     * 
-     * @param eval
-     *            an evaluation
-     * @return the date results were first viewable on
-     */
-    private Date evalViewableOn(EvalEvaluation eval) {
-        if (eval.getViewDate() != null) {
-            return eval.getViewDate();
-        } else if (eval.getStopDate() != null) {
-            return eval.getStopDate();
-        } else {
-            return eval.getDueDate();
-        }
-    }
-
-    /**
-     * Gets a date to display to the user depending on the state, guarantees to
-     * return a date even if the dates are null
-     * 
-     * FIXME this method seems to be wrong.
-     * 
-     * @param eval
-     *            an evaluation (must be saved already)
-     * @param evalState
-     *            the state which you want to get the date for, e.g.
-     *            EVALUATION_STATE_VIEWABLE would get the view date and
-     *            EVALUATION_STATE_CLOSED would get the due date
-     * @return a displayable date
-     */
-    /*
-     * private Date getDisplayableDate(EvalEvaluation eval, String evalState) {
-     * Date date = null; if (eval.getViewDate() != null &&
-     * EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) { date =
-     * eval.getViewDate(); } else { if
-     * (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) { if
-     * (eval.getStopDate() != null) { date = eval.getStopDate(); } else if
-     * (eval.getDueDate() != null) { date = eval.getDueDate(); } else { // FIXME
-     * there's no due date so we give out a finishing date of the start?! date =
-     * eval.getStartDate(); } } else { if (eval.getDueDate() != null &&
-     * EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) { date =
-     * eval.getDueDate(); } else { date = eval.getStartDate(); } } } return
-     * date; }
-     */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases
-     * ()
-     */
     @SuppressWarnings("unchecked")
     public List reportNavigationCases() {
         List i = new ArrayList();

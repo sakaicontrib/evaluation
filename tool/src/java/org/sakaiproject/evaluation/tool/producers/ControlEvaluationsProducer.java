@@ -255,7 +255,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
 
             UIOutput.make(evaluationRow, "inqueue-eval-startdate", df.format(evaluation.getStartDate()));
-            UIOutput.make(evaluationRow, "inqueue-eval-duedate", df.format(evaluation.getDueDate()));
+            // TODO add support for evals that do not close - summary.label.nevercloses
+            UIOutput.make(evaluationRow, "inqueue-eval-duedate", df.format(evaluation.getSafeDueDate()));
 
             UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
@@ -324,7 +325,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
 
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
-            UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));
+            // TODO add support for evals that do not close - summary.label.nevercloses
+            UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getSafeDueDate()));
 
             UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
@@ -405,7 +407,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             } else {
                UIMessage.make(evaluationRow, "closed-eval-message", 
                      "controlevaluations.eval.report.viewable.on",
-                     new String[] { df.format(evaluation.getViewDate()) });
+                     new String[] { df.format(evaluation.getSafeViewDate()) });
             }
 
             UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
