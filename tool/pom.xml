@@ -157,6 +157,13 @@
             </exclusions>
             <!--properties:  war.bundle: true -->
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -209,5 +216,9 @@
         <!-- java source -->
         <sourceDirectory>src/java</sourceDirectory>
         <!-- other resources for the jar - the message bundles -->
+
+        <!-- unit testing -->
+        <testSourceDirectory>src/test</testSourceDirectory>
+
     </build>
 </project>
