@@ -560,8 +560,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("EvalTitle", eval.getTitle());
 
         // use a date which is related to the current users locale
-        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, 
-                commonLogic.getUserLocale(commonLogic.getCurrentUserId()));
+        DateFormat df;
+        boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+        if (useDateTime) {
+            // show date and time if date/time enabled
+            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, 
+                    commonLogic.getUserLocale(commonLogic.getCurrentUserId()));
+        } else {
+            df = DateFormat.getDateInstance(DateFormat.MEDIUM, 
+                    commonLogic.getUserLocale(commonLogic.getCurrentUserId()));
+        }
 
         replacementValues.put("EvalStartDate", df.format(eval.getStartDate()));
         String dueDate = "--------";
