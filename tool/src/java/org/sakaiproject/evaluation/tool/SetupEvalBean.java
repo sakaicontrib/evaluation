@@ -96,55 +96,46 @@ public class SetupEvalBean {
     public String selectionAssistants;
 
     private EvalEvaluationService evaluationService;
-
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
     }
 
     private EvalCommonLogic commonLogic;
-
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
 
     private ExternalHierarchyLogic hierarchyLogic;
-
     public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
         this.hierarchyLogic = logic;
     }
 
     private EvalEvaluationSetupService evaluationSetupService;
-
     public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
         this.evaluationSetupService = evaluationSetupService;
     }
 
     private EvalAuthoringService authoringService;
-
     public void setAuthoringService(EvalAuthoringService authoringService) {
         this.authoringService = authoringService;
     }
 
     private EvaluationBeanLocator evaluationBeanLocator;
-
     public void setEvaluationBeanLocator(EvaluationBeanLocator evaluationBeanLocator) {
         this.evaluationBeanLocator = evaluationBeanLocator;
     }
 
     private EmailTemplateWBL emailTemplateWBL;
-
     public void setEmailTemplateWBL(EmailTemplateWBL emailTemplateWBL) {
         this.emailTemplateWBL = emailTemplateWBL;
     }
 
     private TargettedMessageList messages;
-
     public void setMessages(TargettedMessageList messages) {
         this.messages = messages;
     }
 
     private Locale locale;
-
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
