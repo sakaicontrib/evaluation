@@ -109,7 +109,7 @@
       $('#facebox .loading').remove()
       $('#facebox .body').children().fadeIn('fast')
       //$('#facebox').css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
-	  frameGrow()
+	  frameGrow('up');
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
 	  $(document).trigger('resize.facebox')
     },
@@ -119,7 +119,7 @@
       return false
     },
 	
-	grow: function(){frameGrow()},
+	grow: function(){frameGrow('up')},
 	
 	shrink: function(){frameShrink()},
 	
@@ -384,43 +384,51 @@
 	if($("#facebox .titleHeader"))
 			$("#facebox .titleHeader").remove();
   }
-
-	
-	 //this function needs jquery 1.1.2 or later - it resizes the parent iframe without bringing the scroll to the top
-
+    
 	function frameShrink(){
-	  		var frame = parent.document.getElementById(window.name);
-			$(frame).height(parent.document.body.scrollHeight - 150);
+	  		frameGrow('shrink');
 	}
 	
-	function frameGrow(){
-		try {
-			var frame = parent.document.getElementById(window.name);
-			//if(parent.document.body.scrollHeight  this.document.body.scrollHeight)
-			$(frame).height(parent.document.body.scrollHeight + 120);
-		}catch(e){}
-	
-	}
+    function frameGrow(updown)
+    {
+        var frame = parent.document.getElementById(window.name);
+    try {
+            if (frame)
+            {
+                if (updown == 'shrink')
+                {
+                    $(frame).height(document.body.clientHeight);
+                }
+                else
+                {
+                    $(frame).height(parent.document.body.scrollHeight);
+                }
+            }
+        } catch(e) {
+        }
+    }
   /*
    * Bindings
    */
 
-  $(document).bind('close.facebox', function() {
-    $(document).unbind('keydown.facebox')
-    $('#facebox').fadeOut(500, function() {
-		resetClasses()
-      $('#facebox .content').removeClass().addClass('content')
-      hideOverlay()
-      $('#facebox .loading').remove()
-   	  $('#facebox .loading').remove()
-      $('#facebox table').attr('width', 700);
-      $('#facebox .body').css('width',660);
-      $('#facebox .header').eq(0).show();
-	  $.facebox.defaults.objToUpdate = null;
+    $(document).bind('close.facebox', function() {
+      $(document).unbind('keydown.facebox')
+      $('#facebox').fadeOut(500, function() {
+          frameShrink();
+          resetClasses()
+        $('#facebox .content').removeClass().addClass('content')
+        hideOverlay()
+        $('#facebox .loading').remove()
+           $('#facebox .loading').remove()
+        $('#facebox table').attr('width', 700);
+        $('#facebox .body').css('width',660);
+        $('#facebox .header').eq(0).show();
+		$.facebox.defaults.objToUpdate = null;
+      })
+        $(document).trigger('afterClose.facebox');
+        return false
     })
-  	return false
-  })
- 
+
 
 })(jQuery);
 
