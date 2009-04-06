@@ -11,11 +11,6 @@
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-		<script type="text/javascript">
-			$("form").submit(function() {
-  				$(":submit",this).attr("disabled","disabled");
-			});
-		</script>
 	</head>
 	
 	<body rsf:id="scr=sakai-body">
@@ -24,6 +19,9 @@
 			</script>		
 	<script type="text/javascript">
 	    $(document).ready(function(){
+	    	$(":submit").click(function(e){
+			$(this).css("display","none");
+			 });
 			var charRemFormat = $('#charRemFormat').text();
 			var charMax = $('#charMax').text();
 			if (isNaN(charMax)){
