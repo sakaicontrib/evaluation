@@ -314,9 +314,16 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     String scaleDisplaySettingLabel = " - " + templateItem.getScaleDisplaySetting();
                     UIOutput.make(itemBranch, "scale-display", scaleDisplaySettingLabel);
                 }
+                
+                if (templateItem.getCategory() != null && ! EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory())){
+                	String[] category = new String[] { templateItem.getCategory() };
+                	UIMessage.make(itemBranch, "item-category", "modifytemplate.item.category.title", category)
+                		.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.category.tooltip", category)));
+                }
 
-                UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("general.command.preview"), 
-                        new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) );
+                UIInternalLink.make(itemBranch, "preview-row-item",
+                        new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) )
+                        .decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.preview")));
 
                 if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
                     // if it is a block item
@@ -370,14 +377,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     itemText.decorators = new DecoratorList(new UIStyleDecorator("itemBlockRow"));
                     UIOutput.make(branchText, "item-text-block");
                 }
-
-                String categoryMessage = RenderingUtils.getCategoryLabelKey(templateItem.getCategory());            
-                UIMessage.make(itemBranch, "item-category", categoryMessage);
-                UIMessage.make(itemBranch, "item-category-title", "modifytemplate.item.category.title");
-
-                EvalUser owner = commonLogic.getEvalUserById( templateItem.getOwner() );
-                UIOutput.make(itemBranch, "item-owner-name", owner.displayName);
-                UIMessage.make(itemBranch, "item-owner-title", "modifytemplate.item.owner.title");
 
                 /* Hierarchy Messages 
                  * Only Display these if they are enabled in the preferences.

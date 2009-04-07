@@ -515,7 +515,7 @@ padding-left:1.6em;
 }
 .preview {
 /*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
-padding-left:1.6em;
+padding-left:0.5em;
 }
 a.more {
 background-image: url(../images/collapsed.gif);
