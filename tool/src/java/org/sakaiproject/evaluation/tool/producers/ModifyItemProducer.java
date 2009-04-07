@@ -18,6 +18,8 @@ import static org.sakaiproject.evaluation.utils.EvalUtils.safeBool;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -72,6 +74,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 @SuppressWarnings("deprecation")
 public class ModifyItemProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
+	
+	 private static Log log = LogFactory.getLog(ModifyItemProducer.class);
 
     public static final String VIEW_ID = "modify_item";
     public String getViewID() {
@@ -233,7 +237,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
             if (item.getScale() != null) {
                 currentScale = item.getScale();
-                scaleId = currentScale.getId();
+                //Get the correct scale type only if this is a copied item
+                scaleId = currentScale.getCopyOf() == null ? currentScale.getId() : currentScale.getCopyOf();
             }
 
             EvalUser owner = commonLogic.getEvalUserById( item.getOwner() );
@@ -256,7 +261,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
             if (templateItem.getItem().getScale() != null) {
                 currentScale = templateItem.getItem().getScale();
-                scaleId = currentScale.getId();
+              //Get the correct scale type only if this is a copied item
+                scaleId = currentScale.getCopyOf() == null ? currentScale.getId() : currentScale.getCopyOf();
             }
 
             EvalUser owner = commonLogic.getEvalUserById( templateItem.getItem().getOwner() );
