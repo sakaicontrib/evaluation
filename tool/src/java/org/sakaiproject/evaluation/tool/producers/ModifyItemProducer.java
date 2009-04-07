@@ -330,6 +330,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 if (scales.isEmpty()) {
                     throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
                 }
+                // add in the current scale to ensure it is a valid choice if it is missing - EVALSYS-716
+                if (! scales.contains(currentScale)) {
+                    scales.add(0, currentScale); // might want to copy the list and make a new one here
+                }
                 String[] scaleValues = ScaledUtils.getScaleValues(scales);
                 UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
                         scaleValues, 
