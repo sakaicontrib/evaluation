@@ -18,6 +18,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.sakaiproject.util.FormattedText;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -39,7 +40,6 @@ import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -321,12 +321,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
                     // if it is a block item
                     BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
-                    UIInternalLink.make(itemBranch, "modify-row-item", target);
+                    UIInternalLink.make(itemBranch, "modify-row-item", target)
+                    .decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.edit")));
                 } else {
                     //it is a non-block item
                     ViewParameters target = new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
                             templateItem.getItem().getClassification(), templateId, templateItem.getId());
-                    UIInternalLink.make(itemBranch, "modify-row-item", target);
+                    UIInternalLink.make(itemBranch, "modify-row-item", target)
+                    	.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.edit")));
                 }
 
                 if(TemplateItemUtils.isBlockParent(templateItem)){
@@ -351,6 +353,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     removeItem.decorate(new UIFreeAttributeDecorator("templateItemId", templateItem.getId().toString()));
                     removeItem.decorate(new UIFreeAttributeDecorator("templateId", templateId.toString()));
                     removeItem.decorate(new UIFreeAttributeDecorator("OTP", templateItemOTPBinding));
+                    removeItem.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.delete")));
                     //}
                 }
 
@@ -545,6 +548,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         removeChildItem.decorate(new UIFreeAttributeDecorator("templateItemId", templateItem.getId().toString()));
         removeChildItem.decorate(new UIFreeAttributeDecorator("templateId", templateId.toString()));
         removeChildItem.decorate(new UIFreeAttributeDecorator("OTP", templateItemOTPBinding));
+        removeChildItem.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.delete")));
 
 
     }
