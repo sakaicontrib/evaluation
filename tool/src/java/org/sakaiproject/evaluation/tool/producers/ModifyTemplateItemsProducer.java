@@ -332,8 +332,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 }
 
                 if(TemplateItemUtils.isBlockParent(templateItem)){
-                    //UIInternalLink.make(itemBranch,	"remove-row-item-unblock", 
-                    //     new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
                     UIInternalLink unblockItem = UIInternalLink.make(itemBranch,	"remove-row-item-unblock", 
                             new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
                     unblockItem.decorate(new UIFreeAttributeDecorator("templateItemId", templateItem.getId().toString()));
@@ -341,60 +339,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     unblockItem.decorate(new UIFreeAttributeDecorator("OTP", templateItemOTPBinding));
                 }
                 else{
-                    /*List<EvalTemplate> usingItem = authoringService.getTemplatesUsingItem(templateItem.getId());
-            	//List<EvalTemplate> usingItem = authoringService.getTemplatesUsingItem(templateId);
-            	if(usingItem.size() > 0){
-            		UIOutput removeItem = UIOutput.make(itemBranch, "remove-row-item-disabled");
-            		removeItem.decorate(new UIFreeAttributeDecorator("title", UIMessage.make("removeitem.inuse.warning").toString()));
-            	}*/
-                    //else{
                     UIInternalLink removeItem = UIInternalLink.make(itemBranch,	"remove-row-item", 
                             new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
                     removeItem.decorate(new UIFreeAttributeDecorator("templateItemId", templateItem.getId().toString()));
                     removeItem.decorate(new UIFreeAttributeDecorator("templateId", templateId.toString()));
                     removeItem.decorate(new UIFreeAttributeDecorator("OTP", templateItemOTPBinding));
                     removeItem.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.delete")));
-                    //}
                 }
-
-                /* get templateItem to preview from VPs
-            //ItemViewParameters itemViewParams = new ItemViewParameters((String)null, (Long)null, templateItem.getId(), templateId);
-            //EvalTemplateItem templateItem = null;
-            UIBranchContainer removeBranch = UIBranchContainer.make(itemBranch, "remove-item:");
-            String itemOTPBinding = null;
-                // we are removing a template item
-                itemOTPBinding = "templateItemWBL."+templateItem.getId();
-                UIMessage.make(removeBranch, "remove-item-confirm-text", "removeitem.templateitem.confirmation",
-                      new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
-                if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-                   UIMessage.make(removeBranch, "remove-item-block-text", "removeitem.block.text");
-                }
-            /* use the renderer evolver to show the item
-            Map evalProps  = new HashMap<String, String>();
-            Boolean answerRequired = false;
-            evalProps.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, answerRequired.toString());
-            itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true, evalProps);
-
-
-            UIMessage.make(removeBranch, "cancel-command-link", "general.yes.button");
-
-            UIForm removeform = UIForm.make(removeBranch, "remove-item-form");
-            removeform.targetURL = RemoveItemProducer.VIEW_ID;
-
-            UICommand.make(removeform, "cancel-button", UIMessage.make("general.no.button"));
-
-               // removing TI so just use the OTP deletion binding
-               UICommand removeButton = UICommand.make(removeform, "remove-item-command-link", 
-                     UIMessage.make("general.yes.button"));
-               removeButton.parameters.add(new UIDeletionBinding(itemOTPBinding));        
-
-                 */
-
-
-
-
-
-
+                
                 // SECOND LINE
 
                 UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", null);
@@ -417,8 +369,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 if(TemplateItemUtils.isBlockParent(templateItem)){
                     itemText.decorators = new DecoratorList(new UIStyleDecorator("itemBlockRow"));
                     UIOutput.make(branchText, "item-text-block");
-                    //if(formattedText.length() >= 150)
-                    //	UIOutput.make(branchTextHidden, "item-text-hidden-block");
                 }
 
                 String categoryMessage = RenderingUtils.getCategoryLabelKey(templateItem.getCategory());            
