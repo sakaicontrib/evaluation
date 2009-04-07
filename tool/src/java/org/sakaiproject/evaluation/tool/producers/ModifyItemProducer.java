@@ -317,9 +317,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         if (itemLocked) {
             itemText.willinput = false;
             itemText.decorate(new UIDisabledDecorator());
-        } else {
-            // evolve this into a richtext editor
-            //richTextEvolver.evolveTextInput( itemText );
         }
 
         if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {

@@ -7,7 +7,6 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jfree.util.Log;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -106,7 +105,6 @@ NavigationCaseReporter {
 
         // analyze the string of templateItemIds
         String[] templateItemIds = evParameters.templateItemIds.split(",");
-        Log.info(templateItemIds);
         List<EvalTemplateItem> templateItemList = new ArrayList<EvalTemplateItem>(
                 templateItemIds.length);
         List<EvalTemplateItem> blockItemList = new ArrayList<EvalTemplateItem>();
@@ -307,8 +305,7 @@ NavigationCaseReporter {
 
 
             UIInput.make(form, "item-text", itemPath + ".item.itemText", null);
-            //richTextEvolver.evolveTextInput(itemtext);
-
+            
 
             // render the items below
             UIMessage.make(form, "items-header", "modifyitem.item.header");
