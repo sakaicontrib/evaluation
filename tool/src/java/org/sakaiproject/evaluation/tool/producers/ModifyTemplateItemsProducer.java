@@ -41,6 +41,7 @@ import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -113,6 +114,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
     private ExternalHierarchyLogic hierarchyLogic;
     public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
         this.hierarchyLogic = logic;
+    }
+    
+    private MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+        this.messageLocator = messageLocator;
     }
 
     /*
@@ -316,7 +322,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 }
                 
                 if (templateItem.getCategory() != null && ! EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory())){
-                	String[] category = new String[] { templateItem.getCategory() };
+                	String[] category = new String[] { messageLocator.getMessage( RenderingUtils.getCategoryLabelKey(templateItem.getCategory()) ) };
                 	UIMessage.make(itemBranch, "item-category", "modifytemplate.item.category.title", category)
                 		.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.category.tooltip", category)));
                 }
