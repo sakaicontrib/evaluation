@@ -276,7 +276,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                                         } else {
                                             $('#itemList').html($(d).find('#itemList').html());
                                             $(document).trigger('list.triggerSort', [ui]);
-                                            $(document).trigger('activateControls.templateItems', ['skipSelection']);
+                                            $(document).trigger('activateControls.templateItems');
                                             $(document).trigger('close.facebox');
                                             ui.item.parents('.itemTableBlock').effect('highlight', 3500);
                                         }
