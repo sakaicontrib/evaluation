@@ -4,7 +4,6 @@
 
 $(document).bind('activateControls.templateItems', function(e, opt) {
     var groupableItems = new Array();
-    //$(document).unbind('activateControls.templateItems');
     $('a[rel=remove]').itemRemove({
         ref:    'eval-templateitem',
         id:     '$(this).attr("templateitemid")',
@@ -170,12 +169,6 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         $.facebox.defaults.objToUpdate = "block";
         return false;
     });
-    //$('a[rel=childEdit]').blockChildControls();
-    //$('a[rel=childRemove]').bind('click', function(){
-    //$.facebox('A confirmation message will appear and if true, appropriate DIV removed from the template and DOM.');
-
-    //	return false;
-    //});
     $('.blockExpandText').toggle(
 
             function() {
@@ -218,11 +211,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     });
 
     refreshSort();
-    if (opt && opt != 'skipSelection') {
-        //initialise the reorder dropdowns
-        var l = $("#itemList > div.itemRow").get()
-        EvalSystem.decorateReorderSelects("", l.length);
-    }
+    //initialise the reorder dropdowns
+    EvalSystem.decorateReorderSelects("", $("#itemList > div").get().length);
     // populate or re-populate groupable item array
     $('div.itemList > div:visible').each(function() {
         if ($(this).children('.itemLine3').length == 0) {
@@ -359,7 +349,7 @@ function submitForm(form, textarea, target, btn) {
                     } else {
                         that.find('span').html(realText);
                     }
-
+                    $(document).trigger('activateControls.templateItems');
                 }
             });
 
