@@ -226,10 +226,9 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
     $.get('/direct/eval-templateitem/' + ui.item.parents('.itemRow').children('.itemLine2').find('a[templateitemid]').attr('templateitemid') + '.xml',
             function(msg) {
                 var itemText = $(msg).find('item > itemText').text();
-                var idealColour = $(msg).find('renderOption').text();
                 var usesNA = $(msg).find('usesNA').eq(1).text();
                 var category = $(msg).find('category').eq(1).text();
-
+                var idealColour =  $(msg).find('item > scaleDisplaySetting').text();
                 var t = ui.item.parents('.itemRow').eq(0).children('.itemLine2').find('a[templateitemid]');
 
                 $.ajax({
@@ -242,7 +241,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                         params += '&showItemCategory%3A%3Aitem-category-list-selection-fossil=istring%23%7BtemplateItemWBL.new1.category%7DCourse';
                         params += '$showItemCategory%3A%3Aitem-category-list-selection=' + category;
                         params += '&idealColor-fossil=iboolean%23%7BtemplateBBean.idealColor%7Dfalse';
-                        params += '&idealColor=' + idealColour;
+                        params += '&idealColor=' + (idealColour == "Stepped" ? "false" : "true");
                         params += '&item_NA-fossil=iboolean%23%7BtemplateItemWBL.new1.usesNA%7Dfalse';
                         params += '&item_NA=' + usesNA;
                         var ordering = new Array();
