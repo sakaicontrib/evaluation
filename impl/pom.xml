@@ -36,7 +36,6 @@
         <dependency>
             <groupId>org.sakaiproject.hierarchy</groupId>
             <artifactId>hierarchy-api</artifactId>
-            <version>${hierarchy.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -44,7 +43,6 @@
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>generic-dao</artifactId>
-            <version>${genericdao.version}</version>
         </dependency>
 
         <!-- Spring and Hibernate dependencies. -->
