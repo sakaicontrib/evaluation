@@ -76,7 +76,7 @@ public class EvalResponse implements java.io.Serializable {
         this.owner = owner;
         this.evalGroupId = evalGroupId;
         this.startTime = startTime;
-        this.endTime = endTime;
+        setEndTime(endTime);
         if (answers != null) {
             this.answers = answers;
         }
@@ -192,6 +192,11 @@ public class EvalResponse implements java.io.Serializable {
     }
 
     public void setEndTime(Date endTime) {
+        if (endTime == null) {
+            complete = false;
+        } else {
+            complete = true;
+        }
         this.endTime = endTime;
     }
 
