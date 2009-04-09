@@ -14,12 +14,6 @@ $(document).ready(function() {
                 instrSel.find("fieldset").css({
                     background:'#fff'
                 });
-                var selectedInstrArray = new Array();
-                $.each(selectedInstrDomArray, function(i, item) {
-                    selectedInstrArray.push($(item).val());
-                });
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
             } else {
                 return  error("LECTURER", instrSel);
             }
@@ -30,13 +24,7 @@ $(document).ready(function() {
                 assSel.find("fieldset").css({
                     background:'#fff'
                 });
-                var selectedassistantArray = new Array();
-                $.each(selectedassistantDomArray, function(i, item) {
-                    selectedassistantArray.push($(item).val());
-                });
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
-                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
-            } else {
+			} else {
                 return error("TUTOR", assSel);
             }
         }
