@@ -253,7 +253,7 @@ var EvalSystem = function() {
 			var selectid = EvalSystem.getRelativeID(linkid, localselectid);
 			var selection = $it(selectid);
 			var url = selection.options[selection.selectedIndex].value;
-			$.facebox({ ajax: url });
+			jQuery.facebox({ ajax: url });
 		},
 	
 		decorateReorderSelects: function(namebase, count) {
