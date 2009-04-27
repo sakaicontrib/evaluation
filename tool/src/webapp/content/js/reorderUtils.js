@@ -5,22 +5,22 @@
  * Update: Functions have been exposed to enable startSort() to be accessible by custom plugins - lovemore.nalube@uct.ac.za
  **/
 var sortableIds = new Array();
+
 $(document).ready(
         function () {
-			startSort();
+            startSort();
             $(document).trigger('activateControls.templateItems');
             buildSortableIds();
-
         }
-        );
+    );
 
 function $it(id) {
     return document.getElementById(id);
 }
 
 function enableOrderButtons() {
-	try {
-		$("#revertOrderButton")
+    try {
+        $("#revertOrderButton")
                 .attr('disabled', false)
                 // put original order into the revertOrder trigger
                 .bind('click', function() {
@@ -34,18 +34,19 @@ function enableOrderButtons() {
                     }
                     setIndex(sortableIds[0], 0);
                 });
-		$("#saveReorderButton").attr('disabled', false);
-		$("#orderInputs").attr("class","itemOperationsEnabled");
-	}catch(e){}
+        $("#saveReorderButton").attr('disabled', false);
+        $("#orderInputs").attr("class","itemOperationsEnabled");
+    }catch(e){}
 }
 
 function disableOrderButtons() {
     try {
-		$("#revertOrderButton").attr('disabled', true);
-		$("#saveReorderButton").attr('disabled', true);
-		$("#orderInputs").attr("class","itemOperations");
-	}catch(e){}
+        $("#revertOrderButton").attr('disabled', true);
+        $("#saveReorderButton").attr('disabled', true);
+        $("#orderInputs").attr("class","itemOperations");
+    }catch(e){}
 }
+
 function buildSortableIds() {
     $("#itemList > div.itemRow").each(function(){
        sortableIds.push($(this).attr('id'));
@@ -53,13 +54,13 @@ function buildSortableIds() {
 }
 
 function setIndex(itemId, newindex) {
-	if (newindex != null || newindex != "") {
-		var changed = sortableIds[newindex] != itemId;
-		var itemSelect = document.getElementById(itemId + "item-select-selection");
-		itemSelect.selectedIndex = newindex;
-		// NOTE: might need to disable the pulldowns once the user drags
-		$it(itemId + "hidden-item-num").value = newindex;
-	}
+    if (newindex != null || newindex != "") {
+        var changed = sortableIds[newindex] != itemId;
+        var itemSelect = document.getElementById(itemId + "item-select-selection");
+        itemSelect.selectedIndex = newindex;
+        // NOTE: might need to disable the pulldowns once the user drags
+        $it(itemId + "hidden-item-num").value = newindex;
+    }
 }
 
 
@@ -113,10 +114,10 @@ function startSort() {
 
                         var confirmMsg = '\
                                          <div class="" style="font-weight: bold;">Are you sure?</div><br />\
-			                <div class="footer"> \
-			                  <input type="button" name="blockChildConfirm" msg="yes" accesskey="s" value="Yes"/>  |  \
-			                  <a href="#" name="blockChildConfirm" msg="no">Cancel</a>  \
-			                </div> \
+                            <div class="footer"> \
+                              <input type="button" name="blockChildConfirm" msg="yes" accesskey="s" value="Yes"/>  |  \
+                              <a href="#" name="blockChildConfirm" msg="no">Cancel</a>  \
+                            </div> \
                                          ';
 
                         $.facebox(confirmMsg);
@@ -128,10 +129,10 @@ function startSort() {
                             if ($(this).attr('msg') == 'yes') {
                                 $.facebox('\
                                                   <div><img src="' + $.facebox.defaults.loadingImage + '"/>  Saving... \
-			                </div> \
-			                <div class="footer"> \
-			                   Please do not close this window.  \
-			                </div> ');
+                            </div> \
+                            <div class="footer"> \
+                               Please do not close this window.  \
+                            </div> ');
                                 ui.item.attr('style', 'display:none');
                                 var shadow = ui.item.parent().find('.itemRowBlock').eq(0).clone(true);
                                 shadow.insertAfter(ui.item);
@@ -187,16 +188,13 @@ function refreshSort() {
     startSort();
 }
 $(document).bind('block.triggerChildrenSort', function(e, ui) {
-	if(!ui.item){
-        var tempUi = ui;
-        var ui = new Object()
-          ui.item = tempUi;
-    }
+    var item = ui.item? ui.item : ui;
+
     var count = 1;
-    ui.item.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
-		$(this).find('.itemLabel').text(count);
-		count++;
-	});
+    item.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
+        $(this).find('.itemLabel').text(count);
+        count++;
+    });
 });
 $(document).bind('block.rejectItem', function(e, ui, option) {
     $(document).trigger('list.warning', [ui, option, 'block', 'Sorry this item cannot be grouped here. It is not the same type as the grouped items.']);
@@ -216,20 +214,18 @@ $(document).bind('block.rejectItem', function(e, ui, option) {
 });
 
 $(document).bind('block.saveReorder', function(e, ui, type) {
-    if(!ui.item){
-        var tempUi = ui;
-        var ui = new Object()
-          ui.item = tempUi;
-    }
-	$(document).trigger('list.busy', true);
-    var currentOrder = ui.item.parents('.itemRow').children('input[name=*hidden-item-num]').eq(0).val();
-    $.get('/direct/eval-templateitem/' + ui.item.parents('.itemRow').children('.itemLine2').find('a[templateitemid]').attr('templateitemid') + '.xml',
+    var item = ui.item? ui.item : ui;
+    ui = {item: item};
+
+    $(document).trigger('list.busy', true);
+    var currentOrder = item.parents('.itemRow').children('input[name=*hidden-item-num]').eq(0).val();
+    $.get('/direct/eval-templateitem/' + item.parents('.itemRow').children('.itemLine2').find('a[templateitemid]').attr('templateitemid') + '.xml',
             function(msg) {
                 var itemText = $(msg).find('item > itemText').text();
                 var usesNA = $(msg).find('usesNA').eq(1).text();
                 var category = $(msg).find('category').eq(1).text();
                 var idealColour =  $(msg).find('item > scaleDisplaySetting').text();
-                var t = ui.item.parents('.itemRow').eq(0).children('.itemLine2').find('a[templateitemid]');
+                var t = item.parents('.itemRow').eq(0).children('.itemLine2').find('a[templateitemid]');
 
                 $.ajax({
                     url: "remove_item",
@@ -245,7 +241,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                         params += '&item_NA-fossil=iboolean%23%7BtemplateItemWBL.new1.usesNA%7Dfalse';
                         params += '&item_NA=' + usesNA;
                         var ordering = new Array();
-                        ui.item.parents('.itemTableBlock').eq(0).children('.itemRowBlock').filter(':visible').each(function() {
+                        item.parents('.itemTableBlock').eq(0).children('.itemRowBlock').filter(':visible').each(function() {
                             var val = $(this).children('input[name=hidden-item-id]').eq(0).val();
                             params += '&hidden-item-id=' + val;
                             ordering.push(val);
@@ -260,17 +256,17 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                             data: params,
                             type: "POST",
                             success: function(d) {
-                                var id = 'input[value=' + ui.item.find('input[name=hidden-item-id]').eq(0).val() + ']:hidden';
-                                ui.item.parents('.itemRow').eq(0).html($(d).find(id).parents('.itemRow').eq(0).html());
+                                var id = 'input[value=' + item.find('input[name=hidden-item-id]').eq(0).val() + ']:hidden';
+                                item.parents('.itemRow').eq(0).html($(d).find(id).parents('.itemRow').eq(0).html());
                                 $(document).trigger('list.triggerSort');
-                                ui.item.parents('.itemRow').eq(0).children('input[name=*hidden-item-num]').eq(0).val(currentOrder);
+                                item.parents('.itemRow').eq(0).children('input[name=*hidden-item-num]').eq(0).val(currentOrder);
 
                                 $('form[name=modify_form_rows]').ajaxSubmit({
                                     success: function(d) {
                                         if ((type != null) && (type == "simple")) {
                                             $(document).trigger('activateControls.templateItems');
-                                            ui.item.parents('.itemRow').effect('highlight', 1500);
-                                            ui.item.parents('.itemRow').find('.itemBlockSave').fadeOut('fast', function() {
+                                            item.parents('.itemRow').effect('highlight', 1500);
+                                            item.parents('.itemRow').find('.itemBlockSave').fadeOut('fast', function() {
                                                 $(this).remove();
                                             });
                                         } else {
@@ -278,16 +274,16 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                                             $(document).trigger('list.triggerSort', [ui]);
                                             $(document).trigger('activateControls.templateItems');
                                             $(document).trigger('close.facebox');
-                                            ui.item.parents('.itemTableBlock').effect('highlight', 3500);
+                                            item.parents('.itemTableBlock').effect('highlight', 3500);
                                         }
-										$(document).trigger('list.busy', false);
+                                        $(document).trigger('list.busy', false);
                                     }
                                 });
                             }
                         });
                     }
                 });
-});
+    });
 });
 $(document).bind('list.triggerSort', function() {
 var c = 0;
@@ -299,19 +295,15 @@ $(".itemList > div.itemRow").filter(':visible').each(function() {
 });
 
 $(document).bind('list.warning', function(e, ui, option, extra, err){
-	if(!ui.item){
-        var tempUi = ui;
-        var ui = new Object()
-          ui.item = tempUi;
-    }
-	    if (option != "noAlert") {
-		$('.itemOperationsEnabled').remove();
+    var item = ui.item? ui.item : ui;
+        if (option != "noAlert") {
+        $('.itemOperationsEnabled').remove();
         var error = '<div class="itemOperationsEnabled">\
                         <img src="/library/image/sakai/cancelled.gif"/>\
                         <span class="instruction">'+ err +'</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
                         ';
-		if(extra == 'block')
-        	ui.item.parents('.itemLine3').prepend(error);
+        if(extra == 'block')
+            item.parents('.itemLine3').prepend(error);
         $('#closeItemOperationsEnabled').click(function() {
             $(this).parent().slideUp('normal', function() {
                 $(this).remove()
