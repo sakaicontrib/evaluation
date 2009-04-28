@@ -706,7 +706,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         replyTo[0] = fromAddress;
         InternetAddress[] toAddresses = listAddresses.toArray(new InternetAddress[listAddresses.size()]);
         // headers are set globally and used for all emails going out (see top of this file)
-        emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, this.emailHeaders);
+        // added to ensure non-blank TO header: http://bugs.sakaiproject.org/jira/browse/EVALSYS-724
+        emailService.sendMail(fromAddress, toAddresses, subject, message, 
+                new InternetAddress[]{fromAddress}, replyTo, this.emailHeaders);
 
         if (deferExceptions && exceptionTracker != null) {
             // exceptions occurred so we have to die here
