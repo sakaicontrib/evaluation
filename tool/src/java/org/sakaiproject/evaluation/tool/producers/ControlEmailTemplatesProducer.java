@@ -83,11 +83,6 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-        if (!userAdmin) {
-            // Security check and denial
-            throw new SecurityException("Non-admin users may not access this page");
-        }
-
         /*
          * top links here
          */
@@ -140,7 +135,7 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
             }
         }
 
-        // Get all the default email templates
+        // Get all the email templates for the user
         List<EvalEmailTemplate> templatesList = evaluationService.getEmailTemplatesForUser(currentUserId, null, showDefaults);
         if (templatesList.size() == 0) {
             UIMessage.make(tofill, "templatesList_none", "controlemailtemplates.no.templates");

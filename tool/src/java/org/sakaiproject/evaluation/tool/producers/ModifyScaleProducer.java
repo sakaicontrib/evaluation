@@ -131,11 +131,6 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
                     new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
         }
 
-        if (!userAdmin) {
-            // Security check and denial
-            throw new SecurityException("Non-admin users may not access this page");
-        }
-
 
         EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
         Long scaleId = evalScaleParams.scaleId;
