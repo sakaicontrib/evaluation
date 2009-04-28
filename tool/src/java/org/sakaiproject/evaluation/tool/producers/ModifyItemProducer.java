@@ -328,7 +328,9 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                     throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
                 }
                 // add in the current scale to ensure it is a valid choice if it is missing - EVALSYS-716
-                if (currentScale != null && ! scales.contains(currentScale)) {
+                if (currentScale != null 
+                        && currentScale.getId() != null
+                        && ! scales.contains(currentScale)) {
                     scales.add(0, currentScale); // might want to copy the list and make a new one here
                 }
                 String[] scaleValues = ScaledUtils.getScaleValues(scales);

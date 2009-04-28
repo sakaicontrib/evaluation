@@ -95,7 +95,10 @@ public class ScaledUtils {
 	public static String[] getScaleLabels(List<EvalScale> scales) {
 		List<String> scaleLabels = new ArrayList<String>();
 		for (EvalScale scale : scales) {
-			scaleLabels.add( makeScaleText(scale, 120) );
+		    // ensure only real scales are included
+            if (scale.getId() != null) {
+                scaleLabels.add( makeScaleText(scale, 120) );
+            }
 		}
 		return (String[]) scaleLabels.toArray(new String[scaleLabels.size()]);
 	}
@@ -108,9 +111,11 @@ public class ScaledUtils {
 	 */
 	public static String[] getScaleValues(List<EvalScale> scales) {
 		List<String> scaleValues = new ArrayList<String>();
-		for (int i = 0; i < scales.size(); i++) {
-			EvalScale scale = scales.get(i);
-			scaleValues.add(scale.getId().toString());
+        for (EvalScale scale : scales) {
+            // ensure only real scales are included
+			if (scale.getId() != null) {
+			    scaleValues.add(scale.getId().toString());
+			}
 		}
 		return (String[]) scaleValues.toArray(new String[] {});
 	}
