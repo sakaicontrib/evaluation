@@ -110,6 +110,7 @@
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="leafParser" ref="generalLeafParser" />
+        <property name="messages" ref="targettedMessageList" />
     </bean>
 
     <bean id="templateBeanLocator"
