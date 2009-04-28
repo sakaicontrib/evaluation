@@ -632,7 +632,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             if (dueDateSet) {
                 // set the reminder time to the dueTime - 24 hours
                 reminderTime = dueTime - (1000 * 60 * 60 * 24);
-                log.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
+                if (reminderTime < now) {
+                    // the reminder is in the past, just warn and be done
+                    log.info("Trying to schedule 24h reminder in the past ("+new Date(reminderTime)+"), no reminder will be sent for eval ("+eval.getTitle()+") ["+eval.getId()+"]");
+                    reminderTime = 0;
+                } else {
+                    log.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
+                }
             }
         }
         return reminderTime;
