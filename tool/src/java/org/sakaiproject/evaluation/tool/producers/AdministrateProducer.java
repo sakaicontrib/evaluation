@@ -365,6 +365,12 @@ public class AdministrateProducer implements ViewComponentProducer {
         // Save settings button
         // NB no action now required
         UICommand.make(form, "saveSettings", UIMessage.make("administrate.save.settings.button"), null);	
+
+        UIForm resetForm = UIForm.make(tofill, "cache-reset-form");
+        UICommand.make(resetForm, "cache-reset-submit", 
+                UIMessage.make("administrate.reset.button"), 
+                ADMIN_WBL + ".resetConfigCache");    
+        
     }
 
     /**

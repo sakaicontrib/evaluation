@@ -266,6 +266,14 @@
 	</p>
 </form>
 
+<!-- button for clearing the config cache and forcing an instant reload -->
+<fieldset class="visibleFS">
+    <form  rsf:id="cache-reset-form" method="post">
+        <input rsf:id="cache-reset-submit" type="submit" value="Reset Config Cache" />
+        <span rsf:id="msg=administrate.reset.cache">This will force the configuration cache to clear immediately, use this if you have changed the config settings and they appear to be out of sync, the cache should automatically reset once per hour</span>
+    </form>
+</fieldset>
+
 <div rsf:id="app_version_revision" style="font-style: italic; font-size: 0.8em">Version: 1.0</div>
 
 </div>
