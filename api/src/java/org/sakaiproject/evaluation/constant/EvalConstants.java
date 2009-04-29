@@ -352,6 +352,10 @@ public class EvalConstants {
      */
     public static final String SCALE_ADHOC_DEFAULT_TITLE = "*AdhocScale*";
 
+    /**
+     * This is the title of the category used when creating new expert items
+     */
+    public static final String EXPERT_ITEM_CATEGORY_TITLE = "General";
 
     /**
      * Item type (itemClassification) setting:

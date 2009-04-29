@@ -396,12 +396,15 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             } else {
                 item.setUsesNA( Boolean.FALSE );
             }
+
             if (item.getCategory() == null) {
                 item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
             }
 
-            if (item.isCompulsory() == null) 
+            if (item.isCompulsory() == null) {
                 item.setCompulsory(false);
+            }
+
             // cleanup for XSS scripting and strings
             item.setItemText( commonLogic.cleanupUserStrings(item.getItemText()) );
             item.setDescription( commonLogic.cleanupUserStrings(item.getDescription()) );
@@ -409,6 +412,25 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
             // save the item
             dao.save(item);
+
+            // ensure expert items have a category set
+            if (EvalUtils.safeBool(item.getExpert())) {
+                EvalItemGroup eig = dao.findOneBySearch(EvalItemGroup.class, 
+                        new Search("title", EvalConstants.EXPERT_ITEM_CATEGORY_TITLE));
+                if (eig != null) {
+                    Set<EvalItem> items = eig.getGroupItems();
+                    if (items == null) {
+                        items = new HashSet<EvalItem>();
+                        eig.setGroupItems(items);
+                    }
+                    if (! items.contains(item)) {
+                        items.add(item);
+                        dao.save(eig);
+                        log.info("Added expert item ("+item.getId()+") to default item group: " + EvalConstants.EXPERT_ITEM_CATEGORY_TITLE);
+                    }
+                }
+            }
+
             if (newItem) {
                 commonLogic.registerEntityEvent(EVENT_ITEM_CREATE, item);
             } else {

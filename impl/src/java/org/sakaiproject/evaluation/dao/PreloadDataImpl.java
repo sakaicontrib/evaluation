@@ -384,7 +384,9 @@ public class PreloadDataImpl {
 
             saveCategoryGroup("Assignments", "Measure the perception of out of class assignments", itemSet);
 
-
+            // general catch all
+            saveCategoryGroup(EvalConstants.EXPERT_ITEM_CATEGORY_TITLE, "General use items", null);
+            
             log.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
             log.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
         }
