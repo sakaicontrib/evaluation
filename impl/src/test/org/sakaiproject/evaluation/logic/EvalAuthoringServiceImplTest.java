@@ -76,7 +76,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
    public void testPreloadedItemGroupsData() {
       // check the full count of preloaded items
-      assertEquals(17, evaluationDao.countAll(EvalItemGroup.class) );
+      assertEquals(18, evaluationDao.countAll(EvalItemGroup.class) );
 
       assertEquals(10, evaluationDao.countAll(EvalTemplate.class) );
       List<EvalTemplate> templates1 = evaluationDao.findAll(EvalTemplate.class);
@@ -1748,7 +1748,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check all expert top level groups
       eItems = authoringService.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, true, true);
       assertNotNull( eItems );
-      assertEquals(3 + 4, eItems.size()); // 4 preloaded top level expert groups
+      assertEquals(4 + 4, eItems.size()); // 4 preloaded top level expert groups
       ids = EvalTestDataLoad.makeIdList(eItems);
       assertTrue(ids.contains( etdl.categoryA.getId() ));
       assertTrue(ids.contains( etdl.categoryB.getId() ));
