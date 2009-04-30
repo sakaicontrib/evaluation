@@ -191,8 +191,7 @@
 
 
     <!-- view param inferrer beans to handle entity urls -->
-    <bean class="org.sakaiproject.evaluation.tool.inferrers.EvaluationVPInferrer"
-        init-method="init">
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.EvaluationVPInferrer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -206,6 +205,11 @@
     <bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
 
     <bean class="org.sakaiproject.evaluation.tool.inferrers.ItemVPInferrer" />
+
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.ReportsVPInferrer">
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
 
     <!-- Reporting Utilities -->
     <bean id="reportExporterBean" class="org.sakaiproject.evaluation.tool.reporting.ReportExporterBean">
