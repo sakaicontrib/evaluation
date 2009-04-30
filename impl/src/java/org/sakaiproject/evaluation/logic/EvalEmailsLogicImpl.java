@@ -585,13 +585,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         replacementValues.put("EvalResultsDate", viewDate);
         // https://bugs.caret.cam.ac.uk/browse/CTL-1505 - no titles for empty or adhoc groups
+        String groupTitle = "";
         if (group == null || group.title == null || EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
-            replacementValues.put("EvalGroupTitle", "");
+            groupTitle = "";
         } else if (EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
-            replacementValues.put("EvalGroupTitle", "Adhoc Group");
+            groupTitle = "Adhoc Group";
         } else {
-            replacementValues.put("EvalGroupTitle", group.title);
+            groupTitle = group.title;
         }
+        replacementValues.put("EvalGroupTitle", groupTitle);
 
         // ensure that the if-then variables are set to false if they are unset
         if (! replacementValues.containsKey("ShowAddItemsText")) {
@@ -626,6 +628,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("URLtoOptOut", evalEntityURL);
         replacementValues.put("URLtoViewResults", evalEntityURL);
         replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
+
+        // these are values which are not handled - these are just placeholders -https://bugs.caret.cam.ac.uk/browse/CTL-1604
+        replacementValues.put("EarliestEvalDueDate", dueDate);
+        replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
+        replacementValues.put("EvalToolTitle", "Evaluation System");
+        replacementValues.put("EvalSite", groupTitle);
+        replacementValues.put("MyWorkspaceDashboard", evalEntityURL);
 
         return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
     }
