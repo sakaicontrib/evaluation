@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -626,7 +627,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("URLtoAddItems", evalEntityURL);
         replacementValues.put("URLtoOptIn", evalEntityURL);
         replacementValues.put("URLtoOptOut", evalEntityURL);
-        replacementValues.put("URLtoViewResults", evalEntityURL);
+        replacementValues.put("URLtoViewResults", 
+                commonLogic.getEntityURL(EvalReportsEntityProvider.ENTITY_PREFIX, eval.getId().toString()) );
         replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
 
         // these are values which are not handled - these are just placeholders -https://bugs.caret.cam.ac.uk/browse/CTL-1604

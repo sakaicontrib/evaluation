@@ -29,10 +29,8 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -82,7 +80,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
      * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
      */
     public ViewParameters inferDefaultViewParameters(String reference) {
-    	log.warn("Note: Routing user to view based on reference: " + reference);
+    	//log.warn("Note: Routing user to view based on reference: " + reference);
         final String ref = reference;
         final ViewParameters[] togo = new ViewParameters[1];
         // this is needed to provide transactional protection
@@ -109,8 +107,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             Long AssignGroupId = new Long(ep.id);
             EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(AssignGroupId);
             evalGroupId = assignGroup.getEvalGroupId();
-            evaluation = assignGroup.getEvaluation();
-            evaluationId = evaluation.getId();
+            evaluationId = assignGroup.getEvaluation().getId();
+            evaluation = evaluationService.getEvaluationById(evaluationId);
         }
 
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
@@ -123,24 +121,6 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
             log.info("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
-
-            // eval is over and viewable
-            if ( EvalUtils.checkStateAfter(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_VIEWABLE, true) ) {
-                // go to the reports view
-                if (currentUserId.equals(evaluation.getOwner()) ||
-                        commonLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
-                    ReportParameters vp = new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
-                    vp.external = true;
-                    return vp;
-                } else {
-                    // require auth
-//                    throw new SecurityException("This evaluation/survey is closed and can longer be taken, only survey admins can access this:  User must be authenticated to access this page");
-                    // send user to take eval so they will get the closed message
-                    EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
-                    vp.external = true;
-                    return vp;
-                }
-            }
 
             // eval has not started
             if ( EvalUtils.checkStateBefore(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {

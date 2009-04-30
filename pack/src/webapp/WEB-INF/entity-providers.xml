@@ -56,4 +56,10 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
+    <bean id="org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider"
+            class="org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProviderImpl">
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
+
 </beans>
