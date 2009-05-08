@@ -1508,11 +1508,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if this scale is used in any items
      */
     public boolean isUsedScale(Long scaleId) {
-        log.debug("scaleId: " + scaleId);
-        String hqlQuery = "from EvalItem as item where item.scale.id = '" + scaleId + "'";
-        if (count(hqlQuery) > 0) {
-            // this is used by something
-            return true;
+        if (scaleId != null) {
+            log.debug("scaleId: " + scaleId);
+            String hqlQuery = "from EvalItem as item where item.scale.id = '" + scaleId + "'";
+            if (count(hqlQuery) > 0) {
+                // this is used by something
+                return true;
+            }
         }
         return false;
     }
@@ -1522,11 +1524,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if this item is used in any template (via a template item)
      */
     public boolean isUsedItem(Long itemId) {
-        log.debug("itemId: " + itemId);
-        String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + itemId + "'";
-        if (count(hqlQuery) > 0) {
-            // this is used by something
-            return true;
+        if (itemId != null) {
+            log.debug("itemId: " + itemId);
+            String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + itemId + "'";
+            if (count(hqlQuery) > 0) {
+                // this is used by something
+                return true;
+            }
         }
         return false;
     }
@@ -1536,11 +1540,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if this template is used in any evalautions
      */
     public boolean isUsedTemplate(Long templateId) {
-        log.debug("templateId: " + templateId);
-        String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + templateId + "'";
-        if (count(hqlQuery) > 0) {
-            // this is used by something
-            return true;
+        if (templateId != null) {
+            log.debug("templateId: " + templateId);
+            String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + templateId + "'";
+            if (count(hqlQuery) > 0) {
+                // this is used by something
+                return true;
+            }
         }
         return false;
     }
