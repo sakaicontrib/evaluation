@@ -105,7 +105,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
         Boolean lockObtained = dao.obtainLock("authoring_cleanup", serverId, 60*1000);
         // only execute the code if we have an exclusive lock
-        if (lockObtained != null && lockObtained) {
+        if (EvalUtils.safeBool(lockObtained)) {
 
             // fix up the scales with null modes
             List<EvalScale> scales = dao.findBySearch(EvalScale.class,
@@ -128,6 +128,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                     }
                 )
             );
+
         }
     }
 
