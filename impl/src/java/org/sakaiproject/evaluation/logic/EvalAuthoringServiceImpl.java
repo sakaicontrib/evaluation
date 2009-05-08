@@ -27,9 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -96,18 +98,36 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     public void init() {
         // this method will help us to patch up the system if needed
+        cleanupAuthoring();
+    }
 
-        // fix up the scales with null modes
-        List<EvalScale> scales = dao.findBySearch(EvalScale.class,
-                new Search( new Restriction("mode", "", Restriction.NULL) ) );
-        if (scales.size() > 0) {
-            log.info("Found " + scales.size() + " scales with a null mode, fixing up data...");
-            for (EvalScale scale : scales) {
-                // set this to the default then
-                scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+    protected void cleanupAuthoring() {
+        String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+        Boolean lockObtained = dao.obtainLock("authoring_cleanup", serverId, 60*1000);
+        // only execute the code if we have an exclusive lock
+        if (lockObtained != null && lockObtained) {
+
+            // fix up the scales with null modes
+            List<EvalScale> scales = dao.findBySearch(EvalScale.class,
+                    new Search( new Restriction("mode", "", Restriction.NULL) ) );
+            if (scales.size() > 0) {
+                log.info("Found " + scales.size() + " scales with a null mode, fixing up data...");
+                for (EvalScale scale : scales) {
+                    // set this to the default then
+                    scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+                }
+                dao.saveSet(new HashSet<EvalScale>(scales));
+                log.info("Fixed " + scales.size() + " scales with a null mode, set to default SCALE_MODE...");
             }
-            dao.saveSet(new HashSet<EvalScale>(scales));
-            log.info("Fixed " + scales.size() + " scales with a null mode, set to default SCALE_MODE...");
+
+            // fix up orphaned template items (template or item is null)
+            dao.findBySearch(EvalTemplateItem.class, new Search(
+                    new Restriction[] {
+                        new Restriction("template.id", "", Restriction.NULL),
+                        new Restriction("item.id", "", Restriction.NULL)
+                    }
+                )
+            );
         }
     }
 
@@ -1260,7 +1280,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     }
 
 
-    @SuppressWarnings("unchecked")
     public void deleteTemplate(Long templateId, String userId) {
         log.debug("templateId: " + templateId + ", userId: " + userId);
         // get the template by id
@@ -1279,42 +1298,33 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             }
 
             List<EvalTemplateItem> templateItems = getTemplateItemsForTemplate(template.getId(), new String[] {}, new String[] {}, new String[] {});
+            // always remove templates with no items
             if ( templateItems.size() > 0 ) {
-                if (template.getCopyOf() != null 
-                        || template.isHidden() == true) {
-                    // this is a copy so remove all children (templateItems, items, and scales)
-                    Set<EvalTemplateItem> TIset = new HashSet<EvalTemplateItem>(templateItems);
-                    Set<EvalItem> itemSet = new HashSet<EvalItem>();
-                    Set<EvalScale> scaleSet = new HashSet<EvalScale>();
+                // first purge the template items (dis-associate all items automatically)
+                EvalTemplateItem[] TIArray = templateItems.toArray(new EvalTemplateItem[templateItems.size()]);
+                dao.removeTemplateItems(TIArray);
 
-                    // loop through the TIs and fill the other sets with the persistent objects (if they are copies)
-                    for (EvalTemplateItem templateItem : templateItems) {
-                        EvalItem item = templateItem.getItem();
-                        if (item.getCopyOf() != null 
-                                || item.isHidden() == true) {
-                            itemSet.add(item);
-                            EvalScale scale = item.getScale();
-                            if (scale != null) {
-                                if (scale.getCopyOf() != null 
-                                        || scale.isHidden() == true) {
-                                    scaleSet.add(scale);
-                                }
+                // remove all unused children (items, and scales)
+                Set<EvalItem> itemSet = new HashSet<EvalItem>();
+                Set<EvalScale> scaleSet = new HashSet<EvalScale>();
+
+                // loop through the TIs and fill the other sets with the persistent objects if they are unused
+                for (EvalTemplateItem templateItem : templateItems) {
+                    EvalItem item = templateItem.getItem(); // LAZY LOAD
+                    if (! dao.isUsedItem(item.getId())) {
+                        itemSet.add(item);
+                        EvalScale scale = item.getScale(); // LAZY LOAD
+                        if (scale != null) {
+                            if (! dao.isUsedScale(scale.getId())) {
+                                scaleSet.add(scale);
                             }
                         }
                     }
-
-                    // remove all the children in one large transaction
-                    Set[] entitySets = new HashSet[3];
-                    entitySets[0] = TIset;
-                    entitySets[1] = itemSet;
-                    entitySets[2] = scaleSet;
-                    dao.deleteMixedSet(entitySets);
-                } else {
-                    // this is an original template so do not remove the children
-                    EvalTemplateItem[] TIArray = templateItems.toArray(new EvalTemplateItem[templateItems.size()]);
-                    // remove all associated templateItems (disassociate all items automatically)
-                    dao.removeTemplateItems(TIArray);
                 }
+
+                // remove items and then scales to avoid constraints
+                dao.deleteSet(itemSet);
+                dao.deleteSet(scaleSet);
             }
 
             dao.delete(template);
