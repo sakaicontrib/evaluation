@@ -169,8 +169,8 @@ public class EvalUser implements Serializable {
         return true;
     }
 
-    public static class SortNameComparator implements Comparator<EvalUser> {
-        public static final long serialVersionUID = 31L;
+    public static class SortNameComparator implements Comparator<EvalUser>, Serializable {
+        static private final long serialVersionUID = 31L;
         public int compare(EvalUser o1, EvalUser o2) {
             return o1.sortName.compareTo(o2.sortName);
         }

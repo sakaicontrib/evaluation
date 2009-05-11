@@ -32,6 +32,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -39,5 +44,6 @@
 		<nature>org.springframework.ide.eclipse.core.springnature</nature>
 		<nature>org.mevenide.ui.mavennature</nature>
 		<nature>org.hibernate.eclipse.console.hibernateNature</nature>
+		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 	</natures>
 </projectDescription>
