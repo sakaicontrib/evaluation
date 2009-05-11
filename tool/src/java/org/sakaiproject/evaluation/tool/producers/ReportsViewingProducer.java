@@ -245,7 +245,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                             if (renderBasedOnOptions(dti.templateItem)) {
                                 UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
                                 // add a style to each rendered item
-                                String styleClass = renderedItemCount % 2 == 1 ? "reportItemOddLine" : "reportItemEvenLine"; // must match the existing CSS classes
+                                String styleClass = renderedItemCount % 2 != 0 ? "reportItemOddLine" : "reportItemEvenLine"; // must match the existing CSS classes
                                 nodeItemsBranch.decorate( new UIStyleDecorator(styleClass) );
                                 // render the item
                                 renderTemplateItemResults(nodeItemsBranch, dti, reportViewParams);
@@ -340,7 +340,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                 int commentCount = 0;
                 for (String comment : comments) {
                     UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
-                    if (commentCount % 2 == 1) {
+                    if (commentCount % 2 != 0) {
                         commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
                     }
                     UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
@@ -375,7 +375,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                     naCount++;
                 } else if (! EvalUtils.isBlank(answer.getText())) {
                     UIBranchContainer responsesBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
-                    if (responsesCount % 2 == 1) {
+                    if (responsesCount % 2 != 0) {
                         responsesBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
                     }
                     UIOutput.make(responsesBranch, "responseNum", (responsesCount + 1)+"");

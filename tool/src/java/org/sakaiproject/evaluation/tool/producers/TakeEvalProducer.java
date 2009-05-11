@@ -534,7 +534,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         for (int i = 0; i < dtis.size(); i++) {
                             DataTemplateItem dti = dtis.get(i);
                             UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
-                            if (i % 2 == 1) {
+                            if (i % 2 != 0) {
                                 nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                             }
                             renderItemPrep(nodeItemsBranch, form, dti, eval, missingKeys);

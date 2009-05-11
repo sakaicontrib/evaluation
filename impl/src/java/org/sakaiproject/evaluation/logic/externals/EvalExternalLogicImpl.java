@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -366,8 +367,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         if (! foundAll) {
             // get remaining users from Sakai
             Map<String, User> sakaiUsers = getSakaiUsers(userIds);
-            for (String userId : sakaiUsers.keySet()) {
-                User sakaiUser = sakaiUsers.get(userId);
+            for (Entry<String, User> entry : sakaiUsers.entrySet()) {
+                String userId = entry.getKey();
+                User sakaiUser = entry.getValue();
                 EvalUser user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
                         sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName());
                 users.put(userId, user);

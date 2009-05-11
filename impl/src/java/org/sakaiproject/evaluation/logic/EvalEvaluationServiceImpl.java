@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -669,16 +670,15 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
     public Map<Long, List<EvalGroup>> getEvalGroupsForEval(Long[] evaluationIds,
             boolean includeUnApproved, Boolean includeHierarchyGroups) {
-        log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
         Map<Long, List<EvalGroup>> evals = new TreeMap<Long, List<EvalGroup>>();
 
         Map<Long, List<EvalAssignGroup>> evalAGs = 
             getAssignGroupsForEvals(evaluationIds, includeUnApproved, includeHierarchyGroups);
 
         // replace each assign group with an EvalGroup
-        for (Iterator<Long> iter = evalAGs.keySet().iterator(); iter.hasNext();) {
-            Long evalId = iter.next();
-            List<EvalAssignGroup> innerList = evalAGs.get(evalId);
+        for (Entry<Long, List<EvalAssignGroup>> entry : evalAGs.entrySet()) {
+            Long evalId = entry.getKey();
+            List<EvalAssignGroup> innerList = entry.getValue();
             List<EvalGroup> newList = new ArrayList<EvalGroup>();
             for (int i=0; i<innerList.size(); i++) {
                 EvalAssignGroup eag = innerList.get(i);

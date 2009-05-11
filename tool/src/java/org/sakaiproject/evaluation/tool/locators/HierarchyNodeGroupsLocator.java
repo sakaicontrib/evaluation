@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -65,10 +66,10 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
             Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();
             for (EvalGroup group: evalGroups) {
                 if (assignedGroupIds.contains(group.evalGroupId)) {
-                    assignedGroups.put(group.evalGroupId, new Boolean(true));
+                    assignedGroups.put(group.evalGroupId, Boolean.TRUE);
                 }
                 else {
-                    assignedGroups.put(group.evalGroupId, new Boolean(false));
+                    assignedGroups.put(group.evalGroupId, Boolean.FALSE);
                 }
             }
             togo = assignedGroups;
@@ -87,9 +88,9 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
 
     private void assignGroups(String nodeid, Map<String, Boolean> groupbools) {
         Set<String> assignedGroup = new HashSet<String>();
-        for (Iterator<String> i = groupbools.keySet().iterator(); i.hasNext();) {
-            String groupid = (String) i.next();
-            Boolean assigned = (Boolean) groupbools.get(groupid);
+        for (Entry<String, Boolean> entry : groupbools.entrySet()) {
+            String groupid = entry.getKey();
+            Boolean assigned = entry.getValue();
             if (assigned.booleanValue() == true) {
                 assignedGroup.add(groupid);
             }

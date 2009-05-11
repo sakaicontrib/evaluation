@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
