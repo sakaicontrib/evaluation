@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -410,8 +411,8 @@ public class TemplateItemDataList {
     public int countAutoInsertedItems() {
         int count = 0;
         Map<String, List<EvalTemplateItem>> aiis = getAutoInsertedItems();
-        for (String key : aiis.keySet()) {
-            count += aiis.get(key).size();
+        for (Entry<String, List<EvalTemplateItem>> entry: aiis.entrySet()) {
+            count += entry.getValue().size();
         }
         return count;
     }

@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -368,8 +369,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
 
             Set<String> hierAssignedGroupIDs = new HashSet<String>();
-            for (String key: assignedGroups.keySet()) {
-                hierAssignedGroupIDs.addAll(assignedGroups.get(key));
+            for (Entry<String, Set<String>> entry: assignedGroups.entrySet()) {
+                hierAssignedGroupIDs.addAll(entry.getValue());
             }
             // 3. Remove all EvalGroup IDs that have been assigned to 
             evalGroupIDs.removeAll(hierAssignedGroupIDs);
