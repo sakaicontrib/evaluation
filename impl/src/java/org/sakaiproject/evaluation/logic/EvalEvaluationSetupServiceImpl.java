@@ -1551,8 +1551,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      */
     protected List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
         // get all the evalGroupIds for the given eval ids in one storage call
-        List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
-        l = dao.findBySearch(EvalAssignGroup.class, new Search("evaluation.id", evaluationId) );
+        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, new Search("evaluation.id", evaluationId) );
         return l;
     }
 

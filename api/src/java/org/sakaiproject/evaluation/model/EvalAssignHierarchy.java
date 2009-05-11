@@ -13,6 +13,7 @@ import java.util.Date;
  */
 public class EvalAssignHierarchy implements java.io.Serializable {
 
+    public static final long serialVersionUID = 31L;
     // Fields
 
     protected Long id;

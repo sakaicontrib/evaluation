@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1975,8 +1976,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                     }
                 }
                 // use the copy method to make persistent copies of all template items and children
-                for (Long currentTemplateId : templateToTIsMap.keySet()) {
-                    List<Long> TIIds = templateToTIsMap.get(currentTemplateId);
+                for (Entry<Long, List<Long>> entry : templateToTIsMap.entrySet()) {
+                    List<Long> TIIds = entry.getValue();
                     Long[] copiedIds = copyTemplateItems(TIIds.toArray(new Long[] {}), ownerId, true, template.getId(), true);
                     copiedTIIds = ArrayUtils.appendArrays(copiedTIIds, copiedIds);
                 }

@@ -53,6 +53,30 @@ public class EvalUtils {
 
     private static Log log = LogFactory.getLog(EvalUtils.class);
 
+    private static HashMap<String, Integer> stateNumbers;
+
+    static {
+        stateNumbers = new HashMap<String, Integer>();
+        for (int i = 0; i < EvalConstants.STATE_ORDER.length; i++) {
+            stateNumbers.put(EvalConstants.STATE_ORDER[i], i);
+        }
+    }
+
+    /**
+     * Defines the ORDER of the states<br/>
+     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
+     * 
+     * @param stateConstant
+     * @return a number indicating the position
+     */
+    private static int stateToNumber(String stateConstant) {
+        int value = -1;
+        if (stateNumbers.containsKey(stateConstant)) {
+            value = stateNumbers.get(stateConstant);
+        }
+        return value;
+    }
+
     /**
      * Get the state of an evaluation object<br/>
      * StartDate > DueDate (null) >= StopDate (null) >= ViewDate (null) >= student/instructorViewDate (null)<br/>
@@ -159,29 +183,6 @@ public class EvalUtils {
             }
         }
         return isBeforeState;
-    }
-
-    private static HashMap<String, Integer> stateNumbers = null;
-    /**
-     * Defines the ORDER of the states<br/>
-     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
-     * 
-     * @param stateConstant
-     * @return a number indicating the position
-     */
-    private static int stateToNumber(String stateConstant) {
-        // maybe should do this with a map or something
-        int value = -1;
-        if (stateNumbers == null) {
-            stateNumbers = new HashMap<String, Integer>();
-            for (int i = 0; i < EvalConstants.STATE_ORDER.length; i++) {
-                stateNumbers.put(EvalConstants.STATE_ORDER[i], i);
-            }
-        }
-        if (stateNumbers.containsKey(stateConstant)) {
-            value = stateNumbers.get(stateConstant);
-        }
-        return value;
     }
 
     /**

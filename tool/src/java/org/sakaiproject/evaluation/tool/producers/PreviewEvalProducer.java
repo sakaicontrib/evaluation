@@ -129,7 +129,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         Long templateId = previewEvalViewParams.templateId;
         String evalGroupId = previewEvalViewParams.evalGroupId;
         EvalEvaluation eval = null;
-        EvalTemplate template = null;
+        //EvalTemplate template = null;
 
         if (! previewEvalViewParams.external) {
             UIInternalLink.make(tofill, "summary-link", 
@@ -141,12 +141,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             // previewing a template
             UIMessage.make(tofill, "preview-title", "previeweval.template.title");
             // load up the template
-            template = authoringService.getTemplateById(templateId);
+            EvalTemplate template = authoringService.getTemplateById(templateId);
             // create a fake evaluation
             eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId, 
                     messageLocator.getMessage("previeweval.evaluation.title.default"), 
                     new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE,
-                    new Integer(1), template);
+                    Integer.valueOf(1), template);
             eval.setInstructions(messageLocator.getMessage("previeweval.instructions.default"));
         } else {
             // previewing an evaluation
@@ -155,7 +155,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             // load the real evaluation and template
             eval = evaluationService.getEvaluationById(evaluationId);
             templateId = eval.getTemplate().getId();
-            template = authoringService.getTemplateById(templateId);
+            //template = authoringService.getTemplateById(templateId);
         }
 
         UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
@@ -239,7 +239,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                     for (int i = 0; i < dtis.size(); i++) {
                         DataTemplateItem dti = dtis.get(i);
                         UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
-                        if (i % 2 == 1) {
+                        if (i % 2 != 0) {
                             nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                         }
                         renderItemPrep(nodeItemsBranch, dti, eval);
