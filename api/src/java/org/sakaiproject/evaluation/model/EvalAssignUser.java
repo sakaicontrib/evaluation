@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.model;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -364,8 +365,8 @@ public class EvalAssignUser implements java.io.Serializable {
      * This comparator will put the user assignments in a list in the correct list order
      * using the list order operator, 0 (default) puts the item at the end of the list
      */
-    public static class AssignComparatorByOrder implements Comparator<EvalAssignUser> {
-        public static final long serialVersionUID = 31L;
+    public static class AssignComparatorByOrder implements Comparator<EvalAssignUser>, Serializable {
+        static private final long serialVersionUID = 31L;
         public int compare(EvalAssignUser item0, EvalAssignUser item1) {
             int compare = 0;
             if (item0.listOrder == item1.listOrder
