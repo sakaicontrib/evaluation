@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -395,9 +396,9 @@ public class SetupEvalBean {
      */
     public static String[] makeArrayFromBooleanMap(Map<String, Boolean> booleanSelectionMap) {
         List<String> hierNodeIdList = new ArrayList<String>();
-        for (String hierNodeID : booleanSelectionMap.keySet()) {
-            if (booleanSelectionMap.get(hierNodeID) == true) {
-                hierNodeIdList.add(hierNodeID);
+        for (Entry<String, Boolean> entry: booleanSelectionMap.entrySet()) {
+            if ( EvalUtils.safeBool(entry.getValue()) ) {
+                hierNodeIdList.add(entry.getKey());
             }
         }
         String[] selectedHierarchyNodeIds = hierNodeIdList.toArray(new String[] {});
