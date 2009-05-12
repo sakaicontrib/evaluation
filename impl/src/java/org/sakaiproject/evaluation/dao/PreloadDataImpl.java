@@ -137,6 +137,7 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
          saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
          saveConfig(EvalSettings.ENABLE_RESPONSES_BOX, false);
+         saveConfig(EvalSettings.ENABLE_MY_TOPLINKS, true);
          saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
          saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
          saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);

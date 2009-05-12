@@ -70,6 +70,8 @@ public class ControlEmailProducer implements ViewComponentProducer {
 
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+		//CT-954 TQ: C1 d. Bug - Any admin account - remove toplinks that return everything for admin until paging available
+		boolean showMyToplinks = ((Boolean) evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
 
 		if (!userAdmin) {
 			// Security check and denial
@@ -86,18 +88,20 @@ public class ControlEmailProducer implements ViewComponentProducer {
 		UIInternalLink.make(tofill, "administrate-link", UIMessage
 				.make("administrate.page.title"), new SimpleViewParameters(
 				AdministrateProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "control-scales-link", UIMessage
-				.make("controlscales.page.title"), new SimpleViewParameters(
-				ControlScalesProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "control-templates-link", UIMessage
-				.make("controltemplates.page.title"), new SimpleViewParameters(
-				ControlTemplatesProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "control-items-link", UIMessage
-				.make("controlitems.page.title"), new SimpleViewParameters(
-				ControlItemsProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "control-evaluations-link", UIMessage
-				.make("controlevaluations.page.title"),
-				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+		if(showMyToplinks) {
+			UIInternalLink.make(tofill, "control-scales-link", UIMessage
+					.make("controlscales.page.title"), new SimpleViewParameters(
+					ControlScalesProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-templates-link", UIMessage
+					.make("controltemplates.page.title"), new SimpleViewParameters(
+					ControlTemplatesProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-items-link", UIMessage
+					.make("controlitems.page.title"), new SimpleViewParameters(
+					ControlItemsProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-evaluations-link", UIMessage
+					.make("controlevaluations.page.title"),
+					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+		}
 		UIInternalLink
 				.make(tofill, "control-emailtemplates-link", UIMessage
 						.make("controlemailtemplates.page.title"),

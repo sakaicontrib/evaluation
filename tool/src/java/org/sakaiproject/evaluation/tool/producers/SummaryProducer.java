@@ -121,6 +121,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+		//CT-954 TQ: C1 d. Bug - Any admin account - remove links that return everything for admin until paging available
+		boolean showMyToplinks = ((Boolean) settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -135,12 +137,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIInternalLink.make(tofill, "administrate-link",
 					UIMessage.make("administrate.page.title"),
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-	      UIInternalLink.make(tofill, "control-scales-link",
-	            UIMessage.make("controlscales.page.title"),
-	            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+			if(showMyToplinks) {
+		      UIInternalLink.make(tofill, "control-scales-link",
+		            UIMessage.make("controlscales.page.title"),
+		            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+			}
 		}
 
-		if (createTemplate) {
+		if (createTemplate && showMyToplinks) {
 			UIInternalLink.make(tofill, "control-templates-link",
 					UIMessage.make("controltemplates.page.title"),
 				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
@@ -149,7 +153,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
-		if (beginEvaluation) {
+		if (beginEvaluation && showMyToplinks) {
 			UIInternalLink.make(tofill, "control-evaluations-link",
 					UIMessage.make("controlevaluations.page.title"),
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));

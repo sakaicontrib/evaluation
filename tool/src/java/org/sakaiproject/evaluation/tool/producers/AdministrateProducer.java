@@ -72,6 +72,8 @@ public class AdministrateProducer implements ViewComponentProducer {
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
       String currentUserId = commonLogic.getCurrentUserId();
       boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+      //CT-954 TQ: C1 d. Bug - Any admin account - remove links that return everything for admin until paging available
+      boolean showMyToplinks = ((Boolean) evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
 
       if (! userAdmin) {
          // Security check and denial
@@ -92,21 +94,23 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluations-link",
-            UIMessage.make("controlevaluations.page.title"), 
-            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"),
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-scales-link",
-            UIMessage.make("controlscales.page.title"),
-            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      if(showMyToplinks) {
+	      UIInternalLink.make(tofill, "control-evaluations-link",
+	            UIMessage.make("controlevaluations.page.title"), 
+	            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+	
+	      UIInternalLink.make(tofill, "control-templates-link",
+	            UIMessage.make("controltemplates.page.title"), 
+	            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+	
+	      UIInternalLink.make(tofill, "control-items-link",
+	            UIMessage.make("controlitems.page.title"),
+	            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	
+	      UIInternalLink.make(tofill, "control-scales-link",
+	            UIMessage.make("controlscales.page.title"),
+	            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
       
       UIInternalLink.make(tofill, "control-emailtemplates-link",
             UIMessage.make("controlemailtemplates.page.title"),
@@ -315,6 +319,8 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-enable-administrating-box", EvalSettings.ENABLE_ADMINISTRATING_BOX);
       makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
       makeBoolean(form, "general-enable-responses-summary", EvalSettings.ENABLE_RESPONSES_BOX);
+      //CT-954 TQ: C1 d. Bug - Any admin account - remove links that return everything for admin until paging available
+      makeBoolean(form, "general-show-my-toplinks", EvalSettings.ENABLE_MY_TOPLINKS);
       
       makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
       makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);

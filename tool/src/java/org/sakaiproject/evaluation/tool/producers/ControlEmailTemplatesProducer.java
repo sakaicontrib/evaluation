@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.tool.locators.LineBreakResolver;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
@@ -61,6 +62,10 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+	   this.settings = settings;
+   }
 
    private String emailTemplateLocator = "emailTemplateWBL.";
    private String DEFAULTS = "defaults";
@@ -76,6 +81,8 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
 
       String currentUserId = external.getCurrentUserId();
       boolean userAdmin = external.isUserAdmin(currentUserId);
+      //CT-954 TQ: C1 d. Bug - Any admin account - remove links that return everything for admin until paging available
+      boolean showMyToplinks = ((Boolean) settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
 
       if (!userAdmin) {
          // Security check and denial
@@ -91,18 +98,20 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
       UIInternalLink.make(tofill, "administrate-link", 
             UIMessage.make("administrate.page.title"),
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-scales-link",
-            UIMessage.make("controlscales.page.title"),
-            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-evaluations-link",
-            UIMessage.make("controlevaluations.page.title"),
-            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      if(showMyToplinks) {
+	      UIInternalLink.make(tofill, "control-scales-link",
+	            UIMessage.make("controlscales.page.title"),
+	            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+	      UIInternalLink.make(tofill, "control-templates-link",
+	            UIMessage.make("controltemplates.page.title"), 
+	            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+	      UIInternalLink.make(tofill, "control-items-link",
+	            UIMessage.make("controlitems.page.title"), 
+	            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	      UIInternalLink.make(tofill, "control-evaluations-link",
+	            UIMessage.make("controlevaluations.page.title"),
+	            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      }
 
       UIInternalLink.make(tofill, "control-emailtemplates-link",
             UIMessage.make("controlemailtemplates.page.title"),
