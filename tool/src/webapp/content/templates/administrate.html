@@ -44,6 +44,11 @@
 		<li style="float:right" class=" lastCrumb">
 			<a rsf:id="control-reporting-toplink" href="control_reporting.html" class="goToList">Control Reporting</a>
 		</li>
+		<li style="float:right" class=" lastCrumb">
+			<!-- string added to bundle as administrate.top.control.search -->
+			<a rsf:id="control-administrate-search"  href="administrate_search.html" class="goToList">Search</a>
+		</li>
+
 	</ul>
 </div>
 
@@ -255,24 +260,12 @@
             <input type="checkbox" rsf:id="general-enable-ta-category" />
             <label rsf:id="msg=administrate.general.enable.ta.category" for="general-enable-ta-category">Enable Teaching Assistant item category (UMD/UCT)</label>
         </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="general-enable-selections" />
-            <label rsf:id="msg=administrate.general.enable.selections" for="general-enable-selections">Enable Instructor/Assistant Selections for grouping instructor related items (UCT)</label>
-        </p>
     </fieldset>
 
 	<p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
 	<input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
 	</p>
 </form>
-
-<!-- button for clearing the config cache and forcing an instant reload -->
-<fieldset class="visibleFS">
-    <form  rsf:id="cache-reset-form" method="post">
-        <input rsf:id="cache-reset-submit" type="submit" value="Reset Config Cache" />
-        <span rsf:id="msg=administrate.reset.cache">This will force the configuration cache to clear immediately, use this if you have changed the config settings and they appear to be out of sync, the cache should automatically reset once per hour</span>
-    </form>
-</fieldset>
 
 <div rsf:id="app_version_revision" style="font-style: italic; font-size: 0.8em">Version: 1.0</div>
 
