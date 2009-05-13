@@ -14,7 +14,10 @@
 
 package org.sakaiproject.evaluation.tool.wrapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 import uk.org.ponder.util.RunnableInvoker;
 
@@ -26,6 +29,8 @@ import uk.org.ponder.util.RunnableInvoker;
  */
 public class ModelAccessWrapperInvoker implements RunnableInvoker {
 
+    private static Log log = LogFactory.getLog(ModelAccessWrapperInvoker.class);
+
     public EvalDaoInvoker daoInvoker;
     public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
         this.daoInvoker = daoInvoker;
@@ -35,7 +40,12 @@ public class ModelAccessWrapperInvoker implements RunnableInvoker {
      * @see uk.org.ponder.util.RunnableInvoker#invokeRunnable(java.lang.Runnable)
      */
     public void invokeRunnable(Runnable toinvoke) {
-        daoInvoker.invokeTransactionalAccess(toinvoke);
+        try {
+            daoInvoker.invokeTransactionalAccess(toinvoke);
+        } catch (UnexpectedRollbackException e) {
+            // this will stop the exceptions from reaching the portal
+            log.info("Eval: Caught transaction rollback exception: " + e.getCause());
+        }
     }
 
 }
