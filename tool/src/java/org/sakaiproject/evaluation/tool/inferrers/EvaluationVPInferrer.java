@@ -53,7 +53,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
-       this.evaluationService = evaluationService;
+        this.evaluationService = evaluationService;
     }
 
     private ModelAccessWrapperInvoker wrapperInvoker;
@@ -80,7 +80,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
      * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
      */
     public ViewParameters inferDefaultViewParameters(String reference) {
-    	//log.warn("Note: Routing user to view based on reference: " + reference);
+        //log.warn("Note: Routing user to view based on reference: " + reference);
         final String ref = reference;
         final ViewParameters[] togo = new ViewParameters[1];
         // this is needed to provide transactional protection
@@ -113,10 +113,10 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
             // anonymous evaluation URLs ALWAYS go to the take_eval page
-        	log.info("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
-        	EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
-        	vp.external = true;
-        	return vp;
+            log.info("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
+            EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+            vp.external = true;
+            return vp;
         } else {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
@@ -125,8 +125,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // eval has not started
             if ( EvalUtils.checkStateBefore(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
                 // go to the add instructor items view if permission
+                // NOTE: the checks below are slightly expensive and should probably be reworked to use the newer participants methods
                 if (evalGroupId == null) {
-                   Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
+                    Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
                     EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
                             commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED), 
                             m.get(evaluationId) );
@@ -155,8 +156,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // check perms if not anonymous
                 // switched to take check first
                 if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
-                	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
-                	EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                    log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
+                    EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                     vp.external = true;
                     return vp;
                 } else if (currentUserId.equals(evaluation.getOwner()) ||
