@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
 /**

@@ -49,17 +49,18 @@
                     </form>
                 </div>
                 <div class="listNav">
-                    <form rsf:id="pager-form" action="modify_item.html" method="get" class="inlineForm">
-                        <input rsf:id="pager-prev" type="submit" value="&lt;" />
-						<!-- string for input in bundle as administrate.search.pager.label
-						Viewing {0}-{1} of total {3} -->
-						<span rsf:id="pager-count-message" class="instruction"> Viewing x-y of total n </span>
-                        <input rsf:id="pager-next" type="submit" value="&gt;" />
-                    </form>
+					<!-- string for input in bundle as administrate.search.pager.label
+					Viewing {0}-{1} of total {3} -->
+					<span rsf:id="pager-count-message" class="instruction"> Viewing x-y of total n </span>
+                	<a rsf:id="previous" href="#" title="Previous page" class="pagerButton">&lt;</a>
+                	<span rsf:id="no-previous">&lt;</span>
+              		<a rsf:id="next" href="#" title="Next page" class="pagerButton">&gt;</a>
+                	<span rsf:id="no-next">&gt;</span>
                 </div>
-            </div><!--note: form does not display if there is no results returned from the search-->
-            <form rsf:id="searchResults">
-                <table rsf:id="item-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
+            </div>
+            <!--note: form does not display if there is no results returned from the search-->
+            <div rsf:id="searchResults:">
+                <table class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
                     <thead>
                         <tr>
                             <th id="item-title-title">
@@ -77,55 +78,50 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr rsf:id="item-row:">
-                            <td headers="item-title-title">
-                                <h4><a href="evaluation_settings.html" rsf:id="item-title-link">2009,3,A,PHARMACY,433,001</a></h4>
-                            </td>
-                            <td headers="item-status-title">
-                                <span rsf:id="item-status">Active</span>
-                            </td>
-                            <td headers="item-date-title">
-                                <span rsf:id="item-date">May 10, 2009</span>
-                            </td>
-                        </tr>
-                        <tr rsf:id="item-row:">
-                            <td headers="item-title-title">
-                                <h4><a href="evaluation_settings.html" rsf:id="item-title-link">2009,3,A,PHARMACY,434,001</a></h4>
-                            </td>
-                            <td headers="item-status-title">
-                                <span rsf:id="item-status">Active</span>
-                            </td>
-                            <td headers="item-date-title">
-                                <span rsf:id="item-date">May 10, 2009</span>
-                            </td>
-                        </tr>
-                        <tr rsf:id="item-row:">
-                            <td headers="item-title-title">
-                                <h4><a href="evaluation_settings.html" rsf:id="item-title-link">2009,3,A,PHARMACY,435,001</a></h4>
-                            </td>
-                            <td headers="item-status-title">
-                                <span rsf:id="item-status">Active</span>
-                            </td>
-                            <td headers="item-date-title">
-                                <span rsf:id="item-date">May 10, 2009</span>
-                            </td>
-                        </tr>
-                        <tr rsf:id="item-row:">
-                            <td headers="item-title-title">
-                                <h4><a href="evaluation_settings.html" rsf:id="item-title-link">2009,3,A,PHARMACY,439,001</a></h4>
-                            </td>
-                            <td headers="item-status-title">
-                                <span rsf:id="item-status">Active</span>
-                            </td>
-                            <td headers="item-date-title">
-                                <span rsf:id="item-date">May 10, 2009</span>
-                            </td>
-                        </tr>
+						<tr rsf:id="evalAdminList:">
+							<td align="left" width="50%">
+							<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+							<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+							</td>
+							<td align="left" width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+							</td>
+							<td width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminDateLabel">Starts</span>: 
+								<span rsf:id="evalAdminDate">09/20/2005</span>
+							</td>
+						</tr>
+						<tr rsf:id="evalAdminList:">
+							<td align="left" width="50%">
+							<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+							<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+							</td>
+							<td align="left" width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+							</td>
+							<td width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminDateLabel">Starts</span>: 
+								<span rsf:id="evalAdminDate">09/20/2005</span>
+							</td>
+						</tr>
+						<tr rsf:id="evalAdminList:">
+							<td align="left" width="50%">
+							<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+							<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+							</td>
+							<td align="left" width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+							</td>
+							<td width="25%" nowrap="nowrap">
+								<span rsf:id="evalAdminDateLabel">Starts</span>: 
+								<span rsf:id="evalAdminDate">09/20/2005</span>
+							</td>
+						</tr>
                     </tbody>
                 </table>
-            </form>
+            </div>
             <!--note: block displays if there is no results returned from the search-->
-            <div rsf:id="no-items" class="instruction">
+            <div rsf:id="no-items:" class="instruction">
                 <span rsf:id="msg=administrate.search.list.empty.note">No items found</span>
             </div>
         </div>

@@ -87,6 +87,22 @@
         <property name="reportExporterBean" ref="reportExporterBean"/>
     </bean>
 
+    <bean id="administrateSearchBean"
+    	class="org.sakaiproject.evaluation.tool.AdministrateSearchBean">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evalBeanUtils"
+            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+        <property name="locale" ref="requestLocale" />
+    	
+    </bean>
+
 	<!-- Bean override for rootHandlerHook see RSF-123 and CTL-1214 -->
 	<bean id="rootHandlerBean" class="org.sakaiproject.evaluation.tool.utils.RootHandlerBeanOverride" init-method="handle">
 		<property name="rootHandlerBeanBase" ref="overridedRootHandlerBean"/>
@@ -228,6 +244,15 @@
         class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateSearchProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
     <bean

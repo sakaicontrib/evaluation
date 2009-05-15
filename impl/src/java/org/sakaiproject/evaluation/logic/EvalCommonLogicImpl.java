@@ -39,6 +39,7 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -710,5 +711,19 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         // TODO Auto-generated method stub
         return externalLogic.getContentCollectionId(siteId);
     }
+
+
+	public int countEvaluations(String[] props, Object[] values,
+			int[] comparisons) {
+		
+		return 0;
+	}
+
+
+	public List<EvalEvaluation> getEvaluations(String[] props, Object[] values,
+			int[] comparisons, int startResult, int maxResults) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
