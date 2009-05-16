@@ -2,12 +2,12 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="administrate-title">Administrate</title>
+    <title rsf:id="administrate-title">Administrate</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 <body>
 <div class="portletBody">
@@ -24,27 +24,27 @@
 
 <!--//gsilver: all in the same line, avoid wspace -->
 <div>
-	<ul class="breadCrumb"  style="clear:both;height:1.5em">
-		<li  style="float:left">
-			<a rsf:id="summary-link" href="summary.html">Summary</a>
-		</li>
-		<li style="float:left" class="lastCrumb" rsf:id="administrate-title">Administrate</li>
-		<li style="float:right" class=" lastCrumb addItem">
-			<a rsf:id="test-evalgroupprovider-toplink" href="admin_test_evalgroup_provider.html"  class="goToList">Test EvalGroupProvider</a>
-		</li>
-		<li style="float:right" class=" lastCrumb">
-			<a rsf:id="control-email-toplink" href="control_email.html" class="goToList">Control Email</a>
-		</li>
-		<li style="float:right" class=" lastCrumb">
-			<a rsf:id="control-import-toplink" href="control_import.html" class="goToList">Control Importing</a>
-		</li>
-		<li style="float:right" class=" lastCrumb">
-			<a rsf:id="control-hierarchy-toplink" href="control_hierarchy.html" class="goToList">Control Hierarchy</a>
-		</li>
-		<li style="float:right" class=" lastCrumb">
-			<a rsf:id="control-reporting-toplink" href="control_reporting.html" class="goToList">Control Reporting</a>
-		</li>
-	</ul>
+    <ul class="breadCrumb"  style="clear:both;height:1.5em">
+        <li  style="float:left">
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+        </li>
+        <li style="float:left" class="lastCrumb" rsf:id="administrate-title">Administrate</li>
+        <li style="float:right" class=" lastCrumb addItem">
+            <a rsf:id="test-evalgroupprovider-toplink" href="admin_test_evalgroup_provider.html"  class="goToList">Test EvalGroupProvider</a>
+        </li>
+        <li style="float:right" class=" lastCrumb">
+            <a rsf:id="control-email-toplink" href="control_email.html" class="goToList">Control Email</a>
+        </li>
+        <li style="float:right" class=" lastCrumb">
+            <a rsf:id="control-import-toplink" href="control_import.html" class="goToList">Control Importing</a>
+        </li>
+        <li style="float:right" class=" lastCrumb">
+            <a rsf:id="control-hierarchy-toplink" href="control_hierarchy.html" class="goToList">Control Hierarchy</a>
+        </li>
+        <li style="float:right" class=" lastCrumb">
+            <a rsf:id="control-reporting-toplink" href="control_reporting.html" class="goToList">Control Reporting</a>
+        </li>
+    </ul>
 </div>
 
 <div rsf:id="message-for:*" class="alertMessage">
@@ -54,79 +54,79 @@
 </div>
 
 <p rsf:id="email-delivery" class="alertMessage">
-   	<ul style="margin:0px;">
-     	<li>Message re current email delivery setting here</li>
-   	</ul>
+    <ul style="margin:0px;">
+        <li>Message re current email delivery setting here</li>
+    </ul>
 </p>
-			
+            
 <form  rsf:id="basic-form" method="post">
 
-	<h3 rsf:id="system-settings-header">System Settings</h3>
-	<p class="instruction" rsf:id="system-settings-instructions">
-		Note that the system settings mostly control whether something can happen at all.
-		<br /><br />
-		Settings in the evaluation can still be controlled on a per evaluation basis unless
-		overridden here.
-	</p>
+    <h3 rsf:id="system-settings-header">System Settings</h3>
+    <p class="instruction" rsf:id="system-settings-instructions">
+        Note that the system settings mostly control whether something can happen at all.
+        <br /><br />
+        Settings in the evaluation can still be controlled on a per evaluation basis unless
+        overridden here.
+    </p>
 
-	<fieldset class="visibleFS"><legend><span rsf:id="instructor-settings-header">Instructor Settings:</span></legend>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="instructors-eval-create" id="instructors-eval-create-id"/>
-			<label for="instructors-eval-create"  rsf:id="instructors-eval-create-note">Instructors allowed to create evaluations</label>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="instructors-email-students" id="instructors-email-students-id"/>
-			<label for="instructors-email-students" rsf:id="instructors-email-students-note">Instructors allowed to email students</label>
-		</p>
-		<p class=	"longtext indnt1">
-			<label class="block" for="instructors-view-results-selection"  rsf:id="instructors-view-results-note">Instructors allowed to view results</label>
-			<select type="checkbox" rsf:id="instructors-view-results" id="instructors-view-results-id"></select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label class="block" for="instructors-hierarchy-selection" rsf:id="instructors-hierarchy-note">Instructors must use evaluations from above in the hierachy</label>
-			<select type="checkbox" rsf:id="instructors-hierarchy" id="instructors-hierarchy-id">
-			</select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label class="block" rsf:id="instructors-num-questions-note" for ="instructors-num-questions-selection">Instructors may add this number of questions to evaluations from above in the
-			hierarchy before the release date</label>
-			<select rsf:id="instructors-num-questions" id="instructors-num-questions-id">
-			</select>
-		</p>
-	</fieldset>
+    <fieldset class="visibleFS"><legend><span rsf:id="instructor-settings-header">Instructor Settings:</span></legend>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="instructors-eval-create" id="instructors-eval-create-id"/>
+            <label for="instructors-eval-create"  rsf:id="instructors-eval-create-note">Instructors allowed to create evaluations</label>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="instructors-email-students" id="instructors-email-students-id"/>
+            <label for="instructors-email-students" rsf:id="instructors-email-students-note">Instructors allowed to email students</label>
+        </p>
+        <p class=   "longtext indnt1">
+            <label class="block" for="instructors-view-results-selection"  rsf:id="instructors-view-results-note">Instructors allowed to view results</label>
+            <select type="checkbox" rsf:id="instructors-view-results" id="instructors-view-results-id"></select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label class="block" for="instructors-hierarchy-selection" rsf:id="instructors-hierarchy-note">Instructors must use evaluations from above in the hierachy</label>
+            <select type="checkbox" rsf:id="instructors-hierarchy" id="instructors-hierarchy-id">
+            </select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label class="block" rsf:id="instructors-num-questions-note" for ="instructors-num-questions-selection">Instructors may add this number of questions to evaluations from above in the
+            hierarchy before the release date</label>
+            <select rsf:id="instructors-num-questions" id="instructors-num-questions-id">
+            </select>
+        </p>
+    </fieldset>
 
-	<fieldset class="visibleFS"><legend><span rsf:id="student-settings-header">Student Settings:</span></legend>
-		<p class=	"longtext indnt1">
-			<label for="students-unanswered-selection" class="block" rsf:id="students-unanswered-note">Students may leave questions unanswered</label>
-			<select type="checkbox" rsf:id="students-unanswered" id="students-unanswered-id">
-			</select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label for="students-modify-responses-selection" class="block" rsf:id="students-modify-responses-note">Students may modify their responses up to the due date</label>
-			<select type="checkbox" rsf:id="students-modify-responses" id="students-modify-responses-id">
-			</select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label for="students-view-results-selection" class="block" rsf:id="students-view-results-note">Students allowed to view results</label>
-			<select type="checkbox" rsf:id="students-view-results" id="students-view-results-id">
-			</select>
-		</p>
-	</fieldset>
+    <fieldset class="visibleFS"><legend><span rsf:id="student-settings-header">Student Settings:</span></legend>
+        <p class=   "longtext indnt1">
+            <label for="students-unanswered-selection" class="block" rsf:id="students-unanswered-note">Students may leave questions unanswered</label>
+            <select type="checkbox" rsf:id="students-unanswered" id="students-unanswered-id">
+            </select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label for="students-modify-responses-selection" class="block" rsf:id="students-modify-responses-note">Students may modify their responses up to the due date</label>
+            <select type="checkbox" rsf:id="students-modify-responses" id="students-modify-responses-id">
+            </select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label for="students-view-results-selection" class="block" rsf:id="students-view-results-note">Students allowed to view results</label>
+            <select type="checkbox" rsf:id="students-view-results" id="students-view-results-id">
+            </select>
+        </p>
+    </fieldset>
 
-	<fieldset  class="visibleFS"><legend><span rsf:id="administrator-settings-header">Administrator Settings:</span></legend>
-		<p class=	"longtext indnt1">
-			<label for="admin-hierarchy-num-questions-selection" class="block" rsf:id="admin-hierarchy-num-questions-note">Admins below the hierarchy level of the owner may add this number of questions to the evaluation before the release date</label>
-			<select rsf:id="admin-hierarchy-num-questions" id="admin-hierarchy-num-questions-id"></select>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="admin-view-instructor-added-results" id="admin-view-instructor-added-results-id" />
-			<label rsf:id="admin-view-instructor-added-results-note" for="admin-view-instructor-added-results">Admins allowed to view instructor added question results</label>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="admin-view-below-results" id="admin-view-below-results-id" />
-			<label rsf:id="admin-view-below-results-note" for="admin-view-below-results">Admins allowed to view results from items added below them in the hierarchy</label>
-		</p>
-	</fieldset>
+    <fieldset  class="visibleFS"><legend><span rsf:id="administrator-settings-header">Administrator Settings:</span></legend>
+        <p class=   "longtext indnt1">
+            <label for="admin-hierarchy-num-questions-selection" class="block" rsf:id="admin-hierarchy-num-questions-note">Admins below the hierarchy level of the owner may add this number of questions to the evaluation before the release date</label>
+            <select rsf:id="admin-hierarchy-num-questions" id="admin-hierarchy-num-questions-id"></select>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="admin-view-instructor-added-results" id="admin-view-instructor-added-results-id" />
+            <label rsf:id="admin-view-instructor-added-results-note" for="admin-view-instructor-added-results">Admins allowed to view instructor added question results</label>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="admin-view-below-results" id="admin-view-below-results-id" />
+            <label rsf:id="admin-view-below-results-note" for="admin-view-below-results">Admins allowed to view results from items added below them in the hierarchy</label>
+        </p>
+    </fieldset>
 
    <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.hierarchy.settings.header">Hierarchy Settings:</span></legend>
       <p class=   "checkbox indnt1">
@@ -139,27 +139,27 @@
       </p>
    </fieldset>
 
-	<fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.general.settings.header" style="padding:3px">General Settings:</span></legend>
-		<p class=	"longtext indnt1">
-			<label rsf:id="msg=administrate.general.responses.before.view.note" for="general-responses-before-view" class="block">Number of responses required before results can be viewed</label>
-			<select rsf:id="general-responses-before-view" id="general-responses-before-view"></select>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input rsf:id="general-na-allowed" type="checkbox" id="general-na-allowed" />
-			<label rsf:id="msg=administrate.general.na.allowed.note" for="general-na-allowed"> Not Available allowed when creating questions</label>
-		</p>
+    <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.general.settings.header" style="padding:3px">General Settings:</span></legend>
+        <p class=   "longtext indnt1">
+            <label rsf:id="msg=administrate.general.responses.before.view.note" for="general-responses-before-view" class="block">Number of responses required before results can be viewed</label>
+            <select rsf:id="general-responses-before-view" id="general-responses-before-view"></select>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input rsf:id="general-na-allowed" type="checkbox" id="general-na-allowed" />
+            <label rsf:id="msg=administrate.general.na.allowed.note" for="general-na-allowed"> Not Available allowed when creating questions</label>
+        </p>
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-enable-item-comments" />
             <label rsf:id="msg=administrate.general.enable.item.comments.note" for="general-enable-item-comments">Enable the optional use of text comments on non-text items</label>
         </p>
-		<p class=	"longtext indnt1">
-			<label rsf:id="msg=administrate.general.max.questions.block.note" for="general-max-questions-block">Maximum number of questions in a question block</label>
-			<select rsf:id="general-max-questions-block" id="general-max-questions-block"></select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label rsf:id="msg=administrate.general.template.sharing.note" class="block" for="general-template-sharing">Template sharing and visibility setting</label>
-			<select rsf:id="general-template-sharing"></select>
-		</p>
+        <p class=   "longtext indnt1">
+            <label rsf:id="msg=administrate.general.max.questions.block.note" for="general-max-questions-block">Maximum number of questions in a question block</label>
+            <select rsf:id="general-max-questions-block" id="general-max-questions-block"></select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label rsf:id="msg=administrate.general.template.sharing.note" class="block" for="general-template-sharing">Template sharing and visibility setting</label>
+            <select rsf:id="general-template-sharing"></select>
+        </p>
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-enable-adhoc-groups" />
             <label rsf:id="msg=administrate.general.enable.adhoc.groups.note" for="general-enable-adhoc-groups">Allow use of adhoc groups</label>
@@ -210,29 +210,29 @@
             <label rsf:id="msg=administrate.general.same.view.date.note" for="general-same-view-date">Use same view date for all users<br/>
             (or use separate dates for students, instructors, admins)</label>
         </p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-expert-templates" />
-			<label rsf:id="msg=administrate.general.expert.templates.note" for="general-expert-templates">Use expert created templates</label>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-expert-questions" />
-			<label rsf:id="msg=administrate.general.expert.questions.note" for="general-expert-questions">Use expert created questions</label>
-		</p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-expert-templates" />
+            <label rsf:id="msg=administrate.general.expert.templates.note" for="general-expert-templates">Use expert created templates</label>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-expert-questions" />
+            <label rsf:id="msg=administrate.general.expert.questions.note" for="general-expert-questions">Use expert created questions</label>
+        </p>
 <!-- 
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-require-comments-block" />
-			<label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
-		</p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-require-comments-block" />
+            <label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
+        </p>
 -->
-		<p class=	"longtext indnt1">
-			<label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
-			<select rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id"></select>
-		</p>
-		<p class=	"longtext indnt1">
-			<label class="block" rsf:id="general-mim-time-diff-between-dates-note" for="general-mim-time-diff-between-dates-selection">Minimum time difference (in hours) between start date and due date of an evaluation</label>
-			<select rsf:id="general-mim-time-diff-between-dates" id="general-mim-time-diff-between-dates-id"></select>
-		</p>
-	</fieldset>
+        <p class=   "longtext indnt1">
+            <label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
+            <select rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id"></select>
+        </p>
+        <p class=   "longtext indnt1">
+            <label class="block" rsf:id="general-mim-time-diff-between-dates-note" for="general-mim-time-diff-between-dates-selection">Minimum time difference (in hours) between start date and due date of an evaluation</label>
+            <select rsf:id="general-mim-time-diff-between-dates" id="general-mim-time-diff-between-dates-id"></select>
+        </p>
+    </fieldset>
 
     <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.institution.specific.settings.header" style="padding:3px">Institution Specific Settings:</span></legend>
         <p class=   "checkbox indnt1">
@@ -255,12 +255,24 @@
             <input type="checkbox" rsf:id="general-enable-ta-category" />
             <label rsf:id="msg=administrate.general.enable.ta.category" for="general-enable-ta-category">Enable Teaching Assistant item category (UMD/UCT)</label>
         </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-enable-selections" />
+            <label rsf:id="msg=administrate.general.enable.selections" for="general-enable-selections">Enable Instructor/Assistant Selections for grouping instructor related items (UCT)</label>
+        </p>
     </fieldset>
 
-	<p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
-	<input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
-	</p>
+    <p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
+    <input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
+    </p>
 </form>
+
+<!-- button for clearing the config cache and forcing an instant reload -->
+<fieldset class="visibleFS">
+    <form  rsf:id="cache-reset-form" method="post">
+        <input rsf:id="cache-reset-submit" type="submit" value="Reset Config Cache" />
+        <span rsf:id="msg=administrate.reset.cache">This will force the configuration cache to clear immediately, use this if you have changed the config settings and they appear to be out of sync, the cache should automatically reset once per hour</span>
+    </form>
+</fieldset>
 
 <div rsf:id="app_version_revision" style="font-style: italic; font-size: 0.8em">Version: 1.0</div>
 
