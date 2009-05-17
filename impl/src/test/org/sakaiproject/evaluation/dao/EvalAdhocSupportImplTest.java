@@ -330,6 +330,21 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       assertEquals(0, l.size());
 
    }
+   
+   public void testGetEvalAdhocGroupsByUser() {
+	   Map<String, List <EvalAdhocGroup>> map = null;
+	   map = adhocSupportLogic.getAdhocGroupsByUser(etdl.user1.getUserId());
+	   assertNotNull(map);
+	   assertEquals(2, map.size());
+	   
+	   map = adhocSupportLogic.getAdhocGroupsByUser(etdl.user2.getUserId());
+	   assertNotNull(map);
+	   assertEquals(2, map.size());
+	   
+	   map = adhocSupportLogic.getAdhocGroupsByUser(etdl.user3.getUserId());
+	   assertNotNull(map);
+	   assertEquals(2, map.size());
+   }
 
    public void testIsUserAllowedInAdhocGroup() {
       boolean allowed = false;

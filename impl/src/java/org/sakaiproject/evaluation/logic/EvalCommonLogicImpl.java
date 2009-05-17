@@ -390,6 +390,57 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
 		return count;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId) {
+		Map<String, List<EvalGroup>> mapGroups = new HashMap<String, List<EvalGroup>>();
+		List<EvalGroup> take = new ArrayList<EvalGroup>();
+		List<EvalGroup> be = new ArrayList<EvalGroup>();
+		List<EvalGroup> l = new ArrayList<EvalGroup>();
+		
+		// get the groups from external
+		Map<String, List<EvalGroup>> map = new HashMap<String, List<EvalGroup>>();
+		map = externalLogic.getEvalGroupsForUser(userId);
+		l = map.get(EvalConstants.PERM_TAKE_EVALUATION);
+		if(l != null && !l.isEmpty()) {
+			take.addAll(l);
+		}
+		l = map.get(EvalConstants.PERM_BE_EVALUATED);
+		if(l != null && !l.isEmpty()) {
+			be.addAll(l);
+		}
+		map.clear();
+		
+		// also check provider
+		map = evalGroupsProvider.getEvalGroupsForUser(userId);
+		l = map.get(EvalConstants.PERM_TAKE_EVALUATION);
+		if(l != null && !l.isEmpty()) {
+			take.addAll(l);
+		}
+		l = map.get(EvalConstants.PERM_BE_EVALUATED);
+		if(l != null && !l.isEmpty()) {
+			be.addAll(l);
+		}
+		
+		// also check the internal groups
+		Map<String, List<EvalAdhocGroup>> adhoc = new HashMap<String, List<EvalAdhocGroup>>();
+		adhoc = adhocSupportLogic.getAdhocGroupsByUser(userId);
+		List<EvalAdhocGroup> adhocT = adhoc.get(EvalConstants.PERM_TAKE_EVALUATION);
+		for (EvalAdhocGroup adhocGroup : adhocT) {
+			take.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
+					.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+		}
+		List<EvalAdhocGroup> adhocB = adhoc.get(EvalConstants.PERM_BE_EVALUATED);
+		for (EvalAdhocGroup adhocGroup : adhocB) {
+			be.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
+					.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+		}
+		
+		// return a map with 2 keys EvalConstants.PERM_BE_EVALUATED and EvalConstants.PERM_TAKE_EVALUATION
+		mapGroups.put(EvalConstants.PERM_TAKE_EVALUATION, take);
+		mapGroups.put(EvalConstants.PERM_BE_EVALUATED, be);
+		return mapGroups;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {

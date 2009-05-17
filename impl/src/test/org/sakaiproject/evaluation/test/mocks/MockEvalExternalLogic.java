@@ -162,6 +162,17 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		}
 		return l;
 	}
+	
+	public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId) {
+		Map<String, List<EvalGroup>> map = new HashMap<String, List<EvalGroup>>();
+		List<EvalGroup> take = new ArrayList();
+		take.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
+		map.put(EvalConstants.PERM_TAKE_EVALUATION, take);
+		List<EvalGroup> be = new ArrayList();
+		be.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
+		map.put(EvalConstants.PERM_BE_EVALUATED, be);
+		return map;
+	}
 
 	/**
 	 * Note: Admin has all perms in all sites

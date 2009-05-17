@@ -515,6 +515,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertEquals(1, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      
+      // don't include untaken evaluations
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, false, true);
+      assertNotNull(evals);
+      assertEquals(1, evals.size());
+      ids = EvalTestDataLoad.makeIdList(evals);
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 
       // try to get for invalid user
       evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.INVALID_USER_ID, true, null, true);

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
@@ -93,14 +94,6 @@ public interface EvalEvaluationSetupService {
     * @return a List of {@link EvalEvaluation} objects
     */
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial);
-   
-   /**
-    * Get all evaluations in which this user is being evaluated
-    * 
-    * @param userId the internal user id (not username)
-    * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
-    */
-   public List<EvalEvaluation> getEvaluationsForInstructor(String userId);
 
    /**
     * Get all evaluations that can be taken by this user,
@@ -120,6 +113,26 @@ public interface EvalEvaluationSetupService {
     * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
     */
    public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);
+   
+   /**
+    * Get all evaluations that can be taken by this user
+    * or in which this user may be evaluated,
+    * can include only active and only untaken if desired
+    * 
+    * @param userId the internal user id (not username)
+    * @param activeOnly if true, only include active evaluations, 
+    * if false only include inactive (inqueue, graceperiod, closed, viewable), 
+    * if null, include all evaluations (except partial and deleted)
+    * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
+    * if false, include only evaluations which have already been taken,
+    * if null, include all evaluations<br/>
+    * <b>WARNING:</b> Does not take groups into account and only looks at the evaluation as a whole
+    * @param includeAnonymous if true, include assigned and anonymous evaluations (only anonymous evals if evalGroupIds is null), 
+    * if false, only include assigned evals which are not also anonymous,
+    * if null include only assigned evaluations
+    * @return a Map of permission key, List of {@link EvalEvaluation} objects (sorted by DueDate) value
+    */
+   public Map <String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);
 
    /**
     * Close an evaluation before the closing date,

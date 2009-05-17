@@ -170,12 +170,25 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIMessage.make(notificationsBC, "notifications-higher-level", "summary.eval.assigned.from.above");
 			// add other stuff
 		}
+		
+		List<EvalEvaluation> evalsToTake = null;
+		List<EvalEvaluation> evalsToPreview = null;
+		boolean showResponsesBox = ((Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX)).booleanValue();
+		
+		if(showResponsesBox) {
+			Map<String, List<EvalEvaluation>> map = evaluationSetupService.getEvaluationsByPermissionForUser(currentUserId, true, null, null);
+			evalsToTake = map.get(EvalConstants.PERM_TAKE_EVALUATION);
+			evalsToPreview = map.get(EvalConstants.PERM_BE_EVALUATED);
+		}
 
 		/*
 		 * for the evaluations taking box
 		 */
-		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
-      UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
+		if(evalsToTake == null) {
+			//List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
+			evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
+		}
+        UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 		if (evalsToTake.size() > 0) {
 			// build an array of evaluation ids
 			Long[] evalIds = new Long[evalsToTake.size()];
@@ -266,20 +279,20 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the instructor's view of responses submitted and assigned evaluations listing box
 		 */
-		Boolean showResponsesBox = (Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX);
+		
 		boolean evalsToShow = false;
 		//setting show Instructor widget (responses submitted and view assigned evaluations)
-		if(showResponsesBox != null && showResponsesBox == true) {
-			List<EvalEvaluation> evals = evaluationSetupService.getEvaluationsForInstructor(currentUserId);
+		if(showResponsesBox == true) {
+			//List<EvalEvaluation> evals = evaluationSetupService.getEvaluationsForInstructor(currentUserId);
 			//Since we don't want to show the widget to students, if there are no Instructor evals don't show the box
-			if (evals != null && !evals.isEmpty()) {
+			if (evalsToPreview != null && !evalsToPreview.isEmpty()) {
 				UIBranchContainer evalResponsesBC = UIBranchContainer.make(tofill, "evalResponsesBox:");
 				UIForm evalResponsesForm = UIForm.make(evalResponsesBC , "evalResponsesForm");
 				
 				// build an array of evaluation ids
-				Long[] evalIds = new Long[evals.size()];
-				for (int i=0; i<evals.size(); i++) {
-					evalIds[i] = ((EvalEvaluation) evals.get(i)).getId();
+				Long[] evalIds = new Long[evalsToPreview.size()];
+				for (int i=0; i<evalsToPreview.size(); i++) {
+					evalIds[i] = ((EvalEvaluation) evalsToPreview.get(i)).getId();
 				}
 				//build the widget
 				UIMessage.make(evalResponsesForm, "evalresponses-header-title","summary.header.title");
@@ -287,7 +300,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIMessage.make(evalResponsesForm, "evalresponses-header-date", "summary.header.date");
 				UIMessage.make(evalResponsesForm, "evalresponses-header-responses", "summary.header.responses");
 				Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
-				for (Iterator<EvalEvaluation> iter = evals.iterator(); iter.hasNext();) {
+				for (Iterator<EvalEvaluation> iter = evalsToPreview.iterator(); iter.hasNext();) {
 					EvalEvaluation eval = (EvalEvaluation) iter.next();
 					//is this eval partial, in-queue, active or grace period?
 					if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState()) ||

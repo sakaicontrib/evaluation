@@ -133,6 +133,14 @@ public interface EvalAdhocSupport {
     * @return a list of adhoc groups for which this user has this permission
     */
    public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant);
+   
+   /**
+    * Get adhoc groups for a user
+    * 
+    * @param userId the internal user id (not username)
+    * @return a map of permission key and adhoc groups for which this user has that permission value
+    */
+   public Map<String, List<EvalAdhocGroup>> getAdhocGroupsByUser(String userId);
 
    /**
     * Check if a user has a specified permission/role within an adhoc group

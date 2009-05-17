@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.providers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -94,6 +95,15 @@ public interface EvalGroupsProvider {
 	 * @return a List of {@link EvalGroup} objects representing eval groups
 	 */
 	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission);
+	
+	/**
+	 * Get a list of all eval groups that a user can take an evaluation and be evaluated in,
+	 * eval groups are identified by a unique identifier (groupId)
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @return a Map of permission key and List of {@link EvalGroup} objects representing eval groups value
+	 */
+	public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId);
 
 	/**
     * <b>Note</b>: This is simply here for the sake of efficiency<br/>

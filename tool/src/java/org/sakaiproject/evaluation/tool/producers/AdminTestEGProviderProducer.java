@@ -18,8 +18,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
@@ -219,7 +221,21 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         UIOutput.make(tests3b, "test_result", collectionToString(l));
         total = new Date().getTime() - startTime;
         UIMessage.make(tests3b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
-
+        
+        UIBranchContainer tests3c = UIBranchContainer.make(tofill, "tests_list:", "getEvalGroupsForUser");
+        UIOutput.make(tests3c, "test_method", tests3c.localID);
+        startTime = new Date().getTime();
+        Map<String, List<EvalGroup>> map = evalGroupsProvider.getEvalGroupsForUser(userId);
+        total = new Date().getTime() - startTime;
+        l = map.get(EvalConstants.PERM_TAKE_EVALUATION);
+        if(l != null && !l.isEmpty())
+        	UIOutput.make(tests3c, "test_result", collectionToString(l));
+        
+        UIMessage.make(tests3c, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        l = map.get(EvalConstants.PERM_BE_EVALUATED);
+        if(l != null && !l.isEmpty())
+        	UIOutput.make(tests3c, "test_result", collectionToString(l));
+        
         UIBranchContainer tests4 = UIBranchContainer.make(tofill, "tests_list:", "countEvalGroupsForUser.PERM_BE_EVALUATED");
         UIOutput.make(tests4, "test_method", tests4.localID);
         startTime = new Date().getTime();

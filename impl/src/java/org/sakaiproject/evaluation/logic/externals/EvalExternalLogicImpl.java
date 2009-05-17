@@ -655,6 +655,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
       return l;
    }
+   
+   @SuppressWarnings("unchecked")
+   public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId) {
+	   Map<String, List<EvalGroup>> map = new HashMap<String, List<EvalGroup>>();
+	   map.put(EvalConstants.PERM_TAKE_EVALUATION, getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION));
+	   map.put(EvalConstants.PERM_BE_EVALUATED, getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED));
+	   return map;
+	}
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String)

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -649,28 +650,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       return l;
    }
    
-
-   /*
-    * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForInstructor(java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean)
-    */
-   public List<EvalEvaluation> getEvaluationsForInstructor(String userId) {
-	   List<EvalGroup> beEvaluatedGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
-	   
-	   String[] evalGroupIds = new String[beEvaluatedGroups.size()];
-	   for (int i=0; i<beEvaluatedGroups.size(); i++) {
-		   EvalGroup c = (EvalGroup) beEvaluatedGroups.get(i);
-		   evalGroupIds[i] = c.evalGroupId;
-	   }
-	   
-	   // get the evaluations
-	   List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, null, true, null, 0, 0 );
-   
-   	return evals;
-   }
-
-   
-
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
     */
@@ -686,43 +665,98 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       // get the evaluations
       List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
-
-      if (evals.size() > 0) {
-         // filter out taken/untaken if desired
-         if (untakenOnly != null) {
-            // create an array of the evaluation ids
-            Long[] evalIds = new Long[evals.size()];
-            for (int j = 0; j < evals.size(); j++) {
-               evalIds[j] = evals.get(j).getId();
-            }
-   
-            // now get the responses for all the returned evals
-            List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
-                  new String[] {"owner", "evaluation.id"}, 
-                  new Object[] {userId, evalIds});
-   
-            // Iterate through and remove the evals this user already took
-            for (int i = 0; i < l.size(); i++) {
-               Long evalIdTaken = l.get(i).getEvaluation().getId();
-               for (int j = 0; j < evals.size(); j++) {
-                  if (evalIdTaken.equals(evals.get(j).getId())) {
-                     if (untakenOnly) {
-                        // filter out the evaluations this user already took
-                        evals.remove(j);
-                     }
-                  } else {
-                     if (! untakenOnly) {
-                        // filter out the evaluations this user hasn't taken
-                        evals.remove(j);
-                     }
-                  }
-               }
-            }
-         }
-      }
-
+      filterEvaluations(userId, untakenOnly, evals);
       return evals;
    }
+ 
+   /**
+    * Filter evaluations taken/untaken
+    * 
+    * @param userId user identity
+    * @param untakenOnly if true include only the evaluations which have NOT been taken
+    * 					 if false include only evaluations which have already been taken
+    * 					 if null include all
+    * @param evals the list of evaluations to filter
+    */
+	private void filterEvaluations(String userId, Boolean untakenOnly,
+			List<EvalEvaluation> evals) {
+		if (evals.size() > 0) {
+	         // filter out taken/untaken if desired
+	         if (untakenOnly != null) {
+	            // create an array of the evaluation ids
+	            Long[] evalIds = new Long[evals.size()];
+	            for (int j = 0; j < evals.size(); j++) {
+	               evalIds[j] = evals.get(j).getId();
+	            }
+	   
+	            // now get the responses for all the returned evals
+	            List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
+	                  new String[] {"owner", "evaluation.id"}, 
+	                  new Object[] {userId, evalIds});
+	   
+	            // Iterate through and remove the evals this user already took
+	            for (int i = 0; i < l.size(); i++) {
+	               Long evalIdTaken = l.get(i).getEvaluation().getId();
+	               for (int j = 0; j < evals.size(); j++) {
+	                  if (evalIdTaken.equals(evals.get(j).getId())) {
+	                     if (untakenOnly) {
+	                        // include only the evaluations which have NOT been taken
+	                        evals.remove(j);
+	                     }
+	                  } else {
+	                     if (! untakenOnly) {
+	                        // include only evaluations which have already been taken
+	                        evals.remove(j);
+	                     }
+	                  }
+	               }
+	            }
+	         }
+	      }
+	}
+   
+   @SuppressWarnings("unchecked")
+   public Map<String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(
+			String userId, Boolean activeOnly, Boolean untakenOnly,
+			Boolean includeAnonymous) {
+	   
+	   Map<String, List<EvalEvaluation>> map = new HashMap<String, List<EvalEvaluation>>();
+	   String[] evalGroupIds = null;
+	   List<EvalEvaluation> evals = null;
+	   
+	   List<EvalGroup> groups = new ArrayList();
+	   Map<String, List<EvalGroup>> mapGroups = commonLogic.getEvalGroupsForUser(userId);
+	   groups.addAll(mapGroups.get(EvalConstants.PERM_TAKE_EVALUATION));
+	   
+	      evalGroupIds = new String[groups.size()];
+	      for (int i=0; i<groups.size(); i++) {
+	         EvalGroup c = (EvalGroup) groups.get(i);
+	         evalGroupIds[i] = c.evalGroupId;
+	      }
+	   
+	      // get the evaluations
+	      evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
+	      
+	      filterEvaluations(userId, untakenOnly, evals);
+	      map.put(EvalConstants.PERM_TAKE_EVALUATION, evals);
+	      
+	      groups.clear();
+	      groups.addAll(mapGroups.get(EvalConstants.PERM_BE_EVALUATED));
+	      
+	      evalGroupIds = new String[groups.size()];
+	      for (int i=0; i<groups.size(); i++) {
+	         EvalGroup c = (EvalGroup) groups.get(i);
+	         evalGroupIds[i] = c.evalGroupId;
+	      }
+	   
+	      // get the evaluations
+	      evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
+	      
+	      map.put(EvalConstants.PERM_BE_EVALUATED, evals);
+	
+	   // return a map with 2 keys EvalConstants.TAKE_EVALUATION and EvalConstants.BE_EVALUATED
+		return map;
+	}
 
 
    // CATEGORIES

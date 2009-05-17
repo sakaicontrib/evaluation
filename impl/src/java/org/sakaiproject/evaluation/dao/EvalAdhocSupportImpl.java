@@ -333,6 +333,20 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       }
       return groups;
    }
+   
+   @SuppressWarnings("unchecked")
+   public Map<String, List<EvalAdhocGroup>>  getAdhocGroupsByUser(String userId) {
+	   Map<String, List<EvalAdhocGroup>> map = new HashMap<String, List<EvalAdhocGroup>>();
+      List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         // passthrough to the dao method
+         groups = dao.getEvalAdhocGroupsByUserAndPerm(userId, EvalConstants.PERM_TAKE_EVALUATION);
+         map.put(EvalConstants.PERM_TAKE_EVALUATION, groups);
+         groups = dao.getEvalAdhocGroupsByUserAndPerm(userId, EvalConstants.PERM_BE_EVALUATED);
+         map.put(EvalConstants.PERM_BE_EVALUATED, groups);
+      }
+      return map;
+   }
 
    /**
     * Check if a user has a specified permission/role within an adhoc group

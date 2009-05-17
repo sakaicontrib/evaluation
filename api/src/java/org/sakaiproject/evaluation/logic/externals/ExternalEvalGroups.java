@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -79,6 +80,17 @@ public interface ExternalEvalGroups {
 	 * @return a List of {@link EvalGroup} objects
 	 */
 	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission);
+	
+	/**
+	 * Get a list of all eval groups that a user has a permission in
+	 * (use {@link #countEvalGroupsForUser(String, String)} if you just need the number)
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param permission a permission string constant
+	 * @return a Map of permission key and List of {@link EvalGroup} objects value
+	 */
+	public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId);
+
 
 	/**
 	 * Get a count of all contexts that a user has a specific permission in
