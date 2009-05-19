@@ -18,6 +18,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ELReference;
@@ -124,6 +125,10 @@ public class AdministrateProducer implements ViewComponentProducer {
       UIInternalLink.make(tofill, "control-reporting-toplink", 
             UIMessage.make("administrate.top.control.reporting"),
             new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
+
+        UIInternalLink.make(tofill, "control-administrate-search", 
+                UIMessage.make("administrate.top.control.search"),
+                new AdminSearchViewParameters(AdministrateSearchProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
             UIMessage.make("admintesteg.page.title"),
