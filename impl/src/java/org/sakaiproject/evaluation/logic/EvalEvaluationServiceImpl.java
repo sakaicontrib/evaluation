@@ -246,18 +246,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       if (! EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
          // only counting if the eval is not anonymous, anon is always 0 enrollments effectively
-          System.out.println(" --- countParticipantsForEval( " + evaluationId + " ) --- ");
-    	 long time0 = (new Date()).getTime();
-    	 long time1 = time0;
-    	 long elapsed = time1 - time0;
-    	 
-    	 
          Map<Long, List<EvalAssignGroup>> evalAssignGroups = getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
-         
-         time1 = (new Date()).getTime();
-         elapsed = time1 - time0;
-         time0 = time1;
-         System.out.println("               getAssignGroupsForEvals() == " + elapsed);
          
          List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
          for (int i=0; i<groups.size(); i++) {
@@ -266,12 +255,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             int enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
             totalEnrollments = totalEnrollments + enrollmentCount;
          }
-         
-         time1 = (new Date()).getTime();
-         elapsed = time1 - time0;
-         time0 = time1;
-         System.out.println("     for-loop countUserIdsForEvalGroup() == " + elapsed);
-         
      }
       return totalEnrollments;
    }
@@ -1112,7 +1095,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 			searchString = "%";
 		} else {
 			searchString = "%" + searchString + "%";
-}
+		}
 		Object[] values = new Object[]{searchString};
 		String[] props = new String[]{"title"};
 		int[] comparisons = new int[]{Restriction.LIKE};
