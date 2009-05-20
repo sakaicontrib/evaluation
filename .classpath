@@ -54,5 +54,7 @@
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/org/sakaiproject/generic-dao/0.9.8/generic-dao-0.9.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/db-impl"/>
+	<classpathentry kind="var" path="M2_REPO/org/sakaiproject/generic-dao/0.9.5/generic-dao-0.9.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/uk/org/ponder/rsfutil/rsfutil/0.7.2/rsfutil-0.7.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

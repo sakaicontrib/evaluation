@@ -42,6 +42,8 @@
                     </li>
                 </ul>
             </div>
+            <div rsf:id="msg=administrate.search.instruction" class="instruction">
+            </div>
             <div class="navPanel"> 
                 <div class="viewNav">
                     <form rsf:id="search-form">
@@ -51,10 +53,10 @@
 						<input rsf:id="search-text" type="submit" value="Search" />
                     </form>
                 </div>
-                <div class="listNav">
+                <div class="listNav listPager">
 					<!-- string for input in bundle as administrate.search.pager.label
 					Viewing {0}-{1} of total {3} -->
-					<span rsf:id="pager-count-message" class="instruction"> Viewing x-y of total n </span>
+					<span rsf:id="pager-count-message" class="listPagerCount"> Viewing x-y of total n </span>
                 	<a rsf:id="previous" href="#" title="Previous page" class="pagerButton">&lt;</a>
                 	<span rsf:id="no-previous">&lt;</span>
               		<a rsf:id="next" href="#" title="Next page" class="pagerButton">&gt;</a>
@@ -87,7 +89,7 @@
 					</thead>
 					<tbody>
 						<tr rsf:id="evalAdminList:">
-							<td header="item-title" align="left" width="40%">
+							<td header="item-title">
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
 								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
@@ -95,15 +97,15 @@
 							<td header="item-group-id">
 								<span rsf:id="evalAdminProviderId">Group Provider ID</span>
 							</td>
-							<td header="item-start-date" width="15%" nowrap="nowrap">
+							<td header="item-start-date" nowrap="nowrap">
 								<span rsf:id="evalAdminStartDate">09/07/2005</span>
 							</td>
-							<td header="item-due-date" width="15%" nowrap="nowrap">
+							<td header="item-due-date" nowrap="nowrap">
 								<span rsf:id="evalAdminDueDate">09/21/2005</span>
 							</td>
 						</tr>
 						<tr rsf:id="evalAdminList:">
-							<td header="item-title" align="left" width="40%">
+							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
 								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
@@ -111,15 +113,15 @@
 							<td header="item-group-id">
 								<span rsf:id="evalAdminProviderId">Group Provider ID</span>
 							</td>
-							<td header="item-start-date" width="15%" nowrap="nowrap">
+							<td header="item-start-date" nowrap="nowrap">
 								<span rsf:id="evalAdminStartDate">09/07/2005</span>
 							</td>
-							<td header="item-due-date" width="15%" nowrap="nowrap">
+							<td header="item-due-date" nowrap="nowrap">
 								<span rsf:id="evalAdminDueDate">09/21/2005</span>
 							</td>
 						</tr>
 						<tr rsf:id="evalAdminList:">
-							<td header="item-title" align="left" width="40%">
+							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
 								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
@@ -127,15 +129,15 @@
 							<td header="item-group-id">
 								<span rsf:id="evalAdminProviderId">Group Provider ID</span>
 							</td>
-							<td header="item-start-date" width="15%" nowrap="nowrap">
+							<td header="item-start-date" nowrap="nowrap">
 								<span rsf:id="evalAdminStartDate">09/07/2005</span>
 							</td>
-							<td header="item-due-date" width="15%" nowrap="nowrap">
+							<td header="item-due-date" nowrap="nowrap">
 								<span rsf:id="evalAdminDueDate">09/21/2005</span>
 							</td>
 						</tr>
 						<tr rsf:id="evalAdminList:">
-							<td header="item-title" align="left" width="40%">
+							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
 								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
@@ -143,10 +145,10 @@
 							<td header="item-group-id">
 								<span rsf:id="evalAdminProviderId">Group Provider ID</span>
 							</td>
-							<td header="item-start-date" width="15%" nowrap="nowrap">
+							<td header="item-start-date" nowrap="nowrap">
 								<span rsf:id="evalAdminStartDate">09/07/2005</span>
 							</td>
-							<td header="item-due-date" width="15%" nowrap="nowrap">
+							<td header="item-due-date" nowrap="nowrap">
 								<span rsf:id="evalAdminDueDate">09/21/2005</span>
 							</td>
 						</tr>
