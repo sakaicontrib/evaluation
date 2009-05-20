@@ -400,6 +400,7 @@ tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Auth
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/administrate_search.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
