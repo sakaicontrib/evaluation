@@ -30,7 +30,7 @@
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
-              emailTemplateWBL" />
+              emailTemplateWBL, administrateSearchBean" />
     </bean>
 
     <!-- allows us to identify entities used in OTP on the EL path,

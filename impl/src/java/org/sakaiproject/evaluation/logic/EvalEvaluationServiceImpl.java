@@ -39,6 +39,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
+import org.sakaiproject.genericdao.api.search.Order;
+import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 
 
@@ -1085,5 +1087,37 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          // add in any needed checks or change storage that is needed here
       }
    }
+
+
+	public int countEvaluations(String searchString) {
+		if(searchString == null || searchString.equals("")){
+			searchString = "%";
+		} else {
+			searchString = "%" + searchString + "%";
+}
+		Object[] values = new Object[]{searchString};
+		String[] props = new String[]{"title"};
+		int[] comparisons = new int[]{Restriction.LIKE};
+		Search search = new Search(props, values, comparisons);
+		return (int) this.dao.countBySearch(EvalEvaluation.class, search);
+	}
+
+
+	public List<EvalEvaluation> getEvaluations(String searchString,
+			String order, int startResult, int maxResults) {
+		if(searchString == null || searchString.equals("")){
+			searchString = "%";
+		} else {
+			searchString = "%" + searchString + "%";
+		}
+		Object[] values = new Object[]{searchString};
+		String[] props = new String[]{"title"};
+		int[] comparisons = new int[]{Restriction.LIKE};
+		Search search = new Search(props, values, comparisons);
+		search.addOrder(new Order(order));
+		search.setStart(startResult);
+		search.setLimit(maxResults);
+		return this.dao.findBySearch(EvalEvaluation.class, search );
+	}
 
 }

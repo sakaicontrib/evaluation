@@ -1027,6 +1027,12 @@ color: #555;
 	margin:0		
 }
 
+.listPager {color:#ccc;padding:0 3px;font-weight: bold;font-size:1.2em}
+.listPager a {text-decoration:none !important;padding: 0 1em;border:1px solid #ccc;background:#eee url(../images/pager-back.png) repeat-x !important}
+.listPager span {padding: 0 1em;border:1px solid #ccc;background:#fff}
+.listPager a:hover {text-decoration:none !important;padding: 0 1em;border:1px solid #bbb;background:#eee url(../images/pager-back-hover.png) repeat-x !important}
+.listPager span.listPagerCount{border:0;font-size:.8em}
+
 /* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
 	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
 	http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/
