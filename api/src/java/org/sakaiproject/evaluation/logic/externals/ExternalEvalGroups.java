@@ -86,7 +86,6 @@ public interface ExternalEvalGroups {
 	 * (use {@link #countEvalGroupsForUser(String, String)} if you just need the number)
 	 * 
 	 * @param userId the internal user id (not username)
-	 * @param permission a permission string constant
 	 * @return a Map of permission key and List of {@link EvalGroup} objects value
 	 */
 	public Map<String, List<EvalGroup>> getEvalGroupsForUser(String userId);

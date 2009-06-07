@@ -426,14 +426,18 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		Map<String, List<EvalAdhocGroup>> adhoc = new HashMap<String, List<EvalAdhocGroup>>();
 		adhoc = adhocSupportLogic.getAdhocGroupsByUser(userId);
 		List<EvalAdhocGroup> adhocT = adhoc.get(EvalConstants.PERM_TAKE_EVALUATION);
-		for (EvalAdhocGroup adhocGroup : adhocT) {
-			take.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
-					.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+		if(adhocT != null && !adhocT.isEmpty()) {
+			for (EvalAdhocGroup adhocGroup : adhocT) {
+				take.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
+						.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+			}
 		}
 		List<EvalAdhocGroup> adhocB = adhoc.get(EvalConstants.PERM_BE_EVALUATED);
-		for (EvalAdhocGroup adhocGroup : adhocB) {
-			be.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
-					.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+		if(adhocB != null && !adhocB.isEmpty()) {
+			for (EvalAdhocGroup adhocGroup : adhocB) {
+				be.add(new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup
+						.getTitle(), EvalConstants.GROUP_TYPE_ADHOC));
+			}
 		}
 		
 		// return a map with 2 keys EvalConstants.PERM_BE_EVALUATED and EvalConstants.PERM_TAKE_EVALUATION
