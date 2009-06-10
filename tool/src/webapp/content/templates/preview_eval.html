@@ -13,8 +13,13 @@
         <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 
 		<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
 		<script type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+		<script type="text/javascript"> 
+		$(document).ready(function() { 
+			$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+		}); 
+		</script> 
 	</head>
 
     <!-- supposedly firefox will not cache any pages with unload handlers -->

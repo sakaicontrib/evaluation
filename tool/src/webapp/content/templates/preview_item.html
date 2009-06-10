@@ -4,17 +4,13 @@
 	<head>
 		<title rsf:id="msg=previewitem.page.title">Preview item</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<!--		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-		<script src="../js/facebox/facebox.js" type="text/javascript"></script> 		
-        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>-->
-		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
 
 <script type="text/javascript"> 
  // prepare the form when the DOM is ready 
 $(document).ready(function() { 
 	jQuery.facebox.setHeader($(".portletBody .titleHeader"));
+	    $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
 }); 
 </script> 
 

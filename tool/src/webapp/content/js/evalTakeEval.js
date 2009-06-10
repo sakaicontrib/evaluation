@@ -2,7 +2,7 @@
  * For the takeEval and preview views
  */
 $(document).ready(function() {
-
+    $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
     var instrSel = $('div[@rel=evalinstructorSelector]');
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
