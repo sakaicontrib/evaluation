@@ -4,72 +4,24 @@
  */
 
 (function($) {
-    $.fn.evalComment = function() {
-        init($(this));
-    };
     //Private variable and  functions
-    var truncateLength = 70;   //Customise this if need be
-    function init(that) {
-        that.each(function() {
-            //populate init Fn-scope DOM variables
-            var commentHolder = $(this), isSelectionMade = false,
-                    dom = {
-                        commentHolder: commentHolder,
-                        showLink: commentHolder.find("a.JSshow"),
-                        editLink: commentHolder.find("a.JSedit"),
-                        hideLink: commentHolder.find("a.JShide"),
-                        textarea: commentHolder.find("textarea"),
-                        commentTruncated: commentHolder.find("span.JScommentTruncated"),
-                        commentLabel: commentHolder.find("span.JSlabel"),
-                        //if li:eq(0) doesn't return an object, we are in an item preview
-                        questionHolder: commentHolder.parents("li:eq(0)").length === 0 ? commentHolder.parents("div.highlightPanel:eq(0)") : commentHolder.parents("li:eq(0)"),
-                        warn: commentHolder.find("span.JSwarn")
-                    };
-            //Set listeners for any question item response activity and toggle comment controls - EVALSYS-628
 
-            dom.questionHolder.find("input").each(function() {
-                if (this.checked) {
-                    isSelectionMade = true;
-                }
-                $(this).bind("click", function() {
-                    //Only items with checkboxes or radio buttions are supported.
-                    if (dom.questionHolder.find("input:checked").length == 1) {
-                        //Activate comment controls
-                        enable(dom);
-                    } else if (dom.questionHolder.find("input:checked").length == 0) {
-                        //De-activate comment controls
-                        disable(dom);
-                    }
-                });
-            });
-
-            //Question has an answer (possibly a comment too), so activate comment controls
-            if (isSelectionMade && dom.textarea.val().length > 0) {
-                enable(dom);
-                dom.hideLink.trigger('click');
-            } else if (isSelectionMade) {
-                enable(dom);
-            } else {
-                disable(dom);
-            }
-        });
+    function truncate(dom, str) {
+        if (str.length > dom.truncateLength) {
+            return ( ( str.substring(0, dom.truncateLength).replace(/\w+$/, '') ) + " ..."  );
+        }
+        return str;
     }
 
     //Deal with existing comments
     function hideComment(dom) {
-        var truncatedComment = truncate(dom.textarea.val());//Truncate the comment and update Dom
+        var truncatedComment = truncate(dom, dom.textarea.val());//Truncate the comment and update Dom
         dom.showLink.hide();
         dom.commentLabel.fadeIn("fast");
         dom.editLink.fadeIn("fast");
         dom.commentTruncated.text(truncatedComment).fadeIn("fast"); //add truncated comment to DOM
     }
 
-    function truncate(str) {
-        if (str.length > truncateLength) {
-            return ( ( str.substring(0, truncateLength).replace(/\w+$/, '') ) + " ..."  );
-        }
-        return str;
-    }
 
     function resizeFrame(updown) {
         try {
@@ -144,4 +96,55 @@
         });
 
     }
-})($);
+
+    function init(that) {
+        that.each(function() {
+            //populate init Fn-scope DOM variables
+            var commentHolder = $(this), isSelectionMade = false,
+                    dom = {
+                        truncateLength: 70,   //Customise this if need be
+                        commentHolder: commentHolder,
+                        showLink: commentHolder.find("a.JSshow"),
+                        editLink: commentHolder.find("a.JSedit"),
+                        hideLink: commentHolder.find("a.JShide"),
+                        textarea: commentHolder.find("textarea"),
+                        commentTruncated: commentHolder.find("span.JScommentTruncated"),
+                        commentLabel: commentHolder.find("span.JSlabel"),
+                        //if li:eq(0) doesn't return an object, we are in an item preview
+                        questionHolder: commentHolder.parents("li:eq(0)").length === 0 ? commentHolder.parents("div.highlightPanel:eq(0)") : commentHolder.parents("li:eq(0)"),
+                        warn: commentHolder.find("span.JSwarn")
+                    };
+            //Set listeners for any question item response activity and toggle comment controls - EVALSYS-628
+
+            dom.questionHolder.find("input").each(function() {
+                if (this.checked) {
+                    isSelectionMade = true;
+                }
+                $(this).bind("click", function() {
+                    //Only items with checkboxes or radio buttions are supported.
+                    if (dom.questionHolder.find("input:checked").length === 1) {
+                        //Activate comment controls
+                        enable(dom);
+                    } else if (dom.questionHolder.find("input:checked").length === 0) {
+                        //De-activate comment controls
+                        disable(dom);
+                    }
+                });
+            });
+
+            //Question has an answer (possibly a comment too), so activate comment controls
+            if ( isSelectionMade && dom.textarea.val().length > 0 ) {
+                enable(dom);
+                dom.hideLink.trigger('click');
+            } else if (isSelectionMade) {
+                enable(dom);
+            } else {
+                disable(dom);
+            }
+        });
+    }
+    $.fn.evalComment = function() {
+            init($(this));
+        };
+
+})(jQuery);
