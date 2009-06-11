@@ -704,3 +704,7 @@ background-repeat : no-repeat !important;
      text-align:center;
 
 }
+/* Comment box warn */
+.commentWarn {
+    color:#DD9933
+}
