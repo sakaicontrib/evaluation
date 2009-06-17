@@ -186,6 +186,7 @@ tool/maven.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 tool/project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 tool/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/AdministrateSearchBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalToolConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -225,6 +226,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProd
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateSearchProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+URL+Id
@@ -297,6 +299,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/utils/RenderingUtils.java svn_key
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RootHandlerBeanOverride.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdhocGroupParams.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminSearchViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BaseViewParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -453,6 +456,7 @@ tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_k
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_email.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/administrate_search.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id

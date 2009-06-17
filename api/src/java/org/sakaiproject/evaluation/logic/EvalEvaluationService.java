@@ -496,8 +496,6 @@ public interface EvalEvaluationService {
      */
     public boolean canModifyResponse(String userId, Long responseId);
 
-
-
     // EMAIL TEMPLATES
 
     /**
@@ -567,5 +565,24 @@ public interface EvalEvaluationService {
      * @return true if the user can control the email template at this time, false otherwise
      */
     public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId);
+
+	/**
+	 * Access a count of the number of evaluations in which the search string appears in the title.
+	 * @param searchString
+	 * @return
+	 */
+	public int countEvaluations(String searchString);
+
+	/**
+	 * Access a subset of all evaluations in which the search string appears in the title.
+	 * Results will be returned in ascending order by the field specified in the order parameter.
+	 * @param searchString
+	 * @param order
+	 * @param startResult
+	 * @param maxResults
+	 * @return
+	 */
+	public List<EvalEvaluation> getEvaluations(String searchString,
+			String order, int startResult, int maxResults);
 
 }

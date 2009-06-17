@@ -55,6 +55,10 @@
         <property name="messages" ref="targettedMessageList" />
     </bean>
 
+    <bean id="administrateSearchBean" 
+    		class="org.sakaiproject.evaluation.tool.AdministrateSearchBean">
+    </bean>
+
         <!-- DO NOT USE SAKAI SERVICES DIRECTLY -->
 <!-- 
     <bean id="importBean" class="org.sakaiproject.evaluation.tool.ImportBean">
@@ -228,6 +232,19 @@
         class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateSearchProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evalBeanUtils"
+            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
     </bean>
 
     <bean

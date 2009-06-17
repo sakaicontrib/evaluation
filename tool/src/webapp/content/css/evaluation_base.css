@@ -708,3 +708,124 @@ background-repeat : no-repeat !important;
 .commentWarn {
     color:#DD9933
 }
+.validFail{
+ /* top parent of failed group 
+   can have a border, for example, or just style children below
+  */
+}
+.validFail .label{
+	color:#b11;
+	font-weight:bold;
+}
+.validFail label{
+	color:#000 !important;
+	
+}
+
+
+.validFailGlyph{
+	display:none; /* do not show if not child of .validFail */
+}
+.validFail .validFailGlyph{
+	display:inline;
+	color:#b11;
+	font-weight:bold;
+	font-size:100%;
+	padding:0;
+}
+.itemListReport ol{
+	list-style: none;
+	margin:0;
+	padding:0	
+}
+.itemListReport .showcomments, .itemListReport .showtextresponses{
+	margin: 1em;
+	color:#666;
+	margin-left:3.5%
+}
+.itemListReport .showcomments  ol, .itemListReport .showtextresponses ol{
+	list-style: lower-alpha; list-style-position: outside;line-height:150%
+}
+.itemListReport .showcomments  ol li, .itemListReport .showtextresponses ol li{
+	padding:.4em
+}
+.itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine{
+	background:#fff
+}
+
+.messageAlert{
+		background: #FFEEEE url(../images/exclamation.gif) 5px 7px no-repeat;
+		border:1px solid #FF5555;
+		color:#FF5555;
+		margin:.5em 0;
+}
+.messageInformation{
+		background: #ffe url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
+		border:1px solid #EEBB44;
+		color:#d93;
+		margin:.5em 0;
+}
+.messageComfirm{
+		background: #EEFFBB url(../images/accept.gif) 5px 7px no-repeat;
+		border:1px solid #CCEE66;
+		color:#779900;		
+		margin:.5em 0;
+}
+.messageAlert ul, .messageInformation ul, .messageComfirm ul {
+	list-style: none;
+	padding:3px;
+	margin:0;
+}
+.messageAlert ul li, .messageInformation ul li, .messageComfirm ul li {
+	padding:2px 0 2px 2em;
+	margin:0		
+}
+
+.listPager {color:#ccc;padding:0 3px;font-weight: bold;font-size:1.2em}
+.listPager a {text-decoration:none !important;padding: 0 1em;border:1px solid #ccc;background:#eee url(../images/pager-back.png) repeat-x !important}
+.listPager span {padding: 0 1em;border:1px solid #ccc;background:#fff}
+.listPager a:hover {text-decoration:none !important;padding: 0 1em;border:1px solid #bbb;background:#eee url(../images/pager-back-hover.png) repeat-x !important}
+.listPager span.listPagerCount{border:0;font-size:.8em}
+
+/* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
+	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
+	http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/
+/*
+.fullDisplayHorizontal ul{
+	padding:0 0 2em  0;
+	margin:1em 0;
+	clear:both;
+	float:none;
+	height:100%;
+	overflow:hidden;
+}
+.fullDisplayHorizontal  ul li{
+	padding:0;
+	margin:2px 0 ;
+	list-style: none !important;
+	float:left;
+	height:2.6em;
+	width:30%;
+}
+.fullDisplayHorizontal  ul li input{
+	display:block;
+	float:left;
+	margin-top:.55em
+}
+.fullDisplayHorizontal ul li  label{
+	padding:2px;
+	background:#ffe;
+	width:70%;
+	border:1px solid #ffb;
+	display:block;
+	float:left;
+}
+.fullDisplayHorizontal ul li  label:hover{
+	background:#ffe;
+	border:1px solid #ee9;
+	
+}
+.fullDisplayHorizontal .na{
+	margin:1em .2em;
+}*/
+
