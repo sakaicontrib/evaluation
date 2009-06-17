@@ -1357,4 +1357,50 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     }
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluations(java.lang.String)}.
+	 */
+	public void testCountEvaluations()
+	{
+		//System.out.println("\n\n\n=========================\n\n testCountEvaluations \n\n=========================\n\n\n");
+		String searchString01 = "Eval";
+		int count01 = this.evaluationService.countEvaluations(searchString01);
+		assertEquals(10,count01);
+		
+		String searchString02 = "active";
+		int count02 = this.evaluationService.countEvaluations(searchString02);
+		assertEquals(2,count02);
+		
+		String searchString03 = "No evaluation found";
+		int count03 = this.evaluationService.countEvaluations(searchString03);
+		assertEquals(0,count03);
+		
+		
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluations(java.lang.String, java.lang.String, int, int)}.
+	 */
+	public void testGetEvaluations()
+	{
+		//System.out.println("\n\n\n=========================\n\n testGetEvaluations \n\n=========================\n\n\n");
+		String searchString = "Eval";
+		String order = "title";
+		
+		List<EvalEvaluation> list01 = this.evaluationService.getEvaluations(searchString, order, 0, 5);
+		assertEquals(5, list01.size());
+		
+		List<EvalEvaluation> list02 = this.evaluationService.getEvaluations(searchString, order, 4, 5);
+		assertEquals(5, list02.size());
+		
+		List<EvalEvaluation> list03 = this.evaluationService.getEvaluations(searchString, order, 8, 5);
+		assertEquals(2, list03.size());
+		
+		List<EvalEvaluation> list04 = this.evaluationService.getEvaluations(searchString, order, 0, 25);
+		assertEquals(10, list04.size());
+
+		List<EvalEvaluation> list05 = this.evaluationService.getEvaluations(searchString, order, 4, 25);
+		assertEquals(6, list05.size());
+	}
+
 }

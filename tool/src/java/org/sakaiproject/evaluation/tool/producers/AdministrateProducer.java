@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ELReference;
@@ -104,10 +105,13 @@ public class AdministrateProducer implements ViewComponentProducer {
                 UIMessage.make("controlevaluations.page.title"), 
                 new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
         }
-
         UIInternalLink.make(tofill, "control-templates-link",
                 UIMessage.make("controltemplates.page.title"), 
                 new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-administrate-search", 
+                UIMessage.make("administrate.top.control.search"),
+                new AdminSearchViewParameters(AdministrateSearchProducer.VIEW_ID));
+
 
         if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
             UIInternalLink.make(tofill, "control-items-link",
