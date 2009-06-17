@@ -21,6 +21,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         itemType: 'block',
         text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
     });
+    //$.facebox.defaults.objToUpdate	= null; //this is to store the parent element of item being edited to update after an edit via ajax
     $('a[rel=facebox]').facebox();
     $('a[rel=faceboxGrid]').facebox();
     $('a.addItem[rel=faceboxAddGroupItems]').click(function() {
@@ -256,7 +257,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
 
 function submitForm(form, textarea, target, btn) {
-    var rowId = $(jQuery.facebox.defaults.objToUpdate).attr("id");
+    evalTemplateData.postFCKform(form, textarea, target, btn);
+
+    /*var rowId = $(jQuery.facebox.defaults.objToUpdate).attr("id");
     var thisRow = $(document).find("[id=" + rowId + "]");
     var img = '<img src="/library/image/sakai/spinner.gif"/>';
     var templateItemId = $(form).find('input[@name*=templateItemId]').attr('value');
@@ -356,7 +359,7 @@ function submitForm(form, textarea, target, btn) {
         }
     });
 
-
+*/
 }
 
 function truncateTextDo(string, number) {
