@@ -342,7 +342,13 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          // passthrough to the dao method
          take = dao.getEvalAdhocGroupsByUserAndPerm(userId, EvalConstants.PERM_TAKE_EVALUATION);
+         if(take == null) {
+        	 take = new ArrayList<EvalAdhocGroup>(0);
+         }
          be = dao.getEvalAdhocGroupsByUserAndPerm(userId, EvalConstants.PERM_BE_EVALUATED);
+         if(be == null) {
+        	 be = new ArrayList<EvalAdhocGroup>(0);
+         }
       }
       map.put(EvalConstants.PERM_TAKE_EVALUATION, take);
       map.put(EvalConstants.PERM_BE_EVALUATED, be);
