@@ -12,6 +12,7 @@
             src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
     <script rsf:id="js-jquery" type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script>
+    <script rsf:id="js-jquery" type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>
 
     <script type="text/javascript">
        // prepare the form when the DOM is ready
@@ -43,7 +44,7 @@
                     }
                 };
                 $.facebox.setHeader($(".portletBody .titleHeader"));
-                $.facebox.grow();
+                evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
                 $('#basic-form').ajaxForm(o);
                 $('input.cancelButtonLightbox').bind("click", function() {
                     $(document).trigger('close.facebox');
@@ -112,8 +113,7 @@
         <p class="act">
             <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active"/>
             <input type="button" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x"/>
-            <input type="button" value="Cancel" class="cancelButtonLightbox" rsf:id="cancel-button-lightbox"
-                   accesskey="x"/>
+            <input type="button" value="Cancel" class="cancelButtonLightbox" rsf:id="cancel-button-lightbox" accesskey="x" rel="closeLightBox"/>
         </p>
     </form>
 

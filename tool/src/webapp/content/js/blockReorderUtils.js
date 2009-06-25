@@ -6,7 +6,7 @@ $(document).ready(
 	function () {
         var siteId = $('#site-id').text();
         SakaiProject.fckeditor.initializeEditor("item-text", siteId);		
-		$.facebox.grow();
+        evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
 		$.facebox.setHeader($(".titleHeader"));
 		
 		//$('#blockForm').ajaxForm();
@@ -20,7 +20,7 @@ $(document).ready(
 				childIdList.push($(this).val());
 			});	
 			$("#ordered-child-ids").val(childIdList.toString());
-			submitForm('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
+			evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
 		});
 		
 		function $it(id) {
@@ -140,63 +140,3 @@ $(document).ready(
 		);*/
 	}
 );
-
-function submitF(){  
-					//submitForm('#blockForm', 'item-text:1:input', 'modify_block');
-				//var rowId = $(jQuery.facebox.settings.objToUpdate).attr("id");
-				//var thisRow = $(document).find("[id=" + rowId + "]");	
-				alert('sdaf');
-				return false;
-				var d = $('#blockForm').formToArray();
-				var textarea = 'item-text:1:input';
-				var fckVal = function(){
-					if (FCKeditorAPI) {
-						return FCKeditorAPI.GetInstance(textarea).GetHTML(); //Actual editor textarea value
-					}
-					else {
-						alert('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
-						return false;
-					}
-				}	
-				//iterate through returned formToArray elements and replace input value with editor value
-				for (var i = 0; i < d.length; i++) {
-					if ($(d[i]).attr('name') == textarea) {
-						$(d[i]).attr('value',fckVal);
-					}
-				}
-				$.ajax({
-					type: 'POST',
-					url: 'modify_block',
-					data: d,
-					dataType: "html",
-					beforeSend: function(){	
-					//$(thisRow).html('<div class="loading">Refreshing...<img src="/library/image/sakai/spinner.gif"/></div>');
-					//$("#facebox .results").html('<div class="loading">Saving...<img src="/library/image/sakai/spinner.gif"/></div>');
-					//console.log(target + "   -   "+ d);
-					alert('yes!');
-					},
-					error: function(rq, status, e){
-						alert(rq.responseText);
-						alert(status);
-						alert(e);
-						
-					},
-					success: function(msg){
-						return false;/*$(document).trigger('close.facebox');
-						var messageInformation = $(msg).find(".messageInformation").parent().text();
-						var newRowVal = $(msg).find("[id=" + rowId + "]").html();
-						$(thisRow).html(newRowVal);
-						$(thisRow).find(".itemType").append('<span class="highlight">' + messageInformation + '!</span>');
-						if (target == "modify_item") {
-							$(".itemTable").html($(msg).find("#itemTable").html());
-						}
-						$(thisRow).before('<a name="popUpTop"></a>');
-						window.location.href = "#popUpTop"			
-						$('a[name*=popUpTop]').remove();			
-						$('a[rel*=facebox]').facebox();
-						$('a[rel*=remove]').itemRemove();
-						startSort();*/
-						alert('yes!');
-					}
-				});
-     			}

@@ -2,12 +2,31 @@
 // @author lovemore.nalube@uct.ac.za
 
 var evalTemplateUtils = (function() {
-    //private data
 
     //Configurable variables
     var canDebug = true,
-            canDebugLevels = "info,debug,warn,error",
+            canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml" ;
+    //private data
+
+    function resizeFrame(updown, height) {
+        var _height = typeof height == "undefined" ? 280 : Number(height) + 40,
+                frame = parent.document.getElementById(window.name),
+                clientH = "";
+        try {
+            if (frame) {
+                if (updown === -1) {
+                    clientH = document.body.clientHeight - _height;
+                }
+                else {
+                    clientH = document.body.clientHeight + _height;
+                }
+                $(frame).height(clientH);
+            }
+        } catch(e) {
+            evalTemplateUtils.debug.error("Frame resize did not work. Error: %o", e, e);
+        }
+    }
 
     //public data
     return {
@@ -15,6 +34,12 @@ var evalTemplateUtils = (function() {
             getTemplateItemURL: function(id) {
                 return entityTemplateItemURL.replace(":ID:", id);
             }
+        },
+        frameGrow: function(height) {
+            resizeFrame(1, height);
+        },
+        frameShrink: function(height) {
+            resizeFrame(-1, height);
         },
         debug: {
             info : function() {
