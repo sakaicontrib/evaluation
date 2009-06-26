@@ -49,7 +49,7 @@ var evalTemplateData = (function() {
                 $('#facebox input').each(function() {
                     $(this).attr('disabled', 'disabled');
                 });
-                $("option").each(function(){
+                $("#facebox option").each(function(){
                     this.disabled = true;
                 });
                 fckEditor.EditorDocument.body.disabled = true;

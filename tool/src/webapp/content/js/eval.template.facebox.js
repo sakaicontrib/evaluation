@@ -67,11 +67,17 @@ var evalTemplateFacebox = (function() {
             //restore left css value
             $('#facebox').css('left', fbCssLeft);
             evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
+            //bind event handler for FB form buttons
+            //bind the close button
+            $('#facebox .close').unbind('click');
+            $('#facebox .close').bind('click', function() {
+                $.facebox.close();
+            });
         };
 
         $.facebox.close = function() {
             origionalFBfunctions.close();
-            evalTemplateUtils.debug.info("calling stiff");
+            evalTemplateUtils.debug.info("closing facebox");
             evalTemplateUtils.frameShrink(0); //TODO: find a suitable height
             evalTemplateFacebox.fbResetClasses();
             $('#facebox table').attr('width', 700);
@@ -114,12 +120,33 @@ var evalTemplateFacebox = (function() {
             if ($("#facebox .titleHeader").length > 0) {
                 $("#facebox .titleHeader").remove();
             }
+        },
+        addItem: function(url){
+            //Unbind current reveal event
+                    $(document).unbind('reveal.facebox');
+            //Check for after load type of event to call
+                var pageType = undefined,
+                        revealFunction;
+                pageType = evalTemplateUtils.getPageType(url);
+                if (typeof pageType !== "undefined") {
+                    //Bind new reveal event
+                    if (pageType === evalTemplateUtils.pages.modify_item) {
+                        revealFunction = evalTemplateLoaderEvents.modify_item;
+                    }else if (pageType === evalTemplateUtils.pages.modify_template) {
+                        revealFunction = evalTemplateLoaderEvents.modify_template;
+                    }
+                    $(document).bind('reveal.facebox', function() {
+                        if (typeof revealFunction !== "undefined"){
+                            revealFunction();
+                        }
+                    });
+                }
+            $.facebox({ajax: url});
         }
     };
 
 
-})
-        ($);
+})($);
 
 /*This is a fix for the Interface Highlight compatibility bug [added by lovemore.nalube@uct.ac.za]
  * see http://groups.google.com/group/jquery-en/browse_thread/thread/d094a3f299055a99
@@ -128,18 +155,37 @@ var evalTemplateFacebox = (function() {
     $.dequeue = function(a, b) {
         return $(a).dequeue(b);
     };
-})(jQuery);
+})($);
 
 /**
- attributes with the rel=faceboxGrid have pre-click events attached to them
+ links with the rel=faceboxGrid have pre-click events attached to them
  **/
 
 (function($) {
     function setPreClick(that) {
         that.each(function() {
             $(this).bind('click', function() {
-                evalTemplateFacebox.fbResetClasses();
-                if ($(this).attr("rel") == "faceboxGrid") {
+                 //Unbind current reveal event
+                    $(document).unbind('reveal.facebox');
+                //Check for after load type of event to call
+                var pageType = undefined,
+                        revealFunction;
+                pageType = evalTemplateUtils.getPageType(this.href);
+                if (typeof pageType !== "undefined") {
+                    //Bind new reveal event
+                    if (pageType === evalTemplateUtils.pages.modify_item) {
+                        revealFunction = evalTemplateLoaderEvents.modify_item;
+                    }else if (pageType === evalTemplateUtils.pages.modify_template) {
+                        revealFunction = evalTemplateLoaderEvents.modify_template;
+                    }
+                    $(document).bind('reveal.facebox', function() {
+                        if (typeof revealFunction !== "undefined"){
+                            revealFunction();
+                        }
+                    });
+                }
+                if ($(this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template) {
+                    evalTemplateFacebox.fbResetClasses();
                     $(this).parent().parent().parent().parent().attr("class", "editing");
                     $.facebox.settings.elementToUpdate = $(this).parent().parent().parent();
                 }
@@ -152,4 +198,4 @@ var evalTemplateFacebox = (function() {
     $.fn.faceboxGrid = function() {
         setPreClick($(this));
     };
-})(jQuery);
+})($);

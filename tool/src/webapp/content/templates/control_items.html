@@ -20,7 +20,9 @@
 	   	$(document).ready(function(){
 			$('a[@rel=facebox]').facebox();
 			$('form.inlineForm').ajaxForm({
-				success: function(data) {$.facebox(data);}
+				success: function(data) {
+                            $.facebox(data);
+                        }
 				});
 		});
 		

@@ -252,7 +252,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                         params += '&templateId=' + t.attr('templateid');
                         params += '&command+link+parameters%26el-binding%3Dj%2523%257BtemplateBBean.blockId%257Dnew1%26el-binding%3Dj%2523%257BtemplateBBean.templateItemIds%257D' + ordering.toString() + '%26el-binding%3Dj%2523%257BtemplateBBean.originalDisplayOrder%257D2%26Submitting%2520control%3DsaveBlockAction%26Fast%2520track%2520action%3DtemplateBBean.saveBlockItemAction=Save+item';
                         $.ajax({
-                            url: "modify_block",
+                            url: "modify_template",
                             data: params,
                             type: "POST",
                             success: function(d) {

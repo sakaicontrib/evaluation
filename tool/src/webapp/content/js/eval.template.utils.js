@@ -3,23 +3,23 @@
 
 var evalTemplateUtils = (function() {
 
-    //Configurable variables
-    var canDebug = true,
+    //Configurable private variables
+    var canDebug = false,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
-            entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml" ;
-    //private data
-
+            entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
+            pagesLoadedByFBwithJs = [];
+   
     function resizeFrame(updown, height) {
-        var _height = typeof height == "undefined" ? 280 : Number(height) + 40,
+        var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
                 frame = parent.document.getElementById(window.name),
                 clientH = "";
         try {
             if (frame) {
                 if (updown === -1) {
-                    clientH = document.body.clientHeight - _height;
+                    clientH = document.body.clientHeight - thisHeight;
                 }
                 else {
-                    clientH = document.body.clientHeight + _height;
+                    clientH = document.body.clientHeight + thisHeight;
                 }
                 $(frame).height(clientH);
             }
@@ -60,11 +60,6 @@ var evalTemplateUtils = (function() {
             }
         },
         init: function() {
-
-
-
-
-
             // Debugging. Acts on Firebug console methods described at http://getfirebug.com/console.html
             if (canDebug && typeof console !== "undefined") {
                 if (typeof console.info !== "undefined" && canDebugLevels.search(/info/i) !== -1) {
@@ -92,6 +87,29 @@ var evalTemplateUtils = (function() {
                     evalTemplateUtils.debug.timeEnd = console.timeEnd;
                 }
             }
+        },
+        pages: {
+                modify_item: "modify_item",
+                modify_template: "modify_template"
+            },
+        getPageType: function(url){
+            evalTemplateUtils.debug.group("Getting the page type/name");
+            var pageType = undefined,
+                    i = 0,
+                    regExp = null;
+            pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item, evalTemplateUtils.pages.modify_template ];
+            evalTemplateUtils.debug.debug("Pages supported are %s", pagesLoadedByFBwithJs.toString());
+            for ( i in pagesLoadedByFBwithJs){
+                if ( typeof pageType == "undefined" ){
+                    regExp = new RegExp(pagesLoadedByFBwithJs[i]);
+                    evalTemplateUtils.debug.debug("Checking url against page filter %s and regExp %o", pagesLoadedByFBwithJs[i], regExp);
+                    pageType =  ( url.search(regExp) !== -1 ) ? pagesLoadedByFBwithJs[i] : undefined ;
+                    evalTemplateUtils.debug.debug("Page type is %s", pageType);
+                }
+            }
+            evalTemplateUtils.debug.info("Page type found as: %s", pageType);
+            evalTemplateUtils.debug.groupEnd();
+            return pageType;
         }
     };
 

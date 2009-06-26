@@ -377,7 +377,6 @@ tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text
 tool/src/webapp/content/js/SakaiRSFWidgets.js -text
 tool/src/webapp/content/js/SakaiTableRenderer.js -text
-tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
