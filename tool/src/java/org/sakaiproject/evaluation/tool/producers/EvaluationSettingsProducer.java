@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.RSFUtils;
+import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -65,6 +66,7 @@ import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -192,9 +194,17 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             // creating a new eval
             UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
         }
-
-
+      
         UIForm form = UIForm.make(tofill, "evalSettingsForm");
+
+        if(evalViewParams.returnToSearchResults) {
+      	  form.parameters.add(new UIELBinding(actionBean + "returnToSearchResults", Boolean.TRUE));
+      	  form.parameters.add(new UIELBinding(actionBean + "adminSearchString", evalViewParams.adminSearchString));
+      	  form.parameters.add(new UIELBinding(actionBean + "adminSearchPage", new Integer(evalViewParams.adminSearchPage)));
+      	  //RSFUtil.addResultingViewBinding(form, "returnToSearchResults", "#{" + actionBean + "returnToSearchResults}");
+      	  RSFUtil.addResultingViewBinding(form, "searchString", "#{" + actionBean + "adminSearchString}");
+      	  RSFUtil.addResultingViewBinding(form, "page", "#{" + actionBean + "adminSearchPage}");
+        }
 
         // REOPENING eval (SPECIAL CASE)
         Date reOpenDueDate = null;
@@ -534,7 +544,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
     }
 
-
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
      */
@@ -550,6 +559,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             result.resultingView = new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evalId);
         } else if ("controlEvals".equals(actionReturn)) {
             result.resultingView = new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID);
+        } else if ("adminSearch".equals(actionReturn)) {
+      	  result.resultingView = new AdminSearchViewParameters(AdministrateSearchProducer.VIEW_ID, evp.adminSearchString, evp.adminSearchPage);
         }
     }
 
