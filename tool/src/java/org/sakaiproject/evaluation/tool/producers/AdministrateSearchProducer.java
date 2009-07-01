@@ -44,6 +44,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -170,7 +171,9 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 		RSFUtil.addResultingViewBinding(searchForm, "searchString", "#{administrateSearchBean.searchString}");
 		UICommand.make(searchForm, "search-text", 
 				UIMessage.make("administrate.search.submit.title"), 
-		"administrateSearchBean.processSearch");
+				"administrateSearchBean.processSearch");
+		searchForm.parameters.add(new UIELBinding("administrateSearchBean.page", 0));
+		RSFUtil.addResultingViewBinding(searchForm, "page", "#{administrateSearchBean.page}");
 
 		// this is search by title sorted in ascending order by title
 		// other possible search fields or sorts: type, owner, termId, startDate, dueDate, stopDate, 
