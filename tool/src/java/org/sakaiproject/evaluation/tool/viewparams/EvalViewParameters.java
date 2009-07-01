@@ -44,7 +44,24 @@ public class EvalViewParameters extends BaseViewParameters {
     * Set to true if we are reopening this evaluation
     */
    public boolean reOpening = false;
+   
+   /** 
+    * Whether to navigate to administrate_search view after saving settings
+    */
+   public boolean returnToSearchResults = false;
 
+   /** 
+    * The value of searchString needed by AdministrateSearchProducer.fillCommponents() 
+    * to restore administrate_search view after saving settings
+    */
+   public String adminSearchString = null;
+
+   /** 
+    * The value of page needed by AdministrateSearchProducer.fillCommponents() 
+    * to restore administrate_search view after saving settings
+    */ 
+   public int adminSearchPage = 0;
+   
    public EvalViewParameters() { }
 
    public EvalViewParameters(String viewID, Long evaluationId) {

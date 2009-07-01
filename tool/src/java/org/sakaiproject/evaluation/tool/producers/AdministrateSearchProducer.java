@@ -235,9 +235,13 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
 								UIMessage.make("administrate.search.list.preview"),
 								new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
+					EvalViewParameters newviewparams = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId());
+					newviewparams.returnToSearchResults = true;
+					newviewparams.adminSearchString = searchString;
+					newviewparams.adminSearchPage = page;
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
 								UIMessage.make("administrate.search.list.revise"),
-								new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId()));
+								newviewparams );
 					
 					Map<Long, List<EvalAssignGroup>> map = this.evaluationService.getAssignGroupsForEvals(new Long[]{eval.getId()}, false, false);
 					List<EvalAssignGroup> list = map.get(eval.getId());

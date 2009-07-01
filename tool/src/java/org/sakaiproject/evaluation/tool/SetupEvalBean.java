@@ -81,6 +81,23 @@ public class SetupEvalBean {
      */
     public boolean reOpening = false;
 
+    /** 
+     * Whether to navigate to administrate_search view after saving settings
+     */
+    public boolean returnToSearchResults = false;
+
+    /** 
+     * The value of searchString needed by AdministrateSearchProducer.fillCommponents() 
+     * to restore administrate_search view after saving settings
+     */
+    public String adminSearchString = null;
+
+    /** 
+     * The value of page needed by AdministrateSearchProducer.fillCommponents() 
+     * to restore administrate_search view after saving settings
+     */ 
+    public int adminSearchPage = 0;
+    
     /**
      * the selected groups ids to bind to this evaluation when creating it
      */
@@ -286,7 +303,9 @@ public class SetupEvalBean {
 
         EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
         String destination = "controlEvals";
-        if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+        if(this.returnToSearchResults) {
+        	destination = "adminSearch";
+        } else if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
             destination = "evalAssign";
         } else {
             if (reOpening) {
