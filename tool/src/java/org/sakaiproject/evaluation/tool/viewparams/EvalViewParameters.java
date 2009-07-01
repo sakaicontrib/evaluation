@@ -46,6 +46,10 @@ public class EvalViewParameters extends SimpleViewParameters {
     * Set to true if we are reopening this evaluation
     */
    public boolean reOpening = false;
+   
+   public boolean returnToSearchResults = false;
+   public String adminSearchString = null;
+   public int adminSearchPage = 0;
 
    public EvalViewParameters() { }
 

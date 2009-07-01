@@ -79,6 +79,10 @@ public class SetupEvalBean {
     */
    public boolean reOpening = false;
 
+   public boolean returnToSearchResults = false;
+   public String adminSearchString = null;
+   public int adminSearchPage = 0;
+
    /**
     * the selected groups ids to bind to this evaluation when creating it
     */
@@ -294,7 +298,10 @@ public class SetupEvalBean {
 
       EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
       String destination = "controlEvals";
-      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+      if(this.returnToSearchResults) {
+    	  destination = "adminSearch";
+      }
+      else if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          destination = "evalAssign";
       } else {
          if (reOpening) {
