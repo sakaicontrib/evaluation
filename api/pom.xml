@@ -1,88 +1,74 @@
 <?xml version="1.0"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>evaluation</artifactId>
-        <groupId>org.sakaiproject</groupId>
-        <version>1.2.1</version><!--eval.version-->
-    </parent>
-    <name>Sakai Evaluation API</name>
-    <groupId>org.sakaiproject.evaluation</groupId>
-    <artifactId>sakai-evaluation-api</artifactId>
-    <organization>
-        <name>Sakai Project</name>
-        <url>http://www.sakaiproject.org/</url>
-    </organization>
-    <inceptionYear>2006</inceptionYear>
-
-    <!-- you must deploy your API to shared or it will be 
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>evaluation</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>1.2.1</version>
+<!--eval.version-->
+  </parent>
+  <name>Sakai Evaluation API</name>
+  <groupId>org.sakaiproject.evaluation</groupId>
+  <artifactId>sakai-evaluation-api</artifactId>
+  <organization>
+    <name>Sakai Project</name>
+    <url>http://www.sakaiproject.org/</url>
+  </organization>
+  <inceptionYear>2006</inceptionYear>
+<!-- you must deploy your API to shared or it will be 
         inaccessible from your tool -->
-    <packaging>jar</packaging>
-    <properties>
-        <deploy.target>shared</deploy.target>
-    </properties>
-
-    <dependencies>
-        
-        <dependency>
-			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-authz-api</artifactId>
-			<version>${sakai.version}</version>
-		</dependency>
-
-        <!-- Apache commons dependencies -->
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject.entitybroker</groupId>
-            <artifactId>entitybroker-api</artifactId>
-        </dependency>
-
-        <!-- sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-scheduler-api</artifactId>
-        </dependency>
-
-        <!-- Quartz scheduling -->
-        <dependency>
-            <groupId>quartz</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <sourceDirectory>src/java</sourceDirectory>
-        <resources>
-            <!-- include the readme.txt file and the java source files -->
-            <resource>
-                <directory>${basedir}</directory>
-                <includes>
-                    <include>*.txt</include>
-                    <include>src/**/*.java</include>
-                    <include>src/**/*.html</include>
-                    <include>src/**/*.xml</include>
-                    <include>src/**/*.properties</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
-    </build>
+  <packaging>jar</packaging>
+  <properties>
+    <deploy.target>shared</deploy.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-kernel-api</artifactId>
+    </dependency>
+<!--org.sakaiprojectsakai-authz-api${sakai.version}-->
+<!-- Apache commons dependencies -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sakaiproject.entitybroker</groupId>
+      <artifactId>entitybroker-api</artifactId>
+    </dependency>
+<!-- sakai dependencies -->
+<!--org.sakaiprojectsakai-entity-api-->
+    <dependency>
+      <groupId>org.sakaiproject</groupId>
+      <artifactId>sakai-scheduler-api</artifactId>
+    </dependency>
+<!-- Quartz scheduling -->
+    <dependency>
+      <groupId>quartz</groupId>
+      <artifactId>quartz</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <resources>
+<!-- include the readme.txt file and the java source files -->
+      <resource>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>*.txt</include>
+          <include>src/**/*.java</include>
+          <include>src/**/*.html</include>
+          <include>src/**/*.xml</include>
+          <include>src/**/*.properties</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

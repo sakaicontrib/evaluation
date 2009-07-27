@@ -1,213 +1,177 @@
 <?xml version="1.0"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>evaluation</artifactId>
-        <groupId>org.sakaiproject</groupId>
-        <version>1.2.1</version><!--eval.version-->
-    </parent>
-    <name>Sakai Evaluation Tool</name>
-    <groupId>org.sakaiproject.evaluation</groupId>
-    <artifactId>sakai-evaluation-tool</artifactId>
-    <organization>
-        <name>Sakai Project</name>
-        <url>http://www.sakaiproject.org/</url>
-    </organization>
-    <inceptionYear>2005</inceptionYear>
-
-    <properties>
-        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
-        <rsfutil.version>0.7.3M3</rsfutil.version>
-    </properties>
-    <packaging>war</packaging>
-
-    <dependencies>
-        <!-- Evaluation dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject.evaluation</groupId>
-            <artifactId>sakai-evaluation-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject.entitybroker</groupId>
-            <artifactId>entitybroker-api</artifactId>
-        </dependency>
-
-        <!-- Servlet dependency -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-
-        <!-- Sakai util -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
-        <!-- Sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-authz-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-content-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-site-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-tool-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util-api</artifactId>
-        </dependency>
-
-        <!--Apache commons dependencies -->
-
-        <!-- For Reporting -->
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.12</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.9</version>
-            <type>jar</type>
-        </dependency>
-
-        <!-- Spring dependency -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-        </dependency>
-
-        <!-- RSF dependencies -->
-        <dependency>
-            <groupId>uk.org.ponder.sakairsf</groupId>
-            <artifactId>sakairsf</artifactId>
-            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.org.ponder.sakairsf</groupId>
-            <artifactId>SakaiRSFComponents-evolvers</artifactId>
-            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>uk.org.ponder.sakairsf</groupId>
-            <artifactId>SakaiRSFComponents-templates</artifactId>
-            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <!-- needed for generating CSVs for export -->
-        <dependency>
-            <groupId>net.sf.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>1.7</version>
-            <type>jar</type>
-            <!--properties:  war.bundle: true -->
-        </dependency>
-
-        <!-- needed for generating Excel Files for export -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.0.1-FINAL</version>
-            <type>jar</type>
-            <!--properties:  war.bundle: true -->
-        </dependency>
-
-        <!-- Needed for generating PDF Files for export -->
-        <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>2.0.7</version>
-            <type>jar</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bcprov-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bcmail-jdk14</artifactId>
-                </exclusion>
-            </exclusions>
-            <!--properties:  war.bundle: true -->
-        </dependency>
-    </dependencies>
-
-    <repositories>
-        <!-- We need this temporarily to pick up the snapshot jar for the IE 6
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>evaluation</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>1.2.1</version>
+<!--eval.version-->
+  </parent>
+  <name>Sakai Evaluation Tool</name>
+  <groupId>org.sakaiproject.evaluation</groupId>
+  <artifactId>sakai-evaluation-tool</artifactId>
+  <organization>
+    <name>Sakai Project</name>
+    <url>http://www.sakaiproject.org/</url>
+  </organization>
+  <inceptionYear>2005</inceptionYear>
+  <properties>
+    <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
+    <rsfutil.version>0.7.3M3</rsfutil.version>
+  </properties>
+  <packaging>war</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-kernel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-kernel-util</artifactId>
+    </dependency>
+<!-- Evaluation dependencies -->
+    <dependency>
+      <groupId>org.sakaiproject.evaluation</groupId>
+      <artifactId>sakai-evaluation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sakaiproject.entitybroker</groupId>
+      <artifactId>entitybroker-api</artifactId>
+    </dependency>
+<!-- Servlet dependency -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+<!-- Sakai util -->
+<!--org.sakaiprojectsakai-util${sakai.version}-->
+<!-- Sakai dependencies -->
+<!--org.sakaiprojectsakai-authz-api-->
+<!--org.sakaiprojectsakai-content-api-->
+<!--org.sakaiprojectsakai-entity-api-->
+<!--org.sakaiprojectsakai-site-api-->
+<!--org.sakaiprojectsakai-tool-api-->
+<!--org.sakaiprojectsakai-util-api-->
+<!--Apache commons dependencies -->
+<!-- For Reporting -->
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jcommon</artifactId>
+      <version>1.0.12</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.9</version>
+      <type>jar</type>
+    </dependency>
+<!-- Spring dependency -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+    </dependency>
+<!-- RSF dependencies -->
+    <dependency>
+      <groupId>uk.org.ponder.sakairsf</groupId>
+      <artifactId>sakairsf</artifactId>
+      <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.org.ponder.sakairsf</groupId>
+      <artifactId>SakaiRSFComponents-evolvers</artifactId>
+      <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>uk.org.ponder.sakairsf</groupId>
+      <artifactId>SakaiRSFComponents-templates</artifactId>
+      <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+      <type>war</type>
+    </dependency>
+<!-- needed for generating CSVs for export -->
+    <dependency>
+      <groupId>net.sf.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>1.7</version>
+      <type>jar</type>
+<!--properties:  war.bundle: true -->
+    </dependency>
+<!-- needed for generating Excel Files for export -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>3.0.1-FINAL</version>
+      <type>jar</type>
+<!--properties:  war.bundle: true -->
+    </dependency>
+<!-- Needed for generating PDF Files for export -->
+    <dependency>
+      <groupId>com.lowagie</groupId>
+      <artifactId>itext</artifactId>
+      <version>2.0.7</version>
+      <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcprov-jdk14</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcmail-jdk14</artifactId>
+        </exclusion>
+      </exclusions>
+<!--properties:  war.bundle: true -->
+    </dependency>
+  </dependencies>
+  <repositories>
+<!-- We need this temporarily to pick up the snapshot jar for the IE 6
             MA crashing problem. -->
-        <repository>
-            <id>caret-maven2-dev</id>
-            <name>Caret Maven 2 Dev Repo</name>
-            <layout>default</layout>
-            <url>https://www2.caret.cam.ac.uk/maven2dev</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeTypes>war</includeTypes>
-                            <outputDirectory>
+    <repository>
+      <id>caret-maven2-dev</id>
+      <name>Caret Maven 2 Dev Repo</name>
+      <layout>default</layout>
+      <url>https://www2.caret.cam.ac.uk/maven2dev</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeTypes>war</includeTypes>
+              <outputDirectory>
                                 ${project.build.directory}/webapp/
                             </outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-        </resources>
-        <!-- java source -->
-        <sourceDirectory>src/java</sourceDirectory>
-        <!-- other resources for the jar - the message bundles -->
-    </build>
+              <overWriteReleases>true</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+<!-- java source -->
+    <sourceDirectory>src/java</sourceDirectory>
+<!-- other resources for the jar - the message bundles -->
+  </build>
 </project>

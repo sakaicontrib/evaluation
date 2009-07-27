@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.sakaiproject</groupId>
-    <artifactId>evaluation</artifactId>
-    <name>Sakai Evaluation Project</name>
-    <description>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.sakaiproject</groupId>
+  <artifactId>evaluation</artifactId>
+  <name>Sakai Evaluation Project</name>
+  <description>
         Online Course and Instructor Ratings
 
         The Evaluation System is a tool that runs under Sakai version 2.2 or higher. The
@@ -30,170 +28,162 @@
         automatically, and to remind students to complete an ongoing evaluation. The
         notification scheme is intended to increase the response rate.
     </description>
-    <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
-    <packaging>pom</packaging>
-    <version>1.2.1</version><!--eval.version-->
-
-    <parent>
-        <artifactId>master</artifactId>
-        <groupId>org.sakaiproject</groupId>
-        <version>M2</version>
-        <relativePath>../master/pom.xml</relativePath>
-    </parent>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>tool</id>
-            <modules>
-                <module>tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>api</id>
-            <modules>
-                <module>api</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>ddl</id>
-            <modules>
-                <module>impl/src/ddl</module>
-            </modules>
-        </profile>
-    </profiles>
-
-    <!-- handles the management of all related dependencies -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.sakaiproject.evaluation</groupId>
-                <artifactId>sakai-evaluation-api</artifactId>
-                <version>1.2.1</version><!--eval.version-->
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.sakaiproject.evaluation</groupId>
-                <artifactId>sakai-evaluation-impl</artifactId>
-                <version>1.2.1</version><!--eval.version-->
-            </dependency>
-            <!-- needed until EB is in the Sakai master dependency management -->
-            <dependency>
-                <groupId>org.sakaiproject.entitybroker</groupId>
-                <artifactId>entitybroker-api</artifactId>
-                <version>[1.3.3,1.4.0)</version>
-                <scope>provided</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <!-- Project developers -->
-    <developers>
-        <developer>
-            <id>aaronz@vt.edu</id>
-            <name>Aaron Zeckoski</name>
-            <email>aaron@caret.cam.ac.uk</email>
-            <url>http://confluence.sakaiproject.org/confluence/display/~aaronz</url>
-            <organization>CARET</organization>
-            <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
-            <roles>
-                <role>Project Manager</role>
-                <role>Architect</role>
-                <role>Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-    </developers>
-
-    <repositories>
-        <repository>
-            <id>sakai-maven</id>
-            <name>Sakai Maven Repo</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>default</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Sakai-Maven2</id>
-            <name>Sakaiproject Maven 2 repository</name>
-            <url>file://source.sakaiproject.org/maven2/</url>
-        </repository>
-        <site>
-            <id>local site</id>
-            <url>file:./site/</url>
-        </site>
-    </distributionManagement>
-
-    <issueManagement>
-        <system>JIRA</system>
-        <url>http://jira.sakaiproject.org/jira/browse/EVALSYS</url>
-    </issueManagement>
-
-    <ciManagement>
-        <system>Continuum</system>
-        <url>http://saffron.caret.cam.ac.uk/continuum</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration>
-                    <address>aaron@caret.cam.ac.uk</address>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
-
-    <!-- define the license -->
-    <licenses>
-        <license>
-            <name>Apache License 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <comments>For opensource use</comments>
-        </license>
-        <license>
-            <name>Creative Commons Attribution 3.0</name>
-            <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
-            <comments>For commercial use</comments>
-        </license>
-    </licenses>
-
-    <!-- define source code repository location -->
-    <scm>
-        <connection>
+  <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
+  <packaging>pom</packaging>
+  <version>1.2.1</version>
+<!--eval.version-->
+  <parent>
+    <artifactId>master</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>2.7.0-SNAPSHOT</version>
+    <relativePath>../master/pom.xml</relativePath>
+  </parent>
+  <profiles>
+    <profile>
+      <id>full</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>api</module>
+        <module>impl</module>
+        <module>pack</module>
+        <module>tool</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>tool</id>
+      <modules>
+        <module>tool</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>api</id>
+      <modules>
+        <module>api</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>ddl</id>
+      <modules>
+        <module>impl/src/ddl</module>
+      </modules>
+    </profile>
+  </profiles>
+<!-- handles the management of all related dependencies -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.sakaiproject.evaluation</groupId>
+        <artifactId>sakai-evaluation-api</artifactId>
+        <version>1.2.1</version>
+<!--eval.version-->
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.sakaiproject.evaluation</groupId>
+        <artifactId>sakai-evaluation-impl</artifactId>
+        <version>1.2.1</version>
+<!--eval.version-->
+      </dependency>
+<!-- needed until EB is in the Sakai master dependency management -->
+      <dependency>
+        <groupId>org.sakaiproject.entitybroker</groupId>
+        <artifactId>entitybroker-api</artifactId>
+        <version>[1.3.3,1.4.0)</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+<!-- Project developers -->
+  <developers>
+    <developer>
+      <id>aaronz@vt.edu</id>
+      <name>Aaron Zeckoski</name>
+      <email>aaron@caret.cam.ac.uk</email>
+      <url>http://confluence.sakaiproject.org/confluence/display/~aaronz</url>
+      <organization>CARET</organization>
+      <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+      <roles>
+        <role>Project Manager</role>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+  <repositories>
+    <repository>
+      <id>sakai-maven</id>
+      <name>Sakai Maven Repo</name>
+      <layout>default</layout>
+      <url>http://source.sakaiproject.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>default</id>
+      <name>Maven Repository Switchboard</name>
+      <layout>default</layout>
+      <url>http://repo1.maven.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <distributionManagement>
+    <repository>
+      <id>Sakai-Maven2</id>
+      <name>Sakaiproject Maven 2 repository</name>
+      <url>file://source.sakaiproject.org/maven2/</url>
+    </repository>
+    <site>
+      <id>local site</id>
+      <url>file:./site/</url>
+    </site>
+  </distributionManagement>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.sakaiproject.org/jira/browse/EVALSYS</url>
+  </issueManagement>
+  <ciManagement>
+    <system>Continuum</system>
+    <url>http://saffron.caret.cam.ac.uk/continuum</url>
+    <notifiers>
+      <notifier>
+        <type>mail</type>
+        <sendOnError>true</sendOnError>
+        <sendOnFailure>true</sendOnFailure>
+        <sendOnSuccess>false</sendOnSuccess>
+        <sendOnWarning>false</sendOnWarning>
+        <configuration>
+          <address>aaron@caret.cam.ac.uk</address>
+        </configuration>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+<!-- define the license -->
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <comments>For opensource use</comments>
+    </license>
+    <license>
+      <name>Creative Commons Attribution 3.0</name>
+      <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
+      <comments>For commercial use</comments>
+    </license>
+  </licenses>
+<!-- define source code repository location -->
+  <scm>
+    <connection>
             scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/
         </connection>
-        <developerConnection>
+    <developerConnection>
             scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/
         </developerConnection>
-        <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
-    </scm>
-
+    <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
+  </scm>
 </project>
