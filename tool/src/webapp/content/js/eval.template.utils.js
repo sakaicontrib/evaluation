@@ -93,14 +93,17 @@ var evalTemplateUtils = (function() {
         pages: {
                 modify_item_page: "modify_item",
                 modify_template_page: "modify_template",
-                modify_block_page: "modify_block"
+                modify_block_page: "modify_block",
+                choose_existing_page: "choose_existing_items"
             },
         getPageType: function(url){
             evalTemplateUtils.debug.group("Getting the page type/name");
             var pageType = undefined,
                     i = 0,
                     regExp = null;
-            pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item_page, evalTemplateUtils.pages.modify_template_page, evalTemplateUtils.pages.modify_block_page ];
+            pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item_page,
+                evalTemplateUtils.pages.modify_template_page, evalTemplateUtils.pages.modify_block_page,
+                evalTemplateUtils.pages.choose_existing_page ];
             evalTemplateUtils.debug.debug("Pages supported are %s", pagesLoadedByFBwithJs.toString());
             for ( i in pagesLoadedByFBwithJs){
                 if ( typeof pageType == "undefined" ){

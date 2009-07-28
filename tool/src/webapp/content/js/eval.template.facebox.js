@@ -139,6 +139,13 @@ var evalTemplateFacebox = (function() {
                     revealFunction = evalTemplateLoaderEvents.modify_item;
                 } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
                     revealFunction = evalTemplateLoaderEvents.modify_template;
+                } else if (pageType === evalTemplateUtils.pages.choose_existing_page) {
+                    //Redirect
+                    //if ( confirm("Are you sure?")) {
+                        window.location = url;
+                   // }else{
+                        return false;
+                    //}
                 }
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
