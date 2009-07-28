@@ -4,19 +4,35 @@
 	<head>
 		<title rsf:id="msg=items.existing.page.title">Items - Choose Items</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-       <script type="text/javascript"> 
-		$(document).ready(function() { 
-			$.facebox.setHeader($(".portletBody .titleHeader"));
-			$("a[rel*=facebox]").facebox();
-			$("#search-form").ajaxForm(options_choose_existing_items_html_search);
-		}); 
-        </script> 
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
 	
 	<body>
 		<div class="portletBody">
-         <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
-	<div rsf:id="message-for:*" class="alertMessage">
+
+        <div class="navIntraTool">
+            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+            <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+            <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+            <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+            <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+        </div>
+		
+		<div>
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+				<li><a rsf:id="modify-template-link" href="template_modify.html">Template</a></li>
+				<!--// gsilver: this link goes to the dashboard -->
+				<li><a rsf:id="modify-items-link" href="modify_items.html">Items</a></li>
+				<li rsf:id="msg=items.choose.items" class="lastCrumb">Choose Items</li>
+			</ul>
+		</div>
+		
+		<div rsf:id="message-for:*" class="alertMessage">
 			<ul style="margin:0px;">
 				<li>Message for user here</li>
 			</ul>
@@ -29,9 +45,9 @@
 			<div class="searchNav">
 					<span rsf:id="search-current" class="highlight">Current Search:</span>
 					<span rsf:id="search-current-value" class="instruction">Search Text</span>
-					<form rsf:id="search-form" id="search_form" action="choose_existing_items.html" method="get">
-						<input rsf:id="search-box" type="text" size="25" class="form_search_box" maxlength="100" />
-						<input rsf:id="search-command" type="submit" class="form_submit" value="Search" />
+					<form rsf:id="search-form" action="choose_existing_items.html" method="get">
+						<input rsf:id="search-box" type="text" size="25" maxlength="100" />
+						<input rsf:id="search-command" type="submit" value="Search" />
 					</form>
 			</div>
 		</div>
@@ -41,7 +57,8 @@
             <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->			
             <p>
                 <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-                 </p>
+                <a rsf:id="cancel-items" href="template_modify.html" class="makeButton" id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+            </p>
 
 			<table class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
 				<caption rsf:id="msg=item.list.summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
@@ -84,7 +101,8 @@
 			<p>
 				<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
                 <div rsf:id="no-items" />
-				</p>
+				<a rsf:id="cancel-items-bottom" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+			</p>
 			
 		</form>
 		

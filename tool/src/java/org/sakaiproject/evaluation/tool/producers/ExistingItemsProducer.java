@@ -59,7 +59,7 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
      */
     public static final String VIEW_ID = "choose_existing_items";
     public String getViewID() {
-        return VIEW_ID;
+        return VIEW_ID; 
     }
 
     private EvalCommonLogic commonLogic;
