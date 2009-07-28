@@ -47,24 +47,24 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
         }
         if (noGroupableItems) {
-            $.facebox('There are no items you can add to this group.');
+            $.facebox('There are no items you can add to this group.');      //TODO:i8N
             if ($('#facebox .titleHeader').length > 0)
                 $('#facebox .titleHeader').remove();
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');
+            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');   //TODO:i8N
 
         } else {
 
             $.facebox('<div id="addGroupItemDiv"></div>');
             if ($('#facebox .titleHeader').length > 0)
                 $('#facebox .titleHeader').remove();
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');
-            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="Select all" href="#">Select all</a> | <a id="addGroupItemDeselectAll" title="Deselect all" href="#">Deselect all</a></div>').insertBefore('#addGroupItemDiv');
+            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close'); //TODO:i8N
+            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="Select all" href="#">Select all</a> | <a id="addGroupItemDeselectAll" title="Deselect all" href="#">Deselect all</a></div>').insertBefore('#addGroupItemDiv'); //TODO:i8N
             $('\
 			<div class="act">\
 				<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="Add" disabled="disabled"/>\
 				<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="Cancel"/> \
 			</div>\
-			').insertAfter('#addGroupItemDiv');
+			').insertAfter('#addGroupItemDiv');    //TODO:i8N
             //bind new control actions
             $('#addGroupItemSelectAll').bind('click', function() {
                 $('#addGroupItemDiv input[type=checkbox]').each(function() {
@@ -113,8 +113,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             });
             var clone = $(this).parent().find('.itemRowBlock').eq(0).clone();
             //edit extra controls
-            clone.find('.itemRight').hide();
-            clone.find('.itemLabel').html('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');
+            clone.find('.itemRight').remove();
+            clone.find('.itemLabel').html('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
+            //TODO:Strip out unneeded . in string
 
             if (groupableItems.length > 0) {
                 for (i in groupableItems) {
@@ -166,12 +167,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         return false;
     };
 
-    $('a[rel=childEdit]').click(function() {
-        var url = 'modify_item?templateItemId=' + $(this).parent().parent().find('input[name*=hidden-item-id]').val() + '&templateId=' + $('input[name*=templateId]').val() + '&itemClassification=Block';
-        $.facebox({ ajax: url });
-        $.facebox.settings.elementToUpdate = "block";
-        return false;
-    });
+    $('a[rel=childEdit]').childEdit();
+
     $('.blockExpandText').toggle(
 
             function() {
@@ -182,14 +179,14 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 text = '[Show child items]';
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
-                evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
+                evalTemplateUtils.frameGrow(0);
                 return false;
             },
             function() {
                 text = '[Hide child items]';
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
-                evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
+                evalTemplateUtils.frameGrow(0);
                 return false;
             }
             );
@@ -200,16 +197,12 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         }
         $(this).parent().toggle();
         $(this).parent().parent().find('.itemText').eq(1).toggle();
-        evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
-        //if($(this).parent().parent().parent().find('.itemLine3').is(':hidden'))
-        //   $(this).parent().find('.blockExpandText').text('[Show child items]');
+        evalTemplateUtils.frameGrow(0);
         return false;
     });
     $('.less').bind('click', function() {
         $(this).parent().toggle();
         $(this).parent().parent().find('.itemText').eq(0).toggle();
-        //if($(this).parent().parent().parent().find('.itemLine3').is(':hidden'))
-        //    $(this).parent().find('.blockExpandText').text('[Show child items]');
         return false;
     });
 

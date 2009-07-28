@@ -51,6 +51,11 @@ var evalTemplateFacebox = (function() {
         </div>';
 
         $.facebox.loading = function() {
+            //store original frame height
+            var frameHeight = document.body.clientHeight;
+            if (frameHeight) {
+                evalTemplateUtils.frameSize = frameHeight;
+            }
             origionalFBfunctions.loading();
             $('#saveReorderButton').click();
             $('#facebox').css({
@@ -66,7 +71,7 @@ var evalTemplateFacebox = (function() {
             origionalFBfunctions.reveal(data, klass);
             //restore left css value
             $('#facebox').css('left', fbCssLeft);
-            evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
+            evalTemplateUtils.frameGrow(450);
             //bind event handler for FB form buttons
             //bind the close button
             $('#facebox .close').unbind('click');
@@ -76,9 +81,9 @@ var evalTemplateFacebox = (function() {
         };
 
         $.facebox.close = function() {
+            evalTemplateUtils.frameShrink(0);
             origionalFBfunctions.close();
             evalTemplateUtils.debug.info("closing facebox");
-            evalTemplateUtils.frameShrink(0); //TODO: find a suitable height
             evalTemplateFacebox.fbResetClasses();
             $('#facebox table').attr('width', 700);
             $('#facebox .body').css('width', 660);
@@ -121,26 +126,26 @@ var evalTemplateFacebox = (function() {
                 $("#facebox .titleHeader").remove();
             }
         },
-        addItem: function(url){
+        addItem: function(url) {
             //Unbind current reveal event
-                    $(document).unbind('reveal.facebox');
+            $(document).unbind('reveal.facebox');
             //Check for after load type of event to call
-                var pageType = undefined,
-                        revealFunction;
-                pageType = evalTemplateUtils.getPageType(url);
-                if (typeof pageType !== "undefined") {
-                    //Bind new reveal event
-                    if (pageType === evalTemplateUtils.pages.modify_item) {
-                        revealFunction = evalTemplateLoaderEvents.modify_item;
-                    }else if (pageType === evalTemplateUtils.pages.modify_template) {
-                        revealFunction = evalTemplateLoaderEvents.modify_template;
-                    }
-                    $(document).bind('reveal.facebox', function() {
-                        if (typeof revealFunction !== "undefined"){
-                            revealFunction();
-                        }
-                    });
+            var pageType = undefined,
+                    revealFunction;
+            pageType = evalTemplateUtils.getPageType(url);
+            if (typeof pageType !== "undefined") {
+                //Bind new reveal event
+                if (pageType === evalTemplateUtils.pages.modify_item_page) {
+                    revealFunction = evalTemplateLoaderEvents.modify_item;
+                } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
+                    revealFunction = evalTemplateLoaderEvents.modify_template;
                 }
+                $(document).bind('reveal.facebox', function() {
+                    if (typeof revealFunction !== "undefined") {
+                        revealFunction();
+                    }
+                });
+            }
             $.facebox({ajax: url});
         }
     };
@@ -165,26 +170,28 @@ var evalTemplateFacebox = (function() {
     function setPreClick(that) {
         that.each(function() {
             $(this).bind('click', function() {
-                 //Unbind current reveal event
-                    $(document).unbind('reveal.facebox');
+                //Unbind current reveal event
+                $(document).unbind('reveal.facebox');
                 //Check for after load type of event to call
                 var pageType = undefined,
                         revealFunction;
                 pageType = evalTemplateUtils.getPageType(this.href);
                 if (typeof pageType !== "undefined") {
                     //Bind new reveal event
-                    if (pageType === evalTemplateUtils.pages.modify_item) {
+                    if (pageType === evalTemplateUtils.pages.modify_item_page) {
                         revealFunction = evalTemplateLoaderEvents.modify_item;
-                    }else if (pageType === evalTemplateUtils.pages.modify_template) {
+                    } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
                         revealFunction = evalTemplateLoaderEvents.modify_template;
+                    }else if (pageType === evalTemplateUtils.pages.modify_block_page) {
+                            revealFunction = evalTemplateLoaderEvents.modify_block;
                     }
                     $(document).bind('reveal.facebox', function() {
-                        if (typeof revealFunction !== "undefined"){
+                        if (typeof revealFunction !== "undefined") {
                             revealFunction();
                         }
                     });
                 }
-                if ($(this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template) {
+                if ($(this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template_page) {
                     evalTemplateFacebox.fbResetClasses();
                     $(this).parent().parent().parent().parent().attr("class", "editing");
                     $.facebox.settings.elementToUpdate = $(this).parent().parent().parent();
@@ -195,7 +202,28 @@ var evalTemplateFacebox = (function() {
         });
     }
 
+    function setChildGroupClick(that) {
+        that.each(function() {
+            $(this).bind('click', function() {
+                //Unbind current reveal event
+                $(document).unbind('reveal.facebox');
+                var url = 'modify_item?templateItemId=' + $(this).parent().parent().find('input[name*=hidden-item-id]').val() + '&templateId=' + $('input[name*=templateId]').val() + '&itemClassification=Block';
+                $.facebox.settings.elementToUpdate = "block";
+
+                $(document).bind('reveal.facebox', function() {
+                    evalTemplateLoaderEvents.modify_item();
+                });
+                $.facebox({ ajax: url });
+                return false;
+            });
+        });
+    }
+
     $.fn.faceboxGrid = function() {
         setPreClick($(this));
+    };
+
+    $.fn.childEdit = function() {
+        setChildGroupClick($(this));
     };
 })($);

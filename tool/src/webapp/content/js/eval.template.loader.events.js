@@ -5,8 +5,7 @@ var evalTemplateLoaderEvents = (function($) {
     var _modify_block = function(){
                 var siteId = $('#site-id').text();
         SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-        evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
-		$.facebox.setHeader($(".titleHeader"));
+        $.facebox.setHeader($(".titleHeader"));
 
 		var baseId = ""; // "blockPage::";
 
@@ -105,7 +104,6 @@ var evalTemplateLoaderEvents = (function($) {
                 $('#nonBlockSettings2').hide();
                 $('div[@id=show-item-scale::]').hide();
             }
-            evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
             $.facebox.setHeader($(".portletBody .titleHeader"));
             if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1) {
                 $('.act .submit').bind('click', function() {
@@ -143,7 +141,7 @@ var evalTemplateLoaderEvents = (function($) {
                     }
                 };
                 $.facebox.setHeader($(".portletBody .titleHeader"));
-                evalTemplateUtils.frameGrow(0); //TODO: find a suitable height
+                evalTemplateUtils.frameGrow(0);
                 $('#basic-form').ajaxForm(o);
                 $('input.cancelButtonLightbox').bind("click", function() {
                     $(document).trigger('close.facebox');
