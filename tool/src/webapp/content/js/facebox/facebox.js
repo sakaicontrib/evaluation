@@ -138,7 +138,7 @@
       if (klass) $('#facebox .content').addClass(klass)
       $('#facebox .content').append(data)
       $('#facebox .loading').remove()
-      $('#facebox .body').children().fadeIn('normal')
+      $('#facebox .body').children().show()
       $('#facebox').css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
     },
@@ -287,14 +287,14 @@
     $('#facebox_overlay').hide().addClass("facebox_overlayBG")
       .css('opacity', $.facebox.settings.opacity)
       .click(function() { $(document).trigger('close.facebox') })
-      .fadeIn(200)
+      .show()
     return false
   }
 
   function hideOverlay() {
     if (skipOverlay()) return
 
-    $('#facebox_overlay').fadeOut(200, function(){
+    $('#facebox_overlay').hide(0, function(){
       $("#facebox_overlay").removeClass("facebox_overlayBG")
       $("#facebox_overlay").addClass("facebox_hide")
       $("#facebox_overlay").remove()
@@ -309,7 +309,7 @@
 
   $(document).bind('close.facebox', function() {
     $(document).unbind('keydown.facebox')
-    $('#facebox').fadeOut(function() {
+    $('#facebox').hide(1, function() {
       $('#facebox .content').removeClass().addClass('content')
       hideOverlay()
       $('#facebox .loading').remove()
