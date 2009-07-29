@@ -75,13 +75,13 @@ $(document).ready(function() {
 
 (function($) {
     $.fn.evalSelector = function(opts) {
-        var options = $.extend({}, $.fn.evalSelector.defaults, opts);
+        var options = $.extend({}, $.fn.evalSelector.settings, opts);
         init($(this), options);
     };
     /**
      * Public variables. Once init() has ran, do not reference directly to these, use variables.options instead.
      */
-    $.fn.evalSelector.defaults = {
+    $.fn.evalSelector.settings = {
         css:{
             activeCheckbox: {background:'#eee'}
         },

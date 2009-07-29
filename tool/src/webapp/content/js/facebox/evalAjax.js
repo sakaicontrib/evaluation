@@ -21,9 +21,12 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         itemType: 'block',
         text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
     });
+
     $('a[rel=facebox]').facebox();
-    $('a[rel=faceboxGrid]').facebox();
+    $('a[rel=faceboxGrid]').faceboxGrid();
     $('a.addItem[rel=faceboxAddGroupItems]').click(function() {
+        //Unbind current reveal event to avoid fckEditor error
+        $(document).unbind('reveal.facebox');
         var that = $(this);
         var noGroupableItems = true;
         //console.log(that.attr('class'));
@@ -44,24 +47,24 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
         }
         if (noGroupableItems) {
-            $.facebox('There are no items you can add to this group.');
+            $.facebox('There are no items you can add to this group.');      //TODO:i8N
             if ($('#facebox .titleHeader').length > 0)
                 $('#facebox .titleHeader').remove();
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');
+            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');   //TODO:i8N
 
         } else {
 
             $.facebox('<div id="addGroupItemDiv"></div>');
             if ($('#facebox .titleHeader').length > 0)
                 $('#facebox .titleHeader').remove();
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');
-            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="Select all" href="#">Select all</a> | <a id="addGroupItemDeselectAll" title="Deselect all" href="#">Deselect all</a></div>').insertBefore('#addGroupItemDiv');
+            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close'); //TODO:i8N
+            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="Select all" href="#">Select all</a> | <a id="addGroupItemDeselectAll" title="Deselect all" href="#">Deselect all</a></div>').insertBefore('#addGroupItemDiv'); //TODO:i8N
             $('\
 			<div class="act">\
 				<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="Add" disabled="disabled"/>\
 				<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="Cancel"/> \
 			</div>\
-			').insertAfter('#addGroupItemDiv');
+			').insertAfter('#addGroupItemDiv');    //TODO:i8N
             //bind new control actions
             $('#addGroupItemSelectAll').bind('click', function() {
                 $('#addGroupItemDiv input[type=checkbox]').each(function() {
@@ -76,7 +79,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $('#addGroupItemSave').attr('disabled', 'disabled');
             });
             $('#addGroupItemSave').bind('click', function() {
-                var img = '<img src="' + $.facebox.defaults.loadingImage + '"/>';
+                var img = '<img src="' + $.facebox.settings.loadingImage + '"/>';
                 $(this).attr('disabled', 'disabled');
                 $(this).next('input').attr('disabled', 'disabled');
                 $(img).insertAfter($(this).next('input'));
@@ -99,7 +102,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $(document).trigger('list.triggerSort');
                 //$(document).trigger('activateControls.templateItems');
                 $.facebox('\
-                                                  <div><img src="' + $.facebox.defaults.loadingImage + '"/>  Saving... \
+                                                  <div><img src="' + $.facebox.settings.loadingImage + '"/>  Saving... \
 			                </div> \
 			                <div class="footer"> \
 			                   Please do not close this window.  \
@@ -110,8 +113,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             });
             var clone = $(this).parent().find('.itemRowBlock').eq(0).clone();
             //edit extra controls
-            clone.find('.itemRight').hide();
-            clone.find('.itemLabel').html('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');
+            clone.find('.itemRight').remove();
+            clone.find('.itemLabel').html('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
+            //TODO:Strip out unneeded . in string
 
             if (groupableItems.length > 0) {
                 for (i in groupableItems) {
@@ -163,12 +167,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         return false;
     };
 
-    $('a[rel=childEdit]').click(function() {
-        var url = 'modify_item?templateItemId=' + $(this).parent().parent().find('input[name*=hidden-item-id]').val() + '&templateId=' + $('input[name*=templateId]').val() + '&itemClassification=Block';
-        $.facebox({ ajax: url });
-        $.facebox.defaults.objToUpdate = "block";
-        return false;
-    });
+    $('a[rel=childEdit]').childEdit();
+
     $('.blockExpandText').toggle(
 
             function() {
@@ -179,14 +179,14 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 text = '[Show child items]';
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
-                frameGrow();
+                evalTemplateUtils.frameGrow(0);
                 return false;
             },
             function() {
                 text = '[Hide child items]';
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
-                frameGrow();
+                evalTemplateUtils.frameGrow(0);
                 return false;
             }
             );
@@ -197,16 +197,12 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         }
         $(this).parent().toggle();
         $(this).parent().parent().find('.itemText').eq(1).toggle();
-        frameGrow();
-        //if($(this).parent().parent().parent().find('.itemLine3').is(':hidden'))
-        //   $(this).parent().find('.blockExpandText').text('[Show child items]');
+        evalTemplateUtils.frameGrow(0);
         return false;
     });
     $('.less').bind('click', function() {
         $(this).parent().toggle();
         $(this).parent().parent().find('.itemText').eq(0).toggle();
-        //if($(this).parent().parent().parent().find('.itemLine3').is(':hidden'))
-        //    $(this).parent().find('.blockExpandText').text('[Show child items]');
         return false;
     });
 
@@ -254,111 +250,6 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
 })(jQuery);
 
-
-function submitForm(form, textarea, target, btn) {
-    var rowId = $(jQuery.facebox.defaults.objToUpdate).attr("id");
-    var thisRow = $(document).find("[id=" + rowId + "]");
-    var img = '<img src="/library/image/sakai/spinner.gif"/>';
-    var templateItemId = $(form).find('input[@name*=templateItemId]').attr('value');
-    var entityUrl = '/direct/eval-templateitem/' + templateItemId + '.xml';
-    var d = $(form).formToArray();
-    var fckVal = null;
-    try {
-        if (FCKeditorAPI) {
-            fckVal = FCKeditorAPI.GetInstance(textarea).GetHTML(); //Actual editor textarea value
-        }
-    }
-    catch(e) {
-        console.log('Check if you have imported FCKeditor.js \n Error: FCKeditorAPI not found. ');
-        return false;
-    }
-    //Validate text
-    $('#facebox').append('<div id="fckEditorVal" style="display:none">' + fckVal + '</div>');
-    var str = $('#fckEditorVal');
-    if (str.text() == "" || str.text() == null || str.text() == 'null') {
-        alert('You must fill in the title.');
-        str.remove();
-        return false;
-    }
-    if(str.length>0)str.remove();
-
-    //iterate through returned formToArray elements and replace input value with editor value
-    for (var i = 0; i < d.length; i++) {
-        if ($(d[i]).attr('name') == textarea) {
-            $(d[i]).attr('value', fckVal);
-        }
-    }
-    $.ajax({
-        type: 'POST',
-        url: target,
-        data: d,
-        dataType: "html",
-        beforeSend: function() {
-
-            btn.parent().parent().find('input').each(function() {
-                $(this).attr('disabled', 'disabled');
-            });
-            FCKeditorAPI.GetInstance(textarea).disabled;
-            btn.parent().append(img);
-
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            return false;
-        },
-        success: function(d) {
-            $(document).trigger('close.facebox');
-            if (form == '#blockForm' || form == '#item-form') {
-                $('#itemList').html($(d).find('#itemList').html());
-                $(document).trigger('activateControls.templateItems');
-                return false;
-            }
-            $.ajax({
-                url: entityUrl,
-                dataType: 'xml',
-                cache: false,
-                beforeSend: function() {
-                    $(jQuery.facebox.defaults.objToUpdate).find('.itemText span').html(img);
-                },
-                success: function(msg) {
-                    var realText = $(msg).find('itemText').text();
-                    var shortText = null;
-                    var that = $(jQuery.facebox.defaults.objToUpdate).find('.itemText').eq(0);
-
-                    if (realText.length > 150) {
-                        that.realText = '<h4 class="itemText"><span>' + realText + '</span><a class="less" href="#">less<\/a></h4>';
-                        $('body').append('<div id="shortText" style="display:none;">' + truncateTextDo(realText) + '</div>');
-                        $('body').append('<div id="realText" style="display:none;">' + realText + '</div>');
-                        that.html('<span>' + $('#shortText').text() + '</span><a class="more" href="#">...more</a>');
-                        that.parent().find('.itemText').eq(1).remove();
-                        try {
-                            that.hide();
-                            $('<h4 class="itemText"><span>' + $('#realText').text() + '</span><a class="less" href="#">less<\/a></h4>').insertAfter(that);
-                        } catch(e) {
-                        }
-                        $('.more').bind('click', function() {
-                            $(this).parent().toggle();
-                            $(this).parent().parent().find('.itemText').eq(1).toggle();
-                            frameGrow();
-                            return false;
-                        });
-                        $('.less').bind('click', function() {
-                            $(this).parent().toggle();
-                            $(this).parent().parent().find('.itemText').eq(0).toggle();
-                            return false;
-                        });
-                    } else {
-                        that.find('span').html(realText);
-                    }
-                    $(document).trigger('activateControls.templateItems');
-                }
-            });
-
-        }
-    });
-
-
-}
-
 function truncateTextDo(string, number) {
     trunc = string.substring(0, (number == null) ? 150 : number);
     trunc = trunc.replace(/\w+$/, '');
@@ -383,16 +274,6 @@ $('.itemBlockRow').each(function() {
     block.expandText = ' [<a class="blockExpandText" href="#"> Show child items </a>]';
     block.html(block.html() + block.expandText);
 });
-
-
-function frameGrow() {
-    try {
-        var frame = parent.document.getElementById(window.name);
-        $(frame).height(parent.document.body.scrollHeight + 120);
-    } catch(e) {
-    }
-
-}
 
 var options_choose_existing_items_html_search = {
     beforeSend: function() {
@@ -441,7 +322,7 @@ function updateControlItemsTotal() {
     //
     var that;
     $.fn.itemRemove = function(options) {
-        var defaults = {
+        var settings = {
             ref:    '', //the RESTful unique identifier for this component
             id:        '' //the id passed
         };
@@ -449,7 +330,7 @@ function updateControlItemsTotal() {
         // iterate and bind each matched element
         return this.each(function() {
             $(this).click(function() {
-                var opts = $.extend(defaults, options);
+                var opts = $.extend(settings, options);
                 opts.id = eval(opts.id);
                 var t = eval(opts.text);
                 opts.text = (t != null && t.length > 20) ? truncateTextDo(t, 20) + "..." : t;
@@ -662,6 +543,9 @@ function updateControlItemsTotal() {
                         finish(options, data);
                     }
                 });
+
+                
+
             }
             show_hide_box(an, options);
         });

@@ -11,47 +11,6 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript"
             src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
-    <script rsf:id="js-jquery" type="text/javascript" language="JavaScript" src="../js/jquery-1.2.6.js"></script>
-
-    <script type="text/javascript">
-       // prepare the form when the DOM is ready
-        $(document).ready(function() {
-
-            if($('input.cancelButtonLightbox').length == 0) { //check if page is in a lightbox
-                //Page not in Lightbox
-                //bind cancel btn action
-                $('input.cancelButton').bind("click", function() {
-                    javascript:history.go(-1);
-                    return false;
-                });
-            }
-            else {
-                var title = "";
-                var o = {
-                    beforeSubmit: function() {
-                        title = $('#basic-form input[@name=title]').val();
-                        if (!title) {
-                            alert('Please enter a title.');
-                            return false;
-                        }
-                        $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');
-                    },
-                    success: function(msg) {
-                        $('h3.viewNav > span#title').text(title)
-                        $(document).trigger('close.facebox');
-                        $('h3.viewNav').parent().effect("highlight", {}, 2500);
-                    }
-                };
-                $.facebox.setHeader($(".portletBody .titleHeader"));
-                $.facebox.grow();
-                $('#basic-form').ajaxForm(o);
-                $('input.cancelButtonLightbox').bind("click", function() {
-                    $(document).trigger('close.facebox');
-                });
-
-            }
-        });
-    </script>
 </head>
 
 <body>
@@ -90,7 +49,7 @@
 
         <div class="longtext">
             <label rsf:id="description-header" class="block" for="description">Description</label>
-            <textarea rsf:id="description" id="description" name="description" cols="70" rows="3"></textarea>
+            <textarea rsf:id="description" id="description" name="description" cols="70" rows="3"> </textarea>
 
             <p class="instruction textPanelFooter" rsf:id="description-note">
                 For you or other admins. Place notes or comments about this template here.
@@ -107,13 +66,12 @@
             </select>
         </p>
 
-        <div rsf:id="sharingValueToDisplay" style="font-weight:bold;margin-top:0.5em;"></div>
+        <div rsf:id="sharingValueToDisplay" style="font-weight:bold;margin-top:0.5em;"> </div>
 
         <p class="act">
             <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active"/>
-            <input type="button" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x"/>
-            <input type="button" value="Cancel" class="cancelButtonLightbox" rsf:id="cancel-button-lightbox"
-                   accesskey="x"/>
+            <input type="button" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x" onclick="javascript:history.go(-1);"/>
+            <input type="button" value="Cancel" class="cancelButtonLightbox close" rsf:id="cancel-button-lightbox" accesskey="x"/>
         </p>
     </form>
 
