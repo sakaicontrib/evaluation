@@ -128,7 +128,7 @@ function startSort() {
                         $('#facebox .body [name*=blockChildConfirm]').click(function() {
                             if ($(this).attr('msg') == 'yes') {
                                 $.facebox('\
-                                                  <div><img src="' + $.facebox.defaults.loadingImage + '"/>  Saving... \
+                                                  <div><img src="' + $.facebox.settings.loadingImage + '"/>  Saving... \
                             </div> \
                             <div class="footer"> \
                                Please do not close this window.  \
@@ -169,7 +169,7 @@ function startSort() {
                     ui.item.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
                     ui.item.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
                         $(document).trigger('block.triggerChildrenSort', [ui]);   
-                        $(this).html('Saving... <img src="' + $.facebox.defaults.loadingImage + '"/>');
+                        $(this).html('Saving... <img src="' + $.facebox.settings.loadingImage + '"/>');
                         ui.item.parents('.itemTableBlock').sortable('disable');
                         $(document).trigger('block.saveReorder', [ui,"simple"]);
                         ui.item.parents('.itemTableBlock').sortable('enable');
@@ -252,7 +252,7 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
                         params += '&templateId=' + t.attr('templateid');
                         params += '&command+link+parameters%26el-binding%3Dj%2523%257BtemplateBBean.blockId%257Dnew1%26el-binding%3Dj%2523%257BtemplateBBean.templateItemIds%257D' + ordering.toString() + '%26el-binding%3Dj%2523%257BtemplateBBean.originalDisplayOrder%257D2%26Submitting%2520control%3DsaveBlockAction%26Fast%2520track%2520action%3DtemplateBBean.saveBlockItemAction=Save+item';
                         $.ajax({
-                            url: "modify_block",
+                            url: "modify_template",
                             data: params,
                             type: "POST",
                             success: function(d) {

@@ -102,6 +102,12 @@ function extractSelectedItems(submitButton) {
 			
 			$(submitButton).parent().ajaxSubmit({
 				success: function(msg){
+                    //Unbind current reveal event
+                    $(document).unbind('reveal.facebox');
+                    //Bind new reveal event
+                    $(document).bind('reveal.facebox', function() {
+                        evalTemplateLoaderEvents.modify_block();
+                    });
 					$.facebox(msg);
 				}
 		});

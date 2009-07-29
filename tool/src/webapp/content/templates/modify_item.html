@@ -4,39 +4,7 @@
 	<head>
 		<title rsf:id="msg=modifyitem.page.title">Add/Modify Item</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-       
-    <script type="text/javascript"> 
-$(document).ready(function() {
-    var siteId = $('#site-id').text();
-    SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-    //if($('input[@name=show-item-expert::expert-desc]').length > 0)
-        //SakaiProject.fckeditor.initializeEditor("show-item-expert::expert-desc", siteId);
-    if($.facebox.defaults.objToUpdate == "block"){
-		$('#facebox .content .navPanel').hide();	
-		$('#nonBlockSettings').hide();
-		$('#nonBlockSettings2').hide();
-        $('div[@id=show-item-scale::]').hide();
-	}
-	$.facebox.grow();
-	$.facebox.setHeader($(".portletBody .titleHeader"));
-	if($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1){
-		$('.act .submit').bind('click',function(){
-            // put validation check here
-			submitForm('#item-form', 'item-text', 'modify_item', $(this));
-		});
-	}else{
-		var button = $('<input type="submit" class="active" accesskey="s"/>');
-		button.attr('name', $('.act .submit').attr('name'))
-			    .val($('.act .submit').val());
-		$('.act .submit').replaceWith(button);
-	}
-}); 
-</script> 
-
-
-
-
-	</head>
+     </head>
 	
 	<body>
 		
@@ -250,7 +218,7 @@ $(document).ready(function() {
 			</fieldset>
 			<div class="act">
 				<input rsf:id="save-item-action" type="button" value="Save item" class="active submit" accesskey="s" />
-				<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
+				<input rsf:id="cancel-button" type="button" value="Cancel" class="close" accesskey="x" />
 			</div> 
 			</form>
 		</div>

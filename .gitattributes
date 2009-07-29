@@ -380,10 +380,16 @@ tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text
 tool/src/webapp/content/js/SakaiRSFWidgets.js -text
 tool/src/webapp/content/js/SakaiTableRenderer.js -text
-tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
+tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.loader.events.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.loader.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/facebox/b.png -text
@@ -456,7 +462,6 @@ tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_k
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_email.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/administrate_search.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
