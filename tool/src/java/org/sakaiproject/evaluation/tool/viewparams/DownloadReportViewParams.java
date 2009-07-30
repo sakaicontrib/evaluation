@@ -1,5 +1,5 @@
 /******************************************************************************
- * CSVReportViewParams.java - created by aaronz@vt.edu
+ * DownloadReportViewParams.java - created by aaronz@vt.edu
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -45,6 +45,7 @@ public class DownloadReportViewParams extends SimpleViewParameters {
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",templateId,evalId,groupIds, *:stuff, @1:filename";
+		return super.getParseSpec() + ",templateId,evalId,groupIds,@1:filename";
+		// return super.getParseSpec() + ",templateId,evalId,groupIds, *:stuff, @1:filename";
 	}
 }

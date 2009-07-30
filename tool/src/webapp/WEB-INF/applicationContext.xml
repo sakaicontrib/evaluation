@@ -283,7 +283,7 @@
         <property name="localeGetter" ref="requestLocaleProxy" />
     </bean>
 
-    <!-- View Params For Reporting Types -->
+    <!-- View Params For Reporting Types --> 
     <bean parent="viewParamsRegistrarParent">
         <property name="viewID" value="csvResultsReport" />
         <property name="viewParamsClass"
