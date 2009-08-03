@@ -402,14 +402,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 Boolean useResultsSharing = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
                 if ( useResultsSharing ) {
                     // only show results sharing if it is being used
-                    UIMessage.make(tofill, "item-resultssharing-title", "modifytemplate.item.resultssharing.title");
                     String resultsSharingMessage = "unknown.caps";
                     if ( EvalConstants.SHARING_PUBLIC.equals(templateItem.getResultsSharing()) ) {
                         resultsSharingMessage = "general.public";
                     } else if ( EvalConstants.SHARING_PRIVATE.equals(templateItem.getResultsSharing()) ) {
                         resultsSharingMessage = "general.private";
                     }
-                    UIMessage.make(itemBranch, "item-resultssharing", resultsSharingMessage);
+                    UIMessage.make(itemBranch, "item-results-sharing", resultsSharingMessage);
                 }
 
                 if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification()) &&
