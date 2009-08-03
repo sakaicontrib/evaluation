@@ -1,3 +1,16 @@
+/**
+ * $Id$
+ * $URL$
+ * EvaluationDao.java - evaluation 
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.dao;
 
@@ -17,14 +30,14 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.genericdao.api.CompleteGenericDao;
+import org.sakaiproject.genericdao.api.GeneralGenericDao;
 
 /**
  * Do NOT use this class outside the LOGIC layer
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public interface EvaluationDao extends CompleteGenericDao {
+public interface EvaluationDao extends GeneralGenericDao {
 
    /**
     * This method will check the database for inconsistencies (mostly as a result of upgrades),
@@ -100,7 +113,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param maxResults 0 to return all results, otherwise limit the number of evals returned to this
     * @return a List of EvalEvaluation objects sorted by due date, title, and id
     */
-   @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds,
          Boolean activeOnly, Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults);
    
@@ -115,7 +127,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param includePartial if true then partial evals are included, otherwise only fully created evals
     * @return a List of EvalEvaluation objects sorted by stop date, title, and id
     */
-   @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
          String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults, boolean includePartial);
 
@@ -231,7 +242,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param userId the internal user id (not username), if null then return all categories
     * @return a list of {@link String}
     */
-   @SuppressWarnings("unchecked")
    public List<String> getEvalCategories(String userId);
 
    /**
@@ -241,7 +251,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param evalGroupId a unique id for an eval group
     * @return a unique id for the containing node or null if none found
     */
-   @SuppressWarnings("unchecked")
    public String getNodeIdForEvalGroup(String evalGroupId);
    
    /**
@@ -321,7 +330,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * other permissions will return no results
     * @return a list of adhoc groups for which this user has this permission
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getEvalAdhocGroupsByUserAndPerm(String userId,
          String permissionConstant);
 
@@ -418,7 +426,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * and the length of the repeat period plus the time to run the process for repeating jobs
     * @return true if a lock was obtained, false if not, null if failure
     */
-   @SuppressWarnings("unchecked")
    public Boolean obtainLock(String lockId, String executerId, long timePeriod);
    
    /**
@@ -443,7 +450,6 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param holderId a unique id for the holder of this lock (normally a server id)
     * @return true if a lock was released, false if not, null if failure
     */
-   @SuppressWarnings("unchecked")
    public Boolean releaseLock(String lockId, String executerId);
 
 }
