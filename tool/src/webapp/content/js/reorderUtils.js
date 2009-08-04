@@ -168,12 +168,29 @@ function startSort() {
                     $(saveAction).appendTo(ui.item.parents('.itemTableBlock').children('.instruction').eq(0));
                     ui.item.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
                     ui.item.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
-                        $(document).trigger('block.triggerChildrenSort', [ui]);   
-                        $(this).html('Saving... <img src="' + $.facebox.settings.loadingImage + '"/>');
-                        ui.item.parents('.itemTableBlock').sortable('disable');
-                        $(document).trigger('block.saveReorder', [ui,"simple"]);
-                        ui.item.parents('.itemTableBlock').sortable('enable');
+                        var order = [];
+                        ui.item.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
+                            order.push($(this).find('a[templateitemid]').attr('templateitemid'));
+                        });
+                        var templateItemId = ui.item.parents('.itemRow').children('.itemLine2').find('a[templateitemid]').attr('templateitemid'),
+                        params = {
+                            templateItemId : templateItemId,
+                            orderedIds : order.toString()
+                        },
+                        fnBefore = function(){
+                            $(document).trigger('block.triggerChildrenSort', [ui]);
+                            ui.item.parents('.itemTableBlock').sortable('disable');
+                        },
+                        fnAfter = function(){
+                            ui.item.parents('.itemRow').find('.itemBlockSave').fadeOut(0, function() {
+                                $(this).remove();
+                            });
+                            $(document).trigger('activateControls.templateItems');
+                            ui.item.parents('.itemTableBlock').sortable('enable');
+                        };
+                        evalTemplateData.item.saveBlockOrder(params, fnBefore, fnAfter);
                         return false;
+
                     });
                 }
 
@@ -263,19 +280,11 @@ $(document).bind('block.saveReorder', function(e, ui, type) {
 
                                 $('form[name=modify_form_rows]').ajaxSubmit({
                                     success: function(d) {
-                                        if ((type != null) && (type == "simple")) {
-                                            $(document).trigger('activateControls.templateItems');
-                                            item.parents('.itemRow').effect('highlight', 1500);
-                                            item.parents('.itemRow').find('.itemBlockSave').fadeOut('fast', function() {
-                                                $(this).remove();
-                                            });
-                                        } else {
-                                            $('#itemList').html($(d).find('#itemList').html());
-                                            $(document).trigger('list.triggerSort', [ui]);
-                                            $(document).trigger('activateControls.templateItems');
-                                            $(document).trigger('close.facebox');
-                                            item.parents('.itemTableBlock').effect('highlight', 3500);
-                                        }
+                                        $('#itemList').html($(d).find('#itemList').html());
+                                        $(document).trigger('list.triggerSort', [ui]);
+                                        $(document).trigger('activateControls.templateItems');
+                                        $(document).trigger('close.facebox');
+                                        item.parents('.itemTableBlock').effect('highlight', 3500);
                                         $(document).trigger('list.busy', false);
                                     }
                                 });
