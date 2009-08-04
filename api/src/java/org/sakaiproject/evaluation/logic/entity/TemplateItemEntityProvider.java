@@ -28,4 +28,5 @@ public interface TemplateItemEntityProvider extends EntityProvider {
    
    //Custom actions
    public final static String CUSTOM_BLOCK_REORDER = "block-reorder";
+   public final static String CUSTOM_TEMPLATE_REORDER = "template-reorder";
 }
