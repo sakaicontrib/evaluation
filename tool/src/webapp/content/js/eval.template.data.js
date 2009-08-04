@@ -120,7 +120,7 @@ var evalTemplateData = (function() {
       var _fillActionResponse = function (entityCat,id, templateOwner){
       evalTemplateUtils.debug.group("starting fillActionResponse", this);
   	if (entityCat == "eval-item") {
-		var par = $.facebox.settings.elementToUpdate;
+		var par = $.facebox.settings.elementToUpdate,
 		id = $(par).children(".itemLine2").children("[name=rowItemId]").html();
 	}
 	evalTemplateUtils.debug.info($.facebox.settings.elementToUpdate);
@@ -143,7 +143,7 @@ var evalTemplateData = (function() {
 			if (entityCat == "eval-template") {
 				$(entityCat, xml).each(function(){
 					if ($('form').length > 0) {
-						var newRow = $('form tr:eq(1)').clone()//.prependTo($('form tbody'));
+						var newRow = $('form tr:eq(1)').clone();
 						newRow.find('td:eq(0) span:eq(0)').html($("title", this).text());
 						var q = 'td:eq(0) span:eq(1) a[@href$='+newRow.attr("rowId")+']';
 						alert(newRow.find(q).attr('href').substring(newRow.find(q).attr('href').lastIndexOf('/') + 1));
@@ -154,14 +154,14 @@ var evalTemplateData = (function() {
 						newRow.find('td:eq(2)').html(tempateDate.getFullYear);
 						newRow.find('td:eq(0) span:eq(0)').html($("title", this).text());
 
-						newRow.prependTo($('form tbody'))
+						newRow.prependTo($('form tbody'));
 						}
 				});
 			}
 			}
 	     });
       evalTemplateUtils.debug.groupEnd();
-  }
+  };
 
     //Public data
     return {
@@ -180,7 +180,34 @@ var evalTemplateData = (function() {
         },
         fillActionResponse: function(entityCat,id, templateOwner){
              _fillActionResponse(entityCat,id, templateOwner);
-        }   ,
+        },
+        item: {
+            /** Save the order of grouped items.
+             * @param params :An object of key-value parameter pairs
+             * @param fnAfter :function to excecute on ajax success
+             * @param fnBefore :function to run before post
+             */
+            saveBlockOrder: function(params, fnBefore, fnAfter){
+                if ( typeof params !== undefined ){
+                    evalTemplateUtils.debug.info("Parameters use to set new block items order: %o", params);
+                    $.ajax({
+                        url: "/direct/eval-templateitem/block-reorder",
+                        data: $.param(params),
+                        type: evalTemplateData.constants.rest_Post,
+                        beforeSend: function(){
+                            if ( typeof fnBefore !== undefined ){
+                                fnBefore();
+                            }
+                        },
+                        success: function(data){
+                            if ( typeof fnAfter !== undefined ){
+                                fnAfter(data);
+                            }
+                        }
+                    });
+                }
+            }
+        },
         constants: {
             //REST Constants
             rest_Post : "POST",
