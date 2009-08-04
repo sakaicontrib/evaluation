@@ -182,11 +182,10 @@ function startSort() {
                             ui.item.parents('.itemTableBlock').sortable('disable');
                         },
                         fnAfter = function(){
+                            ui.item.parents('.itemTableBlock').sortable('enable');
                             ui.item.parents('.itemRow').find('.itemBlockSave').fadeOut(0, function() {
                                 $(this).remove();
                             });
-                            $(document).trigger('activateControls.templateItems');
-                            ui.item.parents('.itemTableBlock').sortable('enable');
                         };
                         evalTemplateData.item.saveBlockOrder(params, fnBefore, fnAfter);
                         return false;
