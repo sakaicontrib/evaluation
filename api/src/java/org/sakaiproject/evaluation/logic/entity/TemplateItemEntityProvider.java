@@ -27,6 +27,5 @@ public interface TemplateItemEntityProvider extends EntityProvider {
    public final static String ENTITY_PREFIX = "eval-templateitem";
    
    //Custom actions
-   public final static String CUSTOM_BLOCK_REORDER = "block-reorder";
-   public final static String CUSTOM_TEMPLATE_REORDER = "template-reorder";
+   public final static String CUSTOM_TEMPLATE_ITEMS_REORDER = "template-items-reorder";
 }
