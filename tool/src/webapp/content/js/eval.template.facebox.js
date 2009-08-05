@@ -127,6 +127,7 @@ var evalTemplateFacebox = (function() {
             }
         },
         addItem: function(url) {
+            evalTemplateUtils.debug.info("Trying to fetch: %s", url);
             //Unbind current reveal event
             $(document).unbind('reveal.facebox');
             //Check for after load type of event to call

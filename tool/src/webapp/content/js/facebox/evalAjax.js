@@ -163,7 +163,16 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     saveButton.onclick = function() {
         disableOrderButtons();
         buildSortableIds();
-        $(saveButton.form).ajaxSubmit();
+
+        var order = [];
+        $("#itemList > div").not('.ui-sortable-helper').each(function(){
+            order.push($(this).find('a[templateitemid]').attr('templateitemid'));
+        });
+        var params = {
+            orderedIds : order.toString()
+        };
+
+        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
         return false;
     };
 

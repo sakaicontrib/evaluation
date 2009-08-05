@@ -2082,4 +2082,23 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         return dao.isUsedTemplate(templateId);
     }
 
+
+
+	public void saveTemplateItemOrder(Map<Long, Integer> orderingMap, String currentUserId) {
+		Iterator<Map.Entry<Long, Integer>> selector = orderingMap.entrySet().iterator();
+        while ( selector.hasNext() ) {
+        	Map.Entry<Long, Integer> pairs = selector.next();
+        	Long templateItemId = pairs.getKey();
+        	Integer order = pairs.getValue();
+        	
+            EvalTemplateItem templateItem = getTemplateItemById(templateItemId);
+            templateItem.setDisplayOrder(order);
+            
+            saveTemplateItem(templateItem, currentUserId);
+			
+        }
+	}
+
+
+
 }

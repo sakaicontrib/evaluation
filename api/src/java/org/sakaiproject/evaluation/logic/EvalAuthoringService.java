@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -682,5 +683,12 @@ public interface EvalAuthoringService {
     * @return true if this template is used in any evalautions
     */
    public boolean isUsedTemplate(Long templateId);
+   
+   /**
+    * Save the specified template items in the order they appear in the {@link Map}, security is checked against passed user id
+    * @param orderingMap Item ids and corresponding positions to set
+    * @param currentUserId the internal user id (not username)
+    */
+   public void saveTemplateItemOrder(Map<Long, Integer> orderingMap, String currentUserId);
 
 }

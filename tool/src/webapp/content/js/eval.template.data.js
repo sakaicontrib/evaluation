@@ -182,25 +182,26 @@ var evalTemplateData = (function() {
              _fillActionResponse(entityCat,id, templateOwner);
         },
         item: {
-            /** Save the order of grouped items.
+            /** Save the order of template items or grouped items. Can be used to save order for anything in Evals
+             * @param ebAction :the custom EB action to call. Is anyone of the {@link evalTemplateUtils.pages.eb_*}
              * @param params :An object of key-value parameter pairs
              * @param fnAfter :function to excecute on ajax success
              * @param fnBefore :function to run before post
              */
-            saveBlockOrder: function(params, fnBefore, fnAfter){
-                if ( typeof params !== undefined ){
+            saveOrder: function(ebAction, params, fnBefore, fnAfter){
+                if ( typeof params !== undefined && typeof ebAction !== undefined ){
                     evalTemplateUtils.debug.info("Parameters use to set new block items order: %o", params);
                     $.ajax({
-                        url: "/direct/eval-templateitem/block-reorder",
+                        url: ebAction,
                         data: $.param(params),
                         type: evalTemplateData.constants.rest_Post,
                         beforeSend: function(){
-                            if ( typeof fnBefore !== undefined ){
+                            if ( typeof fnBefore !== "undefined" ){
                                 fnBefore();
                             }
                         },
                         success: function(data){
-                            if ( typeof fnAfter !== undefined ){
+                            if ( typeof fnAfter !== "undefined" ){
                                 fnAfter(data);
                             }
                         }

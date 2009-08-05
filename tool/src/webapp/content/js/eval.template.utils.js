@@ -94,7 +94,8 @@ var evalTemplateUtils = (function() {
                 modify_item_page: "modify_item",
                 modify_template_page: "modify_template",
                 modify_block_page: "modify_block",
-                choose_existing_page: "choose_existing_items"
+                choose_existing_page: "choose_existing_items",
+                eb_save_order: "/direct/eval-templateitem/template-items-reorder"
             },
         getPageType: function(url){
             evalTemplateUtils.debug.group("Getting the page type/name");

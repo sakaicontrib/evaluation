@@ -172,9 +172,7 @@ function startSort() {
                         ui.item.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
                             order.push($(this).find('a[templateitemid]').attr('templateitemid'));
                         });
-                        var templateItemId = ui.item.parents('.itemRow').children('.itemLine2').find('a[templateitemid]').attr('templateitemid'),
-                        params = {
-                            templateItemId : templateItemId,
+                        var params = {
                             orderedIds : order.toString()
                         },
                         fnBefore = function(){
@@ -187,7 +185,7 @@ function startSort() {
                                 $(this).remove();
                             });
                         };
-                        evalTemplateData.item.saveBlockOrder(params, fnBefore, fnAfter);
+                        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params, fnBefore, fnAfter);
                         return false;
 
                     });
