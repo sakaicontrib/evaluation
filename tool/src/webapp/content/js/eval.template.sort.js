@@ -7,7 +7,7 @@ var evalTemplateSort = (function(){
 
     //Update the itemRow labels after a sort event
     var updateLabellingAfterSort = function(enableSaveButton){
-        var list = $("#itemList > div.itemRow").not('.ui-sortable-helper').get(),
+        var list = $("#itemList > div.itemRow:visible").not('.ui-sortable-helper').get(),
         enableBtn = ( typeof enableSaveButton === "undefined" ) ? true : enableSaveButton;
         log.group("Updating Labelling After Sort");
         for (var i = 0; i < list.length; i++) {

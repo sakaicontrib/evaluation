@@ -15,17 +15,23 @@ var evalTemplateOrder = (function(){
                 this.onchange = function(){
                     var newPosition = this.options[this.selectedIndex].value -1,
                     diff = newPosition - oldPosition,
+                    moveUp = newPosition < oldPosition,
+                    allRows = $("#itemList > div.itemRow").not('.ui-sortable-helper'),
                     thisRow = $(this).parents("div.itemRow"),
                     clone = thisRow.clone(true);
                     clone.hide();
                     log.info("Moving row %i from %i to position: %i", thisRow.find("input[name*=item-select-selection-fossil]").val(), oldPosition, newPosition + 1);
                     thisRow.fadeOut(0, function(){
-                        if( (diff === 2 || diff === -2) && newPosition !== 0 ){      //if row to move to is immediatley above this row
-                            clone.insertBefore($("#itemList > div.itemRow").eq(oldPosition - 2));
-                        }else if(newPosition > 0){
-                            clone.insertAfter($("#itemList > div.itemRow").eq(newPosition - 1));
+                        if ( moveUp ){
+                            if( (diff === 2 || diff === -2) && newPosition !== 0 ){      //if row to move to is immediatley above this row
+                                clone.insertBefore(allRows.eq(oldPosition - 2));
+                            }else if(newPosition > 0){
+                                clone.insertAfter(allRows.eq(newPosition - 1));
+                            }else{
+                                clone.insertBefore(allRows.eq(0));  //if row to move is moving to the absolute top
+                            }
                         }else{
-                            clone.insertBefore($("#itemList > div.itemRow").eq(0));  //if row to move is moving to the absolute top
+                            clone.insertAfter(allRows.eq(newPosition));
                         }
 
                         clone.fadeIn(0, function(){
@@ -43,7 +49,6 @@ var evalTemplateOrder = (function(){
                                 })
                                 .effect("highlight", "normal");
                         thisRow.remove();
-
                     });
                 };
            });
