@@ -75,16 +75,9 @@ function startSort() {
         delay:         '1',
         opacity:     '0.9',
         scroll:     true,
-        update: function(data) {
-            var list = $("#itemList > div").get();
-            for (var i = 0; i < list.length - 1; i++) {
-                if (list[i].id) {
-                    setIndex(list[i].id, i);
-                }
-            }
-            enableOrderButtons();
+        update: function(data){
+            evalTemplateSort.updateLabelling(data);
         }
-
     });
     $(".itemTableBlock").each(function() {
         $(this).sortable({

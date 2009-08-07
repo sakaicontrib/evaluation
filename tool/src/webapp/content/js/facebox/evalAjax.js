@@ -217,7 +217,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
     refreshSort();
     //initialise the reorder dropdowns
-    EvalSystem.decorateReorderSelects("", $("#itemList > div").get().length);
+    evalTemplateOrder.initDropDowns();
+
     // populate or re-populate groupable item array
     $('div.itemList > div:visible').each(function() {
         if ($(this).children('.itemLine3').length == 0) {
