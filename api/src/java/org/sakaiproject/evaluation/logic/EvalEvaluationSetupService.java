@@ -138,6 +138,15 @@ public interface EvalEvaluationSetupService {
      */
     public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);
 
+	/**
+	 * Get all evaluations in which this user can be evaluated.
+	 * 
+	 * @param userId the acting user, normally the current user, internal user id (not username)
+	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate) 
+     * @throws IllegalArgumentException if the userId is null
+	 */
+	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId);
+
     /**
      * Close an evaluation before the closing date,
      * this will force the evaluation closed and move up the closing date and stop dates to now<br/>

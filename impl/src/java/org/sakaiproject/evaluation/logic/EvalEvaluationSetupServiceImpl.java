@@ -700,6 +700,33 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         return evals;
     }
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String)
+	 */
+	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId must be set");
+        }
+
+        List<EvalEvaluation> list = null;
+        // get the list of all assignments where this user is instructor
+        List<EvalAssignUser> userEvaluateeAssignments = evaluationService.getParticipantsForEval(
+                null, userId, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+        Set<String> egidSet = EvalUtils.getGroupIdsFromUserAssignments(userEvaluateeAssignments);
+        String[] evalGroupIds = null;
+        if (!egidSet.isEmpty()) {
+            // create array of all assigned groupIds where this user is instructor
+            evalGroupIds = egidSet.toArray(new String[egidSet.size()]);
+        }
+        if(evalGroupIds != null) { 
+        	list = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, null, 0, 0, false);
+        }
+		if(list == null) {
+			return new ArrayList<EvalEvaluation>();
+		}
+        return list;
+	}
+
 
     /**
      * Method which retrieves the groupIds for all groups in which this user has
@@ -1757,5 +1784,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
     }
+
 
 }

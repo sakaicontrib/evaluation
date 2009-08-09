@@ -257,6 +257,26 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         if (instViewResults == null) {
             instViewResults = true;
         } // if configurable then we will assume some are probably shared
+        
+        // determine whether instructor widget is enabled
+        boolean showResponsesBox = ((Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX)).booleanValue();
+        if(showResponsesBox) {
+        	// show the widget
+        	
+        	// need to determine if there are any evals in which the user can be evaluated
+        	List<EvalEvaluation> responses = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId);
+        	if(responses != null && !responses.isEmpty()) {
+        		// if so, show a list of evals with four columns: 
+        		// a link to a preview or results or whatever is appropriate based on eval status
+        		// status
+        		// response date (?)
+        		// count of completed responses out of possible responses
+        	} else {
+        		// else show a message saying no evals
+        	}
+        }
+        
+        
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
         /*
          * If the person is an admin, then just point new evals to existing
@@ -279,7 +299,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 }
             }
         }
-
+        
         if (!newEvals.isEmpty()) {
             UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
             // Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583
