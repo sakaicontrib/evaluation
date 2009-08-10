@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -250,6 +251,47 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             UIMessage.make(tofill, "evaluationsNone", "summary.evaluations.none");
         }
 
+        // determine whether instructor widget is enabled
+        boolean showResponsesBox = ((Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX)).booleanValue();
+        if(showResponsesBox) {
+        	// show the widget
+        	
+        	// need to determine if there are any evals in which the user can be evaluated
+        	List<EvalEvaluation> evalsForInstructor = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId);
+        	if(evalsForInstructor == null || evalsForInstructor.isEmpty()) {
+        		// no evals found
+        		// show a message saying no evals?
+        	} else {
+        		// evals found 
+				UIBranchContainer evalResponsesBC = UIBranchContainer.make(tofill, "evalResponsesBox:");
+				UIForm evalResponsesForm = UIForm.make(evalResponsesBC , "evalResponsesForm");
+				
+				// build an array of evaluation ids
+				Long[] evalIds = new Long[evalsForInstructor.size()];
+				int i = 0;
+				for(EvalEvaluation eval : evalsForInstructor) {
+					evalIds[i++] = eval.getId();
+				}
+				
+				// show four column headings
+				UIMessage.make(evalResponsesForm, "evalresponses-header-title","summary.header.title");
+				UIMessage.make(evalResponsesForm, "evalresponses-header-status", "summary.header.status");
+				UIMessage.make(evalResponsesForm, "evalresponses-header-date", "summary.header.date");
+				UIMessage.make(evalResponsesForm, "evalresponses-header-responses", "summary.header.responses");
+
+				// get the eval groups
+				Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
+				
+				// show a list of evals with four columns: 
+				for(EvalEvaluation eval : evalsForInstructor) {
+					// a link to a preview or results or whatever is appropriate based on eval status
+	        		// status
+	        		// response date (?)
+	        		// count of completed responses out of possible responses
+				}
+        	}
+        }
+        
         /*
          * for the evaluations admin box
          */
@@ -257,25 +299,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         if (instViewResults == null) {
             instViewResults = true;
         } // if configurable then we will assume some are probably shared
-        
-        // determine whether instructor widget is enabled
-        boolean showResponsesBox = ((Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX)).booleanValue();
-        if(showResponsesBox) {
-        	// show the widget
-        	
-        	// need to determine if there are any evals in which the user can be evaluated
-        	List<EvalEvaluation> responses = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId);
-        	if(responses != null && !responses.isEmpty()) {
-        		// if so, show a list of evals with four columns: 
-        		// a link to a preview or results or whatever is appropriate based on eval status
-        		// status
-        		// response date (?)
-        		// count of completed responses out of possible responses
-        	} else {
-        		// else show a message saying no evals
-        	}
-        }
-        
         
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
         /*
