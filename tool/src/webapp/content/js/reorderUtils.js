@@ -155,9 +155,9 @@ function startSort() {
             opacity: '0.9',
             scroll: true,
             update: function(e, ui) {
-                $(document).trigger('block.triggerChildrenSort', [ui]);
+                $(document).trigger('block.triggerChildrenSort', [$(this).parents("div.itemRow")]);
                 if (ui.item.parents('.itemTableBlock').find('.itemBlockSave').length == 0) {
-                    var saveAction = '<a class="itemBlockSave highlight" href="#saveAction">Save new order for grouped items</a>';
+                    var saveAction = '<a class="itemBlockSave highlight" href="#saveAction">Save new order for grouped items</a>'; //todo: i8n this
                     $(saveAction).appendTo(ui.item.parents('.itemTableBlock').children('.instruction').eq(0));
                     ui.item.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
                     ui.item.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
@@ -169,7 +169,7 @@ function startSort() {
                             orderedIds : order.toString()
                         },
                         fnBefore = function(){
-                            $(document).trigger('block.triggerChildrenSort', [ui]);
+                            $(document).trigger('block.triggerChildrenSort', [$(this).parents("div.itemRow")]);
                             ui.item.parents('.itemTableBlock').sortable('disable');
                         },
                         fnAfter = function(){
@@ -194,13 +194,9 @@ function refreshSort() {
     $("div.itemTableBlock").sortable('destroy');
     startSort();
 }
-$(document).bind('block.triggerChildrenSort', function(e, ui) {
-    var item = ui.item? ui.item : ui;
-
-    var count = 1;
-    item.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
-        $(this).find('.itemLabel').text(count);
-        count++;
+$(document).bind('block.triggerChildrenSort', function(e, parentItem) {
+    $.each(parentItem.find('div.itemRowBlock').not('.ui-sortable-helper'), function(i, _this){
+        $(_this).find('span.itemLabel').text(i + 1);
     });
 });
 $(document).bind('block.rejectItem', function(e, ui, option) {
