@@ -75,8 +75,8 @@ function startSort() {
         delay:         '1',
         opacity:     '0.9',
         scroll:     true,
-        update: function(data){
-            evalTemplateSort.updateLabelling(data);
+        update: function(){
+            evalTemplateSort.updateLabelling();
         }
     });
     $(".itemTableBlock").each(function() {
