@@ -107,7 +107,7 @@ public interface EvalSettings {
     /**
      * CONSTANT: Is the box showing the Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
      */
-    public static final String ENABLE_RESPONSES_BOX = "ENABLE_RESPONSES_BOX:java.lang.Boolean";
+    public static final String ENABLE_EVALUATEE_BOX = "ENABLE_EVALUATEE_BOX:java.lang.Boolean";
     /**
      * Enable evaluation taker comments on all non-text answerable items, this is configured
      * on a per item basis, and will disable all comments if turned off
@@ -352,7 +352,7 @@ public interface EvalSettings {
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
         ENABLE_SUMMARY_SITES_BOX,
         ENABLE_ASSISTANT_CATEGORY,
-        ENABLE_RESPONSES_BOX,
+        ENABLE_EVALUATEE_BOX,
         ENABLE_XLS_REPORT_EXPORT,
         EVAL_USE_DATE_TIME,
         EVAL_USE_SAME_VIEW_DATES,
