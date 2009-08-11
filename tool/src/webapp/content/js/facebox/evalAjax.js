@@ -330,7 +330,8 @@ function updateControlItemsTotal() {
     //
     // plugin definition
     //
-    var that;
+    var that,
+    log = evalTemplateUtils.debug;
     $.fn.itemRemove = function(options) {
         var settings = {
             ref:    '', //the RESTful unique identifier for this component
@@ -496,6 +497,7 @@ function updateControlItemsTotal() {
             show_hide_box(an, options);
         });
         $('.removeItemConfirmYes').click(function() {
+            log.group("Start removing template item");
             if (options.itemType == "blockChild") {
                 if ($('#closeItemOperationsEnabled').length > 0) {
                     $('#closeItemOperationsEnabled').parent().remove();
@@ -504,7 +506,7 @@ function updateControlItemsTotal() {
                     var error = '<div class="itemOperationsEnabled">\
             <img src="/library/image/sakai/cancelled.gif"/>\
             <span class="instruction">Sorry, groups have to have at least TWO items in them.</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
-            ';
+            ';    //todo: i8n this
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1500);
                     $('#closeItemOperationsEnabled').click(function() {
                         $(this).parent().slideUp('normal', function() {
@@ -518,7 +520,6 @@ function updateControlItemsTotal() {
                     url: "/direct/" + options.ref + "/" + options.id + "/delete",
                     type: "DELETE",
                     success: function(data) {
-                        //alert(data);
                         finish(options, data);
                     }
                 });
@@ -545,6 +546,7 @@ function updateControlItemsTotal() {
                 });
             }
             else {
+                log.debug("EB action for deleting id: %i", options.id );
                 $.ajax({
                     url: "/direct/" + options.ref + "/" + options.id + "/delete",
                     type: "DELETE",
@@ -558,6 +560,7 @@ function updateControlItemsTotal() {
 
             }
             show_hide_box(an, options);
+            log.groupEnd();
         });
 
         move_box(an, boxdiv, options);
@@ -568,6 +571,7 @@ function updateControlItemsTotal() {
     }
 
     function finish(options, d) {
+        log.group("Removed item of type %s with ref of %s", options.itemType, options.ref);
         if (options.itemType == 'block') {
             $('#itemList').html($(d).find('#itemList').html());
             $(document).trigger('activateControls.templateItems');
@@ -575,27 +579,23 @@ function updateControlItemsTotal() {
         }
         if (options.itemType == 'blockChild') {
             $(that).parent().parent().effect('highlight', {}, 1000).fadeOut(500, function() {
-                $(document).trigger('block.triggerChildrenSort', [$(this)]);
+                var parentItem = $(this).parents("div.itemRow");
                 $(this).remove();
+                $(document).trigger('block.triggerChildrenSort', [parentItem]);
                 updateControlItemsTotal();
             });
             return false;
         }
         if (options.ref == 'eval-templateitem') {
-            $(that).parent().parent().parent().parent().effect('highlight', {}, 1000).fadeOut(500, function() {
+            $(that).parents("div.itemRow").effect('highlight', {}, 1000).fadeOut(500, function() {
                 $(this).remove();
                 updateControlItemsTotal();
-                var list = $("#itemList > div").get();
-                for (var i = 0; i < list.length; i++) {
-                    if (list[i].id) {
-                        setIndex(list[i].id, i);
-                    }
-                }
+                evalTemplateSort.updateLabelling();                
             });
 
             //do more stuff here
         }
-
+        log.groupEnd();
         return false;
     }
 
