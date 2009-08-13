@@ -535,7 +535,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     	
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID);
     	assertNotNull(evals);
-    	assertEquals(8, evals.size());
+    	assertEquals(6, evals.size());
     	
     	for(EvalEvaluation eval : evals) {
             List<EvalAssignUser> assignUsers = evaluationService.getParticipantsForEval(eval.getId(), EvalTestDataLoad.MAINT_USER_ID, 

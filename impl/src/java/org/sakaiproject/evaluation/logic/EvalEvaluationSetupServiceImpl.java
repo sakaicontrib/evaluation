@@ -39,6 +39,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -708,23 +709,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("userId must be set");
         }
 
-        List<EvalEvaluation> list = null;
-        // get the list of all assignments where this user is instructor
-        List<EvalAssignUser> userEvaluateeAssignments = evaluationService.getParticipantsForEval(
-                null, userId, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
-        Set<String> egidSet = EvalUtils.getGroupIdsFromUserAssignments(userEvaluateeAssignments);
-        String[] evalGroupIds = null;
-        if (!egidSet.isEmpty()) {
-            // create array of all assigned groupIds where this user is instructor
-            evalGroupIds = egidSet.toArray(new String[egidSet.size()]);
+        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+        String[] evalGroupIds = new String[evalGroups.size()];
+        int i = 0;
+        for(EvalGroup evalGroup : evalGroups) {
+        	evalGroupIds[i++] = evalGroup.evalGroupId;
         }
-        if(evalGroupIds != null) { 
-        	list = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, null, 0, 0, false);
-        }
-		if(list == null) {
-			return new ArrayList<EvalEvaluation>();
-		}
-        return list;
+        List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
+        return evals;
 	}
 
 
