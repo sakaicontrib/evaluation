@@ -4,7 +4,7 @@
 var evalTemplateUtils = (function() {
 
     //Configurable private variables
-    var canDebug = false,
+    var canDebug = true,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
             pagesLoadedByFBwithJs = [];
@@ -95,7 +95,8 @@ var evalTemplateUtils = (function() {
                 modify_template_page: "modify_template",
                 modify_block_page: "modify_block",
                 choose_existing_page: "choose_existing_items",
-                eb_save_order: "/direct/eval-templateitem/template-items-reorder"
+                eb_save_order: "/direct/eval-templateitem/template-items-reorder",
+                eb_block_edit: "/direct/eval-templateitem/modify-block-items"
             },
         getPageType: function(url){
             evalTemplateUtils.debug.group("Getting the page type/name");

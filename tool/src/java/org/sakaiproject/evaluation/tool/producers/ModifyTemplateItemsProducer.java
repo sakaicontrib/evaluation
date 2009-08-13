@@ -286,6 +286,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
                 // hidden item num
                 UIInput.make(itemBranch, "hidden-item-num", templateItemOTP + "displayOrder", sCurItemNum);
+                UIOutput.make(itemBranch, "template-item-id", templateItem.getId() + "");
 
                 // only show Block Check box for scaled and block parents
                 if ( templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) ||
