@@ -302,13 +302,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         				for(EvalGroup group : groups) {
         					UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable,"evalResponsesList:");
  
-        					UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
          					UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", 
         							EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
         							new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));//view params
-        					UIOutput.make(evalrow, "evalResponsesStatus", eval.getState());
+        					//UIOutput.make(evalrow, "evalResponsesStatus", eval.getState());
         					
-        					makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate");
+        					makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus");
         					
         					int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
         					int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[]{group.evalGroupId});
@@ -376,7 +375,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
- 				makeDateComponent(evalrow, eval, evalState, "evalAdminDateLabel", "evalAdminDate");
+                
+ 				makeDateComponent(evalrow, eval, evalState, "evalAdminDateLabel", "evalAdminDate", "evalAdminStatus");
 
                 /*
                  * 1) if a evaluation is queued, title link go to EditSettings
@@ -473,7 +473,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	 */
 	protected void makeDateComponent(UIContainer evalrow,
 			EvalEvaluation eval, String evalState, 
-			String evalDateLabel, String evalDateItem) {
+			String evalDateLabel, String evalDateItem, String evalStatusItem) {
         // use a date which is related to the current users locale
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
@@ -482,7 +482,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		    UIMessage.make(evalrow, evalDateLabel, "summary.label.starts");
 		    UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
 
-		    UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+		    UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
 		} else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
 		    // Active evaluations can either be open forever or close at
 		    // some point:
@@ -494,7 +494,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		        UIMessage.make(evalrow, evalDateLabel, "summary.label.nevercloses");
 		    }
 
-		    UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+		    UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
 		} else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
 		    // Evaluations can have a grace period, if so that must
 		    // close at some point;
@@ -502,14 +502,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		    UIMessage.make(evalrow, evalDateLabel, "summary.label.gracetill");
 		    UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeStopDate()));
 
-		    UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+		    UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
 		} else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
 		    // if an evaluation is closed then it is not yet viewable
 		    // and ViewDate must have been set
 		    UIMessage.make(evalrow, evalDateLabel, "summary.label.resultsviewableon");
 		    UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeViewDate()));
 
-		    UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+		    UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
 		} else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
 		    // TODO if an evaluation is viewable we may want to notify
 		    // if there are instructor/student dates
@@ -523,7 +523,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		        UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), new ReportParameters(
 		                ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
 		    } else {
-		        UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState).decorate(
+		        UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState).decorate(
 		                new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded })));
 		    }
 		} else {
