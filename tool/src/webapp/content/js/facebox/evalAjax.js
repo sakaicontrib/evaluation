@@ -3,7 +3,8 @@
  **/
 
 $(document).bind('activateControls.templateItems', function(e, opt) {
-    var groupableItems = new Array();
+    var groupableItems = [],
+    log = evalTemplateUtils.debug;
     $('a[rel=remove]').itemRemove({
         ref:    'eval-templateitem',
         id:     '$(this).attr("templateitemid")',
@@ -27,7 +28,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     $('a.addItem[rel=faceboxAddGroupItems]').click(function() {
         //Unbind current reveal event to avoid fckEditor error
         $(document).unbind('reveal.facebox');
-        var that = $(this);
+        var that = $(this),
+        parentObj = that.parents("div.itemRow"),
+        blockId = parentObj.find("input[name=template-item-id]").val();
         var noGroupableItems = true;
         //console.log(that.attr('class'));
         var myType = $(this).parents('.itemRow').find('.itemCheckbox > input').attr('id');
@@ -47,12 +50,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
         }
         if (noGroupableItems) {
-            $.facebox('There are no items you can add to this group.');      //TODO:i8N
-            if ($('#facebox .titleHeader').length > 0)
-                $('#facebox .titleHeader').remove();
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close');   //TODO:i8N
-
-        } else {
+            alert('There are no items you can add to this group.');      //TODO:i8N
+           } else {
 
             $.facebox('<div id="addGroupItemDiv"></div>');
             if ($('#facebox .titleHeader').length > 0)
@@ -83,13 +82,26 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $(this).attr('disabled', 'disabled');
                 $(this).next('input').attr('disabled', 'disabled');
                 $(img).insertAfter($(this).next('input'));
-                var selectedItems = new Array();
+                var selectedItems = [],
+                addItems = [],
+                count = 0;
                 $('#addGroupItemDiv > div').each(function() {
-                    if ($(this).find('input[type=checkbox]').attr('checked') == true) {
+                    if ($(this).find('input[type=checkbox]').attr('checked') === true) {
+                        var itemId = $(this).find("input[name=hidden-item-id]:hidden").val();
                         $(this).find('.itemRight').show();
+                        $(this).find('input[type=checkbox]:eq(0)').remove();
                         $(this).appendTo(that.parent());
                         selectedItems.push($(this).attr('oldRowId'));
+                        addItems.push(itemId);
+                        //remove item from main row
+                        groupableItems.splice(count, 1);
+                        $("div.itemRow input[name=template-item-id]:hidden").each(function(){
+                             if( this.value === itemId ){
+                                 $(this).parents("div.itemRow").remove();
+                             }
+                        });
                     }
+                    count ++;
                 });
                 for (i in groupableItems) {
                     for (l in selectedItems) {
@@ -100,22 +112,27 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 }
                 $(document).trigger('block.triggerChildrenSort', [that]);
                 $(document).trigger('list.triggerSort');
-                //$(document).trigger('activateControls.templateItems');
-                $.facebox('\
-                                                  <div><img src="' + $.facebox.settings.loadingImage + '"/>  Saving... \
-			                </div> \
-			                <div class="footer"> \
-			                   Please do not close this window.  \
-			                </div> ');
-                $(document).trigger('block.saveReorder', [that]);
+
+                $(document).trigger('activateControls.templateItems');
+                parentObj.effect('highlight', 1000);
+
+                log.info("selected %o", addItems.toString());
+                //Save to EB using already set post method
+                var params = {
+                    blockid : blockId,
+                    additems: addItems.toString()
+                };
+                evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params);
+
+                 $(document).trigger('block.triggerChildrenSort', [parentObj]);
                 $(document).trigger('close.facebox');
 
             });
-            var clone = $(this).parent().find('.itemRowBlock').eq(0).clone();
+            var clone = $(this).parent().find('.itemRowBlock').eq(0).clone(),
+            selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
             //edit extra controls
-            clone.find('.itemRight').remove();
-            clone.find('.itemLabel').html('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
-            //TODO:Strip out unneeded . in string
+            clone.find('.itemRight').hide();
+            selectBox.insertBefore(clone.find('.itemLabel'));
 
             if (groupableItems.length > 0) {
                 for (i in groupableItems) {
@@ -126,11 +143,13 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                             (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-')))
 
                             ) {
-                        var itemId = groupableItems[i].itemId;
-                        var otp = groupableItems[i].otp;
-                        var text = groupableItems[i].text;
-                        var rowId = groupableItems[i].rowId;
-                        var shadow = $(clone).clone();
+                        var itemId = groupableItems[i].itemId,
+                        otp = groupableItems[i].otp,
+                        text = groupableItems[i].text,
+                        rowId = groupableItems[i].rowId,
+                        rowNumber = groupableItems[i].rowNumber,
+                        shadow = $(clone).clone();
+                        shadow.find('.itemLabel').text(rowNumber);
                         shadow.css('cursor', 'auto');
                         shadow.attr('oldRowId', rowId);
                         shadow.find('span').eq(1).html(text);
@@ -138,7 +157,6 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                         shadow.find('a[templateitemid]').attr('templateitemid', itemId);
                         shadow.find('a[otp]').attr('otp', otp);
                         $('#addGroupItemDiv').append(shadow);
-
                     }
                 }
                 $('input[name=addGroupItemCheckbox]').bind('click', function() {
@@ -221,18 +239,24 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
     // populate or re-populate groupable item array
     $('div.itemList > div:visible').each(function() {
-        if ($(this).children('.itemLine3').length == 0) {
-            var t = "";
+        if ($(this).children('.itemLine3').length === 0) {
+            var t = "",
+            rowNumber;
             if ($(this).find('.itemText > span').eq(1).text() == "")
                 t = $(this).find('.itemText > span').eq(0).html();
             else
                 t = $(this).find('.itemText > span').eq(1).html();
+
+            $(this).find("select:eq(0)").each(function(){
+                rowNumber = this.options[this.selectedIndex].value;
+            });
             var object = {
                 text:   t,
                 type:   ($(this).find('.itemCheckbox > input').attr('id') ? $(this).find('.itemCheckbox > input').attr('id') : "000"),
                 itemId: $(this).find('a[templateitemid]').eq(0).attr('templateitemid'),
                 otp:    $(this).find('a[otp]').eq(0).attr('otp'),
-                rowId:  $(this).attr('id')
+                rowId:  $(this).attr('id'),
+                rowNumber: rowNumber
             };
             groupableItems.push(object);
         }

@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.entitybroker.EntityView;
@@ -61,6 +63,10 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
     }
     
     private final static String key_ordered_Ids = "orderedIds";
+
+    //parameter name keys for {@link modifyBlockItems} method
+    private final static String key_block_id = "blockid";
+    private final static String key_items_to_add = "additems";
 
     public boolean entityExists(String id) {
         boolean exists = false;
@@ -125,7 +131,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
         return id;
     }
     
-  //Custom action to handle /eval-templateitem/block-reorder
+  //Custom action to handle /eval-templateitem/template-items-reorder
 	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_REORDER,viewKey=EntityView.VIEW_NEW)
 	public void saveTemplateItemsOrdering(EntityView view, Map<String, Object> params) {
 		Object ids = params.get(key_ordered_Ids);
@@ -144,5 +150,52 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 			throw new IllegalArgumentException("No ordered Ids to process.");
 		}
 	}
+	
+	//Custom method to handle /eval-templateitem/modify-block-items
+	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_BLOCK,viewKey=EntityView.VIEW_NEW)
+	public void modifyBlockItems(EntityView view, Map<String, Object> params) {
+		Long blockId = Long.parseLong( params.get(key_block_id).toString() );
+		String currentUserId = commonLogic.getCurrentUserId();
+		String itemsToAddParams = params.get(key_items_to_add).toString();
+		List<String> itemsToAdd = Arrays.asList(itemsToAddParams.split(","));
+		
+		EvalTemplateItem parent = authoringService.getTemplateItemById(blockId);
+		int totalGroupedItems = authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false).size();
+		System.out.println("Total nudged from:" + totalGroupedItems);
+		
+		System.out.println("=======BEFo`re==============");
+		for (EvalTemplateItem item : authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false)){
+			System.out.println(item.getId() +", ");
+		}
 
+		for ( String itemIdstring : itemsToAdd){
+			Long itemId = Long.parseLong(itemIdstring);
+			EvalTemplateItem child = authoringService.getTemplateItemById(itemId);
+			
+			int itemPosition = (itemsToAdd.indexOf(itemIdstring) + 1) + totalGroupedItems;
+			
+			System.out.println("Moved item "+itemIdstring+" from number "+child.getDisplayOrder()+" to  "+itemPosition);
+			
+			
+			child.setBlockParent(Boolean.FALSE);
+			child.setBlockId(blockId);
+			child.setDisplayOrder(itemPosition);
+            child.setCategory(parent.getCategory()); // EVALSYS-441
+            child.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
+            // children have to inherit the parent hierarchy settings
+            child.setHierarchyLevel(parent.getHierarchyLevel());
+            child.setHierarchyNodeId(parent.getHierarchyNodeId());
+            authoringService.saveTemplateItem(child, currentUserId);
+            
+            
+		}
+		
+		System.out.println("Total nudged to:" + authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false).size());
+
+		
+		System.out.println("=========after============");
+		for (EvalTemplateItem item : authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false)){
+			System.out.println(item.getId() +", ");
+		}
+	}
 }
