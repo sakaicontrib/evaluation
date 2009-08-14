@@ -20,6 +20,7 @@ var evalTemplateSort = (function(){
             log.info("enabling save buttons");
             enableOrderButtons();
         }
+        refreshSort();
         log.groupEnd();
     };
 

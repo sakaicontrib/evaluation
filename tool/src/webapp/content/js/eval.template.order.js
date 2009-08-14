@@ -4,12 +4,11 @@
 var evalTemplateOrder = (function(){
 
     //Logger
-    var log = evalTemplateUtils.debug;
+    var log = evalTemplateUtils.debug,
 
     //initialise the reorder dropdowns
-    var initDropDowns = function(){
+    initDropDowns = function(){
       $("#itemList > div.itemRow").each(function(){
-
            $(this).find("select[id*=item-select-selection]:eq(0)").each(function(){
                var oldPosition =  this.options[this.selectedIndex].value;
                 this.onchange = function(){
@@ -37,15 +36,7 @@ var evalTemplateOrder = (function(){
                         clone.fadeIn(0, function(){
                                     evalTemplateSort.updateLabelling(false);
                                     initDropDowns();
-                                    var order = [];
-                                    $("#itemList > div").not('.ui-sortable-helper').each(function(){
-                                        order.push($(this).find('a[templateitemid]').attr('templateitemid'));
-                                    });
-                                    var params = {
-                                        orderedIds : order.toString()
-                                    };
-
-                                    evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+                                    evalTemplateOrder.saveTopLevelTemplateOrdering();
                                 })
                                 .effect("highlight", "normal");
                         thisRow.remove();
@@ -54,9 +45,59 @@ var evalTemplateOrder = (function(){
            });
         });
 
+    },
+
+    saveTopLevelTemplateOrdering = function(){
+        var order = [];
+        $("#itemList > div").not('.ui-sortable-helper').each(function(){
+            order.push($(this).find('a[templateitemid]').attr('templateitemid'));
+        });
+        var params = {
+            orderedIds : order.toString()
+        };
+        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+    },
+
+    initSaveGroupOrderControls = function(anyGroupedItemObject){
+            log.info("Moved ordering for %o", anyGroupedItemObject);
+            $(document).trigger('block.triggerChildrenSort', [anyGroupedItemObject.parents("div.itemTableBlock")]);
+            if (anyGroupedItemObject.parents('.itemTableBlock').find('.itemBlockSave').length === 0) {
+                var saveAction = '<a class="itemBlockSave highlight" href="#saveAction">Save new order for grouped items</a>'; //todo: i8n this
+                $(saveAction).appendTo(anyGroupedItemObject.parents('.itemTableBlock').children('.instruction').eq(0));
+                anyGroupedItemObject.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
+                anyGroupedItemObject.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
+                    evalTemplateOrder.saveGroupLevelTemplateOrdering(anyGroupedItemObject);
+                });
+            }
+        },
+
+    saveGroupLevelTemplateOrdering = function(anyGroupedItemObject){
+        var order = [];
+        anyGroupedItemObject.parents('.itemTableBlock').find('div.itemRowBlock').not('.ui-sortable-helper').each(function(){
+            order.push($(this).find('a[templateitemid]').attr('templateitemid'));
+        });
+        var params = {
+            orderedIds : order.toString()
+        },
+        fnBefore = function(){
+            $(document).trigger('block.triggerChildrenSort', [$(this).parents("div.itemRow")]);
+            anyGroupedItemObject.parents('.itemTableBlock').sortable('disable');
+        },
+        fnAfter = function(){
+            //init dropdown controls
+            evalTemplateOrder.initDropDowns();
+            anyGroupedItemObject.parents('.itemTableBlock').sortable('enable');
+            anyGroupedItemObject.parents('.itemRow').find('.itemBlockSave').fadeOut(0, function() {
+                $(this).remove();
+            });
+        };
+        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params, fnBefore, fnAfter);
     };
 
     return {
-        initDropDowns : initDropDowns
+        initDropDowns : initDropDowns,
+        initSaveGroupOrderControls : initSaveGroupOrderControls,
+        saveTopLevelTemplateOrdering : saveTopLevelTemplateOrdering,
+        saveGroupLevelTemplateOrdering : saveGroupLevelTemplateOrdering
     };
 })($);
