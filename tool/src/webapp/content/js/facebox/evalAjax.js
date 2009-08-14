@@ -3,8 +3,7 @@
  **/
 
 $(document).bind('activateControls.templateItems', function(e, opt) {
-    var groupableItems = [],
-    log = evalTemplateUtils.debug;
+    var log = evalTemplateUtils.debug;
     $('a[rel=remove]').itemRemove({
         ref:    'eval-templateitem',
         id:     '$(this).attr("templateitemid")',
@@ -35,9 +34,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         //console.log(that.attr('class'));
         var myType = $(this).parents('.itemRow').find('.itemCheckbox > input').attr('id');
 
-        if (groupableItems.length > 0) {
-            for (i in groupableItems) {
-                var type = groupableItems[i].type;
+        if (evalTemplateUtils.vars.groupableItems.length > 0) {
+            for (i in evalTemplateUtils.vars.groupableItems) {
+                var type = evalTemplateUtils.vars.groupableItems[i].type;
                 if (
                         (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-')))
                                 ==
@@ -90,11 +89,12 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                         var itemId = $(this).find("input[name=hidden-item-id]:hidden").val();
                         $(this).find('.itemRight').show();
                         $(this).find('input[type=checkbox]:eq(0)').remove();
+                        that.parent().css('cursor', '');
                         $(this).appendTo(that.parent());
                         selectedItems.push($(this).attr('oldRowId'));
                         addItems.push(itemId);
                         //remove item from main row
-                        groupableItems.splice(count, 1);
+                        evalTemplateUtils.vars.groupableItems.splice(count, 1);
                         $("div.itemRow input[name=template-item-id]:hidden").each(function(){
                              if( this.value === itemId ){
                                  $(this).parents("div.itemRow").remove();
@@ -103,51 +103,51 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                     }
                     count ++;
                 });
-                for (i in groupableItems) {
+                for (i in evalTemplateUtils.vars.groupableItems) {
                     for (l in selectedItems) {
-                        if (groupableItems[i].rowId == selectedItems[l]) {
-                            $('div[id=' + groupableItems[i].rowId + ']').remove();
+                        if (evalTemplateUtils.vars.groupableItems[i].rowId == selectedItems[l]) {
+                            $('div[id=' + evalTemplateUtils.vars.groupableItems[i].rowId + ']').remove();
                         }
                     }
                 }
-                $(document).trigger('block.triggerChildrenSort', [that]);
                 $(document).trigger('list.triggerSort');
-
                 $(document).trigger('activateControls.templateItems');
                 parentObj.effect('highlight', 1000);
 
                 log.info("selected %o", addItems.toString());
-                //Save to EB using already set post method
+                //Save new item to the group using already set EB post method
                 var params = {
                     blockid : blockId,
                     additems: addItems.toString()
+                },
+                fnAfter = function(){
+                    //Save overall template ordering so the template knows that we've removed a few items and grouped them.
+                    evalTemplateOrder.saveTopLevelTemplateOrdering();
+                    $(document).trigger('block.triggerChildrenSort', [parentObj]);
+                    $(document).trigger('close.facebox');
                 };
-                evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params);
-
-                 $(document).trigger('block.triggerChildrenSort', [parentObj]);
-                $(document).trigger('close.facebox');
-
-            });
+                evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params, null, fnAfter);
+    });
             var clone = $(this).parent().find('.itemRowBlock').eq(0).clone(),
             selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
             //edit extra controls
             clone.find('.itemRight').hide();
             selectBox.insertBefore(clone.find('.itemLabel'));
 
-            if (groupableItems.length > 0) {
-                for (i in groupableItems) {
-                    var type = groupableItems[i].type;
+            if (evalTemplateUtils.vars.groupableItems.length > 0) {
+                for (i in evalTemplateUtils.vars.groupableItems) {
+                    var type = evalTemplateUtils.vars.groupableItems[i].type;
                     if (
                             (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-')))
                                     ==
                             (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-')))
 
                             ) {
-                        var itemId = groupableItems[i].itemId,
-                        otp = groupableItems[i].otp,
-                        text = groupableItems[i].text,
-                        rowId = groupableItems[i].rowId,
-                        rowNumber = groupableItems[i].rowNumber,
+                        var itemId = evalTemplateUtils.vars.groupableItems[i].itemId,
+                        otp = evalTemplateUtils.vars.groupableItems[i].otp,
+                        text = evalTemplateUtils.vars.groupableItems[i].text,
+                        rowId = evalTemplateUtils.vars.groupableItems[i].rowId,
+                        rowNumber = evalTemplateUtils.vars.groupableItems[i].rowNumber,
                         shadow = $(clone).clone();
                         shadow.find('.itemLabel').text(rowNumber);
                         shadow.css('cursor', 'auto');
@@ -203,14 +203,14 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                     $(this).click();
                     return false;
                 }
-                text = '[Show child items]';
+                text = '[Show child items]'; //Todo: i8n this
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
                 return false;
             },
             function() {
-                text = '[Hide child items]';
+                text = '[Hide child items]';  //todo: i8n this
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
@@ -258,7 +258,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 rowId:  $(this).attr('id'),
                 rowNumber: rowNumber
             };
-            groupableItems.push(object);
+            evalTemplateUtils.vars.groupableItems.push(object);
         }
     });
     updateControlItemsTotal();

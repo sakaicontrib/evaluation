@@ -196,12 +196,12 @@ var evalTemplateData = (function() {
                         data: $.param(params),
                         type: evalTemplateData.constants.rest_Post,
                         beforeSend: function(){
-                            if ( typeof fnBefore !== "undefined" ){
+                            if ( typeof fnBefore === "function"){
                                 fnBefore();
                             }
                         },
                         success: function(data){
-                            if ( typeof fnAfter !== "undefined" ){
+                            if ( typeof fnAfter === "function"){
                                 fnAfter(data);
                             }
                         }

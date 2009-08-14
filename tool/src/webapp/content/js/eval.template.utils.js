@@ -4,7 +4,7 @@
 var evalTemplateUtils = (function() {
 
     //Configurable private variables
-    var canDebug = true,
+    var canDebug = false,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
             pagesLoadedByFBwithJs = [];
@@ -118,6 +118,9 @@ var evalTemplateUtils = (function() {
             evalTemplateUtils.debug.info("Page type found as: %s", pageType);
             evalTemplateUtils.debug.groupEnd();
             return pageType;
+        },
+        vars: {
+            groupableItems : []
         }
     };
 
