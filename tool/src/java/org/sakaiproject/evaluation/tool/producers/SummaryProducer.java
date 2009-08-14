@@ -295,10 +295,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					evalIds[i] = ((EvalEvaluation) evalsToPreview.get(i)).getId();
 				}
 				//build the widget
-				UIMessage.make(evalResponsesForm, "evalresponses-header-title","summary.header.title");
-				UIMessage.make(evalResponsesForm, "evalresponses-header-status", "summary.header.status");
-				UIMessage.make(evalResponsesForm, "evalresponses-header-date", "summary.header.date");
-				UIMessage.make(evalResponsesForm, "evalresponses-header-responses", "summary.header.responses");
+				UIMessage.make(evalResponsesForm, "summary-responses-evaltitle","summary.responses.evaltitle");
+				UIMessage.make(evalResponsesForm, "summary-responses-state", "summary.responses.state");
+				UIMessage.make(evalResponsesForm, "summary-responses-date", "summary.responses.date");
+				UIMessage.make(evalResponsesForm, "summary-responses-responses", "summary.responses.responses");
+				
+				//UIMessage.make(evalResponsesForm, "evalresponses-header-title","summary.header.title");
+				//UIMessage.make(evalResponsesForm, "evalresponses-header-status", "summary.header.status");
+				//UIMessage.make(evalResponsesForm, "evalresponses-header-date", "summary.header.date");
+				//UIMessage.make(evalResponsesForm, "evalresponses-header-responses", "summary.header.responses");
+				
 				Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 				for (Iterator<EvalEvaluation> iter = evalsToPreview.iterator(); iter.hasNext();) {
 					EvalEvaluation eval = (EvalEvaluation) iter.next();
@@ -344,10 +350,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					            UIMessage.make(evalrow, "evalResponsesDateLabel", "summary.label." + evalState);
 					            UIOutput.make(evalrow, "evalResponsesDate", df.format(displayDate));
 					            UIOutput.make(evalrow, "evalResponsesDisplay", responses);
-								UIMessage.make(evalResponsesForm, "summary-responses-evaltitle","summary.responses.evaltitle");
-								UIMessage.make(evalResponsesForm, "summary-responses-state", "summary.responses.state");
-								UIMessage.make(evalResponsesForm, "summary-responses-date", "summary.responses.date");
-								UIMessage.make(evalResponsesForm, "summary-responses-responses", "summary.responses.responses");
 				            }//link per group
 						}//partial, in-queue, active or grace period eval
 					}//for evals iterator
