@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -524,6 +525,31 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         assertEquals(1, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
         assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+    }
+    
+    /**
+     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl.getEvaluationsForEvaluatee(java.lang.String)}.
+     */
+    public void testGetEvaluationsForEvaluatee() {
+    	List<EvalEvaluation> evals = null;
+    	
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID);
+    	assertNotNull(evals);
+    	assertEquals(6, evals.size());
+    	
+    	for(EvalEvaluation eval : evals) {
+            List<EvalAssignUser> assignUsers = evaluationService.getParticipantsForEval(eval.getId(), EvalTestDataLoad.MAINT_USER_ID, 
+                    null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+            assertNotNull(assignUsers);
+    	}
+    	
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.STUDENT_USER_ID);
+    	assertNotNull(evals);
+    	assertEquals(0,evals.size());
+
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.USER_ID);
+    	assertNotNull(evals);
+    	assertEquals(0,evals.size());
     }
 
     /**

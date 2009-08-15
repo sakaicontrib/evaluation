@@ -312,6 +312,7 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="evalBeanUtils"
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+       	<property name="messageLocator" ref="messageLocator" />
         <property name="locale" ref="requestLocale" />
     </bean>
 
