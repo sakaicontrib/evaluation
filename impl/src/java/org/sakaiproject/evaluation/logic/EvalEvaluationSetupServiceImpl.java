@@ -39,6 +39,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -699,6 +700,24 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         return evals;
     }
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String)
+	 */
+	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId must be set");
+        }
+
+        List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+        String[] evalGroupIds = new String[evalGroups.size()];
+        int i = 0;
+        for(EvalGroup evalGroup : evalGroups) {
+        	evalGroupIds[i++] = evalGroup.evalGroupId;
+        }
+        List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
+        return evals;
+	}
 
 
     /**
@@ -1757,5 +1776,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
     }
+
 
 }

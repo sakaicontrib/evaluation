@@ -327,6 +327,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
         makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+        makeBoolean(form, "general-enable-evaluatee-box", EvalSettings.ENABLE_EVALUATEE_BOX);
         makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
         makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
 

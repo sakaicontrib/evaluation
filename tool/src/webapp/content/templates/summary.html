@@ -127,6 +127,50 @@
 						</table>
 					</div>	
 				</div>
+				<div rsf:id="evalResponsesBox:"  class="summaryBox">
+					<h4 rsf:id="msg=summary.responses.title">Evaluations in which I may be evaluated</h4>
+      				<div class="innerPanel">
+      					<form rsf:id="evalResponsesForm" action="evaluation_settings.html">
+      						<p rsf:id="summary-be-evaluated-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
+      						<table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+      							<thead>
+      								<tr>
+	      								<th rsf:id="summary-responses-evaltitle">
+											Evaluation title
+										</th>
+										<th rsf:id="summary-responses-state">
+											State
+										</th>
+										<th rsf:id="summary-responses-date">
+											Date
+										</th>
+										<th rsf:id="summary-responses-responses">
+											Responses
+										</th>
+      								</tr>
+      							</thead>
+      							<tbody>
+      								<tr rsf:id="evalResponsesList:">
+      									<td align="left" width="50%">
+      										<a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+      										<a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+      									</td>
+      									<td align="left" width="10%" nowrap="nowrap">
+      										<span rsf:id="evalResponsesStatus">State</span>
+      									</td>
+      									<td width="25%" nowrap="nowrap">
+      										<span rsf:id="evalResponsesDateLabel">Starts</span>: 
+      										<span rsf:id="evalResponsesDate">09/20/2005</span>
+      									</td>
+      									<td width="15%" nowrap="nowrap">
+      										<span rsf:id="evalResponsesDisplay">2 of 39</span>
+      									</td>
+      								</tr>
+      							</tbody>
+      						</table>
+      					</form>
+      				</div>	
+      			</div>
       			<div rsf:id="evalAdminBox:"  class="summaryBox">
       				<h4><a rsf:id="evaladmin-title-link" href="control_panel.html">Evaluations I am creating or administering</a><span rsf:id="evaladmin-title"></span></h4>
       				<div class="innerPanel">
