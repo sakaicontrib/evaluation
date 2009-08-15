@@ -39,6 +39,7 @@ import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
@@ -102,6 +103,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
     private EvalBeanUtils evalBeanUtils;
     public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
         this.evalBeanUtils = evalBeanUtils;
+    }
+    
+    private MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+    	this.messageLocator = messageLocator;
     }
 
     private Locale locale;
@@ -302,8 +308,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         				for(EvalGroup group : groups) {
         					UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable,"evalResponsesList:");
  
+        					String evalTitle = messageLocator.getMessage("summary.responses.eval.title", new String[]{ group.title, eval.getTitle() });
          					UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", 
-        							EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
+        							EvalUtils.makeMaxLengthString(evalTitle, 70),
         							new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));//view params
         					//UIOutput.make(evalrow, "evalResponsesStatus", eval.getState());
         					
