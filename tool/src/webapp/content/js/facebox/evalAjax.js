@@ -72,8 +72,17 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                         var itemId = $(this).find("input[name=hidden-item-id]:hidden").val();
                         $(this).find('.itemRight').show();           
                         $(this).find('input[type=checkbox]:eq(0)').remove();
-                        that.parent().css('cursor', 'move');
+                        $(this).css('cursor', '');
                         $(this).parent().find('.itemLabel').css('font-weight', '');
+
+                        //Re-binding event for delete icon
+                        $(this).find('a[rel=childRemove]').itemRemove({
+                            ref:    'eval-templateitem',
+                            id:        '$(this).attr("templateitemid")',
+                            itemType: 'blockChild',
+                            text:   '$(this).parents("div.itemRowBlock").eq(0).find("span.text:visible").text()'
+                        });
+
                         $(this).appendTo(that.parent());
                         selectedItems.push($(this).attr('oldRowId'));
                         addItems.push(itemId);
@@ -93,10 +102,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 }
 
                 $(document).trigger('list.triggerSort');
-                //delete icon was loosing it's click event here. Re-binding it now. For some strange reason this needs to be done TWICE.
-                evalTemplateLoaderEvents.bindDeleteIcons();
-                evalTemplateLoaderEvents.bindDeleteIcons();
-
+                
                 parentObj.effect('highlight', 1000);
 
                 log.info("selected %o", addItems.toString());
