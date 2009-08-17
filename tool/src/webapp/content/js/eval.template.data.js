@@ -67,57 +67,15 @@ var evalTemplateData = (function() {
                     evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
                     return false;
                 }
-                /*
-                 TODO Does this code ever get read???
-                 $.ajax({
-                 url: evalTemplateUtils.entity.getTemplateItemURL(templateItemId),
-                 dataType: 'xml',
-                 cache: false,
-                 beforeSend: function() {
-                 $($.facebox.objToUpdate).find('.itemText span').html(img);
-                 },
-                 success: function(msg) {
-                 var realText = $(msg).find('itemText').text();
-                 var shortText = null;
-                 var that = $($.facebox.objToUpdate).find('.itemText').eq(0);
-
-                 if (realText.length > 150) {
-                 that.realText = '<h4 class="itemText"><span>' + realText + '</span><a class="less" href="#">less<\/a></h4>';
-                 $('body').append('<div id="shortText" style="display:none;">' + truncateTextDo(realText) + '</div>');
-                 $('body').append('<div id="realText" style="display:none;">' + realText + '</div>');
-                 that.html('<span>' + $('#shortText').text() + '</span><a class="more" href="#">...more</a>');
-                 that.parent().find('.itemText').eq(1).remove();
-                 try {
-                 that.hide();
-                 $('<h4 class="itemText"><span>' + $('#realText').text() + '</span><a class="less" href="#">less<\/a></h4>').insertAfter(that);
-                 } catch(e) {
-                 }
-                 $('.more').bind('click', function() {
-                 $(this).parent().toggle();
-                 $(this).parent().parent().find('.itemText').eq(1).toggle();
-                 frameGrow();
-                 return false;
-                 });
-                 $('.less').bind('click', function() {
-                 $(this).parent().toggle();
-                 $(this).parent().parent().find('.itemText').eq(0).toggle();
-                 return false;
-                 });
-                 } else {
-                 that.find('span').html(realText);
-                 }
-                 $(document).trigger('activateControls.templateItems');
-                 }
-                 });*/
             }
         });
         evalTemplateUtils.debug.groupEnd();
         evalTemplateUtils.debug.timeEnd("submit");
         return true;
-    }
+    },
     
     //fillActionResponse function called by $.facebox.showResponse
-      var _fillActionResponse = function (entityCat,id, templateOwner){
+    _fillActionResponse = function (entityCat,id, templateOwner){
       evalTemplateUtils.debug.group("starting fillActionResponse", this);
   	if (entityCat == "eval-item") {
 		var par = $.facebox.settings.elementToUpdate,

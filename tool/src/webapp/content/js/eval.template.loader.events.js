@@ -92,7 +92,28 @@ var evalTemplateLoaderEvents = (function($) {
 			};
 		}
 		var saveBlockButton = $it(baseId + "saveBlockAction");
+    },
+
+    bindDeleteIcons = function(){
+         $('a[rel=remove]').itemRemove({
+            ref:    'eval-templateitem',
+            id:     '$(this).attr("templateitemid")',
+            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+        });
+        $('a[rel=childRemove]').itemRemove({
+            ref:    'eval-templateitem',
+            id:        '$(this).attr("templateitemid")',
+            itemType: 'blockChild',
+            text:   '$(this).parents("div.itemRowBlock").eq(0).find("span.text:visible").text()'
+        });
+        $('a[rel=unblock]').itemRemove({
+            ref:    'eval-templateitem',
+            id:        '$(this).attr("templateitemid")',
+            itemType: 'block',
+            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+        });
     };
+
     return {
         //modify_item.html view
         modify_item: function() {
@@ -146,6 +167,7 @@ var evalTemplateLoaderEvents = (function($) {
                 $('input.cancelButtonLightbox').bind("click", function() {
                     $(document).trigger('close.facebox');
                 });
-        }
+        },
+        bindDeleteIcons : bindDeleteIcons
     };
 })($);
