@@ -72,7 +72,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                         var itemId = $(this).find("input[name=hidden-item-id]:hidden").val();
                         $(this).find('.itemRight').show();           
                         $(this).find('input[type=checkbox]:eq(0)').remove();
-                        that.parent().css('cursor', '');
+                        that.parent().css('cursor', 'move');
                         $(this).parent().find('.itemLabel').css('font-weight', '');
                         $(this).appendTo(that.parent());
                         selectedItems.push($(this).attr('oldRowId'));
