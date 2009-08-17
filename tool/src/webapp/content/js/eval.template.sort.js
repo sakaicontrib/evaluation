@@ -8,6 +8,8 @@ var evalTemplateSort = (function(){
     //Update the itemRow labels after a sort event
     var updateLabellingAfterSort = function(enableSaveButton){
         var list = $("#itemList > div.itemRow").not('.ui-sortable-helper').get(),
+        maxDropDownOptions = list.length,
+        count = 0,
         enableBtn = ( typeof enableSaveButton === "undefined" ) ? true : enableSaveButton;
         log.group("Updating Labelling After Sort");
         for (var i = 0; i < list.length; i++) {
@@ -20,6 +22,16 @@ var evalTemplateSort = (function(){
             log.info("enabling save buttons");
             enableOrderButtons();
         }
+        //update all dropdowns to show new max EVALSYS-802
+        $("select[id*=item-select-selection]").each(function(){
+            count = 0;
+            $(this).find("option").each(function(){
+                if (count >= maxDropDownOptions){
+                    $(this).remove();
+                }
+                count++;
+            });
+        });
         refreshSort();
         log.groupEnd();
     };
