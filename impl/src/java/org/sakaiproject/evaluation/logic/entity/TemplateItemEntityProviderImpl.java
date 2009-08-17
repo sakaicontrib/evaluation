@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.entitybroker.EntityView;
@@ -161,21 +160,12 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 		
 		EvalTemplateItem parent = authoringService.getTemplateItemById(blockId);
 		int totalGroupedItems = authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false).size();
-		System.out.println("Total nudged from:" + totalGroupedItems);
 		
-		System.out.println("=======BEFo`re==============");
-		for (EvalTemplateItem item : authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false)){
-			System.out.println(item.getId() +", ");
-		}
-
 		for ( String itemIdstring : itemsToAdd){
 			Long itemId = Long.parseLong(itemIdstring);
 			EvalTemplateItem child = authoringService.getTemplateItemById(itemId);
 			
 			int itemPosition = (itemsToAdd.indexOf(itemIdstring) + 1) + totalGroupedItems;
-			
-			System.out.println("Moved item "+itemIdstring+" from number "+child.getDisplayOrder()+" to  "+itemPosition);
-			
 			
 			child.setBlockParent(Boolean.FALSE);
 			child.setBlockId(blockId);
@@ -185,17 +175,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
             // children have to inherit the parent hierarchy settings
             child.setHierarchyLevel(parent.getHierarchyLevel());
             child.setHierarchyNodeId(parent.getHierarchyNodeId());
-            authoringService.saveTemplateItem(child, currentUserId);
-            
-            
-		}
-		
-		System.out.println("Total nudged to:" + authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false).size());
-
-		
-		System.out.println("=========after============");
-		for (EvalTemplateItem item : authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false)){
-			System.out.println(item.getId() +", ");
+            authoringService.saveTemplateItem(child, currentUserId);    
 		}
 	}
 }

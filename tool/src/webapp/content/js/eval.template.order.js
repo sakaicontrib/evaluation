@@ -92,11 +92,47 @@ var evalTemplateOrder = (function(){
             });
         };
         evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params, fnBefore, fnAfter);
+    },
+
+    // populate or re-populate groupable item array
+    initGroupableItems = function(){
+        log.group("Init groupable Items list");
+        log.debug("%i items WERE groupable.", evalTemplateUtils.vars.groupableItems.length);
+        evalTemplateUtils.vars.groupableItems = [];
+        $('div.itemList > div:visible').each(function() {
+            var that = $(this);
+            if (that.children('.itemLine3').length === 0) {
+                var t = "",
+                rowNumber;
+                if (that.find('.itemText > span').eq(1).text() == ""){
+                    t = that.find('.itemText > span').eq(0).html();
+                }
+                else{
+                    t = that.find('.itemText > span').eq(1).html();
+                }
+                that.find("select:eq(0)").each(function(){
+                    rowNumber = this.options[this.selectedIndex].value;
+                });
+                var groupableItem = {
+                    text:   t,
+                    type:   (that.find('.itemCheckbox > input').attr('id') ? that.find('.itemCheckbox > input').attr('id') : "000"),
+                    itemId: that.find('a[templateitemid]').eq(0).attr('templateitemid'),
+                    otp:    that.find('a[otp]').eq(0).attr('otp'),
+                    rowId:  that.attr('id'),
+                    rowNumber: rowNumber
+                };
+            evalTemplateUtils.vars.groupableItems.push(groupableItem);
+            log.debug("Added %o to list.", groupableItem);
+        }
+    });
+    log.info("%i items now groupable.", evalTemplateUtils.vars.groupableItems.length);
+    log.groupEnd();
     };
 
     return {
         initDropDowns : initDropDowns,
         initSaveGroupOrderControls : initSaveGroupOrderControls,
+        initGroupableItems : initGroupableItems,
         saveTopLevelTemplateOrdering : saveTopLevelTemplateOrdering,
         saveGroupLevelTemplateOrdering : saveGroupLevelTemplateOrdering
     };
