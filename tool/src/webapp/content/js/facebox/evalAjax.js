@@ -101,8 +101,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                     }
                 }
 
-                $(document).trigger('list.triggerSort');
-                
+                evalTemplateSort.updateLabelling();
                 parentObj.effect('highlight', 1000);
 
                 log.info("selected %o", addItems.toString());
