@@ -24,17 +24,19 @@ var evalTemplateSort = (function(){
             enableOrderButtons();
         }
         //update all dropdowns to show new max EVALSYS-802
-        $.each($("select[id*=item-select-selection]"), function(m, dropdown) {
-            log.group("Trimming dropdown vals for %o", dropdown);
-            //Only consider option items in the range to remove so as to avoid unneccessary looping
-            for (var toRemove = previousMaxDropDownOptions; toRemove >= currentMaxDropDownOptions; toRemove--){
-                $(dropdown).find("option:eq(" + toRemove + ")").each(function() {
-                       log.info("Removing %o with num: %i", this, toRemove);
-                        $(this).remove();
-                });
-            }
-            log.groupEnd();
-        });
+        if(currentMaxDropDownOptions !== previousMaxDropDownOptions){
+            $.each($("select[id*=item-select-selection]"), function(m, dropdown) {
+                log.group("Trimming dropdown vals for %o", dropdown);
+                //Only consider option items in the range to remove so as to avoid unneccessary looping
+                for (var toRemove = previousMaxDropDownOptions; toRemove >= currentMaxDropDownOptions; toRemove--){
+                    $(dropdown).find("option:eq(" + toRemove + ")").each(function() {
+                           log.info("Removing %o with num: %i", this, toRemove);
+                            $(this).remove();
+                    });
+                }
+                log.groupEnd();
+            });
+        }
 
         refreshSort();
         log.groupEnd();
