@@ -105,6 +105,10 @@ public interface EvalSettings {
      */
     public static final String ENABLE_NOT_AVAILABLE = "ENABLE_NOT_AVAILABLE:java.lang.Boolean";
     /**
+     * CONSTANT: Is the box showing the Evaluations I am creating or administrating visible? - {@link Boolean}, default True
+     */
+    public static final String ENABLE_ADMINISTRATING_BOX = "ENABLE_ADMINISTRATING_BOX:java.lang.Boolean";
+    /**
      * CONSTANT: Is the box showing the Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
      */
     public static final String ENABLE_EVALUATEE_BOX = "ENABLE_EVALUATEE_BOX:java.lang.Boolean";
@@ -352,6 +356,7 @@ public interface EvalSettings {
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
         ENABLE_SUMMARY_SITES_BOX,
         ENABLE_ASSISTANT_CATEGORY,
+        ENABLE_ADMINISTRATING_BOX,
         ENABLE_EVALUATEE_BOX,
         ENABLE_XLS_REPORT_EXPORT,
         EVAL_USE_DATE_TIME,

@@ -332,6 +332,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         /*
          * for the evaluations admin box
          */
+	  Boolean showAdministratingBox = (Boolean) settings.get(EvalSettings.ENABLE_ADMINISTRATING_BOX);
+	  if(showAdministratingBox != null && showAdministratingBox == true) {
+	  
         Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
         if (instViewResults == null) {
             instViewResults = true;
@@ -402,6 +405,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
             }
         }
+	  } //showAdministratingBox true
 
         /*
          * Site/Group listing box
