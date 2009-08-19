@@ -148,7 +148,7 @@ function startSort() {
                                     $(document).trigger('block.rejectItem', [ui, "noAlert"]);
                                 }
                         }
-                        triggerSort}
+                      }
                     }
                     }
                 }
