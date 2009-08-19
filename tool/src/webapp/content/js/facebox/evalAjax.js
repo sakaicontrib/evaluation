@@ -584,6 +584,7 @@ function updateControlItemsTotal() {
                 $(this).remove();
                 updateControlItemsTotal();
                 evalTemplateSort.updateLabelling();
+                evalTemplateSort.updateDropDownMax();
                 //Updating labelling leaves Save Order active. Deactivate it now.
                 disableOrderButtons();
                 evalTemplateOrder.initGroupableItems();

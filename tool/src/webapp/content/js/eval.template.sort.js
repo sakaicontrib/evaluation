@@ -8,8 +8,6 @@ var evalTemplateSort = (function(){
     //Update the itemRow labels after a sort event
     var updateLabellingAfterSort = function(enableSaveButton){
         var list = $("#itemList > div.itemRow").not('.ui-sortable-helper').get(),
-        currentMaxDropDownOptions = list.length,
-        previousMaxDropDownOptions = $("select[id*=item-select-selection]:eq(0) > option").length,
         enableBtn = ( typeof enableSaveButton === "undefined" ) ? true : enableSaveButton;
         log.group("Updating Labelling After Sort");
         for (var i = 0; i < list.length; i++) {
@@ -23,7 +21,15 @@ var evalTemplateSort = (function(){
             log.info("enabling save buttons");
             enableOrderButtons();
         }
+
+        refreshSort();
+        log.groupEnd();
+    },
+
+    updateDropDownMax = function(){
         //update all dropdowns to show new max EVALSYS-802
+        var currentMaxDropDownOptions = $("#itemList > div.itemRow").not('.ui-sortable-helper').length,
+        previousMaxDropDownOptions = $("select[id*=item-select-selection]:eq(0) > option").length;
         if(currentMaxDropDownOptions !== previousMaxDropDownOptions){
             $.each($("select[id*=item-select-selection]"), function(m, dropdown) {
                 log.group("Trimming dropdown vals for %o", dropdown);
@@ -37,12 +43,10 @@ var evalTemplateSort = (function(){
                 log.groupEnd();
             });
         }
-
-        refreshSort();
-        log.groupEnd();
     };
 
     return {
-        updateLabelling: updateLabellingAfterSort
+        updateLabelling: updateLabellingAfterSort,
+        updateDropDownMax: updateDropDownMax
     };
 })($);
