@@ -95,28 +95,31 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         String username = testViewParameters.username;
         String evalGroupId = testViewParameters.evalGroupId;
         if (evalGroupId == null || evalGroupId.equals("")) {
-            warningMessage += " No evalGroupId set";
-            UIOutput.make(tofill, "warning-message", warningMessage);
+            warningMessage += "No evalGroupId set.";
+            //UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
             String title = commonLogic.getDisplayTitle(evalGroupId);
             if ("--------".equals(title)) {
-                warningMessage += " Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null";
-                UIOutput.make(tofill, "warning-message", warningMessage);
+                warningMessage += "Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null.";
+                //UIOutput.make(tofill, "warning-message", warningMessage);
                 evalGroupId = null;
             }
         }
         String userId = currentUserId;
         if (username == null || username.equals("")) {
             username = commonLogic.getUserUsername(userId);
-            warningMessage += " No username set: using current user";
-            UIOutput.make(tofill, "warning-message", warningMessage);
+            warningMessage += "  No username set: using current user.";
+            //UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
             userId = commonLogic.getUserId(username);
             if (userId == null) {
-                warningMessage += " Invalid username ("+username+"): cannot find id, setting to current user id";
-                UIOutput.make(tofill, "warning-message", warningMessage);
+                warningMessage += "  Invalid username ("+username+"): cannot find id, setting to current user id.";
+                //UIOutput.make(tofill, "warning-message", warningMessage);
                 userId = currentUserId;
             }
+        }
+        if (warningMessage.length() > 0) {
+        	UIOutput.make(tofill, "warning-message", warningMessage);
         }
 
         UIMessage.make(tofill, "page-title", "admintesteg.page.title");
