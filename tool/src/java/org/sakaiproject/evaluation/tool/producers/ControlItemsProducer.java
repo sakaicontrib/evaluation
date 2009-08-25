@@ -19,6 +19,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -69,7 +70,10 @@ public class ControlItemsProducer implements ViewComponentProducer {
         this.evaluationService = evaluationService;
     }
 
-
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -93,35 +97,41 @@ public class ControlItemsProducer implements ViewComponentProducer {
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
         if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                    UIMessage.make("administrate.page.title"),
-                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        	UIInternalLink.make(tofill, "administrate-link", 
+        			UIMessage.make("administrate.page.title"),
+        			new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         }
 
-        if (createTemplate) {
-            UIInternalLink.make(tofill, "control-templates-link",
-                    UIMessage.make("controltemplates.page.title"), 
-                    new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-items-link",
-                    UIMessage.make("controlitems.page.title"), 
-                    new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-        } else {
-            throw new SecurityException("User attempted to access " + 
-                    VIEW_ID + " when they are not allowed");
-        }
+        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        if(showMyToplinks) {
+        	if (createTemplate) {
+        		UIInternalLink.make(tofill, "control-templates-link",
+        				UIMessage.make("controltemplates.page.title"), 
+        				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        		UIInternalLink.make(tofill, "control-items-link",
+        				UIMessage.make("controlitems.page.title"), 
+        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        	} else {
+        		throw new SecurityException("User attempted to access " + 
+        				VIEW_ID + " when they are not allowed");
+        	}
 
-        if (beginEvaluation) {
-            UIInternalLink.make(tofill, "control-evaluations-link",
-                    UIMessage.make("controlevaluations.page.title"),
-                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "begin-evaluation-link", 
-                    UIMessage.make("starteval.page.title"), 
-                    new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null));
-        }
+        	if (beginEvaluation) {
+        		UIInternalLink.make(tofill, "control-evaluations-link",
+        				UIMessage.make("controlevaluations.page.title"),
+        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+        		UIInternalLink.make(tofill, "begin-evaluation-link", 
+        				UIMessage.make("starteval.page.title"), 
+        				new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null));
+        	}
 
+        	if (userAdmin) {
+        		UIInternalLink.make(tofill, "control-scales-link",
+        				UIMessage.make("controlscales.page.title"),
+        				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        	}
+        }
 
         UIMessage.make(tofill, "items-header", "controlitems.items.header");
         UIMessage.make(tofill, "items-description", "controlitems.items.description");
