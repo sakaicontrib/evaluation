@@ -106,11 +106,11 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
             UIInternalLink.make(tofill, "administrate-link", 
                     UIMessage.make("administrate.page.title"),
                     new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
         }
 
+        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        if(showMyToplinks) {
         if (createTemplate) {
             UIInternalLink.make(tofill, "control-templates-link",
                     UIMessage.make("controltemplates.page.title"), 
@@ -130,7 +130,13 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
                     UIMessage.make("controlevaluations.page.title"),
                     new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
         }
-
+        
+        if (userAdmin) {
+            UIInternalLink.make(tofill, "control-scales-link",
+                    UIMessage.make("controlscales.page.title"),
+                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        }
+        }
 
         EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
         Long scaleId = evalScaleParams.scaleId;

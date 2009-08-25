@@ -130,32 +130,39 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
         if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                    UIMessage.make("administrate.page.title"),
-                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        	UIInternalLink.make(tofill, "administrate-link", 
+        			UIMessage.make("administrate.page.title"),
+        			new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         }
 
-        if (createTemplate) {
-            UIInternalLink.make(tofill, "control-templates-link",
-                    UIMessage.make("controltemplates.page.title"), 
-                    new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-            if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-                UIInternalLink.make(tofill, "control-items-link",
-                        UIMessage.make("controlitems.page.title"), 
-                        new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-            }
-        } else {
-            throw new SecurityException("User attempted to access " + 
-                    VIEW_ID + " when they are not allowed");
-        }
+        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+        boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        if(showMyToplinks) {
+        	if (createTemplate) {
+        		UIInternalLink.make(tofill, "control-templates-link",
+        				UIMessage.make("controltemplates.page.title"), 
+        				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        		if (!((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+        			UIInternalLink.make(tofill, "control-items-link",
+        					UIMessage.make("controlitems.page.title"), 
+        					new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        		}
+        	} else {
+        		throw new SecurityException("User attempted to access " + 
+        				VIEW_ID + " when they are not allowed");
+        	}
 
-        if (beginEvaluation) {
-            UIInternalLink.make(tofill, "control-evaluations-link",
-                    UIMessage.make("controlevaluations.page.title"),
-                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+        	if (beginEvaluation) {
+        		UIInternalLink.make(tofill, "control-evaluations-link",
+        				UIMessage.make("controlevaluations.page.title"),
+        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+        	}
+
+        	if (userAdmin) {
+        		UIInternalLink.make(tofill, "control-scales-link",
+        				UIMessage.make("controlscales.page.title"),
+        				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        	}
         }
 
         // create the form to allow submission of this item

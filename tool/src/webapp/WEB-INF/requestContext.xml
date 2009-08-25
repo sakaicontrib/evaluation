@@ -344,6 +344,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
 
@@ -392,6 +394,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyItemProducer">
@@ -594,6 +598,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="deliveryService"
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="locale" ref="requestLocale" />
     </bean>
 
