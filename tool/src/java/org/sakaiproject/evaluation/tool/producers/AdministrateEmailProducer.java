@@ -62,13 +62,17 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
         UIInternalLink.make(tofill, "administrate-link", UIMessage
                 .make("administrate.page.title"), new SimpleViewParameters(
                         AdministrateProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "control-scales-link", UIMessage
-                .make("controlscales.page.title"), new SimpleViewParameters(
-                        ControlScalesProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "control-emailtemplates-link", UIMessage
-                .make("controlemailtemplates.page.title"),
-                new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
 
+        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        if(showMyToplinks) {
+        	UIInternalLink.make(tofill, "control-scales-link", UIMessage
+        			.make("controlscales.page.title"), new SimpleViewParameters(
+        					ControlScalesProducer.VIEW_ID));
+        	UIInternalLink.make(tofill, "control-emailtemplates-link", UIMessage
+        			.make("controlemailtemplates.page.title"),
+        			new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+        }
 
         UIForm form = UIForm.make(tofill, "emailcontrol-form");
 

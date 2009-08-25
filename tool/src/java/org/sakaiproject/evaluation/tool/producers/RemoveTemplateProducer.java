@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -54,12 +55,17 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		this.commonLogic = commonLogic;
 	}
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
+	private EvalAuthoringService authoringService;
+	public void setAuthoringService(EvalAuthoringService authoringService) {
+		this.authoringService = authoringService;
+	}
 
-	
+	private EvalSettings evalSettings;
+	public void setEvalSettings(EvalSettings evalSettings) {
+		this.evalSettings = evalSettings;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
@@ -75,9 +81,13 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
-		UIInternalLink.make(tofill, "control-templates-link",
-				UIMessage.make("controltemplates.page.title"), 
-			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+		// only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+		boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+		if(showMyToplinks) {
+			UIInternalLink.make(tofill, "control-templates-link",
+					UIMessage.make("controltemplates.page.title"), 
+					new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+		}
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		
