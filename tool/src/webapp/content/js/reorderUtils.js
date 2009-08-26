@@ -173,18 +173,22 @@ $(document).bind('block.triggerChildrenSort', function(e, parentItem) {
 $(document).bind('block.rejectItem', function(e, ui, option) {
     evalTemplateUtils.debug.group("rejecting to block this item: %o", ui.item);
     $(document).trigger('list.warning', [ui, option, 'block', 'Sorry this item cannot be grouped here. It is not the same type as the grouped items.']);//todo: i8n this
-    var shadow = ui.item.clone(true);
+    var shadow = evalTemplateUtils.vars.isIE ? ui.item.clone(false) : ui.item.clone(true);
     var shadowPlace = $('.itemList > div.itemRow').eq(ui.item.find('input').eq(0).val()).attr('id');
     ui.item.remove();
     shadow.insertBefore($('[id="' + shadowPlace + '"]'));
     shadow.removeAttr('style').effect('highlight', 1000);
     $('.itemList div[id="' + shadow.attr('id') + '"]').not(':lt(1)').remove();
     refreshSort();
-    evalTemplateSort.updateLabelling();
-    //init dropdown controls
+    if (evalTemplateUtils.vars.isIE){
+        evalTemplateLoaderEvents.bindRowEditPreviewIcons(shadow);
+        //Unbind link events from row links
+        evalTemplateLoaderEvents.unBindDeleteIcons();
+        evalTemplateLoaderEvents.bindDeleteIcons();
+    }
+    //init dropdown controls for this row & also update labelling
     evalTemplateOrder.initDropDowns();
-    //deactivate save order butons
-    disableOrderButtons();
+    evalTemplateSort.updateLabelling(false);
     evalTemplateUtils.debug.groupEnd();
 });
 

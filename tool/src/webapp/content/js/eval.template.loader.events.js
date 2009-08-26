@@ -95,7 +95,7 @@ var evalTemplateLoaderEvents = (function($) {
     },
 
     bindDeleteIcons = function(){
-         $('a[rel=remove]').itemRemove({
+        $('a[rel=remove]').itemRemove({
             ref:    'eval-templateitem',
             id:     '$(this).attr("templateitemid")',
             text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
@@ -112,6 +112,32 @@ var evalTemplateLoaderEvents = (function($) {
             itemType: 'block',
             text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
         });
+    },
+
+    unBindDeleteIcons = function(){
+        $('a[rel=remove]').unbind("click");
+        $('a[rel=childRemove]').unbind("click");
+        $('a[rel=unblock]').unbind("click");
+    },
+
+    bindRowEditPreviewIcons = function(changedRow){
+        if ( typeof changedRow === "undefined" || changedRow === null){
+            $('a[rel=facebox]').facebox();
+            $('a[rel=faceboxGrid]').faceboxGrid();
+        }else{
+            changedRow.find('a[rel=facebox]').facebox();
+            changedRow.find('a[rel=faceboxGrid]').faceboxGrid();
+        }
+    },
+
+    unBindRowEditPreviewIcons = function(changedRow){
+        if ( typeof changedRow === "undefined" || changedRow === null){
+            $('a[rel=facebox]').unbind("facebox");
+            $('a[rel=faceboxGrid]').unbind("faceboxGrid");
+        }else{
+            changedRow.find('a[rel=facebox]').unbind("facebox");
+            changedRow.find('a[rel=faceboxGrid]').unbind("faceboxGrid");
+        }
     };
 
     return {
@@ -168,6 +194,9 @@ var evalTemplateLoaderEvents = (function($) {
                     $(document).trigger('close.facebox');
                 });
         },
-        bindDeleteIcons : bindDeleteIcons
+        bindDeleteIcons : bindDeleteIcons,
+        unBindDeleteIcons : unBindDeleteIcons,
+        bindRowEditPreviewIcons : bindRowEditPreviewIcons,
+        unBindRowEditPreviewIcons : unBindRowEditPreviewIcons
     };
 })($);

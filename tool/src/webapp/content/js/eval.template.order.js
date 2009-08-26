@@ -7,44 +7,21 @@ var evalTemplateOrder = (function(){
     var log = evalTemplateUtils.debug,
 
     //initialise the reorder dropdowns
-    initDropDowns = function(){
-      $("#itemList > div.itemRow").each(function(){
-           $(this).find("select[id*=item-select-selection]:eq(0)").each(function(){
-               var oldPosition =  this.options[this.selectedIndex].value;
-                this.onchange = function(){
-                    var newPosition = this.options[this.selectedIndex].value -1,
-                    diff = newPosition - oldPosition,
-                    moveUp = newPosition < oldPosition,
-                    allRows = $("#itemList > div.itemRow").not('.ui-sortable-helper'),
-                    thisRow = $(this).parents("div.itemRow"),
-                    clone = thisRow.clone(true);
-                    clone.hide();
-                    log.info("Moving row %i from %i to position: %i", thisRow.find("input[name*=item-select-selection-fossil]").val(), oldPosition, newPosition + 1);
-                    thisRow.fadeOut(0, function(){
-                        if ( moveUp ){
-                            if( (diff === 2 || diff === -2) && newPosition !== 0 ){      //if row to move to is immediatley above this row
-                                clone.insertBefore(allRows.eq(oldPosition - 2));
-                            }else if(newPosition > 0){
-                                clone.insertAfter(allRows.eq(newPosition - 1));
-                            }else{
-                                clone.insertBefore(allRows.eq(0));  //if row to move is moving to the absolute top
-                            }
-                        }else{
-                            clone.insertAfter(allRows.eq(newPosition));
-                        }
-
-                        clone.fadeIn(0, function(){
-                                    evalTemplateSort.updateLabelling(false);
-                                    initDropDowns();
-                                    evalTemplateOrder.saveTopLevelTemplateOrdering();
-                                })
-                                .effect("highlight", "normal");
-                        thisRow.remove();
-                    });
-                };
-           });
-        });
-
+    initDropDowns = function(changedRow){
+        if ( typeof changedRow === "undefined" || changedRow === null){
+            var rowList = $("#itemList > div.itemRow");
+              log.group("initialising the reorder dropdowns in rows: %o", rowList);
+              rowList.each(function(){
+                   $(this).find("select[id*=item-select-selection]:eq(0)").each(function(){
+                        privateInitDropDownForRow(this);
+                   });
+                });
+              log.groupEnd();
+        }else{
+            changedRow.each(function(){
+                privateInitDropDownForRow(this);
+            });
+        }
     },
 
     saveTopLevelTemplateOrdering = function(){
@@ -127,6 +104,52 @@ var evalTemplateOrder = (function(){
     });
     log.info("%i items now groupable.", evalTemplateUtils.vars.groupableItems.length);
     log.groupEnd();
+    },
+
+    //Internal functions
+    privateInitDropDownForRow = function(_this){
+        var oldPosition =  _this.options[_this.selectedIndex].value,
+        that = $(_this);
+        //First unbind onChange event
+        that.unbind("change");
+        that.bind("change", function(){
+            var newPosition = this.options[this.selectedIndex].value -1,
+            diff = newPosition - oldPosition,
+            moveUp = newPosition < oldPosition,
+            allRows = $("#itemList > div.itemRow").not('.ui-sortable-helper'),
+            thisRow = $(this).parents("div.itemRow"),
+            clone = evalTemplateUtils.vars.isIE ? thisRow.clone(false) : thisRow.clone(true);
+            clone.hide();
+            log.info("Moving row %i from %i to position: %i", thisRow.find("input[name*=item-select-selection-fossil]").val(), oldPosition, newPosition + 1);
+            thisRow.fadeOut(0, function(){
+                if ( moveUp ){
+                    if( (diff === 2 || diff === -2) && newPosition !== 0 ){      //if row to move to is immediatley above this row
+                        clone.insertBefore(allRows.eq(oldPosition - 2));
+                    }else if(newPosition > 0){
+                        clone.insertAfter(allRows.eq(newPosition - 1));
+                    }else{
+                        clone.insertBefore(allRows.eq(0));  //if row to move is moving to the absolute top
+                    }
+                }else{
+                    clone.insertAfter(allRows.eq(newPosition));
+                }
+
+                clone.fadeIn(0, function(){
+                            evalTemplateSort.updateLabelling(false);
+                            initDropDowns();
+                            evalTemplateOrder.saveTopLevelTemplateOrdering();
+                            //IE has issues with persisting events after cloning, so rebinding event handlers
+                            if (evalTemplateUtils.vars.isIE){
+                                evalTemplateLoaderEvents.bindRowEditPreviewIcons($(this));
+                                //Unbind link events from row links
+                                evalTemplateLoaderEvents.unBindDeleteIcons();
+                                evalTemplateLoaderEvents.bindDeleteIcons();
+                            }
+                        })
+                        .effect("highlight", "normal");
+                thisRow.remove();
+            });
+        });
     };
 
     return {
