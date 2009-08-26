@@ -10,10 +10,11 @@ var evalTemplateUtils = (function() {
             pagesLoadedByFBwithJs = [];
    
     function resizeFrame(updown, height) {
-        var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
+        try {
+            var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
                 frame = parent.document.getElementById(window.name),
                 clientH = "";
-        try {
+
             if (frame) {
                 if (updown === -1) {
                     clientH = document.body.clientHeight;
