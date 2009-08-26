@@ -61,6 +61,10 @@ var evalTemplateUtils = (function() {
             timeEnd : function() {
             }
         },
+        vars: {
+            groupableItems : [],
+            isIE : false
+        },
         init: function() {
             // Debugging. Acts on Firebug console methods described at http://getfirebug.com/console.html
             if (canDebug && typeof console !== "undefined") {
@@ -89,6 +93,8 @@ var evalTemplateUtils = (function() {
                     evalTemplateUtils.debug.timeEnd = console.timeEnd;
                 }
             }
+            //browser check
+            evalTemplateUtils.vars.isIE = $.browser.msie;
         },
         pages: {
                 modify_item_page: "modify_item",
@@ -118,9 +124,6 @@ var evalTemplateUtils = (function() {
             evalTemplateUtils.debug.info("Page type found as: %s", pageType);
             evalTemplateUtils.debug.groupEnd();
             return pageType;
-        },
-        vars: {
-            groupableItems : []
         }
     };
 

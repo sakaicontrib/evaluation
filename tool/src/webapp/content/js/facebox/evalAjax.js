@@ -5,9 +5,8 @@
 $(document).bind('activateControls.templateItems', function(e, opt) {
     var log = evalTemplateUtils.debug;
     evalTemplateLoaderEvents.bindDeleteIcons();
+    evalTemplateLoaderEvents.bindRowEditPreviewIcons();
 
-    $('a[rel=facebox]').facebox();
-    $('a[rel=faceboxGrid]').faceboxGrid();
     $('a.addItem[rel=faceboxAddGroupItems]').click(function() {
         //Unbind current reveal event to avoid fckEditor error
         $(document).unbind('reveal.facebox');
