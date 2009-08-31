@@ -20,7 +20,7 @@ var evalTemplateUtils = (function() {
                     clientH = document.body.clientHeight;
                 }
                 else {
-                    clientH = document.body.clientHeight + thisHeight;
+                    clientH = document.body.clientHeight + thisHeight; //increasing the height
                 }
                 $(frame).height(clientH);
             }
