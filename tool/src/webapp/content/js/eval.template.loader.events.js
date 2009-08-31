@@ -2,7 +2,13 @@
 // @author lovemore.nalube@uct.ac.za
 
 var evalTemplateLoaderEvents = (function($) {
-    var _modify_block = function(){
+    var _initDom = function(){
+        startSort();
+        $(document).trigger('activateControls.templateItems');
+        buildSortableIds();
+    },
+
+    _modify_block = function(){
                 var siteId = $('#site-id').text();
         SakaiProject.fckeditor.initializeEditor("item-text", siteId);
         $.facebox.setHeader($(".titleHeader"));
@@ -141,6 +147,7 @@ var evalTemplateLoaderEvents = (function($) {
     };
 
     return {
+        onDOMReady: _initDom,
         //modify_item.html view
         modify_item: function() {
             var siteId = $('#site-id').text();

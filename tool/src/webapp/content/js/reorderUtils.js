@@ -4,15 +4,7 @@
  *
  * Update: Functions have been exposed to enable startSort() to be accessible by custom plugins - lovemore.nalube@uct.ac.za
  **/
-var sortableIds = new Array();
-
-$(document).ready(
-        function () {
-            startSort();
-            $(document).trigger('activateControls.templateItems');
-            buildSortableIds();
-        }
-    );
+var sortableIds = [];
 
 function $it(id) {
     return document.getElementById(id);
