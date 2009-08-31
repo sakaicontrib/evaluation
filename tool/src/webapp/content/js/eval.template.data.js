@@ -119,19 +119,20 @@ var evalTemplateData = (function() {
 			}
 	     });
       evalTemplateUtils.debug.groupEnd();
-  };
+  },
+
+    _initAjaxSetUp = function(){
+        $(document).ajaxError(function(event, XMLHttpRequest, ajaxOptions){
+                 evalTemplateUtils.debug.error("Ajax request failed: %o", XMLHttpRequest);
+                 alert("Sorry, an error occured while communicating with the server. Your changes have not been saved.\n\n" +
+                       "Error fetching page from: " + ajaxOptions.url);//todo: i8n this
+            }
+        );
+    };
 
     //Public data
     return {
-        ajaxDelete: function() {
-
-        },
-        ajaxGet: function() {
-
-        },
-        ajaxPost: function() {
-
-        },
+        ajaxSetUp: _initAjaxSetUp,
         //Specific methods
         postFCKform: function(form, textarea, target, btn) {
             _postFCKform(form, textarea, target, btn);
