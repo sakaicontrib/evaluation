@@ -185,24 +185,24 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
     $('a[rel=childEdit]').childEdit();
 
-    $('.blockExpandText').toggle(
-
+    $('.blockExpandText').toggle(function() {
+        var that = $(this),
+            childBlock = that.parents('.itemRow').find('.itemLine3'),
+                textToShow = '[Show child items]'; //Todo: i8n this
+        if (that.parents('.itemRow').find('.itemLine3:hidden').length > 0) {
+            that.click();
+            return false;
+        }
+        childBlock.slideToggle();
+        that.text(textToShow);
+        return false;
+        },
             function() {
-                if ($(this).parent().parent().parent().find('.itemLine3').is(':hidden')) {
-                    $(this).click();
-                    return false;
-                }
-                text = '[Show child items]'; //Todo: i8n this
-                $(this).parent().parent().parent().find('.itemLine3').slideToggle();
-                $(this).text(text);
-                evalTemplateUtils.frameGrow(0);
-                return false;
-            },
-            function() {
-                text = '[Hide child items]';  //todo: i8n this
-                $(this).parent().parent().parent().find('.itemLine3').slideToggle();
-                $(this).text(text);
-                evalTemplateUtils.frameGrow(0);
+                var that = $(this),
+                childBlock = that.parents('.itemRow').find('.itemLine3'),
+                textToShow = '[Hide child items]';  //todo: i8n this
+                childBlock.slideToggle();
+                that.text(textToShow);
                 return false;
             }
             );
