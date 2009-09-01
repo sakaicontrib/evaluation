@@ -77,7 +77,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
         }
 
         // start rendering the hierarchy controls
-        hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:", false, false, false);
+        hierUtil.renderModifyHierarchyTree(tofill, "hierarchy-tree:", false, false, false);
 
         // done rendering the hierarchy controls
         UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),

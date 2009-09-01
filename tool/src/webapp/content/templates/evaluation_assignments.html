@@ -47,7 +47,7 @@
                 <thead>
                     <tr>
                         <th>
-                        		<span rsf:id="msg=evaluationassignments.groups.name.header">Name</span>
+                        	<span rsf:id="msg=evaluationassignments.groups.name.header">Name</span>
                         </th>
                         <th>
                       		<span rsf:id="msg=evaluationassignments.groups.members.header">Members</span>
@@ -57,16 +57,21 @@
                         </th>
                     </tr>
                 </thead>
-                <tr rsf:id="groups:">
+                <tr rsf:id="indGroups:">
                     <td width="60%">
-                        <span rsf:id="groupTitle">Group title</span>
-                        &nbsp;<span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
+                        <span rsf:id="indTitle">Group title</span>
+                        &nbsp;<span rsf:id="directIndGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
                     </td>
                     <td width="30%">
-                        <span rsf:id="enrollment">20 members</span>
+                        <span rsf:id="indGrpEnrollment">20 members</span>
                     </td>
                     <td width="10%">
-                        <span rsf:id="groupType">adhoc</span>
+                        <span rsf:id="indGroupType">adhoc</span>
+                    </td>
+                </tr>
+                <tr>
+                	<td colspan="3">
+                		<span rsf:id="noIndGroupsSelected">No Groups selected</span>
                     </td>
                 </tr>
             </table>
@@ -79,41 +84,60 @@
 	                <thead>
 	                    <tr>
 	                        <th>
-                      			<span rsf:id="msg=evaluationassignments.groups.nodetitle.header">Node title</span>
+                      			<span rsf:id="msg=evaluationassignments.nodes.nodetitle.header">Node title</span>
 	                        </th>
 	                        <th>
-	    											<span rsf:id="msg=evaluationassignments.groups.abbr.header">Abbreviation</span>
+	    						<span rsf:id="msg=evaluationassignments.nodes.abbr.header">Abbreviation</span>
 	                        </th>
 	                    </tr>
 	                </thead>
                 	
                     <tr rsf:id="nodes:node">
                         <td width="60%">
-                            <span rsf:id="nodeTitle">Department of Biology</span>
+                            <b><span rsf:id="nodeTitle">Department of Biology</span></b>
                         </td>
                         <td width="40%">
-                            <span rsf:id="nodeAbbr">BIODEPT</span>
+                            <b><span rsf:id="nodeAbbr">BIODEPT</span></b>
                         </td>
                     </tr>
                     <tr rsf:id="nodes:groups">
-                        <td>
+                        <td colspan="2">
                             <p rsf:id="noGroupsForNode" class="instruction"></p>
-                            <table rsf:id="nodeGroupTable:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
-                                <tr rsf:id="groups:">
-                                    <td width="60%">
-                                        <span rsf:id="groupTitle">Group title</span>
-                                        &nbsp;<span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
+                            <table rsf:id="nodeGroupTable:" border="0" cellspacing="0" cellpadding="0" style="width:90%" align="center" class="listHier lines nolines">
+							   <thead>
+							        <tr>
+							             <th width="60%">
+							               	<span rsf:id="msg=evaluationassignments.groups.name.header">Name</span>
+							             </th>
+							             <th width="10%">
+							           		<span rsf:id="msg=evaluationassignments.groups.members.header">Members</span>
+							             </th>
+							             <th width="30%">
+							           		<span rsf:id="msg=evaluationassignments.groups.type.header">Group type</span>
+							             </th>
+							         </tr>
+								</thead>
+                                <tr rsf:id="hierGroups:">
+                                    <td>
+                                        <span rsf:id="hierGroupTitle">Group title</span>
+                                        &nbsp;<span rsf:id="directHierGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
                                     </td>
-                                    <td width="30%">
-                                        <span rsf:id="enrollment">20 members</span>
+                                    <td align="center" >
+                                        <span rsf:id="hierGrpEnrollment">20 members</span>
                                     </td>
-                                    <td width="10%">
-                                        <span rsf:id="groupType">adhoc</span>
+                                    <td align="center" >
+                                        <span rsf:id="hierGroupType">adhoc</span>
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
+                    <tr>
+                	<td colspan="3">
+                		<span rsf:id="noNodesSelected">No Nodes selected</span>
+                    </td>
+                </tr>
+                    
                 </table>
             </div>
             <br/>

@@ -89,7 +89,9 @@ public class HierarchyRenderUtil {
      */
     public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
-
+        
+        translateTableHeaders(joint);
+        
         //Hidden header for column with metadata information.
         UIOutput.make(parent, "node-metadata-header");
 
@@ -217,6 +219,22 @@ public class HierarchyRenderUtil {
                 renderHierarchyNode(tofill, childNode, level+1, groupsNodesMap, nodeIdToNode, showGroups, showUsers);
             }
         }
+    }
+    
+    /**
+     * Translate the table headers and any other decorations on or around the
+     * table.
+     * 
+     * @param tofill
+     */
+    public void translateTableHeaders(UIContainer tofill) {
+       UIMessage.make(tofill, "hierarchy-header", "controlhierarchy.table.hierarchy.header");
+       UIMessage.make(tofill, "hierarchy-nodes", "controlhierarchy.table.nodes.header");
+       UIMessage.make(tofill, "hierarchy-groups", "controlhierarchy.table.groups.header");
+       UIMessage.make(tofill, "hierarchy-users", "controlhierarchy.table.users.header");
+ //      UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
+ //      UIMessage.make(tofill, "assigned-group-count-header", "controlhierarchy.table.groupcount.header");
+       
     }
 
 }
