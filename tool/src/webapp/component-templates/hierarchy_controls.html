@@ -16,10 +16,10 @@
             <tr>
                 <th rsf:id="node-metadata-header" style="display: none"></th>
                 <th rsf:id="node-select-header">Select</th>
-                <th rsf:id="msg=controlhierarchy.table.hierarchy.header">Hierarchy Level</th>
-                <th rsf:id="msg=controlhierarchy.table.nodes.header">Assigned Nodes</th>
-                <th rsf:id="msg=controlhierarchy.table.groups.header">Assigned Groups</th>
-                <th rsf:id="msg=controlhierarchy.table.users.header">Assigned Users</th>
+                <th rsf:id="hierarchy-header">Hierarchy Level</th>
+                <th rsf:id="hierarchy-nodes"></th>
+                <th rsf:id="hierarchy-groups"></th>
+                <th rsf:id="hierarchy-users"></th>
             </tr>
         </thead>
         <tbody>
@@ -29,15 +29,18 @@
                     <input id="parent-id-input" rsf:id="parent-id-input" type="hidden" value="TheParentID" />
                 </td>
                 <td rsf:id="row-data" style="text-indent:0em" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
-                <td rsf:id="node-name" style="text-indent:0em" width="25%"> - Institution Level</td>
+                <td rsf:id="node-select-cell" width="10%">
+                    <input rsf:id="select-checkbox" class="evalgroupselect" type="checkbox" />
+                </td>
+                <td rsf:id="node-name" style="text-indent:0em" > - Institution Level</td>
                 <td rsf:id="nodes-cell">
                     <span rsf:id="number-children">3</span>
                     &nbsp;
                     <a rsf:id="add-child-link" href="" style="font-size: 0.9em;">Add</a>
                     <a rsf:id="modify-node-link" href="" style="font-size: 0.9em;">Modify</a>
                     <form rsf:id="remove-node-form">
-                        <input type="submit" rsf:id="remove-node-button" value="Remove" 
-                            style="font-size:0.9em;height:0.8em;margin:0px;padding:0px;" />
+                        <input type="submit" rsf:id="remove-node-button" value="Remove"
+                            style="font-size:0.9em;height:2.1em;margin:0px;padding:0px;" />
                     </form>
                 </td>
                 <td rsf:id="groups-cell">

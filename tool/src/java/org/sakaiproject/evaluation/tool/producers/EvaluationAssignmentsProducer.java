@@ -126,7 +126,6 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
 
       Map<Long, List<EvalAssignGroup>> groupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
       List<EvalAssignGroup> assignGroups = groupsMap.get(evalViewParams.evaluationId);
-
       // get all evaluator user assignments to count the total enrollments
       HashMap<String, List<EvalAssignUser>> groupIdToEAUList = new HashMap<String, List<EvalAssignUser>>();
       List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, null, 
@@ -140,26 +139,29 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
       }
 
       // show the assigned groups
+      int indGroupCnt = 0;
       if (assignGroups.size() > 0) {
          UIBranchContainer groupsBranch = UIBranchContainer.make(tofill, "showSelectedGroups:");
          for (EvalAssignGroup assignGroup : assignGroups) {
             if (assignGroup.getNodeId() == null) {
                // only include directly added groups (i.e. nodeId is null)
+               indGroupCnt++;
                String evalGroupId = assignGroup.getEvalGroupId();
                EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
-               UIBranchContainer groupRow = UIBranchContainer.make(groupsBranch, "groups:", evalGroupId);
-               UIOutput.make(groupRow, "groupTitle", group.title);
-               UIOutput.make(groupRow, "groupType", group.type);
+               UIBranchContainer groupRow = UIBranchContainer.make(groupsBranch, "indGroups:", evalGroupId);
+               UIOutput.make(groupRow, "indGroupTitle", group.title);
+               UIOutput.make(groupRow, "indGroupType", group.type);
                // direct link to the group eval
-               UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
+               UILink.make(groupRow, "directIndGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                      commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                // calculate the enrollments count
                int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
-               UIOutput.make(groupRow, "enrollment", enrollmentCount + "");
+               UIOutput.make(groupRow, "indGrpEnrollment", enrollmentCount + "");
             }
          }
-      } else {
-         UIMessage.make(tofill, "noGroupsSelected", "evaluationassignments.no.groups");
+      } 
+      if ((assignGroups.size() == 0) || (indGroupCnt == 0)) {
+    	  UIMessage.make(tofill, "noIndGroupsSelected", "evaluationassignments.no.groups");
       }
 
       // show the assigned hierarchy nodes
@@ -186,23 +188,24 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
                }
 
                // now render the list of groups related to this node
-               UIBranchContainer nodeRowGroups = UIBranchContainer.make(hierarchyBranch, "nodes:groups");
+               UIBranchContainer nodeRowGroups = UIBranchContainer.make(nodesBranch, "nodes:groups");
                if (nodeAssignGroups.size() == 0) {
                   UIMessage.make(nodeRowGroups, "noGroupsForNode", "evaluationassignments.no.groups");
                } else {
                   UIBranchContainer groupsTable = UIBranchContainer.make(nodeRowGroups, "nodeGroupTable:");
+            	   //UIBranchContainer groupsTable = UIBranchContainer.make(tofill, "nodeGroupTable:");
                   for (EvalAssignGroup assignGroup : nodeAssignGroups) {
                      String evalGroupId = assignGroup.getEvalGroupId();
                      EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
-                     UIBranchContainer groupRow = UIBranchContainer.make(groupsTable, "groups:", evalGroupId);
-                     UIOutput.make(groupRow, "groupTitle", group.title);
-                     UIOutput.make(groupRow, "groupType", group.type);
+                     UIBranchContainer groupRow = UIBranchContainer.make(groupsTable, "hierGroups:", evalGroupId);
+                     UIOutput.make(groupRow, "hierGroupTitle", group.title);
+                     UIOutput.make(groupRow, "hierGroupType", group.type);
                      // direct link to the group eval
-                     UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
+                     UILink.make(groupRow, "directHierGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                            commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                      // calculate the enrollments count
                      int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
-                     UIOutput.make(groupRow, "enrollment", enrollmentCount + "");
+                     UIOutput.make(groupRow, "hierGrpEnrollment", enrollmentCount + "");
                   }
                }
                

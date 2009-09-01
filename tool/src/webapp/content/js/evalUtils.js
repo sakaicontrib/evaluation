@@ -5,8 +5,8 @@
  * @author Antranig Basman - dropbox methods at end
  */
 var EvalSystem = function() {
-	var $ = $ || function() { throw "JQuery undefined"; };
-	var RSF = RSF || function() { throw "RSF JS undefined"; };
+	//var $ = $ || function() { throw "JQuery undefined"; };
+	//var RSF = RSF || function() { throw "RSF JS undefined"; };
 	function $it(elementID) {
 		return document.getElementById(elementID);
 	}

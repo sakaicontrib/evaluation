@@ -5,8 +5,8 @@
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
+ *
+ * A copy of the Educational Community License has been included in this
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  *
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
@@ -61,11 +61,11 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 /**
- * View for assigning an evaluation to groups and hierarchy nodes. 
- * 
+ * View for assigning an evaluation to groups and hierarchy nodes.
+ *
  * This Producer has instance variables for tracking state of the view, and
  * should never be reused or used as a singleton.
- * 
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
  */
@@ -141,9 +141,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         EvalViewParameters formViewParams = (EvalViewParameters) evalViewParams.copyBase();
         formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
 
-        /* 
+        /*
          * About this form.
-         * 
+         *
          * This is a GET form that has 2 UISelects, one for Hierarchy Nodes, and
          * one for Eval Groups (which includes adhoc groups).  They are interspered
          * and mixed together. In order to do this easily we pass in empty String
@@ -152,39 +152,39 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          * it's position, and this view is too complicated to generate these arrays
          * ahead of time.  So we generate the String Arrays on the fly, using the list.size()-1
          * at each point to get this index.  Then at the very end we update the UISelect's
-         * with the appropriate optionlist and optionnames. This actually works 
-         * really good and the wizard feels much smoother than it did with the 
+         * with the appropriate optionlist and optionnames. This actually works
+         * really good and the wizard feels much smoother than it did with the
          * old session bean.
-         * 
-         * Also see the comments on HierarchyTreeNodeSelectRenderer. 
-         * 
+         *
+         * Also see the comments on HierarchyTreeNodeSelectRenderer.
+         *
          */
         UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
 
         // Things for building the UISelect of Hierarchy Node Checkboxes
         List<String> hierNodesLabels = new ArrayList<String>();
         List<String> hierNodesValues = new ArrayList<String>();
-        UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder", 
+        UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder",
                 new String[] {}, new String[] {}, "selectedHierarchyNodeIDs", new String[] {});
         String hierNodesSelectID = hierarchyNodesSelect.getFullID();
 
         // Things for building the UISelect of Eval Group Checkboxes
         List<String> evalGroupsLabels = new ArrayList<String>();
         List<String> evalGroupsValues = new ArrayList<String>();
-        UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder", 
+        UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder",
                 new String[] {}, new String[] {}, "selectedGroupIDs", new String[] {});
         String evalGroupsSelectID = evalGroupsSelect.getFullID();
 
         /*
          * About the 4 collapsable areas.
-         * 
-         * What's happening here is that we have 4 areas: hierarchy, groups, 
+         *
+         * What's happening here is that we have 4 areas: hierarchy, groups,
          * new adhoc groups, and existing adhoc groups that can be hidden and selected
          * which a checkbox for each one.  I'm not using the UIInitBlock at the moment
-         * because it doesn't seem to take arrays for the javascript arguments (and keep 
+         * because it doesn't seem to take arrays for the javascript arguments (and keep
          * them as javascript arrays).  So we are just putting the javascript initialization
          * here and running it at the bottom of the page.
-         * 
+         *
          */
         Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
         Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
@@ -215,10 +215,10 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             if (showHierarchy) {
                 UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
 
-                addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle", 
+                addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
                         "hierarchy-assignment-area", "hide-button", "show-button", true);
 
-                hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:", 
+                hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:",
                         evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
                         hierNodesLabels, hierNodesValues);
             }
@@ -235,8 +235,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                 UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
             }
             else {
-                addCollapseControl(tofill, evalgroupArea, "initJSGroupsToggle", 
-                        "evalgroups-assignment-area", "hide-button", "show-button", false);
+                addCollapseControl(tofill, evalgroupArea, "initJSGroupsToggle",
+                        "evalgroups-assignment-area", "hide-button", "show-button", true);
             }
 
             String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
@@ -277,8 +277,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             UIBranchContainer adhocGroupsArea = UIBranchContainer.make(form, "use-adhoc-groups-area:");
 
             UIMessage.make(adhocGroupsArea, "adhoc-groups-deleted", "modifyadhocgroup.group.deleted");
-            addCollapseControl(tofill, adhocGroupsArea, "initJSAdhocToggle", 
-                    "adhocgroups-assignment-area", "hide-button", "show-button", false);
+            addCollapseControl(tofill, adhocGroupsArea, "initJSAdhocToggle",
+                    "adhocgroups-assignment-area", "hide-button", "show-button", true);
 
             // Table of Existing adhoc groups for selection
             List<EvalAdhocGroup> myAdhocGroups = commonLogic.getAdhocGroupsForOwner(currentUserId);
@@ -308,7 +308,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                             new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, adhocGroup.getId(), vsh.getFullURL(evalViewParams)));
                     // add delete option - https://bugs.caret.cam.ac.uk/browse/CTL-1310
                     if (currentUserId.equals(adhocGroup.getOwner()) || commonLogic.isUserAdmin(currentUserId)) {
-                        String deleteLink = commonLogic.getEntityURL(AdhocGroupEntityProvider.ENTITY_PREFIX, 
+                        String deleteLink = commonLogic.getEntityURL(AdhocGroupEntityProvider.ENTITY_PREFIX,
                                 adhocGroup.getId().toString());
                         UILink.make(tableRow, "deleteGroupLink", UIMessage.make("general.command.delete"), deleteLink);
                     }
@@ -339,7 +339,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         }
 
         // Error message to be triggered by javascript if users doesn't select anything
-        // There is a 'evalgroupselect' class on each input checkbox that the JS 
+        // There is a 'evalgroupselect' class on each input checkbox that the JS
         // can check for now.
         UIMessage assignErrorDiv = UIMessage.make(tofill, "nogroups-error", "assigneval.invalid.selection");
 
@@ -349,7 +349,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
     /**
      * I think this is getting all the groupIds that are not currently assigned to nodes in the hierarchy
-     * 
+     *
      * @param evalGroups the list of eval groups to check in
      * @return the set of evalGroupsIds from the input list of evalGroups which are not assigned to hierarchy nodes
      */
@@ -372,7 +372,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             for (Entry<String, Set<String>> entry: assignedGroups.entrySet()) {
                 hierAssignedGroupIDs.addAll(entry.getValue());
             }
-            // 3. Remove all EvalGroup IDs that have been assigned to 
+            // 3. Remove all EvalGroup IDs that have been assigned to
             evalGroupIDs.removeAll(hierAssignedGroupIDs);
         }
 
@@ -384,10 +384,10 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     /**
      * Taking the parent container and rsf:id's for the collapsed area and tags
      * to show and hide, creates the necessary javascript.  The Javascript is
-     * appended to the instance variable holding the javascript that will be 
+     * appended to the instance variable holding the javascript that will be
      * rendered at the bottom of the page for javascript initialization.
      */
-    private void addCollapseControl(UIContainer tofill, UIContainer parent, 
+    private void addCollapseControl(UIContainer tofill, UIContainer parent,
             String rsfId, String areaId, String hideId, String showId, boolean initialHide) {
         UIOutput hideControl = UIOutput.make(parent, hideId);
         UIOutput showControl = UIOutput.make(parent, showId);
@@ -398,8 +398,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             UIInitBlock.make(tofill, rsfId, "EvalSystem.makeToggle",
                     new Object[] { showControl.getFullID(),
                     hideControl.getFullID(),
-                    areaDiv.getFullID(), 
-                    null, 
+                    areaDiv.getFullID(),
+                    null,
                     initialHide
                 }
             );
@@ -439,7 +439,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
     /**
      * Renders the usual action breadcrumbs at the top.
-     * 
+     *
      * @param tofill
      * @param currentUserId
      */
@@ -450,12 +450,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         /*
          * top links here
          */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
+        UIInternalLink.make(tofill, "summary-link",
+                UIMessage.make("summary.page.title"),
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
         if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
+            UIInternalLink.make(tofill, "administrate-link",
                     UIMessage.make("administrate.page.title"),
                     new SimpleViewParameters(AdministrateProducer.VIEW_ID));
             UIInternalLink.make(tofill, "control-scales-link",
@@ -468,7 +468,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                     UIMessage.make("controlevaluations.page.title"),
                     new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
         } else {
-            throw new SecurityException("User attempted to access " + 
+            throw new SecurityException("User attempted to access " +
                     VIEW_ID + " when they are not allowed");
         }
     }

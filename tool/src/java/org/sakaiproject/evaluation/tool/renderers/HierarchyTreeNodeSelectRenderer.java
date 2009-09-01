@@ -84,7 +84,7 @@ public class HierarchyTreeNodeSelectRenderer {
        UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
 
        UIMessage.make(joint, "node-select-header", "controlhierarchy.table.selectnode.header");
-       UIMessage.make(joint, "hierarchy-header", "controlhierarchy.table.heirarchy.header");
+       UIMessage.make(joint, "hierarchy-header", "controlhierarchy.table.hierarchy.header");
 
        EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
 
@@ -136,7 +136,7 @@ public class HierarchyTreeNodeSelectRenderer {
           
             hierNodeLabels.add(title);
             hierNodeValues.add(evalHierNode.id);
-            UISelectChoice.make(tableRow, "select-checkbox",
+            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
                 hierNodesSelectID, hierNodeLabels.size()-1);
         }
         else if (toRender instanceof EvalGroup) {
@@ -146,7 +146,7 @@ public class HierarchyTreeNodeSelectRenderer {
             evalGroupLabels.add(title);
             evalGroupValues.add(evalGroup.evalGroupId);
             
-            UISelectChoice.make(tableRow, "select-checkbox",
+            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
                 groupsSelectID, evalGroupLabels.size()-1);
         }
         else {
