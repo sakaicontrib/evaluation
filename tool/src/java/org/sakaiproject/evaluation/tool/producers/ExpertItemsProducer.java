@@ -132,9 +132,6 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
         	}
 
         	if (userAdmin) {
-        		UIInternalLink.make(tofill, "administrate-link", 
-        				UIMessage.make("administrate.page.title"),
-        				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         		UIInternalLink.make(tofill, "control-scales-link",
         				UIMessage.make("controlscales.page.title"),
         				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
