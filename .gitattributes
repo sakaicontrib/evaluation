@@ -387,6 +387,7 @@ tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Auth
 tool/src/webapp/content/js/eval.template.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.loader.events.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.loader.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.template.myitems.loader.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+HeadURL+Id

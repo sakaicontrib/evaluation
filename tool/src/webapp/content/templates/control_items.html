@@ -18,21 +18,9 @@
 <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/eval.template.facebox.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.events.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/eval.template.sort.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/eval.template.order.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/eval.template.myitems.loader.js"></script>        
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
-	   <script type="text/javascript">
-	   	$(document).ready(function(){
-			$('a[@rel=facebox]').faceboxGrid();
-			$(':submit').bind("click", function(){
-                evalTemplateFacebox.addItem( $('form').attr("action") + "?" + $("form").formSerialize() );
-                return false;
-		    });
-		});
-		
-	   </script>
 	</head>
 	
 	<body>
