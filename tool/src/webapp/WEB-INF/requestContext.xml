@@ -126,6 +126,8 @@
         class="org.sakaiproject.evaluation.tool.locators.TemplateItemWBL">
         <property name="localTemplateLogic" ref="localTemplateLogic" />
         <property name="messages" ref="targettedMessageList" />
+        <property name="authoringService" 
+			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
     </bean>
 
     <bean id="itemWBL" class="org.sakaiproject.evaluation.tool.locators.ItemBeanWBL">

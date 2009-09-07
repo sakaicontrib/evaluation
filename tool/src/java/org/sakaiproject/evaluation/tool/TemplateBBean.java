@@ -102,6 +102,8 @@ public class TemplateBBean {
     public String blockTextChoice;
     public String orderedChildIds;
     public String templateItemIds;
+    
+    public Long groupItemId;
 
 
     // TEMPLATES
@@ -480,6 +482,22 @@ public class TemplateBBean {
         }
 
         return "success";
+    }
+    
+    public String saveTemplateItemToGroupAction(){
+    	log.debug("save template item to group");
+    	if(groupItemId != null){
+	        try {
+	            templateItemWBL.saveToGroup(groupItemId);
+	        } catch (BlankRequiredFieldException e) {
+	            messages.addMessage( new TargettedMessage(e.messageKey, 
+	                    new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+	            throw new RuntimeException(e); // should not be needed but it is
+	        }
+    	}else{
+    		throw new RuntimeException(); // should not be needed but it is
+    	}
+    	return "success";
     }
 
     private void setIdealColorForBlockParent(EvalTemplateItem parent) {

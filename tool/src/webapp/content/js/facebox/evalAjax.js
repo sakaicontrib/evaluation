@@ -164,6 +164,18 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 });
             }
         }
+        return false;
+    });
+
+    $('a.addItem[rel=faceboxAddNewGroupItem]').click(function() {
+        var url = "modify_item?external=false&itemClassification=Scaled&",
+        postVars = {
+            groupItemId : $(this).parents(".itemRow").find("input[name=template-item-id]:hidden").val(),
+            templateId  : $("input[name=templateId]:hidden").val()
+        };
+        
+        evalTemplateFacebox.addItem( url + $.param(postVars));
+        return false;
     });
 
     var saveButton = document.getElementById("saveReorderButton");
