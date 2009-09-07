@@ -829,3 +829,9 @@ background-repeat : no-repeat !important;
 	margin:1em .2em;
 }*/
 
+/* Group template item - add existing item into group */
+.dropItem{
+    padding-bottom:1px;
+	background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat
+}
+

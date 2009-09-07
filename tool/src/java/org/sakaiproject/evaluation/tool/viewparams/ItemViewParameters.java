@@ -27,6 +27,7 @@ public class ItemViewParameters extends TemplateViewParameters {
    public Long itemId;
    public Long templateItemId;
    public String itemClassification;
+   public Long groupItemId;
 
    public ItemViewParameters() { }
 

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
@@ -45,9 +46,13 @@ public class TemplateItemWBL implements WriteableBeanLocator {
    public void setMessages(TargettedMessageList messages) {
       this.messages = messages;
    }
+   
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+       this.authoringService = authoringService;
+   }
 
-
-   // keep track of all template items that have been delivered during this request
+// keep track of all template items that have been delivered during this request
    private Map<String, EvalTemplateItem> delivered = new HashMap<String, EvalTemplateItem>();
 
    /* (non-Javadoc)
@@ -134,6 +139,36 @@ public class TemplateItemWBL implements WriteableBeanLocator {
                new Object[] { templateItem.getDisplayOrder() }, 
                TargettedMessage.SEVERITY_INFO));
       }
+   }
+   
+   public void saveToGroup(Long groupItemId) {
+	   for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+	         String key = it.next();
+	         EvalTemplateItem templateItem = (EvalTemplateItem) delivered.get(key);
+	         if (key.startsWith(NEW_PREFIX)) {
+	            // new template item here
+	            if (templateItem.getItem().getId() == null) {
+		           // save the item
+	               localTemplateLogic.saveItem( templateItem.getItem() );
+	            }
+	         }
+	        // then group and save the templateItem
+			EvalTemplateItem parent = authoringService.getTemplateItemById(groupItemId);
+			int totalGroupedItems = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId,
+							false).size();
+
+			templateItem.setBlockParent(Boolean.FALSE);
+			templateItem.setBlockId(groupItemId);
+			templateItem.setDisplayOrder(totalGroupedItems + 1);
+			templateItem.setHierarchyLevel(parent.getHierarchyLevel());
+			templateItem.setHierarchyNodeId(parent.getHierarchyNodeId());
+			localTemplateLogic.saveTemplateItem(templateItem);
+
+			messages.addMessage(new TargettedMessage(
+					"templateitem.saved.message", new Object[] { templateItem
+							.getDisplayOrder() },
+					TargettedMessage.SEVERITY_INFO));
+		}
    }
 
    /**
