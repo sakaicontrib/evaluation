@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -113,7 +115,6 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
             etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
             EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save( evalUnLocked );
-
    }
 
    /**
@@ -232,6 +233,66 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
          assertNotNull(e);
       }
    }
+   
+   public void testCountQueuedGroups() {
+	   // Boolean.TRUE for built email, Boolean.FALSE for unbuilt email, null for both
+	   assertEquals(3, evaluationDao.countQueuedGroups(false));
+	   assertEquals(2, evaluationDao.countQueuedGroups(true));
+	   assertEquals(5, evaluationDao.countQueuedGroups(null));
+   }
+   
+   public void testGetQueuedGroupLocks() {
+	   // Boolean.TRUE for built email, Boolean.FALSE for unbuilt email, null for both
+	   assertEquals(2, evaluationDao.getQueuedGroupLocks(false).size());
+	   assertEquals(2, evaluationDao.getQueuedGroupLocks(true).size());
+	   assertEquals(4, evaluationDao.getQueuedGroupLocks(null).size());
+   }
+   
+   public void testGetQueuedGroupsByLockName() {
+	   String lockName = EvalConstants.GROUP_LOCK_PREFIX + "1";
+	   assertEquals(1, evaluationDao.getQueuedGroupsByLockName(lockName).size());
+	   lockName = EvalConstants.GROUP_LOCK_PREFIX + "2";
+	   assertEquals(2, evaluationDao.getQueuedGroupsByLockName(lockName).size());
+	   lockName = EvalConstants.GROUP_LOCK_PREFIX + "3";
+	   assertEquals(1, evaluationDao.getQueuedGroupsByLockName(lockName).size());
+	   lockName = EvalConstants.GROUP_LOCK_PREFIX + "4";
+	   assertEquals(1, evaluationDao.getQueuedGroupsByLockName(lockName).size());
+   }
+   
+   public void testGetQueuedGroupIds() {
+	   List<Long> ids = evaluationDao.getQueuedGroupIds();
+	   assertEquals(5, ids.size());
+   }
+   
+   public void testGetQueuedEmailIds() {
+	   // 5 are preloaded
+	   List<Long> ids = evaluationDao.getQueuedEmailIds();
+	   assertEquals(5, ids.size());
+	   for(Long id : ids) {
+		   EvalQueuedEmail email = evaluationDao.findById(EvalQueuedEmail.class, id);
+		   assertNotNull(email);
+	   }
+   }
+   
+   public void testGetQueuedEmailLocks() {
+	   // EMAIL_LOCK_PREFIX + "1"
+	   // EMAIL_LOCK_PREFIX + "2"
+	   // EMAIL_LOCK_PREFIX + "3"
+	   List<String> locks = evaluationDao.getQueuedEmailLocks();
+	   assertEquals(3, evaluationDao.getQueuedEmailLocks().size());
+   }
+   
+   public void pendingTestGetQueuedEmails() {
+	   // TODO
+   }
+   
+  public void pendingTestGetQueuedEmailIds() {
+	  // TODO
+  }
+  
+  public void pendingTestGetQueuedEmailByLockName() {
+	  // TODO
+  }
 
    public void testCountSharedEntitiesForUser() {
       int count = 0;

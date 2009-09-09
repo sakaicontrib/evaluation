@@ -553,6 +553,18 @@ public class EvalConstants {
     * used as a confirmation message when the evaluation is submitted
     */
    public static final String EMAIL_TEMPLATE_SUBMITTED = "Submitted";
+   
+   /**
+    * Single email handling:
+    * Build queue of groups to receive email
+    */
+   public static final String SINGLE_EMAIL_BUILT = "SingleEmailBuilt";
+   
+   /**
+    * Single email handling:
+    * Build queue of email to be sent
+    */
+   public static final String SINGLE_EMAIL_SENT = "SingleEmailSent";
    /**
     * EmailTemplate type setting:
     * This identifies a template as the one-email-per-user evaluation-is-available template,
@@ -577,6 +589,16 @@ public class EvalConstants {
 	 * used with the "single-email-per-user" email notification option
 	 */
 	public static final String SINGLE_EMAIL_TEMPLATE_REMINDER_SUBJECT = "SingleEmailReminderSubject";
+	
+	/**
+	 * Single Email type used when queuing email for delivery
+	 */
+	public static final String SINGLE_EMAIL_AVAILABLE = "SingleEmailAvailable";
+	
+	/**
+	 * Single Email type used when queuing email for delivery
+	 */
+	public static final String SINGLE_EMAIL_REMINDER = "SingleEmailReminder";
 	
 	
 	/**
@@ -605,6 +627,11 @@ public class EvalConstants {
 	 * EvalLock name prefix identifying email queued prior to delivery
 	 */
 	public static final String EMAIL_LOCK_PREFIX = "email_lock_";
+	
+	/**
+	 * EvalLock name prefix identifying group queued prior to building email
+	 */
+	public static final String GROUP_LOCK_PREFIX = "group_lock_";
 
    /**
     * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others
