@@ -408,13 +408,13 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     Map<String, String> selectorType = new HashMap<String, String>();
                     instructorSelectionOption = EvalUtils.getSelectionSetting(
                             EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
-                    selectorType.put(SELECT_KEY_INSTRUCTOR, instructorSelectionOption);
+                    selectorType.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, instructorSelectionOption);
                     Boolean assistantsEnabled = (Boolean) evalSettings
                             .get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                     if (assistantsEnabled) {
                         assistantSelectionOption = EvalUtils.getSelectionSetting(
                                 EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
-                        selectorType.put(SELECT_KEY_ASSISTANT, assistantSelectionOption);
+                        selectorType.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assistantSelectionOption);
                     }
                     // populate currently selected people for a previously saved eval
                     List<String> savedInstructorSelectedIds = new ArrayList<String>();
@@ -440,15 +440,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     while ( selector2.hasNext() ) {
                     	Map.Entry<String, String> pairs = selector2.next();
                     	String selectKey = (String) pairs.getKey();
+                        String selectKeyLowerCaps = selectKey.toLowerCase();
                         String selectValue = (String) pairs.getValue();
                         String uiTag = "select-" + selectKey;
                         String selectionOTP = "#{takeEvalBean.selection" + selectKey + "Ids}";
                         Set<String> selectUserIds = new HashSet<String>();
                         List<String> savedSelectedIds = new ArrayList<String>();
-                        if (selectKey.equals(SELECT_KEY_INSTRUCTOR)) {
+                        if (selectKeyLowerCaps.equals(SELECT_KEY_INSTRUCTOR)) {
                             selectUserIds = instructorIds;
                             savedSelectedIds = savedInstructorSelectedIds;
-                        } else if (selectKey.equals(SELECT_KEY_ASSISTANT)) {
+                        } else if (selectKeyLowerCaps.equals(SELECT_KEY_ASSISTANT)) {
                             selectUserIds = assistantIds;
                             savedSelectedIds = savedAssistantSelectedIds;
                         }
