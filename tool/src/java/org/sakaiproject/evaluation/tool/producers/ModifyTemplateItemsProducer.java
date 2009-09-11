@@ -395,13 +395,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                  */
                 Boolean showHierarchy = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
                 if ( showHierarchy ) {
-                    UIMessage.make(itemBranch, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
-                    UIOutput.make(itemBranch, "item-hierarchy-level", templateItem.getHierarchyLevel());
-                    /* Don't show the Node Id if it's a top level item */
+                    /* Don't show the Node Id icon if it's a top level item */
                     if (!templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
-                        UIMessage.make(itemBranch, "item-hierarchy-nodeid-title", "modifytemplate.item.hierarchy.nodeid.title");
                         EvalHierarchyNode curnode = hierarchyLogic.getNodeById(templateItem.getHierarchyNodeId());
-                        UIOutput.make(itemBranch, "item-hierarchy-nodeid", curnode.title);
+                        UILink.make(itemBranch, "item-hierarchy")
+                        	.decorate( new UITooltipDecorator( messageLocator.getMessage("modifytemplate.item.hierarchy.nodeid.title") + curnode.title ));
                     }
                 }
 
