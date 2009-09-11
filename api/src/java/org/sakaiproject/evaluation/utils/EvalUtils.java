@@ -527,23 +527,25 @@ public class EvalUtils {
    }
 
    /**
-    * Sets the persistent fields of this answer based on the NA setting in the
-    * non-persistent field {@link EvalAnswer#NA}<br/>
+    * Sets the persistent fields of this answer based on the numeric setting 
+    * for NA {@link EvalConstants#NA_VALUE}<br/>
     * <b>NOTE:</b> This is not always safe to run as it changes the values of
     * the persistent object so be careful
     * 
     * @param answer an {@link EvalAnswer} (saved or new)
-    * @return true if this answer is NA, false otherwise
+    * @return true if this answer is numeric setting for NA, false otherwise
     */
    public static boolean encodeAnswerNA(EvalAnswer answer) {
       if (answer == null) {
          throw new IllegalArgumentException("answer cannot be null");
       }
-      boolean notApplicable = answer.NA;
-      if (notApplicable) {
-         answer.setNumeric(EvalConstants.NA_VALUE);
-         answer.setText(null);
-         answer.setMultiAnswerCode(null);
+      // CT-906 N/A choices cannot be updated by subsequent submissions
+      boolean notApplicable = false;
+      if (answer.getNumeric().equals(EvalConstants.NA_VALUE)) {
+    	  notApplicable = true;
+    	  answer.setNumeric(EvalConstants.NA_VALUE);
+    	  answer.setText(null);
+    	  answer.setMultiAnswerCode(null);
       }
       return notApplicable;
    }
