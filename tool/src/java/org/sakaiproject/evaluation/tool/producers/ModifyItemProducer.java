@@ -198,7 +198,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         Boolean compulsory = null; //whether or no this question must be answered
         Long scaleId = null; // this holds the current scale id if there is one
         
-        Boolean isGroupable = (groupItemId != null);
+        Boolean isGrouped = (groupItemId != null && groupItemId == -1l ); //We are working with an existing child item
+        Boolean isGroupable = ( ! isGrouped && groupItemId != null);
         
        // now we validate the incoming view params
         if (templateId == null && templateItemId != null) {
@@ -226,7 +227,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             }
             
             //>>>
-            if (isGroupable){
+            if ( isGroupable ){         	
+            	// New child item
             	List<EvalTemplateItem> groupedItemList = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId, false);
             	EvalTemplateItem itemClone = groupedItemList.get(1);
             	EvalItem item = itemClone.getItem();
@@ -279,7 +281,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             itemClassification = item.getClassification();
             itemOTP = "itemWBL." + itemId + ".";
             commonDisplayOTP = itemOTP;
-        } else {
+        } else if ( ! isGrouped ){
             // templateItemId is not null so we are modifying an existing template item
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
             if (templateItem == null) {
@@ -303,6 +305,38 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             templateItemOTP = "templateItemWBL." + templateItemId + ".";
             itemOTP = templateItemOTP + "item.";
             commonDisplayOTP = templateItemOTP;
+        }else  if (isGrouped){
+        	// Editing an existing child item
+            EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
+            if (templateItem == null) {
+                throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
+            }
+            EvalUser itemOwner = commonLogic.getEvalUserById( templateItem.getItem().getOwner() );
+            itemOwnerName = itemOwner.displayName;
+            itemClassification = templateItem.getItem().getClassification();
+            templateItemOTP = "templateItemWBL." + templateItemId + ".";
+            itemOTP = templateItemOTP + "item.";
+            commonDisplayOTP = templateItemOTP;
+            compulsory = safeBool(templateItem.isCompulsory());
+
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "sharing", templateItem.getItem().getSharing()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "scale.id", templateItem.getItem().getScale().getId()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "scaleDisplaySetting", templateItem.getScaleDisplaySetting()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "category", templateItem.getCategory()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "usesComment", templateItem.getUsesComment()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "usesNA", templateItem.getUsesNA()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "classification", templateItem.getItem().getClassification()) );
+            form.parameters.add(
+                    new UIELBinding(itemOTP + "displayRows", templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null ) );
+            
+            
         }
 
         // now we begin with the rendering logic
@@ -339,7 +373,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             itemText.decorate(new UIDisabledDecorator());
         }
 
-        if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification) && ! isGroupable) {
+        if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification) && ! isGroupable && ! isGrouped) {
             UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
             if (! itemLocked) {
                 // SCALED items need to choose a scale
@@ -434,16 +468,16 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 instructionKey = "modifyitem.display.hint.instruction";
             }
             UIMessage.make(itemDisplayHintsBranch, "item-display-hint-header", headerKey);
-            if(! isGroupable){
+            if(! isGroupable && ! isGrouped ){
             	UIMessage.make(itemDisplayHintsBranch, "item-display-hint-instruction", instructionKey);
             }
 
-            if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)  && ! isGroupable) {
+            if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)  && ! isGroupable && ! isGrouped ) {
                 renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
                         EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES, 
                         EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS);
             } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
-                    EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification)  && ! isGroupable) {
+                    EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification)  && ! isGroupable && ! isGrouped ) {
                 renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
                         EvalToolConstants.CHOICES_DISPLAY_SETTING_VALUES, 
                         EvalToolConstants.CHOICES_DISPLAY_SETTING_LABELS_PROPS);
@@ -462,14 +496,14 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             if (! EvalConstants.ITEM_TYPE_HEADER.equals(itemClassification)) {
                 // na option for all non-header items
                 Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
-                if (naAllowed && ! isGroupable) {
+                if (naAllowed && ! isGroupable && ! isGrouped ) {
                     UIBranchContainer showNA = UIBranchContainer.make(itemDisplayHintsBranch, "showNA:");
                     UIBoundBoolean bb = UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
                     UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header")
                     .decorate( new UILabelTargetDecorator(bb) );
                 }
 
-                if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification) && ! isGroupable) {
+                if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification) && ! isGroupable && ! isGrouped ) {
                     // comments options for all non-text and non-header items
                     Boolean commentAllowed = (Boolean) settings.get(EvalSettings.ENABLE_ITEM_COMMENTS);
                     if (commentAllowed) {
@@ -492,7 +526,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 }
             }
 
-            if (! useCourseCategoryOnly && ! isGroupable) {
+            if (! useCourseCategoryOnly && ! isGroupable && ! isGrouped ) {
                 // show all category choices so the user can choose, default is course category
                 UIBranchContainer showItemCategory = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCategory:");
                 UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
@@ -522,7 +556,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
             // hierarchy node selector control
             Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-            if (showHierarchyOptions  && ! isGroupable) {
+            if (showHierarchyOptions  && ! isGroupable && ! isGrouped ) {
                 hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
             }
 
@@ -532,7 +566,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
              * If it is set to false then it is forced to Private
              */
             Boolean useResultSharing = (Boolean) settings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
-            if (useResultSharing && ! isGroupable) {
+            if (useResultSharing && ! isGroupable && ! isGrouped ) {
                 // Means show both options (public & private)
                 UIBranchContainer showItemResultSharing = UIBranchContainer.make(form, "showItemResultSharing:");
                 UIMessage.make(showItemResultSharing, "item-results-sharing-header", "modifyitem.results.sharing.header");

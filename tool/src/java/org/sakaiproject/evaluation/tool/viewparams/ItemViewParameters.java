@@ -56,11 +56,19 @@ public class ItemViewParameters extends TemplateViewParameters {
    }
 
    public ItemViewParameters(String viewID, String itemClassification, Long templateId, Long templateItemId) {
-      this.viewID = viewID;
-      this.itemClassification = itemClassification;
-      this.templateId = templateId;
-      this.templateItemId = templateItemId;
-   }
+	      this.viewID = viewID;
+	      this.itemClassification = itemClassification;
+	      this.templateId = templateId;
+	      this.templateItemId = templateItemId;
+	   }
+
+   public ItemViewParameters(String viewID, String itemClassification, Long templateId, Long templateItemId, Long groupItemId) {
+	      this.viewID = viewID;
+	      this.itemClassification = itemClassification;
+	      this.templateId = templateId;
+	      this.templateItemId = templateItemId;
+	      this.groupItemId = groupItemId;
+	   }
 
    public ItemViewParameters(String viewID, Long itemId, Long templateItemId, String itemClassification, Long templateId) {
       this.viewID = viewID;

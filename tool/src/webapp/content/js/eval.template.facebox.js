@@ -215,7 +215,13 @@ var evalTemplateFacebox = (function() {
             $(this).bind('click', function() {
                 //Unbind current reveal event
                 $(document).unbind('reveal.facebox');
-                var url = 'modify_item?templateItemId=' + $(this).parent().parent().find('input[name*=hidden-item-id]').val() + '&templateId=' + $('input[name*=templateId]').val() + '&itemClassification=Block';
+                var params = {
+                    templateItemId: $(this).parents('.itemRowBlock').find('input[name*=hidden-item-id]').val(),
+                    templateId: $('input[name*=templateId]').val(),
+                    itemClassification: "Block",
+                    groupItemId: -1
+                },
+                        url = 'modify_item?' + $.param(params);
                 $.facebox.settings.elementToUpdate = "block";
 
                 $(document).bind('reveal.facebox', function() {

@@ -153,10 +153,10 @@ var evalTemplateLoaderEvents = (function($) {
             var siteId = $('#site-id').text();
             SakaiProject.fckeditor.initializeEditor("item-text", siteId);
             if ($.facebox.settings.elementToUpdate == "block") {
-                $('#facebox .content .navPanel').hide();
-                $('#nonBlockSettings').hide();
-                $('#nonBlockSettings2').hide();
-                $('div[@id=show-item-scale::]').hide();
+                //$('#facebox .content .navPanel').hide();
+                //$('#nonBlockSettings').hide();
+                //$('#nonBlockSettings2').hide();
+               // $('div[@id=show-item-scale::]').hide();
             }
             $.facebox.setHeader($(".portletBody .titleHeader"));
             if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1) {
