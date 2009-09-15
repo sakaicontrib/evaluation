@@ -9,20 +9,32 @@
             <column name="ID" />
             <generator class="native" />
         </id>
-        <property name="lastModified" type="java.util.Date">
-            <column name="LAST_MODIFIED" not-null="true" />
+        <property name="creationDate" type="java.util.Date">
+            <column name="CREATION_DATE" not-null="true" />
         </property>
-        <property name="lock" type="string" index="eval_lock_name">
-            <column name="LOCK_NAME" not-null="true" length="255" />
+        <property name="emailLock" type="string" index="eval_lock_name">
+            <column name="EMAIL_LOCK" not-null="true" length="255" />
         </property>
-        <property name="toAddress" type="string">
-            <column name="TO_ADDRESS" not-null="true" length="255" />
-        </property>
+        <properties name="email"
+            unique="true">
+        	<property name="toAddress" type="string">
+            	<column name="TO_ADDRESS" not-null="true" length="255" />
+        	</property>
+        	<property name="emailTemplateId" type="long">
+            	<column name="EMAIL_TEMPLATE_ID" not-null="true"  />
+        	</property>
+        </properties>
         <property name="subject" type="text">
             <column name="SUBJECT" />
         </property>
         <property name="message" type="text">
             <column name="MESSAGE" />
+        </property>
+       <property name="TSStreamId" type="long">
+            <column name="TS_STREAM_ID" />
+        </property>
+        <property name="emailSent" type="java.lang.Boolean">
+            <column name="EMAIL_SENT" />
         </property>
     </class>
 </hibernate-mapping>

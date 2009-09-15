@@ -21,6 +21,7 @@
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalQueuedEmail.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalQueuedGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalTags.hbm.xml</value>
@@ -52,6 +53,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalLock</value>
                 <value>org.sakaiproject.evaluation.model.EvalQueuedEmail</value>
+                <value>org.sakaiproject.evaluation.model.EvalQueuedGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalResponse</value>
                 <value>org.sakaiproject.evaluation.model.EvalScale</value>
                 <value>org.sakaiproject.evaluation.model.EvalTags</value>

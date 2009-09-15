@@ -1103,9 +1103,17 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       } catch (RuntimeException e) {
          assertNotNull(e);
       }
-
    }
-
+   
+   public void testGetEarliestDueDate(String userId) {
+	   // test null parameter
+	   assertEquals(EvalConstants.NO_DATE_AVAILABLE, evaluationService.getEarliestDueDate(null));
+	   // test bad user id
+	   assertEquals(EvalConstants.NO_DATE_AVAILABLE, evaluationService.getEarliestDueDate(etdl.INVALID_USER_ID));
+	   // test evaluationActiveUntaken
+	   assertEquals(etdl.today, evaluationService.getEarliestDueDate(etdl.USER_ID));
+	   // TODO test "order by eval.dueDate, eval.title, eval.id"
+   }
 
    public void testGetEmailTemplate() {
       EvalEmailTemplate emailTemplate = null;

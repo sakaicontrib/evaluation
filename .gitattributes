@@ -20,6 +20,7 @@ api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml -text svn_keyw
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalQueuedEmail.hbm.xml -text
+api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalQueuedGroup.hbm.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -31,6 +32,7 @@ api/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupService.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/logic/EvalSingleEmailLogic.java -text
 api/src/java/org/sakaiproject/evaluation/logic/ReportingPermissions.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -76,6 +78,7 @@ api/src/java/org/sakaiproject/evaluation/model/EvalItem.java -text svn_keywords=
 api/src/java/org/sakaiproject/evaluation/model/EvalItemGroup.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalLock.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalQueuedEmail.java -text
+api/src/java/org/sakaiproject/evaluation/model/EvalQueuedGroup.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalResponse.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalScale.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTags.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -118,6 +121,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogicImpl.java -text s
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationServiceImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupServiceImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalSettingsImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/EvalSingleEmailLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/ReportingPermissionsImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -156,6 +160,7 @@ impl/src/test/org/sakaiproject/evaluation/logic/EvalEvaluationSetupServiceImplTe
 impl/src/test/org/sakaiproject/evaluation/logic/EvalExternalLogicStubTest.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/EvalJobLogicImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/EvalSettingsImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/test/org/sakaiproject/evaluation/logic/EvalSingleEmailLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/ExternalHierarchyLogicImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/ReportingPermissionsImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text svn_keywords=Date+Revision+Author+URL+Id

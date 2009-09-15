@@ -41,6 +41,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalLock;
 import org.sakaiproject.evaluation.model.EvalQueuedEmail;
+import org.sakaiproject.evaluation.model.EvalQueuedGroup;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -96,7 +97,6 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
       }
       
    }
-
 
    /**
     * Construct the HQL to do the sharing query based on sharing constants and userId
@@ -438,10 +438,38 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
    
    /*
     * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#countQueuedGroups()
+    * 
+    */
+   public int countQueuedGroups(Boolean emailBuilt) {
+	   String hql = "select count(queuedGroup.id) from EvalQueuedGroup as queuedGroup";
+	   if(emailBuilt != null) {
+		   hql = hql + " where queuedGroup.emailBuilt = " + emailBuilt.toString();
+	   }
+	   Query query = getSession().createQuery(hql);
+	   int count = ( (Number) query.iterate().next() ).intValue();
+	   return count;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#countQueuedEmail(java.lang.Boolean)
+    */
+   public int countQueuedEmail(Boolean emailSent) {
+	   String hql = "select count(email.id) from EvalQueuedEmail as email";
+	   if(emailSent != null) {
+		   hql = hql + " where email.emailSent = " + emailSent.toString();
+	   }
+	   Query query = getSession().createQuery(hql);
+	   int count = ( (Number) query.iterate().next() ).intValue();
+	   return count;
+	}
+   
+   /*
+    * (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmails(java.lang.Long[])
     */
    public List<EvalQueuedEmail> getQueuedEmails(Long[] emailIds) { 
-	   
 	   Map<String, Object> params = new HashMap<String, Object>();
 	     String idsHQL = "";
 	      if (emailIds != null && emailIds.length > 0) {
@@ -451,6 +479,21 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	      String hql = "select email from EvalQueuedEmail as email" + idsHQL;
 	      List<EvalQueuedEmail> results = (List<EvalQueuedEmail>) executeHqlQuery(hql, params, 0, 0);
 	      return results;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmailAddresses()
+    */
+   public List<String> getQueuedEmailAddresses() {
+	   List<String> results = new ArrayList<String>();
+	   String hqlQuery = "select email.toAddress from EvalQueuedEmail as email " 
+		   + "where email.emailSent = true order by email.toAddress, email.emailTemplateId";
+	   List<?> addresses = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : addresses) {
+		   results.add((String) object);
+	   }
+	   return results;
    }
 
    /**
@@ -499,7 +542,8 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	   List<Long> results = new ArrayList<Long>();
        String hqlQuery = "select email.id from EvalQueuedEmail as email";
 	   if(lockName != null && lockName.length() > 0) {
-		   hqlQuery = hqlQuery + " where email.lock = '" + lockName + "'";
+		   hqlQuery = hqlQuery + " where email.emailLock = '" + lockName + "'" +
+			" and email.emailSent = false";
 	   }
 	   List<?> ids = getHibernateTemplate().find(hqlQuery);
 	   for (Object object : ids) {
@@ -508,13 +552,46 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	   return results;
    }
    
+   public List<Long> getQueuedGroupsByLockName(String lockName) {
+	   List<Long> results = new ArrayList<Long>();
+       String hqlQuery = "select queuedGroup.id from EvalQueuedGroup as queuedGroup";
+	   if(lockName != null && lockName.length() > 0) {
+		   hqlQuery = hqlQuery + " where queuedGroup.groupLock = '" + lockName + "'";
+	   }
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((Long) object);
+	   }
+	   return results;
+   }
+   
+   public List<Long> getQueuedEmailIds() {
+	   List<Long> results = new ArrayList<Long>();
+	   String hqlQuery = "select email.id from EvalQueuedEmail as email";
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((Long) object);
+	   }
+	   return results;
+	}
+   
+   public List<Long> getQueuedGroupIds() {
+	   List<Long> results = new ArrayList<Long>();
+	   String hqlQuery = "select queuedGroup.id from EvalQueuedGroup as queuedGroup";
+	   List<?> ids = getHibernateTemplate().find(hqlQuery);
+	   for (Object object : ids) {
+		   results.add((Long) object);
+	   }
+	   return results;
+	}
+   
    /*
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedEmailLocks()
     */
    public List<String> getQueuedEmailLocks() {
 	   List<String> results = new ArrayList<String>();
-       String hqlQuery = "select distinct email.lock from EvalQueuedEmail as email";
+       String hqlQuery = "select distinct email.emailLock from EvalQueuedEmail as email";
 	   List<?> ids = getHibernateTemplate().find(hqlQuery);
 	   for (Object object : ids) {
 		   results.add((String) object);
@@ -522,6 +599,56 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	   return results;
    }
    
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getQueuedGroupLocks()
+    */
+   public List<String> getQueuedGroupLocks(Boolean emailBuilt) {
+	   Map<String, Object> params = new HashMap<String, Object>();
+	   List<String> results = new ArrayList<String>();
+	   String hqlQuery = "select distinct queuedGroup.groupLock from EvalQueuedGroup as queuedGroup";
+	   if(emailBuilt != null) {
+		   hqlQuery = hqlQuery + " where queuedGroup.emailBuilt = :emailBuilt";
+		   params.put("emailBuilt", emailBuilt);
+	   }
+	   results.addAll((List<String>)executeHqlQuery(hqlQuery, params, 0, 0));
+	   return results;
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationIdsFromQueuedGroups(java.lang.String)
+    */
+   public List<Long> getEvaluationIdsFromQueuedGroups(String emailType) {
+	   Map<String, Object> params = new HashMap<String, Object>();
+	   List<Long> results = new ArrayList<Long>();
+	   String hqlQuery = "select distinct queuedGroup.evaluationId from EvalQueuedGroup as queuedGroup";
+	   if(emailType != null) {
+		   hqlQuery = hqlQuery + " where queuedGroup.emailType = :emailType";
+		   params.put("emailType", emailType);
+	   }
+	   results.addAll((List<Long>)executeHqlQuery(hqlQuery, params, 0, 0));
+	   return results;
+	}
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#removeQueuedEmails()
+    */
+   public void removeQueuedEmails() {
+	   String hqlQuery = "select email from EvalQueuedEmail as email where email.emailSent = true";
+	   getHibernateTemplate().deleteAll(getHibernateTemplate().find(hqlQuery));
+	}
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#removeQueuedGroups()
+    */
+   public void removeQueuedGroups() {
+	   String hqlQuery = "select queuedGroup from EvalQueuedGroup as queuedGroup where queuedGroup.emailBuilt = true";
+	   getHibernateTemplate().deleteAll(getHibernateTemplate().find(hqlQuery));
+	}
+ 
    /**
     * Removes a group of templateItems and updates all related items 
     * and templates at the same time (inside one transaction)
