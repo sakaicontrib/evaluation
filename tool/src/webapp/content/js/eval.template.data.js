@@ -28,7 +28,7 @@ var evalTemplateData = (function() {
             return false;
         }
         //Validate text
-        if (fckEditorValue === null || fckEditorValue.length < 0) {
+        if (fckEditorValue === null || fckEditorValue.length === 0) {
             alert('You must fill in the title.'); //TODO: i18n this & make it unobtrusive
             return false;
         }
