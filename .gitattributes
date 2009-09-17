@@ -137,6 +137,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModi
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalUpdatePolicy.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
