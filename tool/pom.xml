@@ -203,6 +203,26 @@
                     </execution>
                 </executions>
             </plugin>
+		<!-- Copy message bundles to webapp dir -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId> 
+	        <artifactId>maven-resources-plugin</artifactId> 
+	        <executions>
+	          <execution>
+	            <id>copy-resources</id>
+	            <phase>process-resources</phase>
+	            <goals><goal>copy-resources</goal></goals>
+	            <configuration>
+	              <outputDirectory>${basedir}/src/webapp/content/bundle</outputDirectory>
+	              <resources>          
+	                <resource>
+						<directory>${basedir}/src/java/org/sakaiproject/evaluation/tool/bundle</directory>
+	                </resource>
+	              </resources>              
+	            </configuration>            
+	          </execution>
+	        </executions>
+	      </plugin>
         </plugins>
         <resources>
             <resource>
