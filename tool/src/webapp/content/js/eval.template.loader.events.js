@@ -183,7 +183,8 @@ var evalTemplateLoaderEvents = (function($) {
                         title = $('#basic-form input[@name=title]').val();
                         description = $('#basic-form textarea[@name=description]').val();
                         if (!title) {
-                            alert('Please enter a title.'); //TODO: i18n this. Make unobtrusive too??
+                            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
+                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header').toLowerCase())); //TODO: Make unobtrusive
                             return false;
                         }
                         $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');
