@@ -29,7 +29,8 @@ var evalTemplateData = (function() {
         }
         //Validate text
         if (fckEditorValue === null || fckEditorValue.length === 0) {
-            alert('You must fill in the title.'); //TODO: i18n this & make it unobtrusive
+            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
+                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
             return false;
         }
 
@@ -124,8 +125,7 @@ var evalTemplateData = (function() {
     _initAjaxSetUp = function(){
         $(document).ajaxError(function(event, XMLHttpRequest, ajaxOptions){
                  evalTemplateUtils.debug.error("Ajax request failed: %o", XMLHttpRequest);
-                 alert("Sorry, an error occured while communicating with the server. Your changes have not been saved.\n\n" +
-                       "Error fetching page from: " + ajaxOptions.url);//todo: i8n this
+                 alert( evalTemplateUtils.messageLocator('GeneralAjaxChannelError', ajaxOptions.url));
             }
         );
     };
