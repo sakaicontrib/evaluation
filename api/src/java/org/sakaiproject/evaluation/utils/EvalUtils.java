@@ -541,7 +541,7 @@ public class EvalUtils {
       }
       // CT-906 N/A choices cannot be updated by subsequent submissions
       boolean notApplicable = false;
-      if (answer.getNumeric().equals(EvalConstants.NA_VALUE)) {
+      if (answer.getNumeric() != null && answer.getNumeric().equals(EvalConstants.NA_VALUE)) {
     	  notApplicable = true;
     	  answer.setNumeric(EvalConstants.NA_VALUE);
     	  answer.setText(null);
