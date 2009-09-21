@@ -43,7 +43,7 @@ var evalTemplateUtils = (function() {
         /** Ensure language code is in the format aa_AA. */
         lang = lang.toLowerCase();
         if(lang.length > 3) {
-            lang = "_" + lang.substring(0, 3) + lang.substring(3).toUpperCase();
+            lang = "_" + lang.substring(0, 2) + "_" + lang.substring(3,5).toUpperCase();
         }
 
         path = messgeBundlePathDir + bundleName + lang + bundleExtension;
