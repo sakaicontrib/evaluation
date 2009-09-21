@@ -440,7 +440,7 @@ public class EvalSingleEmailLogicImpl implements EvalSingleEmailLogic {
 		EvalQueuedEmail email = new EvalQueuedEmail();
 		Map<String, String> replacementValues = new HashMap<String, String>();
 		try {
-			replacementValues = getReplacementValues(systemUrl, url, earliest, toolTitle);
+			replacementValues = getReplacementValues(url, systemUrl, earliest, toolTitle);
 			String message = makeEmailMessage(emailTemplate.getMessage(), replacementValues);
 			String subject = makeEmailMessage(emailTemplate.getSubject(), replacementValues);
 			email.setCreationDate(new Date());
