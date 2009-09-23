@@ -3,6 +3,12 @@
 
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
+	
+	<!-- tool entity providers -->
+	<bean
+		parent="org.sakaiproject.entitybroker.entityprovider.AbstractEntityProvider"
+		class="org.sakaiproject.evaluation.tool.entity.EvalResourcesProvider">		
+	</bean>
 
     <!-- Configure the location of the messages files -->
     <bean id="messageLocator" class="uk.org.ponder.springutil.SpringMessageLocator">
