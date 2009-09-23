@@ -7,7 +7,7 @@ var evalTemplateUtils = (function() {
     var canDebug = false,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
-            messgeBundlePathDir = "/sakai-evaluation-tool/content/bundle/",
+            messgeBundlePath = "/direct/eval-resources/message-bundle.json",
 
     // Dont configure these vars
             pagesLoadedByFBwithJs = [],
@@ -35,60 +35,15 @@ var evalTemplateUtils = (function() {
 
     // Format bundle path for user locale
     var loadMessageBundle = function(){
-        var bundleExtension = ".properties",
-        bundleName = "messages",
-        path,
-        lang = navigator.language /* Mozilla */ || navigator.userLanguage /* IE */;
-
-        /** Ensure language code is in the format aa_AA. */
-        lang = lang.toLowerCase();
-        if(lang.length > 3) {
-            lang = "_" + lang.substring(0, 2) + "_" + lang.substring(3,5).toUpperCase();
-        }
-
-        path = messgeBundlePathDir + bundleName + lang + bundleExtension;
-
-        //Attempt to load this locale's aa_AA bundle if fail then resort to aa, then messages bundle
-        // Try actual locale:
         $.ajax({
-                url: path,
-                global: false,
-                success: function(messageBundleRaw, status){
-                    messageBundle = fluid.parseJavaProperties(messageBundleRaw);
-                },
-                error: function(){
-
-                    //try nearest bundle
-                    path = messgeBundlePathDir + bundleName + lang.substring(0, 3) + bundleExtension;
-                    $.ajax({
-                        url: path,
-                        global: false,
-                        success: function(messageBundleRaw){
-                            messageBundle = fluid.parseJavaProperties(messageBundleRaw);
-                        },
-                        error: function(){
-
-                            //get default bundle
-                            path = messgeBundlePathDir + bundleName + bundleExtension;
-                            $.ajax({
-                                url: path,
-                                global: false,
-                                success: function(messageBundleRaw){
-                                    messageBundle = fluid.parseJavaProperties(messageBundleRaw);                                    
-                                },
-                                error: function(){
-                                    evalTemplateUtils.debug.error("Can not load bundle file.");
-                                    return false;
-                                }
-
-                            });
-                            
-                        }
-
-                    });
-                }
-
-            });
+            url: messgeBundlePath,
+            global: false,
+            cache: true,
+            dataType : "json",
+            success: function(messageBundleJSON){
+                messageBundle = messageBundleJSON.data;
+            }
+        });
     };
 
     //public data
@@ -194,26 +149,8 @@ var evalTemplateUtils = (function() {
         },
         //retrieve the message strings for key
         messageLocator: function(key, params){
-            /*if(messageBundle === null){
-                //try get bundle & wait for it to load. waiting is 1 second.
-                loadMessageBundle();
-                evalTemplateUtils.sleep(1000);
-                if(messageBundle === null){
-                    //wait a little longer
-                    evalTemplateUtils.sleep(1000);
-                }
-            } */
             return fluid.messageLocator( messageBundle )([key], params);            
         }
-        // Sleeper function
-        /*sleep : function(numberMillis){
-             var now = new Date(),
-             exitTime = now.getTime() + numberMillis;
-             while (true){
-                now = new Date();
-                if (now.getTime() > exitTime) {return;};
-             }
-            }*/
         };
 
 
