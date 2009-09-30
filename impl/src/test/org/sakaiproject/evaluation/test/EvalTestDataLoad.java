@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -41,8 +40,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
-import org.sakaiproject.evaluation.model.EvalQueuedEmail;
-import org.sakaiproject.evaluation.model.EvalQueuedGroup;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -595,7 +592,7 @@ public class EvalTestDataLoad {
     */
    public EvalItemGroup objectiveA1;
    /**
-    * Objective with no items (empty), expert
+    * Objerctive with no items (empty), expert
     */
    public EvalItemGroup objectiveA2;
 
@@ -625,10 +622,6 @@ public class EvalTestDataLoad {
     * Owned by maint, contains USER_ID, user1, user3
     */
    public EvalAdhocGroup group2;
-   /**
-    * Owned by maint, contains user3
-    */
-   public EvalAdhocGroup group3;
 
 
    // some date objects
@@ -649,19 +642,7 @@ public class EvalTestDataLoad {
          new String[] {SITE1_REF, SITE2_REF});
    public EvalGroupNodes egn2 = new EvalGroupNodes(new Date(), NODE_ID2,
          new String[] {SITE3_REF});
-   
-   // single email
-   public EvalQueuedGroup queuedGroup1;
-   public EvalQueuedGroup queuedGroup2;
-   public EvalQueuedGroup queuedGroup3;
-   public EvalQueuedGroup queuedGroup4;
-   public EvalQueuedGroup queuedGroup5;
-   
-   public EvalQueuedEmail queuedEmail1;
-   public EvalQueuedEmail queuedEmail2;
-   public EvalQueuedEmail queuedEmail3;
-   public EvalQueuedEmail queuedEmail4;
-   public EvalQueuedEmail queuedEmail5;
+
 
    /**
     * Construct the test data loader
@@ -1216,7 +1197,7 @@ public class EvalTestDataLoad {
             EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
             templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
             UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
-      
+
       // email templates
       emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");
       evaluationNew.setAvailableEmailTemplate(emailTemplate1);
@@ -1228,7 +1209,7 @@ public class EvalTestDataLoad {
       dao.save(emailTemplate1);
       dao.save(emailTemplate2);
       dao.save(emailTemplate3);
-    
+
       dao.save(evaluationPartial);
       dao.save(evaluationNew);
       dao.save(evaluationNewAdmin);
@@ -1239,6 +1220,7 @@ public class EvalTestDataLoad {
       dao.save(evaluationViewable);
       dao.save(evaluationProvided);
       dao.save(evaluationDeleted);
+
 
       // evalGroupId assignments
       assign1 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
@@ -1413,7 +1395,6 @@ public class EvalTestDataLoad {
 
       group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new String[] { STUDENT_USER_ID, user1.getUserId() }, null);
       group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
-      group3 = new EvalAdhocGroup(MAINT_USER_ID, "group 3", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
 
       // need to do this because the ids are null still otherwise
       group1.setParticipantIds( new String[] { STUDENT_USER_ID, user1.getUserId() } );
@@ -1421,38 +1402,7 @@ public class EvalTestDataLoad {
 
       dao.save(group1);
       dao.save(group2);
-      //EvalQueuedGroup(String groupId, String emailType, Long evaluationId, String groupLock, Long TSStreamId)
-      queuedGroup1 = new EvalQueuedGroup("2009,3,A,PHARMACY,432,001", EvalConstants.SINGLE_EMAIL_AVAILABLE, new Long(1l), 
-    		  new String(EvalConstants.GROUP_LOCK_PREFIX + "1"), new Long(1l));
-      queuedGroup2 = new EvalQueuedGroup("2008,2,A,ECON,402,001,2170", EvalConstants.SINGLE_EMAIL_REMINDER, new Long(2l), 
-    		  new String(EvalConstants.GROUP_LOCK_PREFIX + "2"), new Long(2l));
-      queuedGroup3 = new EvalQueuedGroup("2009,3,A,STATS,404,001,11226", EvalConstants.SINGLE_EMAIL_REMINDER,new Long(3l), 
-    		  new String(EvalConstants.GROUP_LOCK_PREFIX + "2"), new Long(3l));
-      queuedGroup4 = new EvalQueuedGroup("2009,3,A,STATS,404,001,11226", EvalConstants.SINGLE_EMAIL_REMINDER,new Long(3l), 
-    		  new String(EvalConstants.GROUP_LOCK_PREFIX + "3"), new Long(4l));
-      queuedGroup5 = new EvalQueuedGroup("2009,3,A,STATS,404,001,11226", EvalConstants.SINGLE_EMAIL_REMINDER,new Long(3l), 
-    		  new String(EvalConstants.GROUP_LOCK_PREFIX + "4"), new Long(5l));
-      queuedGroup4.setEmailBuilt(true);
-      queuedGroup5.setEmailBuilt(true);
- 
-      dao.save(queuedGroup1);
-      dao.save(queuedGroup2);
-      dao.save(queuedGroup3);
-      dao.save(queuedGroup4);
-      dao.save(queuedGroup5);
-      
-      EvalQueuedEmail queuedEmail1 = new EvalQueuedEmail(EvalConstants.EMAIL_LOCK_PREFIX + "1", "message", "subject", "jleasia@umich.edu", new Long(1l), new Long(1l));
-      EvalQueuedEmail queuedEmail2 = new EvalQueuedEmail(EvalConstants.EMAIL_LOCK_PREFIX + "1", "message", "subject", "gsilver@umich.edu", new Long(1l), new Long(1l));
-      EvalQueuedEmail queuedEmail3 = new EvalQueuedEmail(EvalConstants.EMAIL_LOCK_PREFIX + "2", "message", "subject", "dlhaines@umich.edu", new Long(1l), new Long(1l));
-      EvalQueuedEmail queuedEmail4 = new EvalQueuedEmail(EvalConstants.EMAIL_LOCK_PREFIX + "2", "message", "subject", "zqian@umich.edu", new Long(1l), new Long(1l));
-      EvalQueuedEmail queuedEmail5 = new EvalQueuedEmail(EvalConstants.EMAIL_LOCK_PREFIX + "3", "message", "subject", "bottimer@umich.edu", new Long(1l), new Long(1l));
-      
-      dao.save(queuedEmail1);
-      dao.save(queuedEmail2);
-      dao.save(queuedEmail3);
-      dao.save(queuedEmail4);
-      dao.save(queuedEmail5);
-      	  
+
    }
 
 

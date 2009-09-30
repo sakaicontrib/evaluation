@@ -44,7 +44,7 @@ public interface EvaluationDao extends GeneralGenericDao {
     * and will apply any fixes that it can 
     */
    public void fixupDatabase();
-   
+
    /**
     * A general method for fetching entities which are shared for a specific user,
     * this is abstracting the idea of ((private & owner) or (public)) and (other options)
@@ -235,18 +235,6 @@ public interface EvaluationDao extends GeneralGenericDao {
     * @throws Exception if there is a failure
     */
    public void removeResponses(Long[] responseIds);
-   
-   /**
-    * Removes all {@link EvalQueuedEmail} objects having email sent true
-    * 
-    */
-   public void removeQueuedEmails();
-   
-   /**
-    * Removes all {@link EvalQueuedGroup} objects having email built true
-    * 
-    */
-   public void removeQueuedGroups();
 
    /**
     * Get a list of evaluation categories
@@ -267,7 +255,6 @@ public interface EvaluationDao extends GeneralGenericDao {
    
    /**
     * Get the identifiers of persisted EvalQueuedEmail objects
-    * 
     * @param lockName the name of a lock composed of EvalConstants.EMAIL_LOCK_PREFIX
     * and a number in a range defined by EvalSettings.EMAIL_LOCKS_SIZE. If null all
     * EvalQueuedEmail ids will be returned.
@@ -277,60 +264,12 @@ public interface EvaluationDao extends GeneralGenericDao {
    @SuppressWarnings("unchecked")
    public List<Long> getQueuedEmailByLockName(String lockName);
    
-  
    /**
-    * Count the identifiers of persisted EvalQueuedEmail objects by whether or not email has been sent
-    * 
-    * @param emailSent
-    * 			Boolean.TRUE for sent email, Boolean.FALSE for unsent email, null for both
-    * @return 
-    * 			a count of EvalQueuedEmail identifiers
-    */
-   public int countQueuedEmail(Boolean emailSent);
-   
-   /**
-    * Count the identifiers of persisted EvalQueuedGroup objects
-    * 
-    * @param emailSent
-    * 			Boolean.TRUE for built email, Boolean.FALSE for unbuilt email, null for both
-    * 
-    * @return
-    * 			a count of EvalQueuedGroup identifiers
-    */
-   @SuppressWarnings("unchecked")
-   public int countQueuedGroups(Boolean emailBuilt);
-   
-   /**
-    * Get the identifiers of persisted EvalQueuedGroup objects
-    * 
-    * @param lockName the name of a lock composed of EvalConstants.GROUP_LOCK_PREFIX
-    * and a number in a range defined by EvalSettings.EMAIL_LOCKS_SIZE. If null all
-    * EvalQueuedGroup ids will be returned.
-    * 
-    * @return a list of EvalQueuedGroup identifiers
-    */
-   @SuppressWarnings("unchecked")
-   public List<Long> getQueuedGroupsByLockName(String lockName);
-   
-   /**
-    * Get the lock names in records in the queued email table
-    * 
-    * @return a list of unique lock names associated with queued email
+    * Get the lockNames associated with queued email
+    * @return a list of unique lockNames associated with queued email
     */
    @SuppressWarnings("unchecked")
    public List<String> getQueuedEmailLocks();
-   
-   /**
-    * Get the lock names in the queued groups table for groups with email built
-    * or not built
-    * 
-    * @param emailBuilt
-    * 			Boolean.TRUE for built, Boolean.FALSE for not built, and null for both
-    * 
-    * @return a list of unique lock names associated with queued groups
-    */
-   @SuppressWarnings("unchecked")
-   public List<String> getQueuedGroupLocks(Boolean emailBuilt);
    
    /**
     * Get the identified EvalQueuedEmail objects 
@@ -339,43 +278,6 @@ public interface EvaluationDao extends GeneralGenericDao {
     */
    @SuppressWarnings("unchecked")
    public List<EvalQueuedEmail> getQueuedEmails(Long[] emailIds);
-   
-   /**
-    * Get an ordered list of addresses from the EVAL_QUEUED_EMAIL table for
-    * email that has been sent. A recipient will be listed once for each 
-    * appearance in the table (i.e., when a recipient has more than one 
-    * email template in the table.)
-    * 
-    * @return an ordered list of addresses of email recipients
-    */
-   @SuppressWarnings("unchecked")
-   public List<String> getQueuedEmailAddresses();
-   
-   /**
-    * Get the identifiers of all EvalQueuedEmail objects 
-    * 
-    * @return a list of queued email identifiers
-    */
-   @SuppressWarnings("unchecked")
-   public List<Long> getQueuedEmailIds();
-   
-   /**
-    * Get the identifiers of all EvalQueuedGroup objects 
-    * 
-    * @return a list of queued group identifiers
-    */
-   @SuppressWarnings("unchecked")
-   public List<Long> getQueuedGroupIds();
-   
-   /**
-    * Get the identifiers for evaluations in the groups holding table by type of notification
-    * 
-    * @param type
-    * 			EvalConstants.SINGLE_EMAIL_AVAILABLE, EvalConstants.SINGLE_EMAIL_REMINDER, or null for both types
-    * @return
-    * 			a list of distinct evaluation identifiers
-    */
-   public List<Long> getEvaluationIdsFromQueuedGroups(String type);
 
    /**
     * Get all the users who have completely responded to an evaluation 

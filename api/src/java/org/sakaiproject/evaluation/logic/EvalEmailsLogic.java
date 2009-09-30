@@ -25,14 +25,6 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 public interface EvalEmailsLogic {
 
    // NOTIFICATION methods
-	
-	/**
-	 * Save to a holding table groups with active evaluations 
-	 * that should receive available or reminder email.
-	 * 
-	 * @return the number of groups saved to the holding table
-	 */
-	public int queueEmailGroups();
 
    /**
     * Send notifications to evaluatees (and owner if desired) that a new evaluation
@@ -71,6 +63,16 @@ public interface EvalEmailsLogic {
     * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId);
+   
+   /**
+    * Send a single email notification to any user having one or more evaluations ready for them to take,
+    * and include the earliest due date of those evaluations, also include a link to the summary page of 
+    * the evaluation tool on the user's My Workspace site
+    * 
+    * @return an array of the email addresses that were sent to
+    */
+   public String[] sendEvalAvailableSingleEmail();
+
 
    /**
     * Send reminder notifications to all users who are taking an evaluation,
@@ -83,6 +85,15 @@ public interface EvalEmailsLogic {
     * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant);
+   
+   /**
+    * Send a single email reminder to any user having one or more un-submitted responses to active evaluations,
+    * and include the earliest due date of those evaluations, also include a link to the summary page of 
+    * the evaluation tool on the user's My Workspace site
+    * 
+    * @return an array of the email addresses that were sent to
+    */
+   public String[] sendEvalReminderSingleEmail();
 
    /**
     * Send notifications that the evaluation is now complete and the results are viewable,

@@ -107,12 +107,13 @@
       <artifactId>sakai-coursemanagement-api</artifactId>
       <version>${sakai.version}</version>
     </dependency>
-<!-- CTools UmiacClient dependency -->
+<!-- CTools UmiacClient dependency
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-ctools-providers-impl</artifactId>
       <version>${sakai.version}</version>
     </dependency>
+-->
 <!--org.sakaiprojectsakai-email-api${sakai.version}-->
 <!--org.sakaiprojectsakai-entity-api${sakai.version}-->
     <dependency>

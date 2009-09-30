@@ -11,12 +11,12 @@ import java.util.Date;
 public class EvalQueuedEmail {
 	private Long id;
 
-	private Date creationDate;
+	private Date lastModified;
 	
 	/**
 	 * The name of the lock in the EVAL_LOCK table set for this email
 	 */
-	private String emailLock;
+	private String lock;
 
 	/**
 	 * The body of the email
@@ -27,21 +27,6 @@ public class EvalQueuedEmail {
 	 * The subject of the email
 	 */
 	private String subject;
-	
-	/**
-	 * The identifier of the email template used to generate the message
-	 */
-	private Long emailTemplateId;
-	
-	/**
-	 * Task Status stream Id
-	 */
-	private Long TSStreamId;
-	
-	/**
-	 * Flag set to true when email has been sent
-	 */
-	private Boolean emailSent;
 	
 	/**
 	 * 
@@ -55,15 +40,12 @@ public class EvalQueuedEmail {
 	}
 
 	/** full constructor */
-	public EvalQueuedEmail(String emailLock, String message, String subject, String toAddress, Long emailTemplateId, Long TSStreamId) {
-		this.creationDate = new Date();
-		this.emailLock = emailLock;
+	public EvalQueuedEmail(String lock, String message, String subject, String toAddress) {
+		this.lastModified = new Date();
+		this.lock = lock;
 		this.message = message;
 		this.subject = subject;
 		this.toAddress = toAddress;
-		this.emailTemplateId = emailTemplateId;
-		this.TSStreamId = TSStreamId;
-		this.emailSent = new Boolean(false);
 	}
 	
 	// Property accessors
@@ -75,20 +57,20 @@ public class EvalQueuedEmail {
 		this.id = id;
 	}
 
-	public Date getCreationDate() {
-		return this.creationDate;
+	public Date getLastModified() {
+		return this.lastModified;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
 	}
 	
-	public String getEmailLock() {
-		return this.emailLock;
+	public String getLock() {
+		return this.lock;
 	}
 
-	public void setEmailLock(String emailLock) {
-		this.emailLock = emailLock;
+	public void setLock(String lock) {
+		this.lock = lock;
 	}
 	
 	public String getMessage() {
@@ -113,30 +95,6 @@ public class EvalQueuedEmail {
 
 	public void setToAddress(String toAddress) {
 		this.toAddress = toAddress;
-	}
-	
-	public Long getEmailTemplateId() {
-		return emailTemplateId;
-	}
-	
-	public void setEmailTemplateId(Long emailTemplateId) {
-		this.emailTemplateId = emailTemplateId;
-	}
-	
-	public Long getTSStreamId() {
-		return TSStreamId;
-	}
-	
-	public void setTSStreamId(Long TSStreamId) {
-		this.TSStreamId = TSStreamId;
-	}
-	
-	public Boolean getEmailSent() {
-		return this.emailSent;
-	}
-	
-	public void setEmailSent(Boolean emailSent) {
-		this.emailSent = emailSent;
 	}
 	
 	@Override
