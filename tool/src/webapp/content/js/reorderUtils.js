@@ -100,7 +100,7 @@ function startSort() {
                         if (targetVal !== thatVal) {
                             $(document).trigger('block.rejectItem', [ui, "plain"]);
                         } else {
-                            var confirmMsg = 'Are you sure you want to add this item into this group?';//todo: i8n this
+                            var confirmMsg = evalTemplateUtils.messageLocator('modifytemplate.group.add.existingitem.confirm');
                                 if (confirm(confirmMsg)) {
                                     var parentObj = ui.item.parents("div.itemRow"),
                                     blockId = parentObj.find("input[name=template-item-id]").val(),
@@ -164,7 +164,7 @@ $(document).bind('block.triggerChildrenSort', function(e, parentItem) {
 });
 $(document).bind('block.rejectItem', function(e, ui, option) {
     evalTemplateUtils.debug.group("rejecting to block this item: %o", ui.item);
-    $(document).trigger('list.warning', [ui, option, 'block', 'Sorry this item cannot be grouped here. It is not the same type as the grouped items.']);//todo: i8n this
+    $(document).trigger('list.warning', [ui, option, 'block', evalTemplateUtils.messageLocator('modifytemplate.group.cannot.add.item')]);
     var shadow = evalTemplateUtils.vars.isIE ? ui.item.clone(false) : ui.item.clone(true);
     var shadowPlace = $('.itemList > div.itemRow').eq(ui.item.find('input').eq(0).val()).attr('id');
     ui.item.remove();

@@ -3,7 +3,8 @@
  **/
 
 $(document).bind('activateControls.templateItems', function(e, opt) {
-    var log = evalTemplateUtils.debug;
+    var log = evalTemplateUtils.debug,
+    lang = evalTemplateUtils.messageLocator;
     evalTemplateLoaderEvents.bindDeleteIcons();
     evalTemplateLoaderEvents.bindRowEditPreviewIcons();
 
@@ -31,21 +32,21 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
         }
         if (noGroupableItems) {
-            alert('There are no items you can add to this group.');      //TODO:i8N
+            alert(lang('modifytemplate.group.no.itemstoadd'));
            } else {
 
             $.facebox('<div id="addGroupItemDiv"></div>');
             if ($('#facebox .titleHeader').length > 0){
                 $('#facebox .titleHeader').remove();
             }
-            $('<h2 style="font-weight: bold;" class="titleHeader">Select existing items to add to a group</h2>').insertBefore('#facebox .close'); //TODO:i8N
-            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="Select all" href="#">Select all</a> | <a id="addGroupItemDeselectAll" title="Deselect all" href="#">Deselect all</a></div>').insertBefore('#addGroupItemDiv'); //TODO:i8N
+            $('<h2 style="font-weight: bold;" class="titleHeader">' + lang('modifytemplate.group.add.selection') + '').insertBefore('#facebox .close'); 
+            $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="'+lang('modifytemplate.group.add.select.all')+'" href="#">'+lang('modifytemplate.group.add.select.all')+'</a> | <a id="addGroupItemDeselectAll" title="'+lang('modifytemplate.group.add.select.none')+'" href="#">'+lang('modifytemplate.group.add.select.none')+'</a></div>').insertBefore('#addGroupItemDiv');
             $('\
 			<div class="act">\
-				<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="Add" disabled="disabled"/>\
-				<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="Cancel"/> \
+				<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="'+lang('modifytemplate.add.item.button')+'" disabled="disabled"/>\
+				<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="'+lang('general.cancel.button')+'"/> \
 			</div>\
-			').insertAfter('#addGroupItemDiv');    //TODO:i8N
+			').insertAfter('#addGroupItemDiv');
             //bind new control actions
             $('#addGroupItemSelectAll').bind('click', function() {
                 $('#addGroupItemDiv input[type=checkbox]').each(function() {
@@ -119,7 +120,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params, null, fnAfter);
     });
             var clone = $(this).parent().find('.itemRowBlock').eq(0).clone(),
-            selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="Mark item to use in a group" value="true"/>');//TODO:i8N
+            selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="'+ lang('modifytemplate.item.checkbox.title') +'" value="true"/>');
             //edit extra controls
             clone.find('.itemRight').hide();
             selectBox.insertBefore(clone.find('.itemLabel'));
@@ -204,14 +205,14 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                     $(this).click();
                     return false;
                 }
-                text = '[Show child items]'; //Todo: i8n this
+                text = lang('modifytemplate.group.show');
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
                 return false;
             },
             function() {
-                text = '[Hide child items]';  //todo: i8n this
+                text = lang('modifytemplate.group.hide'); 
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
@@ -480,7 +481,7 @@ function updateControlItemsTotal() {
         document.body.appendChild(boxdiv);
 
         var offset = 0,
-                actionText = options.itemType=='block'?'Ungroup':'Delete';
+                actionText = options.itemType=='block'? evalTemplateUtils.messageLocator('general.command.delete'):evalTemplateUtils.messageLocator('modifytemplate.group.upgroup');
         if (options.itemType == "blockChild") {
             $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#ffc');
         }
@@ -509,8 +510,8 @@ function updateControlItemsTotal() {
                 if ($('a[templateItemId=' + options.id + ']').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
                     var error = '<div class="itemOperationsEnabled">\
             <img src="/library/image/sakai/cancelled.gif"/>\
-            <span class="instruction">Sorry, groups have to have at least TWO items in them.</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
-            ';    //todo: i8n this
+            <span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+'<a href="#" id="closeItemOperationsEnabled">close</a></div>\
+            ';
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1000);
                     $('#closeItemOperationsEnabled').click(function() {
                         $(this).parent().slideUp('normal', function() {
