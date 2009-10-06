@@ -66,6 +66,12 @@ var evalTemplateData = (function() {
                     $('#itemList').html($(d).find('#itemList').html());
                     $(document).trigger('activateControls.templateItems');
                     evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
+
+                    // restore closed group items
+                    for ( var closedIndex in evalTemplateUtils.closedGroup.get){
+                        $("div.itemRow[name=" + evalTemplateUtils.closedGroup.get[closedIndex] + "]").find("a.blockExpandText").click();
+                    }
+
                     return false;
                 }
             }
