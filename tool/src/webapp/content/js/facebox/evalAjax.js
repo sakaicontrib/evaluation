@@ -165,6 +165,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 });
             }
         }
+
         return false;
     });
 
@@ -199,7 +200,6 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
     $('a[rel=childEdit]').childEdit();
 
     $('.blockExpandText').toggle(
-
             function() {
                 if ($(this).parent().parent().parent().find('.itemLine3').is(':hidden')) {
                     $(this).click();
@@ -209,12 +209,16 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
+                // save closed state
+                evalTemplateUtils.closedGroup.add( $(this).parents(".itemRow").attr('name') );
                 return false;
             },
             function() {
                 text = lang('modifytemplate.group.hide'); 
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
+                // remove closed state
+                evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
                 evalTemplateUtils.frameGrow(0);
                 return false;
             }

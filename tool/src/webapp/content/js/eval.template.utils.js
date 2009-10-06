@@ -11,7 +11,8 @@ var evalTemplateUtils = (function() {
 
     // Dont configure these vars
             pagesLoadedByFBwithJs = [],
-            messageBundle = {};
+            messageBundle = {},
+            closedGroups = [];     // keep track of groups a user closes: EVALSYS-825
    
     function resizeFrame(updown, height) {
         try {
@@ -150,7 +151,35 @@ var evalTemplateUtils = (function() {
         //retrieve the message strings for key
         messageLocator: function(key, params){
             return fluid.messageLocator( messageBundle )([key], params);            
+        },
+
+        // Remember the groups a user closes: EVALSYS-825
+        closedGroup : {
+            add : function(groupId){
+                if( groupId ){
+                    if ( $.inArray(groupId, closedGroups) === -1){
+                        closedGroups.push(groupId);
+                        evalTemplateUtils.debug.info("Closed %s", groupId);
+                    }
+                }
+                evalTemplateUtils.debug.warn("closedGroups %o", closedGroups);
+            },
+            remove : function(groupId){
+                if( groupId && $.inArray(groupId, closedGroups) > -1){
+                    var index;
+                    for ( var i in closedGroups){
+                        if ( closedGroups[i] === groupId ){
+                            index = i;
+                        }
+                    }
+                    closedGroups.splice(index, 1);
+                    evalTemplateUtils.debug.info("Opened %s", groupId);
+                }
+                evalTemplateUtils.debug.warn("closedGroups %o", closedGroups);
+            },
+            get : closedGroups            
         }
+
         };
 
 

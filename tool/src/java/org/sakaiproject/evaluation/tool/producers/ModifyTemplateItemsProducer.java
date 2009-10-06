@@ -289,7 +289,12 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 templateItemOTP = templateItemOTPBinding + ".";
 
                 UIBranchContainer itemBranch = UIBranchContainer.make(form2, "item-row:", sCurItemNum);
-
+                
+                // Add item type and id to item tag only if this is a block item
+                if ( templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) ){
+                	itemBranch.decorate( new UIFreeAttributeDecorator("name", EvalConstants.ITEM_TYPE_BLOCK_PARENT.toLowerCase() + "-" +templateItem.getId() ) );
+                }
+                
                 // hidden item num
                 UIInput.make(itemBranch, "hidden-item-num", templateItemOTP + "displayOrder", sCurItemNum);
                 UIOutput.make(itemBranch, "template-item-id", templateItem.getId() + "");
