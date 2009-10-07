@@ -68,7 +68,7 @@ var evalTemplateData = (function() {
                     evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
 
                     // restore closed group items
-                    for ( var closedIndex in evalTemplateUtils.closedGroup.get){
+                    for ( var closedIndex = 0; closedIndex < evalTemplateUtils.closedGroup.get.length; closedIndex ++ ){
                         $("div.itemRow[name=" + evalTemplateUtils.closedGroup.get[closedIndex] + "]").find("a.blockExpandText").click();
                     }
 
@@ -82,10 +82,11 @@ var evalTemplateData = (function() {
     },
     
     //fillActionResponse function called by $.facebox.showResponse
-    _fillActionResponse = function (entityCat,id, templateOwner){
+    _fillActionResponse = function (entityCat,_id, templateOwner){
       evalTemplateUtils.debug.group("starting fillActionResponse", this);
-  	if (entityCat == "eval-item") {
-		var par = $.facebox.settings.elementToUpdate,
+        var id = _id;
+    if(entityCat == "eval-item"){
+        var par = $.facebox.settings.elementToUpdate;
 		id = $(par).children(".itemLine2").children("[name=rowItemId]").html();
 	}
 	evalTemplateUtils.debug.info($.facebox.settings.elementToUpdate);

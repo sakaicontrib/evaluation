@@ -2,7 +2,7 @@
  * @author lovemorenalube
  **/
 
-$(document).bind('activateControls.templateItems', function(e, opt) {
+$(document).bind('activateControls.templateItems', function() {
     var log = evalTemplateUtils.debug,
     lang = evalTemplateUtils.messageLocator;
     evalTemplateLoaderEvents.bindDeleteIcons();
@@ -19,13 +19,9 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
         var myType = $(this).parents('.itemRow').find('.itemCheckbox > input').attr('id');
 
         if (evalTemplateUtils.vars.groupableItems.length > 0) {
-            for (var i in evalTemplateUtils.vars.groupableItems) {
-                var type = evalTemplateUtils.vars.groupableItems[i].type;
-                if (
-                        (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-')))
-                                ==
-                        (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-')))
-                        ) {
+            for (var i = 0; i < evalTemplateUtils.vars.groupableItems.length; i ++) {
+                type = evalTemplateUtils.vars.groupableItems[i].type;
+                if ( (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-'))) == (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-'))) ) {
                     noGroupableItems = false;
                 }
             }
@@ -41,12 +37,10 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             }
             $('<h2 style="font-weight: bold;" class="titleHeader">' + lang('modifytemplate.group.add.selection') + '').insertBefore('#facebox .close'); 
             $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="'+lang('modifytemplate.group.add.select.all')+'" href="#">'+lang('modifytemplate.group.add.select.all')+'</a> | <a id="addGroupItemDeselectAll" title="'+lang('modifytemplate.group.add.select.none')+'" href="#">'+lang('modifytemplate.group.add.select.none')+'</a></div>').insertBefore('#addGroupItemDiv');
-            $('\
-			<div class="act">\
-				<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="'+lang('modifytemplate.add.item.button')+'" disabled="disabled"/>\
-				<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="'+lang('general.cancel.button')+'"/> \
-			</div>\
-			').insertAfter('#addGroupItemDiv');
+            $('<div class="act">' +
+              '<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="'+lang('modifytemplate.add.item.button')+'" disabled="disabled"/>' +
+              '<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="'+lang('general.cancel.button')+'"/>' +
+              '</div>').insertAfter('#addGroupItemDiv');
             //bind new control actions
             $('#addGroupItemSelectAll').bind('click', function() {
                 $('#addGroupItemDiv input[type=checkbox]').each(function() {
@@ -93,8 +87,8 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                         });
                     }
                 });
-                for (i in evalTemplateUtils.vars.groupableItems) {
-                    for (l in selectedItems) {
+                for (var i = 0; i < evalTemplateUtils.vars.groupableItems.length; i ++) {
+                    for (var l in selectedItems) {
                         if (evalTemplateUtils.vars.groupableItems[i].rowId == selectedItems[l]) {
                             $('div[id=' + evalTemplateUtils.vars.groupableItems[i].rowId + ']').remove();
                         }
@@ -126,19 +120,14 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             selectBox.insertBefore(clone.find('.itemLabel'));
 
             if (evalTemplateUtils.vars.groupableItems.length > 0) {
-                for (i in evalTemplateUtils.vars.groupableItems) {
-                    var type = evalTemplateUtils.vars.groupableItems[i].type;
-                    if (
-                            (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-')))
-                                    ==
-                            (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-')))
-
-                            ) {
-                        var itemId = evalTemplateUtils.vars.groupableItems[i].itemId,
-                        otp = evalTemplateUtils.vars.groupableItems[i].otp,
-                        text = evalTemplateUtils.vars.groupableItems[i].text,
-                        rowId = evalTemplateUtils.vars.groupableItems[i].rowId,
-                        rowNumber = evalTemplateUtils.vars.groupableItems[i].rowNumber,
+                for (var num = 0; num < evalTemplateUtils.vars.groupableItems.length; num ++) {
+                    var type = evalTemplateUtils.vars.groupableItems[num].type;
+                    if ( (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-'))) == (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-'))) ) {
+                        var itemId = evalTemplateUtils.vars.groupableItems[num].itemId,
+                        otp = evalTemplateUtils.vars.groupableItems[num].otp,
+                        text = evalTemplateUtils.vars.groupableItems[num].text,
+                        rowId = evalTemplateUtils.vars.groupableItems[num].rowId,
+                        rowNumber = evalTemplateUtils.vars.groupableItems[num].rowNumber,
                         shadow = $(clone).clone();
                         shadow.find('.itemLabel').text(rowNumber).css("font-weight","bold");
                         shadow.css('cursor', 'auto');
@@ -205,7 +194,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                     $(this).click();
                     return false;
                 }
-                text = lang('modifytemplate.group.show');
+                var text = lang('modifytemplate.group.show');
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
@@ -214,7 +203,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
                 return false;
             },
             function() {
-                text = lang('modifytemplate.group.hide'); 
+                var text = lang('modifytemplate.group.hide');
                 $(this).parent().parent().parent().find('.itemLine3').slideToggle();
                 $(this).text(text);
                 // remove closed state
@@ -224,7 +213,7 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
             }
             );
     $('.more').bind('click', function() {
-        if ($(this).parent().parent().find('.itemText').eq(1).find('.blockExpandText').length == 0) {
+        if ($(this).parent().parent().find('.itemText').eq(1).find('.blockExpandText').length === 0) {
             $(this).parent().parent().find('.itemText').eq(1).find('.blockExpandText').remove();
             $(this).parent().find('.blockExpandText').clone(true).insertAfter($(this).parent().parent().find('.itemText').eq(1).find('.less'));
         }
@@ -251,7 +240,6 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 
 (function($) {
     $.fn.blockChildControls = function() {
-        var opts = $.extend({});
         // iterate and bind each matched element
         return this.each(function() {
             $(this).click(function() {
@@ -270,26 +258,27 @@ $(document).bind('activateControls.templateItems', function(e, opt) {
 })(jQuery);
 
 function truncateTextDo(string, number) {
-    trunc = string.substring(0, (number == null) ? 150 : number);
+    var trunc = string.substring(0, (number === null) ? 150 : number);
     trunc = trunc.replace(/\w+$/, '');
     return trunc;
 }
 
 function truncateText() {
     $('.itemText').each(function() {
-        that = $(this);
+        var that = $(this);
         that.realText = '<h4 class="itemText"><span>' + that.text() + '</span><a class="less" href="#">less<\/a></h4>';
-        if (that.realText.length > 150) {
-            that.html('<span>' + truncateTextDo(that.text()) + '</span><a class="more" href="#">...more</a>');
+        if(that.realText.length > 150) {
+            that.html('<span>' + truncateTextDo(that.text(), null) + '</span><a class="more" href="#">...more</a>');
             $(that.realText).insertAfter(that);
             that.parent().find('.itemText').eq(1).toggle();
         }
-        else
+        else{
             that.html("<span>" + that.text() + "</span>");
+        }
     });
 }
 $('.itemBlockRow').each(function() {
-    block = $(this);
+    var block = $(this);
     block.expandText = ' [<a class="blockExpandText" href="#"> Show child items </a>]';
     block.html(block.html() + block.expandText);
 });
@@ -315,14 +304,14 @@ function updateControlItemsTotal() {
     $('[id=level-header-number]').text(tNum);
     var dummyLink = $('span[id=begin-eval-dummylink]');
     var link = $('a[id=begin_eval_link]');
-    var title = dummyLink.length != 0 ? dummyLink.text() : link.text();
+    var title = dummyLink.length !== 0 ? dummyLink.text() : link.text();
     var takeEvalLink = '<a id="begin_eval_link" title="' + title + '" href="evaluation_create?reOpening=false&amp;templateId=' + $('input[name*=templateId]').val() + '">' + title + '</a>';
-    if (tNum == 0) {
-        if (link.length != 0) {
+    if (tNum === 0) {
+        if (link.length !== 0) {
             link.replaceWith('<span id="begin-eval-dummylink">' + link.text() + '</span>');
         }
     } else {
-        if (dummyLink.length != 0) {
+        if (dummyLink.length !== 0) {
             dummyLink.replaceWith(takeEvalLink);
         }
     }
@@ -353,7 +342,7 @@ function updateControlItemsTotal() {
                 var opts = $.extend(settings, options);
                 opts.id = eval(opts.id);
                 var t = eval(opts.text);
-                opts.text = (t != null && t.length > 20) ? truncateTextDo(t, 20) + "..." : t;
+                opts.text = (t !== null && t.length > 20) ? truncateTextDo(t, 20) + "..." : t;
                 show_hide_box(this, opts);
                 that = this;
                 return false;
@@ -392,10 +381,9 @@ function updateControlItemsTotal() {
         // which affect normal document, but not
         // absolute-positioned stuff.
         if (document.body.currentStyle &&
-            document.body.currentStyle['marginTop'])
+            document.body.currentStyle.marginTop)
         {
-            ctop += parseInt(
-                    document.body.currentStyle['marginTop']);
+            ctop += parseInt(document.body.currentStyle.marginTop, 10);
         }
 
         box.style.top = ctop + 'px';
@@ -405,12 +393,12 @@ function updateControlItemsTotal() {
     // Hides other alone popup boxes that might be displayed
     function hide_other_alone(obj)
     {
-        if (!document.getElementsByTagName)
+        if (!document.getElementsByTagName){
             return;
-
+        }
         var all_divs = document.body.getElementsByTagName("DIV");
 
-        for (i = 0; i < all_divs.length; i++)
+        for (var i = 0; i < all_divs.length; i++)
         {
             if (all_divs.item(i).style.position != 'absolute' ||
                 all_divs.item(i) == obj ||
@@ -421,29 +409,30 @@ function updateControlItemsTotal() {
 
             all_divs.item(i).style.display = 'none';
         }
-        return;
     }
 
     // Shows a box if it wasn't shown yet or is hidden
     // or hides it if it is currently shown
     function show_hide_box(an, options)
     {
-        if (!options.itemType)
+        if (!options.itemType){
             options.itemType = 'none';
-        if ((options.itemType == "blockChild"))
+        }
+        if ((options.itemType == "blockChild")){
             $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#fff');
-        else
+        }
+        else{
             $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#fff');
+        }
 
-        var href = an.href;
-        var width = 150;
+        var href = an.href,
+        width = 150,
         // only apply to IE
 
-        var height = 0;
-        var borderStyle = '1px solid #2266AA';
-        var boxdiv = document.getElementById(href);
+        borderStyle = '1px solid #2266AA',
+        boxdiv = document.getElementById(href);
 
-        if (boxdiv != null)
+        if (boxdiv !== null)
         {
             if (boxdiv.style.display == 'none') {
                 hide_other_alone(boxdiv);
@@ -484,8 +473,7 @@ function updateControlItemsTotal() {
         $(boxdiv).hide();
         document.body.appendChild(boxdiv);
 
-        var offset = 0,
-                actionText = options.itemType=='block'? evalTemplateUtils.messageLocator('general.command.delete'):evalTemplateUtils.messageLocator('modifytemplate.group.upgroup');
+        var actionText = options.itemType=='block'? evalTemplateUtils.messageLocator('general.command.delete'):evalTemplateUtils.messageLocator('modifytemplate.group.upgroup');
         if (options.itemType == "blockChild") {
             $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#ffc');
         }
@@ -493,13 +481,11 @@ function updateControlItemsTotal() {
             $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#ffc');
         }
 
-        var content = '\
-                            <div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>\
-                            <div class="" style="float: right;">\
-                            <input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/>\
-                            <input type="button" value="Cancel" accesskey="x" class="closeImage"/>\
-                            </div>\
-                            ';
+        var content = '<div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>' +
+                      '<div class="" style="float: right;">' +
+                      '<input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/>' +
+                      '<input type="button" value="Cancel" accesskey="x" class="closeImage"/>' +
+                      '</div>';
         $(boxdiv).html(content);
         $('.closeImage').click(function()
         {
@@ -512,16 +498,15 @@ function updateControlItemsTotal() {
                     $('#closeItemOperationsEnabled').parent().remove();
                 }
                 if ($('a[templateItemId=' + options.id + ']').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
-                    var error = '<div class="itemOperationsEnabled">\
-            <img src="/library/image/sakai/cancelled.gif"/>\
-            <span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+'<a href="#" id="closeItemOperationsEnabled">close</a></div>\
-            ';
+                    var error = '<div class="itemOperationsEnabled">' +
+                                '<img src="/library/image/sakai/cancelled.gif"/>' +
+                                '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+'<a href="#" id="closeItemOperationsEnabled">close</a></div>';
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1000);
                     $('#closeItemOperationsEnabled').click(function() {
                         $(this).parent().slideUp('normal', function() {
-                            $(this).remove()
+                            $(this).remove();
                         });
-                        return false
+                        return false;
                     });
                     return false;
                 }

@@ -23,32 +23,31 @@ var evalTemplateFacebox = (function() {
             $('#saveReorderButton').click();
             $.facebox({ajax:(f)});
         };
-        $.facebox.settings.faceboxHtml = '\
-        <div id="facebox" style="display:none;"> \
-          <div class="popup"> \
-            <table width="700px"> \
-              <tbody> \
-                <tr> \
-                  <td class="tl"/><td class="b"/><td class="tr"/> \
-                </tr> \
-                <tr> \
-                  <td class="b"/> \
-                  <td class="body"> \
-                  <div class="header breadCrumb" style="display:block"> \
-                 <a class="close" href="#" accesskey="x"><img class="close_image" title="close"/></a></div> \
-                    <div style="display: none" class="results"></div> \
-                    <div class="content"> \
-                    </div> \
-                  </td> \
-                  <td class="b"/> \
-                </tr> \
-                <tr> \
-                  <td class="bl"/><td class="b"/><td class="br"/> \
-                </tr> \
-              </tbody> \
-            </table> \
-          </div> \
-        </div>';
+        $.facebox.settings.faceboxHtml = '<div id="facebox" style="display:none;">' +
+                                         '<div class="popup"> ' +
+                                         '<table width="700px"> ' +
+                                         '<tbody> ' +
+                                         '<tr>' +
+                                         '<td class="tl"/><td class="b"/><td class="tr"/>' +
+                                         '</tr>' +
+                                         '<tr>' +
+                                         '<td class="b"/>' +
+                                         '<td class="body">' +
+                                         '<div class="header breadCrumb" style="display:block">' +
+                                         '<a class="close" href="#" accesskey="x"><img class="close_image" title="close"/></a></div>' +
+                                         '<div style="display: none" class="results"></div>' +
+                                         '<div class="content">' +
+                                         '</div>' +
+                                         '</td>' +
+                                         '<td class="b"/>' +
+                                         '</tr>' +
+                                         '<tr>' +
+                                         '<td class="bl"/><td class="b"/><td class="br"/>' +
+                                         '</tr>' +
+                                         '</tbody>' +
+                                         '</table>' +
+                                         '</div>' +
+                                         '</div>';
 
         $.facebox.loading = function() {
             //store original frame height
