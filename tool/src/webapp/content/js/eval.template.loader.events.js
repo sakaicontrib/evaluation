@@ -17,7 +17,7 @@ var evalTemplateLoaderEvents = (function($) {
 
 		$('#saveBlockAction').click(function() {
 			//var list = $("#blockForm > div.itemRow").get();
-			var childIdList = new Array();
+			var childIdList = [];
 			$('#blockForm input[name*=hidden-item-id]').each(function(){
 				childIdList.push($(this).val());
 			});
@@ -26,7 +26,7 @@ var evalTemplateLoaderEvents = (function($) {
 		});
 
 		function $it(id) {
-        	return document.getElementById(id);
+            return document.getElementById(id);
         }
 
 		function enableOrderButtons() {
@@ -41,8 +41,8 @@ var evalTemplateLoaderEvents = (function($) {
 
         //var sortableIds;
         function buildSortableIds() {
-        	var sortableIds = new Array();
-			var domList = $("div.itemList > div").get();
+            var sortableIds = [];
+            var domList = $("div.itemList > div").get();
 			for (var i = 0; i < domList.length; i++) {
 				sortableIds.push(domList[i].id);
 			}
@@ -51,7 +51,7 @@ var evalTemplateLoaderEvents = (function($) {
 		var reorderButtonsExist = false;
 		var saveReorderButton = $it(baseId + "saveReorderButton");
 
-		if (saveReorderButton != null) {
+		if (saveReorderButton !== null) {
 			reorderButtonsExist = true;
 			saveReorderButton.onclick = function() {
 				disableOrderButtons();
@@ -62,14 +62,14 @@ var evalTemplateLoaderEvents = (function($) {
 		}
 
 		function setIndex(itemId, newindex) {
-			$it(itemId + "item-num").innerHTML = (parseInt(newindex) + 1);
+			$it(itemId + "item-num").innerHTML = (parseInt(newindex, 10) + 1);
 		}
 
 		function setRadioActions() {
 			var radioList = $("div.blockText > input").get();
 			var textAreaDiv = $it("item-text-div");
-			if (radioList.length != 0) {
-				for (i in radioList) {
+			if (radioList.length !== 0) {
+				for (var i in radioList) {
 					if (radioList[i].id) {
 						radioList[i].onclick = function() {
 							textAreaDiv.style.display = "none";
@@ -84,7 +84,7 @@ var evalTemplateLoaderEvents = (function($) {
 		}
 		// put original order into the revertOrder trigger
 		var revertOrderButton = $it(baseId + "revertOrderButton");
-		if (revertOrderButton != null) {
+		if (revertOrderButton !== null) {
 			revertOrderButton.onclick = function() {
 				disableOrderButtons();
 				for(var i = sortableIds.length - 1; i > 0; --i) {
