@@ -8,7 +8,8 @@ $(document).ready(function() {
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
     $('[id=form-branch::submitEvaluation]').bind('click', function() {
-        if (instrSel.find('input[type=checkbox]').length != 0) {
+        var valid;
+        if (instrSel.find('input[type=checkbox]').length !== 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
                 instrSel.find("fieldset").css({
@@ -18,7 +19,7 @@ $(document).ready(function() {
                 return  error("LECTURER", instrSel);
             }
         }
-        if (assSel.find('input[type=checkbox]').length != 0) {
+        if (assSel.find('input[type=checkbox]').length !== 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
                 assSel.find("fieldset").css({
@@ -28,10 +29,10 @@ $(document).ready(function() {
                 return error("TUTOR", assSel);
             }
         }
-        if (assSel.find('select').length != 0) {
-            var valid = true;
+        if (assSel.find('select').length !== 0) {
+            valid = true;
             assSel.find('select').each(function() {
-                if (this.selectedIndex == 0) {
+                if (this.selectedIndex === 0) {
                     valid = false;
                 }
             });
@@ -43,10 +44,10 @@ $(document).ready(function() {
                 });
             }
         }
-        if (instrSel.find('select').length != 0) {
+        if (instrSel.find('select').length !== 0) {
             valid = true;
             instrSel.find('select').each(function() {
-                if (this.selectedIndex == 0) {
+                if (this.selectedIndex === 0) {
                     valid = false;
                 }
             });
@@ -86,7 +87,7 @@ $(document).ready(function() {
             activeCheckbox: {background:'#eee'}
         },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
-        debug: true,
+        debug: false,
         fields: ['input', 'select', 'textarea'] //Array of fields in the form
     };
     /**
@@ -98,20 +99,20 @@ $(document).ready(function() {
             one: false,
             multiple: false
         },
-        questionsToShow: new Array(),
-        questionsToHide: new Array(),
+        questionsToShow: [],
+        questionsToHide: [],
         get:{
             typeOfBranch:function() {
                 //log("Active code type is: " + variables.options.type);
                 switch (variables.options.type) {
-                    case 0: return "instructor";break;
-                    case 1: return "assistant";break;
+                    case 0: return "instructor";
+                    case 1: return "assistant";
                 }
             } ,
             shownQuestions: function() {
                 //log("Getting questions for type: " + variables.get.typeOfBranch());
                 var str = 'div.' + variables.get.typeOfBranch() + 'Branch:visible';
-                var temp = new Array();
+                var temp = [];
                 $.each($(str).get(), function(i, item) {
                     temp.push($(item).attr("name"));
                     //log("Search found: " + $(item).attr("name"));
@@ -121,9 +122,11 @@ $(document).ready(function() {
             },
 
             selectedBoxesArray:function(that) {
-                var checked = new Array();
+                var checked = [];
                 that.find('input[@type=checkbox]').each(function() {
-                    if (this.checked)checked.push(this);
+                    if (this.checked){
+                        checked.push(this);
+                    }
                 });
                 //log("Found " + checked.length + " checked boxes");
                 return checked;
@@ -135,20 +138,22 @@ $(document).ready(function() {
         set:{
             typeOfBranch:function(that) {
                 var temp;
-                if (that.attr('name').search(/instructor/i) != -1)
+                if (that.attr('name').search(/instructor/i) != -1){
                     temp = 0;
-                else if (that.attr('name').search(/assistant/i) != -1)
+                }
+                else if (that.attr('name').search(/assistant/i) != -1){
                     temp = 1;
+                }
                 variables.options.type = temp;
                 //log("Active type is: " + variables.get.typeOfBranch());
 
             }
         },
         options:null,
-        savedIds:new Array(),
+        savedIds:[],
         that:null,
         foundArray: function() {
-            var temp = new Array();
+            var temp = [];
             $.each(variables.questionsToShow, function(s, shown) {
                 //log("Checking if " + shown + " is already showing in dom. Dom has:" + variables.get.shownQuestions().length + " visible.");
                 $.each(variables.get.shownQuestions(), function(h, hidden) {
@@ -169,7 +174,7 @@ $(document).ready(function() {
             if (variables.foundBool()) {
                 $.each(variables.questionsToShow, function(s, show) {
                     if (show == item) {
-                        variables.questionsToShow.splice(parseInt(s), 1);
+                        variables.questionsToShow.splice(parseInt(s, 10), 1);
                         //log("Spliced: " + show + " from selected list.");
                         return true;
                     }
@@ -204,7 +209,7 @@ $(document).ready(function() {
             $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
                 index = this.selectedIndex;
             });
-            if (index != 0) {
+            if (index !== 0) {
                 var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
                 frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
@@ -215,7 +220,7 @@ $(document).ready(function() {
         //copy options to this class
         variables.options = options;
         var temp = $('input#selectedPeopleInResponse').val();
-        variables.savedIds = temp == null ? '' : temp.replace('[', '').replace(']', '').split(', ');
+        variables.savedIds = temp === null ? '' : temp.replace('[', '').replace(']', '').split(', ');
         return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;
@@ -230,9 +235,9 @@ $(document).ready(function() {
     }
 
     function initClassVars() {
-        variables.questionsToHide = new Array();
-        variables.questionsToShow = new Array();
-        variables.savedIds = new Array();
+        variables.questionsToHide = [];
+        variables.questionsToShow = [];
+        variables.savedIds = [];
         variables.that = null;
     }
 
@@ -289,7 +294,7 @@ $(document).ready(function() {
                 var elemId = elem.val();
                 var render = false;
                 //log("Selected guy with id: " + elemId);
-                if (variables.get.shownQuestions().length == 0) {
+                if (variables.get.shownQuestions().length === 0) {
                     render = true;
                 }
                 else if (variables.isVisible(elemId)) {
@@ -302,7 +307,7 @@ $(document).ready(function() {
                 }
                 if (render) {
                     variables.questionsToHide = variables.get.shownQuestions();
-                    variables.questionsToShow = new Array();
+                    variables.questionsToShow = [];
                     variables.questionsToShow.push(elemId);
                     //log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
                     showQuestions();
@@ -322,7 +327,7 @@ $(document).ready(function() {
                     tempFound++;
                 }
             });
-            if (tempFound == 0) {
+            if (tempFound === 0) {
                 var str = 'div[name=' + item + '].' + variables.get.typeOfBranch() + 'Branch';
                 frameGrow($(str).height(), 'grow');
                 $(str).slideDown('normal');
@@ -331,7 +336,7 @@ $(document).ready(function() {
     }
 
     function hideQuestions(all) {
-        var temp = new Array();
+        var temp = [];
         temp = (all && all == 1) ? variables.get.shownQuestions() : variables.questionsToHide;
         $.each(temp, function(i, item) {
             var str = 'div[name=' + item + '].' + variables.get.typeOfBranch() + 'Branch';
@@ -353,12 +358,15 @@ $(document).ready(function() {
             //log("Clearing all " + field.toLowerCase() + " fields.");
             item.find(field.toLowerCase()).each(function() {
                 var t = this.type, tag = this.tagName.toLowerCase();
-                if (t == 'text' || t == 'password' || tag == 'textarea')
+                if (t == 'text' || t == 'password' || tag == 'textarea'){
                     this.value = '';
-                else if (t == 'checkbox' || t == 'radio')
+                }
+                else if (t == 'checkbox' || t == 'radio'){
                     this.checked = false;
-                else if (tag == 'select')
+                }
+                else if (tag == 'select'){
                         this.selectedIndex = -1;
+                }
             });
         });
     }
@@ -373,7 +381,7 @@ $(document).ready(function() {
                     }
                     if (tag == 'select') {
                         variables.that.find('select:eq(0)').each(function() {
-                            this.selectedIndex = (parseInt(num));
+                            this.selectedIndex = (parseInt(num, 10));
                         });
                     }
                 }
@@ -383,23 +391,23 @@ $(document).ready(function() {
 
     function frameGrow(height, updown)
     {
-        var _height = height == "" ? 250 : parseInt(height);
+        var h = height == "" ? 250 : parseInt(height, 10);
         var frame = parent.document.getElementById(window.name);
         try {
             if (frame)
             {
+                var clientH;
                 if (updown == 'shrink')
                 {
-                    var clientH = document.body.clientHeight - _height;
+                    clientH = document.body.clientHeight - h;
                 }
                 else
                 {
-                    var clientH = document.body.clientHeight + _height;
+                    clientH = document.body.clientHeight + h;
                 }
                 $(frame).height(clientH);
             }
-        } catch(e) {
-        }
+        } catch(e) {}
     }
 
 
