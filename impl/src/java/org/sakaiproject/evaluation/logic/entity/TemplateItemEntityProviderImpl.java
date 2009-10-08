@@ -33,6 +33,7 @@ import org.sakaiproject.entitybroker.entityprovider.extension.Formats;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 /**
  * Implementation for the entity provider for template items (questions in a template)
@@ -63,9 +64,12 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
     
     private final static String key_ordered_Ids = "orderedIds";
 
-    //parameter name keys for {@link modifyBlockItems} method
+  //parameter name keys for {@link modifyBlockItems} method
     private final static String key_block_id = "blockid";
     private final static String key_items_to_add = "additems";
+
+  //parameter name key for {@link unblock} method
+    private final static String key_item_id = "itemid";
 
     public boolean entityExists(String id) {
         boolean exists = false;
@@ -149,7 +153,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 			throw new IllegalArgumentException("No ordered Ids to process.");
 		}
 	}
-	
+
 	//Custom method to handle /eval-templateitem/modify-block-items
 	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_BLOCK,viewKey=EntityView.VIEW_NEW)
 	public void modifyBlockItems(EntityView view, Map<String, Object> params) {
@@ -177,5 +181,29 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
             child.setHierarchyNodeId(parent.getHierarchyNodeId());
             authoringService.saveTemplateItem(child, currentUserId);    
 		}
+	}
+	
+	//Custom method to handle /eval-templateitem/unblock
+	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_UNBLOCK,viewKey=EntityView.VIEW_NEW)
+	public void unblock(EntityView view, Map<String, Object> params) {
+		Object rawId = params.get(key_item_id);
+		if( rawId !=null ){
+			Long itemId = Long.parseLong( rawId.toString() );
+			String currentUserId = commonLogic.getCurrentUserId();
+			EvalTemplateItem templateItem = authoringService.getTemplateItemById( itemId );
+			if (TemplateItemUtils.isBlockChild(templateItem)){
+				List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForTemplate( templateItem.getTemplate().getId() , new String[]{}, new String[]{}, new String[]{});
+				List<EvalTemplateItem> items = TemplateItemUtils.getNonChildItems(allItems);
+				templateItem.setBlockParent(null);
+				templateItem.setBlockId(null);
+				templateItem.setDisplayOrder(items.size() + 1);
+				authoringService.saveTemplateItem(templateItem, currentUserId);
+			}else{
+				throw new IllegalStateException("Template item "+ itemId +" is not part of a group!");
+			}
+		}else{
+			throw new IllegalArgumentException("No item Id to process.");
+		}
+		
 	}
 }
