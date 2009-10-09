@@ -104,19 +104,25 @@ var evalTemplateLoaderEvents = (function($) {
         $('a[rel=remove]').itemRemove({
             ref:    'eval-templateitem',
             id:     '$(this).attr("templateitemid")',
-            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+            text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });
         $('a[rel=childRemove]').itemRemove({
-            ref:    'eval-templateitem',
-            id:        '$(this).attr("templateitemid")',
-            itemType: 'blockChild',
-            text:   '$(this).parents("div.itemRowBlock").eq(0).find("span.text:visible").text()'
-        });
+                    ref:    'eval-templateitem',
+                    id:        '$(this).attr("templateitemid")',
+                    itemType: 'blockChild',
+                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
+                });
+        $('a[rel=childUngroup]').itemRemove({
+                    ref:    'eval-templateitem/unblock',
+                    id:    '$(this).parents("div.itemRowBlock").find("input[name=hidden-item-id]").val()',
+                    itemType: 'blockChild',
+                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
+                });
         $('a[rel=unblock]').itemRemove({
             ref:    'eval-templateitem',
             id:        '$(this).attr("templateitemid")',
             itemType: 'block',
-            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+            text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });
     },
 

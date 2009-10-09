@@ -510,7 +510,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         removeChildItem.decorate(new UIFreeAttributeDecorator("OTP", templateItemOTPBinding));
         removeChildItem.decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.delete")));
 
-
+        UIInternalLink.make(radiobranch,	"child-ungroup-item", UIMessage.make("general.command.delete"),
+                new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
     }
 
 

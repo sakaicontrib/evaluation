@@ -500,7 +500,7 @@ function updateControlItemsTotal() {
                 if ($('a[templateItemId=' + options.id + ']').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
                     var error = '<div class="itemOperationsEnabled">' +
                                 '<img src="/library/image/sakai/cancelled.gif"/>' +
-                                '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+'<a href="#" id="closeItemOperationsEnabled">close</a></div>';
+                                '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+' <a href="#" id="closeItemOperationsEnabled">X</a></div>';
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1000);
                     $('#closeItemOperationsEnabled').click(function() {
                         $(this).parent().slideUp('normal', function() {
@@ -510,13 +510,30 @@ function updateControlItemsTotal() {
                     });
                     return false;
                 }
+                if( options.ref === "eval-templateitem/unblock" ){
                 $.ajax({
-                    url: "/direct/" + options.ref + "/" + options.id + "/delete",
-                    type: "DELETE",
-                    success: function(data) {
-                        finish(options, data);
+                    url: "/direct/" + options.ref,
+                    data: { itemid: options.id },
+                    type: "POST",
+                    beforeSend: function() {
+                        doBusy($(an));
+                    },
+                    success: function() {
+                        $.get("modify_template_items?external=false&templateId=" + $("input[name=templateId]:hidden").val(), null, function(data){ options.itemType = "block"; finish(options, data); });
                     }
                 });
+                }else{
+                    $.ajax({
+                        url: "/direct/" + options.ref + "/" + options.id + "/delete",
+                        type: "DELETE",
+                        beforeSend: function() {
+                            doBusy($(an));
+                        },
+                        success: function(data) {
+                            finish(options, data);
+                        }
+                    });
+                }
             }
             else if (options.ref === 'eval-templateitem') {
                 var s = 'a[templateitemid=' + options.id + ']';
@@ -527,10 +544,7 @@ function updateControlItemsTotal() {
                     data: 'templateItemId=' + options.id + '&templateId=' + t.attr('templateid') + '&command+link+parameters%26deletion-binding%3Dl%2523%257B' + t.attr('otp') + '%257D%26Submitting%2520control%3Dremove-item-command-link=Remove+Item',
                     type: "POST",
                     beforeSend: function() {
-                        t.hide();
-                        t.parent().find('a').slice(0, 2).hide();
-                        t.parent().append('<img src="/library/image/sakai/spinner.gif"/>');
-                        t.parent().parent().parent().find('.selectReorder').attr('disabled', 'disabled');
+                        doBusy(t);
                     },
                     success: function(data) {
                         t.parent().parent().parent().find('.selectReorder').removeAttr('disabled');
@@ -562,6 +576,13 @@ function updateControlItemsTotal() {
         // The script has successfully shown the box,
         // prevent hyperlink navigation.
         return false;
+    }
+
+    function doBusy( link ){
+        link.hide();
+        link.parent().find('a').slice(0, 2).hide();
+        link.parent().append('<img src="/library/image/sakai/spinner.gif"/>');
+        link.parent().parent().parent().find('.selectReorder').attr('disabled', 'disabled');
     }
 
     function finish(options, d) {
