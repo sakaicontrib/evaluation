@@ -324,7 +324,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             form.parameters.add(
                     new UIELBinding(itemOTP + "scale.id", templateItem.getItem().getScale().getId()) );
             form.parameters.add(
-                    new UIELBinding(itemOTP + "scaleDisplaySetting", templateItem.getScaleDisplaySetting()) );
+                    new UIELBinding(itemOTP + "scaleDisplaySetting", templateItem.getItem().getScaleDisplaySetting()) );
             form.parameters.add(
                     new UIELBinding(itemOTP + "category", templateItem.getCategory()) );
             form.parameters.add(
