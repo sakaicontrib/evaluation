@@ -129,6 +129,7 @@ var evalTemplateLoaderEvents = (function($) {
     unBindDeleteIcons = function(){
         $('a[rel=remove]').unbind("click");
         $('a[rel=childRemove]').unbind("click");
+        $('a[rel=childUngroup]').unbind("click");
         $('a[rel=unblock]').unbind("click");
     },
 
