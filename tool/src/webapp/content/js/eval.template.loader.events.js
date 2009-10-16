@@ -25,15 +25,6 @@ var evalTemplateLoaderEvents = (function($) {
 			evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_template', $('#saveBlockAction'));
 		});
 
-		function $it(id) {
-            return document.getElementById(id);
-        }
-
-		function enableOrderButtons() {
-			$it(baseId + "revertOrderButton").disabled = false;
-			$it(baseId + "saveReorderButton").disabled = false;
-		}
-
 		function disableOrderButtons() {
 			$it(baseId + "revertOrderButton").disabled = true;
 			$it(baseId + "saveReorderButton").disabled = true;
@@ -65,23 +56,6 @@ var evalTemplateLoaderEvents = (function($) {
 			$it(itemId + "item-num").innerHTML = (parseInt(newindex, 10) + 1);
 		}
 
-		function setRadioActions() {
-			var radioList = $("div.blockText > input").get();
-			var textAreaDiv = $it("item-text-div");
-			if (radioList.length !== 0) {
-				for (var i in radioList) {
-					if (radioList[i].id) {
-						radioList[i].onclick = function() {
-							textAreaDiv.style.display = "none";
-						};
-					}
-				}
-				radioList[radioList.length - 1].onclick = function() {
-					textAreaDiv.style.display = "block";
-				};
-				radioList[radioList.length - 1].checked = true;
-			}
-		}
 		// put original order into the revertOrder trigger
 		var revertOrderButton = $it(baseId + "revertOrderButton");
 		if (revertOrderButton !== null) {
@@ -97,7 +71,6 @@ var evalTemplateLoaderEvents = (function($) {
 				setIndex(sortableIds[0], 0);
 			};
 		}
-		var saveBlockButton = $it(baseId + "saveBlockAction");
     },
 
     bindDeleteIcons = function(){
@@ -159,14 +132,8 @@ var evalTemplateLoaderEvents = (function($) {
         modify_item: function() {
             var siteId = $('#site-id').text();
             SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-            if ($.facebox.settings.elementToUpdate == "block") {
-                //$('#facebox .content .navPanel').hide();
-                //$('#nonBlockSettings').hide();
-                //$('#nonBlockSettings2').hide();
-               // $('div[@id=show-item-scale::]').hide();
-            }
             $.facebox.setHeader($(".portletBody .titleHeader"));
-            if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1) {
+            if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
                 $('.act .submit').bind('click', function() {
                     evalTemplateData.postFCKform('#item-form', 'item-text', 'modify_item', $(this));
                 });
