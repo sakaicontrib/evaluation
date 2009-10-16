@@ -85,7 +85,7 @@ $(document).bind('activateControls.templateItems', function() {
                 };
                 evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params, null, fnAfter);
             });
-            var clone = $(this).parent().find('.itemRowBlock').eq(0).clone(),
+            var clone = $(this).parents('.itemRowBlock').find('.itemRowBlock').eq(0).clone(),
             selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="'+ lang('modifytemplate.item.checkbox.title') +'" value="true"/>');
             //edit extra controls
             clone.find('.itemRight').hide();
@@ -162,12 +162,12 @@ $(document).bind('activateControls.templateItems', function() {
 
     $('.blockExpandText').toggle(
             function() {
-                if ($(this).parent().parent().parent().find('.itemLine3').is(':hidden')) {
+                if ($(this).parents('.itemRow').find('.itemLine3').is(':hidden')) {
                     $(this).click();
                     return false;
                 }
                 var text = lang('modifytemplate.group.show');
-                $(this).parent().parent().parent().find('.itemLine3').slideToggle();
+                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
                 $(this).text(text);
                 evalTemplateUtils.frameGrow(0);
                 // save closed state
@@ -176,7 +176,7 @@ $(document).bind('activateControls.templateItems', function() {
             },
             function() {
                 var text = lang('modifytemplate.group.hide');
-                $(this).parent().parent().parent().find('.itemLine3').slideToggle();
+                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
                 $(this).text(text);
                 // remove closed state
                 evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
@@ -185,18 +185,18 @@ $(document).bind('activateControls.templateItems', function() {
             }
             );
     $('.more').bind('click', function() {
-        if ($(this).parent().parent().find('.itemText').eq(1).find('.blockExpandText').length === 0) {
-            $(this).parent().parent().find('.itemText').eq(1).find('.blockExpandText').remove();
-            $(this).parent().find('.blockExpandText').clone(true).insertAfter($(this).parent().parent().find('.itemText').eq(1).find('.less'));
+        if ($(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').length === 0) {
+            $(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').remove();
+            $(this).parent().find('.blockExpandText').clone(true).insertAfter($(this).parents('.itemLine2').find('.itemText').eq(1).find('.less'));
         }
         $(this).parent().toggle();
-        $(this).parent().parent().find('.itemText').eq(1).toggle();
+        $(this).parents('.itemLine2').find('.itemText').eq(1).toggle();
         evalTemplateUtils.frameGrow(0);
         return false;
     });
     $('.less').bind('click', function() {
         $(this).parent().toggle();
-        $(this).parent().parent().find('.itemText').eq(0).toggle();
+        $(this).parents('.itemLine2').find('.itemText').eq(0).toggle();
         return false;
     });
 
@@ -209,25 +209,6 @@ $(document).bind('activateControls.templateItems', function() {
 
     updateControlItemsTotal();
 });
-
-(function($) {
-    $.fn.blockChildControls = function() {
-        // iterate and bind each matched element
-        return this.each(function() {
-            $(this).click(function() {
-                blockChildControls($(this));
-                return false;
-            });
-        });
-    };
-    function blockChildControls(that) {
-        that.bind('click', function() {
-            that.parent().parent().find('span').eq(1).click();
-            return false;
-        });
-    }
-
-})(jQuery);
 
 function truncateTextDo(string, number) {
     var trunc = string.substring(0, (number === null) ? 150 : number);
@@ -524,7 +505,7 @@ function updateControlItemsTotal() {
                         doBusy(t);
                     },
                     success: function(data) {
-                        t.parent().parent().parent().find('.selectReorder').removeAttr('disabled');
+                        t.parents('.itemLine2').find('select.selectReorder').removeAttr('disabled');
                         //alert(data);
                         finish(options, data);
                     }
@@ -559,7 +540,7 @@ function updateControlItemsTotal() {
         link.hide();
         link.parent().find('a').slice(0, 2).hide();
         link.parent().append('<img src="/library/image/sakai/spinner.gif"/>');
-        link.parent().parent().parent().find('.selectReorder').attr('disabled', 'disabled');
+        link.parents('.itemLine2').find('select.selectReorder').attr('disabled', 'disabled');
     }
 
     function finish(options, d) {
@@ -570,7 +551,7 @@ function updateControlItemsTotal() {
             evalTemplateOrder.initGroupableItems();
         }else
         if (options.itemType == 'blockChild') {
-            $(that).parent().parent().effect('highlight', {}, 500).fadeOut(100, function() {
+            $(that).parents('.itemLine3').effect('highlight', {}, 500).fadeOut(100, function() {
                 var parentItem = $(this).parents("div.itemRow");
                 $(this).remove();
                 $(document).trigger('block.triggerChildrenSort', [parentItem]);
