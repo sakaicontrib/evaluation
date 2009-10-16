@@ -392,69 +392,30 @@ tool/src/webapp/content/js/eval.template.myitems.loader.js svn_keywords=Date+Rev
 tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/evalAjax.js -text
 tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/facebox/b.png -text
 tool/src/webapp/content/js/facebox/bl.png -text
 tool/src/webapp/content/js/facebox/br.png -text
 tool/src/webapp/content/js/facebox/closelabel.gif -text
-tool/src/webapp/content/js/facebox/evalAjax.js -text
 tool/src/webapp/content/js/facebox/facebox.css -text
 tool/src/webapp/content/js/facebox/facebox.js -text
 tool/src/webapp/content/js/facebox/loading.gif -text
 tool/src/webapp/content/js/facebox/tl.png -text
 tool/src/webapp/content/js/facebox/tr.png -text
-tool/src/webapp/content/js/fastxmlpull.js -text
 tool/src/webapp/content/js/fluid/Fluid.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/jquery-1.2.6.js -text
-tool/src/webapp/content/js/jquery.form.js -text
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/.project -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/accordion.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/carousel.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/easing.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/fisheye.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iautocompleter.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iautoscroller.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/idrag.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/idrop.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iexpander.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifx.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxblind.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxbounce.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxdrop.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxfold.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxhighlight.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxopenclose.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxpulsate.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxscale.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxscrollto.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxshake.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxslide.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ifxtransfer.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/imagebox.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iresizable.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iselect.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/islider.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/islideshow.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/isortables.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/itooltip.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/ittabs.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/interface/iutil.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/jARIA.js -text
+tool/src/webapp/content/js/jquery/jquery-1.2.6.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-all-effects-1.6rc4.packed.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/jquery.keyboard-a11y.js -text
-tool/src/webapp/content/js/jquery/jquery.tooltip.js -text
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/rsf-parser.js -text
 tool/src/webapp/content/js/rsf-renderer.js -text
 tool/src/webapp/content/js/rsf.js -text
 tool/src/webapp/content/js/rsfbasic.js -text
 tool/src/webapp/content/js/rsfsakaiportal.js -text
-tool/src/webapp/content/js/scroller/jquery.scrollTo-1.4.0-min.js -text
-tool/src/webapp/content/js/tinyxmlsax.js -text
 tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/ui.core.js -text
 tool/src/webapp/content/js/ui.dialog.js -text

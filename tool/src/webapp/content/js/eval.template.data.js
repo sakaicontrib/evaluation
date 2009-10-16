@@ -56,10 +56,6 @@ var evalTemplateData = (function() {
                 fckEditor.EditorDocument.body.disabled = true;
                 btn.parent().append(img);
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                //TODO: Tell user of the error
-                return false;
-            },
             success: function(d) {
                 $(document).trigger('close.facebox');
                 if (form == '#blockForm' || form == '#item-form') {
