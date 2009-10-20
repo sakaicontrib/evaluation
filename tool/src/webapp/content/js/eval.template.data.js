@@ -53,7 +53,9 @@ var evalTemplateData = (function() {
                 $("#facebox option").each(function(){
                     this.disabled = true;
                 });
-                fckEditor.EditorDocument.body.disabled = true;
+                try{ //if fckEditor is in source mode at this time, an exception could occur: EVALSYS-836
+                    fckEditor.EditorDocument.body.disabled = true;
+                }catch(e){};
                 btn.parent().append(img);
             },
             success: function(d) {
