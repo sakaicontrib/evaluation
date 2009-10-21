@@ -16,7 +16,9 @@
     //Deal with existing comments
     function hideComment(dom) {
         var truncatedComment = truncate(dom, dom.textarea.val());//Truncate the comment and update Dom
-        dom.showLink.hide();
+        dom.showLink.hide(function(){
+            dom.showLink.css({display: "inline"});
+        });
         dom.commentLabel.fadeIn("fast");
         dom.editLink.fadeIn("fast");
         dom.commentTruncated.text(truncatedComment).fadeIn("fast"); //add truncated comment to DOM
@@ -42,12 +44,15 @@
         if (dom.hideLink.css("display") !== "none") {
             dom.hideLink.trigger('click');
         }
-        dom.commentHolder.find("a, span:not(.JSwarn)")
+        var commentLink = dom.commentHolder.find("a, span:not(.JSwarn)");
+        commentLink
                 .css({color:"#000", opacity:0.5})
                 .unbind("click")
                 .bind("click", function() {
             return false;
         });
+        //Add event for tooltip
+        commentLink.tipsy({gravity: 'w'});
         if (dom.textarea.val().length > 0) {
             //Warn user
             dom.warn.fadeIn("fast");
@@ -57,7 +62,10 @@
     function enable(dom) {
         dom.commentHolder.find("a, span:not(.JSwarn)")
                 .css({color:null, opacity:1})
-                .unbind("click");
+                .unbind("click")
+                //Remove event for tooltip
+                .unbind('mouseenter').unbind('mouseleave');
+        
         //Hide warning
         dom.warn.fadeOut("fast");
         //Bind the click event for ADD comment control
@@ -87,7 +95,9 @@
             if (dom.textarea.val().length > 0) {
                 hideComment(dom);
             } else {
-                dom.showLink.slideDown("fast");
+                dom.showLink.slideDown("fast", function(){
+                    dom.showLink.css({display: "inline"});
+                });
             }
             dom.textarea.slideUp("fast");
             dom.hideLink.slideUp("fast");

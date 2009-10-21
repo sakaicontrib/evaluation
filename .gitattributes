@@ -377,6 +377,10 @@ tool/src/webapp/content/images/pdate.gif -text
 tool/src/webapp/content/images/pencil.png -text svneol=unset#image/png
 tool/src/webapp/content/images/required.gif -text
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/tipsy-east.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/tipsy-north.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/tipsy-south.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/tipsy-west.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text
 tool/src/webapp/content/js/SakaiRSFWidgets.js -text
@@ -410,6 +414,7 @@ tool/src/webapp/content/js/jquery/jquery-1.2.6.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-all-effects-1.6rc4.packed.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/jquery/jquery.tipsy.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/rsf-parser.js -text
 tool/src/webapp/content/js/rsf-renderer.js -text

@@ -835,3 +835,8 @@ background-repeat : no-repeat !important;
 	background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat
 }
 
+.JSshow{
+    padding-right: 5px;
+    text-decoration: none;
+}
+
