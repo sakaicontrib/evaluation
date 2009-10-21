@@ -450,15 +450,6 @@ public interface EvalEvaluationService {
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
    
    /**
-    * Get the earliest due date from the evaluations available to be be taken by the user,
-    * formatted for display
-    * 
-    * @param userId the Sakai id of the user (not username)
-    * @return the earliest due date, formatted for display e.g., Mar 17, 2008
-    */
-   public String getEarliestDueDate(String userId);
-
-   /**
     * Get an email template for an eval by type, will always return an email template
     * 
     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 

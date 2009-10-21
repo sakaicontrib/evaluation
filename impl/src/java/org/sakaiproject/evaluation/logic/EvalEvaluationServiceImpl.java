@@ -832,30 +832,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	   return dao.isEvaluationWithState(state);
    }
    
-   /*
-    * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEarliestDueDate(java.lang.String)
-    */
-   @SuppressWarnings("unchecked")
-   public String getEarliestDueDate(String userId) {
-	   String earliest = EvalConstants.NO_DATE_AVAILABLE;
-	   Date dueDate = null;
-	   if(userId != null) {
-		   try {
-			   List<EvalEvaluation> evaluations = getEvaluationsForUser(userId, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
-			   if(evaluations != null && !evaluations.isEmpty()) {
-				   dueDate = evaluations.get(0).getDueDate();
-				   earliest = DateFormat.getDateInstance().format(dueDate);
-			   }
-			   //e.g., Mar 17, 2008
-		   }
-		   catch(Exception e) {
-			   log.warn("EvalEvaluationServiceImpl.getEarliestDueDate: getEvaluationsForUser(" + userId + "Boolean.TRUE, Boolean.TRUE, Boolean.FALSE) " + e);
-		   }
-	   }
-	   return earliest;
-   }
-
+ 
    //TODO COPIED CODE! THIS NEEDS TO BE SHARED BY SETUP SERVICE AND LOWER
    
    /* (non-Javadoc)

@@ -17,8 +17,10 @@ package org.sakaiproject.evaluation.logic;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -528,6 +530,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Set<String> userIdsTakingEval = new HashSet<String>();
 		Map<Long, List<EvalAssignGroup>> assignGroupMap = new HashMap<Long, List<EvalAssignGroup>>();
 		Map<String, Set<Long>> emailTemplateMap = new HashMap<String, Set<Long>>();
+		Map<String, Date> earliestDueDate = new HashMap<String, Date>();
 		long start, end;
 		float seconds;
 		
@@ -556,22 +559,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
+				
 				// CT-697
 				userIdsTakingEval.clear();
 				groups = assignGroupMap.get(evalIds[i]);
 				for (int j = 0; j < groups.size(); j++) {
+					
+					Set<String> users = evaluationService
+					.getUserIdsTakingEvalInGroup(evalIds[i], groups
+							.get(j).getEvalGroupId(),
+							EvalConstants.EVAL_INCLUDE_ALL);
+					
 
 					// get the users in these groups
-					userIdsTakingEval.addAll(evaluationService
-							.getUserIdsTakingEvalInGroup(evalIds[i], groups
-									.get(j).getEvalGroupId(),
-									EvalConstants.EVAL_INCLUDE_ALL));
+					userIdsTakingEval.addAll(users);
 
 					// build a map of user id key and email template id list
 					// value
 					emailTemplatesByUser(evalIds[i], userIdsTakingEval,
 							emailTemplateMap,
-							EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE);
+							EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE,
+							earliestDueDate);
 					allUserIds.addAll(userIdsTakingEval);
 				}
 			}
@@ -585,7 +593,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap);
+				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap, earliestDueDate);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -604,6 +612,29 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return toAddresses;
 	}
 
+	/**
+	 * Build a map of user id <K> earliest due date <V> for customizing email
+	 * @param dueDate
+	 * @param users
+	 * @param earliestDueDate
+	 */
+   private void getEarliestDueDate(Date dueDate, Set<String> users,
+		Map<String, Date> earliestDueDate) {
+	   if(dueDate != null && users != null && earliestDueDate != null) {
+		   Date earliest = null;
+		   for(String userId: users) {
+			   earliest = earliestDueDate.get(userId);
+			   if(earliest == null) {
+				   earliestDueDate.put(userId, dueDate);
+			   }
+			   else if (earliest.after(dueDate)) {
+				   earliestDueDate.remove(userId);
+				   earliestDueDate.put(userId, dueDate);
+			   }
+		   }
+	   }
+   }
+
    /*
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalReminderSingleEmail()
@@ -616,6 +647,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Set<String> userIdsTakingEval = new HashSet<String>();
 		Map<Long, List<EvalAssignGroup>> assignGroupMap = new HashMap<Long, List<EvalAssignGroup>>();
 		Map<String, Set<Long>> emailTemplateMap = new HashMap<String, Set<Long>>();
+		Map<String, Date> earliestDueDate = new HashMap<String, Date>();
 		long start, end;
 		float seconds;
 		
@@ -635,6 +667,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			
 			// get groups assigned to these evaluations
 			start = System.currentTimeMillis();
+			// get groups in subsets to avoid query parameter size limit
 			subsetGetAssignGroupsForEvals(assignGroupMap, evalIds);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
@@ -650,15 +683,19 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				for (int j = 0; j < groups.size(); j++) {
 					
 					// get the non-responders in these groups
-					userIdsTakingEval = evaluationService
-							.getUserIdsTakingEvalInGroup(evalIds[i], groups
-									.get(j).getEvalGroupId(),
-									EvalConstants.EVAL_INCLUDE_NONTAKERS);
+					Set<String> users = evaluationService
+					.getUserIdsTakingEvalInGroup(evalIds[i], groups
+							.get(j).getEvalGroupId(),
+							EvalConstants.EVAL_INCLUDE_NONTAKERS);
 
-					//build a map of user id key and email template id list value
+					// get the users in these groups
+					userIdsTakingEval.addAll(users);
+
+					//build maps of user id - email template id list & user id - earliest due date
 					emailTemplatesByUser(evalIds[i], userIdsTakingEval,
 							emailTemplateMap,
-							EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER);
+							EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER,
+							earliestDueDate);
 					allUserIds.addAll(userIdsTakingEval);
 				}
 			}
@@ -672,7 +709,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap);
+				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap, earliestDueDate);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -691,12 +728,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @param emailTemplateMap the collecting parameter pattern for the map of user id key and email template id value
     * @param type the type of email template from EvalConstants
     */
-   private void emailTemplatesByUser(Long evaluationId, Set<String> userIds, Map<String, Set<Long>> emailTemplateMap, String type) {
+   private void emailTemplatesByUser(Long evaluationId, Set<String> userIds, 
+		   Map<String, Set<Long>> emailTemplateMap, String type, Map<String, Date> earliestDueDate) {
+	   
 	   if(evaluationId == null || userIds == null || emailTemplateMap == null || type == null)
 		   throw new IllegalArgumentException("emailTemplatesByUser parameter(s) null");
 	   Long emailTemplateId = null;
 	   Set<Long> emailTemplateIds = null;
 	   EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
+	   Date dueDate = evaluation.getDueDate();
 	   if(EvalConstants.SINGLE_EMAIL_TEMPLATE_REMINDER.equals(type)) {
 		   emailTemplateId = evaluation.getReminderEmailTemplate().getId();
 	   }
@@ -704,6 +744,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		   emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
 	   }
 	   for(String id : userIds) {
+			// build the map of user and earliest due date
+		   getEarliestDueDate(dueDate, userIds, earliestDueDate);
+		   // build the map of user and email templates
 		   emailTemplateIds = emailTemplateMap.get(id);
 		   if(emailTemplateIds == null) {
 			   emailTemplateIds = new HashSet<Long>();
@@ -725,7 +768,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @param textConstant the email text template
     * @return an array of the email addresses to which email was sent
     */
-   private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, Set<Long>> emailTemplatesMap) {
+   private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, 
+		   Set<Long>> emailTemplatesMap, Map<String, Date> earliestDates) {
+	   
 		if (uniqueIds == null || toUserIds == null || emailTemplatesMap == null) {
 			throw new IllegalArgumentException(
 					"EvalEmailLogicImpl.sendEvalSingleEmail(): parameter(s) missing.");
@@ -742,6 +787,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Integer wait = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
 		Integer every = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
 		
+		
 		// check there is something to do
 		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
 				&& !logEmailRecipients.booleanValue()) {
@@ -750,29 +796,37 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			return null;
 		}
 
-		String url = null, message = null, subject = null;
+		String url = null, message = null, subject = null, earliest = null;
+		
 		Map<String, String> replacementValues = new HashMap<String, String>();
 		List<String> sentToAddresses = new ArrayList<String>();
 		Set<Long> emailTemplateIds = new HashSet<Long>();
 		EvalEmailTemplate template = null;
-		String earliestDueDate = null;
 		int numProcessed = 0;
 		int start = 0;
 		int sets = ((Integer)settings.get(EvalSettings.EMAIL_LOCKS_SIZE)).intValue();
 		
 		// a random starting number
-		if(sets > 0)
+		if(sets > 0) {
 			start = new Random().nextInt(sets);
+		}
 		
+		Date dueDate = null;
 		// uniqueIds are user ids
 		for (String s : uniqueIds) {
 			try {
 				replacementValues.clear();
+				earliest = EvalConstants.NO_DATE_AVAILABLE;
+				if(earliestDates.get(s) != null) {
+					dueDate = earliestDates.get(s);
+					earliest = DateFormat.getDateInstance().format(dueDate);  //e.g., Mar 17, 2008
+				}
+				replacementValues.put("EarliestEvalDueDate", earliest);
 				// direct link to summary page of tool on My Worksite
 				url = externalLogic.getMyWorkspaceUrl(s);
 				replacementValues.put("MyWorkspaceDashboard", url);
-				earliestDueDate = evaluationService.getEarliestDueDate(s);
-				replacementValues.put("EarliestEvalDueDate", earliestDueDate);
+				//earliestDueDate = evaluationService.getEarliestDueDate(s);
+				
 				replacementValues.put("HelpdeskEmail", from);
 				//deprecated: EvalConstants.EVAL_TOOL_TITLE
 				replacementValues.put("EvalToolTitle", externalLogic.getEvalToolTitle());
@@ -792,8 +846,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					subject = makeEmailMessage(template.getSubject(),
 							replacementValues);
 					
-					String lockName = EvalConstants.EMAIL_LOCK_PREFIX + selectEmailSet(start, sets).toString();
-					start++;
+					String lockName = getLockName(EvalConstants.EMAIL_LOCK_PREFIX);
+					
+					//String lockName = EvalConstants.EMAIL_LOCK_PREFIX + selectEmailSet(start, sets).toString();
+					//start++;
 					
 					//dispatch email using delivery option
 					if(EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
@@ -832,6 +888,34 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		
 		return (String[]) sentToAddresses.toArray(new String[] {});
 	}
+   
+   private String getLockName(String lockType) {
+		StringBuffer buf = new StringBuffer();
+		buf.append(lockType);
+		int sets = ((Integer)settings.get(EvalSettings.EMAIL_LOCKS_SIZE)).intValue();
+		
+		// a random starting number
+		int start = 0;
+		if(sets > 0)
+			start = new Random().nextInt(sets);
+
+		String lockName = lockType + selectEmailSet(start, sets).toString();
+			start++;
+		return lockName;
+   }
+   
+   /**
+    * There are 0 - EVAL_CONFIG.EMAIL_LOCKS_SIZE sets to select from.
+    * @param start
+    * @param sets
+    * @return
+    */
+   private Integer selectEmailSet(int start, int sets) {
+	   if(sets == 0)
+		   return 0;
+		Integer set = start % sets;
+		return set;
+   }
    
    /*
     * (non-Javadoc)
@@ -893,19 +977,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return to;
 	}
 	
-   /**
-    * There are 0 - EVAL_CONFIG.EMAIL_LOCKS_SIZE sets to select from.
-    * @param start
-    * @param sets
-    * @return
-    */
-   private Integer selectEmailSet(int start, int sets) {
-	   if(sets == 0)
-		   return 0;
-		Integer set = start % sets;
-		return set;
-   }
-   
+ 
    /**
     * Save pending email in a holding table for the email sending process(es) to read
     * 
@@ -972,10 +1044,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	   }
    }
    
+   /**
+    * Build a map of groups assigned to evaluations in successive calls to avoid a db query parameter size limit
+    * 
+    * @param assignGroupMap
+    * @param evalIds
+    */
    private void subsetGetAssignGroupsForEvals(Map<Long, List<EvalAssignGroup>>assignGroupMap, Long[] evalIds) {
 	   List<Long> list = new ArrayList<Long>();
 	   int size = evalIds.length;
 	   int limit = 0;
+	   // limit on parameter size
 	   limit = setQueryLimit(limit);
 	   for(int i = 0; i < size; i++) {
 		   //add an id
@@ -1013,10 +1092,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
 
 
+	/**
+	 * 
+	 * @param assignGroupMap
+	 * @param list
+	 * @return
+	 */
 	private Long[] moveListToAssignGroupMap(
 			Map<Long, List<EvalAssignGroup>> assignGroupMap, List<Long> list) {
 		Long[] sl = (Long[]) list.toArray(new Long[0]);
-		   assignGroupMap.putAll(evaluationService.getAssignGroupsForEvals(sl,false, null));
+		assignGroupMap.putAll(evaluationService.getAssignGroupsForEvals(sl,false, null));
 		return sl;
 	}
 
