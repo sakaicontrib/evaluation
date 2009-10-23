@@ -56,6 +56,8 @@ var evalTemplateUtils = (function() {
         },
         //keep frame size before grow
         frameSize: 0,
+        //keep iframe scroll height
+        frameScrollHeight: 0,
         frameGrow: function(height) {
             resizeFrame(1, height);
         },

@@ -58,6 +58,7 @@ var evalTemplateFacebox = (function() {
             origionalFBfunctions.loading();
             $('#saveReorderButton').click();
             $('#facebox').css({
+                top:    evalTemplateUtils.frameScrollHeight,
                 left:    $(window).width() / 2 - ($('#facebox table').width() / 2)
             }).show();
             $('#facebox_overlay').unbind('click');
@@ -176,7 +177,9 @@ var evalTemplateFacebox = (function() {
 (function($) {
     function setPreClick(that) {
         that.each(function() {
-            $(this).bind('click', function() {
+            $(this).bind('click', function(e) {
+                //Save current iframe height position
+                evalTemplateUtils.frameScrollHeight = e.pageY;
                 //Unbind current reveal event
                 $(document).unbind('reveal.facebox');
                 //Check for after load type of event to call
@@ -211,7 +214,9 @@ var evalTemplateFacebox = (function() {
 
     function setChildGroupClick(that) {
         that.each(function() {
-            $(this).bind('click', function() {
+            $(this).bind('click', function(e) {
+                //Save current iframe height position
+                evalTemplateUtils.frameScrollHeight = e.pageY;
                 //Unbind current reveal event
                 $(document).unbind('reveal.facebox');
                 var params = {
