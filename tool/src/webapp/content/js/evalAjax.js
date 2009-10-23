@@ -8,7 +8,9 @@ $(document).bind('activateControls.templateItems', function() {
     evalTemplateLoaderEvents.bindDeleteIcons();
     evalTemplateLoaderEvents.bindRowEditPreviewIcons();
 
-    $('a.addItem[rel=faceboxAddGroupItems]').click(function() {
+    $('a.addItem[rel=faceboxAddGroupItems]').click(function(e) {
+        //Save current iframe height position
+        evalTemplateUtils.frameScrollHeight = e.pageY;
         //Unbind current reveal event to avoid fckEditor error
         $(document).unbind('reveal.facebox');
         var that = $(this),
@@ -130,7 +132,10 @@ $(document).bind('activateControls.templateItems', function() {
         return false;
     });
 
-    $('a.addItem[rel=faceboxAddNewGroupItem]').click(function() {
+    $('a.addItem[rel=faceboxAddNewGroupItem]').click(function(e) {
+        //Save current iframe height position
+        evalTemplateUtils.frameScrollHeight = e.pageY;
+
         var url = "modify_item?external=false&itemClassification=Scaled&",
         postVars = {
             groupItemId : $(this).parents(".itemRow").find("input[name=template-item-id]:hidden").val(),
