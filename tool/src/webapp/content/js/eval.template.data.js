@@ -59,9 +59,27 @@ var evalTemplateData = (function() {
                 btn.parent().append(img);
             },
             success: function(d) {
+                var successDOM = $(d);
+                //Check if there is a server-side error or an alert
+                if(evalTemplateData.showRSFMessage(successDOM)){
+                    //error happened. STOP and re-enable edit controls
+                    //enable the form in the
+                    $('#facebox input').each(function() {
+                        $(this).removeAttr('disabled');
+                    });
+                    $("#facebox option").each(function(){
+                        this.disabled = false;
+                    });
+                    try{ //if fckEditor is in source mode at this time, an exception could occur: EVALSYS-836
+                        fckEditor.EditorDocument.body.disabled = false;
+                    }catch(e){};
+                    $("#facebox .act img").remove();
+                    return false;
+                }
+
                 $(document).trigger('close.facebox');
                 if (form == '#blockForm' || form == '#item-form') {
-                    $('#itemList').html($(d).find('#itemList').html());
+                    $('#itemList').html(successDOM.find('#itemList').html());
                     $(document).trigger('activateControls.templateItems');
                     evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
 
@@ -178,6 +196,42 @@ var evalTemplateData = (function() {
             rest_Post : "POST",
             rest_Get : "GET",
             rest_Delete : "DELETE"
+        },
+        showRSFMessage: function(DOMresponse){
+            //Possible RSF message tags
+            var message, messageObject, isError = false, isInfo = false,
+                messagesKeys = {
+                    e: "rsf-messages::error-messages::",
+                    c: "rsf-messages::confirm-messages::",  //Not utilising the confirm message yet.
+                    i: "rsf-messages::info-messages::"
+                };
+            //Check if RSF DOM objects exist in response
+            if (typeof DOMresponse == "object"){
+                messageObject = DOMresponse.find("div[id=" + messagesKeys.e + "]").get(0);
+                if(typeof messageObject == "undefined"){
+                    messageObject = DOMresponse.find("div[id=" + messagesKeys.i + "]").get(0);
+                    if(typeof messageObject == "undefined"){
+                        messageObject = DOMresponse.find("div[id=" + messagesKeys.c + "]").get(0);
+                    }else{
+                        isInfo = true;
+                    }
+                }else{
+                    isError = true;
+                }
+
+               if(typeof messageObject != "undefined" || $(messageObject).length > 0){
+                    message = $(messageObject).text();
+                    if(isError){
+                        //Error occurred
+                        alert(message);
+                        return true;
+                    }else if(isInfo){
+                        //User info. occurred
+                        //alert(message);   //TODO: Uncomment this to enable alert on every successfull save.
+                    }
+                }
+            }
+            return false;
         }
     };
 })($);
