@@ -19,9 +19,9 @@
         dom.showLink.hide(function(){
             dom.showLink.css({display: "inline"});
         });
-        dom.commentLabel.fadeIn("fast");
-        dom.editLink.fadeIn("fast");
-        dom.commentTruncated.text(truncatedComment).fadeIn("fast"); //add truncated comment to DOM
+        dom.commentLabel.show();
+        dom.editLink.show();
+        dom.commentTruncated.text(truncatedComment).show(); //add truncated comment to DOM
     }
 
 
@@ -70,9 +70,9 @@
         dom.warn.fadeOut("fast");
         //Bind the click event for ADD comment control
         dom.showLink.bind('click', function() {
-            dom.textarea.slideDown("fast");
-            dom.showLink.slideUp("fast");
-            dom.hideLink.slideDown("fast");
+            dom.textarea.show();
+            dom.showLink.hide();
+            dom.hideLink.show();
             dom.warn.fadeOut("fast");
             resizeFrame('grow');
             dom.textarea.focus();
@@ -80,11 +80,11 @@
         });
         //Bind the click event for EDIT comment control
         dom.editLink.bind('click', function() {
-            dom.textarea.slideDown("fast");
-            dom.commentLabel.slideUp("fast");
-            dom.commentTruncated.slideUp("fast");
-            dom.editLink.slideUp("fast");
-            dom.hideLink.slideDown("fast");
+            dom.textarea.show();
+            dom.commentLabel.hide();
+            dom.commentTruncated.hide();
+            dom.editLink.hide();
+            dom.hideLink.show();
             dom.warn.fadeOut("fast");
             resizeFrame('grow');
             dom.textarea.focus();
@@ -95,12 +95,12 @@
             if (dom.textarea.val().length > 0) {
                 hideComment(dom);
             } else {
-                dom.showLink.slideDown("fast", function(){
+                dom.showLink.show(0, function(){
                     dom.showLink.css({display: "inline"});
                 });
             }
-            dom.textarea.slideUp("fast");
-            dom.hideLink.slideUp("fast");
+            dom.textarea.hide();
+            dom.hideLink.hide();
             resizeFrame('shrink');
             return false;
         });
