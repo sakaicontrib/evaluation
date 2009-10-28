@@ -737,6 +737,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 	      // get the evaluations
 	      evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
 	      
+	      // for take eval, filter on taken
 	      filterEvaluations(userId, untakenOnly, evals);
 	      map.put(EvalConstants.PERM_TAKE_EVALUATION, evals);
 	      
