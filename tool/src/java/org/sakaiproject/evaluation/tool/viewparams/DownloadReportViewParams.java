@@ -43,6 +43,6 @@ public class DownloadReportViewParams extends BaseViewParameters {
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",templateId,evalId,groupIds,@1:filename";
+		return super.getParseSpec() + ",templateId,evalId,groupIds,filename";
 	}
 }
