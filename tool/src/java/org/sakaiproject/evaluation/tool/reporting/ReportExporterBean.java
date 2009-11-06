@@ -40,7 +40,7 @@ public class ReportExporterBean {
     public void setReportingPermissions(ReportingPermissions perms) {
         this.reportingPermissions = perms;
     }
-
+    
     private Map<String, ReportExporter> exportersMap;
     public void setExportersMap(Map<String, ReportExporter> exportersMap) {
         this.exportersMap = exportersMap;
@@ -57,30 +57,53 @@ public class ReportExporterBean {
                     + currentUserId);
         }
 
-        ReportExporter exporter = exportersMap.get(drvp.viewID);
-
-        if (exporter == null) {
-            throw new IllegalArgumentException("No exporter found for ViewID: " + drvp.viewID);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
-        }
-
         OutputStream resultsOutputStream = null;
-        try {
-            resultsOutputStream = response.getOutputStream();
+        
+        if( ! isXLS(drvp.viewID)){
+	        ReportExporter exporter = exportersMap.get(drvp.viewID);
+	
+	        if (exporter == null) {
+	            throw new IllegalArgumentException("No exporter found for ViewID: " + drvp.viewID);
+	        }
+	        if (log.isDebugEnabled()) {
+	            log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
+	        }
+	        
+	        resultsOutputStream = getOutputStream(response);
+	        
+		    // All response Headers that are the same for all Output types
+	        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename);
+		    response.setContentType(exporter.getContentType());
+	        
+	        exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
+        }else{
+        	XLSReportExporter xlsReportExporter = (XLSReportExporter) exportersMap.get(drvp.viewID);
+        	resultsOutputStream = getOutputStream(response);
+        	int columnSize = xlsReportExporter.getEvalTDIsize(evaluation, drvp.groupIds);
+	        response.setHeader("Content-disposition", "inline");
+	        if( columnSize > 255 ){
+		        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename + "x");
+			    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	        }else{
+		        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename);
+			    response.setContentType( xlsReportExporter.getContentType() );
+	        }	        
+		    xlsReportExporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
+        }
+        return true;
+    }
+    
+    private boolean isXLS(String viewID){
+    	return viewID.equals("xlsResultsReport");
+    }
+    
+    private OutputStream getOutputStream(HttpServletResponse response){
+    	try {
+            return response.getOutputStream();
         } catch (IOException ioe) {
             throw UniversalRuntimeException.accumulate(ioe,
                     "Unable to get response stream for Evaluation Results Export");
         }
-
-        // Response Headers that are the same for all Output types
-        response.setHeader("Content-disposition", "inline");
-        response.setHeader("filename", drvp.filename);
-        response.setContentType(exporter.getContentType());
-        exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
-
-        return true;
     }
 
 }

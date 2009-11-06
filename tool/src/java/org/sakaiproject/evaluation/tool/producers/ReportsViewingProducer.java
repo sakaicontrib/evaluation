@@ -554,6 +554,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
         String evaltitle = evaluation.getTitle();
         if (evaltitle.length() > EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH) {
             evaltitle = evaltitle.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
+            evaltitle = evaltitle.trim().replaceAll(" ", "_");
         }
 
         // FIXME don't use sakai classes directly (plus what the crap does this do anyway? -AZ)
@@ -565,7 +566,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                     "csvResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
         }
 
-        Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
+        Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT); 
         if (allowXLSExport != null && allowXLSExport == true) {
             UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new DownloadReportViewParams(
                     "xlsResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xls"));
