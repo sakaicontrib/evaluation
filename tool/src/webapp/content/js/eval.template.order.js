@@ -38,14 +38,7 @@ var evalTemplateOrder = (function(){
     initSaveGroupOrderControls = function(anyGroupedItemObject){
             log.info("Moved ordering for %o", anyGroupedItemObject);
             $(document).trigger('block.triggerChildrenSort', [anyGroupedItemObject.parents("div.itemTableBlock")]);
-            if (anyGroupedItemObject.parents('.itemTableBlock').find('.itemBlockSave').length === 0) {
-                var saveAction = '<a class="itemBlockSave highlight" href="#saveAction">Save new order for grouped items</a>'; //todo: i8n this
-                $(saveAction).appendTo(anyGroupedItemObject.parents('.itemTableBlock').children('.instruction').eq(0));
-                anyGroupedItemObject.parents('.itemTableBlock').children('.instruction').eq(0).effect('highlight', 1500);
-                anyGroupedItemObject.parents('.itemTableBlock').find('.itemBlockSave').bind('click', function() {
                     evalTemplateOrder.saveGroupLevelTemplateOrdering(anyGroupedItemObject);
-                });
-            }
         },
 
     saveGroupLevelTemplateOrdering = function(anyGroupedItemObject){

@@ -17,22 +17,13 @@ var evalTemplateLoaderEvents = (function($) {
 
 		$('#saveBlockAction').click(function() {
 			//var list = $("#blockForm > div.itemRow").get();
-			var childIdList = new Array();
+			var childIdList = [];
 			$('#blockForm input[name*=hidden-item-id]').each(function(){
 				childIdList.push($(this).val());
 			});
 			$("#ordered-child-ids").val(childIdList.toString());
 			evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_template', $('#saveBlockAction'));
 		});
-
-		function $it(id) {
-        	return document.getElementById(id);
-        }
-
-		function enableOrderButtons() {
-			$it(baseId + "revertOrderButton").disabled = false;
-			$it(baseId + "saveReorderButton").disabled = false;
-		}
 
 		function disableOrderButtons() {
 			$it(baseId + "revertOrderButton").disabled = true;
@@ -41,7 +32,7 @@ var evalTemplateLoaderEvents = (function($) {
 
         //var sortableIds;
         function buildSortableIds() {
-        	var sortableIds = new Array();
+            var sortableIds = [];
 			var domList = $("div.itemList > div").get();
 			for (var i = 0; i < domList.length; i++) {
 				sortableIds.push(domList[i].id);
@@ -51,7 +42,7 @@ var evalTemplateLoaderEvents = (function($) {
 		var reorderButtonsExist = false;
 		var saveReorderButton = $it(baseId + "saveReorderButton");
 
-		if (saveReorderButton != null) {
+		if (saveReorderButton !== null) {
 			reorderButtonsExist = true;
 			saveReorderButton.onclick = function() {
 				disableOrderButtons();
@@ -62,29 +53,12 @@ var evalTemplateLoaderEvents = (function($) {
 		}
 
 		function setIndex(itemId, newindex) {
-			$it(itemId + "item-num").innerHTML = (parseInt(newindex) + 1);
+			$it(itemId + "item-num").innerHTML = (parseInt(newindex, 10) + 1);
 		}
 
-		function setRadioActions() {
-			var radioList = $("div.blockText > input").get();
-			var textAreaDiv = $it("item-text-div");
-			if (radioList.length != 0) {
-				for (i in radioList) {
-					if (radioList[i].id) {
-						radioList[i].onclick = function() {
-							textAreaDiv.style.display = "none";
-						};
-					}
-				}
-				radioList[radioList.length - 1].onclick = function() {
-					textAreaDiv.style.display = "block";
-				};
-				radioList[radioList.length - 1].checked = true;
-			}
-		}
 		// put original order into the revertOrder trigger
 		var revertOrderButton = $it(baseId + "revertOrderButton");
-		if (revertOrderButton != null) {
+		if (revertOrderButton !== null) {
 			revertOrderButton.onclick = function() {
 				disableOrderButtons();
 				for(var i = sortableIds.length - 1; i > 0; --i) {
@@ -97,32 +71,38 @@ var evalTemplateLoaderEvents = (function($) {
 				setIndex(sortableIds[0], 0);
 			};
 		}
-		var saveBlockButton = $it(baseId + "saveBlockAction");
     },
 
     bindDeleteIcons = function(){
         $('a[rel=remove]').itemRemove({
             ref:    'eval-templateitem',
             id:     '$(this).attr("templateitemid")',
-            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+            text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });
         $('a[rel=childRemove]').itemRemove({
             ref:    'eval-templateitem',
             id:        '$(this).attr("templateitemid")',
             itemType: 'blockChild',
-            text:   '$(this).parents("div.itemRowBlock").eq(0).find("span.text:visible").text()'
+                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
         });
+        $('a[rel=childUngroup]').itemRemove({
+                    ref:    'eval-templateitem/unblock',
+                    id:    '$(this).parents("div.itemRowBlock").find("input[name=hidden-item-id]").val()',
+                    itemType: 'blockChild',
+                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
+                });
         $('a[rel=unblock]').itemRemove({
             ref:    'eval-templateitem',
             id:        '$(this).attr("templateitemid")',
             itemType: 'block',
-            text:   '$(this).parents("div.itemLine2").eq(0).find("h4.itemText:visible").text()'
+            text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });
     },
 
     unBindDeleteIcons = function(){
         $('a[rel=remove]').unbind("click");
         $('a[rel=childRemove]').unbind("click");
+        $('a[rel=childUngroup]').unbind("click");
         $('a[rel=unblock]').unbind("click");
     },
 
@@ -152,14 +132,8 @@ var evalTemplateLoaderEvents = (function($) {
         modify_item: function() {
             var siteId = $('#site-id').text();
             SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-            if ($.facebox.settings.elementToUpdate == "block") {
-                //$('#facebox .content .navPanel').hide();
-                //$('#nonBlockSettings').hide();
-                //$('#nonBlockSettings2').hide();
-               // $('div[@id=show-item-scale::]').hide();
-            }
             $.facebox.setHeader($(".portletBody .titleHeader"));
-            if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) == -1) {
+            if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
                 $('.act .submit').bind('click', function() {
                     evalTemplateData.postFCKform('#item-form', 'item-text', 'modify_item', $(this));
                 });
@@ -183,7 +157,8 @@ var evalTemplateLoaderEvents = (function($) {
                         title = $('#basic-form input[@name=title]').val();
                         description = $('#basic-form textarea[@name=description]').val();
                         if (!title) {
-                            alert('Please enter a title.'); //TODO: i18n this. Make unobtrusive too??
+                            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
+                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header').toLowerCase())); //TODO: Make unobtrusive
                             return false;
                         }
                         $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');

@@ -22,11 +22,13 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 
 /**
  * The main implementation for the ItemRenderer class which allows the presentation programmers
@@ -109,6 +111,8 @@ public class ItemRendererImpl implements ItemRenderer {
 
             UIBranchContainer showComment = UIBranchContainer.make(parent, "showComment:");
             UIMessage.make(showComment, "itemCommentHeader", "viewitem.comment.desc");
+            UIMessage commentLink = UIMessage.make(showComment, "itemCommentShow", "comment.show");
+            commentLink.decorate(new UITooltipDecorator( UIMessage.make("comment.show.tooltip") ));
             UIInput.make(showComment, "itemComment", commentBinding, commentInit);
         }
     }

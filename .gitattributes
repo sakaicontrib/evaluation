@@ -202,6 +202,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en_GB.properties 
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_es_ES.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_pt_BR.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_ru.properties -text
+tool/src/java/org/sakaiproject/evaluation/tool/entity/EvalResourcesProvider.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn_keywords=Date+Revision+Author+URL+Id
@@ -338,6 +339,7 @@ tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=nativ
 tool/src/webapp/component-templates/render_scaled_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_text_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/css/evaluation_base.css -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/css/tipsy.css -text
 tool/src/webapp/content/images/accept.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/add.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
@@ -377,6 +379,10 @@ tool/src/webapp/content/images/pdate.gif -text
 tool/src/webapp/content/images/pencil.png -text svneol=unset#image/png
 tool/src/webapp/content/images/required.gif -text
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/tipsy-east.gif -text
+tool/src/webapp/content/images/tipsy-north.gif -text
+tool/src/webapp/content/images/tipsy-south.gif -text
+tool/src/webapp/content/images/tipsy-west.gif -text
 tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text
 tool/src/webapp/content/js/SakaiRSFWidgets.js -text
@@ -392,6 +398,7 @@ tool/src/webapp/content/js/eval.template.myitems.loader.js svn_keywords=Date+Rev
 tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/evalAjax.js -text
 tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/facebox/b.png -text

@@ -29,7 +29,8 @@ var evalTemplateData = (function() {
         }
         //Validate text
         if (fckEditorValue === null || fckEditorValue.length === 0) {
-            alert('You must fill in the title.'); //TODO: i18n this & make it unobtrusive
+            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
+                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
             return false;
         }
 
@@ -52,19 +53,41 @@ var evalTemplateData = (function() {
                 $("#facebox option").each(function(){
                     this.disabled = true;
                 });
+                try{ //if fckEditor is in source mode at this time, an exception could occur: EVALSYS-836
                 fckEditor.EditorDocument.body.disabled = true;
+                }catch(e){};
                 btn.parent().append(img);
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                //TODO: Tell user of the error
-                return false;
-            },
             success: function(d) {
+                var successDOM = $(d);
+                //Check if there is a server-side error or an alert
+                if(evalTemplateData.showRSFMessage(successDOM)){
+                    //error happened. STOP and re-enable edit controls
+                    //enable the form in the
+                    $('#facebox input').each(function() {
+                        $(this).removeAttr('disabled');
+                    });
+                    $("#facebox option").each(function(){
+                        this.disabled = false;
+                    });
+                    try{ //if fckEditor is in source mode at this time, an exception could occur: EVALSYS-836
+                        fckEditor.EditorDocument.body.disabled = false;
+                    }catch(e){};
+                    $("#facebox .act img").remove();
+                return false;
+                }
+
                 $(document).trigger('close.facebox');
                 if (form == '#blockForm' || form == '#item-form') {
-                    $('#itemList').html($(d).find('#itemList').html());
+                    $('#itemList').html(successDOM.find('#itemList').html());
                     $(document).trigger('activateControls.templateItems');
                     evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
+
+                    // restore closed group items
+                    for ( var closedIndex = 0; closedIndex < evalTemplateUtils.closedGroup.get.length; closedIndex ++ ){
+                        $("div.itemRow[name=" + evalTemplateUtils.closedGroup.get[closedIndex] + "]").find("a.blockExpandText").click();
+                    }
+
                     return false;
                 }
             }
@@ -75,10 +98,11 @@ var evalTemplateData = (function() {
     },
     
     //fillActionResponse function called by $.facebox.showResponse
-    _fillActionResponse = function (entityCat,id, templateOwner){
+    _fillActionResponse = function (entityCat,_id, templateOwner){
       evalTemplateUtils.debug.group("starting fillActionResponse", this);
+        var id = _id;
   	if (entityCat == "eval-item") {
-		var par = $.facebox.settings.elementToUpdate,
+        var par = $.facebox.settings.elementToUpdate;
 		id = $(par).children(".itemLine2").children("[name=rowItemId]").html();
 	}
 	evalTemplateUtils.debug.info($.facebox.settings.elementToUpdate);
@@ -124,8 +148,7 @@ var evalTemplateData = (function() {
     _initAjaxSetUp = function(){
         $(document).ajaxError(function(event, XMLHttpRequest, ajaxOptions){
                  evalTemplateUtils.debug.error("Ajax request failed: %o", XMLHttpRequest);
-                 alert("Sorry, an error occured while communicating with the server. Your changes have not been saved.\n\n" +
-                       "Error fetching page from: " + ajaxOptions.url);//todo: i8n this
+                 alert( evalTemplateUtils.messageLocator('GeneralAjaxChannelError', ajaxOptions.url));
             }
         );
     };
@@ -173,6 +196,42 @@ var evalTemplateData = (function() {
             rest_Post : "POST",
             rest_Get : "GET",
             rest_Delete : "DELETE"
+        },
+        showRSFMessage: function(DOMresponse){
+            //Possible RSF message tags
+            var message, messageObject, isError = false, isInfo = false,
+                messagesKeys = {
+                    e: "rsf-messages::error-messages::",
+                    c: "rsf-messages::confirm-messages::",  //Not utilising the confirm message yet.
+                    i: "rsf-messages::info-messages::"
+                };
+            //Check if RSF DOM objects exist in response
+            if (typeof DOMresponse == "object"){
+                messageObject = DOMresponse.find("div[id=" + messagesKeys.e + "]").get(0);
+                if(typeof messageObject == "undefined"){
+                    messageObject = DOMresponse.find("div[id=" + messagesKeys.i + "]").get(0);
+                    if(typeof messageObject == "undefined"){
+                        messageObject = DOMresponse.find("div[id=" + messagesKeys.c + "]").get(0);
+                    }else{
+                        isInfo = true;
+        }
+                }else{
+                    isError = true;
+                }
+
+               if(typeof messageObject != "undefined" || $(messageObject).length > 0){
+                    message = $(messageObject).text();
+                    if(isError){
+                        //Error occurred
+                        alert(message);
+                        return true;
+                    }else if(isInfo){
+                        //User info. occurred
+                        //alert(message);   //TODO: Uncomment this to enable alert on every successfull save.
+                    }
+                }
+            }
+            return false;
         }
     };
 })($);

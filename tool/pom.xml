@@ -35,6 +35,11 @@
             <artifactId>entitybroker-api</artifactId>
         </dependency>
 
+	    <dependency>
+	      <groupId>org.sakaiproject.entitybroker</groupId>
+	      <artifactId>entitybroker-utils</artifactId>
+	    </dependency>
+
         <!-- Servlet dependency -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -134,7 +139,14 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.0.1-FINAL</version>
+            <version>3.5-FINAL</version>
+            <type>jar</type>
+            <!--properties:  war.bundle: true -->
+        </dependency>
+		<dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.5-FINAL</version>
             <type>jar</type>
             <!--properties:  war.bundle: true -->
         </dependency>

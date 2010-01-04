@@ -7,7 +7,12 @@ var evalTemplateUtils = (function() {
     var canDebug = false,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
-            pagesLoadedByFBwithJs = [];
+            messgeBundlePath = "/direct/eval-resources/message-bundle.json",
+   
+    // Dont configure these vars
+            pagesLoadedByFBwithJs = [],
+            messageBundle = {},
+            closedGroups = [];     // keep track of groups a user closes: EVALSYS-825
    
     function resizeFrame(updown, height) {
         try {
@@ -29,6 +34,19 @@ var evalTemplateUtils = (function() {
         }
     }
 
+    // Format bundle path for user locale
+    var loadMessageBundle = function(){
+        $.ajax({
+            url: messgeBundlePath,
+            global: false,
+            cache: true,
+            dataType : "json",
+            success: function(messageBundleJSON){
+                messageBundle = messageBundleJSON.data;
+            }
+        });
+    };
+
     //public data
     return {
         entity:{
@@ -38,6 +56,8 @@ var evalTemplateUtils = (function() {
         },
         //keep frame size before grow
         frameSize: 0,
+        //keep iframe scroll height
+        frameScrollHeight: 0,
         frameGrow: function(height) {
             resizeFrame(1, height);
         },
@@ -96,6 +116,10 @@ var evalTemplateUtils = (function() {
             }
             //browser check
             evalTemplateUtils.vars.isIE = $.browser.msie;
+
+            // Message Locale bundle loader
+            loadMessageBundle();
+
         },
         pages: {
                 modify_item_page: "modify_item",
@@ -125,7 +149,39 @@ var evalTemplateUtils = (function() {
             evalTemplateUtils.debug.info("Page type found as: %s", pageType);
             evalTemplateUtils.debug.groupEnd();
             return pageType;
+        },
+        //retrieve the message strings for key
+        messageLocator: function(key, params){
+            return fluid.messageLocator( messageBundle )([key], params);            
+        },
+
+        // Remember the groups a user closes: EVALSYS-825
+        closedGroup : {
+            add : function(groupId){
+                if( groupId ){
+                    if ( $.inArray(groupId, closedGroups) === -1){
+                        closedGroups.push(groupId);
+                        evalTemplateUtils.debug.info("Closed %s", groupId);
         }
+                }
+                evalTemplateUtils.debug.warn("closedGroups %o", closedGroups);
+            },
+            remove : function(groupId){
+                if( groupId && $.inArray(groupId, closedGroups) > -1){
+                    var index;
+                    for ( var i in closedGroups){
+                        if ( closedGroups[i] === groupId ){
+                            index = i;
+                        }
+                    }
+                    closedGroups.splice(index, 1);
+                    evalTemplateUtils.debug.info("Opened %s", groupId);
+                }
+                evalTemplateUtils.debug.warn("closedGroups %o", closedGroups);
+            },
+            get : closedGroups            
+        }
+
     };
 
 

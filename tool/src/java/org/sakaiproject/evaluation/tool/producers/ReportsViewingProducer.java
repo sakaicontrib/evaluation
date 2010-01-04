@@ -554,6 +554,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
         String evaltitle = evaluation.getTitle();
         if (evaltitle.length() > EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH) {
             evaltitle = evaltitle.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
+            evaltitle = evaltitle.trim().replaceAll(" ", "_");
         }
 
         // FIXME don't use sakai classes directly (plus what the crap does this do anyway? -AZ)
