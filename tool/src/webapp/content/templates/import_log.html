@@ -1,0 +1,43 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="administrate-title">Import Log</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<h2>Import Log</h2>
+		<div id="log_messages"> 
+			<p>
+				<label for="search_terms">ID</label>
+				<input type="text" id="search_terms" name="search_terms" />
+				<input type="button" value="Search by ID"/>
+			</p>
+			<p>
+				<label for="search_terms">Date</label>
+				<input type="text" id="search_terms" name="search_terms" />
+				<input type="button" value="Search by date"/>
+			</p>
+			<p>
+				<input type="button" value="Show Errors Only"/>
+				<input type="button" value="Show All"/>
+			</p>
+			<h3>
+				Imported 2 items successfully.  1 error.
+			</h3>
+			<p class="success">Import Template XXXXXXXX01 succeeded</p>
+			<p class="error">Import Template XXXXXXXX02 failed -- missing attribute 'bleah'</p>
+			<p class="success">Import Template XXXXXXXX03 succeeded</p>
+			<p>
+				<input type="button" value="Show older"/>
+			</p>
+		</div>
+		<div>
+		Possibly narrow search by item type.  Upload success/failure, etc.
+		</div>
+	</body>
+</html>

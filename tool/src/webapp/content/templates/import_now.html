@@ -1,0 +1,52 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="administrate-title">Import Evaluations, etc</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<h2>Import Evaluations, etc.</h2>
+		<form action="" method="post">
+			<p>
+				<label for="import_file">Upload file</label>
+				<input type="file" id="import_file" name="import_file" />
+			</p>
+			<p>
+				<label for="update_policy">Update policy</label>
+				<select id="update_policy">
+					<option selected="selected">Use Policy From File</option>
+					<option>Reject Duplicates</option>
+					<option>Ignore Duplicates</option>
+					<option>Replace Duplicates</option>
+					<option>Cascade Duplicates</option>
+				</select>
+			</p>
+			<p>
+				<input type="button" id="Process" name="Process" value="Process Now" onclick="document.getElementById('log_messages').style='display:block;';"/>
+				<input type="button" id="Cancel" name="Cancel" value="Cancel" />
+			</p>
+			
+		</form>
+		<div id="log_messages" style="display: none;"> 
+			<h3>
+				Imported 2 items successfully.  1 error.
+			</h3>
+			<p>
+				<input type="button" value="Show Errors Only"/>
+				<input type="button" value="Show All"/>
+			</p>
+			<p class="success">Import Template XXXXXXXX01 succeeded</p>
+			<p class="error">Import Template XXXXXXXX02 failed -- missing attribute 'bleah'</p>
+			<p class="success">Import Template XXXXXXXX03 succeeded</p>
+		</div>
+			<div>
+				NOTE: This page will use fluid uploader :
+				<a href="http://fluidproject.org/releases/1.1.2/demos/uploader/demo.html">http://fluidproject.org/releases/1.1.2/demos/uploader/demo.html</a>
+			</div>
+	</body>
+</html>

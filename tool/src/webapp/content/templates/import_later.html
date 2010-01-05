@@ -1,0 +1,39 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="administrate-title">Schedule Import of Evaluations, etc</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<h2>Schedule Import of Evaluations, etc.</h2>
+		<form action="" method="post">
+			<p>
+				<label for="import_url">URL</label>
+				<input type="text" id="import_url" name="import_url" />
+			</p>
+			<p>
+				<label for="import_time">Time</label>
+				<input type="text" id="import_time" name="import_time" />
+			</p>
+			<p>
+				<label for="update_policy">Update policy</label>
+				<select id="update_policy">
+					<option value="file" selected="selected">Use Policy From File</option>
+					<option value="reject">Reject Duplicates</option>
+					<option value="ignore">Ignore Duplicates</option>
+					<option value="replace">Replace Duplicates</option>
+					<option value="cascade">Cascade Duplicates</option>
+				</select>
+			</p>
+			<p>
+				<input type="button" id="Schedule" name="Schedule" value="Schedule" />
+				<input type="button" id="Cancel" name="Cancel" value="Cancel" />
+			</p>
+		</form>
+	</body>
+</html>

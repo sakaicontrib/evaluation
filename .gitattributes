@@ -491,6 +491,9 @@ tool/src/webapp/content/templates/evaluation_notifications.html svneol=native#te
 tool/src/webapp/content/templates/evaluation_responders.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/evaluation_settings.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/import_error.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/import_later.html -text
+tool/src/webapp/content/templates/import_log.html -text
+tool/src/webapp/content/templates/import_now.html -text
 tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_block.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_email.html -text svn_keywords=Date+Revision+Author+URL+Id
