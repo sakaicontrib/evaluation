@@ -27,6 +27,15 @@
 				</select>
 			</p>
 			<p>
+				<label for="log_email">Send report to</label>
+				<input type="text" id="log_email" name="log_email" />
+				<select>
+					<option>Statistics Only</option>
+					<option selected="selected">Errors Only</option>
+					<option>Complete Report</option>
+				</select>
+			</p>
+			<p>
 				<input type="button" id="Process" name="Process" value="Process Now" onclick="document.getElementById('log_messages').style='display:block;';"/>
 				<input type="button" id="Cancel" name="Cancel" value="Cancel" />
 			</p>
