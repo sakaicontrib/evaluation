@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.Map.Entry;
 
@@ -220,8 +221,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             Session session = sessionManager.getCurrentSession();
             userId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
             if (userId == null) {
-                String sessionUserId = session.getId() + new Date().getTime();
-                userId = ANON_USER_PREFIX + makeMD5(sessionUserId, 40);
+                UUID userUUId = UUID.randomUUID();
+                userId = ANON_USER_PREFIX + userUUId;
                 session.setAttribute(ANON_USER_ATTRIBUTE, userId);
             }
         }
