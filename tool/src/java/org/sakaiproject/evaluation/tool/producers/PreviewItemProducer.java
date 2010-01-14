@@ -73,6 +73,9 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
         } else if (previewItemViewParams.itemId != null) {
             EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
             templateItem = TemplateItemUtils.makeTemplateItem(item);
+            if (templateItem.getId() == null){
+            	templateItem.setId(item.getId());
+            }
         } else {
             throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
         }
