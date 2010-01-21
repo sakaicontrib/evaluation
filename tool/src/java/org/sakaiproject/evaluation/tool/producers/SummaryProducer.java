@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -175,9 +176,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		List<EvalEvaluation> evalsToPreview = null;
 		boolean showResponsesBox = ((Boolean) settings.get(EvalSettings.ENABLE_RESPONSES_BOX)).booleanValue();
 		
-		// make one call to get info for take eval and show responses/preview boxes
+		// for efficiency make one provider call to get info for take eval and show responses/preview boxes
 		if(showResponsesBox) {
-			Map<String, List<EvalEvaluation>> map = evaluationSetupService.getEvaluationsByPermissionForUser(currentUserId, null, null, null);
+			Map<String, Boolean> activeOnly = new HashMap<String, Boolean>();
+			activeOnly.put(EvalConstants.PERM_TAKE_EVALUATION, new Boolean(true));
+			activeOnly.put(EvalConstants.PERM_BE_EVALUATED, null);
+			Map<String, List<EvalEvaluation>> map = evaluationSetupService.getEvaluationsByPermissionForUser(currentUserId, activeOnly, null, null);
 			evalsToTake = map.get(EvalConstants.PERM_TAKE_EVALUATION);
 			evalsToPreview = map.get(EvalConstants.PERM_BE_EVALUATED);
 		}

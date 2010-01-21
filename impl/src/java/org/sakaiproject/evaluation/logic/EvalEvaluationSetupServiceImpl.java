@@ -715,47 +715,45 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 	      }
 	}
    
-   @SuppressWarnings("unchecked")
-   public Map<String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(
-			String userId, Boolean activeOnly, Boolean untakenOnly,
+	@SuppressWarnings("unchecked")
+	public Map<String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(
+			String userId, Map<String, Boolean> activeOnly, Boolean untakenOnly,
 			Boolean includeAnonymous) {
-	   
-	   Map<String, List<EvalEvaluation>> map = new HashMap<String, List<EvalEvaluation>>();
-	   String[] evalGroupIds = null;
-	   List<EvalEvaluation> evals = null;
-	   
-	   List<EvalGroup> groups = new ArrayList();
-	   Map<String, List<EvalGroup>> mapGroups = commonLogic.getEvalGroupsForUser(userId);
-	   groups.addAll(mapGroups.get(EvalConstants.PERM_TAKE_EVALUATION));
-	   
-	      evalGroupIds = new String[groups.size()];
-	      for (int i=0; i<groups.size(); i++) {
-	         EvalGroup c = (EvalGroup) groups.get(i);
-	         evalGroupIds[i] = c.evalGroupId;
-	      }
-	   
-	      // get the evaluations
-	      evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
-	      
-	      // for take eval, filter on taken
-	      filterEvaluations(userId, untakenOnly, evals);
-	      map.put(EvalConstants.PERM_TAKE_EVALUATION, evals);
-	      
-	      groups.clear();
-	      groups.addAll(mapGroups.get(EvalConstants.PERM_BE_EVALUATED));
-	      
-	      evalGroupIds = new String[groups.size()];
-	      for (int i=0; i<groups.size(); i++) {
-	         EvalGroup c = (EvalGroup) groups.get(i);
-	         evalGroupIds[i] = c.evalGroupId;
-	      }
-	   
-	      // get the evaluations
-	      evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
-	      
-	      map.put(EvalConstants.PERM_BE_EVALUATED, evals);
-	
-	   // return a map with 2 keys EvalConstants.TAKE_EVALUATION and EvalConstants.BE_EVALUATED
+
+		Map<String, List<EvalEvaluation>> map = new HashMap<String, List<EvalEvaluation>>();
+		String[] evalGroupIds = null;
+		List<EvalEvaluation> evals = null;
+		Boolean active = null;
+		List<EvalGroup> groups = new ArrayList();
+		Map<String, List<EvalGroup>> mapGroups = commonLogic.getEvalGroupsForUser(userId);
+		groups.addAll(mapGroups.get(EvalConstants.PERM_TAKE_EVALUATION));
+		evalGroupIds = new String[groups.size()];
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup c = (EvalGroup) groups.get(i);
+			evalGroupIds[i] = c.evalGroupId;
+		}
+		active = (Boolean)activeOnly.get(EvalConstants.PERM_TAKE_EVALUATION);
+		// get the evaluations user may take
+		evals = dao.getEvaluationsByEvalGroups( evalGroupIds, active, true, includeAnonymous, 0, 0 );
+
+		// for take eval, filter on taken
+		filterEvaluations(userId, untakenOnly, evals);
+		map.put(EvalConstants.PERM_TAKE_EVALUATION, evals);
+
+		groups.clear();
+		groups.addAll(mapGroups.get(EvalConstants.PERM_BE_EVALUATED));
+
+		evalGroupIds = new String[groups.size()];
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup c = (EvalGroup) groups.get(i);
+			evalGroupIds[i] = c.evalGroupId;
+		}
+		active = (Boolean)activeOnly.get(EvalConstants.PERM_BE_EVALUATED);
+		// get the evaluations in which user can be evaluated
+		evals = dao.getEvaluationsByEvalGroups( evalGroupIds, active, true, includeAnonymous, 0, 0 );
+		map.put(EvalConstants.PERM_BE_EVALUATED, evals);
+
+		// return a map with 2 keys: EvalConstants.TAKE_EVALUATION and EvalConstants.BE_EVALUATED
 		return map;
 	}
 

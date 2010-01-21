@@ -120,19 +120,24 @@ public interface EvalEvaluationSetupService {
     * can include only active and only untaken if desired
     * 
     * @param userId the internal user id (not username)
-    * @param activeOnly if true, only include active evaluations, 
+    * @param activeOnly map of permission (K) and parameter settings (V)
+    * if true, only include active evaluations, 
     * if false only include inactive (inqueue, graceperiod, closed, viewable), 
     * if null, include all evaluations (except partial and deleted)
-    * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
+    * @param untakenOnly 
+    * if true, include only the evaluations which have NOT been taken, 
     * if false, include only evaluations which have already been taken,
     * if null, include all evaluations<br/>
     * <b>WARNING:</b> Does not take groups into account and only looks at the evaluation as a whole
-    * @param includeAnonymous if true, include assigned and anonymous evaluations (only anonymous evals if evalGroupIds is null), 
+    * @param includeAnonymous 
+    * if true, include assigned and anonymous evaluations (only anonymous evals if evalGroupIds is null), 
     * if false, only include assigned evals which are not also anonymous,
     * if null include only assigned evaluations
     * @return a Map of permission key, List of {@link EvalEvaluation} objects (sorted by DueDate) value
     */
-   public Map <String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);
+   public Map<String, List<EvalEvaluation>> getEvaluationsByPermissionForUser(
+			String userId, Map<String, Boolean> activeOnly, Boolean untakenOnly,
+			Boolean includeAnonymous);
 
    /**
     * Close an evaluation before the closing date,
