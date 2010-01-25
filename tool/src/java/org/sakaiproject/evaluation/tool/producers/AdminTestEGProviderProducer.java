@@ -167,7 +167,20 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
             total = new Date().getTime() - startTime;
             UIMessage.make(tests1, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
         }
-
+        
+        UIBranchContainer tests1ta = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_TA_ROLE");
+        UIOutput.make(tests1ta, "test_method", tests1ta.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests1ta, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests1ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            s = evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_TA_ROLE);
+            UIOutput.make(tests1ta, "test_result", collectionToString(s));
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests1ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+        
         UIBranchContainer tests1b = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_TAKE_EVALUATION");
         UIOutput.make(tests1b, "test_method", tests1b.localID);
         if (evalGroupId == null) {
@@ -194,6 +207,20 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
             UIMessage.make(tests2, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
         }
 
+        UIBranchContainer tests2ta = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_TA_ROLE");
+        UIOutput.make(tests2ta, "test_method", tests1ta.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests2ta, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests2ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            int count = evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_TA_ROLE);
+            UIOutput.make(tests2ta, "test_result", count+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests2ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+        
+        
         UIBranchContainer tests2b = UIBranchContainer.make(tofill, "tests_list:", "countUserIdsForEvalGroups.PERM_TAKE_EVALUATION");
         UIOutput.make(tests2b, "test_method", tests2b.localID);
         if (evalGroupId == null) {
@@ -214,6 +241,15 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         UIOutput.make(tests3, "test_result", collectionToString(l));
         total = new Date().getTime() - startTime;
         UIMessage.make(tests3, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        
+        UIBranchContainer tests3ta = UIBranchContainer.make(tofill, "tests_list:", "getEvalGroupsForUser.PERM_TA_ROLE");
+        UIOutput.make(tests3ta, "test_method", tests3ta.localID);
+        startTime = new Date().getTime();
+        l = evalGroupsProvider.getEvalGroupsForUser(userId, EvalGroupsProvider.PERM_TA_ROLE);
+        UIOutput.make(tests3ta, "test_result", collectionToString(l));
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests3ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+       
 
         UIBranchContainer tests3b = UIBranchContainer.make(tofill, "tests_list:", "getEvalGroupsForUser.PERM_TAKE_EVALUATION");
         UIOutput.make(tests3b, "test_method", tests3b.localID);
@@ -231,6 +267,15 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         total = new Date().getTime() - startTime;
         UIMessage.make(tests4, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
 
+        UIBranchContainer tests4ta = UIBranchContainer.make(tofill, "tests_list:", "countEvalGroupsForUser.PERM_TA_ROLE");
+        UIOutput.make(tests4ta, "test_method", tests4ta.localID);
+        startTime = new Date().getTime();
+        int count4ta = evalGroupsProvider.countEvalGroupsForUser(userId, EvalGroupsProvider.PERM_TA_ROLE);
+        UIOutput.make(tests4ta, "test_result", count4ta+"");
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests4ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        
+        
         UIBranchContainer tests4b = UIBranchContainer.make(tofill, "tests_list:", "countEvalGroupsForUser.PERM_TAKE_EVALUATION");
         UIOutput.make(tests4b, "test_method", tests4b.localID);
         startTime = new Date().getTime();
@@ -265,6 +310,20 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
             UIMessage.make(tests6, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
         }
 
+        UIBranchContainer tests6ta = UIBranchContainer.make(tofill, "tests_list:", "isUserAllowedInGroup.PERM_TA_ROLE");
+        UIOutput.make(tests6ta, "test_method", tests6ta.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests6ta, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests6ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            boolean result = evalGroupsProvider.isUserAllowedInGroup(userId, EvalGroupsProvider.PERM_TA_ROLE, evalGroupId);
+            UIOutput.make(tests6ta, "test_result", result+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests6ta, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+        
+        
         UIBranchContainer tests6b = UIBranchContainer.make(tofill, "tests_list:", "isUserAllowedInGroup.PERM_TAKE_EVALUATION");
         UIOutput.make(tests6b, "test_method", tests6b.localID);
         if (evalGroupId == null) {
