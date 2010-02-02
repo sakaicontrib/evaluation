@@ -328,5 +328,7 @@ public interface EvalEvaluationSetupService {
      * @param userId the acting user, normally the current user, internal user id (not username)
      */
     public void assignEmailTemplate(Long emailTemplateId, Long evaluationId, String emailTemplateTypeConstant, String userId);
+    
+    
 
 }

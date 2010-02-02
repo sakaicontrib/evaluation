@@ -1082,6 +1082,12 @@ public class EvalTestDataLoad {
         emailTemplate3 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, "Email Subject 3", "Email Template 3"); 
         evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
+        // adding EID's to test EvalEvaluationService.getEmailTemplateByEid()
+        // http://jira.sakaiproject.org/browse/EVALSYS-851
+        emailTemplate1.setEid("Email-Template-EID-11111");
+        emailTemplate2.setEid("Email-Template-EID-22222");
+        emailTemplate3.setEid("Email-Template-EID-33333");
+
         dao.save(emailTemplate1);
         dao.save(emailTemplate2);
         dao.save(emailTemplate3);

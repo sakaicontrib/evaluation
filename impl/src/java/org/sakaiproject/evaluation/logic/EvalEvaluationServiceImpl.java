@@ -1059,4 +1059,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		return this.dao.findBySearch(EvalEvaluation.class, search );
 	}
 
+
+	public EvalEmailTemplate getEmailTemplateByEid(String eid) {
+		EvalEmailTemplate template = null;
+		if(eid != null) {
+			template = dao.findOneBySearch(EvalEmailTemplate.class, new Search("eid", eid));
+		}
+		return template;
+	}
+
 }

@@ -527,6 +527,14 @@ public interface EvalEvaluationService {
     public EvalEmailTemplate getEmailTemplate(Long emailTemplateId);
 
     /**
+     * Get an email template by its EID
+     * 
+     * @param eid a unique eid for an {@link EvalEmailTemplate}
+     * @return an email template or null if none found
+     */
+    public EvalEmailTemplate getEmailTemplateByEid(String eid);
+
+    /**
      * Get the email templates accessible to this user (with or without default templates)
      * 
      * @param userId the internal user id (not username)
