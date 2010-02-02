@@ -30,5 +30,8 @@
         </property>
         <!-- identifies this email template as a default template and indicates the type (reminder, available, etc.), use constants -->
         <property name="defaultType" type="java.lang.String" unique="false" length="255" />
+        <property name="eid" type="java.lang.String" index="eval_templ_eid">
+            <column name="EID" length="255" />
+        </property>
 	</class>
 </hibernate-mapping>

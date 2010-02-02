@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1204,10 +1205,32 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         } catch (RuntimeException e) {
             assertNotNull(e);
         }
-
     }
 
-
+    // test for new method EvalEvaluationService.getEmailTemplateByEid()
+    // http://jira.sakaiproject.org/browse/EVALSYS-851
+    public void testGetEmailTemplateByEid() {
+    	List<EvalEmailTemplate> templates = new ArrayList<EvalEmailTemplate>();
+    	templates.add(etdl.emailTemplate1);
+    	templates.add(etdl.emailTemplate2);
+    	templates.add(etdl.emailTemplate3);
+    	
+    	for(EvalEmailTemplate template : templates) {
+        	EvalEmailTemplate emailTemplate = null;
+    		try {
+    			emailTemplate = this.evaluationService.getEmailTemplateByEid(template.getEid());
+    		} catch(Exception e) {
+    			emailTemplate = null;
+    			fail("Should not have thrown exception");
+    		}
+        	assertNotNull(emailTemplate);
+        	if(emailTemplate != null) {
+        		assertEquals(template.getId(), emailTemplate.getId());
+        		assertEquals(template.getEid(), emailTemplate.getEid());
+        	}
+    	}
+    }
+    
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, int)}.
      */

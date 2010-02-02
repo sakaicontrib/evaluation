@@ -15,6 +15,8 @@ public class EvalEmailTemplate implements java.io.Serializable {
     // Fields    
 
     private Long id;
+    
+    private String eid;
 
     private Date lastModified;
 
@@ -117,5 +119,19 @@ public class EvalEmailTemplate implements java.io.Serializable {
     public void setType(String type) {
         this.type = type;
     }
+
+	/**
+	 * @return the eid
+	 */
+	public String getEid() {
+		return eid;
+	}
+
+	/**
+	 * @param eid the eid to set
+	 */
+	public void setEid(String eid) {
+		this.eid = eid;
+	}
 
 }
