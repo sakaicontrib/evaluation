@@ -82,7 +82,7 @@ public class EvalSettingsImpl implements EvalSettings {
       }
 
       // initialize the cache
-      resetCache();
+        resetCache(null);
       log.debug("initialized the settings config cache");
    }
 
@@ -224,36 +224,35 @@ public class EvalSettingsImpl implements EvalSettings {
       return config;
    }
    
-
-
-   /**
-    * clear out the cache and reload all config settings
-    */
-   @SuppressWarnings("unchecked")
+   // Compatibilty with old resetCache
    public void resetCache() {
-      // clear out cache
-      configCache.clear();
-      // reload all cache items
-      List<EvalConfig> l = dao.findAll(EvalConfig.class);
-      for (EvalConfig config : l) {
-         // copy the values to avoid putting persistent objects in the cache
-         config = new EvalConfig(config.getLastModified(), config.getName(), config.getValue());
-         configCache.put(config.getName(), config);
-      }
-      log.debug("reset the settings config cache");
+       resetCache(null);
    }
 
    /**
-    * clean out a single item from the cache,
-    * it will be reloaded from the DB the next time someone attempts to fetch it
-    * 
-    * @param settingConstant a setting constant from {@link EvalSettings}
+     * clear out the cache and reload all config settings if the settingConstant is null,
+     * if not null then clean out a single item from the cache,
+     * it will be reloaded from the DB the next time someone attempts to fetch it
+     * @param settingConstant (OPTIONAL) a setting constant from {@link EvalSettings}
     */
-   public void clearCacheItem(String settingConstant) {
-      String name = SettingsLogicUtils.getName(settingConstant);
-      if (configCache.containsKey(name)) {
-         configCache.remove(name);
-      }
+   public void resetCache(String settingConstant) {
+       if (settingConstant == null) {
+           // clear out cache
+           configCache.clear();
+           // reload all cache items
+           List<EvalConfig> l = dao.findAll(EvalConfig.class);
+           for (EvalConfig config : l) {
+               // copy the values to avoid putting persistent objects in the cache
+               config = new EvalConfig(config.getLastModified(), config.getName(), config.getValue());
+               configCache.put(config.getName(), config);
+           }
+           log.debug("reset the settings config cache");
+       } else {
+           String name = SettingsLogicUtils.getName(settingConstant);
+           if (configCache.containsKey(name)) {
+               configCache.remove(name);
+           }
+       }
    }
 
    /**

@@ -29,4 +29,9 @@
 			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
 	</bean>
 
+    <bean id="org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider"
+            class="org.sakaiproject.evaluation.logic.entity.ConfigEntityProviderImpl">
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+
 </beans>

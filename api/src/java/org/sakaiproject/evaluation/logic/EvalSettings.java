@@ -409,10 +409,15 @@ public interface EvalSettings {
     */
    public boolean set(String settingConstant, Object settingValue);
    
-   /**
-    * Clear out the cache and reload all config settings. <br/>
-    * This method is exposed in the interface as an alternative to the TimerTask evaluating a Hibernate proxy of EvalSettingsImpl.
-    */
-   public void resetCache();
+    /**
+     * Clear items from the settings cache <br/>
+     * This will clear out the cache and reload all config settings if the settingConstant is null,
+     * if not null then clean out a single item from the cache 
+     * (it will be reloaded from the DB the next time someone attempts to fetch it)
+     * 
+     * @param settingConstant (OPTIONAL) a setting constant from {@link EvalSettings} OR null to clear all
+     */
+    public void resetCache();
+    public void resetCache(String settingConstant);
 
 }
