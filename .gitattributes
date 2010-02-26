@@ -100,6 +100,7 @@ impl/src/ddl/hsqldb/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/mssql/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/mysql/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/oracle/db-conversion/ctools_2-5-3T/evaluation-new-evalconfig.sql -text
+impl/src/ddl/oracle/db-conversion/ctools_2-6/evaluation-add-local-selector.sql -text
 impl/src/ddl/oracle/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/postgres/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/aspectj/EvalServicesProfiler.aj -text

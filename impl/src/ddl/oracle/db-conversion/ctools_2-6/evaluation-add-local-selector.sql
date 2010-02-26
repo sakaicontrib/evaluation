@@ -1,0 +1,1 @@
+alter table EVAL_EVALUATION add column LOCAL_SELECTOR varchar2(255 char);
