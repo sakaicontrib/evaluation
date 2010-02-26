@@ -128,6 +128,7 @@
         EVAL_CATEGORY varchar(255),
         AUTO_USE_TAG varchar(255),
         AUTO_USE_INSERTION varchar(255),
+        LOCAL_SELECTOR varchar(255),
         primary key (ID)
     );
 

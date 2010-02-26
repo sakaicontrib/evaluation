@@ -141,5 +141,8 @@
         <property name="autoUseInsertion" type="java.lang.String">
             <column name="AUTO_USE_INSERTION" length="255" />
         </property>
+        <property name="localSelector" type="java.lang.String">
+        	<column name="LOCAL_SELECTOR" length="255" />
+        </property>
     </class>
 </hibernate-mapping>
