@@ -162,6 +162,8 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 			templateItem.setDisplayOrder(totalGroupedItems + 1);
 			templateItem.setHierarchyLevel(parent.getHierarchyLevel());
 			templateItem.setHierarchyNodeId(parent.getHierarchyNodeId());
+			templateItem.setCategory(parent.getCategory());
+			templateItem.setResultsSharing(parent.getResultsSharing());
 			localTemplateLogic.saveTemplateItem(templateItem);
 
 			messages.addMessage(new TargettedMessage(
