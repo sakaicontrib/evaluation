@@ -164,7 +164,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
         	}
         }
-
+		
         // create the form to allow submission of this item
         UIForm form = UIForm.make(tofill, "item-form");
 
@@ -559,33 +559,41 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             if (showHierarchyOptions  && ! isGroupable && ! isGrouped ) {
                 hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
             }
-
+        
             /*
+             * UMD Specific
              * If the system setting (admin setting) for "EvalSettings.ITEM_USE_RESULTS_SHARING" is set as true then all
-             * items default to "Public" and users can select Public or Private.
-             * If it is set to false then it is forced to Private
+             * items default to "Administrative" and users can select Administrative or Student.
+             * If it is set to false then it is forced to Administrative
              */
             Boolean useResultSharing = (Boolean) settings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
-            if (useResultSharing && ! isGroupable && ! isGrouped ) {
-                // Means show both options (public & private)
+            if (useResultSharing) {	// && ! isGroupable && ! isGrouped ) {
+                // Means show both options (Administrative & Student)
                 UIBranchContainer showItemResultSharing = UIBranchContainer.make(form, "showItemResultSharing:");
                 UIMessage.make(showItemResultSharing, "item-results-sharing-header", "modifyitem.results.sharing.header");
-                UIMessage.make(showItemResultSharing, "item-results-sharing-PU", "general.public");
-                UIMessage.make(showItemResultSharing, "item-results-sharing-PR", "general.private");
+                UIMessage.make(showItemResultSharing, "item-results-sharing-AD", "modifyitem.results.sharing.admin");
+                UIMessage.make(showItemResultSharing, "item-results-sharing-ST", "modifyitem.results.sharing.student");
                 // Radio Buttons for "Result Sharing"
-                String[] resultSharingList = { "general.public", "general.private" };
+                String[] resultSharingList = { "modifyitem.results.sharing.admin", "modifyitem.results.sharing.student" };
                 UISelect radios = UISelect.make(showItemResultSharing, "item_results_sharing", EvalToolConstants.ITEM_RESULTS_SHARING_VALUES,
                         resultSharingList, templateItemOTP + "resultsSharing", null);
 
                 String selectID = radios.getFullID();
-                UISelectChoice.make(showItemResultSharing, "item_results_sharing_PU", selectID, 0);
-                UISelectChoice.make(showItemResultSharing, "item_results_sharing_PR", selectID, 1);
+                UISelectChoice.make(showItemResultSharing, "item_results_sharing_AD", selectID, 0);
+                UISelectChoice.make(showItemResultSharing, "item_results_sharing_ST", selectID, 1);
             } else {
                 // false so all questions are private by default (set the binding)
                 form.parameters.add( 
                         new UIELBinding(templateItemOTP + "resultsSharing",
-                                EvalToolConstants.ITEM_RESULTS_SHARING_VALUES[0]) );
+                                EvalConstants.SHARING_PUBLIC));
             }
+            
+            // hierarchy node selector control
+ //           Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+ //           if (showHierarchyOptions) {
+ //               hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
+ //           }
+ 
         }
 
 

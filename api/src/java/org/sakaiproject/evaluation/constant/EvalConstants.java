@@ -517,6 +517,14 @@ public class EvalConstants {
      * (only a super admin can make a template or item public)
      */
     public static final String SHARING_PUBLIC = "public";
+    
+    /**
+     * UMD specific results sharing values
+     * EVALSYS-850
+     */
+    public static final String SHARING_ADMIN = "Administrative";
+    public static final String SHARING_STUDENT = "Student";
+    public static final String SHARING_BOTH = "Both";
 
     /**
      * Evaluation instructorOpt setting:

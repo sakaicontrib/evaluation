@@ -407,7 +407,10 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                         	.decorate( new UITooltipDecorator( messageLocator.getMessage("modifytemplate.item.hierarchy.nodeid.title") + curnode.title ));
                     }
                 }
-
+                /**
+                 * UMD Specific
+                 * changed wording EVALSYS-850
+                 */
                 Boolean useResultsSharing = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
                 if ( useResultsSharing ) {
                     // only show results sharing if it is being used
@@ -416,6 +419,12 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                         resultsSharingMessage = "general.public";
                     } else if ( EvalConstants.SHARING_PRIVATE.equals(templateItem.getResultsSharing()) ) {
                         resultsSharingMessage = "general.private";
+                    }  else if ( EvalConstants.SHARING_ADMIN.equals(templateItem.getResultsSharing()) ) {
+                        resultsSharingMessage = "modifyitem.results.sharing.admin.short";
+                    } else if ( EvalConstants.SHARING_STUDENT.equals(templateItem.getResultsSharing()) ) {
+                        resultsSharingMessage = "modifyitem.results.sharing.student";
+                    }  else if ( EvalConstants.SHARING_BOTH.equals(templateItem.getResultsSharing()) ) {
+                        resultsSharingMessage = "modifyitem.results.sharing.both";
                     }
                     UIMessage.make(itemBranch, "item-results-sharing", resultsSharingMessage);
                 }
