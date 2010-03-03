@@ -336,17 +336,21 @@ public class EvalToolConstants {
     };
 
     /**
-     * values for item results sharing.
+     * UMD Specific
+     * values for item results sharing. 
+     * updated from public/private to Administrative/Student EVALSYS-850
      */
     public static String[] ITEM_RESULTS_SHARING_VALUES = new String[] {
-        EvalConstants.SHARING_PUBLIC,
-        EvalConstants.SHARING_PRIVATE
+        EvalConstants.SHARING_ADMIN,
+        EvalConstants.SHARING_STUDENT
     };
 
     // should match ITEM_RESULTS_SHARING_VALUES
     public static String[] ITEM_RESULTS_SHARING_LABELS_PROPS = {
-        "general.public",
-        "general.private"
+    	"modifyitem.results.sharing.admin",
+    	"modifyitem.results.sharing.student"
+        //"general.public",
+        //"general.private"
     };
 
     /**

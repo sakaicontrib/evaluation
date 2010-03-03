@@ -350,12 +350,31 @@ public class TemplateBBean {
         log.debug("Save Block items");
 
         Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
-
+        
         // Note: Arrays.asList() produces lists that do not support add() or remove(), however set() is supported
         // We may want to change this to ArrayList. (i.e. new ArrayList(Arrays.asList(...)))
         List<String> orderedChildIdList = Arrays.asList(orderedChildIds.split(","));
         List<String> templateItemIdList = Arrays.asList(templateItemIds.split(","));
+        
+        /*
+         * UMD Specific
+         * EVALSYS-850
+         */
+        int adminCt=0;
+   	 	int studentCt=0;
 
+        for (String itemId : templateItemIdList) {
+            EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemId));        	
+        	 if (templateItem.getResultsSharing().equals(EvalConstants.SHARING_ADMIN)) {
+        		 adminCt++;
+        	 } else if (templateItem.getResultsSharing().equals(EvalConstants.SHARING_STUDENT)) {
+        		 studentCt++;
+        	 }
+        }
+        log.info("admin cnt: " + adminCt);
+        log.info("student cnt: " + studentCt);
+         
+        
         if (blockId.equals(TemplateItemWBL.NEW_1)) { // create new block
             EvalTemplateItem parent = (EvalTemplateItem) delivered.get(TemplateItemWBL.NEW_1);
             if (parent != null) {
@@ -377,6 +396,18 @@ public class TemplateBBean {
                 parent.getItem().setUsesNA(parent.getUsesNA());
                 parent.getItem().setCategory(parent.getCategory());
                 setIdealColorForBlockParent(parent);
+                
+                /*
+                 * UMD specific
+                 * EVALSYS-850
+                 */
+                if ((adminCt > 0) && (studentCt > 0)) {
+                	parent.setResultsSharing(EvalConstants.SHARING_BOTH);
+                } else if ((adminCt > 0) && (studentCt == 0)) {
+                	parent.setResultsSharing(EvalConstants.SHARING_ADMIN);
+                } else if ((adminCt == 0) && (studentCt > 0)) {
+                	parent.setResultsSharing(EvalConstants.SHARING_STUDENT);
+                }
 
                 try {
                     localTemplateLogic.saveItem(parent.getItem());
