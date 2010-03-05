@@ -389,27 +389,25 @@ $(document).ready(function() {
         }
     }
 
-    function frameGrow(height, updown)
-    {
-        var h = height == "" ? 250 : parseInt(height, 10);
-        var frame = parent.document.getElementById(window.name);
-        try {
-            if (frame)
-            {
-                var clientH;
-                if (updown == 'shrink')
-                {
-                    clientH = document.body.clientHeight - h;
+    function frameGrow(height, updown){
+        var h = height == "" ? 250 : parseInt(height, 10),
+            windowName = window.name,
+            frame = null;
+        if (windowName !== null && windowName.length > 0){
+            frame = parent.document.getElementById(windowName);
+            try {
+                if (frame){
+                    var clientH;
+                    if (updown == 'shrink'){
+                        clientH = document.body.clientHeight - h;
+                    }else{
+                        clientH = document.body.clientHeight + h;
+                    }
+                    $(frame).height(clientH);
                 }
-                else
-                {
-                    clientH = document.body.clientHeight + h;
-                }
-                $(frame).height(clientH);
-            }
-        } catch(e) {}
+            } catch(e) {}
+        }
     }
-
 
     // Debugging
     function log($obj) {
