@@ -894,7 +894,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
       String ref = getEntityReference(evaluationEntity);
       if (ref != null) {
-         log.info("Entity event: " + eventName + " for " + ref);
+         log.debug("Entity event: " + eventName + " for " + ref);
          entityBroker.fireEvent(eventName, ref);
       }
    }
