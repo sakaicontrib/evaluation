@@ -81,6 +81,11 @@ import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
+import org.sakaiproject.taskstream.client.TSSClientApi;
+import org.sakaiproject.taskstream.client.TSSClientImpl;
+import org.sakaiproject.taskstream.client.TSSQueryParameters;
+import org.sakaiproject.taskstream.client.TSSResponseApi;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
@@ -185,6 +190,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    public void setSiteService(SiteService siteService) {
       this.siteService = siteService;
    }
+   
+  
+   private TSSClientApi taskStatus;
+   public void setTaskStatus(TSSClientApi taskStatus) {
+	   this.taskStatus = taskStatus;
+   }
+ 
    
    private ThreadLocalManager threadLocalManager;
    public void setThreadLocalManager(ThreadLocalManager threadLocalManager) {
@@ -1305,4 +1317,146 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	    }
 	    return emailSettings;
    }
+   
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStatusUrl()
+	 */
+	public String getTaskStatusUrl() {
+		return serverConfigurationService.getString("taskstatus");
+	}
+	
+	public String getTaskStatusContainer(String params) {
+		if(params == null) throw new IllegalArgumentException(this + ".getTaskStatusContainer argument is null.");
+		String serverUrl = getTaskStatusUrl();
+		if(serverUrl != null && serverUrl.endsWith("taskstatus")) {
+			serverUrl += "/" + params;
+			TSSResponseApi r = taskStatus.getTSSItem(serverUrl, "text/xml");
+			// 200 for a successful get.
+			if(r != null && r.getStatus() == 200) {
+				return r.getBody();
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#createTaskStream(java.lang.String)
+	 */
+	public String newTaskStatusStream(String streamTag) {
+		if(streamTag == null) throw new IllegalArgumentException(this + ".createTaskStream argument is null.");
+		
+		String serverUrl = getTaskStatusUrl();
+		if(serverUrl != null && serverUrl.endsWith("taskstatus")) {
+			// create a new stream with a recognized tag
+			TSSResponseApi r = taskStatus.newTSSStream(serverUrl, streamTag);
+
+			// 201 for a successful update.
+			if(r != null && r.getStatus() == 201) {
+				return r.retrieveNewContentUrl();
+			}
+		}
+		return null;
+	}
+
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#addTaskStreamEntry(String, String, TaskStatusStandardValues, String)
+    */
+	public String newTaskStatusEntry(String streamUrl, String entryTag, TaskStatusStandardValues status,
+			String payload) {
+		if(streamUrl == null || status == null) {
+			throw new IllegalArgumentException(this + ".addTaskStreamEntry argument(s) null.");
+		}
+		TSSResponseApi r = null;
+		if(payload == null) {
+			r = taskStatus.newTSSEntry(streamUrl, status, entryTag);
+		}
+		else {
+			r = taskStatus.newTSSEntry(streamUrl, status, entryTag, payload);
+		}
+		// 201 for a successful update.
+		if(r != null && r.getStatus() == 201) {
+			return r.retrieveNewContentUrl();
+		}
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamCount(String, String, TaskStatusStandardValues, String)
+	 
+	public int getTaskStreamCount(String streamTag, String entryTag, TaskStatusStandardValues status, String since) {
+		if(streamTag == null || entryTag == null || status == null || since == null) {
+			throw new IllegalArgumentException(this + ".getTaskStreamCount argument(s) null.");
+		}
+		//String streamUrl = getTaskStatusUrl() + "/?streamTag=" + streamTag + "&entryTag=" + entryTag + "&status=" + status + "&since=" + since; // dlhaines needs to fix
+		String streamUrl = getTaskStatusUrl() + "/?streamTag=" + streamTag;
+		TSSResponseApi r = taskStatus.getTSSItem(streamUrl);
+		//TSSResponseApi r = taskStatus.getTSSItem(streamUrl, "text/xml; charset=ISO-8859-1");
+		// int 200 for a successful get.
+		if(r != null && r.getStatus() == 200) {
+			String body = r.getBody();
+			if(body == null) {
+				return 0;
+			}
+			else {
+				System.out.println(body);
+			}
+			return 1;
+		}
+		return 0;
+	}
+	*/
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamCount(java.lang.String)
+	 */
+	public String getTaskStreamCount(String params) {
+		if(params == null) throw new IllegalArgumentException(this + ".getTaskStreamCount argument is null.");
+		String serverUrl = getTaskStatusUrl() + "/" + params;
+		TSSResponseApi r = taskStatus.getTSSItem(serverUrl, "text/xml");
+		// 200 for a successful get.
+		if(r != null && r.getStatus() == 200) {
+			return r.getBody();
+		}
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreams(java.lang.String, java.lang.String, java.lang.String)
+	 *
+	public void getTaskStreams(String streamTag, String start, String end) {
+		// TODO Auto-generated method stub
+		// int 200 for a successful get.
+		/*
+		 * All it does is construct the URL from the query parameters.  You'll need to do that explicitly for now.
+
+TSSResponseApi getTSSItem(String streamUrl, String mimeFormat);
+		 
+	}
+	*/
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamEntry(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 
+	public void getTaskStreamEntries(String streamTag, String entryTag,
+			String status, String start, String end) {
+		if(streamTag == null) {
+			throw new IllegalArgumentException(this + ".getTaskStreamEntry argument is null.");
+		}
+		// TODO Auto-generated method stub
+		// int 200 for a successful get.
+		/*
+		 * All it does is construct the URL from the query parameters.  You'll need to do that explicitly for now.
+
+TSSResponseApi getTSSItem(String streamUrl, String mimeFormat);
+		 
+		
+	}
+	*/
 }

@@ -38,6 +38,10 @@
    		ref="org.sakaiproject.tool.api.ToolManager" />
    	<property name="userDirectoryService"
    		ref="org.sakaiproject.user.api.UserDirectoryService" />
+ 
+    <property name="taskStatus"
+   		ref="org.sakaiproject.taskstream.client.TSSClientApi" />
+  
    	<property name="timeService"
    		ref="org.sakaiproject.time.api.TimeService" />
    </bean>
@@ -48,5 +52,9 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
    </bean>
-   
+  
+   <bean id="org.sakaiproject.taskstream.client.TSSClientApi"
+   		class="org.sakaiproject.taskstream.client.TSSClientImpl">
+   	</bean>
+  
 </beans>

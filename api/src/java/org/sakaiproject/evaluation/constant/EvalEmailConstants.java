@@ -222,6 +222,7 @@ public class EvalEmailConstants {
     * EmailTemplate subject: Default subject for submission confirmation
     */
    public static final String EMAIL_SUBMITTED_DEFAULT_SUBJECT = "${EvalTitle} ${EvalToolTitle} Submission Confirmation";
+   
  
    /**
     * Sent as submission confirmation when response had been saved to the database
@@ -321,4 +322,14 @@ public class EvalEmailConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on '${EvalToolTitle}' in the left navigation menu under ${EvalSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
+	
+	/**
+	 * EmailTemplate subject: Default subject for summary report of background task status.
+	 */
+	public static final String EMAIL_TASK_DEFAULT_SUBJECT = "TQ Daily operational Status Report for ${ReportDate}.";
+	
+	public static final String EMAIL_TASK_DEFAULT_TEXT = 
+		"This message is a summary of the automated daily TQ operations for ${ReportDate}.\n\n" +
+		"1. The TQ email job ${Ran} last night.\n\n${RanText}\n\n" +
+		"2. Data ${Loaded} loaded into the system.\n\n${LoadedText}"; 
 }

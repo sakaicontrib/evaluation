@@ -29,6 +29,33 @@
         <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
     </bean>
     
+       <!-- job to email status of evaluation's import and single email tasks -->
+    <bean id="evalStatusEmailImpl"
+    	class="org.sakaiproject.evaluation.logic.scheduling.EvalStatusEmailImpl"
+    	init-method="init">
+    	<property name="emails" 
+    		ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+    	<property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    	<property name="evalSettings"
+   			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+    
+    <!-- this is the helper that will register the above bean with the job scheduler -->
+    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.EvalStatusEmailImpl"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      singleton="true" init-method="init">
+      <property name="beanId">
+      	<value>evalStatusEmailImpl</value>
+      </property>
+      <property name="jobName">
+         <value>Evaluation Status Report Email</value>
+      </property>
+      <property name="schedulerManager">
+         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+      </property>
+   </bean>
+    
    <!-- job to consolidate email notifications for active evaluations -->
    <bean id="evalSingleEmailImpl"
    		class="org.sakaiproject.evaluation.logic.scheduling.EvalSingleEmailImpl"

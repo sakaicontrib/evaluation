@@ -46,7 +46,8 @@
 
     <!-- handles simpler evaluation methods -->
     <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationService"
-        class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
+        class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl"
+        init-method="init">
         <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />

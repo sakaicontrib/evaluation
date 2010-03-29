@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -27,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 
@@ -65,7 +68,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       evaluationService.setCommonLogic(commonLogic);
       evaluationService.setSecurityChecks(securityChecks);
       evaluationService.setSettings(settings);
-
    }
 
 
@@ -74,7 +76,33 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     * Note that if a method is overloaded you should include the arguments in the
     * test name like so: testMethodClassInt (for method(Class, int);
     */
+   
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getTaskStatus(String)
+    */
+   public void testGetTaskStatusContainer() {
+	   EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer("?streamTag=Import");
+	   Assert.assertNotNull(container);
+	   // TODO
+   }
 
+   
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getTaskStreamCount(String)
+    
+   public void testGetTaskStreamCount() {
+	   Assert.assertNotNull(evaluationService.getTaskStreamCount("?streamTag=Import"));
+	   // TODO
+   }
+   */
+   
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#updateTaskStatus(String)
+    
+   public void testUpdateTaskStatus() {
+	   Assert.assertTrue(evaluationService.updateTaskStatus("?streamTag=Import"));
+   }
+   */
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationById(java.lang.Long)}.
@@ -1023,14 +1051,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       // get all templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
       assertNotNull(l);
-      assertEquals(11, l.size());
+      assertEquals(12, l.size());
       
  
 
       // get only default templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
       assertNotNull(l);
-      assertEquals(8, l.size());
+      assertEquals(9, l.size());
       for (EvalEmailTemplate emailTemplate : l) {
          assertNotNull(emailTemplate.getDefaultType());
       }

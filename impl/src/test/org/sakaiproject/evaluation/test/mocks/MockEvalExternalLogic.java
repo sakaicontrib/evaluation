@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -52,6 +53,374 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class MockEvalExternalLogic implements EvalExternalLogic {
+	
+	public String getTaskStatusUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getTaskStreamCount(String params) {
+		/*
+		 * http://localhost:8666/taskstatus?streamTag=Import
+		 * http://localhost:8666/taskstatus/TSS20100328083232938
+		 * http://localhost:8666/taskstatus/TSS20100328083232938?entryStatus=RUNNING&entryTag=error&payload=NullPointerException
+		 * http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083409815
+		 * http://localhost:8666/taskstatus/TSS20100328083232938?entryStatus=FINISHED&entryTag=withError&payload=TEST
+		 * http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083532348
+		 * http://localhost:8666/taskstatus?streamTag=Import
+		 * http://localhost:8666/taskstatus/TSS20100328083601015
+		 * http://localhost:8666/taskstatus/TSS20100328083620593
+		 * http://localhost:8666/taskstatus?streamTag=Import&depth=0
+		 * http://localhost:8666/taskstatus/TSS20100328083655087
+		 * 
+		 * <taskStreamContainer>
+  				<streamCount>4</streamCount>
+	 			<streams>
+    			</streams>
+			</taskStreamContainer>
+		 */
+		StringBuilder xml = new StringBuilder();
+		xml.append("<taskStreamContainer>\n");
+		xml.append("\t<streamCount>4</streamCount>\n");
+		xml.append("\t<streams>\n");
+		xml.append("\t</streams>\n");
+		xml.append("</taskStreamContainer>\n");
+		return xml.toString();
+	}
+	
+	public String getTaskStatusContainer(String params) {
+		/*
+		 * TODO update model object EvalTaskStatusContainer re status
+		 * 0.0.16 the single "status" parameter is replaced by 2: "entryStatus" and "streamStatus". - search
+		 * .TQ.Container model object EvalTaskStatusContainer has the single "status" parameter - returned
+		 * 
+		 * http://localhost:8666/taskstatus?streamTag=Import
+			 * http://localhost:8666/taskstatus/TSS20100328083232938
+			 * http://localhost:8666/taskstatus/TSS20100328083232938?entryStatus=RUNNING&entryTag=error&payload=NullPointerException
+			 * http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083409815
+			 * http://localhost:8666/taskstatus/TSS20100328083232938?entryStatus=FINISHED&entryTag=withError&payload=TEST
+			 * http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083532348
+			 * http://localhost:8666/taskstatus?streamTag=Import
+			 * http://localhost:8666/taskstatus/TSS20100328083601015
+			 * http://localhost:8666/taskstatus/TSS20100328083620593
+			 * http://localhost:8666/taskstatus?streamTag=Import&depth=0
+			 * http://localhost:8666/taskstatus/TSS20100328083655087
+			 * GET http://localhost:8666/taskstatus?streamTag=Import&depth=2&otype=.TQ.Container 
+			 * 
+<taskStreamContainer>
+  	<streamCount>4</streamCount>
+	 <streams><streams>
+	 
+<taskStatusStream> 1
+	<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID> 1
+  	<created>Mar 28, 2010 8:32:32 AM</created>
+  	<time>Mar 28, 2010 8:35:32 AM</time>
+  	<status>FINISHED</status>
+  	 <streamTag>Import</streamTag>
+  	   	<entryCount>3</entryCount>
+	 <statusEntries>
+        
+<taskStatusEntry> 1
+	<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083232942</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083232942/TSE20100328083232942</taskStatusEntryURL>
+  	<status>CREATED</status>
+ 	<created>Mar 28, 2010 8:32:32 AM</created>
+  	<entryTag>no value</entryTag>
+  	<payload>no value</payload>
+</taskStatusEntry>
+ 
+        
+<taskStatusEntry> 2
+	<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083409815</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083409815/TSE20100328083409815</taskStatusEntryURL>
+  	<status>RUNNING</status>
+ 	<created>Mar 28, 2010 8:34:09 AM</created>
+  	<entryTag>error</entryTag>
+  	<payload>NullPointerException</payload>
+</taskStatusEntry>
+ 
+        
+<taskStatusEntry> 3
+	<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083532348</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083532348/TSE20100328083532348</taskStatusEntryURL>
+  	<status>FINISHED</status>
+ 	<created>Mar 28, 2010 8:35:32 AM</created>
+  	<entryTag>withError</entryTag>
+  	<payload>TEST</payload>
+</taskStatusEntry>
+ 
+    </statusEntries>
+</taskStatusStream>
+
+	 
+<taskStatusStream> 2
+	<taskStatusStreamID>TSS20100328083601015</taskStatusStreamID>
+  	<created>Mar 28, 2010 8:36:01 AM</created>
+  	<time>Mar 28, 2010 8:36:01 AM</time>
+  	<status>CREATED</status>
+  	 <streamTag>Import</streamTag>
+  	   	<entryCount>1</entryCount>
+	 <statusEntries>
+        
+<taskStatusEntry> 1
+	<taskStatusStreamID>TSS20100328083601015</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083601016</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083601015/TSE20100328083601016/TSE20100328083601016</taskStatusEntryURL>Ã
+  	<status>CREATED</status>
+ 	<created>Mar 28, 2010 8:36:01 AM</created>
+  	<entryTag>no value</entryTag>
+  	<payload>no value</payload>
+</taskStatusEntry>
+ 
+    </statusEntries>
+</taskStatusStream>
+
+	 
+<taskStatusStream> 3
+	<taskStatusStreamID>TSS20100328083620593</taskStatusStreamID>
+  	<created>Mar 28, 2010 8:36:20 AM</created>
+  	<time>Mar 28, 2010 8:36:20 AM</time>
+  	<status>CREATED</status>
+  	 <streamTag>Import</streamTag>
+  	   	<entryCount>1</entryCount>
+	 <statusEntries>
+        
+<taskStatusEntry> 1
+	<taskStatusStreamID>TSS20100328083620593</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083620594</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083620593/TSE20100328083620594/TSE20100328083620594</taskStatusEntryURL>
+  	<status>CREATED</status>
+ 	<created>Mar 28, 2010 8:36:20 AM</created>
+  	<entryTag>no value</entryTag>
+  	<payload>no value</payload>
+</taskStatusEntry>
+ 
+    </statusEntries>
+</taskStatusStream>
+
+	 
+<taskStatusStream> 4
+	<taskStatusStreamID>TSS20100328083655087</taskStatusStreamID>
+  	<created>Mar 28, 2010 8:36:55 AM</created>
+  	<time>Mar 28, 2010 8:36:55 AM</time>
+  	<status>CREATED</status>
+  	 <streamTag>Import</streamTag>
+  	   	<entryCount>1</entryCount>
+	 <statusEntries>
+        
+<taskStatusEntry> 1
+	<taskStatusStreamID>TSS20100328083655087</taskStatusStreamID>
+	<taskStatusEntryID>TSE20100328083655088</taskStatusEntryID>
+	<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083655087/TSE20100328083655088/TSE20100328083655088</taskStatusEntryURL>
+  	<status>CREATED</status>
+ 	<created>Mar 28, 2010 8:36:55 AM</created>
+  	<entryTag>no value</entryTag>
+  	<payload>no value</payload>
+</taskStatusEntry>
+ 
+    </statusEntries>
+</taskStatusStream>
+
+    </streams>
+</taskStreamContainer>
+
+		 */
+		StringBuilder xml = new StringBuilder();
+		xml.append("<taskStreamContainer>\n");
+		xml.append("<streamCount>4</streamCount>\n");
+		xml.append("<streams>\n");
+		
+		// taskStatusStream 1
+		xml.append("\n\n");
+		xml.append("<taskStatusStream>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>\n"); //<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID> 1
+		xml.append("<created>Mar 28, 2010 8:32:32 AM</created>\n");
+		xml.append("<time>Mar 28, 2010 8:35:32 AM</time>\n");
+		xml.append("<status>FINISHED</status>\n");
+		xml.append("<streamTag>Import</streamTag>\n");
+		xml.append("<entryCount>3</entryCount>\n");
+		// statusEntries
+		xml.append("<statusEntries>\n");
+		// taskStatusEntry
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryID>TSE20100328083232942</taskStatusEntryID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083232942/TSE20100328083232942</taskStatusEntryURL>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<created>Mar 28, 2010 8:32:32 AM</created>\n");
+		xml.append("<entryTag>no value</entryTag>\n");
+		xml.append("<payload>no value</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		// taskStatusEntry
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryID>TSE20100328083409815</taskStatusEntryID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083409815/TSE20100328083409815</taskStatusEntryURL>\n");
+		xml.append("<status>RUNNING</status>\n");
+		xml.append("<created>Mar 28, 2010 8:34:09 AM</created>\n");
+		xml.append("<entryTag>error</entryTag>\n");
+		xml.append("<payload>NullPointerException</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		// taskStatusEntry
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083232938</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryID>TSE20100328083532348</taskStatusEntryID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083232938/TSE20100328083532348/TSE20100328083532348</taskStatusEntryURL>\n");
+		xml.append("<status>FINISHED</status>\n");
+		xml.append("<created>Mar 28, 2010 8:35:32 AM</created>\n");
+		xml.append("<entryTag>withError</entryTag>\n");
+		xml.append("<payload>TEST</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		xml.append(" </statusEntries>\n");
+		xml.append("</taskStatusStream>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083601015</taskStatusStreamID>\n");
+		xml.append("<created>Mar 28, 2010 8:36:01 AM</created>\n");
+		xml.append("<time>Mar 28, 2010 8:36:01 AM</time>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<streamTag>Import</streamTag>\n");
+		xml.append("<entryCount>1</entryCount>\n");
+		xml.append("<statusEntries>\n");
+		// taskStatusEntry
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083601015</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryID>TSE20100328083601016</taskStatusEntryID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083601015/TSE20100328083601016/TSE20100328083601016</taskStatusEntryURL>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<created>Mar 28, 2010 8:36:01 AM</created>\n");
+		xml.append("<entryTag>no value</entryTag>\n");
+		xml.append("<payload>no value</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		xml.append("</statusEntries>\n");
+		xml.append("</taskStatusStream>\n");
+		
+		// taskStatusStream 2
+		xml.append("\n\n");
+		xml.append("<taskStatusStream>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083620593</taskStatusStreamID>\n"); //<taskStatusStreamID>TSS20100328083601015</taskStatusStreamID>
+		xml.append("<created>Mar 28, 2010 8:36:20 AM</created>\n");
+		xml.append("<time>Mar 28, 2010 8:36:20 AM</time>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<streamTag>Import</streamTag>\n");
+		xml.append("<entryCount>1</entryCount>\n");
+		xml.append("<statusEntries>\n");
+		// taskStatusEntry 
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083620593</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083620593/TSE20100328083620594/TSE20100328083620594</taskStatusEntryURL>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<created>Mar 28, 2010 8:36:20 AM</created>\n");
+		xml.append("<entryTag>no value</entryTag>\n");
+		xml.append("<payload>no value</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		xml.append("</statusEntries>\n");
+		xml.append("</taskStatusStream>\n");
+		
+		// taskStatusStream 3 TODO
+		
+		// taskStatusStream 4
+		xml.append("\n\n");
+		xml.append("<taskStatusStream>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083655087</taskStatusStreamID>\n"); //<taskStatusStreamID>TSS20100328083655087</taskStatusStreamID>
+		xml.append("<created>Mar 28, 2010 8:36:55 AM</created>\n");
+		xml.append("<time>Mar 28, 2010 8:36:55 AM</time>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<streamTag>Import</streamTag>\n");
+		xml.append("<entryCount>1</entryCount>\n");
+		xml.append("<statusEntries>\n");
+		// taskStatusEntry
+		xml.append("\n\n");
+		xml.append("<taskStatusEntry>\n");
+		xml.append("<taskStatusStreamID>TSS20100328083655087</taskStatusStreamID>\n");
+		xml.append("<taskStatusEntryID>TSE20100328083655088</taskStatusEntryID>\n");
+		xml.append("<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100328083655087/TSE20100328083655088/TSE20100328083655088</taskStatusEntryURL>\n");
+		xml.append("<status>CREATED</status>\n");
+		xml.append("<created>Mar 28, 2010 8:36:55 AM</created>\n");
+		xml.append("<entryTag>no value</entryTag>\n");
+		xml.append("<payload>no value</payload>\n");
+		xml.append("</taskStatusEntry>\n");
+		xml.append("</statusEntries>\n");
+		xml.append("</taskStatusStream>\n");
+		xml.append(" </streams>\n");
+		xml.append("</taskStreamContainer>\n");
+		xml.append("\n");
+
+		return xml.toString();
+	}
+
+	public String getTaskStatus(String params) {
+		//TODO check value of params to return correct XML
+
+		StringBuilder xml = new StringBuilder();
+		xml.append("<taskStreamContainer>\n");
+		xml.append("\t<streamCount>1</streamCount>\n");
+		xml.append("\t<streams>\n");
+		xml.append("\t\t<stream>\n");
+		xml.append("\t\t\t<taskStatusStreamURL>http://localhost:8666/taskstatus/TSS20100322093828540</taskStatusStreamURL>\n");
+		xml.append("\t\t\t<streamLength>4</streamLength>\n");
+		xml.append("\t\t\t<streamTag>Import</streamTag>\n");
+		xml.append("\t\t</stream>\n");
+		xml.append("\t</streams>\n");
+		xml.append("</taskStreamContainer>\n");
+		
+		/*
+		 * 	<taskStreamContainer>Ã
+			  	<streamCount>1</streamCount>Ã
+				 <streams>Ã
+					<taskStatusStream>
+						<taskStatusStreamID>TSS20100325133341590</taskStatusStreamID>
+			  			<created>Mar 25, 2010 1:33:41 PM</created>
+			  			<time>Mar 25, 2010 1:33:41 PM</time>
+			  			<status>CREATED</status>
+			  	 		<streamTag></streamTag>
+			  	   		<entryCount>1</entryCount>
+				 		<statusEntries>
+							<taskStatusEntry>
+								<taskStatusStreamID>TSS20100325133341590</taskStatusStreamID>
+								<taskStatusEntryID>TSE20100325133341596</taskStatusEntryID>
+								<taskStatusEntryURL>http://localhost:8666/taskstatus/TSS20100325133341590/TSE20100325133341596/TSE20100325133341596</taskStatusEntryURL>
+			  					<status>CREATED</status>
+			 					<created>Mar 25, 2010 1:33:41 PM</created>
+			  					<entryTag>no value</entryTag>
+			  					<payload>no value</payload>
+							</taskStatusEntry>
+			    		</statusEntries>
+					</taskStatusStream>
+			    </streams>
+			</taskStreamContainer>
+		 */
+		
+		return xml.toString();
+	}
+
+
+	public boolean updateTaskStatus(String params) {
+		return true;
+	}
+	
+	public String newTaskStatusEntry(
+			String streamUrl,
+			String entryTag,
+			TaskStatusStandardValues status,
+			String payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String newTaskStatusStream(String streamTag) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+
 
 	/**
 	 * Note: Admin has all perms in all sites

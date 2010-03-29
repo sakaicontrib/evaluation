@@ -22,6 +22,8 @@
 
 package org.sakaiproject.evaluation.logic.scheduling;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,6 +41,8 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.taskstream.client.TSSResponseApi;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 /**
  * Schedule this job to run once daily when there are active evaluations, in order to send 
@@ -75,11 +79,9 @@ public class EvalSingleEmailImpl implements Job{
 		this.evaluationService = evaluationService;
 	}
 	
-	//diagnostics
 	private static Log log = LogFactory.getLog(EvalSingleEmailImpl.class);
-	//progress
 	private static final Log metric = LogFactory.getLog("metrics." + EvalSingleEmailImpl.class.getName());
-	
+	private final static String EMAIL_STREAM_TAG = "Email";
 	private static final String FIRST_NOTIFICATION = "first email notification";
 	private static final String REMINDER = "reminder notification";
 
@@ -91,9 +93,28 @@ public class EvalSingleEmailImpl implements Job{
 	 * execute is the main method of a Quartz Job.
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+		String streamUrl = null, entryUrl = null, entryTag = null, payload = null;
+		Integer count = new Integer(0);
+		String startTime = "";
+		float seconds = 0.0f;
+		String endTime = ""; 
 		try {
-			if (log.isInfoEnabled())
-				log.info("EvalSingleEmailImpl.execute() was called by the JobScheduler.");
+			if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() was called by the JobScheduler.");
+			DateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy h:mm a");
+			Date startDate = new Date();
+			startTime = formatter.format(startDate);
+			long diff2 = startDate.getTime();
+			try {
+				// CREATED
+				streamUrl = evaluationService.newTaskStatusStream(EMAIL_STREAM_TAG);
+				
+				// RUNNING
+				reportRunning(streamUrl);
+			}
+			catch (Exception tss) {
+				log.error(this + ".execute - task status " + tss);
+			}
+			if(log.isDebugEnabled()) log.debug(this + ".execute: Open stream Url " + streamUrl);
 			if (checkSettings()) {
 				if (!evaluationService
 						.isEvaluationWithState(EvalConstants.EVALUATION_STATE_ACTIVE)) {
@@ -106,16 +127,15 @@ public class EvalSingleEmailImpl implements Job{
 				return;
 			}
 			Locale locale = new ResourceLoader().getLocale();
+			
 			//an option
 			Boolean logEmailRecipients = (Boolean) evalSettings
 					.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
 			String[] recipients = new String[] {};
-			long start, end;
-			float seconds;
+			long start = 0, end = 0;
 			// next reminder date
 			Date reminderDate = (Date) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
-			if (log.isInfoEnabled())
-				log.info("Next reminder date is " + reminderDate + ".");
+			if (log.isInfoEnabled()) log.info("Next reminder date is " + reminderDate + ".");
 			//reminder interval unit is a day
 			int reminderInterval = ((Integer) evalSettings
 					.get(EvalSettings.REMINDER_INTERVAL_DAYS)).intValue();
@@ -126,61 +146,196 @@ public class EvalSingleEmailImpl implements Job{
 				long rdate = reminderDate.getTime();
 				long tdate = System.currentTimeMillis();
 				if (tdate >= rdate) {
+					
 					// today is a reminder day
-					if (log.isInfoEnabled())
-						log.info("EvalSingleEmailImpl.execute() thinks today is a reminder day.");
-					start = System.currentTimeMillis();
-					recipients = evalEmailsLogic.sendEvalReminderSingleEmail();
-					end = System.currentTimeMillis();
-					seconds = (end - start) / 1000;
-					if (metric.isInfoEnabled())
-						metric.info("metric EvalSingleEmailImpl.execute() It took " + seconds
-									+ " seconds to send " + REMINDER + "s to "
-									+ recipients.length + " addresses.");
+					seconds = runReminderStep(streamUrl, count, start, end, seconds);
+					
+					try {
+						// REMINDERS
+						reportReminders(streamUrl, seconds, count, start, end);
+						
+						// REMINDER USERS
+						reportReminderUsers(streamUrl, count);
+					}
+					catch (Exception tss) {
+						log.error(this + ".execute - task status " + tss);
+					}
+					
 					// log email recipients
 					if (logEmailRecipients.booleanValue()) {
 						logEmailRecipients(recipients, REMINDER);
 					}
 					// set next reminder date 1 minute after midnight
-					Calendar calendar = new GregorianCalendar();
-					calendar.setTime( new Date() );
-					calendar.set(Calendar.AM_PM, Calendar.AM);
-					calendar.set(Calendar.MINUTE, 1);
-					calendar.set(Calendar.SECOND, 0);
-					calendar.set(Calendar.HOUR, 0);
-					Date nextReminderDate = calendar.getTime();
-					tdate = nextReminderDate.getTime();
-					long nextReminder = tdate + (day * reminderInterval);
+					long nextReminder = getNextReminder(reminderInterval, day);
 					updateConfig(EvalSettings.NEXT_REMINDER_DATE, new Date(nextReminder));
 				}
 				else {
-					if (log.isInfoEnabled())
-						log.info("EvalSingleEmailImpl.execute() thinks today is not a reminder day.");
+					if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() - today is not a reminder day.");
 				}
 			}
-			recipients = new String[] {};
-			start = System.currentTimeMillis();
-			/*
-			 * Note: available follows reminder so available's setting
-			 * EvalEvaluation.avalableEmailSent won't trigger a reminder
-			 */
-			recipients = evalEmailsLogic.sendEvalAvailableSingleEmail();
-			end = System.currentTimeMillis();
-			seconds = (end - start) / 1000;
-			if (metric.isInfoEnabled())
-				metric.info("metric EvalSingleEmailImpl.execute() It took "
-							+ seconds + " seconds to send " + FIRST_NOTIFICATION + "s to "
-							+ recipients.length + " addresses.");
+			
+			// send any announcements
+			seconds = runAnnouncementStep(streamUrl, count, start, end, seconds);
+			
+			try {
+				// ANNOUNCEMENTS
+				reportAnnouncements(streamUrl, seconds, count, start, end);
+				
+				// ANNOUNCEMENT USERS
+				reportAnnouncementUsers(streamUrl, count);
+			}
+			catch(Exception tss) {
+				log.error(this + ".execute - task status " + tss);
+			}
 
 			// log email recipients
-			if (logEmailRecipients.booleanValue())
-				logEmailRecipients(recipients, FIRST_NOTIFICATION);
+			if (logEmailRecipients.booleanValue()) logEmailRecipients(recipients, FIRST_NOTIFICATION);
+			
+			Date endDate = new Date();
+			endTime = formatter.format(endDate);
+			long diff1 = endDate.getTime();
+			seconds = (diff1 - diff2) / 1000;
+			String duration = (new Float(seconds)).toString();
+			
+			// FINISHED
+			reportFinished(streamUrl, startTime, duration, endTime);
+			if (log.isInfoEnabled())
+				log.info("EvalSingleEmailImpl.execute() finished.");
 		} catch (Exception e) {
 			log.error("EvalSingleEmailImpl.execute() job exception. " + e);
-			throw new JobExecutionException(e);
 		}
-		if (log.isInfoEnabled())
-			log.info("EvalSingleEmailImpl.execute() finished.");
+		finally {
+			
+			// TODO move // FINISHED here
+		}
+	}
+	
+	private Float runReminderStep(String streamUrl, Integer count, long start, long end, float seconds) {
+		if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() - today is a reminder day.");
+		if(streamUrl != null && count != null) {
+			start = System.currentTimeMillis();
+			String[] recipients = evalEmailsLogic.sendEvalReminderSingleEmail(streamUrl);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			count = new Integer(recipients.length);
+		}
+		else {
+			log.error(this + ".runReminderStep - argument(s) null.");
+		}
+		return seconds;
+	}
+	
+	private Float runAnnouncementStep(String streamUrl, Integer count, long start, long end, float seconds) {
+		/*
+		 * Note:first announcements follow reminders so setting 
+		 * 'first announcement sent' won't trigger a reminder
+		 */
+		if(streamUrl != null) {
+			start = System.currentTimeMillis();
+			String[] recipients = evalEmailsLogic.sendEvalAvailableSingleEmail(streamUrl);
+			end = System.currentTimeMillis();
+			seconds = (end - start) / 1000;
+			count = new Integer(recipients.length);
+		}
+		else {
+			log.error(this + ".runAnnouncementStep - argument(s) null.");
+		}
+		return seconds;
+	}
+
+	private void reportRunning(String streamUrl) {
+		if(streamUrl != null) {
+			String payload = (new Date()).toString();
+			String entryTag = "start execution";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+					entryTag, TaskStatusStandardValues.RUNNING, payload);
+		}
+		else {
+			log.error(this + ".reportRunning - argument(s) null.");
+		}
+	}
+
+	private void reportFinished(String streamUrl, String startTime,
+			String duration, String endTime) {
+		if(streamUrl != null && startTime != null && duration != null && endTime != null) {
+			String payload = "The email took " + duration + " seconds to run. It kicked off at " + startTime + " and ended at " + endTime + ".";
+			String entryTag = "summary";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, 
+					TaskStatusStandardValues.FINISHED, payload);
+		}
+		else {
+			log.error(this + ".reportFinished - argument(s) null.");
+		}
+	}
+
+	private void reportAnnouncementUsers(String streamUrl, Integer count) {
+		if(streamUrl != null && count != null) {
+			String payload = count.toString();
+			String entryTag = "announcementUsers";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+		}
+		else {
+			log.error(this + ".reportAnnouncementUsers - argument(s) null.");
+		}
+	}
+
+	private void reportAnnouncements(String streamUrl, Float seconds, 
+			Integer count,  long start, long end) {
+		if(streamUrl != null && seconds != null && count != null) {
+			Date from = new Date(start);
+			Date to = new Date(end);
+			String payload = seconds.toString() + " seconds from " + from.toString() + " to " + to.toString() + ".";
+			String entryTag = "announcements";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "announcements", TaskStatusStandardValues.RUNNING, payload);
+			if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took "
+							+ seconds.toString() + " seconds to send " + FIRST_NOTIFICATION + "s to "
+							+ count.toString() + " addresses.");
+		}
+		else {
+			log.error(this + ".reportAnnouncements - argument(s) null.");
+		}
+	}
+
+	private void reportReminderUsers(String streamUrl, Integer count) {
+		if(streamUrl != null && count != null) {
+			String payload = count.toString(); 
+			String entryTag = "reminderUsers";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+		}
+		else {
+			log.error(this + ".reportReminderUsers - argument(s) null.");
+		}
+	}
+
+	private void reportReminders(String streamUrl, Float seconds,
+			Integer count,  long start, long end) {
+		if(streamUrl != null && seconds != null && count != null) {
+			Date from = new Date(start);
+			Date to = new Date(end);
+			String payload = seconds.toString() + " seconds from " + from.toString() + " to " + to.toString() + ".";
+			String entryTag = "reminders";
+			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+			if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took " + seconds.toString()
+							+ " seconds to send " + REMINDER + "s to "
+							+ count.toString()  + " addresses.");
+		}
+		else {
+			log.error(this + ".reportReminders - argument(s) null.");
+		}
+	}
+	
+	private long getNextReminder(int reminderInterval, long day) {
+		long tdate;
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime( new Date() );
+		calendar.set(Calendar.AM_PM, Calendar.AM);
+		calendar.set(Calendar.MINUTE, 1);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.HOUR, 0);
+		Date nextReminderDate = calendar.getTime();
+		tdate = nextReminderDate.getTime();
+		long nextReminder = tdate + (day * reminderInterval);
+		return nextReminder;
 	}
 	
 	/**

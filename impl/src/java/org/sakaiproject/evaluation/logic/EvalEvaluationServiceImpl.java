@@ -14,8 +14,13 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,8 +29,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jdom.output.XMLOutputter;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -35,6 +47,10 @@ import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTaskStatusEntry;
+import org.sakaiproject.evaluation.model.EvalTaskStatusStream;
+import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
+import org.sakaiproject.evaluation.model.EvalTaskStreamCount;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -42,6 +58,7 @@ import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 
 /**
@@ -79,8 +96,163 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
    }
+   
+	public void init() {
+	}
+	
+	public String getTaskStatusUrl() {
+		return commonLogic.getTaskStatusUrl();
+	}
+	
+	  /*
+	    * (non-Javadoc)
+	    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getTaskStreamCount(java.lang.String)
+	    */
+	   public Integer getTaskStreamCount(String params) {
+		   if(params == null) throw new IllegalArgumentException(this + ".getTaskStreamCount argument is null.");
+		   List<Object> countElements = null;
+		   InputStream is = null;
+		   Integer streamCount = null;
+		   try {
+			   is = new ByteArrayInputStream(commonLogic.getTaskStatusContainer(params).getBytes());
+			   if(is != null) {
+				   Document doc = new SAXBuilder().build(is);
+				   countElements = getElementsOfDoc(doc, "/taskStreamContainer/streamCount");
+				   for(Object o: countElements) {
+					   Element element = (Element)o;
+					   streamCount = new Integer(element.getValue());
+				   }
+			   }
+		   }
+		   catch (Exception e) {
+			   e.printStackTrace();
+		   }
+		   finally {
+			// close the input stream
+			   if (is != null) {
+				   try {
+					   is.close();
+				   } catch (IOException ioe) {
+					   ioe.printStackTrace();
+				   }
+			   }
+		   }
+		   return streamCount;
+	   }
 
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getTaskStatus(java.lang.String)
+    */
+   public EvalTaskStreamContainer getTaskStatusContainer(String params) {
+	   if(params == null) throw new IllegalArgumentException(this + ".getTaskStatusContainer argument is null.");
+	   List<Object> countElements = null;
+	   List<Object> streamElements = null;
+	   List<Object> entryElements = null;
+	   InputStream is = null;
+	   EvalTaskStreamContainer container = new EvalTaskStreamContainer();
+	   EvalTaskStatusStream stream = null;
+	   EvalTaskStatusEntry entry = null;
+	   try {
+		   is = new ByteArrayInputStream(commonLogic.getTaskStatusContainer(params).getBytes());
+		   if(is != null) {
+			   Document doc = new SAXBuilder().build(is);
+			   countElements = getElementsOfDoc(doc, "/taskStreamContainer/streamCount");
+			   for(Object o: countElements) {
+				   Element element = (Element)o;
+				   container.setStreamCount(new Integer(element.getValue()));
+			   }
+			   streamElements = getElementsOfDoc(doc, "/taskStreamContainer/streams/taskStatusStream");
+				for(Object o: streamElements) {
+					stream = new EvalTaskStatusStream();
+					Element element = (Element)o;
+					stream.setCreated(element.getChildText("created"));
+					stream.setEntryCount(new Integer(element.getChildText("entryCount")));
+					stream.setStatus(element.getChildText("status"));
+					stream.setStreamTag(element.getChildText("streamTag"));
+					stream.setTaskStatusStreamID(element.getChildText("taskStatusStreamID"));
+					stream.setTime(element.getChildText("time"));
+					entryElements = getElementsOfDoc(doc, "/taskStreamContainer/streams/taskStatusStream/statusEntries/taskStatusEntry[taskStatusStreamID='"
+									+ stream.getTaskStatusStreamID() + "']");
+					for(Object obj : entryElements) {
+						entry = new EvalTaskStatusEntry();
+						Element entryEl = (Element)obj;
+						entry.setCreated(entryEl.getChildText("created"));
+						entry.setEntryTag(entryEl.getChildText("entryTag"));
+						entry.setPayload(entryEl.getChildText("payload"));
+						entry.setStatus(entryEl.getChildText("status"));
+						entry.setTaskStatusEntryID(entryEl.getChildText("taskStatusEntryID"));
+						entry.setTaskStatusEntryURL(entryEl.getChildText("taskStatusEntryURL"));
+						entry.setTaskStatusStreamID(entryEl.getChildText("taskStatusStreamID"));
+						stream.addStatusEntry(entry);
+					}
+					container.addStream(stream);
+					entryElements.clear();
+				}
+			}
+		}
+	   catch (Exception e) {
+		   e.printStackTrace();
+	   }
+	   finally {
+		// close the input stream
+		   if (is != null) {
+			   try {
+				   is.close();
+			   } catch (IOException ioe) {
+				   ioe.printStackTrace();
+			   }
+		   }
+	   }
+	   return container;
+   	}
 
+	/**
+	 * Internal method</ br>
+	 * Get the Element data contained in an XML Document based on an XPath expression
+	 * 
+	 * @param doc
+	 * @param path
+	 * @return
+	 * @throws JDOMException
+	 */
+	private List<Object> getElementsOfDoc(Document doc, String path) throws JDOMException {
+		List<Object> elements = new ArrayList();
+		if (path != null) {
+			try {
+				XPath docsPath = XPath.newInstance(path);
+				elements = docsPath.selectNodes(doc);
+			}
+				catch (JDOMException jde) {
+					log.error("There was an error parsing the XML data using the path ' " + path + "' " + jde);
+					throw new JDOMException(jde.getMessage());
+			} 
+				catch (Exception e) {
+				log.error("There was a problem in getElementsFromDoc(String path) using the path '" + "' " + e);
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		return elements;
+	}
+
+  
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateTaskStatus(java.lang.String)
+    */
+   public String newTaskStatusStream(String streamTag) {
+	   // 201 return true
+	   return commonLogic.newTaskStatusStream(streamTag);
+   }
+   
+   public String newTaskStatusEntry(String streamUrl, String entryTag, 
+		   TaskStatusStandardValues status, String payload) {
+	   // 201 return true
+	   return commonLogic.newTaskStatusEntry(streamUrl, entryTag, status, payload);
+   }
+   
+ 
+   
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationById(java.lang.Long)
     */
@@ -972,6 +1144,22 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	   }
 	   return template;
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConfirmationEmailTemplate()
+    */
+   public EvalEmailTemplate getTaskStatusEmailTemplate() {
+	   EvalEmailTemplate template = null;
+	   try {
+		   template = dao.findBySearch(EvalEmailTemplate.class, new Search("type", EvalConstants.EMAIL_TEMPLATE_TASK)).get(0);
+	   }
+	   catch(IndexOutOfBoundsException e) {
+		   //no template found
+	   }
+	   return template;
+   }
+
 
    // PERMISSIONS
 

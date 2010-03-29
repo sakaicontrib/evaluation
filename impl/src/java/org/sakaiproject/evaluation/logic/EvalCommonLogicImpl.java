@@ -39,9 +39,11 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 /**
  * This is the implementation for the base service
@@ -89,6 +91,27 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		} else {
 			log.debug("No EvalGroupsProvider found...");
 		}
+	}
+	
+	public String getTaskStatusUrl() {
+		return externalLogic.getTaskStatusUrl();
+	}
+
+	public String getTaskStatusContainer(String params) {
+		return externalLogic.getTaskStatusContainer(params);
+	}
+	
+	public String getTaskStreamCount(String params) {
+		return externalLogic.getTaskStreamCount(params);
+	}
+	
+	public String newTaskStatusStream(String streamTag) {
+		return externalLogic.newTaskStatusStream(streamTag);
+	}
+	
+	public String newTaskStatusEntry(String streamUrl, String entryTag, 
+			   TaskStatusStandardValues status, String payload) {
+		return externalLogic.newTaskStatusEntry(streamUrl, entryTag, status, payload);
 	}
 
 	public String getCurrentUserId() {

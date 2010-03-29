@@ -73,6 +73,120 @@
       <artifactId>mail</artifactId>
       <version>1.3.1</version>
     </dependency>
+    
+    <!-- taskstatus <scope>test</scope> -->
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>2.4</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.1_3</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
+    
+    <!-- XStream 
+    	<dependency>
+	    	<groupId>com.thoughtworks.xstream</groupId>
+	    	<artifactId>xstream</artifactId>
+	    	<version>1.3.1</version>
+	    </dependency>
+	    
+	    <dependency>
+	    	<groupId>cglib</groupId>
+	    	<artifactId>cglib-nodep</artifactId>
+	    	<version>2.2</version>
+	    	<scope>provided</scope>
+	    </dependency>
+	  
+	    <dependency>
+	    	<groupId>joda-time</groupId>
+	    	<artifactId>joda-time</artifactId>
+	    	<version>1.6</version>
+	    </dependency>
+   --> 
+
+<!-- Restlet dependencies -->
+  <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+   <dependency>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>1.1.8</version>
+      <scope>provided</scope>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>1.1.8</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+   
+    <dependency>
+      <groupId>com.noelios.restlet</groupId>
+      <artifactId>com.noelios.restlet</artifactId>
+      <version>1.1.8</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.noelios.restlet</groupId>
+      <artifactId>com.noelios.restlet</artifactId>
+      <version>1.1.8</version>
+      <classifier>sources</classifier>
+       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet.ext.freemarker</artifactId>
+      <version>1.1.8</version>
+      <scope>provided</scope>
+    </dependency>
+   
+    <dependency>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet.ext.freemarker</artifactId>
+      <version>1.1.8</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+ 
+<!-- Task Stream -->
+    <dependency>
+      <groupId>org.sakaiproject.taskstream</groupId>
+      <artifactId>TaskStream-Client</artifactId>
+      <version>0.0.16-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.sakaiproject.taskstream</groupId>
+      <artifactId>TaskStream-Server</artifactId>
+      <version>0.0.16-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    
 <!-- JDOM dependencies -->
     <dependency>
       <groupId>jdom</groupId>

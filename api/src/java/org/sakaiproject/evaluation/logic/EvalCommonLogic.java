@@ -27,7 +27,8 @@ import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
-
+import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 /**
  * Handles all basic internal operations for the evaluation system,
@@ -41,6 +42,58 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
       ExternalEmail, ExternalSecurity, ExternalContent, ExternalScheduler, ExternalTextUtils {
 
    public static final String ADMIN_USER_ID = "admin";
+   
+	// TASK STATUS
+   
+   /**
+    * Get the Url to reach the Task Status Server
+    */
+   public String getTaskStatusUrl();
+   
+   /**
+    * Get an Xml representation of the number of streams matching the query params
+    * 
+    * @param params
+    * @return
+    */
+   public String getTaskStreamCount(String params);
+   
+   /**
+    * Get an Xml representation of the complete task stream container contents matching the query params
+    * 
+    * @param params
+    * 			the task status container resource query container
+    * @return
+    * 			the Xml
+    */
+   public String getTaskStatusContainer(String params);
+   
+   /**
+    * Create a new task status stream with a specific label tag
+    * @param streamTag
+    * 			a tag that may be used as a query parameter
+    * @return 
+    * 			the Url to the new resource
+    */
+   public String newTaskStatusStream(String streamTag);
+   
+   /**
+    * Create a new task status stream entry
+    * 
+    * @param streamUrl
+    * 			the Url that identifies the stream to container the new entry
+    * @param entryTag
+    * 			a tag that may be used as a query parameter
+    * 			
+    * @param status
+    * 			the task status CREATED, RUNNING, FINISHED, or FAILED
+    * @param payload
+    * 			arbitrary content to include with the entry
+    * @return
+    * 			the Url to the new resource
+    */
+   public String newTaskStatusEntry(String streamUrl, String entryTag, 
+			   TaskStatusStandardValues status, String payload);
 
    // Users
 

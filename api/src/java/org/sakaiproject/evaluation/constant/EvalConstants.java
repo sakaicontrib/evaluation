@@ -553,6 +553,14 @@ public class EvalConstants {
     * used as a confirmation message when the evaluation is submitted
     */
    public static final String EMAIL_TEMPLATE_SUBMITTED = "Submitted";
+   
+   /**
+    * EmailTemplate type setting:
+    * This identifies a template as the "background task status report template",
+    * used as a confirmation message when the evaluation is submitted
+    */
+   public static final String EMAIL_TEMPLATE_TASK = "TaskStatus";
+   
    /**
     * EmailTemplate type setting:
     * This identifies a template as the one-email-per-user evaluation-is-available template,

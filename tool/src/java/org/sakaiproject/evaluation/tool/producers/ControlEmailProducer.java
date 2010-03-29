@@ -67,7 +67,7 @@ public class ControlEmailProducer implements ViewComponentProducer {
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
-
+		
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 		//CT-954 TQ: C1 d. Bug - Any admin account - remove toplinks that return everything for admin until paging available
@@ -110,6 +110,31 @@ public class ControlEmailProducer implements ViewComponentProducer {
 
 		UIForm form = UIForm.make(tofill, "emailcontrol-form");
 		
+		/*
+		 * 		<div rsf:id="since-date:" class="shorttext">
+							<label rsf:id="msg=controlemail.since.date" for="since_date_dummy" class="block">Status updates since</label>
+							<br /><br />
+							<span  rsf:id="show-since-date:">
+							  <input type="text" id="since_date_dummy" name="since_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+							  <img src="../images/calendar.gif" />
+							</span>
+							<p class="instruction" rsf:id="since-instructions">
+								Setting the since date sets the earliest date to include when searching for status updates.
+								<br /><br />
+							</p>
+				</div>
+		 */
+		
+		// since date
+		Date sinceDate = (Date) evalSettings
+				.get(EvalSettings.STATUS_SINCE_DATE);
+		UIBranchContainer since = UIBranchContainer.make(form,
+				"since-date:");
+		generateSinceDateSelector(since, "show-since-date", true, sinceDate);
+		UIVerbatim.make(tofill, "since-instruction", UIMessage
+				.make("controlemail.since.instructions"));
+		String sinceOTP = "settingsBean.";
+
 		/*
 		 * one email per course evaluation (default) OR one email per student
 		 * having one or more evaluations for which no response has been
@@ -204,6 +229,31 @@ public class ControlEmailProducer implements ViewComponentProducer {
 			boolean useDateTime, Date initValue) {
 		
 		String binding = PathUtil.composePath(ADMIN_WBL, EvalSettings.NEXT_REMINDER_DATE);
+		UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
+		if (useDateTime) {
+			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+		} else {
+			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+		}
+		dateevolver.evolveDateInput(datePicker, initValue);
+	}
+	
+	/**
+	 * Generates the date picker control for update since date
+	 * 
+	 * @param parent
+	 *            the parent container
+	 * @param rsfId
+	 *            the rsf id of the evolver
+	 * @param useDateTime
+	 * 			  true to use both date and time, false to use date only
+	 * @param initValue
+	 *            null or an initial date value
+	 */
+	private void generateSinceDateSelector(UIBranchContainer parent, String rsfId,
+			boolean useDateTime, Date initValue) {
+		
+		String binding = PathUtil.composePath(ADMIN_WBL, EvalSettings.STATUS_SINCE_DATE);
 		UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
 		if (useDateTime) {
 			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);

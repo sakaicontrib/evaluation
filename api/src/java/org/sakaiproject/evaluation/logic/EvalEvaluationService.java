@@ -25,8 +25,9 @@ import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 /**
  * This contains simple logic for retrieving evaluationSetupService and evaluation related objects
@@ -37,6 +38,60 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public interface EvalEvaluationService {
+	
+	// TASK STATUS
+	
+	/**
+	 * Get the Url to reach the Task Status Server.
+	 */
+	public String getTaskStatusUrl();
+	
+	/**
+	 * Get a model object representing the full task stream container content.
+	 * 
+	 * @param params
+	 * 			the GET Url query parameters
+	 * @return
+	 * 			the model object
+	 */
+	public EvalTaskStreamContainer getTaskStatusContainer(String params);
+	
+	/**
+	 * Get the count of task status streams matching query parameters.
+	 * 
+	 * @param params
+	 * 			the GET Url query parameters
+	 * @return
+	 * 			the stream count
+	 */
+	public Integer getTaskStreamCount(String params);
+	
+	/**
+	 * Create a new task status stream with a streamTag.
+	 * 
+	 * @param streamTag
+	 * 			the tag assigned to the stream.
+	 * @return
+	 * 			the Url to the new stream resource.
+	 */
+	public String newTaskStatusStream(String streamTag);
+	
+	/**
+	 * Create a new task status entry withinn a stream.
+	 * 
+	 * @param streamUrl
+	 * 			the Url that identifies the stream resource to contail the entry.
+	 * @param entryTag
+	 * 			the tag assigned to the entry.
+	 * @param status
+	 * 			the TaskStatusStandardValues value representing task status.
+	 * @param payload
+	 * 			the text content carried by the entry.
+	 * @return
+	 * 		the Url to the new status entry resource.
+	 */
+	public String newTaskStatusEntry(String streamUrl, String entryTag, 
+			   TaskStatusStandardValues status, String payload);
 
    // EVALUATIONS
 
@@ -469,9 +524,20 @@ public interface EvalEvaluationService {
    /**
     * Get an email template for submission confirmation email
     * 
-    * @return the email template identified by this eid
+    * @return the email template of this type
+    * 
+    * TODO refactor: getEvalEmailTemplate(String type) 
     */
    public EvalEmailTemplate getConfirmationEmailTemplate();
+   
+   /**
+    * Get an email template for task status report email
+    * 
+    * @return the email template of this type
+    * 
+    * TODO refactor: getEvalEmailTemplate(String type)
+    */
+   public EvalEmailTemplate getTaskStatusEmailTemplate();
 
    /**
     * Get an email template by its unique id

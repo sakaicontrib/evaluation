@@ -45,7 +45,20 @@ public class EvalExternalLogicStubTest extends TestCase {
 		// create and setup the object to be tested
 		external = new MockEvalExternalLogic();
 	}
-
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getTaskStatus(String)}.
+	 */
+	public void testGetTaskStatus() {
+		Assert.assertNotNull(external.getTaskStatus("?streamTag=Import"));
+	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getTaskStreamCount(String)}.
+	 */
+	public void testGetTaskStreamCount() {
+		Assert.assertNotNull(external.getTaskStreamCount("?streamTag=Import"));
+	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getCurrentUserId()}.

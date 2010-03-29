@@ -26,6 +26,26 @@
 			</div>
 			<h3 rsf:id="msg=controlemail.title">Control Email</h3>
 			<form  rsf:id="emailcontrol-form" method="post">
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.status">Email Report of Background Processing</span></legend>
+				<div rsf:id="since-date:" class="shorttext">
+							<label rsf:id="msg=controlemail.since.date" for="since_date_dummy" class="block">Status updates since</label>
+							<br /><br />
+							<span  rsf:id="show-since-date:">
+							  <input type="text" id="since_date_dummy" name="since_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+							  <img src="../images/calendar.gif" />
+							</span>
+							<p class="instruction" rsf:id="since-instructions">
+								Setting the since date sets the earliest date to include when searching for status updates.
+								<br /><br />
+							</p>
+							<p class="instruction" rsf:id="msg=controlemail.status.instructions">
+								Send an email with the status of tasks that run in the background. \
+								The status email implementation (UM) uses a daily Quartz job to process email. \
+								This job is registered with and scheduled by the Job Scheduler.
+						<br /><br />
+					</p>
+				</div>
+				</fieldset>
 				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.type">Type of Email Notification</span></legend>
 					<p class=   "checkbox indnt1">
 						<input type="checkbox" rsf:id="emailtype" name="emailtype"  id="emailtype-id" />

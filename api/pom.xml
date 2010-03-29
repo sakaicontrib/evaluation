@@ -47,7 +47,14 @@
       <groupId>quartz</groupId>
       <artifactId>quartz</artifactId>
     </dependency>
-  </dependencies>
+  <!-- taskstatus enum -->
+     <dependency>
+      <groupId>org.sakaiproject.taskstream</groupId>
+      <artifactId>TaskStream-Server</artifactId>
+      <version>0.0.16-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    </dependencies>
   <build>
     <sourceDirectory>src/java</sourceDirectory>
     <resources>

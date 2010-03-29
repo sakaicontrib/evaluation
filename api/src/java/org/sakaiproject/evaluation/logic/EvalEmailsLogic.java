@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.util.List;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 
 /**
@@ -69,9 +71,11 @@ public interface EvalEmailsLogic {
     * and include the earliest due date of those evaluations, also include a link to the summary page of 
     * the evaluation tool on the user's My Workspace site
     * 
+    * @param streamUrl
+    * 			the location of a task stream resource
     * @return an array of the email addresses that were sent to
     */
-   public String[] sendEvalAvailableSingleEmail();
+   public String[] sendEvalAvailableSingleEmail(String streamUrl);
 
 
    /**
@@ -91,9 +95,11 @@ public interface EvalEmailsLogic {
     * and include the earliest due date of those evaluations, also include a link to the summary page of 
     * the evaluation tool on the user's My Workspace site
     * 
+    * @param streamUrl
+    * 			the location of a task stream resource
     * @return an array of the email addresses that were sent to
     */
-   public String[] sendEvalReminderSingleEmail();
+   public String[] sendEvalReminderSingleEmail(String streamUrl);
 
    /**
     * Send notifications that the evaluation is now complete and the results are viewable,
@@ -117,5 +123,21 @@ public interface EvalEmailsLogic {
     * @return the email address of the user
     */
    public String sendEvalSubmissionConfirmationEmail(Long evalId);
+   
+   /**
+    * 
+    * @param jobRan 
+    * 			true if the single email job created a atask stream
+    * @param dataLoaded
+    * 			true if any files were imported
+    * @param ranText
+    * 			a summary of the email job task status during processing
+    * @param loadedText
+    * 			a summary of the import servlet task status during processing
+    * @param unfinished
+    * 			the number of files that have not finished being processed
+    */
+   public void sendEvalTaskStatusEmail(Boolean jobRan, Boolean dataLoaded,
+			List<String> ranText, List<String> loadedText, Integer unfinished);
 
 }

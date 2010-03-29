@@ -80,6 +80,10 @@ api/src/java/org/sakaiproject/evaluation/model/EvalResponse.java -text svn_keywo
 api/src/java/org/sakaiproject/evaluation/model/EvalScale.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTags.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTagsMeta.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalTaskStatusEntry.java -text
+api/src/java/org/sakaiproject/evaluation/model/EvalTaskStatusStream.java -text
+api/src/java/org/sakaiproject/evaluation/model/EvalTaskStreamContainer.java -text
+api/src/java/org/sakaiproject/evaluation/model/EvalTaskStreamCount.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalTemplate.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTranslation.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -140,6 +144,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalEnableSendingQueu
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalSingleEmailImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalStatusEmailImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate-test.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate.cfg.xml -text svn_keywords=Date+Revision+Author+URL+Id

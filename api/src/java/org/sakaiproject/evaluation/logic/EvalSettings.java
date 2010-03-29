@@ -257,6 +257,12 @@ public interface EvalSettings {
    public static final String NEXT_REMINDER_DATE = "NEXT_REMINDER_DATE:java.util.Date";
    
    /**
+    * CONSTANT: The Date to include status updates since in email report  - {@link String}, 
+    * default is null
+    */
+   public static final String STATUS_SINCE_DATE = "STATUS_SINCE_DATE:java.util.Date";
+   
+   /**
     * CONSTANT: Frequency of reminders when one email per student is set. - {@link Integer},default 0}
     */
    public static final String REMINDER_INTERVAL_DAYS = "REMINDER_INTERVAL_DAYS:java.lang.Integer";

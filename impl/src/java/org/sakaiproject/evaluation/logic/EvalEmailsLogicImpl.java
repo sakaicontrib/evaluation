@@ -45,6 +45,7 @@ import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
+import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 
 /**
  * EvalEmailsLogic implementation,
@@ -517,12 +518,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       return (String[]) sentEmails.toArray(new String[] {});
    }
    
+	private String reportError(String streamUrl, String entryTag, String payload) {
+		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+				entryTag, TaskStatusStandardValues.RUNNING, payload);
+		return entryUrl;
+	}
+   
    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalAvailableSingleEmail()
 	 */
-	public String[] sendEvalAvailableSingleEmail() {
+	public String[] sendEvalAvailableSingleEmail(String streamUrl) {
 		Long[] evalIds = new Long[] {};
 		String[] toAddresses = new String[] {};
 		List<EvalAssignGroup> groups = null;
@@ -556,6 +563,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if (log.isInfoEnabled())
 				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): getting groups assigned to these evaluations"
 						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
+			try {
+				// ANNOUNCEMENT GROUPS
+				reportGroups(streamUrl, assignGroupMap.size(), "announcementGroups");
+			}
+			catch(Exception e) {
+				log.error(this + ".sendEvalAvailableSingleEmail - task status " + e);
+			}
 
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
@@ -570,7 +584,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							.get(j).getEvalGroupId(),
 							EvalConstants.EVAL_INCLUDE_ALL);
 					
-
 					// get the users in these groups
 					userIdsTakingEval.addAll(users);
 
@@ -593,7 +606,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap, earliestDueDate);
+				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap, earliestDueDate, streamUrl);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -610,6 +623,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
 		}
 		return toAddresses;
+	}
+
+	private String reportGroups(String streamUrl, int size, String entryTag) {
+		String payload = (new Integer(size)).toString();
+		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+				entryTag, TaskStatusStandardValues.RUNNING, payload);
+		return entryUrl;
 	}
 
 	/**
@@ -639,7 +659,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalReminderSingleEmail()
     */
-   public String[] sendEvalReminderSingleEmail() {
+   public String[] sendEvalReminderSingleEmail(String streamUrl) {
 		Long[] evalIds = new Long[] {};
 		String[] toAddresses = new String[] {};
 		List<EvalAssignGroup> groups = null;
@@ -674,7 +694,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if (log.isInfoEnabled())
 				log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): getting groups assigned to these evaluations"
 						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
-
+			try {
+				// REMINDER GROUPS
+				reportGroups(streamUrl, assignGroupMap.size(), "reminderGroups");
+			}
+			catch(Exception e) {
+				log.error(this + ".sendEvalReminderSingleEmail - tasks status " + e);
+			}
+			
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
 				// CT-697
@@ -709,7 +736,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap, earliestDueDate);
+				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap, earliestDueDate, streamUrl);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -719,8 +746,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		return toAddresses;
 	}
-   
-   /**
+
+/**
     * Build a map of user id key and email template id value
     * 
     * @param evalId the evaluation identifier
@@ -769,7 +796,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @return an array of the email addresses to which email was sent
     */
    private String[] sendEvalSingleEmail(Set<String> uniqueIds, String[] toUserIds, Map<String, 
-		   Set<Long>> emailTemplatesMap, Map<String, Date> earliestDates) {
+		   Set<Long>> emailTemplatesMap, Map<String, Date> earliestDates, String streamUrl) {
 	   
 		if (uniqueIds == null || toUserIds == null || emailTemplatesMap == null) {
 			throw new IllegalArgumentException(
@@ -845,12 +872,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							replacementValues);
 					subject = makeEmailMessage(template.getSubject(),
 							replacementValues);
-					
 					String lockName = getLockName(EvalConstants.EMAIL_LOCK_PREFIX);
-					
-					//String lockName = EvalConstants.EMAIL_LOCK_PREFIX + selectEmailSet(start, sets).toString();
-					//start++;
-					
+	
 					//dispatch email using delivery option
 					if(EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
 						String emailAddress = queueOutgoingEmail(s, subject, message, lockName);
@@ -864,16 +887,21 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						if(log.isInfoEnabled())
 							log.info("Evaluation email delivery option is " + deliveryOption + ".");
 					}
-					
 			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
-					//deprecated String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
 			         
 			        // handle throttling email delivery and logging progress
 					numProcessed = logEmailsProcessed(batch, wait, every, numProcessed, "queued");
 				}
 			} catch (Exception e) {
-				log.error("EvalEmailLogicImpl.sendEvalSingleEmail(): user id '" + s
-						+ "', url '" + url + "' " + e);
+				String payload = "user id '" + s + "', url '" + url + "' " + e.toString();
+				log.error("EvalEmailLogicImpl.sendEvalSingleEmail(): " + payload);
+				try {
+					reportError(streamUrl, "error", "user id '" + s
+							+ "', url '" + url + "' " + e);
+				}
+				catch(Exception tss) {
+					log.error(this + ".sendEvalSingleEmail - task status " + tss);
+				}
 			}
 		}
 		// handle logging of total number of email messages processed
@@ -885,8 +913,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			logRecipients(sentToAddresses);
 		if(log.isInfoEnabled())
 			log.info("EvalEmailLogicImpl.sendEvalSingleEmail(): queuing of notifications is done.");
-		
-		return (String[]) sentToAddresses.toArray(new String[] {});
+
+		String[] recipients = new String[sentToAddresses.size()];
+		sentToAddresses.toArray(recipients);
+		return recipients;
 	}
    
    private String getLockName(String lockType) {
@@ -977,6 +1007,82 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return to;
 	}
 	
+	public void sendEvalTaskStatusEmail(Boolean jobRan, Boolean dataLoaded,
+				List<String> ranText, List<String> loadedText, Integer unfinished) {
+		if(jobRan == null || dataLoaded == null || ranText == null || loadedText == null)
+			throw new IllegalArgumentException(this + ".sendEvalTaskStatusEmail argument(s) null.");
+		String ran = null;
+		String loaded = null;
+		StringBuilder emailText = new StringBuilder();
+		StringBuilder importText = new StringBuilder();
+		if(jobRan) {
+			ran = "ran";
+			for(String line : ranText) {
+				emailText.append(line + "\n");
+			}
+		}
+		else {
+			ran = "didn't run";
+			emailText.append("Please check that the TQ Daily operational Summary Report job has been scheduled to run.");
+		}
+		if(dataLoaded) {
+			loaded = "was";
+			for(String line : loadedText) {
+				importText.append(line + "\n");
+			}
+		}
+		else {
+			loaded = "was not";
+			if(unfinished != null) {
+				importText.append(unfinished.toString() + " files have not finished loading.");
+			}
+		}
+		String to = externalLogic.getConfigurationSetting("taskstatus.email", "rwellis@umich.edu");
+		String[] sendTo = (String[]) new String[] {to};
+		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		
+		DateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy h:mm a");
+		Date date = new Date();
+		String reportDate = formatter.format(date);
+		
+        // replace the text of the template with real values
+        Map<String, String> replacementValues = new HashMap<String, String>();
+        replacementValues.put("ReportDate", reportDate);
+        replacementValues.put("Ran", ran);
+        replacementValues.put("RanText", emailText.toString());
+        replacementValues.put("Loaded", loaded);
+        replacementValues.put("LoadedText", importText.toString());
+ 
+		//get the template
+		EvalEmailTemplate template = evaluationService.getTaskStatusEmailTemplate();
+		//make the substitutions
+		String subject = makeEmailMessage(template.getSubject(),
+				replacementValues);
+		String message = makeEmailMessage(template.getMessage(),
+				replacementValues);
+		if(log.isDebugEnabled()) {
+			log.debug("sendEvalTaskStatusEmail: subject: " + subject);
+			log.debug("sendEvalTaskStatusEmail: message: " + message);
+		}
+		String[] sentTo = externalLogic.sendEmailsToAddresses(from, sendTo, subject, message, true);
+	}
+	
+	   /**
+	    * Send emails to a set of email addresses (can send to a single address
+	    * by specifying an array with one item only)
+	    * NOTE: Use {@link #sendEmailsToUsers(String, String[], String, String, boolean)} if you know who the users are
+	    * 
+	    * @param from the email address this email appears to come from
+	    * @param to the email address(es) this message should be sent to
+	    * @param subject the message subject
+	    * @param message the message to send
+	    * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
+	    * if false then exceptions are thrown immediately
+	    * @return an array of email addresses that this message was sent to
+	    * @throws 
+	    
+	   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions);
+	*/
  
    /**
     * Save pending email in a holding table for the email sending process(es) to read

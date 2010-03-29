@@ -164,7 +164,8 @@ public class PreloadDataImpl {
          
          // Default email settings
          saveConfig(EvalSettings.REMINDER_INTERVAL_DAYS, 0); //no reminders
-         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "Sat Oct 18 09:15:00 EST 2008");
+         saveConfig(EvalSettings.NEXT_REMINDER_DATE, "Sat Oct 18 09:15:00 EST 2008"); //the next date single email reminders will be sent
+         saveConfig(EvalSettings.STATUS_SINCE_DATE, "Sat Oct 18 09:15:00 EST 2008"); //check for background task status messages since
          saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0); //no throttle
          saveConfig(EvalSettings.EMAIL_LOCKS_SIZE, 100);//influences batch size
          saveConfig(EvalSettings.EMAIL_SEND_QUEUED_ENABLED, true); // a simple flag that can be set
@@ -233,6 +234,10 @@ public class PreloadDataImpl {
          dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_SUBMITTED, 
         		 EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_TEXT, 
         		 EvalConstants.EMAIL_TEMPLATE_SUBMITTED));
+         //background task status report template
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_TASK, 
+        		 EvalEmailConstants.EMAIL_TASK_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_TASK_DEFAULT_TEXT, 
+        		 EvalConstants.EMAIL_TEMPLATE_TASK));
  
          log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }
