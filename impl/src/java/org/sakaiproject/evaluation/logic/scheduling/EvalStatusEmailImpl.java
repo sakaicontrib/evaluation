@@ -190,7 +190,7 @@ public class EvalStatusEmailImpl implements Job{
 							+ "&since=" + since 
 							+ "&entryTag=" + WITHOUT_ERROR
 							+ "&entryStatus=" + TaskStatusStandardValues.FINISHED;
-					loadedText.add("\nDetails are <a href='" + taskStatusUrl + queryParameters + "'>here</a>.");
+					loadedText.add("\nDetails: " + taskStatusUrl + queryParameters);
 				}
 				// files with errors
 				Integer filesWithError = importedWithError(baseImportQuery, streamUrl);
@@ -207,7 +207,7 @@ public class EvalStatusEmailImpl implements Job{
 							+ "&since=" + since 
 							+ "&entryTag=" + WITH_ERROR
 							+ "&entryStatus=" + TaskStatusStandardValues.FINISHED;
-					loadedText.add("\nDetails are <a href='"  + taskStatusUrl + queryParameters + "'>here</a>.");
+					loadedText.add("\nDetails: " + taskStatusUrl + queryParameters);
 				}
 				// files still being processed
 				filesUnfinished = importUnfinished(baseImportQuery, streamUrl);
@@ -282,8 +282,8 @@ public class EvalStatusEmailImpl implements Job{
 		}
 		if(jobErrors != null && jobErrors) {
 			// link to details
-			ranText.add("The email job had problems. \nDetails are <a href='" + taskStatusUrl + "?streamTag=" 
-					+ EMAIL_STREAM_TAG  + "&entryTag=" + ERROR + "&since=" + since + "'>here</a>.");
+			ranText.add("The email job had problems. \nDetails: " + taskStatusUrl + "?streamTag=" 
+					+ EMAIL_STREAM_TAG  + "&entryTag=" + ERROR + "&since=" + since);
 		}
 		ranText.add("\n------------------------------------------------------------------------\n");
 	}
