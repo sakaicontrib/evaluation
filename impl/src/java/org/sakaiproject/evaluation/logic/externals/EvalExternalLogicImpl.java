@@ -1385,33 +1385,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamCount(String, String, TaskStatusStandardValues, String)
-	 
-	public int getTaskStreamCount(String streamTag, String entryTag, TaskStatusStandardValues status, String since) {
-		if(streamTag == null || entryTag == null || status == null || since == null) {
-			throw new IllegalArgumentException(this + ".getTaskStreamCount argument(s) null.");
-		}
-		//String streamUrl = getTaskStatusUrl() + "/?streamTag=" + streamTag + "&entryTag=" + entryTag + "&status=" + status + "&since=" + since; // dlhaines needs to fix
-		String streamUrl = getTaskStatusUrl() + "/?streamTag=" + streamTag;
-		TSSResponseApi r = taskStatus.getTSSItem(streamUrl);
-		//TSSResponseApi r = taskStatus.getTSSItem(streamUrl, "text/xml; charset=ISO-8859-1");
-		// int 200 for a successful get.
-		if(r != null && r.getStatus() == 200) {
-			String body = r.getBody();
-			if(body == null) {
-				return 0;
-			}
-			else {
-				System.out.println(body);
-			}
-			return 1;
-		}
-		return 0;
-	}
-	*/
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamCount(java.lang.String)
 	 */
 	public String getTaskStreamCount(String params) {
@@ -1424,39 +1397,4 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return null;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreams(java.lang.String, java.lang.String, java.lang.String)
-	 *
-	public void getTaskStreams(String streamTag, String start, String end) {
-		// TODO Auto-generated method stub
-		// int 200 for a successful get.
-		/*
-		 * All it does is construct the URL from the query parameters.  You'll need to do that explicitly for now.
-
-TSSResponseApi getTSSItem(String streamUrl, String mimeFormat);
-		 
-	}
-	*/
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getTaskStreamEntry(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 
-	public void getTaskStreamEntries(String streamTag, String entryTag,
-			String status, String start, String end) {
-		if(streamTag == null) {
-			throw new IllegalArgumentException(this + ".getTaskStreamEntry argument is null.");
-		}
-		// TODO Auto-generated method stub
-		// int 200 for a successful get.
-		/*
-		 * All it does is construct the URL from the query parameters.  You'll need to do that explicitly for now.
-
-TSSResponseApi getTSSItem(String streamUrl, String mimeFormat);
-		 
-		
-	}
-	*/
 }

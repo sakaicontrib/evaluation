@@ -606,7 +606,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap, earliestDueDate, streamUrl);
+				toAddresses = sendEvalSingleEmail(allUserIds, toAddresses, emailTemplateMap, earliestDueDate, streamUrl);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -736,7 +736,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// user's active evaluations)
 			start = System.currentTimeMillis();
 			if (!allUserIds.isEmpty())
-				sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap, earliestDueDate, streamUrl);
+				toAddresses = sendEvalSingleEmail(allUserIds, toAddresses,emailTemplateMap, earliestDueDate, streamUrl);
 			end = System.currentTimeMillis();
 			seconds = (end - start) / 1000;
 			if (log.isInfoEnabled())
@@ -769,6 +769,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	   }
 	   else if(EvalConstants.SINGLE_EMAIL_TEMPLATE_AVAILABLE.equals(type)) {
 		   emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
+		   
 	   }
 	   for(String id : userIds) {
 			// build the map of user and earliest due date
@@ -1028,7 +1029,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		if(dataLoaded) {
 			loaded = "was";
 			for(String line : loadedText) {
-				importText.append(line + "\n");
+				importText.append(line + "\n\n");
 			}
 		}
 		else {

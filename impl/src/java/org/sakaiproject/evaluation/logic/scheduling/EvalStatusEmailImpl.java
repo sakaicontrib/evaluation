@@ -83,7 +83,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			// RUNNING
 			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					"started", TaskStatusStandardValues.RUNNING, null);
+					null, TaskStatusStandardValues.RUNNING, null);
 			
 			if(log.isDebugEnabled()) log.debug("stream tag " + STATUS_STREAM_TAG + " streamUrl " + streamUrl);
 			
@@ -94,6 +94,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			String taskStatusUrl = evaluationService.getTaskStatusUrl();
 			String queryParameters = null;
+			String filesText = null;
 			
 			// EMAIL JOB
 			String baseEmailQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=2";
@@ -118,7 +119,7 @@ public class EvalStatusEmailImpl implements Job{
 							anc = "Announcements were sent. This took " + entry.getPayload() + ".";
 						}
 						else if(ANNOUNCEMENT_GROUPS.equalsIgnoreCase(entry.getEntryTag())) {
-							ancGroups = "There were " + entry.getPayload() + " groups processed.";
+							ancGroups = "Announcements were sent to " + entry.getPayload() + " groups.";
 						}
 						else if (ANNOUNCEMENT_USERS.equalsIgnoreCase(entry.getEntryTag())) {
 							ancUsers = "Announcements were sent to " + entry.getPayload() + " users.";
@@ -127,13 +128,13 @@ public class EvalStatusEmailImpl implements Job{
 							rem = "Reminders were sent. This took "  + entry.getPayload() + ".";
 						}
 						else if (REMINDER_GROUPS.equalsIgnoreCase(entry.getEntryTag())) {
-							remGroups = "There were " + entry.getPayload() + " groups processed.";
+							remGroups = "Reminders were sent to " + entry.getPayload() + " groups.";
 						}
 						else if(REMINDER_USERS.equalsIgnoreCase(entry.getEntryTag())) {
 							remUsers = "Reminders were sent to " + entry.getPayload() + " users.";
 						}
 						else if(SUMMARY.equals(entry.getEntryTag())) {
-							email = entry.getPayload() + ".";
+							email = entry.getPayload();
 						}
 					}
 					addEmailText(ranText, anc, ancGroups, ancUsers, rem,
@@ -151,17 +152,29 @@ public class EvalStatusEmailImpl implements Job{
 				// get the details of files loaded
 				dataLoaded = Boolean.TRUE;
 				// all files loaded
-				loadedText.add(filesTotal.toString() + " files were loaded since the last email status report.");
-				String containerQuery = "?streamtag=Import&since=" + since + "&depth=2" + "&otype=" + CONTAINER_OTYPE;
+				filesText =  " files were ";
+				if(filesTotal == 1) {
+					filesText =  " file was ";
+				}
+				loadedText.add(filesTotal.toString() + filesText + "loaded since the last email status report.");
+				String containerQuery = "?streamTag=Import&since=" + since + "&depth=2" + "&otype=" + CONTAINER_OTYPE + "&streamStatus=" + TaskStatusStandardValues.FINISHED;
+				EvalTaskStatusStream firstStream = null;
+				EvalTaskStatusStream lastStream = null;
+				// TODO need the first and last streams not the whole container
 				EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer(containerQuery);
-				EvalTaskStatusStream firstStream = container.getStreams().get(0);
-				EvalTaskStatusStream lastStream = container.getStreams().get(container.getStreamCount() - 1);
-				EvalTaskStatusEntry secondEntry = firstStream.getStatusEntries().get(1);
-				// first file
-				loadedText.add("The first file " + secondEntry.getPayload() + " started loading at " + secondEntry.getCreated());
-				EvalTaskStatusEntry lastEntry = lastStream.getStatusEntries().get(lastStream.getStatusEntries().size() - 1);
-				// last file
-				loadedText.add("The last file " + lastEntry.getPayload() + " finished loading at " + lastEntry.getCreated());
+				if(container.getStreamCount().intValue() > 1) {
+					firstStream = container.getStreams().get(0);
+					lastStream = container.getStreams().get(container.getStreamCount() - 1);
+					// by convention the second entry payload has the filename
+					EvalTaskStatusEntry secondEntry = firstStream.getStatusEntries().get(1);
+					// first file
+					loadedText.add("The first file " + secondEntry.getPayload() + " started loading at " + secondEntry.getCreated());
+					// by convention the last entry payload has the filename
+					EvalTaskStatusEntry lastEntry = lastStream.getStatusEntries().get(lastStream.getStatusEntries().size() - 1);
+					// last file
+					loadedText.add("The last file " + lastEntry.getPayload() + " finished loading at " + lastEntry.getCreated());
+				}
+
 				// files without errors
 				Integer filesWithoutError = importedWithoutError(baseImportQuery, streamUrl);
 				if(filesWithoutError > 0) {
@@ -177,7 +190,7 @@ public class EvalStatusEmailImpl implements Job{
 							+ "&since=" + since 
 							+ "&entryTag=" + WITHOUT_ERROR
 							+ "&entryStatus=" + TaskStatusStandardValues.FINISHED;
-					loadedText.add("Details are at " + taskStatusUrl + queryParameters);
+					loadedText.add("\nDetails are <a href='" + taskStatusUrl + queryParameters + "'>here</a>.");
 				}
 				// files with errors
 				Integer filesWithError = importedWithError(baseImportQuery, streamUrl);
@@ -194,17 +207,16 @@ public class EvalStatusEmailImpl implements Job{
 							+ "&since=" + since 
 							+ "&entryTag=" + WITH_ERROR
 							+ "&entryStatus=" + TaskStatusStandardValues.FINISHED;
-					loadedText.add("Details are at "  + taskStatusUrl + queryParameters);
+					loadedText.add("\nDetails are <a href='"  + taskStatusUrl + queryParameters + "'>here</a>.");
 				}
 				// files still being processed
 				filesUnfinished = importUnfinished(baseImportQuery, streamUrl);
 				if(filesUnfinished > 0) {
+					filesText = " files have ";
 					if(filesUnfinished == 1) {
-						loadedText.add(filesUnfinished.toString() + " file has not finished processing.");
+						filesText = " file has ";
 					}
-					else {
-						loadedText.add(filesUnfinished.toString() + " files have not finished processing.");
-					}
+					loadedText.add(filesUnfinished.toString() + filesText + "not finished processing.");
 				}
 			}
 			
@@ -219,7 +231,7 @@ public class EvalStatusEmailImpl implements Job{
 			if(log.isInfoEnabled()) log.info(this + ".execute - done.");
 			
 			// FINISHED
-			entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "EvalSettings.STATUS_SINCE_DATE", 
+			entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "STATUS_SINCE_DATE", 
 					TaskStatusStandardValues.FINISHED, "updated to " + newDate.toString());
 		
 		} catch (Exception e) {
@@ -236,7 +248,7 @@ public class EvalStatusEmailImpl implements Job{
 		if(errors > 0) jobErrors = Boolean.TRUE;
 		
 		// EvalStatusEmailImpl status
-		String entryTag = "emailJobErrors";
+		String entryTag = "emailErrors";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
 						jobErrors)).toString());
@@ -246,17 +258,34 @@ public class EvalStatusEmailImpl implements Job{
 	private void addEmailText(List<String> ranText, String anc,
 			String ancGroups, String ancUsers, String rem, String remGroups,
 			String remUsers, String email, String taskStatusUrl, Boolean jobErrors, String since) {
-		ranText.add(email);
-		ranText.add(anc);
-		ranText.add(ancGroups);
-		ranText.add(ancUsers);
-		ranText.add(rem);
-		ranText.add(remGroups);
-		ranText.add(remUsers);
-		if(jobErrors) {
-			// link to details
-			ranText.add("The email job had problems. Details are at " + taskStatusUrl + "?streamTag=" + EMAIL_STREAM_TAG  + "&entryTag=" + ERROR + "&since=" + since);
+		
+		if(email != null) {
+			ranText.add(email);
 		}
+		if(anc != null) {
+			ranText.add(anc);
+		}
+		if(ancGroups != null) {
+			ranText.add(ancGroups);
+		}
+		if(ancUsers != null) {
+			ranText.add(ancUsers);
+		}
+		if(rem != null) {
+			ranText.add(rem);
+		}
+		if(remGroups != null) {
+			ranText.add(remGroups);
+		}
+		if(remUsers != null) {
+			ranText.add(remUsers);
+		}
+		if(jobErrors != null && jobErrors) {
+			// link to details
+			ranText.add("The email job had problems. \nDetails are <a href='" + taskStatusUrl + "?streamTag=" 
+					+ EMAIL_STREAM_TAG  + "&entryTag=" + ERROR + "&since=" + since + "'>here</a>.");
+		}
+		ranText.add("\n------------------------------------------------------------------------\n");
 	}
 
 	/**
@@ -277,7 +306,7 @@ public class EvalStatusEmailImpl implements Job{
 		if(log.isDebugEnabled()) log.debug("'email job ran' is " + (new Boolean(jobRan)).toString());
 		
 		// EvalStatusEmailImpl status
-		String entryTag = "emailJobRan";
+		String entryTag = "emailRan";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
 						jobRan)).toString());
@@ -376,7 +405,7 @@ public class EvalStatusEmailImpl implements Job{
 		
 		// EvalStatusEmailImpl status
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				"importUnfinished", TaskStatusStandardValues.RUNNING,
+				"filesUnfinished", TaskStatusStandardValues.RUNNING,
 				stillRunning.toString());
 		
 		return stillRunning;

@@ -330,6 +330,8 @@ public class EvalEmailConstants {
 	
 	public static final String EMAIL_TASK_DEFAULT_TEXT = 
 		"This message is a summary of the automated daily TQ operations for ${ReportDate}.\n\n" +
-		"1. The TQ email job ${Ran} last night.\n\n${RanText}\n\n" +
-		"2. Data ${Loaded} loaded into the system.\n\n${LoadedText}"; 
+		"     1. The TQ email job ${Ran} last night.\n\n" + "" +
+				"     ${RanText}\n\n" +
+		"     2. Data ${Loaded} loaded into the system.\n\n" + 
+				"     ${LoadedText}"; 
 }

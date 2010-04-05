@@ -110,21 +110,6 @@ public class ControlEmailProducer implements ViewComponentProducer {
 
 		UIForm form = UIForm.make(tofill, "emailcontrol-form");
 		
-		/*
-		 * 		<div rsf:id="since-date:" class="shorttext">
-							<label rsf:id="msg=controlemail.since.date" for="since_date_dummy" class="block">Status updates since</label>
-							<br /><br />
-							<span  rsf:id="show-since-date:">
-							  <input type="text" id="since_date_dummy" name="since_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-							  <img src="../images/calendar.gif" />
-							</span>
-							<p class="instruction" rsf:id="since-instructions">
-								Setting the since date sets the earliest date to include when searching for status updates.
-								<br /><br />
-							</p>
-				</div>
-		 */
-		
 		// since date
 		Date sinceDate = (Date) evalSettings
 				.get(EvalSettings.STATUS_SINCE_DATE);
