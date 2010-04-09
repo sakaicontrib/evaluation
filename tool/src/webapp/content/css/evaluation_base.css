@@ -268,7 +268,9 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 .itemListNew ol{ padding: 0; margin: 0 }
 .itemListNew li{ padding: .3em; margin: .3em; border: 1px solid #eee }
 .itemListNew li:hover .itemScalePanel{ border: 1px solid #aaa; background: #fff }
-.itemListEval li{ list-style: none; padding: .5em; margin: .2em }
+.itemListEval li{ list-style: none; padding: .5em !important; margin: .2em}
+.itemScalePanelNACell{background:#fff !important}
+
 /*since these list items can contain list items,minimize inheritance*/
 .itemListEval li ul li,.itemListEval li ol li{
 	list-style: disc;
@@ -291,14 +293,31 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 .itemScalePanel td{ padding: .3em .5em }
 .itemScalePanel .compactDisplayStart{ background: #FF8BA0 }
 .itemScalePanel .compactDisplayEnd{ background: #8BE8A2 }
-.itemScalePanel td.idealScale{ padding: 0 !important; vertical-align: top }
+.itemScalePanel td.idealScale{ padding: 0 !important; vertical-align: top;}
 .itemScalePanel td.idealScale div{ margin: 0 }
-.itemScalePanel td.idealScale label{ padding: 5px 2px .2em 2px; margin: 0 2px }
-.itemScalePanel td.idealScale label:hover{
-	border: 1px solid #aaa;
+.itemScalePanel td.idealScale label{
+
+		-moz-border-radius:.5em;
+	-webkit-border-radius:.5em;	
+	 text-align:center;
+	 display:inline-block;
+	 width:28px;
+ 	 border:none
+ }
+
+.itemScalePanel td.idealScale label input{margin:3px 0px !important;}
+.itemScalePanel td.idealScale .scaleChoiceColored label:hover{
 	background: #fff;
-	margin: 0 1px
 }
+.itemScalePanel td.idealScale .scaleChoiceNotColored label:hover{
+	background: #eee;
+}
+
+.scaleChoiceColored{width:100%;display:block;position:absolute;z-index:6;background-color:transparent;padding-top:1px}
+.scaleChoiceNotColored{padding-top:2px;}
+.scaleChoiceNotColored .scaleItemLabelSelected{background:#ccc;}
+.scaleChoiceColored .scaleItemLabelSelected{background:#fff;}
+.itemScalePanelNACell{background:transparent !important}
 .idealScaleBack{
 	width: 100%;
 	display: block;
@@ -306,17 +325,117 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 	z-index: 5
 }
 .idealScaleBack img{ width: 100%; height: 29px; overflow: hidden }
-.fullVertical{ margin: .5em 2em }
-.fullVertical ol{ padding-left: 0; margin: 0 }
 .fullVertical ol li{
 	margin: 0;
 	padding: .3em;
 	border: none;
 	list-style: none  !important
 }
-.fullDisplayHorizontal td{ padding: 0 }
-.fullVertical .na label{ padding-left: .2em }
+td.fullDisplayHorizontalColoredWrapper {
+	padding-top:1em;
+}
+.fullDisplayHorizontalColored{
+	margin-top:0 !important;
+}
+.fullDisplayHorizontalScale{
+	height:28px;
+}
+.fullDisplayHorizontalScale td {
+	padding: 5px;
+	 vertical-align:middle;
+	 text-align:center;
+	 white-space:nowrap;
+}
+.fullDisplayHorizontal label{
+	font-weight:bold;
+	}
+.fullDisplayHorizontalScale span{
+	font-weight:bold;
+	padding-left:2em !important;
+	padding-right:2em !important;
+	-moz-border-radius:.5em;
+	-webkit-border-radius:.5em;	
+}
+
+.fullDisplayHorizontalScale span:hover{
+	background-color:#eee
+}
+.fullDisplayHorizontalScale .labelSelected{
+	background-color:#eee
+}
+.itemsListOddLine .fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected,
+.itemsListOddLine .fullDisplayHorizontalScale span:hover, .fullDisplayHorizontalColored span:hover{
+	background-color:#fff;
+}
+
+.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected{
+	background-image:url(../images/tick.png);
+	background-position: .5em;
+	background-repeat: no-repeat; 
+	
+	padding:.5em;
+	}
+
+.fullDisplayHorizontal td input{
+}
+.fullVertical, .fullDisplayHorizontal {
+	clear:both;
+	height:100%;
+	overflow:hidden;
+	margin:1em 0;
+	padding:0
+}
+.fullVertical li, .fullDisplayHorizontal li{
+	border:1px solid #ccc !important;
+	float:left;
+	height:4em;
+	list-style-image:none !important;
+	list-style-position:outside !important;
+	list-style-type:none !important;
+	margin:0.3em;
+	padding:0 !important;
+	width:15em;
+	background: #fff;
+	-moz-border-radius:.5em;
+	-webkit-border-radius:.5em;
+	overflow:hidden;	
+}
+.fullVertical li label, .fullDisplayHorizontal li label{
+	display:block;
+	margin:0;
+	font-weight:normal;
+	text-indent:-2em;
+	padding:0.5em 0.5em 0.5em 2.5em!important;
+	height:100%;
+	}
+.fullVertical li:hover, .fullDisplayHorizontal li:hover {
+	background:#FDFFCC;
+	cursor:pointer;x
+	}
+
+.fullVertical li{
+	margin:0.3em;
+	float:none;
+	width:50%;
+	height:auto;
+}
+.fullVertical li.checked, .fullDisplayHorizontal li.checked{
+	background:#FDFFCC
+}
+.fullVertical li.checkedNA, .fullDisplayHorizontal li.checkedNA{
+	background:#ddd
+}
+.fullVertical li.na, .fullDisplayHorizontal li.na {
+	}
+.fullVertical li.na{
+	margin:1em 0 0 0.3em !important;
+	float:none;
+	width:50% !important;
+	text-align:left;
+	height:auto;
+}
 /*2nd toolbar item links*/
+
 .addItem{
 	padding-left: 2em;
 	background: transparent url(../images/add.png) center left no-repeat
@@ -336,7 +455,7 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 /*see block items*/
 .steppedRowContainer{ border-collapse: collapse }
 .steppedRowContainer tr:hover{ background: #eee }
-.steppedRowContainer tr:hover td{ border-bottom: 1px solid #000 }
+.steppedRowContainer tr:hover td{ border-bottom: 1px solid #000; }
 .steppedRowContainer tr:hover td.exclude{ border: none }
 
 
@@ -365,6 +484,64 @@ remove input width in template and use these instead
 	border-bottom: 1px solid #fff
 }
 .itemsListOddLine .steppedRowContainer td td{ border: none }
+
+#toolTip{padding:3px;border:1px solid #ccc;position:absolute;z-index:10;background:#ffe;display:none}
+.questionCell{
+	width:60%
+}
+
+.answerCell{
+}
+.NACell{
+	width:28px !important;padding-right:.5em;
+}
+.blockChoiceColored{
+	width:100%;display:block;position:absolute;z-index:6;background-color:transparent;
+}
+.blockChoiceColored label.blockItemLabelSelected {
+	background:#fff;
+}
+.blockChoiceNotColored{
+
+}
+.blockChoiceNotColored label.blockItemLabelSelected {
+	background:#ccc;
+}
+
+.blockItemLabelSelectedNA{
+	background:#ccc;
+}
+.blockChoiceColored label.blockItemLabel:hover{
+	background:#fff;
+}
+
+.blockChoiceNotColored label.blockItemLabel:hover{
+	background:#aaa;
+}
+.itemsListOddLine .blockChoiceNotColored label.blockItemLabel:hover{
+		background:#eee;
+}
+
+label.blockItemLabel, label.blockItemLabelNA{
+	-moz-border-radius:.5em; 
+	-webkit-border-radius:.5em;	
+	 text-align:center;
+	 display:inline-block;
+	 width:28px;
+}
+label.blockItemLabel input, label.blockItemLabelNA input{margin:3px 0px !important;}	 
+label.blockItemLabel:hover{
+	background:#fff;
+}
+.itemDoneCheck{
+}
+.itemDoneCheckShow{
+	background:  url(../images/tick.png) top left  no-repeat;
+}
+.blockItemHeaderHilite{
+	color:#09C
+}
+
 /*PART 5 end*/
 /*PART 6 - report view styling*/
 .itemListReport ol{ list-style: none; margin: 0; padding: 0 }

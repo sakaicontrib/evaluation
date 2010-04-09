@@ -5,8 +5,8 @@
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
+ *
+ * A copy of the Educational Community License has been included in this
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  *
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
@@ -39,7 +39,7 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of scaled type items
- * 
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 @SuppressWarnings("deprecation")
@@ -82,7 +82,7 @@ public class ScaledRenderer implements ItemRenderer {
             // setup simple variables to make code more clear
             boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting);
 
-            String compactDisplayStart = scaleOptions[0];		
+            String compactDisplayStart = scaleOptions[0];
             String compactDisplayEnd = scaleOptions[optionCount - 1];
 
             for (int count = 0; count < optionCount; count++) {
@@ -151,7 +151,7 @@ public class ScaledRenderer implements ItemRenderer {
                 UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice));
             }
 
-        } else if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
+        } else if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
@@ -164,7 +164,7 @@ public class ScaledRenderer implements ItemRenderer {
 
             for (int count = 0; count < optionCount; count++) {
                 scaleValues[count] = new Integer(count).toString();
-                scaleLabels[count] = scaleOptions[count];	
+                scaleLabels[count] = scaleOptions[count];
             }
 
             UIOutput.make(fullFirst, "itemNum", displayNumber+"" ); //$NON-NLS-2$
@@ -208,14 +208,14 @@ public class ScaledRenderer implements ItemRenderer {
             for (int j = 0; j < limit; ++j) {
                 UIBranchContainer radiobranchNested = UIBranchContainer.make(displayContainer, "scaleOption:", j+"");
                 UISelectChoice choice = UISelectChoice.make(radiobranchNested, "radioValue", selectID, j);
-                UISelectLabel.make(radiobranchNested, "radioLabel", selectID, j).decorate( new UILabelTargetDecorator(choice));
+                UISelectLabel.make(radiobranchNested, "radioLabel", selectID, j);//.decorate( new UILabelTargetDecorator(choice));
             }
 
             if (usesNA) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
-                radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
+                radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
                 UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
-                UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice));
+                UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc");//.decorate( new UILabelTargetDecorator(choice));
             }
 
 
@@ -251,7 +251,7 @@ public class ScaledRenderer implements ItemRenderer {
                 scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
             }
 
-            UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue); 
+            UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
             String selectID = radios.getFullID();
 
             if (disabled) {

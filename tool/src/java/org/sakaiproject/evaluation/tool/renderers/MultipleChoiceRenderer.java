@@ -5,8 +5,8 @@
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
+ *
+ * A copy of the Educational Community License has been included in this
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  *
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
@@ -36,7 +36,7 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of multiple choice type items
- * 
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 @SuppressWarnings("deprecation")
@@ -67,7 +67,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
         boolean usesNA = templateItem.getUsesNA().booleanValue();
 
-        if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
+        if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
             UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
             if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
@@ -78,7 +78,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
 
             for (int count = 0; count < optionCount; count++) {
                 scaleValues[count] = new Integer(count).toString();
-                scaleLabels[count] = scaleOptions[count];	
+                scaleLabels[count] = scaleOptions[count];
             }
 
             UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
@@ -114,17 +114,17 @@ public class MultipleChoiceRenderer implements ItemRenderer {
             int scaleLength = scaleValues.length;
             int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
             for (int j = 0; j < limit; ++j) {
-                UIBranchContainer radiobranchNested = 
+                UIBranchContainer radiobranchNested =
                     UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
                 UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
-                UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j).decorate( new UILabelTargetDecorator(choice) );
+                UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j);//.decorate( new UILabelTargetDecorator(choice) );
             }
 
             if (usesNA) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
-                radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
+                radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
                 UISelectChoice choice = UISelectChoice.make(radiobranch3, "itemNA", selectID, scaleLength - 1);
-                UIMessage.make(radiobranch3, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice) );
+                UIMessage.make(radiobranch3, "descNA", "viewitem.na.desc"); //.decorate( new UILabelTargetDecorator(choice) );
             }
 
         } else {

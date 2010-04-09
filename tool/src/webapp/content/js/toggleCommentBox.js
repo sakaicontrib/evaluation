@@ -30,7 +30,7 @@
             var clientH, frame = parent.document.getElementById(window.name);
             if (frame) {
                 if (updown === 'shrink') {
-                    clientH = document.body.clientHeight - 70;
+                    clientH = document.body.clientHeight;
                 } else {
                     clientH = document.body.clientHeight + 70;
                 }
@@ -74,7 +74,8 @@
             dom.showLink.hide();
             dom.hideLink.show();
             dom.warn.fadeOut("fast");
-            resizeFrame('grow');
+            console.log('1')
+			resizeFrame('grow');
             dom.textarea.focus();
             return false;
         });
@@ -86,6 +87,7 @@
             dom.editLink.hide();
             dom.hideLink.show();
             dom.warn.fadeOut("fast");
+            console.log('2')
             resizeFrame('grow');
             dom.textarea.focus();
             return false;
@@ -101,6 +103,7 @@
             }
             dom.textarea.hide();
             dom.hideLink.hide();
+            console.log('3')
             resizeFrame('shrink');
             return false;
         });
@@ -121,21 +124,23 @@
                         commentTruncated: commentHolder.find("span.JScommentTruncated"),
                         commentLabel: commentHolder.find("span.JSlabel"),
                         //if li:eq(0) doesn't return an object, we are in an item preview
-                        questionHolder: commentHolder.parents("li:eq(0)").length === 0 ? commentHolder.parents("div.highlightPanel:eq(0)") : commentHolder.parents("li:eq(0)"),
+                        questionHolder: commentHolder.parents("li.evalItemTop:eq(0)").length === 0 ? commentHolder.parents("div.highlightPanel:eq(0)") : commentHolder.parents("li.evalItemTop:eq(0)"),
                         warn: commentHolder.find("span.JSwarn")
                     };
             //Set listeners for any question item response activity and toggle comment controls - EVALSYS-628
 
-            dom.questionHolder.find("input").each(function() {
+			dom.questionHolder.find("input").each(function() {
                 if (this.checked) {
                     isSelectionMade = true;
                 }
+
                 $(this).bind("click", function() {
                     //Only items with checkboxes or radio buttions are supported.
-                    if (dom.questionHolder.find("input:checked").length === 1) {
+					// console.log(dom.questionHolder.find("input:checked").length)
+					  if (dom.questionHolder.find(":checked").length > 0) {
                         //Activate comment controls
                         enable(dom);
-                    } else if (dom.questionHolder.find("input:checked").length === 0) {
+                    } else if (dom.questionHolder.find(":checked").length === 0) {
                         //De-activate comment controls
                         disable(dom);
                     }
