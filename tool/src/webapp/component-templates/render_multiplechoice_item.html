@@ -6,7 +6,7 @@
 		<title>Multiple Choice Item Renderer:</title>
 	</head>
 	<body>
-	
+
 		<!-- html template for the multiple choice item renderer -AZ -->
 		<div rsf:id="render-multiplechoice-item:">
 
@@ -18,47 +18,62 @@
 
                <div rsf:id="nextrow:">
 
-					<div rsf:id="verticalDisplay:" class="fullVertical">
+					<div rsf:id="verticalDisplay:">
 						<!-- DIV tag for Vertical display -->
 						<span rsf:id="dummyRadio" />
-						<ol>
-							<li rsf:id="scaleOptions:">
+						<ul class="fullVertical mult-choice-ans">
+							<li rsf:id="scaleOptions:"  class="check">
+								<label>
 								<input rsf:id="choiceValue" type="radio" id="vertical1" name="vertical" />
-								<label for="vertical1" rsf:id="choiceLabel">vertical label</label>
+								<span for="vertical1" rsf:id="choiceLabel">vertical label</span>
+								</label>
+								<!--<label for="vertical1" rsf:id="choiceLabel">vertical label</label>-->
 							</li>
-							<li rsf:id="scaleOptions:">
+							<li rsf:id="scaleOptions:"  class="check">
+								<label>
 								<input rsf:id="choiceValue" type="radio" id="vertical2" name="vertical" />
-								<label for="vertical2" rsf:id="choiceLabel">vertical label</label>
+								<span for="vertical2" rsf:id="choiceLabel">vertical label</span>
+								<!--<label for="vertical2" rsf:id="choiceLabel">vertical label</label>-->
+								</label>
 							</li>
-							<li rsf:id="scaleOptions:">
+							<li rsf:id="scaleOptions:"  class="check">
+								<label>
 								<input rsf:id="choiceValue" type="radio" id="vertical3" name="vertical" />
-								<label for="vertical3" rsf:id="choiceLabel">vertical label</label>
+								<span for="vertical3" rsf:id="choiceLabel">vertical label</span>
+								</label>
 							</li>
-						</ol>
-                         <div rsf:id="showNA:" class="na">
-                             <input type="radio" rsf:id="itemNA" name="vertical" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
-                         </div>
+							<li rsf:id="showNA:" class="na">
+                 <label><input type="radio" rsf:id="itemNA" name="vertical" id="itemNA" /> <span rsf:id="descNA" for="itemNA">N/A</span></label>
+              </li>
+						</ul>
+
 					</div>
 
-					<div rsf:id="fullDisplay:" class="fullDisplayHorizontal">
+					<ul rsf:id="fullDisplay:"  class="fullDisplayHorizontal mult-choice-ans">
 						<!-- DIV tag for full display  -->
-						<span rsf:id="dummyRadio" />
-						<span rsf:id="scaleOptions:">
-							<input type="radio" rsf:id="choiceValue" id="full1" name="full" />
-							<label for="full1" rsf:id="choiceLabel">full label</label>									
-						</span>
-						<span rsf:id="scaleOptions:">
-							<input type="radio" rsf:id="choiceValue" id="full2" name="full" />
-							<label for="full2" rsf:id="choiceLabel">full label</label>									
-						</span>
-						<span rsf:id="scaleOptions:">
+						<li style="display:none"><span rsf:id="dummyRadio" /></li>
+						<li rsf:id="scaleOptions:" class="check">
+							<label>
+								<input type="radio" rsf:id="choiceValue" id="full1" name="full" />
+								<span for="full1" rsf:id="choiceLabel">full label</span>
+							</label>
+						</li>
+						<li rsf:id="scaleOptions:" class="check">
+							<label>
+								<input type="radio" rsf:id="choiceValue" id="full2" name="full" />
+								<span for="full2" rsf:id="choiceLabel">full label</span>
+							</label>	
+						</li>
+						<li rsf:id="scaleOptions:" class="check">
+							<label>
 							<input type="radio" rsf:id="choiceValue" id="full3" name="full" />
-							<label for="full3" rsf:id="choiceLabel">full label</label>									
-						</span>
-                         <div rsf:id="showNA:" class="na">
-                             <input type="radio" rsf:id="itemNA" name="full" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
-                         </div>
-					</div>
+							<span for="full3" rsf:id="choiceLabel">full label</span>
+							</label>
+						</li>
+						<li rsf:id="showNA:" class="na">
+							 <label><input type="radio" rsf:id="itemNA" name="full" id="itemNA" /> <span rsf:id="descNA" for="itemNA">N/A</span></label>
+						 </li>
+					</ul>
 
 				</div>
 			</div>
@@ -77,10 +92,10 @@
                 </div>
                 <div>
                     <textarea rsf:id="itemComment" style="display:none" cols="65" rows="3"> Comment text...</textarea>
-                </div>        
+                </div>
            </div>
 
 		</div>
-	
+
 	</body>
 </html>

@@ -6,7 +6,7 @@
 		<title>Multiple Answer Item Renderer:</title>
 	</head>
 	<body>
-	
+
 		<!-- html template for the multiple answer item renderer -AZ -->
 		<div rsf:id="render-multipleanswer-item:">
 
@@ -18,47 +18,87 @@
 
                <div rsf:id="nextrow:">
 
-                     <div rsf:id="verticalDisplay:" class="fullVertical">
+                     <div rsf:id="verticalDisplay:">
                          <!-- DIV tag for Vertical display -->
                          <span rsf:id="dummyCheckbox" />
-                         <ol>
-                             <li rsf:id="scaleOptions:">
-                                 <input rsf:id="choiceValue" type="checkbox" id="vertical1" name="vertical1" />
-                                 <label for="vertical1" rsf:id="choiceLabel">vertical label</label>
+                         <ul class="fullVertical mult-choice-ans">
+                             <li rsf:id="scaleOptions:"  class="check">
+                             	<label>
+                                 <input rsf:id="choiceValue" type="checkbox" id="vertical1" name="vertical1" class="ma"/>
+                                 <span rsf:id="choiceLabel">vertical label</span>
+								 </label>
+                                 <!--<label for="vertical1" rsf:id="choiceLabel">vertical label</label>-->
                              </li>
-                             <li rsf:id="scaleOptions:">
-                                 <input rsf:id="choiceValue" type="checkbox" id="vertical2" name="vertical2" />
-                                 <label for="vertical2" rsf:id="choiceLabel">vertical label</label>
+                             <li rsf:id="scaleOptions:"  class="check">
+                             	<label>
+                                 <input rsf:id="choiceValue" type="checkbox" id="vertical2" name="vertical2" class="ma"/>
+                                 <span rsf:id="choiceLabel">vertical label</span>
+								 </label>
+                                 <!--<label for="vertical2" rsf:id="choiceLabel">vertical label</label>-->
+
                              </li>
-                             <li rsf:id="scaleOptions:">
-                                 <input rsf:id="choiceValue" type="checkbox" id="vertical3" name="vertical3" />
-                                 <label for="vertical3" rsf:id="choiceLabel">vertical label</label>
+
+
+
+                             <li rsf:id="scaleOptions:"  class="check">
+                             	<label>
+                                 <input rsf:id="choiceValue" type="checkbox" id="vertical3" name="vertical3" class="ma"/>
+                                 <!--<label for="vertical3" rsf:id="choiceLabel">vertical label</label>-->
+                                 <span rsf:id="choiceLabel">vertical label</span>
+								 </label>								 
                              </li>
-                         </ol>
-                         <div rsf:id="showNA:" class="na">
-                             <input type="checkbox" rsf:id="itemNA" name="vertical" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
-                         </div>
+
+
+
+
+			 <li class="na">
+				 <span rsf:id="showNA:">
+	                 <label>
+	                 	<input type="checkbox" rsf:id="itemNA" name="vertical" id="itemNA" class="ma"/>
+						<span rsf:id="descNA" for="itemNA">N/A</span>
+						</label>
+				 </span>
+			 </li>
+                         </ul>
                      </div>
 
-                     <div rsf:id="fullDisplay:" class="fullDisplayHorizontal">
+                     <ul rsf:id="fullDisplay:" class="fullDisplayHorizontal mult-choice-ans">
                          <!-- DIV tag for full display  -->
-                         <span rsf:id="dummyCheckbox" />
-                         <span rsf:id="scaleOptions:">
-                             <input type="checkbox" rsf:id="choiceValue" id="full1" name="full1" />
-                             <label for="full1" rsf:id="choiceLabel">full label</label>                                  
-                         </span>
-                         <span rsf:id="scaleOptions:">
-                             <input type="checkbox" rsf:id="choiceValue" id="full2" name="full2" />
-                             <label for="full2" rsf:id="choiceLabel">full label</label>                                  
-                         </span>
-                         <span rsf:id="scaleOptions:">
-                             <input type="checkbox" rsf:id="choiceValue" id="full3" name="full3" />
-                             <label for="full3" rsf:id="choiceLabel">full label</label>                                  
-                         </span>
-                         <div rsf:id="showNA:">
-                                 <input type="checkbox" rsf:id="itemNA" name="full" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
-                         </div>
-                     </div>
+ 													<li style="display:none"  class="check"><span rsf:id="dummyCheckbox" /></li>
+                         <li rsf:id="scaleOptions:" class="check">
+							<label>
+							 <input type="checkbox" rsf:id="choiceValue" id="full1" name="full1"   class="ma check" />
+                             <span rsf:id="choiceLabel">full label</span>
+                             <!--<label for="full1" rsf:id="choiceLabel">full label</label>-->
+							 </label>							 
+
+                         </li>
+                         <li rsf:id="scaleOptions:" class="check">
+                           	<label>
+                             <input type="checkbox" rsf:id="choiceValue" id="full2" name="full2"   class="ma check" />
+                             <span rsf:id="choiceLabel">full label</span>
+                             <!--<label for="full2" rsf:id="choiceLabel">full label</label>-->
+							 </label>
+                         </li>
+                         <li rsf:id="scaleOptions:" class="check">
+                             	<label>
+                             <input type="checkbox" rsf:id="choiceValue" id="full3" name="full3"   class="ma check" />
+                             <span rsf:id="choiceLabel">full label</span>
+							 </label>
+                             <!--<label for="full3" rsf:id="choiceLabel">full label</label>-->
+                         </li>
+                         <li class="na">
+					     		<span rsf:id="showNA:">
+							     	<label>
+
+					     			<input type="checkbox" rsf:id="itemNA" name="full" id="itemNA" class="ma"/>
+									<span rsf:id="descNA" for="itemNA">N/A</span>
+									</label>
+									</span>
+
+                         </li>
+
+                     </ul>
 
                  </div>
             </div>
@@ -77,10 +117,10 @@
                 </div>
                 <div>
                     <textarea rsf:id="itemComment" style="display:none" cols="65" rows="3"> Comment text...</textarea>
-                </div>            
+                </div>
            </div>
 
 		</div>
-	
+
 	</body>
 </html>

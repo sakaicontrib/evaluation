@@ -14,15 +14,42 @@
 
 		<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script>
+<!--	<script type="text/javascript"  language="JavaScript" src="/library/js/jquery-latest.min.js"></script> -->
+		<script type="text/javascript"  language="JavaScript" src="../js/utils.js"></script>
         <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
-		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>       
-		<script type="text/javascript" language="JavaScript" src="../js/evalTakeEval.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
 
+		<!--
+		<script type="text/javascript" language="JavaScript" src="../js/evalTakeEval.js"></script>
+		-->
 	</head>
 
     <!-- supposedly firefox will not cache any pages with unload handlers -->
     <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
 		<div class="portletBody">
+			<div id="toolTip"></div>
+	<script type="text/javascript">
+			$(document).ready(function(){
+				if ($('.blockItemGroup').length > 0){
+					evalsys.instrumentBlockItem();
+				}
+				if ($('.steppedItemGroup').length > 0){
+					evalsys.instrumentSteppedItem();
+				}
+
+				if ($('.mult-choice-ans').length > 0){
+					evalsys.instrumentMCMAItem();
+				}
+				if ($('.itemListEval').length > 0) {
+					evalsys.instrumentScaleItem();
+				}
+				if ($('.fullDisplayHorizontal').length > 0) {
+					evalsys.instrumentDisplayHorizontal();
+				}
+				$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+			});
+		</script>
+
 
 			<div class="textPanel"> 			
 				<h3 style="display:inline">
@@ -132,7 +159,7 @@
                               <li rsf:id="itemrow:nodeSection">
                                   <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
                               </li>
-                              <li rsf:id="itemrow:templateItem">
+                              <li rsf:id="itemrow:templateItem" class="evalItemTop">
                                  <!-- DIV tag for item renderer -->
                                  <div rsf:id="renderedItem:">Items get rendered here</div>
                               </li>

@@ -377,6 +377,7 @@ tool/src/webapp/content/images/pdate.gif -text
 tool/src/webapp/content/images/pencil.png -text svneol=unset#image/png
 tool/src/webapp/content/images/required.gif -text
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/tick.png -text
 tool/src/webapp/content/images/tipsy-east.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-north.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-south.gif -text svneol=unset#image/gif
@@ -426,6 +427,7 @@ tool/src/webapp/content/js/ui.core.js -text
 tool/src/webapp/content/js/ui.dialog.js -text
 tool/src/webapp/content/js/ui.draggable.js -text
 tool/src/webapp/content/js/ui.droppable.js -text
+tool/src/webapp/content/js/utils.js -text
 tool/src/webapp/content/js/yahoo-calendar-setup.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
