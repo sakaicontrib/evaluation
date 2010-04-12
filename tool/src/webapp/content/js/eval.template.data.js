@@ -4,7 +4,7 @@
 var evalTemplateData = (function() {
     //Private data
 
-
+    // if @textarea is boolen FALSE, treat form as a non fck editor form.
     var _postFCKform = function(form, textarea, target, btn) {
         evalTemplateUtils.debug.group("Starting Fn submitFCKform", [form, textarea, target, btn]);
         evalTemplateUtils.debug.time("submitFCKform");
@@ -12,32 +12,35 @@ var evalTemplateData = (function() {
                 templateItemId = $(form).find('input[@name*=templateItemId]').attr('value'),
                 formAsArray = $(form).formToArray(),
                 fckEditor = null,
-                fckEditorValue = null;
+                fckEditorValue = null,
+                isFCKEditor = textarea !== false;
         img.src = $.facebox.settings.loadingImage;
         evalTemplateUtils.debug.info("Saving item %i", templateItemId);
-        try {
-            if (typeof FCKeditorAPI !== "undefined" && textarea !== null) {
-                fckEditor = FCKeditorAPI.GetInstance(textarea);
-                fckEditorValue = fckEditor.GetHTML(); //Actual editor textarea value
-                evalTemplateUtils.debug.info("User entered: %s ( from DOM object %o )", fckEditorValue, fckEditor);
+        if (isFCKEditor) {
+            try {
+                if (typeof FCKeditorAPI !== "undefined" && textarea !== null) {
+                    fckEditor = FCKeditorAPI.GetInstance(textarea);
+                    fckEditorValue = fckEditor.GetHTML(); //Actual editor textarea value
+                    evalTemplateUtils.debug.info("User entered: %s ( from DOM object %o )", fckEditorValue, fckEditor);
+                }
             }
-        }
-        catch(e) {
-            evalTemplateUtils.debug.error('Check if you have imported FCKeditor.js Error: FCKeditorAPI not found. ', e);
-            //TODO: Update UI - tell user that saving will not be done.
-            return false;
-        }
-        //Validate text
-        if (fckEditorValue === null || fckEditorValue.length === 0) {
-            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
-                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
-            return false;
-        }
+            catch(e) {
+                evalTemplateUtils.debug.error('Check if you have imported FCKeditor.js Error: FCKeditorAPI not found. ', e);
+                //TODO: Update UI - tell user that saving will not be done.
+                return false;
+            }
+            //Validate text
+            if (fckEditorValue === null || fckEditorValue.length === 0) {
+                alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
+                                        evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
+                return false;
+            }
 
-        //iterate through returned formToArray elements and replace input value with editor value
-        for (var i = 0; i < formAsArray.length; i++) {
-            if ($(formAsArray[i]).attr('name') === textarea) {
-                $(formAsArray[i]).attr('value', fckEditorValue);
+            //iterate through returned formToArray elements and replace input value with editor value
+            for (var i = 0; i < formAsArray.length; i++) {
+                if ($(formAsArray[i]).attr('name') === textarea) {
+                    $(formAsArray[i]).attr('value', fckEditorValue);
+                }
             }
         }
         $.ajax({
