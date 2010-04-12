@@ -16,13 +16,17 @@ var evalTemplateLoaderEvents = (function($) {
 		var baseId = ""; // "blockPage::";
 
 		$('#saveBlockAction').click(function() {
-			//var list = $("#blockForm > div.itemRow").get();
-			var childIdList = [];
+			var childIdList = [],
+                reuseBlockText = $('.blockText input[type=radio][checked][value!=new1]').length > 0;
 			$('#blockForm input[name*=hidden-item-id]').each(function(){
 				childIdList.push($(this).val());
 			});
 			$("#ordered-child-ids").val(childIdList.toString());
-			evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_template', $('#saveBlockAction'));
+            if (reuseBlockText){
+			    evalTemplateData.postFCKform('#blockForm', false, 'modify_template', $('#saveBlockAction'));
+            }else{
+                evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_template', $('#saveBlockAction'));
+            }
 		});
 
 		function disableOrderButtons() {
