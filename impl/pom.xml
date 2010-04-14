@@ -193,6 +193,12 @@
       <artifactId>jdom</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1-beta-10</version>
+      <scope>provided</scope>
+    </dependency>
 <!-- Quartz dependencies -->
     <dependency>
       <groupId>quartz</groupId>

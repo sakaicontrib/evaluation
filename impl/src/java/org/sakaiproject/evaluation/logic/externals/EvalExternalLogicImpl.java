@@ -524,7 +524,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       log.debug("Checking is eval super admin for: " + userId);
       return securityService.isSuperUser(userId);
    }
-
+   
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserLocale(java.lang.String)
     */
@@ -1334,6 +1334,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			TSSResponseApi r = taskStatus.getTSSItem(serverUrl, "text/xml");
 			// 200 for a successful get.
 			if(r != null && r.getStatus() == 200) {
+				if(log.isDebugEnabled()) log.debug("r.getBody() " + r.getBody());
 				return r.getBody();
 			}
 		}

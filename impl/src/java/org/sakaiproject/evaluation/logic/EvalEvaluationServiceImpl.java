@@ -116,6 +116,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		   try {
 			   is = new ByteArrayInputStream(commonLogic.getTaskStatusContainer(params).getBytes());
 			   if(is != null) {
+				   if(log.isDebugEnabled()) log.debug(is.toString());
 				   Document doc = new SAXBuilder().build(is);
 				   countElements = getElementsOfDoc(doc, "/taskStreamContainer/streamCount");
 				   for(Object o: countElements) {
@@ -203,6 +204,27 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 				   ioe.printStackTrace();
 			   }
 		   }
+		   if(log.isDebugEnabled()) {
+			   log.debug("container.getStreamCount() " + container.getStreamCount());
+			   List<EvalTaskStatusStream> streams = container.getStreams();
+			   for(EvalTaskStatusStream s : streams) {
+				   log.debug("\nstream.getCreated() " + s.getCreated() +
+				   "\nstream.getEntryCount() " + s.getEntryCount() +
+				   "\nstream.getStatus() " + s.getStatus() +
+				   "\nstream.getStreamTag() " + s.getStreamTag() +
+				   "\nstream.getTaskStatusStreamID() " + s.getTaskStatusStreamID() +
+				   "\nstream.getTime() " + s.getTime());
+				   for(EvalTaskStatusEntry e : s.getStatusEntries()) {
+					   log.debug("\ne.getCreated() " + e.getCreated() +
+					   "\nentry.getEntryTag() " + e.getEntryTag() +
+					   "\nentry.getPayload() " + e.getPayload() +
+					   "\nentry.getStatus() " + e.getStatus() +
+					   "\nentry.getTaskStatusEntryID() " + e.getTaskStatusEntryID() +
+					   "\nentry.getTaskStatusEntryURL() " + e.getTaskStatusEntryURL() +
+					   "\nentry.getTaskStatusStreamID() " + e.getTaskStatusStreamID());
+				   }
+			   }
+		   }
 	   }
 	   return container;
    	}
@@ -223,11 +245,11 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 				XPath docsPath = XPath.newInstance(path);
 				elements = docsPath.selectNodes(doc);
 			}
-				catch (JDOMException jde) {
+			catch (JDOMException jde) {
 					log.error("There was an error parsing the XML data using the path ' " + path + "' " + jde);
 					throw new JDOMException(jde.getMessage());
 			} 
-				catch (Exception e) {
+			catch (Exception e) {
 				log.error("There was a problem in getElementsFromDoc(String path) using the path '" + "' " + e);
 				throw new RuntimeException(e.getMessage());
 			}

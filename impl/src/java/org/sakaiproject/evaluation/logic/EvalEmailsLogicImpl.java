@@ -519,8 +519,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    }
    
 	private String reportError(String streamUrl, String entryTag, String payload) {
-		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING, payload);
+		String entryUrl = null;
+		if(streamUrl != null) {
+			entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+					entryTag, TaskStatusStandardValues.RUNNING, payload);
+		}
+		else {
+			log.error(this + ".reportError - TaskStatusService streamUrl is null. entryTag " + entryTag + " payoad " + payload);
+		}
 		return entryUrl;
 	}
    
@@ -563,14 +569,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if (log.isInfoEnabled())
 				log.info("EvalEmailLogicImpl.sendEvalAvailableSingleEmail(): getting groups assigned to these evaluations"
 						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
-			try {
+			if(streamUrl != null) {
 				// ANNOUNCEMENT GROUPS
 				reportGroups(streamUrl, assignGroupMap.size(), "announcementGroups");
 			}
-			catch(Exception e) {
-				log.error(this + ".sendEvalAvailableSingleEmail - task status " + e);
+			else {
+				log.error(this + ".sendEvalAvailableSingleEmail - TaskStatusServer stream url is null.");
 			}
-
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
 				
@@ -626,9 +631,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
 
 	private String reportGroups(String streamUrl, int size, String entryTag) {
-		String payload = (new Integer(size)).toString();
-		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING, payload);
+		String entryUrl = null;
+		if(streamUrl != null) {
+			String payload = (new Integer(size)).toString();
+			entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+					entryTag, TaskStatusStandardValues.RUNNING, payload);
+		}
+		else {
+			log.error(this + ".reportGroups - TaskStatusService streamUrl is null. entryTag " + entryTag + " size " + new Integer(size));
+		}
 		return entryUrl;
 	}
 
@@ -694,14 +705,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if (log.isInfoEnabled())
 				log.info("EvalEmailLogicImpl.sendEvalReminderSingleEmail(): getting groups assigned to these evaluations"
 						+ " took " + seconds + " seconds for " + evalIds.length + " evaluation ids.");
-			try {
+			if(streamUrl != null) {
 				// REMINDER GROUPS
 				reportGroups(streamUrl, assignGroupMap.size(), "reminderGroups");
 			}
-			catch(Exception e) {
-				log.error(this + ".sendEvalReminderSingleEmail - tasks status " + e);
+			else {
+				log.error(this + ".sendEvalReminderSingleEmail - TaskStatusService stream url is null.");
 			}
-			
+
 			start = System.currentTimeMillis();
 			for (int i = 0; i < evalIds.length; i++) {
 				// CT-697
@@ -896,12 +907,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			} catch (Exception e) {
 				String payload = "user id '" + s + "', url '" + url + "' " + e.toString();
 				log.error("EvalEmailLogicImpl.sendEvalSingleEmail(): " + payload);
-				try {
+				if(streamUrl != null) {
 					reportError(streamUrl, "error", "user id '" + s
 							+ "', url '" + url + "' " + e);
-				}
-				catch(Exception tss) {
-					log.error(this + ".sendEvalSingleEmail - task status " + tss);
 				}
 			}
 		}
@@ -1008,6 +1016,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return to;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalTaskStatusEmail(java.lang.Boolean, java.lang.Boolean, java.util.List, java.util.List, java.lang.Integer)
+	 */
 	public void sendEvalTaskStatusEmail(Boolean jobRan, Boolean dataLoaded,
 				List<String> ranText, List<String> loadedText, Integer unfinished) {
 		if(jobRan == null || dataLoaded == null || ranText == null || loadedText == null)
@@ -1067,23 +1079,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		String[] sentTo = externalLogic.sendEmailsToAddresses(from, sendTo, subject, message, true);
 	}
-	
-	   /**
-	    * Send emails to a set of email addresses (can send to a single address
-	    * by specifying an array with one item only)
-	    * NOTE: Use {@link #sendEmailsToUsers(String, String[], String, String, boolean)} if you know who the users are
-	    * 
-	    * @param from the email address this email appears to come from
-	    * @param to the email address(es) this message should be sent to
-	    * @param subject the message subject
-	    * @param message the message to send
-	    * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
-	    * if false then exceptions are thrown immediately
-	    * @return an array of email addresses that this message was sent to
-	    * @throws 
-	    
-	   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions);
-	*/
  
    /**
     * Save pending email in a holding table for the email sending process(es) to read

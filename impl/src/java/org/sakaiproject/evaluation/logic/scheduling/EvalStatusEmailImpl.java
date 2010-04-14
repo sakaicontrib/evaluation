@@ -73,13 +73,21 @@ public class EvalStatusEmailImpl implements Job{
 	/**
 	 * The main method of a Quartz job. 
 	 * Get data from background tasks to report to an email distribution list.
+	 * This job depends on the TaskStatusServer and throws a JobExecutionException
+	 * if TSS is not responding.
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
 			if(log.isInfoEnabled()) log.info(this + ".execute - start.");
 			
+			// TODO classloader issue using ResourceLoader
+			
 			// CREATED
 			String streamUrl = evaluationService.newTaskStatusStream(STATUS_STREAM_TAG);
+			if(streamUrl == null) {
+				log.error(this + ".execute - TaskStatusService streamUrl is null.");
+				throw new JobExecutionException("TaskStatusServer streamUrl is null.");
+			}
 			
 			// RUNNING
 			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
@@ -97,7 +105,7 @@ public class EvalStatusEmailImpl implements Job{
 			String filesText = null;
 			
 			// EMAIL JOB
-			String baseEmailQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=2";
+			String baseEmailQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE;
 			String emailErrorQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=0" + "&entryTag=error";
 			List<String> ranText = new ArrayList<String>();
 			Integer filesUnfinished = null;
@@ -109,29 +117,38 @@ public class EvalStatusEmailImpl implements Job{
 			Boolean jobRan = emailJobRan(baseEmailQuery, streamUrl);
 			Boolean jobErrors = jobErrors(emailErrorQuery, streamUrl);
 			if(jobRan) {
+				baseEmailQuery += "&depth=2";
 				EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer(baseEmailQuery);
 				// FOR EACH EMAIL JOB - typically 1 a day
 				for(EvalTaskStatusStream stream : container.getStreams()) {
 					anc = "Announcements were not sent.";
-					rem = "Reminders were not sent";
+					rem = "Reminders were not sent.";
 					for(EvalTaskStatusEntry entry : stream.getStatusEntries()) {
 						if(ANNOUNCEMENTS.equalsIgnoreCase(entry.getEntryTag())) {
 							anc = "Announcements were sent. This took " + entry.getPayload() + ".";
 						}
 						else if(ANNOUNCEMENT_GROUPS.equalsIgnoreCase(entry.getEntryTag())) {
-							ancGroups = "Announcements were sent to " + entry.getPayload() + " groups.";
+							if(new Integer(entry.getPayload()) > 0) {
+								ancGroups = "Announcements were sent to " + entry.getPayload() + " groups.";
+							}
 						}
 						else if (ANNOUNCEMENT_USERS.equalsIgnoreCase(entry.getEntryTag())) {
-							ancUsers = "Announcements were sent to " + entry.getPayload() + " users.";
+							if(new Integer(entry.getPayload()) > 0) {
+								ancUsers = "Announcements were sent to " + entry.getPayload() + " users.";
+							}
 						}
 						else if(REMINDERS.equalsIgnoreCase(entry.getEntryTag())) {
 							rem = "Reminders were sent. This took "  + entry.getPayload() + ".";
 						}
 						else if (REMINDER_GROUPS.equalsIgnoreCase(entry.getEntryTag())) {
-							remGroups = "Reminders were sent to " + entry.getPayload() + " groups.";
+							if(new Integer(entry.getPayload()) > 0) {
+								remGroups = "Reminders were sent to " + entry.getPayload() + " groups.";
+							}
 						}
 						else if(REMINDER_USERS.equalsIgnoreCase(entry.getEntryTag())) {
-							remUsers = "Reminders were sent to " + entry.getPayload() + " users.";
+							if(new Integer(entry.getPayload()) > 0) {
+								remUsers = "Reminders were sent to " + entry.getPayload() + " users.";
+							}
 						}
 						else if(SUMMARY.equals(entry.getEntryTag())) {
 							email = entry.getPayload();
@@ -157,12 +174,15 @@ public class EvalStatusEmailImpl implements Job{
 					filesText =  " file was ";
 				}
 				loadedText.add(filesTotal.toString() + filesText + "loaded since the last email status report.");
+				// TODO need the first and last streams not the whole container
 				String containerQuery = "?streamTag=Import&since=" + since + "&depth=2" + "&otype=" + CONTAINER_OTYPE + "&streamStatus=" + TaskStatusStandardValues.FINISHED;
 				EvalTaskStatusStream firstStream = null;
 				EvalTaskStatusStream lastStream = null;
 				// TODO need the first and last streams not the whole container
 				EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer(containerQuery);
+				// TODO offsetFirst=0&offsetLast=-1 returns just the first and last entries in the list. - streams@depth=1
 				if(container.getStreamCount().intValue() > 1) {
+					// TODO offsetFirst=0&offsetLast=-1 returns just the first and last entries in the list. - entries@depth=1
 					firstStream = container.getStreams().get(0);
 					lastStream = container.getStreams().get(container.getStreamCount() - 1);
 					// by convention the second entry payload has the filename

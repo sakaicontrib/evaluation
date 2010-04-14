@@ -29,6 +29,8 @@ import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTaskStatusEntry;
+import org.sakaiproject.evaluation.model.EvalTaskStatusStream;
 import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
@@ -75,26 +77,191 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     * ADD unit tests below here, use testMethod as the name of the unit test,
     * Note that if a method is overloaded you should include the arguments in the
     * test name like so: testMethodClassInt (for method(Class, int);
+    * 
     */
    
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getTaskStatus(String)
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getTaskStatusContainer(String)
+    * TODO entry.getTaskStatusEntryURL() - entryUrl is incorrect at 0.0.17
+    * TODO stream.getStatus() should be updated to stream.getStreamStatus() in model and template
+    * TODO entry.getStatus() should be updated to entry.getEntryStatus() in model and template
     */
    public void testGetTaskStatusContainer() {
-	   EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer("?streamTag=Import");
-	   Assert.assertNotNull(container);
-	   // TODO
-   }
+	   EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer("?streamTag=Import&depth=2");
+	   assertNotNull(container);
+	   assertEquals(3, container.getStreamCount().intValue());
+	   assertEquals(3, container.getStreams().size());
 
+	   // stream 1
+	   EvalTaskStatusStream stream = container.getStreams().get(0);
+	   assertEquals("TSS20100408150833568", stream.getTaskStatusStreamID());
+	   assertEquals("Apr 8, 2010 3:08:33 PM", stream.getCreated());
+	   assertEquals("Apr 8, 2010 3:11:08 PM", stream.getTime());
+	   assertEquals("FINISHED", stream.getStatus());
+	   assertEquals("Import", stream.getStreamTag());
+	   assertEquals(4, stream.getEntryCount().intValue());
+	   List<EvalTaskStatusEntry> entries = stream.getStatusEntries();
+	   assertEquals(4, entries.size());
+	   
+	   // entry 1
+	   EvalTaskStatusEntry entry = entries.get(0);
+	   assertEquals("TSS20100408150833568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408150833570", entry.getTaskStatusEntryID());
+	   assertEquals("CREATED", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:08:33 PM", entry.getCreated());
+	   assertEquals("no value", entry.getEntryTag());
+	   assertEquals("no value", entry.getPayload());
+	   
+	   // entry 2
+	   entry = entries.get(1);
+	   assertEquals("TSS20100408150833568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408150951240", entry.getTaskStatusEntryID());
+	   assertEquals("RUNNING", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:09:51 PM", entry.getCreated());
+	   assertEquals("filename", entry.getEntryTag());
+	   assertEquals("file1.txt", entry.getPayload());
+	   
+	   // entry 3
+	   entry = entries.get(2);
+	   assertEquals("TSS20100408150833568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151032081", entry.getTaskStatusEntryID());
+	   assertEquals("RUNNING", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:10:32 PM", entry.getCreated());
+	   assertEquals("error", entry.getEntryTag());
+	   assertEquals("my dumb error", entry.getPayload());
+
+	   // entry 4
+	   entry = entries.get(3);
+	   assertEquals("TSS20100408150833568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151108574", entry.getTaskStatusEntryID());
+	   assertEquals("FINISHED", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:11:08 PM", entry.getCreated());
+	   assertEquals("withError", entry.getEntryTag());
+	   assertEquals("file1.txt", entry.getPayload());
+
+	   // stream 2
+	   stream = container.getStreams().get(1);
+	   assertEquals("TSS20100408151132355", stream.getTaskStatusStreamID());
+	   assertEquals("Apr 8, 2010 3:11:32 PM", stream.getCreated());
+	   assertEquals("Apr 8, 2010 3:12:48 PM", stream.getTime());
+	   assertEquals("FINISHED", stream.getStatus());
+	   assertEquals("Import", stream.getStreamTag());
+	   assertEquals(3, stream.getEntryCount().intValue());
+	   entries = stream.getStatusEntries();
+	   assertEquals(3, entries.size());
+	   
+	   // entry 1
+	   entry = entries.get(0);
+	   assertEquals("TSS20100408151132355", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151132356", entry.getTaskStatusEntryID());
+	   assertEquals("CREATED", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:11:32 PM", entry.getCreated());
+	   assertEquals("no value", entry.getEntryTag());
+	   assertEquals("no value", entry.getPayload());
+	   
+	   // entry 2
+	   entry = entries.get(1);
+	   assertEquals("TSS20100408151132355", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151225382", entry.getTaskStatusEntryID());
+	   assertEquals("RUNNING", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:12:25 PM", entry.getCreated());
+	   assertEquals("filename", entry.getEntryTag());
+	   assertEquals("file2.txt", entry.getPayload());
+	   
+	   // entry 3
+	   entry = entries.get(2);
+	   assertEquals("TSS20100408151132355", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151248499", entry.getTaskStatusEntryID());
+	   assertEquals("FINISHED", entry.getStatus());
+	   assertEquals("Apr 8, 2010 3:12:48 PM", entry.getCreated());
+	   assertEquals("withoutError", entry.getEntryTag());
+	   assertEquals("file2.txt", entry.getPayload());
+
+	   // stream 3
+	   stream = container.getStreams().get(2);
+	   assertEquals("TSS20100408151315568", stream.getTaskStatusStreamID());
+	   assertEquals("Apr 8, 2010 3:13:15 PM", stream.getCreated());
+	   assertEquals("Apr 8, 2010 3:15:28 PM", stream.getTime());
+	   assertEquals("FINISHED", stream.getStatus());
+	   assertEquals("Import", stream.getStreamTag());
+	   assertEquals(7, stream.getEntryCount().intValue());
+	   entries = stream.getStatusEntries();
+	   assertEquals(7, entries.size());
+
+	   // entry 1
+	   entry = entries.get(0);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151315569", entry.getTaskStatusEntryID()); 
+	   assertEquals("CREATED", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:13:15 PM", entry.getCreated());
+	   assertEquals("no value", entry.getEntryTag());
+	   assertEquals("no value", entry.getPayload());
+
+	   // entry 2
+	   entry = entries.get(1);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151355969", entry.getTaskStatusEntryID()); 
+	   assertEquals("RUNNING", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:13:55 PM", entry.getCreated());
+	   assertEquals("filename", entry.getEntryTag());
+	   assertEquals("file3.txt", entry.getPayload());
+	   
+	   // entry 3
+	   entry = entries.get(2);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151424297", entry.getTaskStatusEntryID()); 
+	   assertEquals("RUNNING", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:14:24 PM", entry.getCreated());
+	   assertEquals("error", entry.getEntryTag());
+	   assertEquals("NullPointerError", entry.getPayload());
+	   
+	   // entry 4
+	   entry = entries.get(3);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151440876", entry.getTaskStatusEntryID()); 
+	   assertEquals("RUNNING", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:14:40 PM", entry.getCreated());
+	   assertEquals("error", entry.getEntryTag());
+	   assertEquals("IllegalArgumentException", entry.getPayload());
+
+	   // entry 5
+	   entry = entries.get(4);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151457486", entry.getTaskStatusEntryID()); 
+	   assertEquals("RUNNING", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:14:57 PM", entry.getCreated());
+	   assertEquals("error", entry.getEntryTag());
+	   assertEquals("IllegalArgumentException", entry.getPayload());
+	   
+	   // entry 6
+	   entry = entries.get(5);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151502835", entry.getTaskStatusEntryID()); 
+	   assertEquals("RUNNING", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:15:02 PM", entry.getCreated());
+	   assertEquals("error", entry.getEntryTag());
+	   assertEquals("IllegalArgumentException", entry.getPayload());
+	   
+	   // entry 7
+	   entry = entries.get(6);
+	   assertEquals("TSS20100408151315568", entry.getTaskStatusStreamID());
+	   assertEquals("TSE20100408151528564", entry.getTaskStatusEntryID()); 
+	   assertEquals("FINISHED", entry.getStatus()); 
+	   assertEquals("Apr 8, 2010 3:15:28 PM", entry.getCreated());
+	   assertEquals("withError", entry.getEntryTag());
+	   assertEquals("file3.txt", entry.getPayload());
+   }
+   
+  
    
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getTaskStreamCount(String)
-    
+    */
    public void testGetTaskStreamCount() {
-	   Assert.assertNotNull(evaluationService.getTaskStreamCount("?streamTag=Import"));
-	   // TODO
+	   assertNotNull(evaluationService.getTaskStreamCount("?streamTag=Import&depth=0"));
+	   assertEquals(3, evaluationService.getTaskStreamCount("?streamTag=Import&depth=0").intValue());
    }
-   */
+
    
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#updateTaskStatus(String)
