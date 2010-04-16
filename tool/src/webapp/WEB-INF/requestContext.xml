@@ -385,6 +385,9 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />  
     </bean>
 
 
@@ -404,9 +407,7 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-       <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="authoringService"
+       <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
@@ -454,13 +455,8 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertItemsProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />     
     </bean>
 
     <!-- SCALES -->
