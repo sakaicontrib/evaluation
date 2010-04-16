@@ -26,16 +26,15 @@ public class EvalLikertChartBuilder {
     private String[] responses = new String[] {};
     private int[] values = new int[] {};
     private boolean showPercentages = false;
+    private int responseCount = 0;
 
     @SuppressWarnings("deprecation")
     public JFreeChart makeLikertChart() {
 
         DefaultCategoryDataset likertDataset = new DefaultCategoryDataset();
 
-        int responsesCount = 0;
         for (int i = 0; i < responses.length; i++) {
             likertDataset.addValue(values[i], "Responses", responses[i]);
-            responsesCount += values[i];
         }
 
         JFreeChart chart = ChartFactory.createBarChart(null, // "Likert Chart", // Chart title
@@ -61,7 +60,7 @@ public class EvalLikertChartBuilder {
         renderer.setOutlineStroke(new BasicStroke(0.5f));
         renderer.setBaseItemLabelsVisible(true);
         if (showPercentages) {
-            renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(responsesCount));
+            renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(this.responseCount));
         } else {
             renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         }
@@ -99,5 +98,9 @@ public class EvalLikertChartBuilder {
 
     public void setShowPercentages(boolean showPercentages) {
         this.showPercentages = showPercentages;
+    }
+    
+    public void setResponseCount(int responseCount) {
+    	this.responseCount = responseCount;
     }
 }
