@@ -222,6 +222,8 @@ public class EvalPDFReportBuilder {
      *            the text for the choices
      * @param values
      *            the count of answers for each choice (same order as choices)
+     * @param reponseCount
+     *            the number of responses to the question
      * @param showPercentages
      *            if true then show the percentages
      * @param answersAndMean
@@ -229,7 +231,7 @@ public class EvalPDFReportBuilder {
      *            mean)
      */
     public void addLikertResponse(String question, String[] choices, int[] values,
-            boolean showPercentages, String answersAndMean) {
+            int responseCount, boolean showPercentages, String answersAndMean) {
         try {
             responseArea.addElement(new Paragraph(question, questionTextFont));
 
@@ -243,6 +245,7 @@ public class EvalPDFReportBuilder {
             chartBuilder.setValues(values);
             chartBuilder.setResponses(choices);
             chartBuilder.setShowPercentages(showPercentages);
+            chartBuilder.setResponseCount(responseCount);
             JFreeChart chart = chartBuilder.makeLikertChart();
 
             /* The height is going to be based off the number of choices */

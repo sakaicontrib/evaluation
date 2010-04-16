@@ -206,6 +206,7 @@ public class PDFReportExporter implements ReportExporter {
             // showPercentages = true;
             // }
 
+            int responseNo = itemAnswers.size();
             displayNumber++;
             String[] itemScaleOptions = item.getScale().getOptions();
             int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType,
@@ -230,7 +231,7 @@ public class PDFReportExporter implements ReportExporter {
             String answersAndMean = messageLocator.getMessage("viewreport.answers.mean", params);
 
             evalPDFReportBuilder.addLikertResponse(displayNumber + ". " + questionText,
-                    optionLabels, responseArray, showPercentages, answersAndMean);
+                    optionLabels, responseArray, responseNo, showPercentages, answersAndMean);
 
             // handle comments
             if (dti.usesComments()) {
