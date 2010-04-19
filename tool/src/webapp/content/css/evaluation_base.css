@@ -253,9 +253,6 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
 .itemListNew{
 	width: 95%;
-	border-color: #eee;
-	border-style: solid;
-	border-width: 2px;
 	padding: .5em;
 	list-style: none
 }
@@ -265,7 +262,7 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 	font-size: 110%;
 	margin-left: 1em
 }
-.itemListNew ol{ padding: 0; margin: 0 }
+.itemListNew ol{ padding: 0; margin: 13px 0 0 }
 .itemListNew li{ padding: .3em; margin: .3em; border: 1px solid #eee }
 .itemListNew li:hover .itemScalePanel{ border: 1px solid #aaa; background: #fff }
 .itemListEval li{ list-style: none; padding: .5em !important; margin: .2em}
@@ -1017,3 +1014,21 @@ background-repeat : no-repeat !important;
     text-decoration: none;
 }
 
+/* fake-fieldset to fix EVALSYS-551 */
+.fake-fieldset .fieldset {
+  border: solid 2px #eee;
+  margin-top: 20px;
+  position: relative;
+  }
+
+.fake-fieldset .legend {
+  left: 0.5em;
+  top: -15px;
+  background: white;
+  position: absolute;
+  font-weight: bold;
+  color:orange;
+  font-size:110%;
+  margin-left:1em;
+  padding:0.3em 0.7em;
+  }

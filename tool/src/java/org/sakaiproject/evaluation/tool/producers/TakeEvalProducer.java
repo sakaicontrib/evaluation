@@ -494,7 +494,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                                 UIOutput.make(showSwitchGroup, uiTag + "-one-header");
                                 UISelect.make(showSwitchGroup, uiTag + "-one-list", value
                                         .toArray(new String[value.size()]), label
-                                        .toArray(new String[label.size()]), selectionOTP, savedSelectedIds.size() == 0 ? savedSelectedIds.get(0) : null);
+                                        .toArray(new String[label.size()]), selectionOTP, savedSelectedIds.size() == 0 ? null : savedSelectedIds.get(0));
                                } else {
                                 throw new IllegalStateException("Invalid selection option ("
                                         + selectValue + "): do not know how to handle this.");
