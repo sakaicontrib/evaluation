@@ -176,14 +176,14 @@
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client</artifactId>
-      <version>0.0.17-SNAPSHOT</version>
+      <version>0.0.18-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Server</artifactId>
-      <version>0.0.17-SNAPSHOT</version>
+      <version>0.0.18-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     

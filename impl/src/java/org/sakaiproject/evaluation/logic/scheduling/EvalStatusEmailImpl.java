@@ -25,7 +25,8 @@ import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
 /**
  * This U-M class runs under Quartz and sends an email summary report on background tasks
  * of importing data in files and sending single-email announcements and reminders.
- * It depends on a U-M Task Status Servlet (Restlet).
+ * It depends on a U-M Task Status Servlet (Restlet) and a property taskstatus.email
+ * where email will be sent.
  * 
  * @author rwellis
  *
@@ -82,14 +83,14 @@ public class EvalStatusEmailImpl implements Job{
 			
 			// TODO classloader issue using ResourceLoader
 			
-			// CREATED
+			// entryStatus CREATED
 			String streamUrl = evaluationService.newTaskStatusStream(STATUS_STREAM_TAG);
 			if(streamUrl == null) {
 				log.error(this + ".execute - TaskStatusService streamUrl is null.");
 				throw new JobExecutionException("TaskStatusServer streamUrl is null.");
 			}
 			
-			// RUNNING
+			// entryStatus RUNNING
 			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 					null, TaskStatusStandardValues.RUNNING, null);
 			
@@ -104,7 +105,7 @@ public class EvalStatusEmailImpl implements Job{
 			String queryParameters = null;
 			String filesText = null;
 			
-			// EMAIL JOB
+			// ANNOUNCEMENTS & REMINDERS EMAIL JOB
 			String baseEmailQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE;
 			String emailErrorQuery = "?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=0" + "&entryTag=error";
 			List<String> ranText = new ArrayList<String>();
@@ -159,8 +160,10 @@ public class EvalStatusEmailImpl implements Job{
 				}
 			}
 			
-			// IMPORT - (1 stream per file imported)
-			String baseImportQuery = "?streamTag=" + IMPORT_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=0";
+			// DATA FILE IMPORT - 1 task stream per file imported
+			String baseImportQuery = "?streamTag=" + IMPORT_STREAM_TAG
+					+ "&since=" + since + "&otype=" + CONTAINER_OTYPE
+					+ "&depth=0";
 			List<String> loadedText = new ArrayList<String>();
 			Integer filesTotal = importedTotal(baseImportQuery, streamUrl);
 			Boolean dataLoaded = new Boolean(false);
@@ -174,15 +177,16 @@ public class EvalStatusEmailImpl implements Job{
 					filesText =  " file was ";
 				}
 				loadedText.add(filesTotal.toString() + filesText + "loaded since the last email status report.");
-				// TODO need the first and last streams not the whole container
-				String containerQuery = "?streamTag=Import&since=" + since + "&depth=2" + "&otype=" + CONTAINER_OTYPE + "&streamStatus=" + TaskStatusStandardValues.FINISHED;
+				// represent the day's activity by the first and last streams
+				String containerQuery = "?offsetFirst=0&offsetLast=-1&streamTag=Import&since=" + since
+						+ "&depth=2"
+						+ "&otype=" + CONTAINER_OTYPE
+						+ "&streamStatus=" + TaskStatusStandardValues.FINISHED;
 				EvalTaskStatusStream firstStream = null;
 				EvalTaskStatusStream lastStream = null;
-				// TODO need the first and last streams not the whole container
+				// Note: it might be more efficient to get the streams with depth=1 and get the entries in separate calls
 				EvalTaskStreamContainer container = evaluationService.getTaskStatusContainer(containerQuery);
-				// TODO offsetFirst=0&offsetLast=-1 returns just the first and last entries in the list. - streams@depth=1
 				if(container.getStreamCount().intValue() > 1) {
-					// TODO offsetFirst=0&offsetLast=-1 returns just the first and last entries in the list. - entries@depth=1
 					firstStream = container.getStreams().get(0);
 					lastStream = container.getStreams().get(container.getStreamCount() - 1);
 					// by convention the second entry payload has the filename
@@ -250,7 +254,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			if(log.isInfoEnabled()) log.info(this + ".execute - done.");
 			
-			// FINISHED
+			// entryStatus FINISHED
 			entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "STATUS_SINCE_DATE", 
 					TaskStatusStandardValues.FINISHED, "updated to " + newDate.toString());
 		
@@ -267,7 +271,7 @@ public class EvalStatusEmailImpl implements Job{
 		Integer errors = evaluationService.getTaskStreamCount(emailErrorQuery);
 		if(errors > 0) jobErrors = Boolean.TRUE;
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryTag = "emailErrors";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
@@ -302,8 +306,10 @@ public class EvalStatusEmailImpl implements Job{
 		}
 		if(jobErrors != null && jobErrors) {
 			// link to details
-			ranText.add("The email job had problems. \nDetails: " + taskStatusUrl + "?streamTag=" 
-					+ EMAIL_STREAM_TAG  + "&entryTag=" + ERROR + "&since=" + since);
+			ranText.add("The email job had problems. \nDetails: " 
+					+ taskStatusUrl + "?streamTag=" + EMAIL_STREAM_TAG  
+					+ "&entryTag=" + ERROR 
+					+ "&since=" + since);
 		}
 		ranText.add("\n------------------------------------------------------------------------\n");
 	}
@@ -325,7 +331,7 @@ public class EvalStatusEmailImpl implements Job{
 		if(runs > 0) jobRan = Boolean.TRUE;
 		if(log.isDebugEnabled()) log.debug("'email job ran' is " + (new Boolean(jobRan)).toString());
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryTag = "emailRan";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
@@ -343,12 +349,12 @@ public class EvalStatusEmailImpl implements Job{
 	 * @return
 	 */
 	private Integer importedTotal(String baseImportQuery, String streamUrl) {
-		// CREATED
+		// entryStatus CREATED
 		String query = baseImportQuery + "&entryStatus=" + TaskStatusStandardValues.CREATED;
 		Integer total = evaluationService.getTaskStreamCount(query);
 		if(log.isDebugEnabled()) log.debug(total.toString() + " total files imported (using query " + query + ")");
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryTag = "filesTotal";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING,
@@ -368,12 +374,12 @@ public class EvalStatusEmailImpl implements Job{
 	 * @return the number of files of this type
 	 */
 	private Integer importedWithError(String baseImportQuery, String streamUrl) {
-		// FINISHED WITH_ERROR
+		// entryStatus FINISHED entryTag withError
 		String query = baseImportQuery + "&entryStatus=" + TaskStatusStandardValues.FINISHED + "&entryTag=" + WITH_ERROR;
 		Integer errors = evaluationService.getTaskStreamCount(query);
 		if(log.isDebugEnabled()) log.debug(errors.toString() + " files imported with error (using query " + query + ")");
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryTag = "filesWithError";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING,
@@ -393,12 +399,12 @@ public class EvalStatusEmailImpl implements Job{
 	 * @return the number of files of this type
 	 */
 	private Integer importedWithoutError(String baseImportQuery, String streamUrl) {
-		// FINISHED WITHOUT_ERROR
+		// entryTag FINISHED entryTag withoutError
 		String query = baseImportQuery + "&entryStatus=" + TaskStatusStandardValues.FINISHED + "&entryTag=" + WITHOUT_ERROR;
 		Integer good = evaluationService.getTaskStreamCount(query);
 		if(log.isDebugEnabled()) log.debug(good.toString() + " files imported without error (using query " + query + ")");
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryTag = "filesWithoutError";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				entryTag, TaskStatusStandardValues.RUNNING,
@@ -418,12 +424,12 @@ public class EvalStatusEmailImpl implements Job{
 	 * @return the number of files of this type
 	 */
 	private Integer importUnfinished(String baseImportQuery, String streamUrl) {
-		// RUNNING
+		// streamStatus RUNNING
 		String query = baseImportQuery + "&streamStatus=" + TaskStatusStandardValues.RUNNING;
 		Integer stillRunning = evaluationService.getTaskStreamCount(query);
 		if(log.isDebugEnabled()) log.debug(stillRunning.toString() + " files not yet finished using query " + query);
 		
-		// EvalStatusEmailImpl status
+		// streamTag StatusReport
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
 				"filesUnfinished", TaskStatusStandardValues.RUNNING,
 				stillRunning.toString());
