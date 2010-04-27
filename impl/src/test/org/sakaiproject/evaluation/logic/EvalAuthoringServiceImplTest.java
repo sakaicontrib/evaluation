@@ -1168,6 +1168,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)}.
     */
    public void testSaveTemplateItem() {
+
       // load up a no items template to work with
       EvalTemplate noItems = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
 
@@ -1197,12 +1198,15 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertEquals( 1, eiTest1.getDisplayOrder().intValue() );
 
       // test saving a valid templateItem
+      etdl.templateUnused.setLocked(false); // why is this needed?
       authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
             noItems, etdl.item7, new Integer(2), 
             EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
             EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(3),
             null, Boolean.FALSE, false, false, null, null, null),
             EvalTestDataLoad.ADMIN_USER_ID);
+
+      System.out.println("ZZZZZZZZZZZZZZ template: " + etdl.templateUnused.getId() + ":" + etdl.templateUnused.getLocked());
 
       // test saving valid templateItem with locked item
       authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
