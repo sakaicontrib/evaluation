@@ -24,7 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
+import org.sakaiproject.evaluation.logic.exceptions.InvalidEvalCategoryException;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -467,5 +469,27 @@ public class EvalBeanUtils {
             }
         }
     }
-
+    
+    /**
+     * Tests validity of user-supplied evaluation category by attempting to create
+     * the resulting entity URL. Throws an {@link InvalidEvalCategoryException} if 
+     * the eval category contains any invalid characters (i.e. characters that are 
+     * invalid for use in a URL).
+     * 
+     * @param evalCategory the eval category entered by the user
+     * @return boolean indicating its validity
+     */
+    public void validateEvalCategory(String evalCategory) {
+    	
+    	try {
+    		
+    		if ((evalCategory != null) && (evalCategory.length() != 0))
+    			commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evalCategory);
+    		
+    	} catch (IllegalArgumentException ex) {
+    		throw new InvalidEvalCategoryException(ex);
+    	}
+    	
+    }
+    
 }

@@ -223,6 +223,10 @@ public interface EvalSettings {
      */
     public static final String ENABLE_EVAL_CATEGORIES = "ENABLE_EVAL_CATEGORIES:java.lang.Boolean";
     /**
+     * CONSTANT: Show the textbox for entering evaluation term IDs when setting up an eval - {@link Boolean}, default False
+     */
+    public static final String ENABLE_EVAL_TERM_IDS = "ENABLE_EVAL_TERM_IDS:java.lang.Boolean";
+    /**
      * CONSTANT: If this is activated then evaluation responses can be removed,
      * this is for removal of individual responses - {@link Boolean}, default False
      */
@@ -347,6 +351,7 @@ public interface EvalSettings {
         ENABLE_ADHOC_USERS,
         ENABLE_CSV_REPORT_EXPORT,
         ENABLE_EVAL_CATEGORIES,
+        ENABLE_EVAL_TERM_IDS,
         ENABLE_EVAL_EARLY_CLOSE,
         ENABLE_EVAL_REOPEN,
         ENABLE_EVAL_RESPONSE_REMOVAL,

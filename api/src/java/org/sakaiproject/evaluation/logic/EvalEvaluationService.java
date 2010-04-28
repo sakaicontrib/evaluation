@@ -70,7 +70,7 @@ public interface EvalEvaluationService {
     public EvalEvaluation getEvaluationByEid(String eid);
 
     /**
-     * Get a list of evaluationSetupService for a template id
+     * Get a list of evaluations associated with a template id
      * 
      * @param templateId the id of an {@link EvalTemplate} object
      * @return a List of {@link EvalEvaluation} objects (empty if none exist)
@@ -78,14 +78,22 @@ public interface EvalEvaluationService {
     public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId);
 
     /**
-     * Count the number of evaluationSetupService for a template id
+     * Count the number of evaluations associated with a template id
      * 
      * @param templateId the id of an {@link EvalTemplate} object
      * @return the count of {@link EvalEvaluation} objects
      */
     public int countEvaluationsByTemplateId(Long templateId);
-
-
+    
+    /**
+     * Get a list of evaluations with the specified term id.
+     * 
+     * @param termId the term id of one or more {@link EvalEvaluation} objects
+     * @return a list of {@link EvalEvaluation} objects, an empty list if no 
+     * evaluations with a matching term id can be found
+     */
+    public List<EvalEvaluation> getEvaluationsByTermId(String termId);
+    
     // EVALUATION STATES
 
     /**

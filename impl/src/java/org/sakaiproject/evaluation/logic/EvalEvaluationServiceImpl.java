@@ -137,7 +137,20 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         }
         return evals;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByTermId(java.lang.String)
+     */
+    public List<EvalEvaluation> getEvaluationsByTermId(String termId) {
+    	log.debug("termId: " + termId);
+        Search search = makeSearchForEvalsByTermId(termId);
+        List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
+        for (EvalEvaluation evaluation : evals) {
+            fixupEvaluation(evaluation);
+        }
+        return evals;
+    }
+    
     /**
      * @param templateId unique id of a template (must be set or exception occurs)
      * @return the search which will find evals based on a template id
@@ -150,6 +163,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         Search search = new Search(
                 new Restriction[] {
                         new Restriction("template.id", templateId),
+                        new Restriction("state", EvalConstants.EVALUATION_STATE_PARTIAL, Restriction.NOT_EQUALS),
+                        new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
+                }
+        );
+        return search;
+    }
+    
+    /**
+     * @param termId the term id of an {@link EvalEvaluation}
+     * @return the search object that will select {@link EvalEvaluation} objects based on term id
+     */
+    private Search makeSearchForEvalsByTermId(String termId) {
+        Search search = new Search(
+                new Restriction[] {
+                        new Restriction("termId", termId),
                         new Restriction("state", EvalConstants.EVALUATION_STATE_PARTIAL, Restriction.NOT_EQUALS),
                         new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
                 }

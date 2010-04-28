@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
+import org.sakaiproject.evaluation.logic.exceptions.InvalidEvalCategoryException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -297,6 +298,10 @@ public class SetupEvalBean {
             throw new RuntimeException(e); // should not be needed but it is
         } catch (InvalidDatesException e) {
             messages.addMessage(new TargettedMessage(e.messageKey, new Object[] {},
+                    TargettedMessage.SEVERITY_ERROR));
+            throw new RuntimeException(e); // should not be needed but it is
+        } catch (InvalidEvalCategoryException e) {
+        	messages.addMessage(new TargettedMessage(e.messageKey, new Object[] {},
                     TargettedMessage.SEVERITY_ERROR));
             throw new RuntimeException(e); // should not be needed but it is
         }

@@ -87,6 +87,11 @@ public class EvaluationBeanLocator implements BeanLocator {
             }
             // fix up all the dates before saving
             evalBeanUtils.fixupEvaluationDates(evaluation);
+            
+            // validate the eval category before saving, throws exception
+            // and returns to page if it contains invalid characters
+            evalBeanUtils.validateEvalCategory(evaluation.getEvalCategory());
+            
             // fix selection settings too
             fixUpSelections(evaluation);
             evaluationSetupService.saveEvaluation(evaluation, commonLogic.getCurrentUserId(), false);

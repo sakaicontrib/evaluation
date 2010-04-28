@@ -336,6 +336,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-evaluatee-box", EvalSettings.ENABLE_EVALUATEE_BOX);
         makeBoolean(form, "general-show-my-toplinks", EvalSettings.ENABLE_MY_TOPLINKS);
         makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
+        makeBoolean(form, "general-use-eval-term-id", EvalSettings.ENABLE_EVAL_TERM_IDS);
         makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
 
         makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
