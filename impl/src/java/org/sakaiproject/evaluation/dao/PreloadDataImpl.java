@@ -136,6 +136,7 @@ public class PreloadDataImpl {
 
             saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
             saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
+            saveConfig(EvalSettings.ENABLE_EVAL_TERM_IDS, false);
             saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
             saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
             saveConfig(EvalSettings.EVAL_USE_DATE_TIME, false);

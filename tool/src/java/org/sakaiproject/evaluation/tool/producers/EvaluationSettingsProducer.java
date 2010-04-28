@@ -516,7 +516,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
         // EVALUATION EXTRAS SECTION
         Boolean categoriesEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
-        if (categoriesEnabled) {
+        Boolean evalTermIdsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_TERM_IDS);
+        
+        if ((categoriesEnabled) || (evalTermIdsEnabled)) {
             UIBranchContainer extrasBranch = UIBranchContainer.make(form, "showEvalExtras:");
 
             // eval category
@@ -529,6 +531,16 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                             .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
                 }
             }
+            
+            if (evalTermIdsEnabled) {
+            	
+            	UIBranchContainer evalTermIdBranch = UIBranchContainer.make(extrasBranch, "showEvalTermId:");
+                
+            	UIInput evalTermIdInput = UIInput.make(evalTermIdBranch, "eval-term-id", evaluationOTP + "termId");
+            	evalTermIdInput.mustapply = true;
+            	
+            }
+            
         }
 
         // EVAL SETTINGS SAVING CONTROLS
