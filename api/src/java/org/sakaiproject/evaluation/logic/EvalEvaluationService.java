@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * This contains simple logic for retrieving evaluationSetupService and evaluation related objects

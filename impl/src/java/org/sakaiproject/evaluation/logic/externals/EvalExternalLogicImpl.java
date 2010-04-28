@@ -85,7 +85,7 @@ import org.sakaiproject.taskstream.client.TSSClientApi;
 import org.sakaiproject.taskstream.client.TSSClientImpl;
 import org.sakaiproject.taskstream.client.TSSQueryParameters;
 import org.sakaiproject.taskstream.client.TSSResponseApi;
-import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;

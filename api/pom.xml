@@ -50,8 +50,7 @@
   <!-- taskstatus enum -->
      <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
-      <artifactId>TaskStream-Server</artifactId>
-      <version>0.0.18-SNAPSHOT</version>
+      <artifactId>TaskStream-Client</artifactId>
       <scope>provided</scope>
     </dependency>
     </dependencies>

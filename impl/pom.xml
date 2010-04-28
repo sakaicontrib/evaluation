@@ -176,15 +176,15 @@
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client</artifactId>
-      <version>0.0.18-SNAPSHOT</version>
       <scope>provided</scope>
+      <version>0.0.19-SNAPSHOT</version>
     </dependency>
     
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Server</artifactId>
-      <version>0.0.18-SNAPSHOT</version>
       <scope>provided</scope>
+      <version>0.0.19-SNAPSHOT</version>
     </dependency>
     
 <!-- JDOM dependencies -->

@@ -45,7 +45,7 @@ import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
-import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * EvalEmailsLogic implementation,

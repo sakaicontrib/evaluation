@@ -20,7 +20,7 @@ import org.sakaiproject.evaluation.model.EvalTaskStatusEntry;
 import org.sakaiproject.evaluation.model.EvalTaskStatusStream;
 import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
-import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * This U-M class runs under Quartz and sends an email summary report on background tasks

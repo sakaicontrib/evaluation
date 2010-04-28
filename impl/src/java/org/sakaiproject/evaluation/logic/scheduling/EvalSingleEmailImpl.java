@@ -44,7 +44,7 @@ import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.taskstream.client.TSSResponseApi;
-import org.sakaiproject.taskstream.domain.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * Schedule this job to run once daily when there are active evaluations, in order to send 

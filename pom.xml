@@ -71,28 +71,43 @@
     </profile>
   </profiles>
 <!-- handles the management of all related dependencies -->
+
   <dependencyManagement>
+<!-- Task Stream -->
     <dependencies>
-      <dependency>
-        <groupId>org.sakaiproject.evaluation</groupId>
-        <artifactId>sakai-evaluation-api</artifactId>
-        <version>1.2.1</version>
-<!--eval.version-->
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.sakaiproject.evaluation</groupId>
-        <artifactId>sakai-evaluation-impl</artifactId>
-        <version>1.2.1</version>
-<!--eval.version-->
-      </dependency>
-<!-- needed until EB is in the Sakai master dependency management -->
-      <dependency>
-        <groupId>org.sakaiproject.entitybroker</groupId>
-        <artifactId>entitybroker-api</artifactId>
-        <version>${sakai.entitybroker.version}</version>
-        <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.evaluation</groupId>
+            <artifactId>sakai-evaluation-api</artifactId>
+            <version>1.2.1</version>
+            <!--eval.version-->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.evaluation</groupId>
+            <artifactId>sakai-evaluation-impl</artifactId>
+            <version>1.2.1</version>
+            <!--eval.version-->
+        </dependency>
+        <!-- needed until EB is in the Sakai master dependency management -->
+        <dependency>
+            <groupId>org.sakaiproject.entitybroker</groupId>
+            <artifactId>entitybroker-api</artifactId>
+            <version>${sakai.entitybroker.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.taskstream</groupId>
+            <artifactId>TaskStream-Client</artifactId>
+            <version>${tss.client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sakaiproject.taskstream</groupId>
+            <artifactId>TaskStream-Server</artifactId>
+            <version>${tss.server.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
   </dependencyManagement>
 <!-- Project developers -->
