@@ -586,6 +586,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="locale" ref="requestLocale" />
     </bean>
 

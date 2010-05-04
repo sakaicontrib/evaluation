@@ -146,6 +146,8 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 8);
             saveConfig(EvalSettings.ENABLE_EVAL_EARLY_CLOSE, true);
             saveConfig(EvalSettings.ENABLE_EVAL_REOPEN, true);
+            saveConfig(EvalSettings.ENABLE_MY_TOPLINKS, true);
+            saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
 
             // REPORTING
             saveConfig(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
