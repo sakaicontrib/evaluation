@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -64,9 +65,9 @@ public class EvaluationNotificationsProducer implements ViewComponentProducer, V
         this.evaluationService = evaluationService;
     }
 
-    private EvalSettings evalSettings;
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+        this.settings = settings;
     }
 
     private Locale locale;
@@ -96,7 +97,7 @@ public class EvaluationNotificationsProducer implements ViewComponentProducer, V
         }
 
         // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        boolean showMyToplinks = EvalUtils.safeBool((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS));
         if(showMyToplinks) {
         	UIInternalLink.make(tofill, "control-evaluations-link", UIMessage.make("controlevaluations.page.title"), 
         			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));

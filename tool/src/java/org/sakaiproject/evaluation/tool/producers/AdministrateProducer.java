@@ -101,32 +101,30 @@ public class AdministrateProducer implements ViewComponentProducer {
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
         // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-        if(showMyToplinks) {
-        	if (beginEvaluation) {
-        		UIInternalLink.make(tofill, "control-evaluations-link",
-        				UIMessage.make("controlevaluations.page.title"), 
-        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        	}
-        	
-        	UIInternalLink.make(tofill, "control-templates-link",
-        			UIMessage.make("controltemplates.page.title"), 
-        			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        //boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue(); // ALWAYS SHOW FOR ADMIN
+    	if (beginEvaluation) {
+    		UIInternalLink.make(tofill, "control-evaluations-link",
+    				UIMessage.make("controlevaluations.page.title"), 
+    				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+    	}
+    	
+    	UIInternalLink.make(tofill, "control-templates-link",
+    			UIMessage.make("controltemplates.page.title"), 
+    			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
-        	if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-        		UIInternalLink.make(tofill, "control-items-link",
-        				UIMessage.make("controlitems.page.title"),
-        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-        	}
+    	if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
+    		UIInternalLink.make(tofill, "control-items-link",
+    				UIMessage.make("controlitems.page.title"),
+    				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+    	}
 
-        	UIInternalLink.make(tofill, "control-scales-link",
-        			UIMessage.make("controlscales.page.title"),
-        			new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+    	UIInternalLink.make(tofill, "control-scales-link",
+    			UIMessage.make("controlscales.page.title"),
+    			new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
-        	UIInternalLink.make(tofill, "control-emailtemplates-link",
-        			UIMessage.make("controlemailtemplates.page.title"),
-        			new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
-        }
+    	UIInternalLink.make(tofill, "control-emailtemplates-link",
+    			UIMessage.make("controlemailtemplates.page.title"),
+    			new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
 
         // BREADCRUMBS
         UIInternalLink.make(tofill, "control-email-toplink",
