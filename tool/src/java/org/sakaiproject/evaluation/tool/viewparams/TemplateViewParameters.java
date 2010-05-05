@@ -22,6 +22,7 @@ package org.sakaiproject.evaluation.tool.viewparams;
 public class TemplateViewParameters extends BaseViewParameters {
 
 	public Long templateId;
+	public Long templateItemId;
 
 	public TemplateViewParameters() {
 	}
@@ -29,6 +30,12 @@ public class TemplateViewParameters extends BaseViewParameters {
 	public TemplateViewParameters(String viewID, Long templateId) {
 		this.viewID = viewID;
 		this.templateId = templateId;
+	}
+	
+	public TemplateViewParameters(String viewID, Long templateId, Long templateItemId) {
+		this.viewID = viewID;
+		this.templateId = templateId;
+		this.templateItemId = templateItemId;
 	}
 
 }

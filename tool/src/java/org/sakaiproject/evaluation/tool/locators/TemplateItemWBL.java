@@ -120,7 +120,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
    /**
     * saves all delivered template items and the associated items (new or existing)
     */
-   public void saveBoth() {
+   public String saveBoth() {
       for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
          String key = it.next();
          EvalTemplateItem templateItem = (EvalTemplateItem) delivered.get(key);
@@ -135,10 +135,9 @@ public class TemplateItemWBL implements WriteableBeanLocator {
          localTemplateLogic.saveItem( templateItem.getItem() );
          // then save the templateItem
          localTemplateLogic.saveTemplateItem(templateItem);
-         messages.addMessage( new TargettedMessage("templateitem.saved.message", 
-               new Object[] { templateItem.getDisplayOrder() }, 
-               TargettedMessage.SEVERITY_INFO));
+         return templateItem.getId().toString();
       }
+      return "";  //should not get here is this is a failure
    }
    
    public void saveToGroup(Long groupItemId) {

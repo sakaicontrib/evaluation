@@ -18,7 +18,7 @@ $(document).bind('activateControls.templateItems', function() {
         blockId = parentObj.find("input[name=template-item-id]").val();
         var noGroupableItems = true;
         //console.log(that.attr('class'));
-        var myType = $(this).parents('.itemRow').find('.itemCheckbox > input').attr('id');
+        var myType = that.parents('.itemRow').find('.itemCheckbox > input').attr('id');
 
         if (evalTemplateUtils.vars.groupableItems.length > 0) {
             for (var i = 0; i < evalTemplateUtils.vars.groupableItems.length; i ++) {
@@ -34,14 +34,11 @@ $(document).bind('activateControls.templateItems', function() {
            } else {
 
             $.facebox('<div id="addGroupItemDiv"></div>');
-            if ($('#facebox .titleHeader').length > 0){
-                $('#facebox .titleHeader').remove();
-            }
-            $('<h2 style="font-weight: bold;" class="titleHeader">' + lang('modifytemplate.group.add.selection') + '').insertBefore('#facebox .close'); 
+            $('<h2 style="font-weight: bold;" class="titleHeader">' + lang('modifytemplate.group.add.existingitem') + '</h2>').insertBefore('#facebox .close');
             $('<div class="itemAction"> <a id="addGroupItemSelectAll" title="'+lang('modifytemplate.group.add.select.all')+'" href="#">'+lang('modifytemplate.group.add.select.all')+'</a> | <a id="addGroupItemDeselectAll" title="'+lang('modifytemplate.group.add.select.none')+'" href="#">'+lang('modifytemplate.group.add.select.none')+'</a></div>').insertBefore('#addGroupItemDiv');
             $('<div class="act">' +
-              '<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="'+lang('modifytemplate.add.item.button')+'" disabled="disabled"/>' +
-              '<input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="'+lang('general.cancel.button')+'"/>' +
+              '<input type="button" id="addGroupItemSave" class="active submit" accesskey="s" value="'+lang('modifytemplate.add.item.button')+'" disabled="disabled"/> ' +
+              ' <input type="button" onclick="$(document).trigger(\'close.facebox\')" accesskey="x" value="'+lang('general.cancel.button')+'"/>' +
               '</div>').insertAfter('#addGroupItemDiv');
             //bind new control actions
             $('#addGroupItemSelectAll').bind('click', function() {
@@ -57,16 +54,14 @@ $(document).bind('activateControls.templateItems', function() {
                 $('#addGroupItemSave').attr('disabled', 'disabled');
             });
             $('#addGroupItemSave').bind('click', function() {
-                var img = '<img src="' + $.facebox.settings.loadingImage + '"/>';
+                var img = '<img alt="Loading..." src="' + $.facebox.settings.loadingImage + '"/>';
                 $(this).attr('disabled', 'disabled');
                 $(this).next('input').attr('disabled', 'disabled');
                 $(img).insertAfter($(this).next('input'));
                 var addItems = [];
-                $('#addGroupItemDiv > div').each(function() {
-                    if ($(this).find('input[type=checkbox]').attr('checked') === true) {
-                        var itemId = $(this).find("input[name=hidden-item-id]:hidden").val();
-                        addItems.push(itemId);
-                    }
+                $('#addGroupItemDiv input[type=checkbox]:checked').each(function() {
+                    var itemId = $(this).parents('.itemRowBlock').find("input[name=hidden-item-id]:hidden").val();
+                    addItems.push(itemId);
                 });
 
                 log.info("selected %o", addItems.toString());
@@ -76,18 +71,19 @@ $(document).bind('activateControls.templateItems', function() {
                     additems: addItems.toString()
                 },
                 fnAfter = function(){
-                    $.get("modify_template_items?external=false&templateId=" + $("input[name=templateId]:hidden").val(),
+                    window.location.reload(true);
+                    /*$.get("modify_template_items?external=false&templateId=" + $("input[name=templateId]:hidden").val(),
                             null,
                             function(data){
                                 $('#itemList').html($(data).find('#itemList').html());
                                 $(document).trigger('activateControls.templateItems');
                                 evalTemplateOrder.initGroupableItems();
                                 $(document).trigger('close.facebox');
-                            });
+                            });*/
                 };
                 evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params, null, fnAfter);
             });
-            var clone = $(this).parents('.itemRowBlock').find('.itemRowBlock').eq(0).clone(),
+            var clone = $(this).parents('.itemTableBlock').find('.itemRowBlock').eq(0).clone(),
             selectBox = $('<input name="addGroupItemCheckbox" type="checkbox" title="'+ lang('modifytemplate.item.checkbox.title') +'" value="true"/>');
             //edit extra controls
             clone.find('.itemRight').hide();
@@ -96,9 +92,9 @@ $(document).bind('activateControls.templateItems', function() {
             if (evalTemplateUtils.vars.groupableItems.length > 0) {
                 for (var num = 0; num < evalTemplateUtils.vars.groupableItems.length; num ++) {
                     var type = evalTemplateUtils.vars.groupableItems[num].type;
+                    log.debug("Checking this %s against %s", (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-'))), (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-'))));
                     if ( (myType.substring(myType.indexOf('-') + 1, myType.lastIndexOf('-'))) == (type.substring(type.indexOf('-') + 1, type.lastIndexOf('-'))) ) {
                         var itemId = evalTemplateUtils.vars.groupableItems[num].itemId,
-                        otp = evalTemplateUtils.vars.groupableItems[num].otp,
                         text = evalTemplateUtils.vars.groupableItems[num].text,
                         rowId = evalTemplateUtils.vars.groupableItems[num].rowId,
                         rowNumber = evalTemplateUtils.vars.groupableItems[num].rowNumber,
@@ -107,10 +103,10 @@ $(document).bind('activateControls.templateItems', function() {
                         shadow.css('cursor', 'auto');
                         shadow.attr('oldRowId', rowId);
                         shadow.find('span').eq(1).html(text);
-                        shadow.find('input').eq(0).val(itemId);
-                        shadow.find('a[templateitemid]').attr('templateitemid', itemId);
-                        shadow.find('a[otp]').attr('otp', otp);
+                        shadow.find('input[name=hidden-item-id]:hidden').val(itemId);
+                        //shadow.find('a[otp]').attr('otp', otp);
                         $('#addGroupItemDiv').append(shadow);
+                        log.debug("Adding groupable item %o to div", shadow);
                     }
                 }
                 $('input[name=addGroupItemCheckbox]').bind('click', function() {
@@ -153,7 +149,7 @@ $(document).bind('activateControls.templateItems', function() {
 
         var order = [];
         $("#itemList > div").not('.ui-sortable-helper').each(function(){
-            order.push($(this).find('a[templateitemid]').attr('templateitemid'));
+            order.push($(this).find('input[name=template-item-id]:hidden').val());
         });
         var params = {
             orderedIds : order.toString()
@@ -377,10 +373,10 @@ function updateControlItemsTotal() {
             options.itemType = 'none';
         }
         if ((options.itemType == "blockChild")){
-            $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#fff');
+            $('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').css('background', '#fff');
         }
         else{
-            $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#fff');
+            $('input[name=template-item-id][value='+options.id+']:hidden').parents('.itemRow').css('background', '#fff');
         }
 
         var href = an.href,
@@ -438,10 +434,10 @@ function updateControlItemsTotal() {
         }
 
         if (options.itemType == "blockChild") {
-            $('a[templateItemId=' + options.id + ']').parents('.itemRowBlock').eq(0).css('background', '#ffc');
+            $('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').css('background', '#ffc');
         }
         else{
-            $('a[templateItemId=' + options.id + ']').parents('.itemRow').eq(0).css('background', '#ffc');
+            $('input[name=template-item-id][value='+options.id+']:hidden').parents('.itemRow').css('background', '#ffc');
         }
 
         var content = '<div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>' +
@@ -460,7 +456,7 @@ function updateControlItemsTotal() {
                 if ($('#closeItemOperationsEnabled').length > 0) {
                     $('#closeItemOperationsEnabled').parent().remove();
                 }
-                if ($('a[templateItemId=' + options.id + ']').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
+                if ($('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
                     var error = '<div class="itemOperationsEnabled">' +
                                 '<img src="/library/image/sakai/cancelled.gif"/>' +
                                 '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+' <a href="#" id="closeItemOperationsEnabled">X</a></div>';
@@ -471,6 +467,7 @@ function updateControlItemsTotal() {
                         });
                         return false;
                     });
+                    $('.closeImage').click();
                     return false;
                 }
                 if( options.ref === "eval-templateitem/unblock" ){
@@ -482,7 +479,8 @@ function updateControlItemsTotal() {
                         doBusy($(an));
                     },
                     success: function() {
-                        $.get("modify_template_items?external=false&templateId=" + $("input[name=templateId]:hidden").val(), null, function(data){ options.itemType = "block"; finish(options, data); });
+                        window.location.reload(true);
+                        //$.get("modify_template_items?external=false&templateId=" + $("input[name=templateId]:hidden").val(), null, function(data){ options.itemType = "block"; finish(options, data); });
                     }
                 });
                 }else{
@@ -497,24 +495,6 @@ function updateControlItemsTotal() {
                         }
                     });
                 }
-            }
-            else if (options.ref === 'eval-templateitem') {
-                var s = 'a[templateitemid=' + options.id + ']';
-                var t = $(s);
-                //AJAX request is to bean because of what it returns
-                $.ajax({
-                    url: "remove_item",
-                    data: 'templateItemId=' + options.id + '&templateId=' + t.attr('templateid') + '&command+link+parameters%26deletion-binding%3Dl%2523%257B' + t.attr('otp') + '%257D%26Submitting%2520control%3Dremove-item-command-link=Remove+Item',
-                    type: "POST",
-                    beforeSend: function() {
-                        doBusy(t);
-                    },
-                    success: function(data) {
-                        t.parents('.itemLine2').find('select.selectReorder').removeAttr('disabled');
-                        //alert(data);
-                        finish(options, data);
-                    }
-                });
             }
             else {
                 log.debug("EB action for deleting id: %i", options.id );
@@ -551,12 +531,13 @@ function updateControlItemsTotal() {
     function finish(options, d) {
         log.group("Removed item of type %s with ref of %s", options.itemType, options.ref);
         if (options.itemType == 'block') {
-            $('#itemList').html($(d).find('#itemList').html());
+            window.location.reload(true);
+            /*$('#itemList').html($(d).find('#itemList').html());
             $(document).trigger('activateControls.templateItems');
-            evalTemplateOrder.initGroupableItems();
+            evalTemplateOrder.initGroupableItems();*/
         }else
         if (options.itemType == 'blockChild') {
-            $(that).parents('.itemLine3').effect('highlight', {}, 500).fadeOut(100, function() {
+            $(that).parents('.itemRowBlock').effect('highlight', {}, 500).fadeOut(100, function() {
                 var parentItem = $(this).parents("div.itemRow");
                 $(this).remove();
                 $(document).trigger('block.triggerChildrenSort', [parentItem]);

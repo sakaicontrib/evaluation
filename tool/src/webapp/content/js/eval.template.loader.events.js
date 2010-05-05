@@ -23,9 +23,9 @@ var evalTemplateLoaderEvents = (function($) {
 			});
 			$("#ordered-child-ids").val(childIdList.toString());
             if (reuseBlockText){
-			    evalTemplateData.postFCKform('#blockForm', false, 'modify_template', $('#saveBlockAction'));
+			    evalTemplateData.postFCKform('#blockForm', false, 'modify_block', $('#saveBlockAction'));
             }else{
-                evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_template', $('#saveBlockAction'));
+                evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
             }
 		});
 
@@ -77,27 +77,28 @@ var evalTemplateLoaderEvents = (function($) {
 		}
     },
 
-    bindDeleteIcons = function(){
-        $('a[rel=remove]').itemRemove({
+    bindDeleteIcons = function(row){
+        var scope = (typeof row === 'undefined') ? document : row.get();
+        $(scope).find('a[rel=remove]').itemRemove({
             ref:    'eval-templateitem',
-            id:     '$(this).attr("templateitemid")',
+            id:     'evalTemplateUtils.getTemplateItemId($(this))',
             text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });
-        $('a[rel=childRemove]').itemRemove({
+        $(scope).find('a[rel=childRemove]').itemRemove({
                     ref:    'eval-templateitem',
-                    id:        '$(this).attr("templateitemid")',
+                    id:        '$(this).parents("div.itemRowBlock").find("input[name=hidden-item-id]").val()',
                     itemType: 'blockChild',
-                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
+                    text:   '$(this).parents("div.itemRowBlock").find("span.text").text()'
                 });
-        $('a[rel=childUngroup]').itemRemove({
+        $(scope).find('a[rel=childUngroup]').itemRemove({
                     ref:    'eval-templateitem/unblock',
                     id:    '$(this).parents("div.itemRowBlock").find("input[name=hidden-item-id]").val()',
                     itemType: 'blockChild',
                     text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
                 });
-        $('a[rel=unblock]').itemRemove({
+        $(scope).find('a[rel=unblock]').itemRemove({
             ref:    'eval-templateitem',
-            id:        '$(this).attr("templateitemid")',
+            id:        'evalTemplateUtils.getTemplateItemId($(this))',
             itemType: 'block',
             text:   '$(this).parents("div.itemLine2").find("h4.itemText:visible").text()'
         });

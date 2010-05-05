@@ -136,138 +136,164 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
         Long templateId = evalViewParams.templateId;
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
-
-        /*
-         * top links here
-         */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        if (userAdmin) {
-        	UIInternalLink.make(tofill, "administrate-link", 
-        			UIMessage.make("administrate.page.title"),
-        			new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-        }
-
-        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-        if(showMyToplinks) {
-        	if (createTemplate
-        			|| authoringService.canModifyTemplate(currentUserId, templateId)) {
-        		UIInternalLink.make(tofill, "control-templates-link",
-        				UIMessage.make("controltemplates.page.title"), 
-        				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-        		UIInternalLink.make(tofill, "control-items-link",
-        				UIMessage.make("controlitems.page.title"), 
-        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-        	} else {
-        		throw new SecurityException("User attempted to access " + 
-        				VIEW_ID + " when they are not allowed");
-        	}
-
-        	if (beginEvaluation) {
-        		UIInternalLink.make(tofill, "control-evaluations-link",
-        				UIMessage.make("controlevaluations.page.title"),
-        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        	}
-        	if (userAdmin) {
-        		UIInternalLink.make(tofill, "control-scales-link",
-        				UIMessage.make("controlscales.page.title"),
-        				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-        	}
-        }
-
-        // begin page rendering
-
-        UIOutput.make(tofill, "site-id", commonLogic.getContentCollectionId(commonLogic.getCurrentEvalGroup()));
-        UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
-
-        UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
-                new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId))
-                .decorate( new UITooltipDecorator( UIMessage.make("modifytemplate.preview.eval.link.title") ) );
-
-        UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
-
-        UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-                commonLogic.getEntityURL(template) )
-                .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
-
-        // get form to submit the type of item to create to the correct view
-        UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
-
-        // create the choices for the pulldown
-        ArrayList<ViewParameters> templateItemVPList = new ArrayList<ViewParameters>();
-        ArrayList<String> templateItemLabelList = new ArrayList<String>();
-        for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
-            templateItemVPList.add( new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
-                    EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i], templateId) );
-            templateItemLabelList.add(EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS[i]);
-        }
-
-        // add in existing items selection
-        templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
-        templateItemLabelList.add("item.classification.existing");
-
-        // add in expert items choice if enabled
-        Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
-        if (useExpertItems) {
-            templateItemVPList.add( new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
-            templateItemLabelList.add("item.classification.expert");
-        }
-
-        EvalUser TempOwner = commonLogic.getEvalUserById( template.getOwner() );
-        UIOutput.make(tofill, "template-owner", TempOwner.displayName );
-
-
-        addItemControlRenderer.renderControl(tofill, "add-item-control:", 
-                templateItemVPList.toArray(new ViewParameters[templateItemVPList.size()]), 
-                templateItemLabelList.toArray(new String[templateItemLabelList.size()]), 
-                UIMessage.make("modifytemplate.add.item.button"), templateId);
-
+        Long templateItemId = evalViewParams.templateItemId == null ? null : evalViewParams.templateItemId;
+        boolean showTemplateItemOnly = templateItemId != null;
+        
         List<EvalTemplateItem> itemList = localTemplateLogic.fetchTemplateItems(templateId);
-        List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
-        if (templateItemsList.isEmpty()) {
-            UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
-        } else {
-            UIInternalLink evalLink = UIInternalLink.make(tofill, "begin_eval_link", UIMessage.make("modifytemplate.begin.eval.link"), 
-                    new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null, templateId));
-            evalLink.decorators = new DecoratorList( new UITooltipDecorator(UIMessage.make("modifytemplate.begin.eval.link.title")));
+        
+        if (showTemplateItemOnly){
+        	//we are requesting one template item for use by UI JS renderer EVALSYS-878
+        	EvalTemplateItem templateItem = null;
+        	for (int i=0; i<itemList.size(); i++) {
+                EvalTemplateItem templateItemInitemList = (EvalTemplateItem) itemList.get(i);
+                if (templateItemInitemList.getId().equals(templateItemId)) {
+                	templateItem = templateItemInitemList;
+                	continue;
+                }
+            }
+        	if( templateItem != null){
+	        	itemList = TemplateItemUtils.getChildItems(itemList, templateItemId);
+	        	itemList.add(templateItem);   
+        	}else{
+        		throw new IllegalArgumentException("A template id AND template item id needs to be provided.");
+        	}
         }
 
-        // TODO - this should be the actual level and not some made up string
-        String currentLevel = "Current";
-        UIMessage.make(tofill, "level-header-level", "modifytemplate.level.header.level", 
-                new String[] {currentLevel});			
-        UIOutput.make(tofill, "level-header-number", new Integer(templateItemsList.size()).toString() );			
-        UIMessage.make(tofill, "level-header-items", "modifytemplate.level.header.items");			
+        List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
 
-        UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header");
-        UIOutput.make(tofill, "title", template.getTitle());
-
-        UIInternalLink.make(tofill, "modify_title_desc_link", UIMessage.make("modifytemplate.modify.title.desc.link"),
-                new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, templateId)).decorators = 
-                    new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.modify.title.desc.link.title")));
-
-        if (template.getDescription() != null && !template.getDescription().trim().equals("")) {
-            UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
-            UIMessage.make(descbranch, "description-header", "modifytemplate.description.header");
-            UIOutput.make(descbranch, "description", template.getDescription());
+        if (!showTemplateItemOnly){
+	        /*
+	         * top links here
+	         */
+	        UIInternalLink.make(tofill, "summary-link", 
+	                UIMessage.make("summary.page.title"), 
+	                new SimpleViewParameters(SummaryProducer.VIEW_ID));
+	
+	        if (userAdmin) {
+	        	UIInternalLink.make(tofill, "administrate-link", 
+	        			UIMessage.make("administrate.page.title"),
+	        			new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+	        }
+	
+	        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
+	        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+	        if(showMyToplinks) {
+	        	if (createTemplate
+	        			|| authoringService.canModifyTemplate(currentUserId, templateId)) {
+	        		UIInternalLink.make(tofill, "control-templates-link",
+	        				UIMessage.make("controltemplates.page.title"), 
+	        				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+	        		UIInternalLink.make(tofill, "control-items-link",
+	        				UIMessage.make("controlitems.page.title"), 
+	        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+	        	} else {
+	        		throw new SecurityException("User attempted to access " + 
+	        				VIEW_ID + " when they are not allowed");
+	        	}
+	
+	        	if (beginEvaluation) {
+	        		UIInternalLink.make(tofill, "control-evaluations-link",
+	        				UIMessage.make("controlevaluations.page.title"),
+	        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+	        	}
+	        	if (userAdmin) {
+	        		UIInternalLink.make(tofill, "control-scales-link",
+	        				UIMessage.make("controlscales.page.title"),
+	        				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+	        	}
+	        }
+	
+	        // begin page rendering
+	
+	        UIOutput.make(tofill, "site-id", commonLogic.getContentCollectionId(commonLogic.getCurrentEvalGroup()));
+	        UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
+	
+	        UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
+	                new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId))
+	                .decorate( new UITooltipDecorator( UIMessage.make("modifytemplate.preview.eval.link.title") ) );
+	
+	        UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
+	
+	        UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
+	                commonLogic.getEntityURL(template) )
+	                .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
+	
+	        // get form to submit the type of item to create to the correct view
+	        UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
+	
+	        // create the choices for the pulldown
+	        ArrayList<ViewParameters> templateItemVPList = new ArrayList<ViewParameters>();
+	        ArrayList<String> templateItemLabelList = new ArrayList<String>();
+	        for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
+	            templateItemVPList.add( new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
+	                    EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i], templateId) );
+	            templateItemLabelList.add(EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS[i]);
+	        }
+	
+	        // add in existing items selection
+	        templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
+	        templateItemLabelList.add("item.classification.existing");
+	
+	        // add in expert items choice if enabled
+	        Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
+	        if (useExpertItems) {
+	            templateItemVPList.add( new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
+	            templateItemLabelList.add("item.classification.expert");
+	        }
+	
+	        EvalUser TempOwner = commonLogic.getEvalUserById( template.getOwner() );
+	        UIOutput.make(tofill, "template-owner", TempOwner.displayName );
+	
+	
+	        addItemControlRenderer.renderControl(tofill, "add-item-control:", 
+	                templateItemVPList.toArray(new ViewParameters[templateItemVPList.size()]), 
+	                templateItemLabelList.toArray(new String[templateItemLabelList.size()]), 
+	                UIMessage.make("modifytemplate.add.item.button"), templateId);
+	
+	        if (templateItemsList.isEmpty()) {
+	            UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
+	        } else {
+	            UIInternalLink evalLink = UIInternalLink.make(tofill, "begin_eval_link", UIMessage.make("modifytemplate.begin.eval.link"), 
+	                    new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null, templateId));
+	            evalLink.decorators = new DecoratorList( new UITooltipDecorator(UIMessage.make("modifytemplate.begin.eval.link.title")));
+	        }
+	
+	        // TODO - this should be the actual level and not some made up string
+	        String currentLevel = "Current";
+	        UIMessage.make(tofill, "level-header-level", "modifytemplate.level.header.level", 
+	                new String[] {currentLevel});			
+	        UIOutput.make(tofill, "level-header-number", new Integer(templateItemsList.size()).toString() );			
+	        UIMessage.make(tofill, "level-header-items", "modifytemplate.level.header.items");			
+	
+	        UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header");
+	        UIOutput.make(tofill, "title", template.getTitle());
+	
+	        UIInternalLink.make(tofill, "modify_title_desc_link", UIMessage.make("modifytemplate.modify.title.desc.link"),
+	                new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, templateId)).decorators = 
+	                    new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.modify.title.desc.link.title")));
+	
+	        if (template.getDescription() != null && !template.getDescription().trim().equals("")) {
+	            UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
+	            UIMessage.make(descbranch, "description-header", "modifytemplate.description.header");
+	            UIOutput.make(descbranch, "description", template.getDescription());
+	        }
         }
 
 
         UIForm form2 = UIForm.make(tofill, "modifyFormRows");
-        UICommand.make(form2, "hiddenBtn");
-        form2.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
-
-        UIMessage revertOrderButton = UIMessage.make(form2, "revertOrderButton", "modifytemplate.button.revert.order");
-        revertOrderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.revert.order.title") ) );
-        UICommand saveReorderButton = UICommand.make(form2, "saveReorderButton", 
-                UIMessage.make("modifytemplate.button.save.order"), "#{templateBBean.saveReorder}");
-        saveReorderButton.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
-        saveReorderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.save.order.title") ) );
-
-        UIMessage.make(form2, "orderingInstructions", "modifytemplate.instructions.reorder");
+        if (!showTemplateItemOnly){
+		    UICommand.make(form2, "hiddenBtn");
+		    form2.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
+		
+		    UIMessage revertOrderButton = UIMessage.make(form2, "revertOrderButton", "modifytemplate.button.revert.order");
+		    revertOrderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.revert.order.title") ) );
+		    UICommand saveReorderButton = UICommand.make(form2, "saveReorderButton", 
+		            UIMessage.make("modifytemplate.button.save.order"), "#{templateBBean.saveReorder}");
+		    saveReorderButton.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
+		    saveReorderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.save.order.title") ) );
+		
+		    UIMessage.make(form2, "orderingInstructions", "modifytemplate.instructions.reorder");
+        }
 
         String sCurItemNum = null;
         int blockChildNum = 0;
@@ -298,6 +324,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 // hidden item num
                 UIInput.make(itemBranch, "hidden-item-num", templateItemOTP + "displayOrder", sCurItemNum);
                 UIOutput.make(itemBranch, "template-item-id", templateItem.getId() + "");
+                if (templateItem.getItem().getClassification() != null){
+                	UIOutput.make(itemBranch, "item-classification", templateItem.getItem().getClassification());
+                }
 
                 // only show Block Check box for scaled and block parents
                 if ( templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) ||
@@ -325,7 +354,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                         break;
                     }
                 }
-                UIMessage.make(itemBranch, "item-classification", itemLabelKey);
+                UIMessage.make(itemBranch, "item-classification-label", itemLabelKey);
 
                 if (templateItem.getScaleDisplaySetting() != null) {
                     String scaleDisplaySettingLabel = " - " + templateItem.getScaleDisplaySetting();
@@ -487,16 +516,18 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
         }
 
-        //this outputs the total number of rows
-        UIVerbatim.make(tofill, "total-rows", (sCurItemNum + 1));
-
-        // the create block form
-        UIForm blockForm = UIForm.make(tofill, "createBlockForm",
-                new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
-        UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
-        createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
-
-        UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
+        if (!showTemplateItemOnly){
+	        //this outputs the total number of rows
+	        UIVerbatim.make(tofill, "total-rows", (sCurItemNum + 1));
+	
+	        // the create block form
+	        UIForm blockForm = UIForm.make(tofill, "createBlockForm",
+	                new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
+	        UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
+	        createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
+	
+	        UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
+        }
     }
 
     /**
