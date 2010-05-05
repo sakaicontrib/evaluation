@@ -13,7 +13,7 @@ var evalTemplateUtils = (function() {
             pagesLoadedByFBwithJs = [],
             messageBundle = {},
             closedGroups = [];     // keep track of groups a user closes: EVALSYS-825
-   
+
     function resizeFrame(updown, height) {
         try {
             var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
@@ -126,6 +126,7 @@ var evalTemplateUtils = (function() {
                 modify_template_page: "modify_template",
                 modify_block_page: "modify_block",
                 choose_existing_page: "choose_existing_items",
+                choose_expert_page: "choose_expert_category",
                 eb_save_order: "/direct/eval-templateitem/template-items-reorder",
                 eb_block_edit: "/direct/eval-templateitem/modify-block-items"
             },
@@ -134,9 +135,9 @@ var evalTemplateUtils = (function() {
             var pageType = undefined,
                     i = 0,
                     regExp = null;
-            pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item_page,
+            pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item_page, evalTemplateUtils.pages.choose_expert_page,
                 evalTemplateUtils.pages.modify_template_page, evalTemplateUtils.pages.modify_block_page,
-                evalTemplateUtils.pages.choose_existing_page ];
+                evalTemplateUtils.pages.choose_existing_page];
             evalTemplateUtils.debug.debug("Pages supported are %s", pagesLoadedByFBwithJs.toString());
             for ( i in pagesLoadedByFBwithJs){
                 if ( typeof pageType == "undefined" ){

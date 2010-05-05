@@ -180,6 +180,11 @@ var evalTemplateLoaderEvents = (function($) {
                     $(document).trigger('close.facebox');
                 });
         },
+        //choose expert items view
+        choose_expert_category: function(){
+            $.facebox.setHeader($(".portletBody .titleHeader"));
+            $('a[rel*=facebox]').facebox();
+        },
         bindDeleteIcons : bindDeleteIcons,
         unBindDeleteIcons : unBindDeleteIcons,
         bindRowEditPreviewIcons : bindRowEditPreviewIcons,
