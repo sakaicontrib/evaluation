@@ -115,7 +115,6 @@ var evalTemplateFacebox = (function() {
 
     };
 
-
     return {
         init: function() {
             initFunction();
@@ -142,11 +141,9 @@ var evalTemplateFacebox = (function() {
                     revealFunction = evalTemplateLoaderEvents.modify_template;
                 } else if (pageType === evalTemplateUtils.pages.choose_existing_page) {
                     //Redirect
-                    //if ( confirm("Are you sure?")) {
                         window.location = url;
-                   // }else{
-                        return false;
-                    //}
+                } else if (pageType === evalTemplateUtils.pages.choose_expert_page){
+                    revealFunction = evalTemplateLoaderEvents.choose_expert_category;
                 }
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
