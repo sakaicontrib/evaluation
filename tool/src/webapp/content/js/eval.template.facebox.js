@@ -141,7 +141,8 @@ var evalTemplateFacebox = (function() {
                     revealFunction = evalTemplateLoaderEvents.modify_template;
                 } else if (pageType === evalTemplateUtils.pages.choose_existing_page) {
                     //Redirect
-                        window.location = url;
+                    window.location = url;
+                    return false;
                 } else if (pageType === evalTemplateUtils.pages.choose_expert_page){
                     revealFunction = evalTemplateLoaderEvents.choose_expert_category;
                 }
