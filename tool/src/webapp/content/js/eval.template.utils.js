@@ -10,6 +10,7 @@ var evalTemplateUtils = (function() {
             messgeBundlePath = "/direct/eval-resources/message-bundle.json",
 
     // Dont configure these vars
+            templateId = 0,
             pagesLoadedByFBwithJs = [],
             messageBundle = {},
             closedGroups = [];     // keep track of groups a user closes: EVALSYS-825
@@ -120,6 +121,7 @@ var evalTemplateUtils = (function() {
             // Message Locale bundle loader
             loadMessageBundle();
 
+            templateId = $('input[name=templateId]:hidden').val();
         },
         pages: {
                 modify_item_page: "modify_item",
@@ -181,6 +183,15 @@ var evalTemplateUtils = (function() {
                 evalTemplateUtils.debug.warn("closedGroups %o", closedGroups);
             },
             get : closedGroups            
+        },
+
+        // DOM values retrieval functions
+        getTemplateId:  function(){return templateId;},
+        getTemplateItemId: function(that){
+            return that.parents('.itemRow').find('input[name=template-item-id]:hidden').val();
+        },
+        getItemClassification: function(that){
+            return that.parents('.itemRow').find('input[name=item-classification]:hidden').val();
         }
 
         };

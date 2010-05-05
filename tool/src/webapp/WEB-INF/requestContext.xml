@@ -713,4 +713,7 @@
         <property name="adhocGroupsBean" ref="adhocGroupsBean" />
     </bean>
 
+	<!-- Flow cycle messages view -->
+	 <bean class="org.sakaiproject.evaluation.tool.producers.MessagesProducer" />
+	
 </beans>

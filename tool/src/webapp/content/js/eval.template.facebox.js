@@ -89,6 +89,7 @@ var evalTemplateFacebox = (function() {
             $('#facebox .body').css('width', 660);
             $('#facebox .header').eq(0).show();
             $.facebox.settings.elementToUpdate = null;
+            evalTemplateData.setCurrentRow(undefined);
             return false;
         };
 
@@ -200,9 +201,11 @@ var evalTemplateFacebox = (function() {
                     });
                 }
                 if ($(this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template_page) {
+                    var itemRowBlock = $(this).parents('.itemRow');
+                    evalTemplateData.setCurrentRow(itemRowBlock);
                     evalTemplateFacebox.fbResetClasses();
                     $(this).parent().parent().parent().parent().attr("class", "editing");
-                    $.facebox.settings.elementToUpdate = $(this).parent().parent().parent();
+                    $.facebox.settings.elementToUpdate = itemRowBlock;
                 }
                 $.facebox({ajax: this.href});
                 return false;
@@ -217,14 +220,16 @@ var evalTemplateFacebox = (function() {
                 evalTemplateUtils.frameScrollHeight = e.pageY;
                 //Unbind current reveal event
                 $(document).unbind('reveal.facebox');
-                var params = {
-                    templateItemId: $(this).parents('.itemRowBlock').find('input[name*=hidden-item-id]').val(),
-                    templateId: $('input[name*=templateId]').val(),
+                var itemRowBlock = $(this).parents('.itemRowBlock'),
+                    params = {
+                    templateItemId: itemRowBlock.find('input[name*=hidden-item-id]').val(),
+                    templateId: $('input[name=templateId]').val(),
                     itemClassification: "Block",
                     groupItemId: -1
                 },
                         url = 'modify_item?' + $.param(params);
                 $.facebox.settings.elementToUpdate = "block";
+                evalTemplateData.setCurrentRow(itemRowBlock);               
 
                 $(document).bind('reveal.facebox', function() {
                     evalTemplateLoaderEvents.modify_item();

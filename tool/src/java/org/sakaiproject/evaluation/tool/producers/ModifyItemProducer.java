@@ -103,8 +103,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
     }
 
-
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -596,9 +595,16 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         if (ivp.templateId == null) {
             // go to the Items view if we are not working with a template currently
             result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);
-        } else {
-            // go to the template items view if we are working with a template
-            result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
+        }else{        
+	        if(actionReturn != null){
+	        	try{
+	        		Long itemId = Long.parseLong(actionReturn.toString());
+	        		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
+	        	}catch(NumberFormatException e){
+	        		//This must be a non-number string, it can only be an error. So return an error view:
+	        		result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
+	        	}
+	        }
         }
     }
 
@@ -606,7 +612,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
      * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
      */
     public ViewParameters getViewParameters() {
-        return new ItemViewParameters();
+        return new ItemViewParameters();      
     }
-
 }

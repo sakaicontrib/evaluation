@@ -221,13 +221,12 @@ public class TemplateBBean {
     public String saveBothAction() {
         log.info("save template item and item");
         try {
-            templateItemWBL.saveBoth();
+            return templateItemWBL.saveBoth();  //returns the item's Id
         } catch (BlankRequiredFieldException e) {
             messages.addMessage( new TargettedMessage(e.messageKey, 
                     new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
             throw new RuntimeException(e); // should not be needed but it is
         }
-        return "success";
     }
 
 
@@ -510,6 +509,7 @@ public class TemplateBBean {
                 child.setHierarchyNodeId(parent.getHierarchyNodeId());
                 localTemplateLogic.saveTemplateItem(child);
             }
+            return parent.getId().toString();
         }
 
         return "success";

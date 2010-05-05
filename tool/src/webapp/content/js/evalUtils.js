@@ -5,8 +5,8 @@
  * @author Antranig Basman - dropbox methods at end
  */
 var EvalSystem = function() {
-	//var $ = $ || function() { throw "JQuery undefined"; };
-	//var RSF = RSF || function() { throw "RSF JS undefined"; };
+	var $ = $ || function() { throw "JQuery undefined"; };
+	var RSF = RSF || function() { throw "RSF JS undefined"; };
 	function $it(elementID) {
 		return document.getElementById(elementID);
 	}
@@ -255,40 +255,5 @@ var EvalSystem = function() {
 			var url = selection.options[selection.selectedIndex].value;
             evalTemplateFacebox.addItem( url );
 		}
-	
-		/*decorateReorderSelects: function(namebase, count) {
-			var makeButtonClick = function(b) {
-				return function() {
-					b.click();
-				};
-			};
-			var buttonid = namebase + "hiddenBtn";
-			var button = $it(buttonid);
-			for (var i = 0; i < count; ++ i) {
-				var selectid = namebase + "item-row:"+i+":item-select-selection";
-				var selection = $it(selectid);
-
-				//selection.onchange = makeButtonClick(button);
-
-               // selection.onchange = function(){
-                 //   alert(44);
-                //};
-                $(selection).bind('onChange', function(){
-                    alert(4434);
-                });
-
-                var order = [];
-                $("#itemList > div").not('.ui-sortable-helper').each(function(){
-                    order.push($(this).find('a[templateitemid]').attr('templateitemid'));
-                });
-                var params = {
-                    orderedIds : order.toString()
-                };
-
-                evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
-                
-			}
-		}
-*/
 	};
 }();

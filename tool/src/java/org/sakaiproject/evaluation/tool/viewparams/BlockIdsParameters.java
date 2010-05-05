@@ -16,13 +16,26 @@ package org.sakaiproject.evaluation.tool.viewparams;
 
 public class BlockIdsParameters extends TemplateViewParameters {
 	public String templateItemIds;
+	public String templateItemId;
 
 	public BlockIdsParameters() {
+	}
+	
+	public BlockIdsParameters(String viewID, Long templateId) {
+		this.viewID = viewID;
+		this.templateId = templateId;
 	}
 
 	public BlockIdsParameters(String viewID, Long templateId, String templateItemIds) {
 		this.viewID = viewID;
 		this.templateId = templateId;
+		this.templateItemIds = templateItemIds;
+	}
+	
+	public BlockIdsParameters(String viewID, Long templateId, String templateItemIds, String templateItemId) {
+		this.viewID = viewID;
+		this.templateId = templateId;
+		this.templateItemId = templateItemId;
 		this.templateItemIds = templateItemIds;
 	}
 
