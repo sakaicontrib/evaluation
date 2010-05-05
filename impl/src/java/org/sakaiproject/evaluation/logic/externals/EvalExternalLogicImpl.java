@@ -82,8 +82,6 @@ import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.taskstream.client.TSSClientApi;
-import org.sakaiproject.taskstream.client.TSSClientImpl;
-import org.sakaiproject.taskstream.client.TSSQueryParameters;
 import org.sakaiproject.taskstream.client.TSSResponseApi;
 import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 import org.sakaiproject.thread_local.cover.ThreadLocalManager;

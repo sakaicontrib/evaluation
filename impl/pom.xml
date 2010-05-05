@@ -177,14 +177,14 @@
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client</artifactId>
       <scope>provided</scope>
-      <version>0.0.19-SNAPSHOT</version>
+      <version>${tss.client.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Server</artifactId>
       <scope>provided</scope>
-      <version>0.0.19-SNAPSHOT</version>
+      <version>${tss.server.version}</version>
     </dependency>
     
 <!-- JDOM dependencies -->
