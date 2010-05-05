@@ -22,17 +22,18 @@ var evalTemplateData = (function() {
                     fckEditor = FCKeditorAPI.GetInstance(textarea);
                     fckEditorValue = fckEditor.GetHTML(); //Actual editor textarea value
                     evalTemplateUtils.debug.info("User entered: %s ( from DOM object %o )", fckEditorValue, fckEditor);
+                }else{
+                    fckEditorValue = $("textarea[name="+textarea+"]").val();
                 }
             }
             catch(e) {
                 evalTemplateUtils.debug.error('Check if you have imported FCKeditor.js Error: FCKeditorAPI not found. ', e);
-                //TODO: Update UI - tell user that saving will not be done.
-                return false;
+                fckEditorValue = $("textarea[name="+textarea+"]").val();
             }
             //Validate text
             if (fckEditorValue === null || fckEditorValue.length === 0) {
                 alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
-                                        evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
+                                       evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
                 return false;
             }
 
