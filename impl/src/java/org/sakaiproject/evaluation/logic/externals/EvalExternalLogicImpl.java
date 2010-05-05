@@ -1372,10 +1372,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		TSSResponseApi r = null;
 		if(payload == null) {
-			r = taskStatus.newTSSEntry(streamUrl, status, entryTag);
+			//r = taskStatus.newTSSEntry(streamUrl, status, entryTag);
+			r = taskStatus.newTSSEntry(streamUrl, status.toString(), entryTag);
 		}
 		else {
-			r = taskStatus.newTSSEntry(streamUrl, status, entryTag, payload);
+			//r = taskStatus.newTSSEntry(streamUrl, status, entryTag, payload);
+			r = taskStatus.newTSSEntry(streamUrl, status.toString(), entryTag, payload);
 		}
 		// 201 for a successful update.
 		if(r != null && r.getStatus() == 201) {
