@@ -138,7 +138,9 @@ var evalTemplateLoaderEvents = (function($) {
             var siteId = $('#site-id').text();
             SakaiProject.fckeditor.initializeEditor("item-text", siteId);
             $.facebox.setHeader($(".portletBody .titleHeader"));
-            if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
+            if ($('.act .submit').attr('name').search(/templateBBean.saveTemplateItemToGroupAction/) !== -1) {
+                //proper submit  skip validation - it is not important
+            } else if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
                 $('.act .submit').bind('click', function() {
                     evalTemplateData.postFCKform('#item-form', 'item-text', 'modify_item', $(this));
                 });

@@ -137,7 +137,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
          localTemplateLogic.saveTemplateItem(templateItem);
          return templateItem.getId().toString();
       }
-      return "";  //should not get here is this is a failure
+      return "";  //will never get here
    }
    
    public void saveToGroup(Long groupItemId) {
@@ -165,11 +165,11 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 			templateItem.setResultsSharing(parent.getResultsSharing());
 			localTemplateLogic.saveTemplateItem(templateItem);
 
-			messages.addMessage(new TargettedMessage(
+			/*messages.addMessage(new TargettedMessage(
 					"templateitem.saved.message", new Object[] { templateItem
 							.getDisplayOrder() },
-					TargettedMessage.SEVERITY_INFO));
-		}
+					TargettedMessage.SEVERITY_INFO));*/
+			}
    }
 
    /**

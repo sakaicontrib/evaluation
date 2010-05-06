@@ -40,7 +40,7 @@ var evalTemplateData = (function() {
 
             //iterate through returned formToArray elements and replace input value with editor value
             for (var i = 0; i < formAsArray.length; i++) {
-                if ($(formAsArray[i]).attr('name') === textarea) {
+                if (formAsArray[i].name === textarea) {
                     $(formAsArray[i]).attr('value', fckEditorValue);
                 }
             }

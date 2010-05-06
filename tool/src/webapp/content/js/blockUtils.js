@@ -96,10 +96,9 @@ function extractSelectedItems(submitButton) {
 		//alert("ids="+destinationForm.templateItemIds.value);
 		
 		if (count < 2) {
-		 	alert("you must select at least 2 items to create a group");
+            alert(evalTemplateUtils.messageLocator('modifytemplate.group.warn.minimum'));
 		 	return false; 
 		} else {
-			
 			$(submitButton).parent().ajaxSubmit({
 				success: function(msg){
                     //Unbind current reveal event
@@ -107,11 +106,22 @@ function extractSelectedItems(submitButton) {
                     //Bind new reveal event
                     $(document).bind('reveal.facebox', function() {
                         evalTemplateLoaderEvents.modify_block();
+                        $('#saveBlockAction')
+                                .unbind("click")
+                                .bind("click", function(){
+                            			var childIdList = [],
+                                        reuseBlockText = $('.blockText input[type=radio][checked][value!=new1]').length > 0;
+                                        $('#blockForm input[name*=hidden-item-id]').each(function(){
+                                            childIdList.push($(this).val());
+                                        });
+                                        $("#ordered-child-ids").val(childIdList.toString());
+                                        return true;
+                                    });
+
                     });
 					$.facebox(msg);
 				}
-		});
-			
+		    });
 			return false;
 		}
 	}
