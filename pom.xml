@@ -98,12 +98,12 @@
         <dependency>
 			<groupId>org.sakaiproject.taskstream</groupId>
       		<artifactId>TaskStream-Client-Api</artifactId>
-      		<version>0.0.X-SNAPSHOT</version>
+      		<version>${tss.client.version}</version>
     	</dependency>
         <dependency>
 			<groupId>org.sakaiproject.taskstream</groupId>
       		<artifactId>TaskStream-Client-Impl</artifactId>
-      		<version>0.0.X-SNAPSHOT</version>
+      		<version>${tss.client.version}</version>
     	</dependency>
     </dependencies>
   </dependencyManagement>
