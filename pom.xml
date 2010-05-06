@@ -73,7 +73,6 @@
 <!-- handles the management of all related dependencies -->
 
   <dependencyManagement>
-<!-- Task Stream -->
     <dependencies>
         <dependency>
             <groupId>org.sakaiproject.evaluation</groupId>
@@ -95,19 +94,17 @@
             <version>${sakai.entitybroker.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Task Stream -->
         <dependency>
-            <groupId>org.sakaiproject.taskstream</groupId>
-            <artifactId>TaskStream-Client</artifactId>
-            <version>${tss.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
+			<groupId>org.sakaiproject.taskstream</groupId>
+      		<artifactId>TaskStream-Client-Api</artifactId>
+      		<version>0.0.X-SNAPSHOT</version>
+    	</dependency>
         <dependency>
-            <groupId>org.sakaiproject.taskstream</groupId>
-            <artifactId>TaskStream-Server</artifactId>
-            <version>${tss.server.version}</version>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>org.sakaiproject.taskstream</groupId>
+      		<artifactId>TaskStream-Client-Impl</artifactId>
+      		<version>0.0.X-SNAPSHOT</version>
+    	</dependency>
     </dependencies>
   </dependencyManagement>
 <!-- Project developers -->

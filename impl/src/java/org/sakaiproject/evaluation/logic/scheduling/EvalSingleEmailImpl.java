@@ -22,6 +22,7 @@
 
 package org.sakaiproject.evaluation.logic.scheduling;
 
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -108,8 +109,8 @@ public class EvalSingleEmailImpl implements Job{
 			if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() was called by the JobScheduler.");
 			// job start
 			Date startDate = new Date(System.currentTimeMillis());
-			startTime = formatter.format(startDate);
-			long diff2 = startDate.getTime();
+			
+			
 			try {
 				// CREATED
 				streamUrl = evaluationService.newTaskStatusStream(EMAIL_STREAM_TAG);
@@ -126,10 +127,18 @@ public class EvalSingleEmailImpl implements Job{
 						.isEvaluationWithState(EvalConstants.EVALUATION_STATE_ACTIVE)) {
 					if (log.isInfoEnabled())
 						log.info("EvalSingleEmailImpl.execute() found no active evaluations.");
+					
+					// FINISHED
+					reportFinished(streamUrl, startDate,
+							formatter, "found no active evaluations.");
 					return;
 				}
 			} else {
 				log.error("EvalSingleEmailImpl.execute() settings are inconsistent with job execution.");
+				
+				// FINISHED
+				reportFinished(streamUrl, startDate,
+						formatter, "settings are inconsistent with job execution.");
 				return;
 			}
 			Locale locale = new ResourceLoader().getLocale();
@@ -198,15 +207,9 @@ public class EvalSingleEmailImpl implements Job{
 
 			// log email recipients
 			if (logEmailRecipients.booleanValue()) logEmailRecipients(recipients, FIRST_NOTIFICATION);
-			// job end
-			Date endDate = new Date(System.currentTimeMillis());
-			endTime = formatter.format(endDate);
-			long diff1 = endDate.getTime();
-			float seconds = (diff1 - diff2) / 1000;
-			String duration = (new Float(seconds)).toString();
-			
+	
 			// FINISHED
-			reportFinished(streamUrl, startTime, duration, endTime);
+			reportFinished(streamUrl, startDate, formatter, payload);
 			
 			if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() finished.");
 		} catch (Exception e) {
@@ -302,7 +305,7 @@ public class EvalSingleEmailImpl implements Job{
 	private void reportRunning(String streamUrl) {
 		if(streamUrl != null) {
 			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					null, TaskStatusStandardValues.RUNNING, null);
+					null, TaskStatusStandardValues.RUNNING.toString(), null);
 		}
 		else {
 			log.error(this + ".reportRunning() - TaskStatusServer returned a null streamUrl.");
@@ -314,14 +317,28 @@ public class EvalSingleEmailImpl implements Job{
 	 * 
 	 * @param streamUrl
 	 */
-	private void reportFinished(String streamUrl, String startTime,
-			String duration, String endTime) {
+	private void reportFinished(String streamUrl, Date startDate,
+			DateFormat formatter, String payload) {
 		if(streamUrl != null) {
-			if(startTime != null && duration != null && endTime != null) {
-				String payload = "The email took " + duration + " seconds to run. It kicked off at " + startTime + " and ended at " + endTime + ".";
+			if(startDate != null && formatter != null) {
+				Date endDate = new Date(System.currentTimeMillis());
+				String startTime = formatter.format(startDate);
+				String endTime = formatter.format(endDate);
+				long diff1 = endDate.getTime();
+				long diff2 = startDate.getTime();
+				float seconds = (diff1 - diff2) / 1000;
+				String duration = (new Float(seconds)).toString();
+				if(payload == null) {
+					payload = "The email job took " + duration + " seconds to run. It kicked off at " + startTime + " and ended at " + endTime + ".";
+				}
 				String entryTag = "summary";
-				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, 
-						TaskStatusStandardValues.FINISHED, payload);
+				try {
+					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, 
+							TaskStatusStandardValues.FINISHED.toString(),  URLEncoder.encode(payload, "UTF-8"));
+				}
+				catch(Exception e) {
+					log.error(this + ".reportFinished() " + e);
+				}
 			}
 			else {
 				log.error(this + ".reportFinished() - arguments null.");
@@ -342,7 +359,13 @@ public class EvalSingleEmailImpl implements Job{
 			if((new Integer((String)metrics.get(COUNT)) > 0)) {
 				String payload = metrics.get(COUNT);
 				String entryTag = "announcementUsers";
-				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+				try {
+					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+				}
+				catch(Exception e) {
+					log.error(this + ".reportAnnouncementUsers() " + e);
+				}
 			}
 		}
 		else {
@@ -360,7 +383,13 @@ public class EvalSingleEmailImpl implements Job{
 			if((new Integer((String)metrics.get(COUNT)) > 0)) {
 				String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
 				String entryTag = "announcements";
-				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "announcements", TaskStatusStandardValues.RUNNING, payload);
+				try {
+					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+							"announcements", TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+				}
+				catch(Exception e) {
+					log.error(this + ".reportAnnouncements() " + e);
+				}
 				if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took "
 								+ metrics.get(SECONDS) + " seconds to send " + FIRST_NOTIFICATION + "s to "
 								+ metrics.get(COUNT) + " addresses.");
@@ -381,7 +410,13 @@ public class EvalSingleEmailImpl implements Job{
 			if(new Integer(metrics.get(COUNT)) > 0) {
 				String payload = metrics.get(COUNT); 
 				String entryTag = "reminderUsers";
-				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+				try {
+					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+				}
+				catch(Exception e) {
+					log.error(this + ".reportReminderUsers() " + e);
+				}
 			}
 		}
 		else {
@@ -399,7 +434,13 @@ public class EvalSingleEmailImpl implements Job{
 			if(new Integer(metrics.get(COUNT)) > 0) {
 				String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
 				String entryTag = "reminders";
-				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, entryTag, TaskStatusStandardValues.RUNNING, payload);
+				try {
+					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+				}
+				catch(Exception e) {
+					log.error(this + ".reportReminders() " + e);
+				}
 				if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took " + metrics.get(SECONDS)
 								+ " seconds to send " + REMINDER + "s to "
 								+ metrics.get(COUNT)  + " addresses.");

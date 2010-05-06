@@ -14,13 +14,12 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +44,6 @@ import org.sakaiproject.evaluation.model.EvalQueuedEmail;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * EvalEmailsLogic implementation,
@@ -520,12 +518,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    
 	private String reportError(String streamUrl, String entryTag, String payload) {
 		String entryUrl = null;
-		if(streamUrl != null) {
-			entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					entryTag, TaskStatusStandardValues.RUNNING, payload);
+		try {
+			if(streamUrl != null) {
+				entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+						entryTag, "RUNNING", URLEncoder.encode(payload, "UTF-8"));
+			}
+			else {
+				log.error(this + ".reportError - TaskStatusService streamUrl is null. entryTag " + entryTag + " payoad " + payload);
+			}
 		}
-		else {
-			log.error(this + ".reportError - TaskStatusService streamUrl is null. entryTag " + entryTag + " payoad " + payload);
+		catch(Exception e) {
+			log.error(this + ".reportError() " + e);
 		}
 		return entryUrl;
 	}
@@ -632,13 +635,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	private String reportGroups(String streamUrl, int size, String entryTag) {
 		String entryUrl = null;
-		if(streamUrl != null) {
-			String payload = (new Integer(size)).toString();
-			entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					entryTag, TaskStatusStandardValues.RUNNING, payload);
+		try {
+			if(streamUrl != null) {
+				String payload = URLEncoder.encode((new Integer(size)).toString(), "UTF-8");
+				entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+						entryTag, "RUNNING", payload);
+			}
+			else {
+				log.error(this + ".reportGroups - TaskStatusService streamUrl is null. entryTag " + entryTag + " size " + new Integer(size));
+			}
 		}
-		else {
-			log.error(this + ".reportGroups - TaskStatusService streamUrl is null. entryTag " + entryTag + " size " + new Integer(size));
+		catch(Exception e) {
+			log.error(this + ".reportGroups() " + e);
 		}
 		return entryUrl;
 	}

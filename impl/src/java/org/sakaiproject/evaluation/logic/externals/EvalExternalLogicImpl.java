@@ -81,9 +81,8 @@ import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
-import org.sakaiproject.taskstream.client.TSSClientApi;
 import org.sakaiproject.taskstream.client.TSSResponseApi;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
+import org.sakaiproject.taskstream.client.TSSClientImpl;
 import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
@@ -189,12 +188,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
       this.siteService = siteService;
    }
    
-  
+   /*
    private TSSClientApi taskStatus;
    public void setTaskStatus(TSSClientApi taskStatus) {
 	   this.taskStatus = taskStatus;
    }
- 
+   */
+   private TSSClientImpl taskStatus;
    
    private ThreadLocalManager threadLocalManager;
    public void setThreadLocalManager(ThreadLocalManager threadLocalManager) {
@@ -221,6 +221,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
       // register Sakai permissions for this tool
       registerPermissions();
+      taskStatus = new TSSClientImpl();
    }
 
 
@@ -1350,7 +1351,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if(serverUrl != null && serverUrl.endsWith("taskstatus")) {
 			// create a new stream with a recognized tag
 			TSSResponseApi r = taskStatus.newTSSStream(serverUrl, streamTag);
-
 			// 201 for a successful update.
 			if(r != null && r.getStatus() == 201) {
 				return r.retrieveNewContentUrl();
@@ -1361,21 +1361,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
    /*
     * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#addTaskStreamEntry(String, String, TaskStatusStandardValues, String)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#addTaskStreamEntry(String, String, String, String)
     */
-	public String newTaskStatusEntry(String streamUrl, String entryTag, TaskStatusStandardValues status,
+	public String newTaskStatusEntry(String streamUrl, String entryTag, String status,
 			String payload) {
 		if(streamUrl == null || status == null) {
 			throw new IllegalArgumentException(this + ".addTaskStreamEntry argument(s) null.");
 		}
 		TSSResponseApi r = null;
 		if(payload == null) {
-			//r = taskStatus.newTSSEntry(streamUrl, status, entryTag);
-			r = taskStatus.newTSSEntry(streamUrl, status.toString(), entryTag);
+			r = taskStatus.newTSSEntry(streamUrl, status, entryTag);
 		}
 		else {
-			//r = taskStatus.newTSSEntry(streamUrl, status, entryTag, payload);
-			r = taskStatus.newTSSEntry(streamUrl, status.toString(), entryTag, payload);
+			r = taskStatus.newTSSEntry(streamUrl, status, entryTag, payload);
 		}
 		// 201 for a successful update.
 		if(r != null && r.getStatus() == 201) {

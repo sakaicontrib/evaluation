@@ -439,7 +439,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	public String newTaskStatusEntry(
 			String streamUrl,
 			String entryTag,
-			TaskStatusStandardValues status,
+			String status,
 			String payload) {
 		// TODO Auto-generated method stub
 		return null;

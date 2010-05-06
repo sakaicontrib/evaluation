@@ -58,7 +58,7 @@ import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
+//import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 
 /**
@@ -268,7 +268,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
    
    public String newTaskStatusEntry(String streamUrl, String entryTag, 
-		   TaskStatusStandardValues status, String payload) {
+		   String status, String payload) {
 	   // 201 return true
 	   return commonLogic.newTaskStatusEntry(streamUrl, entryTag, status, payload);
    }

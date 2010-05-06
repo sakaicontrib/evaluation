@@ -39,11 +39,11 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
-import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
+//import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
+//import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * This is the implementation for the base service
@@ -110,7 +110,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 	}
 	
 	public String newTaskStatusEntry(String streamUrl, String entryTag, 
-			   TaskStatusStandardValues status, String payload) {
+			   String status, String payload) {
 		return externalLogic.newTaskStatusEntry(streamUrl, entryTag, status, payload);
 	}
 

@@ -27,7 +27,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * This contains simple logic for retrieving evaluationSetupService and evaluation related objects
@@ -84,14 +83,14 @@ public interface EvalEvaluationService {
 	 * @param entryTag
 	 * 			the tag assigned to the entry.
 	 * @param status
-	 * 			the TaskStatusStandardValues value representing task status.
+	 * 			the String value of TaskStatusStandardValues representing task status.
 	 * @param payload
 	 * 			the text content carried by the entry.
 	 * @return
 	 * 		the Url to the new status entry resource.
 	 */
 	public String newTaskStatusEntry(String streamUrl, String entryTag, 
-			   TaskStatusStandardValues status, String payload);
+			   String status, String payload);
 
    // EVALUATIONS
 

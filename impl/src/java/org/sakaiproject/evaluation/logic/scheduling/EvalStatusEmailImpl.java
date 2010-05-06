@@ -1,5 +1,6 @@
 package org.sakaiproject.evaluation.logic.scheduling;
 
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class EvalStatusEmailImpl implements Job{
 			if(log.isInfoEnabled()) log.info(this + ".execute - start.");
 			
 			// TODO classloader issue using ResourceLoader
+			String payload = null;
 			
 			// entryStatus CREATED
 			String streamUrl = evaluationService.newTaskStatusStream(STATUS_STREAM_TAG);
@@ -92,7 +94,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			// entryStatus RUNNING
 			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					null, TaskStatusStandardValues.RUNNING, null);
+					null, TaskStatusStandardValues.RUNNING.toString(), null);
 			
 			if(log.isDebugEnabled()) log.debug("stream tag " + STATUS_STREAM_TAG + " streamUrl " + streamUrl);
 			
@@ -249,6 +251,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			// update since
 			Date newDate = updateSince();
+			payload = URLEncoder.encode("updated to " + newDate.toString(), "UTF-8");
 			
 			if(log.isDebugEnabled()) log.debug("stream tag " + STATUS_STREAM_TAG + " entryUrl " + entryUrl);
 			
@@ -256,7 +259,7 @@ public class EvalStatusEmailImpl implements Job{
 			
 			// entryStatus FINISHED
 			entryUrl = evaluationService.newTaskStatusEntry(streamUrl, "STATUS_SINCE_DATE", 
-					TaskStatusStandardValues.FINISHED, "updated to " + newDate.toString());
+					TaskStatusStandardValues.FINISHED.toString(), payload);
 		
 		} catch (Exception e) {
 			log.error("EvalStatusEmailImpl.execute " + e);
@@ -266,6 +269,16 @@ public class EvalStatusEmailImpl implements Job{
 		}
 	}
 
+	/**
+	 * Check if there are email announcement/reminder job errors.
+	 * 
+	 * @param emailErrorQuery
+	 * 			"?streamTag=" + EMAIL_STREAM_TAG + "&since=" + since + "&otype=" + CONTAINER_OTYPE + "&depth=0" + "&entryTag=error";
+	 * @param streamUrl
+	 * 			the task status stream for EvalStatusEmail status messages
+	 * @return
+	 * 			true if there were errors, false otherwise
+	 */
 	private Boolean jobErrors(String emailErrorQuery, String streamUrl) {
 		Boolean jobErrors = new Boolean(false);
 		Integer errors = evaluationService.getTaskStreamCount(emailErrorQuery);
@@ -274,11 +287,26 @@ public class EvalStatusEmailImpl implements Job{
 		// streamTag StatusReport
 		String entryTag = "emailErrors";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
+				entryTag, TaskStatusStandardValues.RUNNING.toString(), (new Boolean(
 						jobErrors)).toString());
 		return jobErrors;
 	}
 
+	/**
+	 * Put together the content to place in the email template for EvalStatusEmail.
+	 * 
+	 * @param ranText
+	 * @param anc
+	 * @param ancGroups
+	 * @param ancUsers
+	 * @param rem
+	 * @param remGroups
+	 * @param remUsers
+	 * @param email
+	 * @param taskStatusUrl
+	 * @param jobErrors
+	 * @param since
+	 */
 	private void addEmailText(List<String> ranText, String anc,
 			String ancGroups, String ancUsers, String rem, String remGroups,
 			String remUsers, String email, String taskStatusUrl, Boolean jobErrors, String since) {
@@ -334,7 +362,7 @@ public class EvalStatusEmailImpl implements Job{
 		// streamTag StatusReport
 		String entryTag = "emailRan";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING, (new Boolean(
+				entryTag, TaskStatusStandardValues.RUNNING.toString(), (new Boolean(
 						jobRan)).toString());
 		
 		return jobRan;
@@ -357,7 +385,7 @@ public class EvalStatusEmailImpl implements Job{
 		// streamTag StatusReport
 		String entryTag = "filesTotal";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING,
+				entryTag, TaskStatusStandardValues.RUNNING.toString(),
 				total.toString());
 		
 		return total;
@@ -382,7 +410,7 @@ public class EvalStatusEmailImpl implements Job{
 		// streamTag StatusReport
 		String entryTag = "filesWithError";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING,
+				entryTag, TaskStatusStandardValues.RUNNING.toString(),
 				errors.toString());
 		
 		return errors;
@@ -407,7 +435,7 @@ public class EvalStatusEmailImpl implements Job{
 		// streamTag StatusReport
 		String entryTag = "filesWithoutError";
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				entryTag, TaskStatusStandardValues.RUNNING,
+				entryTag, TaskStatusStandardValues.RUNNING.toString(),
 				good.toString());
 		
 		return good;
@@ -431,7 +459,7 @@ public class EvalStatusEmailImpl implements Job{
 		
 		// streamTag StatusReport
 		String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-				"filesUnfinished", TaskStatusStandardValues.RUNNING,
+				"filesUnfinished", TaskStatusStandardValues.RUNNING.toString(),
 				stillRunning.toString());
 		
 		return stillRunning;

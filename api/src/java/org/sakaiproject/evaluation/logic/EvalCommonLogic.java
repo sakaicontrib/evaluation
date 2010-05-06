@@ -27,8 +27,8 @@ import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
-import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
+//import org.sakaiproject.evaluation.model.EvalTaskStreamContainer;
+//import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
 
 /**
  * Handles all basic internal operations for the evaluation system,
@@ -93,7 +93,7 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
     * 			the Url to the new resource
     */
    public String newTaskStatusEntry(String streamUrl, String entryTag, 
-			   TaskStatusStandardValues status, String payload);
+			   String status, String payload);
 
    // Users
 

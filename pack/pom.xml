@@ -132,16 +132,13 @@
     </dependency>
  
 <!-- Task Stream -->
-    <dependency>
+   <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
-      <artifactId>TaskStream-Client</artifactId>
-      <scope>provided</scope>
+      <artifactId>TaskStream-Client-Api</artifactId>
     </dependency>
-    
     <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
-      <artifactId>TaskStream-Server</artifactId>
-      <scope>provided</scope>
+      <artifactId>TaskStream-Client-Impl</artifactId>
     </dependency>
     
   </dependencies>

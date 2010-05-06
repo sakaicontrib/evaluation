@@ -18,8 +18,6 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
-import org.sakaiproject.taskstream.client.TaskStatusStandardValues;
-
 
 /**
  * Handles getting and sending of information that is external to the evaluation system,
@@ -162,10 +160,6 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public String getTaskStatusUrl();
    
-   //public String getTaskStatus(String params);
-   
-   //public boolean updateTaskStatus(String params);
-   
    public String getTaskStatusContainer(String params);
    
    public String getTaskStreamCount(String params);
@@ -183,38 +177,10 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     * 
     * @param streamUrl the Url of the stream
     * @param entryTag
-    * @param status a value in the enum TaskStatusStandardValues
+    * @param status a value in the enum TaskStatusStandardValues.toString()
     * @param payload if included add to entry, may be null
     * @return the new entry's Url
     */
-   public String newTaskStatusEntry(String streamUrl, String entryTag, TaskStatusStandardValues status, String payload);
+   public String newTaskStatusEntry(String streamUrl, String entryTag, String status, String payload);
    
-   /**
-    * Get a count of streams having stream tag, entry tag, and status since date/time
-    * 
-    * @param streamTag
-    * @param entryTag
-    * @param status
-    * @param since the start of the range of date/time ending with current time, expressed at yyyy-MM-ddTHH:mm:ss
-    * 			The T is a literal to separate date and time.  The rest of the letters represent the obvious values.
-    * 			This is compatible with ISO 8601 and fits easily into a URL.
-    * 
-    
-   public int getTaskStreamCount(String streamTag, String entryTag, TaskStatusStandardValues status, String since);
-   */
-   
- 
-   
-   /**
-    * Get an entry in a stream
-    * 
-    * @param streamId
-    * @param entryTag
-    * @param status
-    * @param start
-    * @param end
-    
-   public void getTaskStreamEntries(String streamTag, String entryTag, String status, String start, String end);
-   */
-
 }
