@@ -601,8 +601,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 	        		Long itemId = Long.parseLong(actionReturn.toString());
 	        		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
 	        	}catch(NumberFormatException e){
-	        		//This must be a non-number string, it can only be an error. So return an error view:
-	        		result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
+	        		if ("success".equals(actionReturn.toString())){
+		        		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
+	        		}else{
+		        		//This is an unexpected return string, possibly an error. So return an error view:
+		        		result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
+	        		}
 	        	}
 	        }
         }

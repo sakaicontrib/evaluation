@@ -374,9 +374,6 @@ NavigationCaseReporter {
 
         i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(
                 PreviewItemProducer.VIEW_ID)));
-        i.add(new NavigationCase("success", new TemplateViewParameters(
-                ModifyTemplateItemsProducer.VIEW_ID, null)));
-
         return i;
     }
 
@@ -394,8 +391,11 @@ NavigationCaseReporter {
         		Long itemId = Long.parseLong(actionReturn.toString());
         		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
         	}catch(NumberFormatException e){
-        		//action return is not an id so navigate to nav cases.
-        	}
+        		//action return is not an id, so give JavaScript the producer to go to
+        		if ("success".equals(actionReturn)){
+            		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
+        		}
+       		}
         }
     }
 
