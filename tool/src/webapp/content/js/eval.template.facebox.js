@@ -90,7 +90,6 @@ var evalTemplateFacebox = (function() {
             $('#facebox .header').eq(0).show();
             $.facebox.settings.elementToUpdate = null;
             evalTemplateData.setCurrentRow(undefined);
-            evalTemplateData.setIsNewBlockChild(false);
             return false;
         };
 

@@ -24,8 +24,10 @@ var evalTemplateLoaderEvents = (function($) {
 			$("#ordered-child-ids").val(childIdList.toString());
             if (reuseBlockText){
 			    evalTemplateData.postFCKform('#blockForm', false, 'modify_block', $('#saveBlockAction'));
+                return false;
             }else{
                 evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
+                return false;
             }
 		});
 
@@ -143,12 +145,8 @@ var evalTemplateLoaderEvents = (function($) {
             } else if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
                 $('.act .submit').bind('click', function() {
                     evalTemplateData.postFCKform('#item-form', 'item-text', 'modify_item', $(this));
+                    return false;
                 });
-            } else {
-                var button = $('<input type="submit" class="active" accesskey="s"/>');
-                button.attr('name', $('.act .submit').attr('name'))
-                        .val($('.act .submit').val());
-                $('.act .submit').replaceWith(button);
             }
         },
         //modify_block.html view

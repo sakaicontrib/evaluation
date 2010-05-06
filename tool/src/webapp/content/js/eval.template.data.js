@@ -44,7 +44,12 @@ var evalTemplateData = (function() {
                     $(formAsArray[i]).attr('value', fckEditorValue);
                 }
             }
+            //formToArray does not save submit button, add submit button manually
+            if (btn.attr('type') === 'submit'){
+                formAsArray.push({'name': btn.attr('name'), 'value': btn.val()});
+            }
         }
+
         $.ajax({
             type: evalTemplateData.constants.rest_Post,
             url: target,
