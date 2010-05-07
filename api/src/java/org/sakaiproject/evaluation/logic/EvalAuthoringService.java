@@ -690,5 +690,13 @@ public interface EvalAuthoringService {
     * @param currentUserId the internal user id (not username)
     */
    public void saveTemplateItemOrder(Map<Long, Integer> orderingMap, String currentUserId);
-
+   
+   /**
+    * Used for determining next available displayOrder for in a block
+    * 
+    * @param templateId unique id for a template
+    * @param blockId id for a template block
+    * @return a count of the non-child items in the template
+    */
+  public int getItemCountForTemplateItemBlock(Long templateId, Long blockId);
 }

@@ -150,11 +150,10 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 		           // save the item
 	               localTemplateLogic.saveItem( templateItem.getItem() );
 	            }
-	         }
+	         }	         
 	        // then group and save the templateItem
 			EvalTemplateItem parent = authoringService.getTemplateItemById(groupItemId);
-			int totalGroupedItems = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId,
-							false).size();
+			int totalGroupedItems = authoringService.getItemCountForTemplateItemBlock(parent.getTemplate().getId(), groupItemId);
 
 			templateItem.setBlockParent(Boolean.FALSE);
 			templateItem.setBlockId(groupItemId);

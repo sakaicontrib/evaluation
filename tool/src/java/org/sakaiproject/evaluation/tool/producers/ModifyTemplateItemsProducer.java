@@ -402,7 +402,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 
                 // SECOND LINE
 
-                UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", null);
+                UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", new Integer(i + 1).toString());
                 orderPulldown.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.select.order.title") ) );
 
                 String formattedText = FormattedText.convertFormattedTextToPlaintext(templateItem.getItem().getItemText());

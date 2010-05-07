@@ -163,7 +163,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 		List<String> itemsToAdd = Arrays.asList(itemsToAddParams.split(","));
 		
 		EvalTemplateItem parent = authoringService.getTemplateItemById(blockId);
-		int totalGroupedItems = authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false).size();
+		int totalGroupedItems = authoringService.getItemCountForTemplateItemBlock(parent.getTemplate().getId(), blockId);
 		
 		for ( String itemIdstring : itemsToAdd){
 			Long itemId = Long.parseLong(itemIdstring);
