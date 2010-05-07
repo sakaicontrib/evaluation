@@ -105,17 +105,6 @@ function startSort() {
                                     var parentObj = ui.item.parents("div.itemRow"),
                                     blockId = parentObj.find("input[name=template-item-id]").val(),
                                     itemId =  ui.item.find('input[name=template-item-id]').val();
-                                    //alert(itemId);
-                                    /*log.info("Added group %o", parentObj);
-                                    ui.item.attr('style', 'display:none');
-                                    var shadow = ui.item.parent().find('.itemRowBlock').eq(0).clone(true);
-                                    ui.item.parent().find('div[id="' + shadow.attr('id') + '"]').not(':lt(2)').remove();
-                                    shadow.find('span').eq(1).html(ui.item.find('.itemText > span').eq(0).html());
-                                    shadow.find('input').eq(0).val(itemId);
-                                    //shadow.find('a[templateitemid]').attr('templateitemid', ui.item.find('a[templateitemid]').attr('templateitemid'));
-                                    shadow.find('a[otp]').attr('otp', ui.item.find('a[otp]').attr('otp'));
-                                    shadow.insertAfter(ui.item);
-                                    log.info("Added %o to group %o", itemId, parentObj);*/
                                     //Save new item to the group using already set EB post method
                                     var params = {
                                         blockid : blockId,
@@ -123,12 +112,6 @@ function startSort() {
                                     },
                                     fnAfter = function(){
                                         window.location.reload(true);
-                                        /*evalTemplateSort.updateDropDownMax();
-                                        //Save new group order
-                                        evalTemplateOrder.saveGroupLevelTemplateOrdering(ui.item);
-                                        //Save overall template ordering so the template knows that we've removed a few items and grouped them.
-                                        evalTemplateOrder.saveTopLevelTemplateOrdering();
-                                        $(document).trigger('block.triggerChildrenSort', [parentObj]);*/
                                     };
                                     evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_block_edit, params, null, fnAfter);
                                 }

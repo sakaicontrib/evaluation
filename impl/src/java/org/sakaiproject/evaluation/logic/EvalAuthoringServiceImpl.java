@@ -626,17 +626,21 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         }
 
         // get the template items count to set display order for new templateItems
+        int itemsCount = getItemCountForTemplate(template.getId());
         if (templateItem.getId() == null) {
             if (TemplateItemUtils.isBlockParent(templateItem) 
                     && templateItem.getDisplayOrder() != null) {
                 // if this a block parent then we allow the display order to be set
             } else {
                 // new item
-                int itemsCount = getItemCountForTemplate(template.getId());
                 templateItem.setDisplayOrder( new Integer(itemsCount + 1) );
             }
         } else {
             // existing item
+        	if (templateItem.getDisplayOrder() == null){
+        		//put items without display ids at the bottom of the template
+        		templateItem.setDisplayOrder( new Integer(itemsCount + 2) );
+        	}
             // TODO - check if the display orders are set to a value that is used already?
         }
 
@@ -756,6 +760,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 }
         ));
         return itemsCount;
+    }
+    
+    public int getNonBlockItemCountForTemplate(Long templateId) {
+    	return getItemCountForTemplate(templateId);
     }
 
     /**
