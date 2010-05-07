@@ -133,6 +133,10 @@ var evalTemplateData = (function() {
                             }else{
                                 newRow = successDOM.find("div.itemRow:eq(0)");
                                 thisRow = currentRow;
+                                //update checkbox
+                                if (thisRow.find("label.itemCheckbox").length !== 0){
+                                    thisRow.find("label.itemCheckbox").html(newRow.find("label.itemCheckbox").html());  //there HAS to be only ONE itemCheckbox in each row
+                                }
                                 //update visible text
                                 thisRow.find("span.itemTextReplacementHolder").html(newRow.find("span.itemTextReplacementHolder").html());  //there HAS to be only ONE itemTextReplacementHolder in each row
                                 thisRow.find("span.textPanelReplacementHolder").html(newRow.find("span.textPanelReplacementHolder").html());  //there HAS to be only ONE textPanelReplacementHolder in each row
