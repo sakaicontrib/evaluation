@@ -9,6 +9,7 @@ $(document).bind('activateControls.templateItems', function() {
     evalTemplateLoaderEvents.bindRowEditPreviewIcons();
 
     $('a.addItem[rel=faceboxAddGroupItems]').click(function(e) {
+        evalTemplateOrder.initGroupableItems();
         //Save current iframe height position
         evalTemplateUtils.frameScrollHeight = e.pageY;
         //Unbind current reveal event to avoid fckEditor error
