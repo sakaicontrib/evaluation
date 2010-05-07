@@ -140,6 +140,8 @@ var evalTemplateData = (function() {
                                 //update visible text
                                 thisRow.find("span.itemTextReplacementHolder").html(newRow.find("span.itemTextReplacementHolder").html());  //there HAS to be only ONE itemTextReplacementHolder in each row
                                 thisRow.find("span.textPanelReplacementHolder").html(newRow.find("span.textPanelReplacementHolder").html());  //there HAS to be only ONE textPanelReplacementHolder in each row
+                                //bind the hide/show and more/less links
+                                evalTemplateLoaderEvents.bindGroupParentTextControls(thisRow);
                                 thisRow.removeClass("editing").addClass("itemRow").effect('highlight', 3000);
                             }
                         }
