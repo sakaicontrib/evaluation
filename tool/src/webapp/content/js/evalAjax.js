@@ -161,43 +161,7 @@ $(document).bind('activateControls.templateItems', function() {
 
     $('a[rel=childEdit]').childEdit();
 
-    $('.blockExpandText').toggle(
-            function() {
-                if ($(this).parents('.itemRow').find('.itemLine3').is(':hidden')) {
-                    $(this).click();
-                    return false;
-                }
-                var text = lang('modifytemplate.group.show');
-                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
-                $(this).text(text);
-                // save closed state
-                evalTemplateUtils.closedGroup.add( $(this).parents(".itemRow").attr('name') );
-                return false;
-            },
-            function() {
-                var text = lang('modifytemplate.group.hide');
-                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
-                $(this).text(text);
-                // remove closed state
-                evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
-                return false;
-            }
-            );
-    $('.more').bind('click', function() {
-        if ($(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').length === 0) {
-            $(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').remove();
-            $(this).parent().find('.blockExpandText').clone(true).insertAfter($(this).parents('.itemLine2').find('.itemText').eq(1).find('.less'));
-        }
-        $(this).parent().toggle();
-        $(this).parents('.itemLine2').find('.itemText').eq(1).toggle();
-        evalTemplateUtils.frameGrow(0);
-        return false;
-    });
-    $('.less').bind('click', function() {
-        $(this).parent().toggle();
-        $(this).parents('.itemLine2').find('.itemText').eq(0).toggle();
-        return false;
-    });
+    evalTemplateLoaderEvents.bindGroupParentTextControls();
 
     refreshSort();
     //initialise the reorder dropdowns

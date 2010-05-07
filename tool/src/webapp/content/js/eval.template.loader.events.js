@@ -131,6 +131,48 @@ var evalTemplateLoaderEvents = (function($) {
             changedRow.find('a[rel=facebox]').unbind("facebox");
             changedRow.find('a[rel=faceboxGrid]').unbind("faceboxGrid");
         }
+    },
+        /**
+         * this will bind these controls in the main item of a group: hide/show item && more/less item
+          */
+    bindGroupParentTextControls = function(row){
+        var scope = (typeof row === 'undefined') ? document : row.get();
+        $(scope).find('.blockExpandText').toggle(
+            function() {
+                if ($(this).parents('.itemRow').find('.itemLine3').is(':hidden')) {
+                    $(this).click();
+                    return false;
+                }
+                var text = evalTemplateUtils.messageLocator('modifytemplate.group.show');
+                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
+                $(this).text(text);
+                // save closed state
+                evalTemplateUtils.closedGroup.add( $(this).parents(".itemRow").attr('name') );
+                return false;
+            },
+            function() {
+                var text = evalTemplateUtils.messageLocator('modifytemplate.group.hide');
+                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
+                $(this).text(text);
+                // remove closed state
+                evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
+                return false;
+            });
+        $(scope).find('.more').bind('click', function() {
+            if ($(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').length === 0) {
+                $(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').remove();
+                $(this).parent().find('.blockExpandText').clone(true).insertAfter($(this).parents('.itemLine2').find('.itemText').eq(1).find('.less'));
+            }
+            $(this).parent().toggle();
+            $(this).parents('.itemLine2').find('.itemText').eq(1).toggle();
+            evalTemplateUtils.frameGrow(0);
+            return false;
+        });
+        $(scope).find('.less').bind('click', function() {
+            $(this).parent().toggle();
+            $(this).parents('.itemLine2').find('.itemText').eq(0).toggle();
+            return false;
+        });
     };
 
     return {
@@ -208,6 +250,7 @@ var evalTemplateLoaderEvents = (function($) {
         bindDeleteIcons : bindDeleteIcons,
         unBindDeleteIcons : unBindDeleteIcons,
         bindRowEditPreviewIcons : bindRowEditPreviewIcons,
-        unBindRowEditPreviewIcons : unBindRowEditPreviewIcons
+        unBindRowEditPreviewIcons : unBindRowEditPreviewIcons,
+        bindGroupParentTextControls : bindGroupParentTextControls
     };
 })($);
