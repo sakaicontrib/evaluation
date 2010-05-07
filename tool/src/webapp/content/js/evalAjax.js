@@ -170,7 +170,6 @@ $(document).bind('activateControls.templateItems', function() {
                 var text = lang('modifytemplate.group.show');
                 $(this).parents('.itemRow').find('.itemLine3').slideToggle();
                 $(this).text(text);
-                evalTemplateUtils.frameGrow(0);
                 // save closed state
                 evalTemplateUtils.closedGroup.add( $(this).parents(".itemRow").attr('name') );
                 return false;
@@ -181,7 +180,6 @@ $(document).bind('activateControls.templateItems', function() {
                 $(this).text(text);
                 // remove closed state
                 evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
-                evalTemplateUtils.frameGrow(0);
                 return false;
             }
             );
