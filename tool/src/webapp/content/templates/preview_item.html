@@ -4,35 +4,6 @@
 	<head>
 		<title rsf:id="msg=previewitem.page.title">Preview item</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
-        
-        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
-        <script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
-		<script type="text/javascript"  language="JavaScript" src="../js/utils.js"></script>
-<script type="text/javascript"> 
-	$(document).ready(function() { 
-		if ($('.blockItemGroup').length > 0){
-			evalsys.instrumentBlockItem();
-		}
-		if ($('.steppedItemGroup').length > 0){
-			evalsys.instrumentSteppedItem();
-		}
-		
-		if ($('.mult-choice-ans').length > 0){
-			evalsys.instrumentMCMAItem();
-		}
-		if ($('.itemListEval').length > 0) {
-			evalsys.instrumentScaleItem();
-		}
-		if ($('.fullDisplayHorizontal').length > 0) {
-			evalsys.instrumentDisplayHorizontal();
-		}
-		// prepare the form when the DOM is ready 	
-		jQuery.facebox.setHeader($(".portletBody .titleHeader"));
-		$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
-	}); 
-</script> 
-
 
 	</head>
 	

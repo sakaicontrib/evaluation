@@ -192,7 +192,9 @@ var evalTemplateFacebox = (function() {
                     } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
                         revealFunction = evalTemplateLoaderEvents.modify_template;
                     }else if (pageType === evalTemplateUtils.pages.modify_block_page) {
-                            revealFunction = evalTemplateLoaderEvents.modify_block;
+                        revealFunction = evalTemplateLoaderEvents.modify_block;
+                    } else if (pageType === evalTemplateUtils.pages.preview_item_page){
+                        revealFunction = evalTemplateLoaderEvents.preview_item;
                     }
                     $(document).bind('reveal.facebox', function() {
                         if (typeof revealFunction !== "undefined") {
