@@ -699,4 +699,13 @@ public interface EvalAuthoringService {
     * @return a count of the non-child items in the template
     */
   public int getItemCountForTemplateItemBlock(Long templateId, Long blockId);
+  
+  /**
+   * Used for determining next available displayOrder
+   * 
+   * @param templateId unique id for a template
+   * @return a count of the non-child items in the template
+   */
+  
+  public int getNonBlockItemCountForTemplate(Long templateId);
 }

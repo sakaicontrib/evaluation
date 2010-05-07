@@ -163,23 +163,30 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 		List<String> itemsToAdd = Arrays.asList(itemsToAddParams.split(","));
 		
 		EvalTemplateItem parent = authoringService.getTemplateItemById(blockId);
-		int totalGroupedItems = authoringService.getItemCountForTemplateItemBlock(parent.getTemplate().getId(), blockId);
+		List<EvalTemplateItem> children = authoringService.getBlockChildTemplateItemsForBlockParent(blockId, false);
+		List<EvalTemplateItem> orderedChildren = TemplateItemUtils.getChildItems(children, blockId);
 		
+		//update children order value to reflect the display order
+		int orderCurrentChildren = 1;
+		for ( EvalTemplateItem child : orderedChildren){
+			child.setDisplayOrder(orderCurrentChildren);
+            authoringService.saveTemplateItem(child, currentUserId);
+            orderCurrentChildren ++;
+		}
+		int orderNewChildren = 1;
 		for ( String itemIdstring : itemsToAdd){
 			Long itemId = Long.parseLong(itemIdstring);
 			EvalTemplateItem child = authoringService.getTemplateItemById(itemId);
-			
-			int itemPosition = (itemsToAdd.indexOf(itemIdstring) + 1) + totalGroupedItems;
-			
 			child.setBlockParent(Boolean.FALSE);
 			child.setBlockId(blockId);
-			child.setDisplayOrder(itemPosition);
+			child.setDisplayOrder( new Integer(orderedChildren.size() + orderNewChildren));
             child.setCategory(parent.getCategory()); // EVALSYS-441
             child.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
             // children have to inherit the parent hierarchy settings
             child.setHierarchyLevel(parent.getHierarchyLevel());
             child.setHierarchyNodeId(parent.getHierarchyNodeId());
-            authoringService.saveTemplateItem(child, currentUserId);    
+            authoringService.saveTemplateItem(child, currentUserId);   
+            orderNewChildren ++;
 		}
 	}
 	
@@ -192,11 +199,9 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 			String currentUserId = commonLogic.getCurrentUserId();
 			EvalTemplateItem templateItem = authoringService.getTemplateItemById( itemId );
 			if (TemplateItemUtils.isBlockChild(templateItem)){
-				List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForTemplate( templateItem.getTemplate().getId() , new String[]{}, new String[]{}, new String[]{});
-				List<EvalTemplateItem> items = TemplateItemUtils.getNonChildItems(allItems);
 				templateItem.setBlockParent(null);
 				templateItem.setBlockId(null);
-				templateItem.setDisplayOrder(items.size() + 1);
+				templateItem.setDisplayOrder(null);  //saving item without order will put it at the bottom of the template.
 				authoringService.saveTemplateItem(templateItem, currentUserId);
 			}else{
 				throw new IllegalStateException("Template item "+ itemId +" is not part of a group!");
