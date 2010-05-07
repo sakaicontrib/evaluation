@@ -74,7 +74,6 @@
             dom.showLink.hide();
             dom.hideLink.show();
             dom.warn.fadeOut("fast");
-            console.log('1')
 			resizeFrame('grow');
             dom.textarea.focus();
             return false;
@@ -87,7 +86,6 @@
             dom.editLink.hide();
             dom.hideLink.show();
             dom.warn.fadeOut("fast");
-            console.log('2')
             resizeFrame('grow');
             dom.textarea.focus();
             return false;
@@ -103,7 +101,6 @@
             }
             dom.textarea.hide();
             dom.hideLink.hide();
-            console.log('3')
             resizeFrame('shrink');
             return false;
         });
