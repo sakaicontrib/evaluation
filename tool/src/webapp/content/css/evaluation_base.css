@@ -47,6 +47,7 @@ DIV.itemRowBlock{
 .itemRow div{ padding: .2em; vertical-align: middle }
 /*all rows of a block item*/
 .itemRowBlock div{ padding: .2em; vertical-align: middle }
+.itemRowBlock .text {padding-right:80px;}
 /*first line in a sortable item,item type and links*/
 div.itemLine{
 	clear: left;
@@ -57,7 +58,8 @@ div.itemLine{
 .itemCheckbox{
 	cursor: default;
 	float: left;
-	padding: 0 1.5em 1px 3px
+	padding: 0 1em 0 0;
+    margin-top: -0.04em;
 }
 .itemCheckbox input{ margin: 0 }
 span.itemType{ float: left; padding: 0 }
@@ -75,11 +77,7 @@ select.selectReorder{ font-weight: bold; float: left }
 h4.itemText{
 	display: inline;
 	float: left;
-	width: 50%;
-	padding-top: 0em;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 1em;
+	padding: 0 0 0 0.3em;
 	overflow: hidden;
 	margin: 0.2em;
 	font-weight: normal;
@@ -120,24 +118,22 @@ div.scaleDesc{
 	cursor: default;
 	margin: 0;
 	visibility: hidden;
-	padding-top: 0px;
-	padding-right: 2.4em;
-	padding-bottom: 1px;
-	padding-left: 3px;
+	padding: 0 2.1em 0 0;
 }
 /*next "selectable" collection added/susbstracted via script to give hints while grouping template items*/
 .selectable{
 	float: left;
 	cursor: default;
-	padding: 0 1.5em 1px 3px;
-	background: url(../images/asterisk_orange.gif) 1.7em no-repeat
+    margin-top: -0.04em;
+	padding: 0 1em 0 0;
+	background: url(../images/asterisk_orange.gif) 1.3em 50% no-repeat
 }
 .selectable input{ margin: 0 }
 .notselectable{
 	float: left;
 	cursor: default;
-	margin: 0;
-	padding: 1px 1.5em 1px 3px
+    margin-top: -0.04em;
+	padding: 0 1em 0 0;
 }
 .notselectable input{ margin: 0 }
 .notselectable *{
@@ -407,7 +403,7 @@ td.fullDisplayHorizontalColoredWrapper {
 	}
 .fullVertical li:hover, .fullDisplayHorizontal li:hover {
 	background:#FDFFCC;
-	cursor:pointer;x
+	cursor:pointer;
 	}
 
 .fullVertical li{
