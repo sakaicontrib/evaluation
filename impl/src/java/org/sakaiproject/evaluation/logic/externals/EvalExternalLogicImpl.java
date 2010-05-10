@@ -1332,9 +1332,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			serverUrl += "/" + params;
 			TSSResponseApi r = taskStatus.getTSSItem(serverUrl, "text/xml");
 			// 200 for a successful get.
-			if(r != null && r.getStatus() == 200) {
-				if(log.isDebugEnabled()) log.debug("r.getBody() " + r.getBody());
-				return r.getBody();
+			if(r != null) {
+				if(r.getStatus() == 200) {
+					if(log.isDebugEnabled()) log.debug("r.getBody() " + r.getBody());
+					return r.getBody();
+				 }
+				else {
+					log.error(this + ".getTaskStatusContainer() " + params + " status not 200 is " + r.getStatus());
+				}
+			}
+			else {
+				log.error(this + ".getTaskStatusContainer() " + params + " response is null. ");
 			}
 		}
 		return null;
