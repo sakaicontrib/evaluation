@@ -70,7 +70,7 @@ span.itemRight{
 	padding-right: 0.4em;
 	padding-bottom: 0;
 	padding-left: 0.4em;
-	margin-top: -1.7em;
+	/*margin-top: -1.7em;*/
 }
 /*selectReorder,itemText,scaleDesc are the 3 children of the 2nd row*/
 select.selectReorder{ font-weight: bold; float: left }
