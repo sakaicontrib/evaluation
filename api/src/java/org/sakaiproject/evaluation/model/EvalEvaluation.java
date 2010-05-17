@@ -175,8 +175,21 @@ public class EvalEvaluation implements java.io.Serializable {
     private String authControl;
 
     private String evalCategory;
+    
+    /** 
+     * A flag to toggle sending mass email on evaluation open state
+     */
+    private Boolean emailOpenNotification;
 
-    /**
+    public Boolean getEmailOpenNotification() {
+		return emailOpenNotification;
+	}
+
+	public void setEmailOpenNotification(Boolean emailOpenNotification) {
+		this.emailOpenNotification = emailOpenNotification;
+	}
+
+	/**
      * If this is not null then we will load in all templates/templateItems/items with the related
      * linking autoUseTag when the evaluation is created
      */
@@ -257,7 +270,7 @@ public class EvalEvaluation implements java.io.Serializable {
     }
 
     /**
-     * full constructor
+     * full constructor without email flag
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
@@ -268,6 +281,26 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
             String authControl, String evalCategory, String selectionSettings) {
+    	
+    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorsDate, state,
+                resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
+                authControl, evalCategory, selectionSettings, Boolean.TRUE);
+    }
+    
+    /**
+     * full constructor
+     */
+    public EvalEvaluation(String type, String owner, String title, String instructions,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
+            Date studentsDate, boolean instructorViewResults, Date instructorsDate, String state,
+            String resultsSharing, String instructorOpt, Integer reminderDays,
+            String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
+            EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed,
+            Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
+            String authControl, String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
+    	
         this.lastModified = new Date();
         this.type = type;
         this.owner = owner;
@@ -298,6 +331,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
+    	this.emailOpenNotification = emailOpenNotification;
     }
 
     @Override

@@ -711,4 +711,20 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return externalLogic.getContentCollectionId(siteId);
     }
 
+
+	public List<EvalGroup> getFilteredEvalGroupsForUser(String userId,
+			String permission, String currentSiteId) {
+		List<EvalGroup> l = new ArrayList<EvalGroup>();
+
+        // get the groups from external
+        l.addAll( externalLogic.getFilteredEvalGroupsForUser(userId, permission, currentSiteId) );
+
+        if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
+        return l;
+	}
+
+	public boolean isEvalGroupPublished(String evalGroupId) {
+		return externalLogic.isEvalGroupPublished(evalGroupId);
+	}
+
 }

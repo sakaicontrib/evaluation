@@ -97,7 +97,7 @@ public class ScaledUtils {
 		for (EvalScale scale : scales) {
 		    // ensure only real scales are included
             if (scale.getId() != null) {
-                scaleLabels.add( makeScaleText(scale, 120) );
+                scaleLabels.add( makeScaleText(scale, 90) );
             }
 		}
 		return (String[]) scaleLabels.toArray(new String[scaleLabels.size()]);

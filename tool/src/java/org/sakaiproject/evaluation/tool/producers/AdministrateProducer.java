@@ -373,6 +373,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-disable-question-blocks", EvalSettings.DISABLE_QUESTION_BLOCKS);
         makeBoolean(form, "general-enable-ta-category", EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         makeBoolean(form, "general-enable-selections", EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        makeBoolean(form, "general-filter-evalgroups", EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);
         // Save settings button
         // NB no action now required
         UICommand.make(form, "saveSettings", UIMessage.make("administrate.save.settings.button"), null);	

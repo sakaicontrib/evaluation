@@ -878,6 +878,9 @@ background-repeat : no-repeat !important;
 .commentWarn {
     color:#DD9933
 }
+.previewEvalNote {
+    padding:5px; margin:10px; border: 1px solid rgb(255, 204, 0); background: rgb(255, 255, 204); width:97%
+}
 .validFail{
  /* top parent of failed group 
    can have a border, for example, or just style children below
@@ -903,6 +906,12 @@ background-repeat : no-repeat !important;
 	font-size:100%;
 	padding:0;
 }
+.infoItem{
+	padding-left: 2em;
+	background: transparent url(/library/image/sakai/information.png) center left no-repeat
+}
+
+
 .itemListReport ol{
 	list-style: none;
 	margin:0;
@@ -1028,3 +1037,13 @@ background-repeat : no-repeat !important;
   margin-left:1em;
   padding:0.3em 0.7em;
   }
+  
+.elementAlertBack{
+	background: transparent url(/library/image/silk/error.png) no-repeat scroll right 0;
+	padding-right: 20px
+}
+
+.elementAlertFront{
+	background: transparent url(/library/image/silk/error.png) no-repeat scroll left 0;
+	padding-left: 20px
+}

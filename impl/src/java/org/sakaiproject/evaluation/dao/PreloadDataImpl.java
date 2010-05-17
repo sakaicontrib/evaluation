@@ -164,6 +164,7 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
             saveConfig(EvalSettings.DISABLE_ITEM_BANK, false);
             saveConfig(EvalSettings.DISABLE_QUESTION_BLOCKS, false);
+            saveConfig(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS, false);
 
             // Default email settings
             saveConfig(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);
@@ -174,6 +175,7 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
             saveConfig(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, 0);
             saveConfig(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS, 300);
+            saveConfig(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION, false);
 
             // Default batch performance metrics settings
             saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);

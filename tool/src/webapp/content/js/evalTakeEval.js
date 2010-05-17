@@ -220,7 +220,7 @@ $(document).ready(function() {
         //copy options to this class
         variables.options = options;
         var temp = $('input#selectedPeopleInResponse').val();
-        variables.savedIds = temp === null ? '' : temp.replace('[', '').replace(']', '').split(', ');
+        variables.savedIds = typeof temp === "undefined" ? '' : temp.replace('[', '').replace(']', '').split(', ');
         return that.each(function() {
             if ($(this).find('select').length > 0) {
                 variables.typeOfSelector.one = true;

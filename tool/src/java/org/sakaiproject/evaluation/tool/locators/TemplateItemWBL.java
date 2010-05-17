@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -52,7 +53,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
        this.authoringService = authoringService;
    }
 
-// keep track of all template items that have been delivered during this request
+   // keep track of all template items that have been delivered during this request
    private Map<String, EvalTemplateItem> delivered = new HashMap<String, EvalTemplateItem>();
 
    /* (non-Javadoc)

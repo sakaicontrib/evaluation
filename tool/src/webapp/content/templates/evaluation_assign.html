@@ -10,7 +10,11 @@
 		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
         <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
         <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+	    <script rsf:id="JS-facebox" type="text/javascript" src="../js/facebox/facebox.js"></script>
+	    <script rsf:id="JS-facebox-assign" type="text/javascript" src="../js/eval.assign.facebox.js"></script>
+	    <script rsf:id="JS-assign" type="text/javascript" src="../js/eval.assign.js"></script>
+	    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
+	    <link href="../js/facebox/facebox.css" type="text/css" rel="stylesheet" media="all"/> 
 	</head>
 	
 	<body>
@@ -37,7 +41,7 @@
 			
 			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
 						
-			<form id="eval-assign-form" rsf:id="eval-assign-form" method="get">
+			<form id="eval-assign-form" rsf:id="eval-assign-form" method="post">
 				<span rsf:id="hierarchyNodeSelectHolder"></span>
 				<span rsf:id="evalGroupSelectHolder"></span>
 			
@@ -69,6 +73,9 @@
 					</p>
 					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
 						<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+						<p class="elementAlertFront instruction" rsf:id="assign-eval-instructions-group-notpublished">
+						This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
+						
 						<div rsf:id="siteCheckboxes"/>
 						<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
 							<thead>
@@ -79,6 +86,9 @@
 									<th>
 										<span rsf:id="msg=assigneval.name.header">Title</span>
 									</th>
+			                        <th>
+			                        	<span rsf:id="select-column-title">Instructors and TAs</span>
+			                        </th>
 								</tr>
 							</thead>
 							<tbody>
@@ -89,6 +99,11 @@
 									<td>
 										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
 									</td>
+									<td>
+			                        	<span rsf:id="select-no" class="instruction">You cannot assign to this site, it has no member to take the evaluation.</span>
+			                        	<a rsf:id="select-instructors" href="#" title="Select Instructors"  rel="assignInstructorSelector">Select Instructors (5/5)</a>
+			                            <a rsf:id="select-tas" href="#" title="Select TAs" rel="assignTaSelector" style="margin-left:30px">Select TAs (5/12)</a>
+			                        </td>
 								</tr>
 							</tbody>
 						</table>
@@ -139,6 +154,11 @@
 					</div>
                     
 				</div>
+				<div id="error" style="display:none" class="messageAlert">
+			        <ul style="margin:0px;">
+			            <li><span rsf:id="msg=assigneval.invalid.selection">Message for user here</span></li>
+			        </ul>
+        		</div>
 
 				<p class="act">	
 					<input id="confirmAssignCourses" rsf:id="confirmAssignCourses" type="submit" name="save_assigned_courses" value="Save Assigned Courses" class="active" accesskey="s" />

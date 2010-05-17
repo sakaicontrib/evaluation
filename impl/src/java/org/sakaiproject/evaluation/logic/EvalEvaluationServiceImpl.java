@@ -433,13 +433,19 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 // check that the evalGroupId is valid for this evaluation
                 search.addRestriction( new Restriction("evalGroupId", evalGroupId) );
             }
-            // do the count based on the search
-            long count = dao.countBySearch(EvalAssignGroup.class, search);
-            if (count <= 0l) {
+            // do the search
+            List<EvalAssignGroup> groups = dao.findBySearch(EvalAssignGroup.class, search);
+            if (groups.size() <= 0) {
                 // no valid groups
                 valid = false;
+            } else if (groups.size() == 1){
+                valid = commonLogic.isEvalGroupPublished(groups.get(0).getEvalGroupId());
             } else {
-                valid = true;
+                int validGroups = 0;
+                for ( EvalAssignGroup evalAssignGroup : groups){
+                	validGroups = commonLogic.isEvalGroupPublished(groups.get(0).getEvalGroupId()) ? validGroups + 1 : validGroups;
+                }
+                valid = validGroups > 0;
             }
         }
         return valid;
