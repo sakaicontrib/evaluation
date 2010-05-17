@@ -79,6 +79,17 @@ public interface ExternalEvalGroups {
 	 * @return a List of {@link EvalGroup} objects
 	 */
 	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission);
+	
+	/**
+	 * Get a list of all eval groups that a user has a specific permission in that are of the same as this site
+	 * (use {@link #countEvalGroupsForUser(String, String)} if you just need the number)
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param permission a permission string constant
+	 * @param currentSiteId the site id of the site to use as a filtering measure
+	 * @return a List of {@link EvalGroup} objects
+	 */
+	public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId);
 
 	/**
 	 * Get a count of all contexts that a user has a specific permission in
@@ -88,5 +99,13 @@ public interface ExternalEvalGroups {
 	 * @return the count of the eval groups that the user has a permission in
 	 */
 	public int countEvalGroupsForUser(String userId, String permission);
+	
+	/**
+	 * Check if this group/site is published since some operations must be done on published groups/sites.
+	 * 
+	 * @param evalGroupId
+	 * @return TRUE: Group exists and is published. FALSE: Group may not exist or is unpublished
+	 */
+	public boolean isEvalGroupPublished(String evalGroupId);
 
 }

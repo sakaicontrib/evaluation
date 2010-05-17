@@ -334,6 +334,16 @@ public interface EvalSettings {
      */
     public static final String ENABLE_INSTRUCTOR_ASSISTANT_SELECTION = "ENABLE_INSTRUCTOR_ASSISTANT_SELECTION:java.lang.Boolean";
 
+    /**
+     * If this is enabled/true then we only show evalgroups/sites like the current one in the Assign Eval to groups view
+     */
+    public static final String ENABLE_FILTER_ASSIGNABLE_GROUPS = "ENABLE_FILTER_ASSIGNABLE_GROUPS:java.lang.Boolean";
+    
+    /**
+     * if this is enabled/true, users can decide to disable the email notification sent out when the eval begins
+     */
+    public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
+
 
     /**
      * This is here to identify all the boolean ONLY settings in the system,
@@ -343,6 +353,7 @@ public interface EvalSettings {
     public static String[] BOOLEAN_SETTINGS = {
         ADMIN_VIEW_BELOW_RESULTS,
         ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
+        ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION,
         DISABLE_ITEM_BANK,
         DISABLE_QUESTION_BLOCKS,
         DISPLAY_HIERARCHY_HEADERS,
@@ -355,6 +366,7 @@ public interface EvalSettings {
         ENABLE_EVAL_EARLY_CLOSE,
         ENABLE_EVAL_REOPEN,
         ENABLE_EVAL_RESPONSE_REMOVAL,
+        ENABLE_FILTER_ASSIGNABLE_GROUPS,
         ENABLE_IMPORTING,
         ENABLE_INSTRUCTOR_ASSISTANT_SELECTION,
         ENABLE_ITEM_COMMENTS,

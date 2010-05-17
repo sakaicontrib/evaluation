@@ -3,8 +3,8 @@
     <head>
         <title rsf:id="msg=evaluationassignments.page.title">Display Assignments</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="../../../library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-        <link href="../../../library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
         <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js">
         </script>
         <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -39,6 +39,8 @@
             <p rsf:id="msg=evaluationassignments.info"  class="instruction" >
                 This shows the current groups and hierarchy nodes that your evaluation is assigned to
             </p>
+            <p class="elementAlertFront instruction" rsf:id="eval-instructions-group-notpublished">
+				This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
             <h4 rsf:id="msg=evaluationassignments.groups.header">
                 Individual Groups
             </h4>
@@ -47,8 +49,14 @@
                 <thead>
                     <tr>
                         <th>
-                        	<span rsf:id="msg=evaluationassignments.groups.name.header">Name</span>
+                        		<span rsf:id="msg=evaluationassignments.groups.name.header">Name</span>
                         </th>
+						<th>
+							<span rsf:id="msg=evaluationassignments.groups.instructors.header">Selected Instructors</span>
+							</th>
+                        <th>
+                        	<span rsf:id="msg=evaluationassignments.groups.assistants.header">Selected Assistants</span>
+							</th>
                         <th>
                       		<span rsf:id="msg=evaluationassignments.groups.members.header">Members</span>
                         </th>
@@ -57,21 +65,22 @@
                         </th>
                     </tr>
                 </thead>
-                <tr rsf:id="indGroups:">
+                <tr rsf:id="groups:">
                     <td width="60%">
-                        <span rsf:id="indTitle">Group title</span>
-                        &nbsp;<span rsf:id="directIndGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
+                        <span rsf:id="groupTitle">Group title</span>
+                        &nbsp;<span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
                     </td>
-                    <td width="30%">
-                        <span rsf:id="indGrpEnrollment">20 members</span>
+					<td width="10%">
+                        <span rsf:id="enrollment-instructors">20 instructors</span>
                     </td>
                     <td width="10%">
-                        <span rsf:id="indGroupType">adhoc</span>
+                        <span rsf:id="enrollment-assistants">20 assistants</span>
                     </td>
-                </tr>
-                <tr>
-                	<td colspan="3">
-                		<span rsf:id="noIndGroupsSelected">No Groups selected</span>
+                    <td width="10%">
+                        <span rsf:id="enrollment">20 members</span>
+                    </td>
+                    <td width="10%">
+                        <span rsf:id="groupType">adhoc</span>
                     </td>
                 </tr>
             </table>

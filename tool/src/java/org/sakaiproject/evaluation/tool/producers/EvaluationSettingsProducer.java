@@ -28,7 +28,6 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -318,42 +317,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             }
         }
 
-        // EVALUATION INSTRUCTOR/TA SELECTION
-        if((Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)){
-            // radio buttons for the INSTRUCTOR selection options
-            UIBranchContainer selectFieldSet = UIBranchContainer.make(form, "selectInstructorTA:");
-            String[] selectValues = new String[] {
-                    EvalAssignGroup.SELECTION_OPTION_ALL,
-                    EvalAssignGroup.SELECTION_OPTION_ONE, 
-                    EvalAssignGroup.SELECTION_OPTION_MULTIPLE};
-            String savedSettingInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, null, evaluation);
-            UISelect selectInstructors = UISelect.make(selectFieldSet, "selectionRadioInstructors", 
-                    selectValues, 
-                    new String[] {"evalsettings.selection.instructor.all",
-                    "evalsettings.selection.instructor.one",
-            "evalsettings.selection.instructor.many"},
-            actionBean + "selectionInstructors", savedSettingInstructor).setMessageKeys();
-            String selectInstructorsId = selectInstructors.getFullID();
-            for (int i = 0; i < selectValues.length; ++i) {
-                UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectInstructorsChoice:", i + "");
-                UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", selectInstructorsId, i);
-                UISelectLabel.make(radiobranch, "radioLabel", selectInstructorsId, i)
-                .decorate( new UILabelTargetDecorator(choice) );
-            }
-            // radio buttons for the TA selection options
-            String savedAssistantInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, null, evaluation);
-            UISelect selectTAs = UISelect.make(selectFieldSet, "selectionRadioTAs", 
-                    selectValues, 
-                    new String[] {"evalsettings.selection.ta.all","evalsettings.selection.ta.one","evalsettings.selection.ta.many"},
-                    actionBean + "selectionAssistants", savedAssistantInstructor).setMessageKeys();
-            String selectTAsId = selectTAs.getFullID();
-            for (int i = 0; i < selectValues.length; ++i) {
-                UIBranchContainer radiobranch = UIBranchContainer.make(selectFieldSet, "selectTAsChoice:", i + "");
-                UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", selectTAsId, i);
-                UISelectLabel.make(radiobranch, "radioLabel", selectTAsId, i)
-                .decorate( new UILabelTargetDecorator(choice) );}
-        }
-
         // EVALUATION DATES
 
         Date today = new Date();
@@ -487,6 +450,16 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
         UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), 
                 new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluation.getId()) );
 
+        // toggle opening email
+        Boolean allowEmailOpenNotification = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
+        if (allowEmailOpenNotification){
+	        boolean toggleSendMail = evaluation.getEmailOpenNotification() == null ? Boolean.TRUE : evaluation.getEmailOpenNotification();
+	        UIBoundBoolean sendOpeningEmail = UIBoundBoolean.make(form, "enable-mass-email", evaluationOTP + "emailOpenNotification", toggleSendMail);
+	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
+	            RSFUtils.disableComponent(sendOpeningEmail);
+	        }
+        }
+        
         // email reminder control
         UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
                 EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();

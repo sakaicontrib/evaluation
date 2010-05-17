@@ -48,6 +48,8 @@ import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
+import org.sakaiproject.entity.api.EntityPropertyNotDefinedException;
+import org.sakaiproject.entity.api.EntityPropertyTypeException;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.EntityReference;
@@ -106,6 +108,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     private static final String ANON_USER_PREFIX = "Anon_User_";
 
     private static final String ADMIN_USER_ID = "admin";
+    private static final String SITE_TERM = "term";
 
     /**
      * Add presedence:bulk to mark emails as a type of bulk mail
@@ -529,22 +532,58 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             }
         }
-
+        
         return count;
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
         log.debug("userId: " + userId + ", permission: " + permission);
 
-        List<EvalGroup> l = new ArrayList<EvalGroup>();
+        return getEvalGroups(userId, permission, false, null);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
+     */
+    public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId) {
+    	log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
+
+        return getEvalGroups(userId, permission, true, currentSiteId);
+    }
+    
+    @SuppressWarnings("unchecked")
+	private List<EvalGroup>getEvalGroups(String userId, String permission, boolean filterSites, String currentSiteId) {
+    	List<EvalGroup> l = new ArrayList<EvalGroup>();
 
         // get the groups from Sakai
         Set<String> authzGroupIds = 
             authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
+        
+        Site currentSite = null;
+        if ( filterSites && currentSiteId != null ){
+	        try {
+				currentSite = siteService.getSite(currentSiteId);
+			} catch (IdUnusedException e1) {
+				// invalid site Id returned
+	            throw new RuntimeException("Could not get site from siteId:" + currentSiteId);
+			}
+        }
+        long currentSiteTerm = 0l;
+        boolean isCurrentSiteTermDefined = true;
+        if ( currentSite != null && currentSite.getProperties() != null ){
+			try {
+				currentSiteTerm = currentSite.getProperties().getLongProperty(SITE_TERM);
+			} catch (EntityPropertyNotDefinedException e) {
+				isCurrentSiteTermDefined = false;
+			} catch (EntityPropertyTypeException e) {
+				isCurrentSiteTermDefined = false;
+			}
+        }else{
+        	isCurrentSiteTermDefined = false;
+        }
         Iterator<String> it = authzGroupIds.iterator();
         while (it.hasNext()) {
             String authzGroupId = it.next();
@@ -558,8 +597,26 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String siteId = r.getId();
                         try {
                             Site site = siteService.getSite(siteId);
-                            l.add(new EvalGroup(r.getReference(), site.getTitle(), 
-                                    getContextType(r.getType())));
+                            if (filterSites && currentSite != null && currentSite.getType() != null){
+                            	//only process sites that have the same type as the current one, if type is not stipulated simply add all sites
+                            	if ( currentSite.getType().equals(site.getType()) ){
+                            		//We only check terms if current site has term defined, otherwise just add this site to the list
+                            		if ( isCurrentSiteTermDefined && site.getProperties() !=null){
+		                                long siteTerm = 0l;
+										try {
+											siteTerm = site.getProperties().getLongProperty(SITE_TERM);
+										} catch (EntityPropertyNotDefinedException e) {} catch (EntityPropertyTypeException e) {}
+										//add this site to list only if it has the same term as the current site
+		                                if ( currentSiteTerm == siteTerm ){
+		                                	l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
+		                                }
+			                        }else{
+			                        	l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
+			                        }
+                                }
+		                    }else{
+		                    	l.add(new EvalGroup(r.getReference(), site.getTitle(),  getContextType(r.getType())));
+                          }
                         } catch (IdUnusedException e) {
                             // invalid site Id returned
                             throw new RuntimeException("Could not get site from siteId:" + siteId);
@@ -1023,5 +1080,20 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         String ret = contentHostingService.getSiteCollection(siteId);
         return ret;
     }
+    
+	public boolean isEvalGroupPublished(String evalGroupId) {
+		//unless the site is specifically flagged as unpublished, assume it is published.
+		boolean isEvalGroupPublished = true; 
+		if( evalGroupId != null){
+			try{
+				Site site = siteService.getSite(evalGroupId.replaceAll("/site/", ""));
+				isEvalGroupPublished = site.isPublished();
+			}catch(IdUnusedException e){
+				log.debug(e);
+			} 
+		}
+		return isEvalGroupPublished;
+	}
+
 
 }

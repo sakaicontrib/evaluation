@@ -93,6 +93,7 @@ public class TemplateBBean {
 
     public Long templateId;
     public Long itemId;
+    public Long[] itemIds;
     public Long scaleId;
 
     public Boolean idealColor;
@@ -177,6 +178,21 @@ public class TemplateBBean {
         Long[] copiedIds = authoringService.copyItems(new Long[] {itemId}, ownerId, false, false);
         messages.addMessage( new TargettedMessage("controlitems.copy.user.message", 
                 new Object[] {itemId, copiedIds[0]}, TargettedMessage.SEVERITY_INFO) );
+        return "success";
+    }
+
+
+    /**
+     * Make a copy of a template item at the users request,
+     * itemId must be set
+     */
+    public String copyTemplateItems() {
+        log.debug("make a copy of a template item ("+itemIds+") at the users request");
+        String ownerId = commonLogic.getCurrentUserId();
+        Long[] copiedIds = authoringService.copyTemplateItems(itemIds, ownerId, false, templateId, true);
+        messages.addMessage( new TargettedMessage("modifytemplate.copy.user.message", 
+                new Object[] {}, TargettedMessage.SEVERITY_INFO) );
+        log.debug("Copied: " + copiedIds[0].toString());
         return "success";
     }
 

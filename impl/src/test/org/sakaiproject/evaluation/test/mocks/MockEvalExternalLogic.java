@@ -561,4 +561,20 @@ public String getContentCollectionId(String siteId) {
 	return null;
 }
 
+public Set<String[]> getUsersByRole(String evalGroupId, String perm) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public List<EvalGroup> getFilteredEvalGroupsForUser(String arg0, String arg1,
+		String arg2) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public boolean isEvalGroupPublished(String evalGroupId) {
+	// TODO Auto-generated method stub
+	return true;
+}
+
 }

@@ -33,6 +33,10 @@
         <property name="emailTemplateWBL" ref="emailTemplateWBL" />
         <property name="messages" ref="targettedMessageList" />
         <property name="locale" ref="requestLocale" />
+        <property name="selectedEvalautionUsersLocator" ref="selectedEvaluationUsersLocator"/>
+    	<property name="assignGroupSelectionSettings" ref="assignGroupSelectionSettings"/>
+    	<property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 
     <bean id="takeEvalBean" class="org.sakaiproject.evaluation.tool.TakeEvalBean">
@@ -126,8 +130,7 @@
         class="org.sakaiproject.evaluation.tool.locators.TemplateItemWBL">
         <property name="localTemplateLogic" ref="localTemplateLogic" />
         <property name="messages" ref="targettedMessageList" />
-        <property name="authoringService" 
-			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="authoringService" ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
     </bean>
 
     <bean id="itemWBL" class="org.sakaiproject.evaluation.tool.locators.ItemBeanWBL">
@@ -191,6 +194,14 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+    </bean>
+    
+    <bean id="selectedEvaluationUsersLocator" 
+    	class="org.sakaiproject.evaluation.tool.locators.SelectedEvaluationUsersLocator">
+    </bean>
+
+    <bean id="assignGroupSelectionSettings" 
+    	class="org.sakaiproject.evaluation.tool.locators.AssignGroupSelectionSettings">
     </bean>
 
     <bean id="adhocGroupsBean"
@@ -535,13 +546,23 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="hierarchyRenderUtil"
-            ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="hierarchyRenderUtil"
+            ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
+        <property name="locale" ref="requestLocale" />
+        <property name="messageLocator" ref="messageLocator" />
+		<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="viewStateHandler" ref="viewStateHandler" />
     </bean>
+	
+    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignSelectProducer">
+       <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        </bean>
 
     <!-- This renderer is only used by the EvaluationAssignProducer (right above here) -->
     <bean id="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer"

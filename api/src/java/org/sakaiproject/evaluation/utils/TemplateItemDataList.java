@@ -15,9 +15,11 @@
 package org.sakaiproject.evaluation.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,6 +110,10 @@ public class TemplateItemDataList {
         return eti;
     }
 
+    private Long evaluationId;
+    private String evalGroupId;
+    private EvalEvaluationService evaluationService;
+    
     private List<EvalHierarchyNode> hierarchyNodes = null;
     /**
      * @return the list of hierarchy nodes we are working with, empty if there are none
@@ -197,6 +203,11 @@ public class TemplateItemDataList {
                 || authoringService == null) {
             throw new IllegalArgumentException("evaluationId, evalGroupId, evaluationService, and authoringService must be set");
         }
+        
+        // set local class variable instances
+        this.evaluationId = evaluationId;
+        this.evalGroupId = evalGroupId;
+        this.evaluationService = evaluationService;
 
         String[] hierarchyNodeIDs = {};
         List<EvalHierarchyNode> evalHierarchyNodes = null;
@@ -373,11 +384,20 @@ public class TemplateItemDataList {
      * @see #associates map for more information about the possible returns
      */
     public Set<String> getAssociateIds(String associateType) {
-        Set<String> ids = new HashSet<String>();
+    	Set<String> ids = new HashSet<String>();
+    	Set<String> sortedIds = new HashSet<String>();
         if (this.associates.containsKey(associateType)) {
             ids.addAll( this.associates.get(associateType) );
         }
-        return ids;
+        
+        if( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(associateType) ){
+        	sortedIds = getSortedUserIdsFromUsers( ids, EvalAssignUser.TYPE_EVALUATEE);
+        }else if( EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(associateType) ){
+        	sortedIds = getSortedUserIdsFromUsers( ids, EvalAssignUser.TYPE_ASSISTANT );
+        }else{
+        	sortedIds = ids;
+        }
+        return sortedIds;
     }
 
     private Map<String, List<EvalTemplateItem>> autoInsertMap = null;
@@ -504,8 +524,17 @@ public class TemplateItemDataList {
                 // get all the template items for this category
                 List<EvalTemplateItem> categoryNonChildItemsList = TemplateItemUtils.getCategoryTemplateItems(associateType, nonChildItemsList);
                 if (categoryNonChildItemsList.size() > 0) {
-                    // assume the associateIds are in the correct render order
-                    for (String associateId : associateIds) {
+        	    	// apply listing ordering
+                	Set<String> sortedAssociateIds = new HashSet<String>();
+                	if( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(associateType) ){
+                		sortedAssociateIds = getSortedUserIdsFromUsers( associateIds, EvalAssignUser.TYPE_EVALUATEE );
+                    }else if( EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(associateType) ){
+                    	sortedAssociateIds = getSortedUserIdsFromUsers( associateIds, EvalAssignUser.TYPE_ASSISTANT);
+                    }else{
+                    	sortedAssociateIds = new HashSet<String>(associateIds);
+                    }
+                	
+                	for (String associateId : sortedAssociateIds) {
                         // handle the data creation for this associateId
                         TemplateItemGroup tig = new TemplateItemGroup(associateType, associateId);
                         tig.hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
@@ -1119,6 +1148,33 @@ public class TemplateItemDataList {
             hierarchyNodes = hierarchyLogic.getSortedNodes(nodes);
         }
         return hierarchyNodes;
+    }
+    
+    /**
+     * Extract the userIds from the evaluation's assigned list sort them according to the user's {@link EvalAssignUser} list order.
+     * @param userIds A collection of internal User Ids
+     * @param associatedType The type a user can be eg. {@link EvalConstants.ITEM_CATEGORY_INSTRUCTOR}
+     * @return the sorted set of user ids
+     */
+	private Set<String> getSortedUserIdsFromUsers( Collection<String> userIds, String associatedType){
+    	List<EvalAssignUser> usersInList = new ArrayList<EvalAssignUser>();
+    	Set<String> sortedIds = new LinkedHashSet<String>();
+    	if( userIds != null && associatedType != null && evaluationService != null && evalGroupId != null && evaluationId != null){
+            List<EvalAssignUser> userList = evaluationService.getParticipantsForEval(evaluationId, null, new String[] { evalGroupId }, null, EvalEvaluationService.STATUS_ANY, null, null);
+	    	for( EvalAssignUser evalAssignUser : userList ){
+    			if( userIds.contains(evalAssignUser.getUserId()) && evalAssignUser.getEvalGroupId().equals(evalGroupId) && evalAssignUser.getType().equals(associatedType)){
+	    			usersInList.add(evalAssignUser);
+	    		}
+	    	}
+    	}
+    	if( usersInList.size() > 0 ){
+	    	// sort according to saved selection ordering
+	    	Collections.sort(usersInList, new EvalAssignUser.AssignComparatorByOrder());
+	    	for( EvalAssignUser user : usersInList ){
+	    		sortedIds.add( user.getUserId() );
+	    	}
+    	}
+    	return sortedIds.size() > 0 ? sortedIds : new HashSet<String>(userIds);
     }
 
 }

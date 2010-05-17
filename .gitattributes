@@ -210,6 +210,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AdhocGroupMemberRemovalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AdhocGroupsBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/AssignGroupSelectionSettings.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/DateResolver.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EmailTemplateWBL.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -221,6 +222,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/LineBreakResolver.java s
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseAnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ScaleBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/SelectedEvaluationUsersLocator.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/SettingsWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -238,6 +240,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.j
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirmProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignSelectProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignmentsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationCreateProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationNotificationsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -391,6 +394,8 @@ tool/src/webapp/content/js/SakaiTableRenderer.js -text
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
+tool/src/webapp/content/js/eval.assign.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/eval.assign.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/eval.template.loader.events.js svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -406,6 +411,7 @@ tool/src/webapp/content/js/facebox/b.png -text
 tool/src/webapp/content/js/facebox/bl.png -text
 tool/src/webapp/content/js/facebox/br.png -text
 tool/src/webapp/content/js/facebox/closelabel.gif -text
+tool/src/webapp/content/js/facebox/evalAjax.js -text
 tool/src/webapp/content/js/facebox/facebox.css -text
 tool/src/webapp/content/js/facebox/facebox.js -text
 tool/src/webapp/content/js/facebox/loading.gif -text
@@ -449,6 +455,7 @@ tool/src/webapp/content/templates/control_scales.html -text svn_keywords=Date+Re
 tool/src/webapp/content/templates/control_templates.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign_confirm.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/evaluation_assign_select.html -text
 tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/evaluation_create.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_notifications.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
