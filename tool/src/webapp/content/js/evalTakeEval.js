@@ -12,7 +12,7 @@ $(document).ready(function() {
         if (instrSel.find('input[type=checkbox]').length !== 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
-                instrSel.find("div.fieldset").css({
+                instrSel.find("fieldset").css({
                     background:'#fff'
                 });
             } else {
@@ -22,7 +22,7 @@ $(document).ready(function() {
         if (assSel.find('input[type=checkbox]').length !== 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
-                assSel.find("div.fieldset").css({
+                assSel.find("fieldset").css({
                     background:'#fff'
                 });
 			} else {
@@ -39,7 +39,7 @@ $(document).ready(function() {
             if (!valid) {
                 return error("TUTOR", assSel);
             } else {
-                assSel.find("div.fieldset").css({
+                assSel.find("fieldset").css({
                     background:'#fff'
                 });
             }
@@ -54,7 +54,7 @@ $(document).ready(function() {
             if (!valid) {
                 return  error("LECTURER", instrSel);
             } else {
-                instrSel.find("div.fieldset").css({
+                instrSel.find("fieldset").css({
                     background:'#fff'
                 });
             }
@@ -65,7 +65,7 @@ $(document).ready(function() {
 
     function error(type, that) {
         alert('Please evaluate at least one ' + type + '.');
-        that.find("div.fieldset").css({
+        that.find("fieldset").css({
             background:'#fee'
         });
         return false;
