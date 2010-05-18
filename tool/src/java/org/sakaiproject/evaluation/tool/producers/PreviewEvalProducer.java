@@ -129,8 +129,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         Long templateId = previewEvalViewParams.templateId;
         String evalGroupId = previewEvalViewParams.evalGroupId;
         EvalEvaluation eval = null;
-        //EvalTemplate template = null;
-
+        
         if (! previewEvalViewParams.external) {
             UIInternalLink.make(tofill, "summary-link", 
                     UIMessage.make("summary.page.title"), 
@@ -168,7 +167,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         } else {
             UIOutput.make(groupTitle, "group-title", commonLogic.getDisplayTitle(evalGroupId) );
         }
-
+        
         // show instructions if not null
         if (eval.getInstructions() != null) {
             UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
@@ -195,7 +194,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             // make the TI data structure
             Map<String, List<String>> associates = new HashMap<String, List<String>>();
             associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-
+            
             // add in the TA list if it is enabled
             Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
             if (taEnabled.booleanValue()) {
@@ -207,6 +206,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
             TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
+            int countAssistants = 0;
+            int countInstructors = 0;
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
                 UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
@@ -217,10 +218,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                     String instructorName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.instructor.questions.header", new Object[] { instructorName });
+                    countInstructors ++;
                 } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                     String assistantName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
                             "takeeval.assistant.questions.header", new Object[] { assistantName });
+                    countAssistants ++;
                 }
 
                 // loop through the hierarchy node groups
@@ -245,6 +248,11 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                         renderItemPrep(nodeItemsBranch, dti, eval);
                     }
                 }
+            }
+            
+            //explain groups if using any groups in this template
+            if ( countAssistants > 0 || countInstructors > 0 ){
+            	UIOutput.make(tofill, "show-eval-instructions-groups");
             }
         }
 
