@@ -405,7 +405,7 @@ function updateControlItemsTotal() {
 
         var content = '<div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>' +
                       '<div class="" style="float: right;">' +
-                      '<input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/>' +
+                      '<input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/> ' +
                       '<input type="button" value="Cancel" accesskey="x" class="closeImage"/>' +
                       '</div>';
         $(boxdiv).html(content);
@@ -422,7 +422,7 @@ function updateControlItemsTotal() {
                 if ($('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
                     var error = '<div class="itemOperationsEnabled">' +
                                 '<img src="/library/image/sakai/cancelled.gif"/>' +
-                                '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+' <a href="#" id="closeItemOperationsEnabled">X</a></div>';
+                                '<span class="instruction"></span>'+evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item')+' <a href="#" id="closeItemOperationsEnabled">x</a></div>';
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1000);
                     $('#closeItemOperationsEnabled').click(function() {
                         $(this).parent().slideUp('normal', function() {
