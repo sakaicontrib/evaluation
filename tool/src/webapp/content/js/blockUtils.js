@@ -71,10 +71,8 @@ function extractSelectedItems(submitButton) {
         }
 
         destinationForm.templateItemIds.value=idList.toString();
-	
-		//alert("ids="+destinationForm.templateItemIds.value);
-		
-		if (count < 2) {
+
+		if (checkBoxes_CHECKED.length < 2) {
             alert(evalTemplateUtils.messageLocator('modifytemplate.group.warn.minimum'));
 		 	return false; 
 		} else {
@@ -104,6 +102,5 @@ function extractSelectedItems(submitButton) {
 			return false;
 		}
 	}
-
 	return false;
 }
