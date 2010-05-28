@@ -663,42 +663,44 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             boolean includeUnApproved, Boolean includeHierarchyGroups) {
         log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
         Map<Long, List<EvalAssignGroup>> evals = new TreeMap<Long, List<EvalAssignGroup>>();
-
-        // create the inner lists
-        for (int i=0; i<evaluationIds.length; i++) {
-            List<EvalAssignGroup> innerList = new ArrayList<EvalAssignGroup>();
-            evals.put(evaluationIds[i], innerList);
-        }
-
-        Search search = new Search("evaluation.id", evaluationIds);
-
-        if (! includeUnApproved) {
-            // only include those that are approved
-            search.addRestriction( new Restriction("instructorApproval", Boolean.TRUE) );
-        }
-
-        // include all groups unless this is not null and then we limit
-        if (includeHierarchyGroups != null) {
-            if (includeHierarchyGroups) {
-                // only include those which were added via nodes
-                search.addRestriction( new Restriction("nodeId", "", Restriction.NOT_NULL) );
-            } else {
-                // only include those which were added directly (i.e. nodeId = null)
-                search.addRestriction( new Restriction("nodeId", "", Restriction.NULL) );
-            }
-        }
-
-        // get all the groups for the given eval ids in one storage call
-        search.addOrder( new Order("id") );
-        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, search );
-
-        for (int i=0; i<l.size(); i++) {
-            EvalAssignGroup eac = l.get(i);
-
-            // put stuff in inner list
-            Long evalId = eac.getEvaluation().getId();
-            List<EvalAssignGroup> innerList = evals.get(evalId);
-            innerList.add( eac );
+        
+        if ( evaluationIds != null & evaluationIds.length > 0){
+	        // create the inner lists
+	        for (int i=0; i<evaluationIds.length; i++) {
+	            List<EvalAssignGroup> innerList = new ArrayList<EvalAssignGroup>();
+	            evals.put(evaluationIds[i], innerList);
+	        }
+	
+	        Search search = new Search("evaluation.id", evaluationIds);
+	
+	        if (! includeUnApproved) {
+	            // only include those that are approved
+	            search.addRestriction( new Restriction("instructorApproval", Boolean.TRUE) );
+	        }
+	
+	        // include all groups unless this is not null and then we limit
+	        if (includeHierarchyGroups != null) {
+	            if (includeHierarchyGroups) {
+	                // only include those which were added via nodes
+	                search.addRestriction( new Restriction("nodeId", "", Restriction.NOT_NULL) );
+	            } else {
+	                // only include those which were added directly (i.e. nodeId = null)
+	                search.addRestriction( new Restriction("nodeId", "", Restriction.NULL) );
+	            }
+	        }
+	
+	        // get all the groups for the given eval ids in one storage call
+	        search.addOrder( new Order("id") );
+	        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, search );
+	
+	        for (int i=0; i<l.size(); i++) {
+	            EvalAssignGroup eac = l.get(i);
+	
+	            // put stuff in inner list
+	            Long evalId = eac.getEvaluation().getId();
+	            List<EvalAssignGroup> innerList = evals.get(evalId);
+	            innerList.add( eac );
+	        }
         }
         return evals;
     }
