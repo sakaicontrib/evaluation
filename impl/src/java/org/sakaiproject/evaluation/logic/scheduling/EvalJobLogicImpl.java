@@ -144,7 +144,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             sendCreatedEmail(evaluationId);
 
         } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
-            sendAvailableEmail(evaluationId);
+            // Consider flag wrt sending a mass email notifying users of opening. Send mail if flag is not set.
+            boolean sendMail = ( eval.getSendAvailableNotifications() == null ? true : eval.getSendAvailableNotifications() );
+            if (sendMail){
+                sendAvailableEmail(evaluationId);
+            }
             if (eval.getDueDate() != null) {
                 // might not have a due date set
                 scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
@@ -270,11 +274,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             long runAt = new Date().getTime() + (1000 * timeToWaitSecs);
             scheduleJob(eval.getId(), new Date(runAt), EvalConstants.JOB_TYPE_CREATED);
         }
-        //Consider flag wrt sending a mass email notifying users of opening. Send mail if flag is not set.
-        boolean sendMail = ( eval.getEmailOpenNotification() == null) ? true : eval.getEmailOpenNotification();
-        if (sendMail){
-        	scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
-        }
+        scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
     }
 
 
@@ -388,7 +388,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
     /**
      * Compare the date when a job will be invoked with the EvalEvaluation date to see if the job
-     * needs to be rescheduled. This takes into consideration the toggle on sending an opening email notfication
+     * needs to be rescheduled.
      * 
      * @param eval
      *           the EvalEvaluation
@@ -423,12 +423,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
         // if there are no invocations, return
         if (jobs.length == 0) {
-            // No job was found so lets create one but consider flag wrt sending a mass email notifying users of opening. 
-        	// Send mail if flag is not set.
-            boolean sendMail = ( eval.getEmailOpenNotification() == null) ? true : eval.getEmailOpenNotification();
-            if (sendMail){
-            	scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
-            }
+            // FIXME why return here? if no job was found should we not create one? -AZ
             return;
         } else {
             // we expect one delayed invocation matching componentId and opaqueContext so remove any extras
@@ -444,14 +439,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     log.debug("EvalJobLogicImpl.checkInvocationDate remove the old invocation "
                             + job.uuid + "," + job.contextId + "," + job.date);
 
-                // and schedule a new invocation and consider the email flag on eval.
-                boolean sendMail = ( eval.getEmailOpenNotification() == null) ? true : eval.getEmailOpenNotification();
-                if (sendMail){
-                	String newJobId = commonLogic.createScheduledJob(correctDate, eval.getId(), jobType);
-	                if (log.isDebugEnabled())
-	                    log.debug("EvalJobLogicImpl.checkInvocationDate and schedule a new invocation: "
-	                            + newJobId + ", date=" + correctDate + "," + eval.getId() + "," + jobType + ")");
-                }
+                // and schedule a new invocation
+                String newJobId = commonLogic.createScheduledJob(correctDate, eval.getId(), jobType);
+                if (log.isDebugEnabled())
+                    log.debug("EvalJobLogicImpl.checkInvocationDate and schedule a new invocation: "
+                            + newJobId + ", date=" + correctDate + "," + eval.getId() + "," + jobType + ")");
+
                 // the due date was changed, so reminder might need to be removed
                 if (EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
                     fixReminder(eval.getId());

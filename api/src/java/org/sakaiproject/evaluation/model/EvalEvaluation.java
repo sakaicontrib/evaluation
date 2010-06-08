@@ -177,17 +177,9 @@ public class EvalEvaluation implements java.io.Serializable {
     private String evalCategory;
     
     /** 
-     * A flag to toggle sending mass email on evaluation open state
+     * A flag to toggle sending mass email on evaluation active state
      */
-    private Boolean emailOpenNotification;
-
-    public Boolean getEmailOpenNotification() {
-		return emailOpenNotification;
-	}
-
-	public void setEmailOpenNotification(Boolean emailOpenNotification) {
-		this.emailOpenNotification = emailOpenNotification;
-	}
+    private Boolean sendAvailableNotifications;
 
 	/**
      * If this is not null then we will load in all templates/templateItems/items with the related
@@ -331,7 +323,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
-    	this.emailOpenNotification = emailOpenNotification;
+    	this.sendAvailableNotifications = emailOpenNotification;
     }
 
     @Override
@@ -753,6 +745,14 @@ public class EvalEvaluation implements java.io.Serializable {
 
     public void setEvalAssignGroups(List<EvalAssignGroup> evalAssignGroups) {
         this.evalAssignGroups = evalAssignGroups;
+    }
+    
+    public Boolean getSendAvailableNotifications() {
+        return sendAvailableNotifications;
+    }
+    
+    public void setSendAvailableNotifications(Boolean sendAvailableNotifications) {
+        this.sendAvailableNotifications = sendAvailableNotifications;
     }
 
 }

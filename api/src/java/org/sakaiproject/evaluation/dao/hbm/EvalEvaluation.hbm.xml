@@ -142,7 +142,7 @@
             <column name="SELECTION_SETTINGS" length="2000" />
         </property>
         <!-- for storing eval specific flag on sending notification emails when  -->
-        <property name="emailOpenNotification" type="java.lang.Boolean">
+        <property name="sendAvailableNotifications" type="java.lang.Boolean">
             <column name="EMAIL_OPEN_NOTIFICATION" />
         </property>
     </class>
