@@ -191,7 +191,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         for (int i = 0; i < assignGroups.size(); i++) {
             EvalAssignGroup assignGroup = assignGroups.get(i);
             
-            if(! commonLogic.isEvalGroupPublished(assignGroup.getEvalGroupId())) continue;
+            if(! commonLogic.isEvalGroupPublished(assignGroup.getEvalGroupId())) {
+                continue;
+            }
             
             EvalGroup group = commonLogic.makeEvalGroupObject(assignGroup.getEvalGroupId());
             if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
@@ -266,7 +268,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
         List<String> sentEmails = new ArrayList<String>();
         
-        if(! commonLogic.isEvalGroupPublished(evalGroupId)) return new String[] {};
+        if(! commonLogic.isEvalGroupPublished(evalGroupId)) {
+            return new String[] {};
+        }
 
         // get group
         EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
@@ -334,8 +338,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 continue; // skip processing for invalid groups
             }
             String evalGroupId = group.evalGroupId;
-            
-            if(! commonLogic.isEvalGroupPublished(evalGroupId)) continue;
+
+            // FIXME: this method does not work right, disabling -AZ
+//            if (! commonLogic.isEvalGroupPublished(evalGroupId)) {
+//                continue; // skip processing for groups that are not published?
+//            }
 
             String[] limitGroupIds = null;
             if (evalGroupId != null) {
@@ -348,9 +355,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (userIdsSet.size() > 0) {
                 // turn the set into an array
                 String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
-                log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
-                        + EvalConstants.EMAIL_TEMPLATE_REMINDER + " notification to for available evaluation ("
-                        + evaluationId + ") and group (" + group.evalGroupId + ")");
+                if (log.isDebugEnabled()) {
+                    log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
+                            + EvalConstants.EMAIL_TEMPLATE_REMINDER + " notification to for available evaluation ("
+                            + evaluationId + ") and group (" + group.evalGroupId + ")");
+                }
 
                 // replace the text of the template with real values
                 Map<String, String> replacementValues = new HashMap<String, String>();
@@ -360,7 +369,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
-                log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+                log.info("Sent evaluation reminder message for eval ("+evaluationId+") and group ("+group.evalGroupId+") to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
                     sentEmails.add(emailAddresses[j]);            
