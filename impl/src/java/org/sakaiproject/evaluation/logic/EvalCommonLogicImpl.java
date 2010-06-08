@@ -496,6 +496,38 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return false;
     }
 
+
+    // CURRENTLY BROKEN METHODS
+
+    // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups -AZ
+    public String getContentCollectionId(String siteId) {
+        // TODO Auto-generated method stub
+        return externalLogic.getContentCollectionId(siteId);
+    }
+
+
+    // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups -AZ
+    public List<EvalGroup> getFilteredEvalGroupsForUser(String userId,
+            String permission, String currentSiteId) {
+        List<EvalGroup> l = new ArrayList<EvalGroup>();
+
+        // get the groups from external
+        l.addAll( externalLogic.getFilteredEvalGroupsForUser(userId, permission, currentSiteId) );
+
+        if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
+        return l;
+    }
+
+    // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups, forcing this to true for now so it does not break things -AZ
+    public boolean isEvalGroupPublished(String evalGroupId) {
+        return true;
+        //return externalLogic.isEvalGroupPublished(evalGroupId);
+    }
+
+
+
+    // EMAILS 
+
     public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String deliveryOption) {
         // handle the list of TO addresses
         List<EvalUser> l = getEvalUsersByIds(toUserIds);
@@ -705,26 +737,5 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
         return md5;
     }
-
-    public String getContentCollectionId(String siteId) {
-        // TODO Auto-generated method stub
-        return externalLogic.getContentCollectionId(siteId);
-    }
-
-
-	public List<EvalGroup> getFilteredEvalGroupsForUser(String userId,
-			String permission, String currentSiteId) {
-		List<EvalGroup> l = new ArrayList<EvalGroup>();
-
-        // get the groups from external
-        l.addAll( externalLogic.getFilteredEvalGroupsForUser(userId, permission, currentSiteId) );
-
-        if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
-        return l;
-	}
-
-	public boolean isEvalGroupPublished(String evalGroupId) {
-		return externalLogic.isEvalGroupPublished(evalGroupId);
-	}
 
 }
