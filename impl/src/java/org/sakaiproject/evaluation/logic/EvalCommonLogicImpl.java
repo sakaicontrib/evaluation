@@ -46,6 +46,10 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 /**
  * This is the implementation for the base service
  * This is a BOTTOM level service and should depend on no other eval services (only those in Sakai)
+ * 
+ * This service merges the multiple data sources for the eval system (sakai, providers, internal DB, etc.) into 
+ * common object types so there is only one type to deal with and only one method to call when writing UI
+ * or other services code
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -240,20 +244,22 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         /* now put the users into the list in the original order of the array 
          * with INVALID EvalUser objects in place of not-found users
          */
-        for (int i = 0; i < userIds.length; i++) {
-            String userId = userIds[i];
-            EvalUser user = null;
-            if (adhocUsers.containsKey(userId)) {
-                EvalAdhocUser adhocUser = adhocUsers.get(userId);
-                user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
-                        adhocUser.getEmail(), adhocUser.getUsername(), 
-                        adhocUser.getDisplayName() == null ? adhocUser.getEmail() : adhocUser.getDisplayName());
-            } else if (externalUsers.containsKey(userId)) {
-                user = externalUsers.get(userId);
-            } else {
-                user = makeInvalidUser(userId, null);
+        if (! foundAll) {
+            for (int i = 0; i < userIds.length; i++) {
+                String userId = userIds[i];
+                EvalUser user = null;
+                if (adhocUsers.containsKey(userId)) {
+                    EvalAdhocUser adhocUser = adhocUsers.get(userId);
+                    user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
+                            adhocUser.getEmail(), adhocUser.getUsername(), 
+                            adhocUser.getDisplayName() == null ? adhocUser.getEmail() : adhocUser.getDisplayName());
+                } else if (externalUsers.containsKey(userId)) {
+                    user = externalUsers.get(userId);
+                } else {
+                    user = makeInvalidUser(userId, null);
+                }
+                users.add(user);
             }
-            users.add(user);
         }
         //    original not very efficient version -AZ
         //    for (int i = 0; i < userIds.length; i++) {
