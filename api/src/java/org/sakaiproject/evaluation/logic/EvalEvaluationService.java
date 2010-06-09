@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -127,6 +128,19 @@ public interface EvalEvaluationService {
      * {@link org.sakaiproject.evaluation.constant.EvalConstants}
      */
     public String returnAndFixEvalState(EvalEvaluation evaluation, boolean saveState);
+
+
+    // EVAL REMINDER STATUS
+
+    /**
+     * Sets the current eval reminder status for this eval,
+     * developers can and should retrieve the current reminder status from the eval itself
+     * 
+     * @param evaluationId the if of the evaluation to update the reminder status for
+     * @param reminderStatus the reminder status, note that NULL will clear the reminder status
+     * @throws IllegalArgumentException if the params are invalid
+     */
+    public void updateEvaluationReminderStatus(Long evaluationId, EvalReminderStatus reminderStatus);
 
 
     // EVALUATION PERMISSIONS
@@ -582,21 +596,25 @@ public interface EvalEvaluationService {
      */
     public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId);
 
+    // COUNT METHODS FROM UM
+
 	/**
+     * UM method
 	 * Access a count of the number of evaluations in which the search string appears in the title.
 	 * @param searchString
-	 * @return
+	 * @return the count
 	 */
 	public int countEvaluations(String searchString);
 
 	/**
+	 * UM method
 	 * Access a subset of all evaluations in which the search string appears in the title.
 	 * Results will be returned in ascending order by the field specified in the order parameter.
 	 * @param searchString
 	 * @param order
 	 * @param startResult
 	 * @param maxResults
-	 * @return
+	 * @return the list of evals based on the serarch
 	 */
 	public List<EvalEvaluation> getEvaluations(String searchString,
 			String order, int startResult, int maxResults);

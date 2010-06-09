@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 
 /**
  * Handle job scheduling related to EvalEvaluation state transitions.</br> Dates that have not
@@ -517,7 +518,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
      */
     protected void removeScheduledReminder(Long evaluationId) {
         if (evaluationId == null) {
-            log.warn("removeScheduledReminder(evaluationId=" + evaluationId + " :: null evaluationId, cannot proceed");
+            log.warn("removeScheduledReminder(evaluationId is null, cannot proceed");
             return; // FIXME throw exceptions or AT LEAST log warnings here
         }
 
@@ -620,12 +621,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
         int reminderDays = eval.getReminderDaysInt();
         if (reminderDays > 0) {
-            long interval = (1000 * 60 * 60 * 24) * reminderDays;
-            // we'll say the future starts in 15 minutes
+            long interval = (1000l * 60l * 60l * 24l) * (long)reminderDays;
+            // we'll say the future starts in 3 minutes, this is a user buffer
             if (interval != 0 
                     && available > interval) {
                 reminderTime = startTime + interval;
-                while (reminderTime < now + (1000 * 60 * 15)) {
+                while (reminderTime < now + (1000l * 60l * 3l)) {
                     reminderTime = reminderTime + interval;
                 }
             }
@@ -635,7 +636,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             // only send 24h reminder if the eval is due to end and not continuous
             if (dueDateSet) {
                 // set the reminder time to the dueTime - 24 hours
-                reminderTime = dueTime - (1000 * 60 * 60 * 24);
+                reminderTime = dueTime - (1000l * 60l * 60l * 24l);
                 if (reminderTime < now) {
                     // the reminder is in the past, just warn and be done
                     log.info("Trying to schedule 24h reminder in the past ("+new Date(reminderTime)+"), no reminder will be sent for eval ("+eval.getTitle()+") ["+eval.getId()+"]");
@@ -663,8 +664,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         boolean includeEvaluatees = true;
         String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
         if (log.isDebugEnabled())
-            log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: "
-                    + sentMessages.toString());
+            log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
     }
 
     /**
@@ -677,8 +677,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         boolean includeOwner = true;
         String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
         if (log.isDebugEnabled())
-            log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: "
-                    + sentMessages.toString());
+            log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
     }
 
     /**
@@ -694,8 +693,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
             String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, includeConstant);
             if (log.isDebugEnabled())
-                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessages: "
-                        + sentMessages.toString());
+                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
         }
     }
 

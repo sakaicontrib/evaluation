@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -35,9 +35,8 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.genericdao.api.search.Order;
-import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
@@ -196,6 +195,15 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return returnAndFixEvalState(eval, true);
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationReminderStatus(java.lang.Long, org.sakaiproject.evaluation.logic.model.EvalReminderStatus)
+     */
+    public void updateEvaluationReminderStatus(Long evaluationId, EvalReminderStatus reminderStatus) {
+        log.debug("evalId: " + evaluationId);
+        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+        eval.setCurrentReminderStatus(reminderStatus);
+        dao.update(eval);
+    }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#returnAndFixEvalState(org.sakaiproject.evaluation.model.EvalEvaluation, boolean)
@@ -661,10 +669,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
     public Map<Long, List<EvalAssignGroup>> getAssignGroupsForEvals(Long[] evaluationIds,
             boolean includeUnApproved, Boolean includeHierarchyGroups) {
-        log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
+        log.debug("evalIds: " + ArrayUtils.arrayToString(evaluationIds) + ", includeUnApproved=" + includeUnApproved);
         Map<Long, List<EvalAssignGroup>> evals = new TreeMap<Long, List<EvalAssignGroup>>();
         
-        if ( evaluationIds != null & evaluationIds.length > 0){
+        if ( evaluationIds != null && evaluationIds.length > 0){
 	        // create the inner lists
 	        for (int i=0; i<evaluationIds.length; i++) {
 	            List<EvalAssignGroup> innerList = new ArrayList<EvalAssignGroup>();
@@ -690,9 +698,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	        }
 	
 	        // get all the groups for the given eval ids in one storage call
-	        search.addOrder( new Order("id") );
+	        search.addOrder( new Order("evalGroupId") );
 	        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, search );
-	
+
 	        for (int i=0; i<l.size(); i++) {
 	            EvalAssignGroup eac = l.get(i);
 	
