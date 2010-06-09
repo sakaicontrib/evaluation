@@ -27,10 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 
@@ -142,7 +144,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             // turn the set into an array
             String[] toUserIds = (String[]) instructors.toArray(new String[] {});
             if (log.isDebugEnabled()) {
-                log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
+                log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") to send "
                         + EvalConstants.EMAIL_TEMPLATE_CREATED + " notification to for new evaluation ("
                         + evaluationId + ") and evalGroupId (" + group.evalGroupId + ")");
             }
@@ -230,7 +232,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 
             if (log.isDebugEnabled()) {
-                log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
+                log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") to send "
                         + EvalConstants.EMAIL_TEMPLATE_CREATED + " notification to for available evaluation ("
                         + evaluationId + ") and group (" + group.evalGroupId + ")");
             }
@@ -326,6 +328,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         // to see if the instructor has opted in in this case -AZ
         Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, false, null);
 
+        // handle recovery of interrupted email sending
+        EvalReminderStatus reminderStatus = eval.getCurrentReminderStatus();
+        boolean reminderGroupFound = false;
+        if (reminderStatus != null) {
+            log.info("Reminder recovery processing for eval ("+evaluationId+") will attempt to continue from: "+reminderStatus);
+        }
+
         // only one possible map key so we can assume evaluationId
         List<EvalGroup> groups = evalGroupIds.get(evaluationId);
         log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
@@ -339,10 +348,25 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
             String evalGroupId = group.evalGroupId;
 
-            // FIXME: this method does not work right, disabling -AZ
-//            if (! commonLogic.isEvalGroupPublished(evalGroupId)) {
-//                continue; // skip processing for groups that are not published?
-//            }
+            // skip courses until we reach the one that we stopped on before when email was interrupted
+            if (reminderStatus != null) {
+                if (reminderStatus.currentEvalGroupId.equals(evalGroupId)) {
+                    reminderGroupFound = true;
+                    log.info("Reminder processing for eval ("+evaluationId+"), found last processed group ("+evalGroupId+") at position "+(i+1)+" of "+groups.size());
+                }
+                if (reminderGroupFound) {
+                    reminderStatus = null;
+                }
+                // skip this group
+                if (log.isDebugEnabled()) {
+                    log.debug("Reminder status ("+reminderStatus+") for eval ("+evaluationId+"), skipping group "+evalGroupId);
+                }
+                continue;
+            }
+
+            if (! commonLogic.isEvalGroupPublished(evalGroupId)) {
+                continue; // skip processing for groups that are not published?
+            }
 
             String[] limitGroupIds = null;
             if (evalGroupId != null) {
@@ -356,7 +380,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // turn the set into an array
                 String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
                 if (log.isDebugEnabled()) {
-                    log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
+                    log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") to send "
                             + EvalConstants.EMAIL_TEMPLATE_REMINDER + " notification to for available evaluation ("
                             + evaluationId + ") and group (" + group.evalGroupId + ")");
                 }
@@ -374,9 +398,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 for (int j = 0; j < emailAddresses.length; j++) {
                     sentEmails.add(emailAddresses[j]);            
                 }
-                commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
             }
+            // update the reminder status
+            evaluationService.updateEvaluationReminderStatus(evaluationId, new EvalReminderStatus(groups.size(), i+1, evalGroupId));
         }
+        // set reminder status back to idle
+        evaluationService.updateEvaluationReminderStatus(evaluationId, null);
+        commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
 
         return (String[]) sentEmails.toArray(new String[] {});
     }

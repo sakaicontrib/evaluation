@@ -141,9 +141,13 @@
         <property name="selectionSettings" type="java.lang.String">
             <column name="SELECTION_SETTINGS" length="2000" />
         </property>
-        <!-- for storing eval specific flag on sending notification emails when  -->
+        <!-- for storing eval specific flag to determine if it should send available emails -->
         <property name="sendAvailableNotifications" type="java.lang.Boolean">
             <column name="EMAIL_OPEN_NOTIFICATION" />
+        </property>
+        <!-- track the eval reminder status -->
+        <property name="reminderStatus" type="java.lang.String">
+            <column name="REMINDER_STATUS" length="255" />
         </property>
     </class>
 </hibernate-mapping>
