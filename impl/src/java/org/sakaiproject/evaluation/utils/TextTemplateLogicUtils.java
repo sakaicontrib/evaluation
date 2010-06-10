@@ -59,7 +59,7 @@ public class TextTemplateLogicUtils {
      * freemarker will be used by default
      */
     public static boolean useVelocity = false;
-    public final static int totalResetCount = 1000;
+    public final static int totalResetCount = 500;
     /**
      * Used to track and reset the processor every totalResetCount runs
      */

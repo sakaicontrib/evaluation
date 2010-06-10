@@ -203,6 +203,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setCurrentReminderStatus(reminderStatus);
         dao.update(eval);
+        dao.forceCommit();
     }
 
     /* (non-Javadoc)

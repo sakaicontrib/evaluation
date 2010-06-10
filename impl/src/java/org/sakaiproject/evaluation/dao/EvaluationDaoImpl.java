@@ -78,6 +78,19 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         log.debug("init");
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceCommit()
+     */
+    public void forceCommit() {
+        getSession().getTransaction().commit();
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceRollback()
+     */
+    public void forceRollback() {
+        getSession().getTransaction().rollback();
+    }
 
     public void fixupDatabase() {
         // fix up some of the null fields
