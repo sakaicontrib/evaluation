@@ -26,6 +26,16 @@ import org.sakaiproject.genericdao.api.GeneralGenericDao;
 public interface EvaluationDao extends GeneralGenericDao {
 
     /**
+     * Cause an immediate commit of the current transaction
+     */
+    public void forceCommit();
+
+    /**
+     * Cause an immediate rollback of the current transaction
+     */
+    public void forceRollback();
+
+    /**
      * This method will check the database for inconsistencies (mostly as a result of upgrades),
      * and will apply any fixes that it can 
      */
