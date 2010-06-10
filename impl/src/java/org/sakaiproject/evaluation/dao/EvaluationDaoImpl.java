@@ -84,25 +84,14 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceCommit()
      */
     public void forceCommit() {
-        try {
-            if (! getSession().getTransaction().isActive()) {
-                getSession().getTransaction().begin();
-            }
-            getSession().getTransaction().commit();
-        } catch (Exception e) {
-            log.warn("unable to commit transaction: "+e,e);
-        }
+        getHibernateTemplate().flush(); // this should commit the data immediately
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceRollback()
      */
     public void forceRollback() {
-        try {
-            getSession().getTransaction().rollback();
-        } catch (Exception e) {
-            log.warn("unable to rollback transaction: "+e,e);
-        }
+        getHibernateTemplate().clear();
     }
 
     public void fixupDatabase() {
