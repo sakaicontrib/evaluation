@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -53,6 +54,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -82,14 +84,25 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceCommit()
      */
     public void forceCommit() {
-        getSession().getTransaction().commit();
+        try {
+            if (! getSession().getTransaction().isActive()) {
+                getSession().getTransaction().begin();
+            }
+            getSession().getTransaction().commit();
+        } catch (Exception e) {
+            log.warn("unable to commit transaction: "+e,e);
+        }
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceRollback()
      */
     public void forceRollback() {
-        getSession().getTransaction().rollback();
+        try {
+            getSession().getTransaction().rollback();
+        } catch (Exception e) {
+            log.warn("unable to rollback transaction: "+e,e);
+        }
     }
 
     public void fixupDatabase() {
