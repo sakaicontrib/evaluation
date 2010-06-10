@@ -219,7 +219,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#makeEmailMessage(java.lang.String, org.sakaiproject.evaluation.model.EvalEvaluation, org.sakaiproject.evaluation.logic.model.EvalGroup, java.util.Map)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#makeEmailMessage(java.lang.String, String, org.sakaiproject.evaluation.model.EvalEvaluation, org.sakaiproject.evaluation.logic.model.EvalGroup, java.util.Map)}.
     */
    public void testMakeEmailMessage() {
    // TODO fail("Not yet implemented");

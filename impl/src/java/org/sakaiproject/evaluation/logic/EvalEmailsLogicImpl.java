@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
+import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -106,8 +107,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
         }
 
-        String message = emailTemplate.getMessage();
-
         // get the associated groups for this evaluation
         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, true, null);
 
@@ -150,11 +149,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
 
             // replace the text of the template with real values
-            message = makeEmailMessage(message, eval, group, replacementValues);
-            String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
             log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -174,7 +172,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
 
         Set<String> userIdsSet = null;
-        String message = null;
         boolean studentNotification = true;
 
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
@@ -246,11 +243,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (! studentNotification) {
                 currentTemplate = emailOptInTemplate;
             }
-            message = makeEmailMessage(currentTemplate.getMessage(), eval, group, replacementValues);
-            String subject = makeEmailMessage(currentTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(currentTemplate.getMessage(), currentTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
             log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -295,11 +291,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             // replace the text of the template with real values
             Map<String, String> replacementValues = new HashMap<String, String>();
             replacementValues.put("HelpdeskEmail", from);
-            String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
-            String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
+            String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
             log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -388,11 +383,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // replace the text of the template with real values
                 Map<String, String> replacementValues = new HashMap<String, String>();
                 replacementValues.put("HelpdeskEmail", from);
-                String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
-                String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
+                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
 
                 // send the actual emails for this evalGroupId
-                String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
+                String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
                 log.info("Sent evaluation reminder message for eval ("+evaluationId+") and group ("+group.evalGroupId+") to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
@@ -505,11 +499,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // replace the text of the template with real values
                 Map<String, String> replacementValues = new HashMap<String, String>();
                 replacementValues.put("HelpdeskEmail", from);
-                String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
-                String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
+                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
 
                 // send the actual emails for this evalGroupId
-                String[] emailAddresses = sendUsersEmails(from, toUserIds, subject, message);
+                String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
                 log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
@@ -591,13 +584,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * (passed in and otherwise)
      * 
      * @param messageTemplate
+     * @param subjectTemplate
      * @param eval
      * @param group
      * @param replacementValues a map of String -> String representing $keys in the template to replace with text values
      * @return the processed message template with replacements and logic handled
      */
-    public String makeEmailMessage(String messageTemplate, EvalEvaluation eval, EvalGroup group,
-            Map<String, String> replacementValues) {
+    public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
+            EvalGroup group, Map<String, String> replacementValues) {
         // replace the text of the template with real values
         if (replacementValues == null) {
             replacementValues = new HashMap<String, String>();
@@ -682,7 +676,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("EvalSite", groupTitle);
         replacementValues.put("MyWorkspaceDashboard", evalEntityURL);
 
-        return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+        String message = TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+        String subject = null;
+        if (subjectTemplate != null) {
+            subject = TextTemplateLogicUtils.processTextTemplate(subjectTemplate, replacementValues);
+        }
+        return new EvalEmailMessage(subjectTemplate, messageTemplate, subject, message);
     }
 
     
