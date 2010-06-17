@@ -206,7 +206,12 @@
             ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
     </bean>
 
-    <bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer" />
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService"/>
+    </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
 
