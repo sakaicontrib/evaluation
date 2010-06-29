@@ -120,6 +120,11 @@ public interface EvalSettings {
     */
    public static final String ENABLE_ITEM_COMMENTS = "ENABLE_ITEM_COMMENTS:java.lang.Boolean";
    /**
+    * Enable making a copy of a template when saving a new evaluation, this is configured
+    * for the system, and will disable saving an evaluation with a copy of its template
+    */
+   public static final String ENABLE_TEMPLATE_COPYING = "ENABLE_TEMPLATE_COPYING:java.lang.Boolean";
+   /**
     * CONSTANT: Require a comments block to be included in every evaluation - {@link Boolean}, default True
     */
    public static final String REQUIRE_COMMENTS_BLOCK = "REQUIRE_COMMENTS_BLOCK:java.lang.Boolean";
@@ -353,6 +358,7 @@ public interface EvalSettings {
       ENABLE_RESPONSES_BOX,
       ENABLE_MY_TOPLINKS,
       ENABLE_XLS_REPORT_EXPORT,
+      ENABLE_TEMPLATE_COPYING,
       EVAL_USE_DATE_TIME,
       EVAL_USE_SAME_VIEW_DATES,
       EVAL_USE_STOP_DATE,

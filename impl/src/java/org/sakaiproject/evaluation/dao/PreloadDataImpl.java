@@ -129,6 +129,7 @@ public class PreloadDataImpl {
          saveConfig(EvalSettings.ENABLE_NOT_AVAILABLE, true);
          saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
          saveConfig(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
+         saveConfig(EvalSettings.ENABLE_TEMPLATE_COPYING, true);
          saveConfig(EvalSettings.USE_EXPERT_TEMPLATES, true);
          saveConfig(EvalSettings.USE_EXPERT_ITEMS, true);
          saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);

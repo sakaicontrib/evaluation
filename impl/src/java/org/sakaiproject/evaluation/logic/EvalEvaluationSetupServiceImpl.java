@@ -216,7 +216,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    public void saveEvaluation(EvalEvaluation evaluation, String userId, boolean created) {
       log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
-
+      
       // set the date modified
       evaluation.setLastModified( new Date() );
 
@@ -337,23 +337,25 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("Evaluations must include a template with at least one item in it");
          }         
       }
-
-      // make sure the template is copied if not in partial state, it is ok to have the original template while in partial state
-      if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
-         // this eval is not partial anymore so the template MUST be a hidden copy
-         if (template.getCopyOf() == null ||
-               template.isHidden() == false) {
-            // not a hidden copy so make one
-            Long copiedTemplateId = authoringService.copyTemplate(template.getId(), null, evaluation.getOwner(), true, true);
-            EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
-            evaluation.setTemplate(copy);
-            template = copy; // set the new template to the template variable
-            // alternative is to throw an exception to force the user to do this, but we may as well handle it
-//            throw new IllegalStateException("This evaluation ("+evaluation.getId()+") is being saved "
-//            		+ "in a state ("+evalState+") that is after the partial state with "
-//                  + "a template that has not been copied yet, this is invalid as all evaluations must use copied "
-//                  + "templates, copy the template using the authoringService.copyTemplate method before saving this eval");
-         }
+      
+      if(((Boolean)settings.get(EvalSettings.ENABLE_TEMPLATE_COPYING)).booleanValue()) {
+	      // make sure the template is copied if not in partial state, it is ok to have the original template while in partial state
+	      if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
+	         // this eval is not partial anymore so the template MUST be a hidden copy
+	         if (template.getCopyOf() == null ||
+	               template.isHidden() == false) {
+	            // not a hidden copy so make one
+	            Long copiedTemplateId = authoringService.copyTemplate(template.getId(), null, evaluation.getOwner(), true, true);
+	            EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
+	            evaluation.setTemplate(copy);
+	            template = copy; // set the new template to the template variable
+	            // alternative is to throw an exception to force the user to do this, but we may as well handle it
+	//            throw new IllegalStateException("This evaluation ("+evaluation.getId()+") is being saved "
+	//            		+ "in a state ("+evalState+") that is after the partial state with "
+	//                  + "a template that has not been copied yet, this is invalid as all evaluations must use copied "
+	//                  + "templates, copy the template using the authoringService.copyTemplate method before saving this eval");
+	         }
+	      }
       }
 
       // fill in any default values and nulls here
