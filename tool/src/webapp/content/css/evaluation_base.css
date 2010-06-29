@@ -373,7 +373,7 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 .fullVertical, .fullDisplayHorizontal {
 	clear:both;
-	height:100%;
+	/* height:100%; EVALSYS-952*/
 	overflow:hidden;
 	margin:1em 0;
 	padding:0
