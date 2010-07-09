@@ -29,7 +29,7 @@ $(document).ready(function() {
      */
     $.fn.assignSelector.defaults = {
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = ta
-        debug: false
+        debug: typeof window.console !== "undefined"
     };
     /**
      * Private methods and variables
@@ -143,7 +143,6 @@ $(document).ready(function() {
                     });
                 }
                 $.facebox.setHeader($("#title"));
-                $("#facebox .header .titleHeader").show();
                 //Activate Mass (De)Selector controls
                 $("#selectorControl").bind('click', function(){
                     if (this.checked) {
