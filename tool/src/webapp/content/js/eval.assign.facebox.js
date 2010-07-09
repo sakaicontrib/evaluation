@@ -29,6 +29,7 @@ var evalAssignFacebox = (function() {
                                          '<td class="b"/>' +
                                          '<td class="body">' +
                                          '<div class="header breadCrumb" style="display:block">' +
+                                         '<h2 id="titleHeader" class="titleHeader">&nbsp;</h2>' +
                                          '<a class="close" href="#" accesskey="x"><img class="close_image" title="close"/></a></div>' +
                                          '<div style="display: none" class="results"></div>' +
                                          '<div class="content">' +
@@ -77,11 +78,10 @@ var evalAssignFacebox = (function() {
         };
 
         $.facebox.setHeader = function(obj) {
-            if ($("#facebox .titleHeader")) {
-                $("#facebox .titleHeader").remove();
+
+            if ($("#facebox .titleHeader").length > 0 && typeof obj !== "undefined") {
+                $("#facebox .titleHeader").text(obj.text());
             }
-            $(obj).clone(true).insertBefore($("#facebox .header .close"));
-            $(obj).remove();
         };
     };
 
