@@ -458,6 +458,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
 	            RSFUtils.disableComponent(sendOpeningEmail);
 	        }
+	        UIMessage.make(form, "enable-mass-email-label", "evalsettings.general.enable.email.onbegin");
         }
         
         // email reminder control
