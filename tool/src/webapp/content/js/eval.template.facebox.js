@@ -34,6 +34,7 @@ var evalTemplateFacebox = (function() {
                                          '<td class="b"/>' +
                                          '<td class="body">' +
                                          '<div class="header breadCrumb" style="display:block">' +
+                                         '<h2 id="titleHeader" class="titleHeader">&nbsp;</h2>' +
                                          '<a class="close" href="#" accesskey="x"><img class="close_image" title="close"/></a></div>' +
                                          '<div style="display: none" class="results"></div>' +
                                          '<div class="content">' +
@@ -93,12 +94,31 @@ var evalTemplateFacebox = (function() {
             return false;
         };
 
-        $.facebox.setHeader = function(obj) {
-            if ($("#facebox .titleHeader")) {
-                $("#facebox .titleHeader").remove();
+        $.facebox.setHeader = function(page_type) {
+            var pageTitle = "";
+            if(page_type === evalTemplateUtils.pages.preview_item_page){
+                pageTitle = evalTemplateUtils.messageLocator("previewitem.page.title");
+            }else
+            if(page_type === evalTemplateUtils.pages.modify_block_page){
+                pageTitle = evalTemplateUtils.messageLocator("modifyblock-page-title");
+            }else
+            if(page_type === evalTemplateUtils.pages.modify_item_page){
+                pageTitle = evalTemplateUtils.messageLocator("modifyitem.page.title");
+            }else
+            if(page_type === evalTemplateUtils.pages.modify_template_page){
+                pageTitle = evalTemplateUtils.messageLocator("modifytemplatetitledesc.page.title");
+            }else
+            if(page_type === evalTemplateUtils.pages.choose_expert_page){
+                pageTitle = evalTemplateUtils.messageLocator("expert.expert.items");
             }
-            $(obj).clone(true).insertBefore($("#facebox .header .close"));
-            $(obj).remove();
+
+            $("h2.pageHeaderOnPage").hide();
+
+            if (pageTitle !== "" && $("#facebox .titleHeader").length > 0) {
+                $("#facebox .titleHeader").text(pageTitle);
+            }
+
+            evalTemplateUtils.debug.info("Page title for %s is %s", page_type, pageTitle);
         };
 
         $.facebox.setBtn = function(obj, form) {
@@ -122,9 +142,6 @@ var evalTemplateFacebox = (function() {
         },
         fbResetClasses: function() {
             $("#itemList").find(".editing").attr("class", "itemRow");
-            if ($("#facebox .titleHeader").length > 0) {
-                $("#facebox .titleHeader").remove();
-            }
         },
         addItem: function(url) {
             evalTemplateUtils.debug.info("Trying to fetch: %s", url);

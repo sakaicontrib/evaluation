@@ -137,7 +137,6 @@ public class ExpertCategoryProducer implements ViewComponentProducer, ViewParams
         // create a copy of the VP and then set it to the right view (to avoid corrupting the original)
         ExpertItemViewParameters eivp = (ExpertItemViewParameters) expertItemViewParameters.copyBase();
 
-        UIMessage.make(tofill, "expert-items", "expert.expert.items");
         UIMessage.make(tofill, "expert-items-category", "expert.category");
 
         UIMessage.make(tofill, "choose-category-1", "expert.choose.category");

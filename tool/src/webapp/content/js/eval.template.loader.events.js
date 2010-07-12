@@ -11,7 +11,7 @@ var evalTemplateLoaderEvents = (function($) {
     _modify_block = function(){
                 var siteId = $('#site-id').text();
         SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-        $.facebox.setHeader($(".titleHeader"));
+        $.facebox.setHeader(evalTemplateUtils.pages.modify_block_page);
 
 		var baseId = ""; // "blockPage::";
 
@@ -181,7 +181,7 @@ var evalTemplateLoaderEvents = (function($) {
         modify_item: function() {
             var siteId = $('#site-id').text();
             SakaiProject.fckeditor.initializeEditor("item-text", siteId);
-            $.facebox.setHeader($(".portletBody .titleHeader"));
+            $.facebox.setHeader(evalTemplateUtils.pages.modify_item_page);
             if ($('.act .submit').attr('name').search(/templateBBean.saveTemplateItemToGroupAction/) !== -1) {
                 //proper submit  skip validation - it is not important
             } else if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
@@ -216,7 +216,7 @@ var evalTemplateLoaderEvents = (function($) {
                         $(document).trigger('close.facebox');
                     }
                 };
-                $.facebox.setHeader($(".portletBody .titleHeader"));
+                $.facebox.setHeader(evalTemplateUtils.pages.modify_template_page);
                 evalTemplateUtils.frameGrow(0);
                 $('#basic-form').ajaxForm(o);
                 $('input.cancelButtonLightbox').bind("click", function() {
@@ -225,7 +225,7 @@ var evalTemplateLoaderEvents = (function($) {
         },
         //choose expert items view
         choose_expert_category: function(){
-            $.facebox.setHeader($(".portletBody .titleHeader"));
+            $.facebox.setHeader(evalTemplateUtils.pages.choose_expert_page);
             $('a[rel*=facebox]').facebox();
         },
         preview_item: function(){
@@ -244,7 +244,7 @@ var evalTemplateLoaderEvents = (function($) {
             if ($('.fullDisplayHorizontal').length > 0) {
                 evalsys.instrumentDisplayHorizontal();
             }
-            $.facebox.setHeader($(".portletBody .titleHeader"));
+            $.facebox.setHeader(evalTemplateUtils.pages.preview_item_page);
             $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
         },
         bindDeleteIcons : bindDeleteIcons,
