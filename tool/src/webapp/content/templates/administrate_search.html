@@ -9,9 +9,19 @@
         <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js">
         </script>
         <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-        <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js">
-        </script>
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
+
         <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/evalUtils.js">
+        </script>
+        <script language="javascript">
+        	$(document).ready(function(){
+        		$("input[id=search-text]").click(function(){
+					$("input[name=searchGroups]").val(false);
+				});
+        		$("input[id=search-text-group]").click(function(){
+					$("input[name=searchGroups]").val(true);
+				});
+            });
         </script>
     </head>
     <body>
@@ -45,13 +55,18 @@
             </div>
             <div rsf:id="msg=administrate.search.instruction" class="instruction">
             </div>
+            <div rsf:id="results-max" class="messageInformation">Too many results were returned, be a little more specific with your search.
+            </div>           
             <div class="navPanel"> 
                 <div class="viewNav">
                     <form rsf:id="search-form">
                         <!--note: default is blank for first search, previous search strings for subsequent searches-->
-						<input rsf:id="search-input" size="45" type="text" />
+						<input rsf:id="search-input" size="30" type="text" />
 						<!-- string for input in bundle as administrate.search.submit.title-->
-						<input rsf:id="search-text" type="submit" value="Search" />
+						<input rsf:id="search-text" id="" type="submit" value="Search by eval title" />
+						
+						<input rsf:id="search-input-group" size="30" type="text" />
+						<input rsf:id="search-text-group" id="" type="submit" value="Search by group title" />
                     </form>
                 </div>
                 <div class="listNav listPager">
@@ -95,7 +110,7 @@
 						<tr rsf:id="evalAdminList:">
 							<td header="item-title">
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
-								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
+								(<a rsf:id="evalAdminTitleLink_preview" target="_blank" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
 							</td>
 							<td header="item-group-id">
@@ -114,7 +129,7 @@
 						<tr rsf:id="evalAdminList:">
 							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
-								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
+								(<a rsf:id="evalAdminTitleLink_preview" target="_blank" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
 							</td>
 							<td header="item-group-id">
@@ -133,7 +148,7 @@
 						<tr rsf:id="evalAdminList:">
 							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
-								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
+								(<a rsf:id="evalAdminTitleLink_preview" target="_blank" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
 							</td>
 							<td header="item-group-id">
@@ -152,7 +167,7 @@
 						<tr rsf:id="evalAdminList:">
 							<td header="item-title" >
 								<span rsf:id="evalAdminTitle">Evaluation Title </span>
-								(<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">preview</a>)
+								(<a rsf:id="evalAdminTitleLink_preview" target="_blank" href="preview_eval.html">preview</a>)
 								(<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">revise</a>)
 							</td>
 							<td header="item-group-id">

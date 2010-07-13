@@ -32,6 +32,7 @@ public class AdminSearchViewParameters extends SimpleViewParameters
 {
 	public String searchString = "";
 	public int page = 0;
+	public boolean searchGroups = false;
 
 	public AdminSearchViewParameters()
 	{
@@ -48,6 +49,16 @@ public class AdminSearchViewParameters extends SimpleViewParameters
 		super(viewId);
 		this.searchString = searchString;
 		this.page = page;
+		this.searchGroups = false;
+	}
+	
+
+	public AdminSearchViewParameters(String viewId, String searchString, int page, boolean searchGroups) 
+	{
+		super(viewId);
+		this.searchString = searchString;
+		this.page = page;
+		this.searchGroups = searchGroups;
 	}
 
 }

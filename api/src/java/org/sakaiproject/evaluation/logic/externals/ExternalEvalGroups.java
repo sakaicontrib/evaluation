@@ -20,6 +20,9 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 
 /**
  * This interface provides methods to get EvalGroups (user collections) information
@@ -107,5 +110,16 @@ public interface ExternalEvalGroups {
 	 * @return TRUE: Group exists and is published. FALSE: Group may not exist or is unpublished
 	 */
 	public boolean isEvalGroupPublished(String evalGroupId);
+
+	/**
+     * Get a list of evaluation group Ids that contain the search term.
+     * Currently, this will only search assign groups of type Sakai Site 
+     * 
+     * @param searchString Text to match. If empty no results are sent back
+     * @param order Field to order the groups
+     * @param startResult Results set will start at this minimum count
+     * @param maxResults Results set will end at this limit count
+     */
+	public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults);
 
 }

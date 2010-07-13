@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -619,4 +620,13 @@ public interface EvalEvaluationService {
 	public List<EvalEvaluation> getEvaluations(String searchString,
 			String order, int startResult, int maxResults);
 
+	/**
+	 * Retrieve an ordered list of evaluations with matching eval group Ids.
+     * 
+     * @param searchString Text to match. If empty no results are sent back
+     * @param order Field to order the groups
+     * @param startResult Results set will start at this minimum count
+     * @param maxResults Results set will end at this limit count
+	 */
+	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, String order, int startResult, int maxResults);
 }
