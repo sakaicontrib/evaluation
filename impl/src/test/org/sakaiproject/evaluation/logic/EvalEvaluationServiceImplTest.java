@@ -1433,8 +1433,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 		int MAX_SEARCH = 1;
 		List<String> sitesIds = externalLogic.searchForEvalGroupIds(searchString, "", 0, MAX_SEARCH);
 		assertEquals(1, sitesIds.size());
-		List<EvalEvaluation> evaluations = evaluationService.getEvaluationsForEvalGroups(sitesIds.toArray(new String[sitesIds.size()]), order, 0, 0);
-		assertEquals(5, evaluations.size());
+		List<EvalEvaluation> evaluations = evaluationService.getEvaluationsForEvalGroups(sitesIds.toArray(new String[sitesIds.size()]), 0, 0);
+		assertEquals(6, evaluations.size());
 	}
 
 }

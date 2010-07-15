@@ -1100,15 +1100,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults) {
-		//for now support sakai sites only TODO:// support hierarchy and adhoc groups
+		//for now support sakai sites only TODO:// support hierarchy and adhoc groups. Ordering?
 		List<String> sakaiSites = new ArrayList<String>(); //keep site ref 
-		Search search = new Search();
-		search.addRestriction( new Restriction("search", searchString));
-		search.addOrder(new Order(order));	
-		search.setStart(startResult);
-		search.setLimit(maxResults);
-		List<?> searchResults = entityBroker.fetchEntities("site", search, null);
-		//List<?> searchResults = siteService.getSites(SiteService.SelectionType.ANY, null, searchString, null, SiteService.SortType.NONE, new PagingPosition(startResult, maxResults));
+		List<Site> searchResults = siteService.getSites(SiteService.SelectionType.ANY, null, searchString, null, SiteService.SortType.TITLE_ASC, new PagingPosition(1, maxResults));
 		for ( Object rawSite : searchResults){
 			Site site = (Site) rawSite;
 			sakaiSites.add(site.getReference());

@@ -66,7 +66,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class AdministrateSearchProducer implements ViewComponentProducer, ViewParamsReporter 
 {
 	public static int PAGE_SIZE = 20;
-	public static int MAX_GROUP_SIZE = 100;
+	public static int MAX_GROUP_SIZE = 200;
 
 	/**
 	 * This is used for navigation within the system.
@@ -207,9 +207,9 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 			if (searchForGroups){
 				// do the search for groups and get the results
 				List<String> assignGroups = commonLogic.searchForEvalGroupIds(searchString, order, startResult, MAX_GROUP_SIZE);
-				evals = evaluationService.getEvaluationsForEvalGroups(assignGroups.toArray(new String[assignGroups.size()]), order, 0, 0); //get all evaluations
+				evals = evaluationService.getEvaluationsForEvalGroups(assignGroups.toArray(new String[assignGroups.size()]), 0, 0); //get all evaluations
 				
-				if (assignGroups.size() > MAX_GROUP_SIZE){
+				if (assignGroups.size() >= MAX_GROUP_SIZE){
 					//show 'too many results' messages
 					UIMessage.make(tofill, "results-max", "administrate.search.results.max", new String[]{String.valueOf(assignGroups.size())});
 				}

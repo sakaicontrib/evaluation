@@ -1122,8 +1122,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		return template;
 	}
 
-	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, String order, int startResult, int maxResults){
-		return  dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, true, startResult, maxResults);
+	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, int startResult, int maxResults){
+		if( evalGroupIds.length > 0){
+			return  dao.getEvaluationsForOwnerAndGroups("", evalGroupIds, null, startResult, maxResults, Boolean.TRUE);
+		}else{
+			return new ArrayList<EvalEvaluation>();
+		}
 	}
 
 }

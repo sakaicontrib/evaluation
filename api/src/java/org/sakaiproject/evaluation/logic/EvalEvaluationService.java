@@ -621,12 +621,10 @@ public interface EvalEvaluationService {
 			String order, int startResult, int maxResults);
 
 	/**
-	 * Retrieve an ordered list of evaluations with matching eval group Ids.
-     * 
-     * @param searchString Text to match. If empty no results are sent back
-     * @param order Field to order the groups
-     * @param startResult Results set will start at this minimum count
-     * @param maxResults Results set will end at this limit count
+	 * Retrieve a list of evaluations with matching eval group Ids.
+	 * @param startResult Results set will start at this minimum count
+	 * @param maxResults Results set will end at this limit count
+	 * @param searchString Text to match. If empty no results are sent back
 	 */
-	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, String order, int startResult, int maxResults);
+	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, int startResult, int maxResults);
 }
