@@ -206,7 +206,7 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 
 			if (searchForGroups){
 				// do the search for groups and get the results
-				List<String> assignGroups = commonLogic.searchForEvalGroupIds(searchString, order, startResult, MAX_GROUP_SIZE);
+				List<String> assignGroups = commonLogic.searchForEvalGroupIds(searchString, order, 1, MAX_GROUP_SIZE);
 				evals = evaluationService.getEvaluationsForEvalGroups(assignGroups.toArray(new String[assignGroups.size()]), 0, 0); //get all evaluations
 				
 				if (assignGroups.size() >= MAX_GROUP_SIZE){
