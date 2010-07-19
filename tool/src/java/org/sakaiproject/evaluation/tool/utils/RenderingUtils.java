@@ -149,7 +149,7 @@ public class RenderingUtils {
             evalRequiresItems = ! EvalUtils.safeBool(eval.getBlankResponsesAllowed(), true);
         }
         
-        boolean isDtiCompulsory = authoringService.isCompulsory(dti.templateItem);
+        boolean isDtiCompulsory = authoringService.isCompulsory(dti.templateItem, eval);
                 
         if ( isDtiCompulsory || (evalRequiresItems && dti.isRequireable()) ) {
             renderProperties.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, Boolean.TRUE);

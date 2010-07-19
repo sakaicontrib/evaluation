@@ -205,6 +205,11 @@ public class EvalEvaluation implements java.io.Serializable {
      * {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
      */
     private String autoUseInsertion;
+    
+	/**
+     * A flag to see if compulsory text items in the evaluation must be answered by takers
+     */
+    private Boolean compulsoryTextItemsAllowed;
 
     // NON_PERSISTENT
 
@@ -288,7 +293,7 @@ public class EvalEvaluation implements java.io.Serializable {
     	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
-                authControl, evalCategory, selectionSettings, Boolean.TRUE);
+                authControl, evalCategory, selectionSettings, Boolean.TRUE, null);
     }
     
     /**
@@ -302,7 +307,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-            String authControl, String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
+            String authControl, String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean compulsoryTextItemsAllowed) {
     	
         this.lastModified = new Date();
         this.type = type;
@@ -335,6 +340,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
     	this.sendAvailableNotifications = emailOpenNotification;
+    	this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
     }
 
     @Override
@@ -774,6 +780,14 @@ public class EvalEvaluation implements java.io.Serializable {
         selectionSettings = EvalAssignGroup.validateSelectionSettings(selectionSettings);
         this.selectionSettings = selectionSettings;
     }
+    
+    public Boolean getCompulsoryTextItemsAllowed() {
+		return compulsoryTextItemsAllowed;
+	}
+
+	public void setCompulsoryTextItemsAllowed(Boolean compulsoryTextItemsAllowed) {
+		this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
+	}
 
     /**
      * NON_PERSISTENT list of assign groups for this eval, may be limited by user

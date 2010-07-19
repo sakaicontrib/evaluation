@@ -407,7 +407,15 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                 "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form,
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
 
-
+        //compulsory text items
+        Boolean compulsoryTextItemsAllowed = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
+        if( compulsoryTextItemsAllowed == null){
+            Boolean compulsoryTextItemsEval = evaluation.getCompulsoryTextItemsAllowed() == null ? Boolean.FALSE : evaluation.getCompulsoryTextItemsAllowed() ;
+	        UIBranchContainer compulsoryTextItemsAllowedBranch = UIBranchContainer.make(form, "compulsoryTextItemsAllowed_branch:");
+	        UIBoundBoolean checkbox = UIBoundBoolean.make(compulsoryTextItemsAllowedBranch, "compulsoryTextItemsAllowed", evaluationOTP + "compulsoryTextItemsAllowed", compulsoryTextItemsEval);
+            UIMessage.make(compulsoryTextItemsAllowedBranch, "compulsoryTextItemsAllowed_label", "evalsettings.compulsoryTextItemsAllowed.label")
+            	.decorate( new UILabelTargetDecorator(checkbox) );
+        }
 
         // ADMIN SETTINGS SECTION
 

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -3127,12 +3128,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    public void testIsCompulsory() {
        EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
-       assertTrue( authoringService.isCompulsory(etdl.templateItem1U) );
-       assertFalse( authoringService.isCompulsory(etdl.templateItem2B) );
-       assertFalse( authoringService.isCompulsory(etdl.templateItem3A) );
-       assertFalse( authoringService.isCompulsory(etdl.templateItem5U) );
-       assertFalse( authoringService.isCompulsory(etdl.templateItem6UU) );
-       assertFalse( authoringService.isCompulsory(etdl.templateItem9B) );
+       assertTrue( authoringService.isCompulsory(etdl.templateItem1U, etdl.evaluationActive) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem2B, null) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem3A, etdl.evaluationActiveUntaken) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem5U, etdl.evaluationPartial) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem6UU, etdl.evaluationViewable) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem9B, null) );
    }
 
    public void testGetCompulsoryTemplateItems() {
@@ -3144,7 +3145,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
        itemList.add(etdl.templateItem5U);
 
        List<EvalTemplateItem> list = null;
-       list = authoringService.getCompulsoryTemplateItems(itemList);
+       list = authoringService.getCompulsoryTemplateItems(itemList, null);
        assertNotNull(list);
        assertEquals(1, list.size());
        assertEquals(etdl.templateItem1U, list.get(0));

@@ -715,24 +715,26 @@ public interface EvalAuthoringService {
    * Check if a {@link EvalTemplateItem} is compulsory (must be answered by a user taking an evaluation) or not,
    * this is checking the compulsory settings for this template item,
    * all answerable items that are marked as compulsory are included.
-   * Text items can be required if the {@link EvalSettings.ENABLE_TEXT_ITEM_REQUIRED} is set to YES or CONFIGURABLE.
+   * Text items can be required if the  and {@link EvalSettings.ENABLE_TEXT_ITEM_REQUIRED} is set to YES or CONFIGURABLE.
    * <br/>
-   * <b>NOTE</b> use {@link #getCompulsoryTemplateItems(List)} to do a large set
+   * <b>NOTE</b> use {@link #getCompulsoryTemplateItems(List, EvalEvaluation)} to do a large set
    * 
    * @param templateItem a {@link EvalTemplateItem} persistent object
+   * @param evaluation If specified (not <code>null</code>) and {@link EvalSettings.ENABLE_TEXT_ITEM_REQUIRED} is CONFIGURABLE, method will consider {@link EvalEvaluation} settings
    * @return true if the item is compulsory, false otherwise
    */
   
-  public boolean isCompulsory(EvalTemplateItem templateItem); //TODO: new method  
+  public boolean isCompulsory(EvalTemplateItem templateItem, EvalEvaluation evaluation); 
   
   /**
    * Get the list of all templateItems which are compulsory (must be answered),
    * this will include any scaled items or items which are part of a block (but not a block parent)
    * 
    * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+   * @param evaluation If specified (not <code>null</code>) and {@link EvalSettings.ENABLE_TEXT_ITEM_REQUIRED} is CONFIGURABLE, method will consider {@link EvalEvaluation} settings
    * @return a List of {@link EvalTemplateItem} objects
-   * @see #isCompulsory(EvalTemplateItem)
+   * @see #isCompulsory(EvalTemplateItem, EvalEvaluation)
    */
-  public List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList);    //TODO: new method  
+  public List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList, EvalEvaluation evaluation); 
   
 }
