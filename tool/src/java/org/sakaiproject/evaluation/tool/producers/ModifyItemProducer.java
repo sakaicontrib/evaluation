@@ -461,16 +461,20 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                     }
                 }
 
-                if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
-                    //compulsory 
-                    Boolean selectOptionsCompulsory = true;
-                    if (selectOptionsCompulsory) {
-                        UIBranchContainer showComp = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCompulsory:");
-                        UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + "compulsory", compulsory);
-                        UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header")
-                        .decorate( new UILabelTargetDecorator(bb) );
-                    }
+                //compulsory
+                Boolean selectOptionsCompulsory = true;
+                if (EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
+                	//Check global configuration if text items can be compulsory 
+                    Boolean textItemsCanBeRequired = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
+                    selectOptionsCompulsory = (textItemsCanBeRequired == null || textItemsCanBeRequired);
                 }
+                if (selectOptionsCompulsory) {
+                    UIBranchContainer showComp = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCompulsory:");
+                    UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + "compulsory", compulsory);
+                    UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header")
+                    .decorate( new UILabelTargetDecorator(bb) );
+                }
+                
             }
 
             if (! useCourseCategoryOnly && ! isGroupable && ! isGrouped ) {

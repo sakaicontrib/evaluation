@@ -9,8 +9,10 @@
 		
 		<!-- html template for the text item renderer -AZ -->
 		<div rsf:id="render-text-item:">
-				<span rsf:id="itemNum">0</span>.&nbsp;
-				<div rsf:id="itemText" style="display:inline"></div>
+		<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span>
+				<span rsf:id="itemNum" class="label"></span>
+				<span class="label">.&nbsp;</span>
+				<div rsf:id="itemText" style="display:inline" class="label"></div>
 			<textarea rsf:id="essayBox" cols="65" rows="3" style="display:block"></textarea>
 			<label rsf:id="showNA:">
 				<input type="checkbox" rsf:id="itemNA" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>

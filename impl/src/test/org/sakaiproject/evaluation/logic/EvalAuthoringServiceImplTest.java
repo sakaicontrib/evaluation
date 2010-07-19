@@ -3123,5 +3123,31 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertNull(items);
 
    }
+   
+   public void testIsCompulsory() {
+       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
+
+       assertTrue( authoringService.isCompulsory(etdl.templateItem1U) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem2B) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem3A) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem5U) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem6UU) );
+       assertFalse( authoringService.isCompulsory(etdl.templateItem9B) );
+   }
+
+   public void testGetCompulsoryTemplateItems() {
+       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
+       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+
+       itemList.add(etdl.templateItem1U);
+       itemList.add(etdl.templateItem3U);
+       itemList.add(etdl.templateItem5U);
+
+       List<EvalTemplateItem> list = null;
+       list = authoringService.getCompulsoryTemplateItems(itemList);
+       assertNotNull(list);
+       assertEquals(1, list.size());
+       assertEquals(etdl.templateItem1U, list.get(0));
+   }
 
 }

@@ -58,9 +58,13 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
     public void setItemRenderer(ItemRenderer itemRenderer) {
         this.itemRenderer = itemRenderer;
     }
+    
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+		this.renderingUtils = renderingUtils;
+	}
 
-
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
@@ -89,7 +93,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
         TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
         DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
         itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
-                RenderingUtils.makeRenderProps(dti, null, null, null) );
+                renderingUtils.makeRenderProps(dti, null, null, null) );
 
         // render the close button
         UIMessage.make(tofill, "close-button", "general.close.window.button");

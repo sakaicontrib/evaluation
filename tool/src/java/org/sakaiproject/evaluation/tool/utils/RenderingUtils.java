@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -36,8 +37,13 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class RenderingUtils {
+	
+	private EvalAuthoringService authoringService;
+	public void setAuthoringService(EvalAuthoringService authoringService) {
+		this.authoringService = authoringService;
+	}
 
-    /**
+	/**
      * Calculates the weighted average and number of counted answers from the responseArray
      * (this comes from the {@link TemplateItemDataList#getAnswerChoicesCounts(String, int, List)}) <br/>
      * http://en.wikipedia.org/wiki/Weighted_mean
@@ -127,7 +133,7 @@ public class RenderingUtils {
      * @param renderProperties (OPTIONAL) the existing map of rendering properties (one is created if this is null)
      * @return the map of render properties (created if the input map is null)
      */
-    public static Map<String,Object> makeRenderProps(DataTemplateItem dti, 
+    public Map<String,Object> makeRenderProps(DataTemplateItem dti, 
             EvalEvaluation eval, Set<String> missingKeys, 
             Map<String,Object> renderProperties) {
         if (dti == null || dti.templateItem == null) {
@@ -142,7 +148,10 @@ public class RenderingUtils {
         if (eval != null) {
             evalRequiresItems = ! EvalUtils.safeBool(eval.getBlankResponsesAllowed(), true);
         }
-        if ( dti.isCompulsory() || (evalRequiresItems && dti.isRequireable()) ) {
+        
+        boolean isDtiCompulsory = authoringService.isCompulsory(dti.templateItem);
+                
+        if ( isDtiCompulsory || (evalRequiresItems && dti.isRequireable()) ) {
             renderProperties.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, Boolean.TRUE);
         } else {
             renderProperties.remove(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED);
@@ -161,7 +170,7 @@ public class RenderingUtils {
             List<DataTemplateItem> children = dti.getBlockChildren();
             for (DataTemplateItem childDTI : children) {
                 HashMap<String,Object> childRenderProps = new HashMap<String, Object>();
-                RenderingUtils.makeRenderProps(childDTI, eval, missingKeys, childRenderProps);
+                makeRenderProps(childDTI, eval, missingKeys, childRenderProps);
                 String key = "child-"+childDTI.templateItem.getId();
                 renderProperties.put(key, childRenderProps);
             }

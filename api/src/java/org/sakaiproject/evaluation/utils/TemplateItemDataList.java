@@ -754,15 +754,6 @@ public class TemplateItemDataList {
         }
 
         /**
-         * @return true if this item is compulsory (i.e. must be answered),
-         * false otherwise
-         * @see TemplateItemUtils#isCompulsory(EvalTemplateItem)
-         */
-        public boolean isCompulsory() {
-            return TemplateItemUtils.isCompulsory(this.templateItem);
-        }
-
-        /**
          * @return the auto insertion tag for this item or null if none found
          */
         public String getAutoInsertionTag() {

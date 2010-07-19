@@ -24,6 +24,8 @@ import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 
 /**
@@ -708,4 +710,29 @@ public interface EvalAuthoringService {
    */
   
   public int getNonBlockItemCountForTemplate(Long templateId);
+
+  /**
+   * Check if a {@link EvalTemplateItem} is compulsory (must be answered by a user taking an evaluation) or not,
+   * this is checking the compulsory settings for this template item,
+   * all answerable items that are marked as compulsory are included.
+   * Text items can be required if the {@link EvalSettings.ENABLE_TEXT_ITEM_REQUIRED} is set to YES or CONFIGURABLE.
+   * <br/>
+   * <b>NOTE</b> use {@link #getCompulsoryTemplateItems(List)} to do a large set
+   * 
+   * @param templateItem a {@link EvalTemplateItem} persistent object
+   * @return true if the item is compulsory, false otherwise
+   */
+  
+  public boolean isCompulsory(EvalTemplateItem templateItem); //TODO: new method  
+  
+  /**
+   * Get the list of all templateItems which are compulsory (must be answered),
+   * this will include any scaled items or items which are part of a block (but not a block parent)
+   * 
+   * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+   * @return a List of {@link EvalTemplateItem} objects
+   * @see #isCompulsory(EvalTemplateItem)
+   */
+  public List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList);    //TODO: new method  
+  
 }

@@ -268,6 +268,13 @@ public class AdministrateProducer implements ViewComponentProducer {
                 administrateConfigurableLabels, 
                 EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
         UIMessage.make(form, "students-view-results-note","administrate.students.view.results.note");
+        
+        //Select for whether students can ignore text items flagged as required
+        makeSelect(form, "students-answer-text-required-items",
+                administrateConfigurableValues, 
+                administrateConfigurableLabels, 
+                EvalSettings.ENABLE_TEXT_ITEM_REQUIRED, true);
+        UIMessage.make(form, "students-answer-text-required-items-note","administrate.general.allow.required.textitem");
 
         // Administrator Settings
         UIMessage.make(form, "administrator-settings-header","administrate.admin.settings.header");		

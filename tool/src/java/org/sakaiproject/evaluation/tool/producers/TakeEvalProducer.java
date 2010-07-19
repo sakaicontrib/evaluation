@@ -162,6 +162,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
         this.httpServletResponse = httpServletResponse;
     }
+    
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+		this.renderingUtils = renderingUtils;
+	}
 
     Long responseId;
 
@@ -646,7 +651,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         }
 
         // setup the render properties to send along
-        Map<String, Object> renderProps = RenderingUtils.makeRenderProps(dti, eval, missingKeys, null);
+        Map<String, Object> renderProps = renderingUtils.makeRenderProps(dti, eval, missingKeys, null);
         // render the item
         itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, renderProps);
 

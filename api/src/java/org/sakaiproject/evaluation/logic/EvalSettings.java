@@ -344,6 +344,11 @@ public interface EvalSettings {
      */
     public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
 
+    /**
+     * CONSTANT: Can a text item be flagged as required? - {@link Boolean}, default False
+     * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
+     */
+    public static final String ENABLE_TEXT_ITEM_REQUIRED = "ENABLE_TEXT_ITEM_REQUIRED:java.lang.Boolean";
 
     /**
      * This is here to identify all the boolean ONLY settings in the system,
@@ -405,7 +410,8 @@ public interface EvalSettings {
         INSTRUCTOR_ALLOWED_VIEW_RESULTS,
         STUDENT_ALLOWED_LEAVE_UNANSWERED,
         STUDENT_MODIFY_RESPONSES,
-        STUDENT_ALLOWED_VIEW_RESULTS
+        STUDENT_ALLOWED_VIEW_RESULTS,
+        ENABLE_TEXT_ITEM_REQUIRED
     };
 
     /**

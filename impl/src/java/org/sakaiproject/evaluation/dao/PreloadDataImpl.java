@@ -148,6 +148,7 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.ENABLE_EVAL_REOPEN, true);
             saveConfig(EvalSettings.ENABLE_MY_TOPLINKS, true);
             saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
+            saveConfig(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED, false);
 
             // REPORTING
             saveConfig(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
