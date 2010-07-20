@@ -236,10 +236,12 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				UIMessage.make(searchResults, "item-due-date-title", "administrate.search.list.due.date.title");
 				
 				//loop through the evaluations and get whatever we need for use in retrieving users, groups etc.. later
+				List<Long> evalIds = new ArrayList<Long>();  //keep the eval ids
 				Map<String, EvalUser> evalOwners = new HashMap<String, EvalUser>();  //keep the owner's Id and Sort name
 				
 				for(EvalEvaluation eval : evals){
 					evalOwners.put(eval.getOwner(), null);
+					evalIds.add(eval.getId());
 				}
 				
 				//in one DB query, get the eval owners sort names
@@ -247,6 +249,10 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				for(EvalUser evalUser : evalOwnersFull){
 					evalOwners.put(evalUser.userId, evalUser);
 				}
+				
+				//in one DB query, get the eval groups
+				Map<Long, List<EvalAssignGroup>> evalAssignGroupsFull = this.evaluationService.getAssignGroupsForEvals(evalIds.toArray(new Long[evalIds.size()]), false, false);
+
 				
 				for(EvalEvaluation eval : evals)
 				{
@@ -266,8 +272,7 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 								UIMessage.make("administrate.search.list.revise"),
 								newviewparams );
 					
-					Map<Long, List<EvalAssignGroup>> map = this.evaluationService.getAssignGroupsForEvals(new Long[]{eval.getId()}, false, false);
-					List<EvalAssignGroup> list = map.get(eval.getId());
+					List<EvalAssignGroup> list = evalAssignGroupsFull.get(eval.getId());
 					String evalAdminProviderId = null;
 					for(EvalAssignGroup grp : list) {
 						if(evalAdminProviderId == null) {
