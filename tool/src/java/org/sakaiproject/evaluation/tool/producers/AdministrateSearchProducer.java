@@ -252,7 +252,6 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				
 				//in one DB query, get the eval groups
 				Map<Long, List<EvalAssignGroup>> evalAssignGroupsFull = this.evaluationService.getAssignGroupsForEvals(evalIds.toArray(new Long[evalIds.size()]), false, false);
-
 				
 				for(EvalEvaluation eval : evals)
 				{
@@ -273,18 +272,17 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 								newviewparams );
 					
 					List<EvalAssignGroup> list = evalAssignGroupsFull.get(eval.getId());
-					String evalAdminProviderId = null;
-					for(EvalAssignGroup grp : list) {
-						if(evalAdminProviderId == null) {
-							evalAdminProviderId = grp.getEvalGroupId();
-						} else {
-							evalAdminProviderId += ", " + grp.getEvalGroupId();
-						}
+					// vary the display depending on the number of groups assigned
+					int groupsCount = list.size();
+					if (groupsCount == 1){
+						UIInternalLink.make(evalrow, "evalAdminGroup", getTitleForFirstEvalGroup(list.get(0).getEvalGroupId()), 
+			                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, eval.getId()) );
+					}else{
+						UIInternalLink.make(evalrow, "evalAdminGroup", 
+			                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount }), 
+			                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, eval.getId()) );
 					}
 					
-					if(evalAdminProviderId != null) {
-						UIOutput.make(evalrow, "evalAdminProviderId", evalAdminProviderId);
-					}
 					UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
 					UIOutput.make(evalrow, "evalAdminDueDate", df.format(eval.getDueDate()));
 					
@@ -312,5 +310,16 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 	{
 		return new AdminSearchViewParameters(VIEW_ID);
 	}
+	
+	/**
+    * Gets the title for the first returned evalGroupId for this evaluation,
+    * should only be used when there is only one evalGroupId assigned to an eval
+    * 
+    * @param evaluationId
+    * @return title of first evalGroupId returned
+    */
+   private String getTitleForFirstEvalGroup(String evalGroupId) {
+      return commonLogic.getDisplayTitle( evalGroupId );
+   }
 
 }
