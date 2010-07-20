@@ -264,8 +264,8 @@ public class TemplateItemUtilsTest extends TestCase {
         assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem1U) );
         assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem2B) );
         assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem3A) );
-        assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem5U) );
-        assertTrue( TemplateItemUtils.isRequireable(etdl.templateItem6UU) );
+        assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem5U) );
+        assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem6UU) );
         assertFalse( TemplateItemUtils.isRequireable(etdl.templateItem9B) );
     }
 
@@ -283,7 +283,7 @@ public class TemplateItemUtilsTest extends TestCase {
         List<EvalTemplateItem> list = null;
         list = TemplateItemUtils.getRequireableTemplateItems(itemList);
         assertNotNull(list);
-        assertEquals(3, list.size());
+        assertEquals(2, list.size());
         assertEquals(etdl.templateItem1U, list.get(0));
         assertEquals(etdl.templateItem3U, list.get(1));
     }

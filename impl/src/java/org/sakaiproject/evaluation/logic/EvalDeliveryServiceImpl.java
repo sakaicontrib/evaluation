@@ -517,7 +517,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                     required = dti.isRequireable();
                 } else {
                     // only items marked as compulsory must be answered
-                    required = authoringService.isCompulsory(dti.templateItem, null);
+                    required = authoringService.isCompulsory(dti.templateItem, eval);
                 }
                 // if the item is required then add it to the required keys listing
                 if (required) {

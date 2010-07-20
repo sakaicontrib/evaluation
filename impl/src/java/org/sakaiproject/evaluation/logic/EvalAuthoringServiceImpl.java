@@ -2159,6 +2159,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             		result = EvalUtils.safeBool(evaluation.getCompulsoryTextItemsAllowed(), false) && EvalUtils.safeBool(templateItem.isCompulsory());
             	}else if(textItemsCanBeRequired != null && textItemsCanBeRequired && EvalUtils.safeBool(templateItem.isCompulsory())){
             		result = true;
+            	}else if(textItemsCanBeRequired == null && evaluation == null){
+            		result = true;
             	}
             } else if ( EvalUtils.safeBool(templateItem.isCompulsory()) ) {
                 result = true;
