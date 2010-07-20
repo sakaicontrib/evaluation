@@ -23,8 +23,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +32,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
@@ -234,30 +231,15 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				UIMessage.make(searchResults, "item-group-id-title", "administrate.search.list.group.id.title");
 				UIMessage.make(searchResults, "item-start-date-title", "administrate.search.list.start.date.title");
 				UIMessage.make(searchResults, "item-due-date-title", "administrate.search.list.due.date.title");
-				
-				//loop through the evaluations and get whatever we need for use in retrieving users, groups etc.. later
-				Map<String, EvalUser> evalOwners = new HashMap<String, EvalUser>();  //keep the owner's Id and Sort name
-				
-				for(EvalEvaluation eval : evals){
-					evalOwners.put(eval.getOwner(), null);
-				}
-				
-				//in one DB query, get the eval owners sort names
-				List<EvalUser> evalOwnersFull = commonLogic.getEvalUsersByIds(evalOwners.keySet().toArray(new String[evalOwners.size()]));
-				for(EvalUser evalUser : evalOwnersFull){
-					evalOwners.put(evalUser.userId, evalUser);
-				}
-				
+
 				for(EvalEvaluation eval : evals)
 				{
 					UIBranchContainer evalrow = UIBranchContainer.make(searchResults,
 							"evalAdminList:", eval.getId().toString() );
-				List<Long> evalIds = new ArrayList<Long>();  //keep the eval ids
 					
 					UIOutput.make(evalrow, "evalAdminTitle", EvalUtils.makeMaxLengthString(eval.getTitle(), 70));
 
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
-					evalIds.add(eval.getId());
 								UIMessage.make("administrate.search.list.preview"),
 								new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
 					EvalViewParameters newviewparams = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId());
@@ -266,13 +248,10 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 					newviewparams.adminSearchPage = page;
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
 								UIMessage.make("administrate.search.list.revise"),
-				//in one DB query, get the eval groups
-				Map<Long, List<EvalAssignGroup>> evalAssignGroupsFull = this.evaluationService.getAssignGroupsForEvals(evalIds.toArray(new Long[evalIds.size()]), false, false);
-
-				
 								newviewparams );
 					
-					List<EvalAssignGroup> list = evalAssignGroupsFull.get(eval.getId());
+					Map<Long, List<EvalAssignGroup>> map = this.evaluationService.getAssignGroupsForEvals(new Long[]{eval.getId()}, false, false);
+					List<EvalAssignGroup> list = map.get(eval.getId());
 					String evalAdminProviderId = null;
 					for(EvalAssignGroup grp : list) {
 						if(evalAdminProviderId == null) {
@@ -287,17 +266,6 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 					}
 					UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
 					UIOutput.make(evalrow, "evalAdminDueDate", df.format(eval.getDueDate()));
-					
-					String ownerOutput = "-------";
-					EvalUser owner = evalOwners.get(eval.getOwner());
-					if(owner != null){
-						if (owner.username.equals(owner.sortName)){
-							ownerOutput = owner.username;
-						}else{
-							ownerOutput = owner.sortName + " (" + owner.username+ ")";
-						}
-					}
-					UIOutput.make(evalrow, "evalAdminOwner", ownerOutput);
 				}
 			}
 			else
