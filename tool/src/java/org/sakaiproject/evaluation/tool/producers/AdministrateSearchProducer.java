@@ -236,12 +236,10 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				{
 					UIBranchContainer evalrow = UIBranchContainer.make(searchResults,
 							"evalAdminList:", eval.getId().toString() );
-				List<Long> evalIds = new ArrayList<Long>();  //keep the eval ids
 					
 					UIOutput.make(evalrow, "evalAdminTitle", EvalUtils.makeMaxLengthString(eval.getTitle(), 70));
 
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
-					evalIds.add(eval.getId());
 								UIMessage.make("administrate.search.list.preview"),
 								new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
 					EvalViewParameters newviewparams = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId());
@@ -250,13 +248,10 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 					newviewparams.adminSearchPage = page;
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
 								UIMessage.make("administrate.search.list.revise"),
-				//in one DB query, get the eval groups
-				Map<Long, List<EvalAssignGroup>> evalAssignGroupsFull = this.evaluationService.getAssignGroupsForEvals(evalIds.toArray(new Long[evalIds.size()]), false, false);
-
-				
 								newviewparams );
 					
-					List<EvalAssignGroup> list = evalAssignGroupsFull.get(eval.getId());
+					Map<Long, List<EvalAssignGroup>> map = this.evaluationService.getAssignGroupsForEvals(new Long[]{eval.getId()}, false, false);
+					List<EvalAssignGroup> list = map.get(eval.getId());
 					String evalAdminProviderId = null;
 					for(EvalAssignGroup grp : list) {
 						if(evalAdminProviderId == null) {
