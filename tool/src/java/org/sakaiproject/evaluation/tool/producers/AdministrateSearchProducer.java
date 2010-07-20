@@ -23,6 +23,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -232,6 +233,15 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 				UIMessage.make(searchResults, "item-start-date-title", "administrate.search.list.start.date.title");
 				UIMessage.make(searchResults, "item-due-date-title", "administrate.search.list.due.date.title");
 
+				 //loop through the evaluations and get whatever we need for use in retrieving users, groups etc.. later
+				 List<Long> evalIds = new ArrayList<Long>();  //keep the eval ids
+				 for(EvalEvaluation eval : evals){
+					 evalIds.add(eval.getId());
+				 }
+				 
+				//in one DB query, get the eval groups
+				Map<Long, List<EvalAssignGroup>> evalAssignGroupsFull = evaluationService.getAssignGroupsForEvals(evalIds.toArray(new Long[evalIds.size()]), false, false);
+				 
 				for(EvalEvaluation eval : evals)
 				{
 					UIBranchContainer evalrow = UIBranchContainer.make(searchResults,
@@ -250,8 +260,7 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 								UIMessage.make("administrate.search.list.revise"),
 								newviewparams );
 					
-					Map<Long, List<EvalAssignGroup>> map = this.evaluationService.getAssignGroupsForEvals(new Long[]{eval.getId()}, false, false);
-					List<EvalAssignGroup> list = map.get(eval.getId());
+					List<EvalAssignGroup> list = evalAssignGroupsFull.get(eval.getId());
 					String evalAdminProviderId = null;
 					for(EvalAssignGroup grp : list) {
 						if(evalAdminProviderId == null) {
