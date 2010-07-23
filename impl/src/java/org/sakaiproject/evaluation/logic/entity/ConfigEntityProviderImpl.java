@@ -14,10 +14,14 @@
 
 package org.sakaiproject.evaluation.logic.entity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.entitybroker.event.EventReceiver;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.entitybroker.EntityReference;
 
 /**
  * Allows for detecting changes to the config via events,
@@ -28,6 +32,8 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, EventReceiver {
 
     private EvalSettings settings;
+    private static Log log = LogFactory.getLog(ConfigEntityProviderImpl.class);
+
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
     }
@@ -53,10 +59,19 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
     }
 
     public void receiveEvent(String eventName, String id) {
-        if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
+        //If it gets an entity prefix back, convert the value to an id
+        if (id.contains(ENTITY_PREFIX)) {
+            id = new EntityReference(id).getId();
+        }  
+	if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
+            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") settings.resetCache(" + id + ")");
             settings.resetCache(id);
         } else if (EvalSettings.EVENT_SET_MANY_CONFIG.equals(eventName)) {
+            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") settings.resetCache(null)");
             settings.resetCache(null);
+        }
+        else {  
+            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") EVENT received UNKNOWN!");
         }
     }
 
