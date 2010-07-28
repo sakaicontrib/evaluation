@@ -16,9 +16,7 @@
     //Deal with existing comments
     function hideComment(dom) {
         var truncatedComment = truncate(dom, dom.textarea.val());//Truncate the comment and update Dom
-        dom.showLink.hide(function(){
-            dom.showLink.css({display: "inline"});
-        });
+        dom.showLink.hide();
         dom.commentLabel.show();
         dom.editLink.show();
         dom.commentTruncated.text(truncatedComment).show(); //add truncated comment to DOM
