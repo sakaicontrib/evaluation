@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -43,7 +43,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -79,6 +78,10 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
       this.evaluationService = evaluationService;
    }
 
+   private NavBarRenderer navBarRenderer;
+   public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -93,27 +96,15 @@ public class EvaluationAssignmentsProducer implements ViewComponentProducer, Vie
        * This is the evaluation we are working with on this page,
        * this should ONLY be read from, do not change any of these fields
        */
-      EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
       Long evaluationId = evalViewParams.evaluationId;
 
       /*
        * top links here
        */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-evaluations-link",
-            UIMessage.make("controlevaluations.page.title"),
-            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-
+      navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
       UIInternalLink.make(tofill, "eval-settings-link",
-            UIMessage.make("evalsettings.page.title"),
-            new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
-      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
-         // creating a new eval
-         UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
-      }
+              UIMessage.make("evalsettings.page.title"),
+              new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
 
 
       // normal page content

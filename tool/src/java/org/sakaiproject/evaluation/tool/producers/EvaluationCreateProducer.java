@@ -20,10 +20,10 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -45,7 +45,6 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -67,11 +66,6 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
       this.commonLogic = commonLogic;
    }
 
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
-   }
-
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
@@ -81,11 +75,11 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
    public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
       this.richTextEvolver = richTextEvolver;
    }
-
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-       this.evalSettings = evalSettings;
-   }
+   
+   private NavBarRenderer navBarRenderer;
+   public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
    
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -94,52 +88,11 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
 
       // local variables used in the render logic
       String currentUserId = commonLogic.getCurrentUserId();
-      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-
+      
       /*
        * top links here
        */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      if (userAdmin) {
-          UIInternalLink.make(tofill, "administrate-link", 
-                UIMessage.make("administrate.page.title"),
-                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-       }
-
-      // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-      boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-      if(showMyToplinks) {
-    	  if (createTemplate) {
-    		  UIInternalLink.make(tofill, "control-templates-link",
-    				  UIMessage.make("controltemplates.page.title"), 
-    				  new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-    		  if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-    			  UIInternalLink.make(tofill, "control-items-link",
-    					  UIMessage.make("controlitems.page.title"), 
-    					  new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-    		  }
-    	  }
-
-    	  if (beginEvaluation) {
-    		  UIInternalLink.make(tofill, "control-evaluations-link",
-    				  UIMessage.make("controlevaluations.page.title"),
-    				  new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-    	  } else {
-    		  throw new SecurityException("User attempted to access " + 
-    				  VIEW_ID + " when they are not allowed");
-    	  }
-
-    	  if (userAdmin) {
-    		  UIInternalLink.make(tofill, "control-scales-link",
-    				  UIMessage.make("controlscales.page.title"),
-    				  new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-    	  }
-      }
+      navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
       EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 

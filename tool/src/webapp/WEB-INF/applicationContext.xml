@@ -185,7 +185,7 @@
         <property name="templateNames"
             value="render_header_item, render_text_item, render_scaled_item, render_block_item, 
 			     render_multiplechoice_item, render_multipleanswer_item,
-			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector" />
+			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector, nav_bar" />
         <property name="expected" value="true" />
     </bean>
 

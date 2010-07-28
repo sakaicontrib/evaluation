@@ -14,6 +14,18 @@
         <property name="targetBeanName" value="sakaiFCKTextEvolver" />
         <!--      <property name="targetBeanName" value="plainTextInputEvolver" />-->
     </bean>
+	
+	<!-- navigation renderer -->
+	<bean id="navBarRenderer" class="org.sakaiproject.evaluation.tool.renderers.NavBarRenderer">
+		<property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+	</bean>
 
     <!-- request scope backing beans here -->
 
@@ -235,10 +247,9 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean
@@ -258,12 +269,14 @@
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="evalBeanUtils"
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean
         class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
     
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateEmailProducer">
@@ -271,11 +284,13 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings" 
         	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
         <!-- DO NOT USE SAKAI SERVICES DIRECTLY -->
         <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
         <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
@@ -287,26 +302,25 @@
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
-        <property name="evalSettings" 
-            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean
         class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean
         class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
@@ -327,6 +341,7 @@
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
        	<property name="messageLocator" ref="messageLocator" />
         <property name="locale" ref="requestLocale" />
+        <property name="navBarRenderer" ref="navBarRenderer" />
     </bean>
 
 
@@ -334,22 +349,17 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="locale" ref="requestLocale" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateProducer">
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
@@ -357,8 +367,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings"
-            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
@@ -379,6 +388,7 @@
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 		<property name="messageLocator" ref="messageLocator" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
@@ -396,9 +406,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />  
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
@@ -406,12 +414,9 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings"
-            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyItemProducer">
@@ -434,35 +439,31 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
     <!-- EXPERT items views -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertObjectiveProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertItemsProducer">
@@ -476,19 +477,17 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
+        <property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
@@ -507,25 +506,22 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evaluationSetupService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
-        <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="deliveryService"
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="evalBeanUtils"
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
         <property name="locale" ref="requestLocale" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationCreateProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
         <property name="richTextEvolver" ref="richTextEvolver" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
@@ -539,6 +535,7 @@
         <property name="dateEvolver" ref="fieldDateInputEvolver" />
         <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="locale" ref="requestLocale" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
@@ -554,6 +551,7 @@
         <property name="messageLocator" ref="messageLocator" />
 		<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="viewStateHandler" ref="viewStateHandler" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 	
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignSelectProducer">
@@ -583,6 +581,7 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean
@@ -594,6 +593,7 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
@@ -607,8 +607,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="locale" ref="requestLocale" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer">
@@ -618,9 +618,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="deliveryService"
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-        <property name="evalSettings"
-            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="locale" ref="requestLocale" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
@@ -631,7 +630,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
@@ -640,10 +639,9 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
@@ -713,18 +711,17 @@
             ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
         <property name="evalResponseAggregatorUtil"
             ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer">
-	<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="reportingPermissions"
             ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <!-- Adhoc Group Views -->

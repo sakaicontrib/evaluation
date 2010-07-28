@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -87,6 +88,11 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
+    
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
 
 
     /* (non-Javadoc)
@@ -113,37 +119,13 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
-        // local variables used in the render logic
-        String currentUserId = commonLogic.getCurrentUserId();
-        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-
         /*
          * top links here
          */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                    UIMessage.make("administrate.page.title"),
-                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-        }
-
-        UIInternalLink.make(tofill, "control-evaluations-link",
-                UIMessage.make("controlevaluations.page.title"),
-                new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-
+        navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
         UIInternalLink.make(tofill, "eval-settings-link",
                 UIMessage.make("evalsettings.page.title"),
                 new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
-        if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
-            // creating a new eval
-            UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
-        }
 
 
         // normal page content

@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -49,17 +50,17 @@ public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsRep
       return VIEW_ID;
    }
 
-   private EvalCommonLogic commonLogic;
-   public void setCommonLogic(EvalCommonLogic commonLogic) {
-      this.commonLogic = commonLogic;
-   }
-
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
 
    private String emailTemplateLocator = "emailTemplateWBL.";
+   
+   private NavBarRenderer navBarRenderer;
+   public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -94,27 +95,11 @@ public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsRep
       }
       String emailTemplateOTP = emailTemplateLocator + emailTemplateId + ".";
 
-      // local variables used in the render logic
-      String currentUserId = commonLogic.getCurrentUserId();
-      boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-
       if (emailViewParams.evaluationId == null) {
          /*
           * top links here
           */
-         UIInternalLink.make(tofill, "summary-link", 
-               UIMessage.make("summary.page.title"), 
-               new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-         if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                  UIMessage.make("administrate.page.title"),
-                  new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-         }
-
-         UIInternalLink.make(tofill, "control-emailtemplates-link",
-               UIMessage.make("controlemailtemplates.page.title"),
-               new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+    	  navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
       }
 
       UIMessage.make(tofill, "modify-template-header", "modifyemail.modify.template.header", 
