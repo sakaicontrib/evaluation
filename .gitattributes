@@ -283,6 +283,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleChoiceRenderer.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/NavBarRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/CSVReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -334,6 +335,7 @@ tool/src/webapp/WEB-INF/requestContext.xml -text svn_keywords=Date+Revision+Auth
 tool/src/webapp/WEB-INF/web.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/Messages.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/hierarchy_controls.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/component-templates/nav_bar.html -text
 tool/src/webapp/component-templates/render_add_item_control.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_block_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_header_item.html -text svn_keywords=Date+Revision+Author+URL+Id

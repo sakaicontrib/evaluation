@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -60,12 +60,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		this.authoringService = authoringService;
 	}
 
-	private EvalSettings evalSettings;
-	public void setEvalSettings(EvalSettings evalSettings) {
-		this.evalSettings = evalSettings;
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
 	}
-
-
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
@@ -77,17 +75,8 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 
 		UIMessage.make(tofill, "remove-template-title", "removetemplate.page.title");
 		UIMessage.make(tofill, "control-panel-title","modifytemplate.page.title");
-		
-		UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
-		// only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-		boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-		if(showMyToplinks) {
-			UIInternalLink.make(tofill, "control-templates-link",
-					UIMessage.make("controltemplates.page.title"), 
-					new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-		}
+		navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		

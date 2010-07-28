@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 
 import uk.org.ponder.beanutil.PathUtil;
@@ -60,16 +61,16 @@ public class AdministrateProducer implements ViewComponentProducer {
         this.commonLogic = commonLogic;
     }
 
-    private EvalEvaluationService evaluationService;
-    public void setEvaluationService(EvalEvaluationService evaluationService) {
-        this.evaluationService = evaluationService;
-    }
-
     private EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;
     }
 
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
+    
     // Used to prepare the path for WritableBeanLocator
     public static final String ADMIN_WBL = "settingsBean";
 
@@ -79,7 +80,6 @@ public class AdministrateProducer implements ViewComponentProducer {
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-        boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
         if (! userAdmin) {
             // Security check and denial
@@ -91,40 +91,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         UIMessage.make(tofill, "app_version_revision", "administrate.version.revision", 
                 new Object[] {EvalConstants.APP_VERSION, EvalConstants.SVN_REVISION, EvalConstants.SVN_LAST_UPDATE});
 
-        // TOP LINKS
-        UIInternalLink.make(tofill, "administrate-link",
-                UIMessage.make("administrate.page.title"),
-                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        //boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue(); // ALWAYS SHOW FOR ADMIN
-    	if (beginEvaluation) {
-    		UIInternalLink.make(tofill, "control-evaluations-link",
-    				UIMessage.make("controlevaluations.page.title"), 
-    				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-    	}
-    	
-    	UIInternalLink.make(tofill, "control-templates-link",
-    			UIMessage.make("controltemplates.page.title"), 
-    			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-
-    	if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-    		UIInternalLink.make(tofill, "control-items-link",
-    				UIMessage.make("controlitems.page.title"),
-    				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-    	}
-
-    	UIInternalLink.make(tofill, "control-scales-link",
-    			UIMessage.make("controlscales.page.title"),
-    			new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-
-    	UIInternalLink.make(tofill, "control-emailtemplates-link",
-    			UIMessage.make("controlemailtemplates.page.title"),
-    			new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+        navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
         // BREADCRUMBS
         UIInternalLink.make(tofill, "control-email-toplink",
