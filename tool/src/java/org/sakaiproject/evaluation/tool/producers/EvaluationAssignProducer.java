@@ -257,11 +257,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         Boolean isGroupFilterEnabled = (Boolean) settings.get(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);
 
         if( isGroupFilterEnabled ){
-	        evalGroups = commonLogic.getFilteredEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_ASSIGN_EVALUATION, currentSiteId);  
-	        beEvalGroups = commonLogic.getFilteredEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED, currentSiteId);  
+	        evalGroups = commonLogic.getFilteredEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION, currentSiteId);  
+	        beEvalGroups = commonLogic.getFilteredEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED, currentSiteId);  
         }else{
-        	evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_ASSIGN_EVALUATION);
-        	beEvalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+        	evalGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION);
+        	beEvalGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
         }
         
         for (EvalGroup evalGroup : beEvalGroups) {
