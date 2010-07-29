@@ -302,7 +302,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-            String authControl, String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
+            String authControl, String evalCategory, String selectionSettings, Boolean sendAvailableNotifications) {
     	
         this.lastModified = new Date();
         this.type = type;
@@ -334,7 +334,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
-    	this.sendAvailableNotifications = emailOpenNotification;
+    	this.sendAvailableNotifications = sendAvailableNotifications;
     }
 
     @Override
