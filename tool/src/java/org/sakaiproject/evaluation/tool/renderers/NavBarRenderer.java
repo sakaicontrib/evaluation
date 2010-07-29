@@ -57,6 +57,7 @@ public class NavBarRenderer {
         UIJointContainer joint = new UIJointContainer(tofill, divID, "evals-navigation:");
         boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK)).booleanValue();
         boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        boolean adminAllowedToSee = isUserAdmin && showMyToplinks;
         
         // set a few local variables
         this.currentViewID = currentViewID;
@@ -69,21 +70,21 @@ public class NavBarRenderer {
 
 
         
-        if(isUserAdmin || showMyToplinks) {
+        if(adminAllowedToSee || showMyToplinks) {
         	
-        	if (isUserAdmin || canBeginEvaluation) {
+        	if (adminAllowedToSee || canBeginEvaluation) {
         		renderLink(joint, ControlEvaluationsProducer.VIEW_ID, "controlevaluations.page.title");
         	}
         	
-        	if (isUserAdmin || canCreateTemplate) {
+        	if (adminAllowedToSee || canCreateTemplate) {
         		renderLink(joint, ControlTemplatesProducer.VIEW_ID, "controltemplates.page.title");
-        		if (isUserAdmin || ! hideQuestionBank) {
+        		if (adminAllowedToSee || ! hideQuestionBank) {
         			renderLink(joint, ControlItemsProducer.VIEW_ID, "controlitems.page.title");
         			renderLink(joint, ControlScalesProducer.VIEW_ID, "controlscales.page.title");
         		}
         	}
 
-        	if (isUserAdmin || canBeginEvaluation) {
+        	if (adminAllowedToSee || canBeginEvaluation) {
         		renderLink(joint, ControlEmailTemplatesProducer.VIEW_ID, "controlemailtemplates.page.title"); 
         	}
         }
