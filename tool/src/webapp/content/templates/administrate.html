@@ -236,9 +236,13 @@
             <label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
         </p>
 -->
-        <p class=   "longtext indnt1">
+        <!--<p class=   "longtext indnt1">
             <label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
             <select rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id"></select>
+        </p>
+        --><p class=   "longtext indnt1">
+            <label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
+            <input rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id" value="0" type="text" size="5"/>
         </p>
         <p class=   "longtext indnt1">
             <label class="block" rsf:id="general-mim-time-diff-between-dates-note" for="general-mim-time-diff-between-dates-selection">Minimum time difference (in hours) between start date and due date of an evaluation</label>
@@ -271,11 +275,11 @@
             <input type="checkbox" rsf:id="general-enable-selections" />
             <label rsf:id="msg=administrate.general.enable.selections" for="general-enable-selections">Enable Instructor/Assistant Selections for grouping instructor related items (UCT)</label>
         </p>        
-        <p class=   "checkbox indnt1">
+        <!--<p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-filter-evalgroups" />
             <label rsf:id="msg=administrate.general.enable.filtered.evalgroups" for="general-filter-evalgroups">Only show sites like a user's current site in the assignments view (UCT)</label>
         </p>
-    </fieldset>
+    --></fieldset>
 
     <p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
     <input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
