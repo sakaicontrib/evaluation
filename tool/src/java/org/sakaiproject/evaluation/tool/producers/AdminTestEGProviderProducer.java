@@ -23,6 +23,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.AdminTestEGViewParameters;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -66,6 +67,10 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         this.applicationContext = applicationContext;
     }
 
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -79,6 +84,8 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
             // Security check and denial
             throw new SecurityException("Non-admin users may not access this page");
         }
+        
+        navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
         // get provider
         EvalGroupsProvider evalGroupsProvider;

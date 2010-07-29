@@ -6,8 +6,8 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -49,11 +49,11 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         this.hierarchyLogic = hierarchyLogic;
     }
 
-    private EvalSettings evalSettings;
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
-    }
-
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
+    
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
@@ -66,30 +66,8 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         /*
          * top links here
          */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "administrate-link", 
-                UIMessage.make("administrate.page.title"),
-                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-        if(showMyToplinks) {
-        	UIInternalLink.make(tofill, "control-scales-link",
-        			UIMessage.make("controlscales.page.title"),
-        			new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-        	UIInternalLink.make(tofill, "control-templates-link",
-        			UIMessage.make("controltemplates.page.title"), 
-        			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-        	if (!((Boolean) evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-        		UIInternalLink.make(tofill, "control-items-link",
-        				UIMessage.make("controlitems.page.title"), 
-        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-        	}
-        	UIInternalLink.make(tofill, "control-evaluations-link",
-        			UIMessage.make("controlevaluations.page.title"),
-        			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        }
+        navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
+        
         UIInternalLink.make(tofill, "hierarchy-toplink", 
                 UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
 

@@ -40,6 +40,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
@@ -132,6 +133,10 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         this.vsh = vsh;
     }
    
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
@@ -139,8 +144,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
-        // render top links
-        renderTopLinks(tofill, currentUserId);
+        navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
         EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
         if (evalViewParams.evaluationId == null) {
@@ -648,42 +652,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
      */
     public ViewParameters getViewParameters() {
         return new EvalViewParameters();
-    }
-
-    /**
-     * Renders the usual action breadcrumbs at the top.
-     * 
-     * @param tofill
-     * @param currentUserId
-     */
-    private void renderTopLinks(UIContainer tofill, String currentUserId) {
-        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-        boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-
-        /*
-         * top links here
-         */
-        UIInternalLink.make(tofill, "summary-link", 
-                UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        if (userAdmin) {
-            UIInternalLink.make(tofill, "administrate-link", 
-                    UIMessage.make("administrate.page.title"),
-                    new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-            UIInternalLink.make(tofill, "control-scales-link",
-                    UIMessage.make("controlscales.page.title"),
-                    new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-        }
-
-        if (beginEvaluation) {
-            UIInternalLink.make(tofill, "control-evaluations-link",
-                    UIMessage.make("controlevaluations.page.title"),
-                    new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        } else {
-            throw new SecurityException("User attempted to access " + 
-                    VIEW_ID + " when they are not allowed");
-        }
     }
 
 }

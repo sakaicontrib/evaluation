@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -51,7 +52,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -102,6 +102,11 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
+	
+    private NavBarRenderer navBarRenderer;
+    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
+		this.navBarRenderer = navBarRenderer;
+	}
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -119,7 +124,6 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 		//DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 		//NumberFormat nf = NumberFormat.getInstance(locale);
@@ -133,42 +137,8 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 		UIMessage.make(tofill, "search-page-title", "administrate.search.page.title");
 
 		// TOP LINKS
-		UIInternalLink.make(tofill, "administrate-link",
-				UIMessage.make("administrate.page.title"),
-				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-
-		UIInternalLink.make(tofill, "summary-link", 
-				UIMessage.make("summary.page.title"), 
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-        // only show "My Evaluations", "My Templates", "My Items", "My Scales" and "My Email Templates" links if enabled
-        boolean showMyToplinks = ((Boolean)evalSettings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
-        if(showMyToplinks) {
-        	if (beginEvaluation) {
-        		UIInternalLink.make(tofill, "control-evaluations-link",
-        				UIMessage.make("controlevaluations.page.title"), 
-        				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-        	}
-        	
-        	UIInternalLink.make(tofill, "control-templates-link",
-        			UIMessage.make("controltemplates.page.title"), 
-        			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-
-        	if (!((Boolean)evalSettings.get(EvalSettings.DISABLE_ITEM_BANK))) {
-        		UIInternalLink.make(tofill, "control-items-link",
-        				UIMessage.make("controlitems.page.title"),
-        				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-        	}
-
-        	UIInternalLink.make(tofill, "control-scales-link",
-        			UIMessage.make("controlscales.page.title"),
-        			new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-
-        	UIInternalLink.make(tofill, "control-emailtemplates-link",
-        			UIMessage.make("controlemailtemplates.page.title"),
-        			new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
-        }
-
+		navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
+		
 		//System Settings
 		UIForm searchForm = UIForm.make(tofill, "search-form");
 		UIInput searchInput = UIInput.make(searchForm, "search-input", 
