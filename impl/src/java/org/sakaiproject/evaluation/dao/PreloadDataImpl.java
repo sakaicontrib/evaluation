@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,9 +56,10 @@ public class PreloadDataImpl {
     public void setExternalLogic(EvalExternalLogic externalLogic) {
         this.externalLogic = externalLogic;
     }
-    
-    //will need this 
+
+	//will need this 
     List<EvalEmailTemplate> defaultEmailTempates = new ArrayList<EvalEmailTemplate>();
+    Map<String, Object> evalConfigMap = new HashMap<String, Object>();
 
     public void preload() {
         // run the methods that will preload the data
@@ -75,21 +77,28 @@ public class PreloadDataImpl {
      */
     public boolean checkCriticalDataPreloaded() {
         boolean preloaded = true;
-        int configCount = dao.countAll(EvalConfig.class);
-        if (configCount <= 0) {
+        populateEvalConfig();
+        long configDBCount = dao.countAll(EvalConfig.class);
+        if (configDBCount <= 0) {
             preloaded = false;
         } else {
-        	populateEmailTemplates();
-            long emailTemplateCount = dao.countBySearch(EvalEmailTemplate.class,
-                    new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
-            if (emailTemplateCount < defaultEmailTempates.size()) {
-                preloaded = false;
-            } else {
-                int scaleCount = dao.countAll(EvalScale.class);
-                if (scaleCount <= 0) {
-                    preloaded = false;
-                }
-            }
+        	//there are some config settings saved, lets check if these include the ones declared here
+        	configDBCount = countDefaultEvalConfigInDB();
+        	if(configDBCount < evalConfigMap.size()){
+        		preloaded = false;
+        	}else{          
+	        	populateEmailTemplates();
+	            long emailTemplateCount = dao.countBySearch(EvalEmailTemplate.class,
+	                    new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
+	            if (emailTemplateCount < defaultEmailTempates.size()) {
+	                preloaded = false;
+	            } else {
+	                int scaleCount = dao.countAll(EvalScale.class);
+	                if (scaleCount <= 0) {
+	                    preloaded = false;
+	                }
+	            }
+        	}
         }
         return preloaded;
     }
@@ -104,101 +113,43 @@ public class PreloadDataImpl {
      * fail, just comment out or do not include the setting you want to "save" as
      * null to have the effect without causing a failure
      */
-    public void preloadEvalConfig() {
+    @SuppressWarnings("unchecked")
+	public void preloadEvalConfig() {
         // check if there are any EvalConfig items present
-        int count = dao.countAll(EvalConfig.class);
-        if (count == 0) {
-            // Default Instructor system settings
-            saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
-            saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
-            saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
-            // NOTE: leave this out to default to use the setting in the evaluation
-            saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_REQUIRED);
-
-            saveConfig(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
-
-            // Default Student settings
-            saveConfig(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
-            saveConfig(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
-            saveConfig(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
-
-            // Default Admin settings
-            saveConfig(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);
-            saveConfig(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
-            saveConfig(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);
-
-            // default hierarchy settings
-            saveConfig(EvalSettings.DISPLAY_HIERARCHY_OPTIONS, false);
-            saveConfig(EvalSettings.DISPLAY_HIERARCHY_HEADERS, false);
-
-            // Default general settings
-            String helpdeskEmail = externalLogic.getConfigurationSetting("support.email", "helpdesk@institution.edu");
-            saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, helpdeskEmail);
-            saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 3);
-            saveConfig(EvalSettings.ENABLE_NOT_AVAILABLE, true);
-            saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
-            saveConfig(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
-            saveConfig(EvalSettings.USE_EXPERT_TEMPLATES, true);
-            saveConfig(EvalSettings.USE_EXPERT_ITEMS, true);
-            saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
-            saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
-
-            saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
-            saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
-            saveConfig(EvalSettings.ENABLE_EVAL_TERM_IDS, false);
-            saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
-            saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
-            saveConfig(EvalSettings.EVAL_USE_DATE_TIME, false);
-            saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
-            saveConfig(EvalSettings.EVAL_USE_VIEW_DATE, false);
-            saveConfig(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
-            saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 8);
-            saveConfig(EvalSettings.ENABLE_EVAL_EARLY_CLOSE, true);
-            saveConfig(EvalSettings.ENABLE_EVAL_REOPEN, true);
-            saveConfig(EvalSettings.ENABLE_MY_TOPLINKS, true);
-            saveConfig(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
-
-            // REPORTING
-            saveConfig(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
-            saveConfig(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT, true);
-            saveConfig(EvalSettings.ENABLE_PDF_REPORT_BANNER, false);
-            saveConfig(EvalSettings.ENABLE_PDF_REPORT_EXPORT, false);
-            saveConfig(EvalSettings.ENABLE_XLS_REPORT_EXPORT, true);
-
-            // INSTITUTIONAL SPECIFIC
-            saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
-            saveConfig(EvalSettings.ENABLE_IMPORTING, false);
-            saveConfig(EvalSettings.ENABLE_ADHOC_GROUPS, true);
-            saveConfig(EvalSettings.ENABLE_ADHOC_USERS, true);
-            saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
-            saveConfig(EvalSettings.DISABLE_ITEM_BANK, false);
-            saveConfig(EvalSettings.DISABLE_QUESTION_BLOCKS, false);
-            saveConfig(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS, false);
-
-            // Default email settings
-            saveConfig(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);
-            saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 0);
-            saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
-            saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
-            saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
-            saveConfig(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
-            saveConfig(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, 0);
-            saveConfig(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS, 300);
-            saveConfig(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION, false);
-
-            // Default batch performance metrics settings
-            saveConfig(EvalSettings.LOG_PROGRESS_EVERY, 0);
-
-            log.info("Preloaded " + dao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
+    	if( evalConfigMap.size() == 0){
+    		populateEvalConfig();
+    	}
+        List<EvalConfig> configInDB = dao.findAll(EvalConfig.class);
+        
+        //convert DB configs into maps with NAME as key
+        Map<String, String> configInDBMap = new HashMap<String, String>();
+        for ( EvalConfig config : configInDB){
+        	configInDBMap.put(config.getName(), config.getValue());
         }
-    }
+        
+        int countNewConfigs = 0;
+        Iterator evalConfigMapIt = evalConfigMap.entrySet().iterator();
+        while (evalConfigMapIt.hasNext()) {
+            Map.Entry<String, Object> configuration = (Map.Entry<String, Object>) evalConfigMapIt.next();
+            String configName = configuration.getKey();
+            Object configValue = configuration.getValue();
+            
+            if(! configInDBMap.containsKey(SettingsLogicUtils.getName(configName))){
+            	//configuration is not in the DB, lets add it
+            	if( configValue != null){
+	            	if ( configValue.getClass().equals(Integer.class) || configValue.getClass().equals(String.class)){
+	            		saveConfig(configName, configValue.toString());
+	            	}else if ( configValue.getClass().equals(Boolean.class) ){
+	            		saveConfig(configName, Boolean.parseBoolean(configValue.toString()) ? "true" : "false");
+	            	}
+            	}
+            	countNewConfigs++;
+            }
+        }
 
-    private void saveConfig(String key, boolean value) {
-        saveConfig(key, value ? "true" : "false");
-    }
-
-    private void saveConfig(String key, int value) {
-        saveConfig(key, Integer.toString(value));
+        if( countNewConfigs > 0){
+        	log.info("Preloaded " + countNewConfigs + " evaluation system EvalConfig items");
+        }
     }
 
     private void saveConfig(String key, String value) {
@@ -430,6 +381,7 @@ public class PreloadDataImpl {
     }
     
     private void populateEmailTemplates(){
+    	defaultEmailTempates.clear();
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
                 EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_CREATED));
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
@@ -447,6 +399,115 @@ public class PreloadDataImpl {
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 
                 EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, 
                 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
+    }
+    
+    private void populateEvalConfig(){
+    	evalConfigMap.clear();
+    	
+    	// Default Instructor system settings
+    	evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
+        evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
+        evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
+        // NOTE: leave this out to default to use the setting in the evaluation
+        evalConfigMap.put(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_REQUIRED);
+
+        evalConfigMap.put(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
+
+        // Default Student settings
+        evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
+        evalConfigMap.put(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
+        evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
+
+        // Default Admin settings
+        evalConfigMap.put(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);
+        evalConfigMap.put(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
+        evalConfigMap.put(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);
+
+        // default hierarchy settings
+        evalConfigMap.put(EvalSettings.DISPLAY_HIERARCHY_OPTIONS, false);
+        evalConfigMap.put(EvalSettings.DISPLAY_HIERARCHY_HEADERS, false);
+
+        // Default general settings
+        String helpdeskEmail = externalLogic.getConfigurationSetting("support.email", "helpdesk@institution.edu");
+        evalConfigMap.put(EvalSettings.FROM_EMAIL_ADDRESS, helpdeskEmail);
+        
+        evalConfigMap.put(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 3);
+        evalConfigMap.put(EvalSettings.ENABLE_NOT_AVAILABLE, true);
+        evalConfigMap.put(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
+        evalConfigMap.put(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
+        evalConfigMap.put(EvalSettings.USE_EXPERT_TEMPLATES, true);
+        evalConfigMap.put(EvalSettings.USE_EXPERT_ITEMS, true);
+        evalConfigMap.put(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
+        evalConfigMap.put(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
+
+        evalConfigMap.put(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
+        evalConfigMap.put(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
+        evalConfigMap.put(EvalSettings.ENABLE_EVAL_TERM_IDS, false);
+        evalConfigMap.put(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
+        evalConfigMap.put(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
+        evalConfigMap.put(EvalSettings.EVAL_USE_DATE_TIME, false);
+        evalConfigMap.put(EvalSettings.EVAL_USE_STOP_DATE, false);
+        evalConfigMap.put(EvalSettings.EVAL_USE_VIEW_DATE, false);
+        evalConfigMap.put(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
+        evalConfigMap.put(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 8);
+        evalConfigMap.put(EvalSettings.ENABLE_EVAL_EARLY_CLOSE, true);
+        evalConfigMap.put(EvalSettings.ENABLE_EVAL_REOPEN, true);
+        evalConfigMap.put(EvalSettings.ENABLE_MY_TOPLINKS, true);
+        evalConfigMap.put(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
+
+        // REPORTING
+        evalConfigMap.put(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
+        evalConfigMap.put(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT, true);
+        evalConfigMap.put(EvalSettings.ENABLE_PDF_REPORT_BANNER, false);
+        evalConfigMap.put(EvalSettings.ENABLE_PDF_REPORT_EXPORT, false);
+        evalConfigMap.put(EvalSettings.ENABLE_XLS_REPORT_EXPORT, true);
+
+        // INSTITUTIONAL SPECIFIC
+        evalConfigMap.put(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
+        evalConfigMap.put(EvalSettings.ENABLE_IMPORTING, false);
+        evalConfigMap.put(EvalSettings.ENABLE_ADHOC_GROUPS, true);
+        evalConfigMap.put(EvalSettings.ENABLE_ADHOC_USERS, true);
+        evalConfigMap.put(EvalSettings.ENABLE_ITEM_COMMENTS, true);
+        evalConfigMap.put(EvalSettings.DISABLE_ITEM_BANK, false);
+        evalConfigMap.put(EvalSettings.DISABLE_QUESTION_BLOCKS, false);
+        evalConfigMap.put(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS, false);
+
+        // Default email settings
+        evalConfigMap.put(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, 0);
+        evalConfigMap.put(EvalSettings.EMAIL_BATCH_SIZE, 0);
+        evalConfigMap.put(EvalSettings.EMAIL_WAIT_INTERVAL, 0);
+        evalConfigMap.put(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+        evalConfigMap.put(EvalSettings.LOG_EMAIL_RECIPIENTS, false);
+        evalConfigMap.put(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, false);
+        evalConfigMap.put(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, 0);
+        evalConfigMap.put(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS, 300);
+        evalConfigMap.put(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION, false);
+
+        // Default batch performance metrics settings
+        evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);
+        
+        log.info("Found " + evalConfigMap.size() + " configurations to try run.");
+    	
+    }
+    
+    /**
+     * Gets the number of configuration in the database that are defined as preloadable configs
+     */
+    private long countDefaultEvalConfigInDB(){
+    	long defaultConfigCount = 0;
+    	if (evalConfigMap.size() == 0){
+    		populateEvalConfig();
+    	}
+    	
+    	//get default configs and trim their class definer
+    	String[] configNames = evalConfigMap.keySet().toArray( new String[evalConfigMap.keySet().size()]);
+    	for (int i = 0; i < configNames.length; i++){
+    		configNames[i] = SettingsLogicUtils.getName(configNames[i]);
+    	}
+    	
+    	Search search = new Search(new Restriction("name", configNames));
+    	defaultConfigCount = dao.countBySearch(EvalConfig.class, search);
+    	return defaultConfigCount;
     }
 
 }
