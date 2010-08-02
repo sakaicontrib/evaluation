@@ -320,10 +320,8 @@ public class AdministrateProducer implements ViewComponentProducer {
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
         //Number of days old can an eval be and still be recently closed
-        makeSelect(form, "general-eval-closed-still-recent",
-                EvalToolConstants.PULLDOWN_INTEGER_VALUES,
-                EvalToolConstants.PULLDOWN_INTEGER_VALUES,
-                EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, false); 
+        Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+        UIInput.make(form, "general-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
         UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note");
 
         //Minimum time difference (in hours) between the start date and due date

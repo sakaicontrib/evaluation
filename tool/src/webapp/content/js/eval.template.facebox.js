@@ -100,7 +100,7 @@ var evalTemplateFacebox = (function() {
                 pageTitle = evalTemplateUtils.messageLocator("previewitem.page.title");
             }else
             if(page_type === evalTemplateUtils.pages.modify_block_page){
-                pageTitle = evalTemplateUtils.messageLocator("modifyblock-page-title");
+                pageTitle = evalTemplateUtils.messageLocator("modifyblock.page.title");
             }else
             if(page_type === evalTemplateUtils.pages.modify_item_page){
                 pageTitle = evalTemplateUtils.messageLocator("modifyitem.page.title");
