@@ -16,7 +16,6 @@
 <script type="text/javascript" language="JavaScript" src="../js/fluid/Fluid.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/facebox/facebox.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/reorderUtils.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>        
 <script type="text/javascript" language="JavaScript" src="../js/evalAjax.js"></script>
@@ -90,7 +89,7 @@
                 <input rsf:id="item-classification" type="hidden" name="item-classification" value="0"/>
              <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
                 <label rsf:id="block-check-branch" class="itemCheckbox" for="cb0">
-                <input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();"
+                <input rsf:id="block-checkbox" type="checkbox" 
 												title="Mark item to use in block" id="cb0" />
                 &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
                 <select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder" title="Choose a new order for this item">
@@ -146,7 +145,7 @@
                 <input rsf:id="item-classification" type="hidden" name="item-classification" value="0"/>
               <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
                 <label rsf:id="block-check-branch" class="itemCheckbox" for="cb1">
-                <input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();"
+                <input rsf:id="block-checkbox" type="checkbox" 
 												title="Mark item to use in block" id="cb1" />
                 &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
                 <select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder" title="Choose a new order for this item">
@@ -197,7 +196,7 @@
               <input rsf:id="template-item-id" type="hidden" name="hidden-item-id" value="2" id="item-row::2:hidden-item-id" />
               <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
                 <label rsf:id="block-check-branch" class="itemCheckbox" for="cb2">
-                <input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();"
+                <input rsf:id="block-checkbox" type="checkbox" 
 												title="Mark items to use in block" id="cb2" />
                 &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
                 <select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder" title="Choose a new order for this item">
@@ -233,8 +232,7 @@
         <div class="itemOperations" id="blockInputs">
           <form rsf:id="createBlockForm" id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html" class="inlineForm">
             <input type="hidden" name="templateItemIds"/>
-            <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="button" value="Create Group" disabled="disabled"
-									onclick="extractSelectedItems(this);" />
+            <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="button" value="Create Group" disabled="disabled" />
           </form>
           <span rsf:id="blockInstructions"class="instruction"> Check the boxes next to a set of items and click Create Block to make a block with the chosen items </span> </div>
         <div class="cleaner">&nbsp;</div>

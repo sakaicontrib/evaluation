@@ -162,6 +162,11 @@ $(document).bind('activateControls.templateItems', function() {
 
     $('a[rel=childEdit]').childEdit();
 
+    //bind grouping/block button
+    $('#createBlockBtn').click(evalTemplateLoaderEvents.block.extractSelectedItems);
+    //bind groupable checkboxes
+    $('input[name$=block-checkbox]').click(evalTemplateLoaderEvents.block.countCheckBox);
+
     evalTemplateLoaderEvents.bindGroupParentTextControls();
 
     refreshSort();
