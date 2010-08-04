@@ -4,7 +4,7 @@
 var evalTemplateUtils = (function() {
 
     //Configurable private variables
-    var canDebug = typeof window.console !== "undefined",
+    var canDebug = typeof window.console.firebug !== "undefined",
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
             messgeBundlePath = "/direct/eval-resources/message-bundle.json",
