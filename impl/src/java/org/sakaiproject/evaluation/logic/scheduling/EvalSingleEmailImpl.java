@@ -101,16 +101,12 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		String streamUrl = null, entryUrl = null, entryTag = null, payload = null;
-		String startTime = "";
-		String endTime = ""; 
 		Map<String, String> metrics = new HashMap<String, String>();
-		DateFormat formatter = new SimpleDateFormat("h:mm:ss a");
+		DateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
 		try {
 			if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() was called by the JobScheduler.");
 			// job start
-			Date startDate = new Date(System.currentTimeMillis());
-			
-			
+			long startTime = System.currentTimeMillis();
 			try {
 				// CREATED
 				streamUrl = evaluationService.newTaskStatusStream(EMAIL_STREAM_TAG);
@@ -129,7 +125,7 @@ public class EvalSingleEmailImpl implements Job{
 						log.info("EvalSingleEmailImpl.execute() found no active evaluations.");
 					
 					// FINISHED
-					reportFinished(streamUrl, startDate,
+					reportFinished(streamUrl, startTime,
 							formatter, "found no active evaluations.");
 					return;
 				}
@@ -137,7 +133,7 @@ public class EvalSingleEmailImpl implements Job{
 				log.error("EvalSingleEmailImpl.execute() settings are inconsistent with job execution.");
 				
 				// FINISHED
-				reportFinished(streamUrl, startDate,
+				reportFinished(streamUrl, startTime,
 						formatter, "settings are inconsistent with job execution.");
 				return;
 			}
@@ -209,7 +205,7 @@ public class EvalSingleEmailImpl implements Job{
 			if (logEmailRecipients.booleanValue()) logEmailRecipients(recipients, FIRST_NOTIFICATION);
 	
 			// FINISHED
-			reportFinished(streamUrl, startDate, formatter, payload);
+			reportFinished(streamUrl, startTime, formatter, payload);
 			
 			if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() finished.");
 		} catch (Exception e) {
@@ -219,34 +215,6 @@ public class EvalSingleEmailImpl implements Job{
 			
 			// TODO move // FINISHED here
 		}
-	}
-	
-	/**
-	 * Send reminders to take active evaluations previously announced
-	 * 
-	 * @param streamUrl
-	 * @param formatter
-	 * @return
-	 */
-	private Map<String, String> runReminderStep(String streamUrl, DateFormat formatter) {
-		if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() - today is a reminder day.");
-		Map<String, String> metrics = new HashMap<String, String>();
-		float seconds = 0.0f;
-		Integer count = new Integer(0);
-		long start = System.currentTimeMillis();
-		Date startDate = new Date(start);
-		String startTime = formatter.format(startDate);
-		if(streamUrl == null) {
-			log.error(this + ".runReminderStep() - TaskStatusServer streamUrl is null.");
-		}
-		String[] recipients = evalEmailsLogic.sendEvalReminderSingleEmail(streamUrl);
-		count = new Integer(recipients.length);	
-		long end = System.currentTimeMillis();
-		Date endDate = new Date(end);
-		String endTime = formatter.format(startDate);
-		seconds = (end - start) / 1000;
-		setMetrics(metrics, seconds, count, startTime, endTime);
-		return metrics;
 	}
 
 	/**
@@ -279,21 +247,45 @@ public class EvalSingleEmailImpl implements Job{
 		 * 'first announcement sent' won't trigger a reminder
 		 */
 		Map<String, String> metrics = new HashMap<String, String>();
-		float seconds = 0.0f;
 		Integer count = new Integer(0);
-		long start = System.currentTimeMillis();
-		Date startDate = new Date(start);
-		String startTime = formatter.format(startDate);
-		if(streamUrl == null) { 
-			log.error(this + ".runAnnouncementStep() - TaskStatusServer streamUrl is null.");
-		}
+		long startTime = System.currentTimeMillis();
+		Date d = new Date(startTime);
+		String start = formatter.format(d);
+		if(streamUrl == null) log.error(this + ".runAnnouncementStep() - TaskStatusServer streamUrl is null.");
 		String[] recipients = evalEmailsLogic.sendEvalAvailableSingleEmail(streamUrl);
 		count = new Integer(recipients.length);
-		long end = System.currentTimeMillis();
-		Date endDate = new Date(end);
-		String endTime = formatter.format(startDate);
-		seconds = (end - start) / 1000;
-		setMetrics(metrics, seconds, count, startTime, endTime);
+		long endTime = System.currentTimeMillis();
+		d = new Date(endTime);
+		String end = formatter.format(d);
+		long diff = endTime - startTime;
+		float seconds = (float)diff/1000;
+		setMetrics(metrics, seconds, count, start, end);
+		return metrics;
+	}
+	
+	/**
+	 * Send reminders to take active evaluations previously announced
+	 * 
+	 * @param streamUrl
+	 * @param formatter
+	 * @return
+	 */
+	private Map<String, String> runReminderStep(String streamUrl, DateFormat formatter) {
+		if (log.isInfoEnabled()) log.info("EvalSingleEmailImpl.execute() - today is a reminder day.");
+		Map<String, String> metrics = new HashMap<String, String>();
+		Integer count = new Integer(0);
+		long startTime = System.currentTimeMillis();
+		Date d = new Date(startTime);
+		String start = formatter.format(d);
+		if(streamUrl == null) log.error(this + ".runReminderStep() - TaskStatusServer streamUrl is null.");
+		String[] recipients = evalEmailsLogic.sendEvalReminderSingleEmail(streamUrl);
+		count = new Integer(recipients.length);
+		long endTime = System.currentTimeMillis();
+		d = new Date(endTime);
+		String end = formatter.format(d);
+		long diff = endTime - startTime;
+		float seconds = (float)diff/1000;
+		setMetrics(metrics, seconds, count, start, end);
 		return metrics;
 	}
 
@@ -304,8 +296,13 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	private void reportRunning(String streamUrl) {
 		if(streamUrl != null) {
-			String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
-					null, TaskStatusStandardValues.RUNNING.toString(), null);
+			try {
+				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl,
+						URLEncoder.encode("no value", "UTF-8"), TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode("no value", "UTF-8"));
+			}
+			catch(Exception e) {
+				log.error(this + ".reportRunning() " + e);
+			}
 		}
 		else {
 			log.error(this + ".reportRunning() - TaskStatusServer returned a null streamUrl.");
@@ -315,21 +312,23 @@ public class EvalSingleEmailImpl implements Job{
 	/**
 	 * Mark the end of the job noting its duration
 	 * 
-	 * @param streamUrl
+	 * @param streamUrl the URL of task status server
+	 * @param startTime the time this job started
 	 */
-	private void reportFinished(String streamUrl, Date startDate,
+	private void reportFinished(String streamUrl, long startTime,
 			DateFormat formatter, String payload) {
 		if(streamUrl != null) {
-			if(startDate != null && formatter != null) {
-				Date endDate = new Date(System.currentTimeMillis());
-				String startTime = formatter.format(startDate);
-				String endTime = formatter.format(endDate);
-				long diff1 = endDate.getTime();
-				long diff2 = startDate.getTime();
-				float seconds = (diff1 - diff2) / 1000;
+			if(formatter != null) {
+				Date d = new Date(startTime);
+				String start = formatter.format(d);
+				long endTime = System.currentTimeMillis();
+				d = new Date(endTime);
+				String end = formatter.format(d);
+				long diff = endTime - startTime;
+				float seconds = (float)diff/1000;
 				String duration = (new Float(seconds)).toString();
 				if(payload == null) {
-					payload = "The email job took " + duration + " seconds to run. It kicked off at " + startTime + " and ended at " + endTime + ".";
+					payload = "The email job took " + duration + " seconds to run. It kicked off at " + start + " and ended at " + end + ".";
 				}
 				String entryTag = "summary";
 				try {
@@ -356,16 +355,14 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	private void reportAnnouncementUsers(String streamUrl, Map<String, String> metrics) {
 		if(streamUrl != null && metrics != null) {
-			if((new Integer((String)metrics.get(COUNT)) > 0)) {
-				String payload = metrics.get(COUNT);
-				String entryTag = "announcementUsers";
-				try {
-					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
-							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
-				}
-				catch(Exception e) {
-					log.error(this + ".reportAnnouncementUsers() " + e);
-				}
+			String payload = metrics.get(COUNT);
+			String entryTag = "announcementUsers";
+			try {
+				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+						entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+			}
+			catch(Exception e) {
+				log.error(this + ".reportAnnouncementUsers() " + e);
 			}
 		}
 		else {
@@ -380,20 +377,18 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	private void reportAnnouncements(String streamUrl, Map<String, String> metrics) {
 		if(streamUrl != null && metrics != null) {
-			if((new Integer((String)metrics.get(COUNT)) > 0)) {
-				String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
-				String entryTag = "announcements";
-				try {
-					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
-							"announcements", TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
-				}
-				catch(Exception e) {
-					log.error(this + ".reportAnnouncements() " + e);
-				}
-				if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took "
-								+ metrics.get(SECONDS) + " seconds to send " + FIRST_NOTIFICATION + "s to "
-								+ metrics.get(COUNT) + " addresses.");
+			String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
+			String entryTag = "announcements";
+			try {
+				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+						"announcements", TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
 			}
+			catch(Exception e) {
+				log.error(this + ".reportAnnouncements() " + e);
+			}
+			if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took "
+							+ metrics.get(SECONDS) + " seconds to send " + FIRST_NOTIFICATION + "s to "
+							+ metrics.get(COUNT) + " addresses.");
 		}
 		else {
 			log.error(this + ".reportAnnouncements() - argument(s) null.");
@@ -407,16 +402,14 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	private void reportReminderUsers(String streamUrl, Map<String, String> metrics) {
 		if(streamUrl != null && metrics != null) {
-			if(new Integer(metrics.get(COUNT)) > 0) {
-				String payload = metrics.get(COUNT); 
-				String entryTag = "reminderUsers";
-				try {
-					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
-							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
-				}
-				catch(Exception e) {
-					log.error(this + ".reportReminderUsers() " + e);
-				}
+			String payload = metrics.get(COUNT); 
+			String entryTag = "reminderUsers";
+			try {
+				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+						entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+			}
+			catch(Exception e) {
+				log.error(this + ".reportReminderUsers() " + e);
 			}
 		}
 		else {
@@ -431,20 +424,18 @@ public class EvalSingleEmailImpl implements Job{
 	 */
 	private void reportReminders(String streamUrl, Map<String, String> metrics) {
 		if(streamUrl != null && metrics != null) {
-			if(new Integer(metrics.get(COUNT)) > 0) {
-				String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
-				String entryTag = "reminders";
-				try {
-					String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
-							entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
-				}
-				catch(Exception e) {
-					log.error(this + ".reportReminders() " + e);
-				}
-				if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took " + metrics.get(SECONDS)
-								+ " seconds to send " + REMINDER + "s to "
-								+ metrics.get(COUNT)  + " addresses.");
-				}
+			String payload = metrics.get(SECONDS) + " seconds from " + metrics.get(START) + " to " + metrics.get(END) + ".";
+			String entryTag = "reminders";
+			try {
+				String entryUrl = evaluationService.newTaskStatusEntry(streamUrl, 
+						entryTag, TaskStatusStandardValues.RUNNING.toString(), URLEncoder.encode(payload, "UTF-8"));
+			}
+			catch(Exception e) {
+				log.error(this + ".reportReminders() " + e);
+			}
+			if (metric.isInfoEnabled()) metric.info("metric EvalSingleEmailImpl.execute() It took " + metrics.get(SECONDS)
+							+ " seconds to send " + REMINDER + "s to "
+							+ metrics.get(COUNT)  + " addresses.");
 		}
 		else {
 			log.error(this + ".reportReminders() - argument(s) null.");
