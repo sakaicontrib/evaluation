@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -63,14 +62,8 @@ public class TakeEvalBean {
     public void setMessages(TargettedMessageList messages) {
         this.messages = messages;
     }
-    
-    private EvalEmailsLogic emailsLogic;
 
-    public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
-		this.emailsLogic = emailsLogic;
-	}
-
-	public String submitEvaluation() {
+    public String submitEvaluation() {
         log.debug("submit evaluation");
         try {
         	Map<String, String[]> selectionOptions = new HashMap<String, String[]>();
@@ -98,8 +91,6 @@ public class TakeEvalBean {
         messages.addMessage(new TargettedMessage("evaluations.take.message", new Object[] {
                 eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) },
                 TargettedMessage.SEVERITY_INFO));
-        
-        emailsLogic.sendEvalCreatedNotifications(eval.getId(), true);
         return "success";
     }
 
