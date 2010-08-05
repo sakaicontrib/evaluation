@@ -88,25 +88,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         String from = getFromEmailOrFail(eval);
         EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_CREATED, evaluationId);
 
-        Map<String, String> replacementValues = new HashMap<String, String>();
-        replacementValues.put("HelpdeskEmail", from);
-
-        // setup the opt-in, opt-out, and add questions variables
-        int addItems = ((Integer) settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).intValue();
-        if (! eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0)) {
-            if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
-                // if eval is opt-in notify instructors that they may opt in
-                replacementValues.put("ShowOptInText", "true");
-            } else if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_OUT)) {
-                // if eval is opt-out notify instructors that they may opt out
-                replacementValues.put("ShowOptOutText", "true");
-            }
-            if (addItems > 0) {
-                // if eval allows instructors to add questions notify instructors they may add questions
-                replacementValues.put("ShowAddItemsText", "true");
-            }
-        }
-
         // get the associated groups for this evaluation
         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, true, null);
 
@@ -149,7 +130,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
 
             // replace the text of the template with real values
-            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -234,16 +215,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                         + evaluationId + ") and group (" + group.evalGroupId + ")");
             }
 
-            // replace the text of the template with real values
-            Map<String, String> replacementValues = new HashMap<String, String>();
-            replacementValues.put("HelpdeskEmail", from);
-
             // choose from 2 templates
             EvalEmailTemplate currentTemplate = emailTemplate;
             if (! studentNotification) {
                 currentTemplate = emailOptInTemplate;
             }
-            EvalEmailMessage em = makeEmailMessage(currentTemplate.getMessage(), currentTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(currentTemplate.getMessage(), currentTemplate.getSubject(), eval, group);
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -288,10 +265,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         if (userIdsSet.size() > 0) {
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 
-            // replace the text of the template with real values
-            Map<String, String> replacementValues = new HashMap<String, String>();
-            replacementValues.put("HelpdeskEmail", from);
-            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
+            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -380,10 +354,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                             + evaluationId + ") and group (" + group.evalGroupId + ")");
                 }
 
-                // replace the text of the template with real values
-                Map<String, String> replacementValues = new HashMap<String, String>();
-                replacementValues.put("HelpdeskEmail", from);
-                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
+                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -496,10 +467,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                         + EvalConstants.EMAIL_TEMPLATE_RESULTS + " notification to for available evaluation ("
                         + evaluationId + ") and group (" + evalGroupId + ")");
 
-                // replace the text of the template with real values
-                Map<String, String> replacementValues = new HashMap<String, String>();
-                replacementValues.put("HelpdeskEmail", from);
-                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, replacementValues);
+                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -580,22 +548,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     }
 
     /**
-     * Builds the email message from a template and a bunch of variables
-     * (passed in and otherwise)
+     * Builds the email message from a template and a bunch of email gobal variables
      * 
      * @param messageTemplate
      * @param subjectTemplate
      * @param eval
      * @param group
-     * @param replacementValues a map of String -> String representing $keys in the template to replace with text values
      * @return the processed message template with replacements and logic handled
      */
     public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
-            EvalGroup group, Map<String, String> replacementValues) {
+            EvalGroup group) {
         // replace the text of the template with real values
-        if (replacementValues == null) {
-            replacementValues = new HashMap<String, String>();
-        }
+    	Map<String, String> replacementValues = new HashMap<String, String>();
         replacementValues.put("EvalTitle", eval.getTitle());
 
         // use a date which is related to the current users locale
@@ -633,6 +597,24 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             groupTitle = group.title;
         }
         replacementValues.put("EvalGroupTitle", groupTitle);
+        
+        replacementValues.put("HelpdeskEmail", getFromEmailOrFail(eval));
+
+        // setup the opt-in, opt-out, and add questions variables
+        int addItems = ((Integer) settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).intValue();
+        if (! eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0)) {
+            if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
+                // if eval is opt-in notify instructors that they may opt in
+                replacementValues.put("ShowOptInText", "true");
+            } else if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_OUT)) {
+                // if eval is opt-out notify instructors that they may opt out
+                replacementValues.put("ShowOptOutText", "true");
+            }
+            if (addItems > 0) {
+                // if eval allows instructors to add questions notify instructors they may add questions
+                replacementValues.put("ShowAddItemsText", "true");
+            }
+        }
 
         // ensure that the if-then variables are set to false if they are unset
         if (! replacementValues.containsKey("ShowAddItemsText")) {
