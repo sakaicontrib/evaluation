@@ -501,12 +501,12 @@ public class SetupEvalBean {
 				String settingInstructor = assignGroupSelectionSettings.getInstructorSetting(currentGroupId);
 				String settingAssistant = assignGroupSelectionSettings.getAssistantSetting(currentGroupId);
 				if( settingInstructor == null || "".equals(settingInstructor)){
-					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, EvalAssignGroup.SELECTION_OPTION_ALL );
+					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, EvalAssignGroup.SELECTION_OPTION_MULTIPLE );
 				}else{
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, settingInstructor );
 				}
 				if( settingAssistant == null || "".equals(settingAssistant)){
-					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_ALL );
+					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_MULTIPLE );
 				}else{
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, settingAssistant );
 				}

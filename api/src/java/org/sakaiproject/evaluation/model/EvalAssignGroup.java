@@ -19,10 +19,10 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Serializable {
 
-    public static final String SELECTION_OPTION_ALL = "all";
+    public static final String SELECTION_OPTION_ALL = "all"; 
     public static final String SELECTION_OPTION_ONE = "one";
     public static final String SELECTION_OPTION_MULTIPLE = "multiple";
-
+    
     public static final String SELECTION_TYPE_INSTRUCTOR = EvalConstants.ITEM_CATEGORY_INSTRUCTOR;
     public static final String SELECTION_TYPE_ASSISTANT = EvalConstants.ITEM_CATEGORY_ASSISTANT;
     public static final String SELECTION_TYPE_ENVIRONMENT = EvalConstants.ITEM_CATEGORY_ENVIRONMENT;

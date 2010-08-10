@@ -113,12 +113,11 @@
 			<div rsf:id="select-instructor-multiple:" class="navPanel" rel="evalinstructorSelector">
 				<fieldset class="itemListNew">
 					<legend rsf:id="msg=takeeval.selection.instructor.header.multiple"> Select Instructors to evaluate:</legend>
-					<span rsf:id="select-instructor-multiple-holder:" />
+					<span rsf:id="select-instructor-multiple-holder:"></span>
 						<div rsf:id="select-instructor-multiple-row:">
 						<input rsf:id="select-instructor-multiple-box" type="checkbox" />
 						<label rsf:id="select-instructor-multiple-label"> Lovemore Nalube</label>
 					</div>
-					<input rsf:id="select-instructor-multiple-input" type="checkbox" />
 				</fieldset>
 			</div>
             <!-- Selector for ONE TA -->
@@ -136,32 +135,29 @@
 			<div rsf:id="select-assistant-multiple:" class="navPanel" rel="evalassistantSelector">
 				<fieldset class="itemListNew">
 					<legend rsf:id="msg=takeeval.selection.assistant.header.multiple"> Select TAs to evaluate:</legend>
-					<span rsf:id="select-assistant-multiple-holder:" />
+					<span rsf:id="select-assistant-multiple-holder:"></span>
 					<div rsf:id="select-assistant-multiple-row:">
 						<input rsf:id="select-assistant-multiple-box" type="checkbox" />
 						<label rsf:id="select-assistant-multiple-label"> Lovemore Nalube</label>
 					</div>
-					<input rsf:id="select-assistant-multiple-input" type="checkbox" />
 				</fieldset>
 			</div>
 			
 			<input rsf:id="selectedPeopleInResponse" type="hidden" value=""/>
 
 			<div rsf:id="categorySection:">
-				<div class="fake-fieldset itemListNew">		
-                        <div class="fieldset">
-                           <div rsf:id="categoryHeader" class="legend"> Group Items: </div>
+                        <fieldset class="itemListNew">
+                           <legend rsf:id="categoryHeader"> Group Items: </legend>
                            <ol class="itemListEval">
                               <li rsf:id="itemrow:nodeSection">
                                   <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
                               </li>
-                              <li rsf:id="itemrow:templateItem" class="evalItemTop">
+                              <li rsf:id="itemrow:templateItem">
                                  <!-- DIV tag for item renderer -->
                                  <div rsf:id="renderedItem:">Items get rendered here</div>
                               </li>
                            </ol>
-						</div>
-					</div>
+						</fieldset>
 					</div>
 
 					<div class="act">
