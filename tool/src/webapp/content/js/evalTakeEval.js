@@ -15,6 +15,12 @@ $(document).ready(function() {
                 instrSel.find("fieldset").css({
                     background:'#fff'
                 });
+                var selectedInstrArray = new Array();
+                $.each(selectedInstrDomArray, function(i, item) {
+                    selectedInstrArray.push($(item).val());
+                });
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row" value="' + selectedInstrArray.toString() + '" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-instructor-multiple%3A%3Aselect-instructor-multiple-row-fossil" value="istring#{takeEvalBean.selectioninstructorIds}" />');
             } else {
                 return  error("LECTURER", instrSel);
             }
@@ -25,7 +31,13 @@ $(document).ready(function() {
                 assSel.find("fieldset").css({
                     background:'#fff'
                 });
-			} else {
+                var selectedassistantArray = new Array();
+                $.each(selectedassistantDomArray, function(i, item) {
+                    selectedassistantArray.push($(item).val());
+                });
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row" value="' + selectedassistantArray.toString() + '" />');
+                $('form').append('<input type="hidden" name="form-branch%3A%3Aselect-assistant-multiple%3A%3Aselect-assistant-multiple-row-fossil" value="istring#{takeEvalBean.selectionassistantIds}" />');
+            } else {
                 return error("TUTOR", assSel);
             }
         }
@@ -303,7 +315,7 @@ $(document).ready(function() {
                 } else
                 {
                     var temp = 'div[name=' + variables.get.shownQuestions()[0] + '].' + variables.get.typeOfBranch() + 'Branch';
-                    render = confirmSelection($(temp).find('.legend').attr('title'));
+                    render = confirmSelection($(temp).find('legend').attr('title'));
                 }
                 if (render) {
                     variables.questionsToHide = variables.get.shownQuestions();
@@ -312,6 +324,8 @@ $(document).ready(function() {
                     //log("Added item " + elemId + " to array. Now Array has this number of elements: " + variables.questionsToShow.length);
                     showQuestions();
                     initClassVars();
+                }else{
+                	elem.find('option[value='+variables.get.shownQuestions()[0]+']').attr('selected', 'selected');
                 }
             }
         });

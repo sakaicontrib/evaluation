@@ -106,6 +106,7 @@ public class EvaluationAssignSelectProducer implements ViewComponentProducer, Vi
          * this should ONLY be read from, do not change any of these fields
          */
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evalId);
+        String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
         
         //do a check for the Header
 		UIMessage.make(tofill, "title", (isInstructor ? "assignselect.instructors.page.header" : "assignselect.tas.page.header"),
@@ -121,7 +122,11 @@ public class EvaluationAssignSelectProducer implements ViewComponentProducer, Vi
 	                    EvalAssignGroup.SELECTION_OPTION_MULTIPLE};    
 	         // radio buttons for the INSTRUCTOR selection options
 	         if(isInstructor){
-	            String savedSettingInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, null, evaluation);
+	            String savedSettingInstructor = getEvalSelectionSettings(evaluation, EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, currentEvalState);
+	            //if this is a new eval, default setting is {@link EvalAssignGroup.SELECTION_OPTION_MULTIPLE} EVALSYS-903
+	            if(EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_PARTIAL, true)){
+	            	savedSettingInstructor = EvalAssignGroup.SELECTION_OPTION_MULTIPLE;
+	            }
 	            UISelect selectInstructors = UISelect.make(selectFieldSet, "selectionRadioInstructors", 
 	                    selectValues, 
 	                    new String[] {"evalsettings.selection.instructor.all",
@@ -138,7 +143,7 @@ public class EvaluationAssignSelectProducer implements ViewComponentProducer, Vi
         	}
             // radio buttons for the TA selection options
 	        if(isAssistant){
-	            String savedAssistantInstructor = EvalUtils.getSelectionSetting(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, null, evaluation);
+	            String savedAssistantInstructor = getEvalSelectionSettings(evaluation, EvalAssignGroup.SELECTION_TYPE_ASSISTANT, currentEvalState);
 	            UISelect selectTAs = UISelect.make(selectFieldSet, "selectionRadioTAs", 
 	                    selectValues, 
 	                    new String[] {"evalsettings.selection.ta.all","evalsettings.selection.ta.one","evalsettings.selection.ta.many"},
@@ -171,5 +176,15 @@ public class EvaluationAssignSelectProducer implements ViewComponentProducer, Vi
 	public ViewParameters getViewParameters() {
 		// TODO Auto-generated method stub
 		return new EvalViewParameters();
+	}
+	
+	private String getEvalSelectionSettings(EvalEvaluation evaluation, String selectionTypeInstructor, String currentEvalState){
+		String selection = EvalUtils.getSelectionSetting(selectionTypeInstructor, null, evaluation);
+
+		//if this is a new eval, default setting is {@link EvalAssignGroup.SELECTION_OPTION_MULTIPLE} EVALSYS-903
+        if(EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_PARTIAL, true)){
+        	selection = EvalAssignGroup.SELECTION_OPTION_MULTIPLE;
+        }
+        return selection;
 	}
 }

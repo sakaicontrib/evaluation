@@ -721,7 +721,7 @@ public class EvalUtils {
             throw new IllegalArgumentException("assignGroup and eval cannot both be null");
         }
 
-        String selectionSetting = EvalAssignGroup.SELECTION_OPTION_ALL;
+        String selectionSetting = EvalAssignGroup.SELECTION_OPTION_ALL; 
         if (assignGroup != null) {
             Map<String, String> m = assignGroup.getSelectionOptions();
             String s = m.get(selectionTypeConstant);

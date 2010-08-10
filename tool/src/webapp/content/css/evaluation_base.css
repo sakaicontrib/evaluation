@@ -249,6 +249,9 @@ ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
 .itemListNew{
 	width: 95%;
+	border-color: #eee;
+	border-style: solid;
+	border-width: 2px;
 	padding: .5em;
 	list-style: none
 }
