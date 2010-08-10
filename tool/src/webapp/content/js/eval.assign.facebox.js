@@ -61,6 +61,7 @@ var evalAssignFacebox = (function() {
             origionalFBfunctions.reveal(data, klass);
             //restore left css value
             $('#facebox').css('left', fbCssLeft);
+            resizeFrame(1, 150);
             //bind event handler for FB form buttons
             //bind the close button
             $('#facebox .close').unbind('click');
@@ -74,6 +75,7 @@ var evalAssignFacebox = (function() {
             $('#facebox table').attr('width', 700);
             $('#facebox .body').css('width', 660);
             $('#facebox .header').eq(0).show();
+            resizeFrame(-1, 150);
             return false;
         };
 
@@ -84,6 +86,26 @@ var evalAssignFacebox = (function() {
             }
         };
     };
+
+    function resizeFrame(updown, height) {
+        try {
+            var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
+                frame = parent.document.getElementById(window.name),
+                clientH = "";
+
+            if (frame) {
+                if (updown === -1) {
+                    clientH = document.body.clientHeight;
+                }
+                else {
+                    clientH = document.body.clientHeight + thisHeight; //increasing the height
+                }
+                $(frame).height(clientH);
+            }
+        } catch(e) {
+            evalTemplateUtils.debug.error("Frame resize did not work. Error: %o", e, e);
+        }
+    }
 
 
     return {
