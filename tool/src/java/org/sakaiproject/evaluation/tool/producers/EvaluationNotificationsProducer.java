@@ -110,7 +110,7 @@ public class EvaluationNotificationsProducer implements ViewComponentProducer, V
                     new Object[] {evalGroup.title} );
         }
         UIInternalLink.make(tofill, "evalRespondersLink", UIMessage.make("evalresponders.page.title"),
-                new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluationId, evalGroupId) );
+                new EvalViewParameters(EvaluationRespondersProducer.VIEW_ID, evaluationId, evalGroupId) );
 
         UIVerbatim.make(tofill, "email_templates_fieldhints", UIMessage.make("email.templates.field.names"));
 
