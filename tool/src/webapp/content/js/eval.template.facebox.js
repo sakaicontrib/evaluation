@@ -145,11 +145,22 @@ var evalTemplateFacebox = (function() {
         },
         addItem: function(url) {
             evalTemplateUtils.debug.info("Trying to fetch: %s", url);
+            //Clear current iframe height position
+            evalTemplateUtils.frameScrollHeight = 0;
+            evalTemplateFacebox.clearFacebox(url);
+        },
+        clearFacebox: function(_this){
             //Unbind current reveal event
             $(document).unbind('reveal.facebox');
             //Check for after load type of event to call
             var pageType = undefined,
-                    revealFunction;
+                    revealFunction,
+                    url = null;
+            if ( typeof _this.href === "undefined"){
+                url = _this;
+            }else{
+                url = _this.href;
+            }
             pageType = evalTemplateUtils.getPageType(url);
             if (typeof pageType !== "undefined") {
                 //Bind new reveal event
@@ -157,18 +168,27 @@ var evalTemplateFacebox = (function() {
                     revealFunction = evalTemplateLoaderEvents.modify_item;
                 } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
                     revealFunction = evalTemplateLoaderEvents.modify_template;
-                } else if (pageType === evalTemplateUtils.pages.choose_existing_page) {
-                    //Redirect
-                    window.location = url;
-                    return false;
-                } else if (pageType === evalTemplateUtils.pages.choose_expert_page){
-                    revealFunction = evalTemplateLoaderEvents.choose_expert_category;
+                }else if (pageType === evalTemplateUtils.pages.modify_block_page) {
+                    revealFunction = evalTemplateLoaderEvents.modify_block;
+                } else if (pageType === evalTemplateUtils.pages.preview_item_page){
+                    revealFunction = evalTemplateLoaderEvents.preview_item;
                 }
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
                         revealFunction();
                     }
                 });
+            }
+            if (url !== null && ($(_this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template_page)) {
+                var itemRowBlock = $(_this).parents('.itemRow');
+                evalTemplateData.setCurrentRow(itemRowBlock);
+                evalTemplateFacebox.fbResetClasses();
+                $(_this).parent().parent().parent().parent().attr("class", "editing");
+                $.facebox.settings.elementToUpdate = itemRowBlock;
+            }else{
+                evalTemplateData.setCurrentRow(undefined);
+                evalTemplateFacebox.fbResetClasses();
+                $.facebox.settings.elementToUpdate = null;
             }
             $.facebox({ajax: url});
         }
@@ -196,37 +216,7 @@ var evalTemplateFacebox = (function() {
             $(this).bind('click', function(e) {
                 //Save current iframe height position
                 evalTemplateUtils.frameScrollHeight = e.pageY;
-                //Unbind current reveal event
-                $(document).unbind('reveal.facebox');
-                //Check for after load type of event to call
-                var pageType = undefined,
-                        revealFunction;
-                pageType = evalTemplateUtils.getPageType(this.href);
-                if (typeof pageType !== "undefined") {
-                    //Bind new reveal event
-                    if (pageType === evalTemplateUtils.pages.modify_item_page) {
-                        revealFunction = evalTemplateLoaderEvents.modify_item;
-                    } else if (pageType === evalTemplateUtils.pages.modify_template_page) {
-                        revealFunction = evalTemplateLoaderEvents.modify_template;
-                    }else if (pageType === evalTemplateUtils.pages.modify_block_page) {
-                        revealFunction = evalTemplateLoaderEvents.modify_block;
-                    } else if (pageType === evalTemplateUtils.pages.preview_item_page){
-                        revealFunction = evalTemplateLoaderEvents.preview_item;
-                    }
-                    $(document).bind('reveal.facebox', function() {
-                        if (typeof revealFunction !== "undefined") {
-                            revealFunction();
-                        }
-                    });
-                }
-                if ($(this).attr("rel") === "faceboxGrid" && pageType !== evalTemplateUtils.pages.modify_template_page) {
-                    var itemRowBlock = $(this).parents('.itemRow');
-                    evalTemplateData.setCurrentRow(itemRowBlock);
-                    evalTemplateFacebox.fbResetClasses();
-                    $(this).parent().parent().parent().parent().attr("class", "editing");
-                    $.facebox.settings.elementToUpdate = itemRowBlock;
-                }
-                $.facebox({ajax: this.href});
+                evalTemplateFacebox.clearFacebox(this);
                 return false;
             });
         });
