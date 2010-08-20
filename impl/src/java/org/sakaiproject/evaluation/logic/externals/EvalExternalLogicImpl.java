@@ -177,23 +177,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
    public void setSessionManager(SessionManager sessionManager) {
       this.sessionManager = sessionManager;
    }
-   
-   private EvalSettings settings;
-   public void setSettings(EvalSettings settings) {
-      this.settings = settings;
-   }
 
    private SiteService siteService;
    public void setSiteService(SiteService siteService) {
       this.siteService = siteService;
    }
    
-   /*
-   private TSSClientApi taskStatus;
-   public void setTaskStatus(TSSClientApi taskStatus) {
-	   this.taskStatus = taskStatus;
-   }
-   */
    private TSSClientImpl taskStatus;
    
    private ThreadLocalManager threadLocalManager;
@@ -742,7 +731,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEmail#sendEmailsToAddresses(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, boolean)
     */
-   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions) {
+   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions, String disposition) {
       String exceptionTracker = null;
 
       InternetAddress fromAddress;
@@ -769,7 +758,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          toEmails.add(email);
       }
 
-      return sendEmails(fromAddress, toEmails, subject, message, deferExceptions, exceptionTracker);
+      return sendEmails(fromAddress, toEmails, subject, message, deferExceptions, exceptionTracker, disposition);
    }
    
    /**
@@ -783,16 +772,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     * @return
     */
    private String[] sendEmails(InternetAddress fromAddress, List<String> toEmails, String subject,
-         String message, boolean deferExceptions, String exceptionTracker) {
-      InternetAddress[] replyTo = new InternetAddress[1];
-      List<InternetAddress> listAddresses = new ArrayList<InternetAddress>();
-      for (int i = 0; i < toEmails.size(); i++) {
-         String email = toEmails.get(i);
-         try {
-            InternetAddress toAddress = new InternetAddress(email);
-            listAddresses.add(toAddress);
-         } catch (AddressException e) {
-            if (deferExceptions) {
+         String message, boolean deferExceptions, String exceptionTracker, String disposition) {
+	   if(disposition == null) {
+		   disposition = EvalConstants.EMAIL_DELIVERY_DEFAULT;
+	   }
+	   InternetAddress[] replyTo = new InternetAddress[1];
+	   List<InternetAddress> listAddresses = new ArrayList<InternetAddress>();
+	   for (int i = 0; i < toEmails.size(); i++) {
+		   String email = toEmails.get(i);
+		   try {
+			   InternetAddress toAddress = new InternetAddress(email);
+			   listAddresses.add(toAddress);
+		   } catch (AddressException e) {
+			   if (deferExceptions) {
                exceptionTracker += e.getMessage() + " :: ";
                log.error("Invalid to address: " + email + ", skipping...", e);
                continue;
@@ -802,20 +794,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } 
          }
       }
-      Object[] mailSettings = new Object[6];
-      mailSettings = getSingleEmailSettings();
-      String deliveryOption = (String)mailSettings[1];
       replyTo[0] = fromAddress;
       InternetAddress[] toAddresses = listAddresses.toArray(new InternetAddress[listAddresses.size()]);
       
       //dispose of email by sending, logging, or doing nothing
-      if(EvalConstants.EMAIL_DELIVERY_DEFAULT.equals(deliveryOption) || EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
+      if(EvalConstants.EMAIL_DELIVERY_DEFAULT.equals(disposition) || EvalConstants.EMAIL_DELIVERY_SEND.equals(disposition)) {
     	  emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
       }
-      else if(EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+      else if(EvalConstants.EMAIL_DELIVERY_LOG.equals(disposition)) {
     	  logEmails(fromAddress, toAddresses, subject, message, replyTo);
       }
-      else if(EvalConstants.EMAIL_DELIVERY_NONE.equals(deliveryOption)) {
+      else if(EvalConstants.EMAIL_DELIVERY_NONE.equals(disposition)) {
     	  if(log.isWarnEnabled())
     		  log.warn("Email delivery option is set to 'none'.");
       }
@@ -1277,44 +1266,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          }
       }
       return jobs;
-   }
-   /**
-    * Get email settings used with single email option
-    * 
-    * @param from
-    * @param deliveryOption
-    * @param logEmailRecipients
-    * @param batch
-    * @param wait
-    * @param modulo
-    */
-   private Object[] getSingleEmailSettings() {
-	   Object[] emailSettings = new Object[6];
-		emailSettings[0] = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-	    if (emailSettings[0] == null) {
-	         throw new IllegalStateException("Could not get a from email address from system settings or the evaluation");
-	    }
-	    emailSettings[1] = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
-	    if (emailSettings[1] == null) {
-	         throw new IllegalStateException("Could not get the delivery option from system settings or the evaluation");
-	    }
-	    emailSettings[2] = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-	    if (emailSettings[2] == null) {
-	         throw new IllegalStateException("Could not get logging of email recipients from system settings or the evaluation");
-	    }
-	    emailSettings[3] = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
-	    if (emailSettings[3] == null) {
-	         throw new IllegalStateException("Could not get batch size system settings or the evaluation");
-	    }
-	    emailSettings[4] = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
-	    if (emailSettings[4] == null) {
-	         throw new IllegalStateException("Could not get a wait value from system settings or the evaluation");
-	    }
-	    emailSettings[5] = (Integer) settings.get(EvalSettings.LOG_PROGRESS_EVERY);
-	    if (emailSettings[5] == null) {
-	         throw new IllegalStateException("Could not get a logging interval from system settings or the evaluation");
-	    }
-	    return emailSettings;
    }
    
 	/*

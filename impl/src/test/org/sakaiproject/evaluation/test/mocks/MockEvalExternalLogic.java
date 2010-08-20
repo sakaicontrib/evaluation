@@ -1022,4 +1022,11 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		return null;
 	}
 
+	public String[] sendEmailsToAddresses(String from, String[] to,
+			String subject, String message, boolean deferExceptions,
+			String disposition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

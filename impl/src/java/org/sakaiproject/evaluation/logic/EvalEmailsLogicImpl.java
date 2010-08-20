@@ -97,21 +97,21 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
    // INIT method
    public void init() {
-      log.debug("Init");
-      String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
-     	if(log.isInfoEnabled())
-    		log.info("EvalEmailLogicImpl.init() on " + serverId);
-      //clear email locks on startup
-      List<EvalLock> locks = dao.obtainLocksForHolder(EvalConstants.EMAIL_LOCK_PREFIX, serverId);
-   	if(log.isInfoEnabled())
-		log.info("EvalEmailLogicImpl.init() serverId '" + serverId + "' held " + locks.size() + " locks at startup. ");
-      if(locks != null && !locks.isEmpty()) {
+	   log.debug("Init");
+	   String serverId = commonLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+	   if(log.isInfoEnabled()) log.info("EvalEmailLogicImpl.init() on " + serverId);
+	   
+	   //clear email locks on startup
+	   List<EvalLock> locks = dao.obtainLocksForHolder(EvalConstants.EMAIL_LOCK_PREFIX, serverId);
+	   if(log.isInfoEnabled()) log.info("EvalEmailLogicImpl.init() serverId '" + serverId + "' held " + locks.size() + " locks at startup. ");
+	   if(locks != null && !locks.isEmpty()) {
     	  for(EvalLock lock:locks) {
     		  dao.releaseLock(lock.getName(), externalLogic.getCurrentUserId());
-    		   	if(log.isInfoEnabled())
-    				log.info("EvalEmailLogicImpl.init() Lock '" + lock.getName() + "' held by '" + lock.getHolder() + " was released. ");
+    		  if(log.isInfoEnabled()) log.info("EvalEmailLogicImpl.init() Lock '" + lock.getName() + 
+    		   			"' held by '" + lock.getHolder() + " was released. ");
     	  }
-      }
+	   }
+	   
       //make sure we have the settings
       if(((Integer)settings.get(settings.EMAIL_SEND_QUEUED_REPEAT_INTERVAL)) != null &&
     		  ((Integer)settings.get(settings.EMAIL_SEND_QUEUED_START_INTERVAL)) != null) {
@@ -177,7 +177,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         	 }
         	 
         	 String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-        	 String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+        	 String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
         	 Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
         	 Integer batch = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
         	 Integer wait = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
@@ -196,10 +196,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         	 }
         	 
         	//is there something to do?
-        	 if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
-        	 	&& !logEmailRecipients.booleanValue()) {
-        	 if (log.isDebugEnabled())
-        	 	log.debug(serverId + " runSendEmailTask.run(): EMAIL_DELIVERY_NONE and no logging of email recipients. " +
+        	 if (EvalConstants.EMAIL_DELIVERY_NONE.equals(disposition)) {
+        		 if (log.isDebugEnabled()) log.debug(serverId + " runSendEmailTask.run(): EMAIL_DELIVERY_NONE. " +
         	 			" There is no work to do so quitting.");
         	 	return;
         	 }
@@ -258,11 +256,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                      	//TODO: see CT-719 for an array version of send, which should be faster
                      	//send one email and delete from holding table for loss-less restart behavior
                      	String[] to = new String[]{email.getToAddress()};
-                  		commonLogic.sendEmailsToAddresses(from, to, email.getSubject(), email.getMessage(), deferExceptions);
-                  		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_LOG)) {
-                  			//log email
-                		   log.info(serverId + " runSendEmailTask.run() sent notification: " + email.toString());
-                  		}
+                  		commonLogic.sendEmailsToAddresses(from, to, email.getSubject(), email.getMessage(), deferExceptions, disposition);
                   		dao.delete(email);
                   		if(log.isDebugEnabled())
                 		   log.debug(serverId + " runSendEmailTask.run(): server deleted notification from the email holding table: " +
@@ -302,7 +296,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
       log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
-
+      
+      String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+      Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_CREATED, evaluationId);
@@ -372,13 +368,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, disposition);
          log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
             sentEmails.add(emailAddresses[j]);            
          }
          commonLogic.registerEntityEvent(EVENT_EMAIL_CREATED, eval);
+      }
+      // handle logging of email recipients
+      if(logEmailRecipients) {
+    	  logRecipients(sentEmails);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -391,6 +391,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
       log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
 
+      String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+      Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
       Set<String> userIdsSet = null;
       String message = null;
       boolean studentNotification = true;
@@ -460,13 +462,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(currentTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, disposition);
          log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
             sentEmails.add(emailAddresses[j]);            
          }
          commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
+      }
+      // handle logging of email recipients
+      if(logEmailRecipients) {
+    	  logRecipients(sentEmails);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -478,6 +484,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId) {
 
+	  String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+	  Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
       List<String> sentEmails = new ArrayList<String>();
 
       // get group
@@ -504,7 +512,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
          // send the actual emails for this evalGroupId
-         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, disposition);
          log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          // store sent emails to return
          for (int j = 0; j < emailAddresses.length; j++) {
@@ -512,7 +520,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          }
          commonLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
       }
-
+      // handle logging of email recipients
+      if(logEmailRecipients) {
+    	  logRecipients(sentEmails);
+      }
+      
       return (String[]) sentEmails.toArray(new String[] {});
    }
    
@@ -828,7 +840,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 
 		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-		String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+		String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
 		Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
 		Integer batch = (Integer) settings.get(EvalSettings.EMAIL_BATCH_SIZE);
 		Integer wait = (Integer) settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
@@ -836,7 +848,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		
 		
 		// check there is something to do
-		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_NONE)
+		if (EvalConstants.EMAIL_DELIVERY_NONE.equals(disposition)
 				&& !logEmailRecipients.booleanValue()) {
 			if (log.isWarnEnabled())
 				log.warn("EvalEmailLogicImpl.sendEvalSingleEmail(): EMAIL_DELIVERY_NONE and no logging of email recipients");
@@ -895,17 +907,20 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					String lockName = getLockName(EvalConstants.EMAIL_LOCK_PREFIX);
 	
 					//dispatch email using delivery option
-					if(EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
+					if(EvalConstants.EMAIL_DELIVERY_SEND.equals(disposition)) {
+						// queue outgoing email for delivery across cluster nodes
 						String emailAddress = queueOutgoingEmail(s, subject, message, lockName);
 						sentToAddresses.add(emailAddress);
 					}
-					else if(EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+					else if(EvalConstants.EMAIL_DELIVERY_LOG.equals(disposition)) {
+						// log outgoing email
 						String emailAddress = logOutgoingEmail(from, s, subject, message, lockName);
 						sentToAddresses.add(emailAddress);
 					}
-					else if (EvalConstants.EMAIL_DELIVERY_NONE.equals(deliveryOption)) {
+					else if (EvalConstants.EMAIL_DELIVERY_NONE.equals(disposition)) {
+						// do nothing
 						if(log.isInfoEnabled())
-							log.info("Evaluation email delivery option is " + deliveryOption + ".");
+							log.info("Evaluation email delivery option is " + disposition + ".");
 					}
 			         //TODO commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
 			         
@@ -926,8 +941,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			metric.info("metric  EvalEmailLogicImpl.sendEvalSingleEmail(): total notifications queued " + numProcessed + ".");
 		
 		// handle logging of email recipients
-		if(logEmailRecipients.booleanValue())
+		if(logEmailRecipients.booleanValue()) {
 			logRecipients(sentToAddresses);
+		}
 		if(log.isInfoEnabled())
 			log.info("EvalEmailLogicImpl.sendEvalSingleEmail(): queuing of notifications is done.");
 
@@ -973,9 +989,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		String message = null;
 		String subject = null;
 		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-		String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+		String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
 		String[] sentTo = new String[]{};
-		if(!EvalConstants.EMAIL_DELIVERY_NONE.equals(deliveryOption)) {
+		// if EMAIL_DELIVERY_NONE no submission email is sent
+		if(!EvalConstants.EMAIL_DELIVERY_NONE.equals(disposition)) {
 			Boolean  sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
 			try {
 				EvalUser user = externalLogic.getEvalUserById(externalLogic.getCurrentUserId());
@@ -984,7 +1001,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					Map<String, String> replacementValues = new HashMap<String, String>();
 					String[] sendTo = new String[]{user.email};
 					String name = user.displayName;
-					String toolName = externalLogic.getEvalToolTitle();
 					EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
 					String evalTitle = eval.getTitle();
 					Date date = new Date();
@@ -1002,17 +1018,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						subject = makeEmailMessage(template.getSubject(),
 								replacementValues);
 						to = user.email;
-						if(EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
+						// if EMAIL_DELIVERY_LOG then log submission email
+						if(EvalConstants.EMAIL_DELIVERY_LOG.equals(disposition)) {
 							if(log.isInfoEnabled()) {
 								log.info("Submission Confirmation\nTo: " + to + 
 										"\nFrom: " + from + "\nSubject: " + subject + "\nMessage:\n" + message + "\n\n");
 							}
 						}
-						else if (EvalConstants.EMAIL_DELIVERY_SEND.equals(deliveryOption)) {
-							sentTo = externalLogic.sendEmailsToAddresses(from, sendTo, subject, message, true);
+						else if (EvalConstants.EMAIL_DELIVERY_SEND.equals(disposition)) {
+							sentTo = commonLogic.sendEmailsToAddresses(from, sendTo, subject, message, true, disposition);
 						}
 						else {
-							log.error(this + ".sendEvalSubmissionConfirmationEmail(): invalid delivery option: " + deliveryOption);
+							log.error(this + ".sendEvalSubmissionConfirmationEmail(): invalid delivery option: " + disposition);
 						}
 					}
 				}
@@ -1085,7 +1102,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("sendEvalTaskStatusEmail: subject: " + subject);
 			log.debug("sendEvalTaskStatusEmail: message: " + message);
 		}
-		String[] sentTo = externalLogic.sendEmailsToAddresses(from, sendTo, subject, message, true);
+		String[] sentTo = commonLogic.sendEmailsToAddresses(from, sendTo, subject, message, true, EvalConstants.EMAIL_DELIVERY_SEND);
 	}
  
    /**
@@ -1260,7 +1277,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
       log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
       EvalUtils.validateEmailIncludeConstant(includeConstant);
-
+      String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+      Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_REMINDER, evaluationId);
@@ -1300,7 +1318,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, disposition);
             log.info("EvalEmailLogic reminders sent to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -1308,6 +1326,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
             commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
          }
+      }
+      // handle logging of email recipients
+      if(logEmailRecipients) {
+    	  logRecipients(sentEmails);
       }
 
       return (String[]) sentEmails.toArray(new String[] {});
@@ -1331,7 +1353,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
        log.error("includeEvaluatees Not implemented");
        }
        */
-
+      String disposition = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+      Boolean logEmailRecipients = (Boolean) settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_RESULTS, evaluationId);
@@ -1409,7 +1432,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
             // send the actual emails for this evalGroupId
-            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            String[] emailAddresses = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, disposition);
             log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             // store sent emails to return
             for (int j = 0; j < emailAddresses.length; j++) {
@@ -1418,6 +1441,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             commonLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
          }
       }
+      // handle logging of email recipients
+      if(logEmailRecipients) {
+    	  logRecipients(sentEmails);
+      }
+      
       return (String[]) sentEmails.toArray(new String[] {});
    }
 

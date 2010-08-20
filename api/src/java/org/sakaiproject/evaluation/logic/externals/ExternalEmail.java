@@ -35,9 +35,14 @@ public interface ExternalEmail {
     * @param message the message to send
     * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
     * if false then exceptions are thrown immediately
+    * @param disposition constant from among
+    * 	EvalConstants.EMAIL_DELIVERY_DEFAULT
+    *   EvalConstants.EMAIL_DELIVERY_LOG
+    *   EvalConstants.EMAIL_DELIVERY_NONE
+    *   EvalConstants.EMAIL_DELIVERY_SEND
     * @return an array of email addresses that this message was sent to
     * @throws 
     */
-   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions);
+   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions, String disposition);
 
 }

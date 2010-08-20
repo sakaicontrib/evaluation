@@ -159,10 +159,34 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
     * @param subject the message subject
     * @param message the message to send
     * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
-    * if false then exceptions are thrown immediately
+    * 	if false then exceptions are thrown immediately
+    * @param disposition constant from among
+    *   EvalConstants.EMAIL_DELIVERY_DEFAULT
+    *   EvalConstants.EMAIL_DELIVERY_LOG
+    *   EvalConstants.EMAIL_DELIVERY_NONE
+    *   EvalConstants.EMAIL_DELIVERY_SEND
     * @return an array of email addresses that this message was sent to
     */
-   public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions);
+   public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String disposition);
+   
+   /**
+    * Send emails to a set of addresses (can send to a single user
+    * by specifying an array with one item only)
+    * 
+    * @param from the email address this email appears to come from
+    * @param to the addresses this message should be sent to
+    * @param subject the message subject
+    * @param message the message to send
+    * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
+    * 	if false then exceptions are thrown immediately
+    * @param disposition constant from among
+    * 	EvalConstants.EMAIL_DELIVERY_DEFAULT
+    *   EvalConstants.EMAIL_DELIVERY_LOG
+    *   EvalConstants.EMAIL_DELIVERY_NONE
+    *   EvalConstants.EMAIL_DELIVERY_SEND
+    * @return an array of email addresses that this message was sent to
+    */
+   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions, String disposition);
 
    // SERVER
 

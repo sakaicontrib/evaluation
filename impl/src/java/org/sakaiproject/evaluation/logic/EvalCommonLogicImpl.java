@@ -618,7 +618,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 	}
 
 	public String[] sendEmailsToUsers(String from, String[] toUserIds,
-			String subject, String message, boolean deferExceptions) {
+			String subject, String message, boolean deferExceptions, String disposition) {
 		// handle the list of TO addresses
 		List<EvalUser> l = getEvalUsersByIds(toUserIds);
 		List<String> toEmails = new ArrayList<String>();
@@ -643,13 +643,13 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		}
 
 		return sendEmailsToAddresses(from, toEmails.toArray(new String[] {}),
-				subject, message, deferExceptions);
+				subject, message, deferExceptions, disposition);
 	}
 
 	public String[] sendEmailsToAddresses(String from, String[] to,
-			String subject, String message, boolean deferExceptions) {
+			String subject, String message, boolean deferExceptions, String disposition) {
 		return externalLogic.sendEmailsToAddresses(from, to, subject, message,
-				deferExceptions);
+				deferExceptions, disposition);
 	}
 
 	// ENTITIES
