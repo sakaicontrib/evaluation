@@ -172,6 +172,12 @@ var evalTemplateFacebox = (function() {
                     revealFunction = evalTemplateLoaderEvents.modify_block;
                 } else if (pageType === evalTemplateUtils.pages.preview_item_page){
                     revealFunction = evalTemplateLoaderEvents.preview_item;
+                } else if (pageType === evalTemplateUtils.pages.choose_existing_page) {
+                    //Redirect
+                    window.location = url;
+                    return false;
+                } else if (pageType === evalTemplateUtils.pages.choose_expert_page){
+                    revealFunction = evalTemplateLoaderEvents.choose_expert_category;
                 }
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
