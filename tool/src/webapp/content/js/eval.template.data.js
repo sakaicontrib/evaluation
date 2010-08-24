@@ -120,6 +120,8 @@ var evalTemplateData = (function() {
                                 //bind control actions for new row
                                 //$(document).trigger('activateControls.templateItems');
                                 evalTemplateOrder.initGroupableItems();
+                                //bind groupable checkboxes
+                                $('input[name$=block-checkbox]').click(evalTemplateLoaderEvents.block.countCheckBox);
                                 //evalTemplateSort.updateLabelling();
                                 //evalTemplateSort.updateDropDownMax();
                                 updateControlItemsTotal();
