@@ -202,7 +202,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
         Long evaluationId = evalTakeViewParams.evaluationId;
         if (evaluationId == null) {
             // redirect over to the main view maybe?? (not sure how to do this in RSF)
-            log.error("User ("+currentUserId+") cannot take evaluation, eval id is not set");
+            log.debug("User ("+currentUserId+") cannot take evaluation, eval id is not set");
             throw new IllegalArgumentException("Invalid evaluationId: id must be set and cannot be null, cannot load evaluation");
         }
         String evalGroupId = evalTakeViewParams.evalGroupId;

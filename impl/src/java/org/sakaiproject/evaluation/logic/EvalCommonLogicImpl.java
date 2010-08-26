@@ -319,7 +319,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
 
         if (c == null) {
-            log.error("Could not get group from evalGroupId:" + evalGroupId);
+            log.debug("Could not get group from evalGroupId:" + evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
