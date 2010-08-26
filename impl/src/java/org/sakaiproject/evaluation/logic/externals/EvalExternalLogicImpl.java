@@ -298,7 +298,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         try {
             userId = userDirectoryService.getUserId(username);
         } catch(UserNotDefinedException ex) {
-            log.error("Could not get userId from username: " + username);
+            log.debug("Could not get userId from username: " + username);
         }
         return userId;
     }
@@ -487,7 +487,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         if (c == null) {
-            log.error("Could not get group from evalGroupId:" + evalGroupId);
+            log.debug("Could not get group from evalGroupId:" + evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
@@ -717,7 +717,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             if (email == null || email.equals("")) {
                 if (deferExceptions) {
                     exceptionTracker += "blank or null to address in list ("+i+") :: ";
-                    log.error("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
+                    log.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
                     continue;
                 } else {
                     // die here since we were unable to find this user at all
@@ -752,7 +752,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } catch (AddressException e) {
                 if (deferExceptions) {
                     exceptionTracker += e.getMessage() + " :: ";
-                    log.error("Invalid to address (" + email + "), skipping it, error:("+e+")...");
+                    log.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
                     if (log.isDebugEnabled()) {
                     	e.printStackTrace();
                     }
