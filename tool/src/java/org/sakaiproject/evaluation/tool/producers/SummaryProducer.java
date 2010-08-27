@@ -176,6 +176,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) itEvals.next();
+                
+                // make sure state is up to date http://jira.sakaiproject.org/browse/EVALSYS-1013
+                String evalState = evaluationService.returnAndFixEvalState(eval, true); 
+                // skip evaluations that are in a non-active state
+                if(! EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)){
+                	continue;
+                }
 
                 UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString());
 
