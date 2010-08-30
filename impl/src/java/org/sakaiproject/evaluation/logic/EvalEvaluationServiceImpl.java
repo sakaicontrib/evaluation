@@ -1110,7 +1110,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		if(eid != null) {
 			template = dao.findOneBySearch(EvalEmailTemplate.class, new Search("eid", eid));
 		}
-		unEscapeEmailTemplateHtml(template);
 		return template;
 	}
 
