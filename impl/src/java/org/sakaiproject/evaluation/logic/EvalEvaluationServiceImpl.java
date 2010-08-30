@@ -40,7 +40,6 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
-import org.sakaiproject.util.FormattedText;
 
 
 /**
@@ -935,12 +934,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             throw new IllegalArgumentException("Could not find any default template for type constant: "
                     + emailTemplateTypeConstant);
         }
-        
-        EvalEmailTemplate emailTemplate = (EvalEmailTemplate) l.get(0);
-        
-        unEscapeEmailTemplateHtml(emailTemplate);
-        
-        return emailTemplate;
+        return (EvalEmailTemplate) l.get(0);
     }
 
     public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant) {
@@ -964,7 +958,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         EvalEmailTemplate emailTemplate = null;
         if (emailTemplateId != null) {
             emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
-            unEscapeEmailTemplateHtml(emailTemplate);
         }
 
         if (emailTemplate == null || emailTemplate.getMessage() == null) {
@@ -978,7 +971,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
      */
     public EvalEmailTemplate getEmailTemplate(Long emailTemplateId) {
         EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
-        unEscapeEmailTemplateHtml(emailTemplate);
         return emailTemplate;
     }
 
@@ -1121,18 +1113,5 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		unEscapeEmailTemplateHtml(template);
 		return template;
 	}
-	
-    /**
-     * Unescape the HTML code that may be in an email template subject or message body
-     * http://jira.sakaiproject.org/browse/EVALSYS-994
-     * @param emailTemplate
-     * @return
-     */
-    private void unEscapeEmailTemplateHtml(EvalEmailTemplate emailTemplate){
-        String subject = FormattedText.unEscapeHtml(emailTemplate.getSubject());
-        String message = FormattedText.unEscapeHtml(emailTemplate.getMessage());
-        emailTemplate.setSubject(subject);
-        emailTemplate.setMessage(message);
-    }
 
 }
