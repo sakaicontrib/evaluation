@@ -1516,9 +1516,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
 
-        // cleanup for XSS scripting and strings
-        emailTemplate.setMessage( commonLogic.cleanupUserStrings(emailTemplate.getMessage()) );
-        emailTemplate.setSubject( commonLogic.cleanupUserStrings(emailTemplate.getSubject()) );
+        // DO NOT do cleanup for XSS scripting and strings: EVALSYS-994
 
         // save the template if allowed
         dao.save(emailTemplate);
