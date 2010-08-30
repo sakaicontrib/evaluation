@@ -130,11 +130,6 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         }
 
         UIMessage.make(tofill, "page-title", "admintesteg.page.title");
-        UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), 
-                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-
         UIMessage.make(tofill, "current_test_header", "admintesteg.current.test.header");
         UIMessage.make(tofill, "current_test_user_header", "admintesteg.current.test.user.header");
         UIOutput.make(tofill, "current_test_user", username);
