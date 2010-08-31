@@ -223,6 +223,7 @@ public class BlockRenderer implements ItemRenderer {
                 }
 
                 if (usesNA) {
+                	UIBranchContainer na = UIBranchContainer.make(childRow, "na-parent:");
                     UISelectChoice.make(childRow, "na-input", selectID, scaleLength - 1);
                 }
 
