@@ -518,7 +518,7 @@ label.blockItemLabel:hover{
 .itemDoneCheck{
 }
 .itemDoneCheckShow{
-	background:  url(../images/tick.png) top left  no-repeat;
+	background:  url(../images/tick.png) center left  no-repeat;
 }
 .blockItemHeaderHilite{
 	color:#09C
