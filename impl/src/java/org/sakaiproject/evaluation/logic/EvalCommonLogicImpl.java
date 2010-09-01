@@ -91,7 +91,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (evalGroupsProvider == null) {
             evalGroupsProvider = (EvalGroupsProvider) externalLogic.getBean(EvalGroupsProvider.class);
             if (evalGroupsProvider != null)
-                log.info("EvalGroupsProvider found...");
+                log.debug("EvalGroupsProvider found...");
         } else {
             log.debug("No EvalGroupsProvider found...");
         }
@@ -332,7 +332,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         String location = externalLogic.getCurrentEvalGroup();
         if (location == null) {
             location = NO_LOCATION;
-            log.info("Could not get the current location (we are probably outside the portal), returning the NON-location one: " + location);
+            log.debug("Could not get the current location (we are probably outside the portal), returning the NON-location one: " + location);
         }
         return location;
     }
@@ -401,7 +401,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             }
         }
 
-        if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
+        if (l.isEmpty()) log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
         return l;
     }
 
@@ -520,7 +520,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         // get the groups from external
         l.addAll( externalLogic.getFilteredEvalGroupsForUser(userId, permission, currentSiteId) );
 
-        if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
+        if (l.isEmpty()) log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
         return l;
     }
 
@@ -570,7 +570,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             emails = externalLogic.sendEmailsToAddresses(from, to, subject, message, deferExceptions);
         } else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
             for (String email : emails) {
-                log.info("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+                log.debug("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
             }
         } else {
             log.warn("Delivery NONE: No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
