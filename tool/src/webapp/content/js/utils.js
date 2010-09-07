@@ -18,28 +18,6 @@ evalsys.instrumentBlockItem = function(){
             $(this).addClass('blockItemLabelSelectedNA');
         }
     });
-    $('.blockItemLabel,.blockItemLabelNA').hover(function(e){
-	       var text = $(this).find('span').text();
-	     $('#toolTip').text(text);
-	        var width = $('#toolTip').width();
-	        var pos = $(this).parents('.answerCell').find('.NACell').position();
-	        var reposition = 1;
-	        
-        	if($("div#startPreviewItems").length !== 0){
-				reposition += $("div#startPreviewItems").position().top;
-				reposition  += 30; //adjust a little
-			};
-			
-	        $(this).find('input').attr('title', '');
-	
-	        $('#toolTip').css({
-	            'top': pos.top + reposition,
-	            'left': pos.left - width - 25
-	        });
-	       $('#toolTip').show();
-	}, function(e){
-	      $('#toolTip').hide();
-	});
     
     $('.blockItemLabel,.blockItemLabelNA').each(function(){
         if ($(this).children('input:checked').length == 1) {
