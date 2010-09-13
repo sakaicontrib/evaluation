@@ -85,6 +85,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     public void forceCommit() {
         getHibernateTemplate().flush(); // this should commit the data immediately
+        // trying this to see if it will actually do it -AZ
+        if (getSession().getTransaction() != null) {
+            getSession().getTransaction().commit();
+        } else {
+            getSession().beginTransaction().commit();
+        }
+        // should probably use the PlatformTransactionManager
     }
 
     /* (non-Javadoc)
