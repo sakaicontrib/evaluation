@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -54,7 +53,6 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
-import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -84,21 +82,31 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceCommit()
      */
     public void forceCommit() {
-        getHibernateTemplate().flush(); // this should commit the data immediately
-        // trying this to see if it will actually do it -AZ
+        getHibernateTemplate().flush(); // this should sync the data immediately
+        // do a commit using the current transaction or make a new one
         if (getSession().getTransaction() != null) {
             getSession().getTransaction().commit();
+            getSession().beginTransaction(); // start a new one
         } else {
+            // establish a transaction and then force the commit
             getSession().beginTransaction().commit();
         }
-        // should probably use the PlatformTransactionManager
+        // should probably use the org.springframework.transaction.PlatformTransactionManager
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceRollback()
      */
     public void forceRollback() {
-        getHibernateTemplate().clear();
+        getHibernateTemplate().clear(); // clear pending data
+        // do a rollback using the current transaction or make a new one
+        if (getSession().getTransaction() != null) {
+            getSession().getTransaction().rollback();
+            getSession().beginTransaction(); // start a new one
+        } else {
+            // establish a transaction and then force the rollback
+            getSession().beginTransaction().rollback();
+        }
     }
 
     public void fixupDatabase() {
