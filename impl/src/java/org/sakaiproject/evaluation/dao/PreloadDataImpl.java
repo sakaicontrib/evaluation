@@ -57,8 +57,14 @@ public class PreloadDataImpl {
         this.externalLogic = externalLogic;
     }
 
-	//will need this 
+	/*
+	 * List to hold the default email templates. Gets populated with default templates in method {@link #populateEmailTemplates()}
+	 */
     List<EvalEmailTemplate> defaultEmailTempates = new ArrayList<EvalEmailTemplate>();
+    
+	/*
+	 * List to hold the default configuration settings. Gets populated with default templates in method {@link #populateEvalConfig()}
+	 */
     Map<String, Object> evalConfigMap = new HashMap<String, Object>();
 
     public void preload() {
@@ -80,17 +86,21 @@ public class PreloadDataImpl {
         populateEvalConfig();
         long configDBCount = dao.countAll(EvalConfig.class);
         if (configDBCount <= 0) {
+        	//No config settings found in DB
             preloaded = false;
         } else {
-        	//there are some config settings saved, lets check if these include the ones declared here
+        	//there are some config settings saved, lets check if these include all settings in the evalConfigMap
         	configDBCount = countDefaultEvalConfigInDB();
         	if(configDBCount < evalConfigMap.size()){
+        		//Some (not all) settings in evalConfigMap are in the DB
         		preloaded = false;
-        	}else{          
+        	}else{         
+        		//Get defined email templates for defaultEmailTempates list. Does not load data into DB
 	        	populateEmailTemplates();
 	            long emailTemplateCount = dao.countBySearch(EvalEmailTemplate.class,
 	                    new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
 	            if (emailTemplateCount < defaultEmailTempates.size()) {
+	            	//Either there are no templates loaded or some (not all) templates in defaultEmailTempates are in the DB
 	                preloaded = false;
 	            } else {
 	                int scaleCount = dao.countAll(EvalScale.class);
@@ -115,18 +125,19 @@ public class PreloadDataImpl {
      */
     @SuppressWarnings("unchecked")
 	public void preloadEvalConfig() {
-        // check if there are any EvalConfig items present
+        // check if there are any EvalConfig items present in the defaults map
     	if( evalConfigMap.size() == 0){
     		populateEvalConfig();
     	}
         List<EvalConfig> configInDB = dao.findAll(EvalConfig.class);
         
-        //convert DB configs into maps with NAME as key
+        //convert DB configurations into maps with the Config Name as key
         Map<String, String> configInDBMap = new HashMap<String, String>();
         for ( EvalConfig config : configInDB){
         	configInDBMap.put(config.getName(), config.getValue());
         }
         
+        //Now lets check and make sure that each default config in this file is actually in the DB. Load those that are loaded.
         int countNewConfigs = 0;
         Iterator evalConfigMapIt = evalConfigMap.entrySet().iterator();
         while (evalConfigMapIt.hasNext()) {
@@ -135,7 +146,7 @@ public class PreloadDataImpl {
             Object configValue = configuration.getValue();
             
             if(! configInDBMap.containsKey(SettingsLogicUtils.getName(configName))){
-            	//configuration is not in the DB, lets add it
+            	//this default configuration is not in the DB, lets add it
             	if( configValue != null){
 	            	if ( configValue.getClass().equals(Integer.class) || configValue.getClass().equals(String.class)){
 	            		saveConfig(configName, configValue.toString());
@@ -163,7 +174,7 @@ public class PreloadDataImpl {
     	if ( defaultEmailTempates.size() == 0){
     		populateEmailTemplates();
     	}
-        // check if there are any emailTemplates present
+        // check if there are any emailTemplates present in the DB
     	List<EvalEmailTemplate> currentDefaultsList = dao.findBySearch(EvalEmailTemplate.class,
                 new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
     	
@@ -173,10 +184,12 @@ public class PreloadDataImpl {
     		currentDefaultsMap.put(emailTemplate.getDefaultType(), emailTemplate);
     	}
     	
+    	//Now lets check and make sure that each default template in this file is actually in the DB. Load those that are loaded.
         int count = 0;
         if (count < defaultEmailTempates.size()) {
         	for(EvalEmailTemplate emailTemplate : defaultEmailTempates){
         		if(! currentDefaultsMap.containsKey(emailTemplate.getDefaultType())){
+        			//this default template is not in the DB, lets add it
         			dao.save(emailTemplate);
         			count++;
         		}
@@ -380,6 +393,9 @@ public class PreloadDataImpl {
         return group;
     }
     
+    /**
+     * Default email templates are defined here
+     */
     private void populateEmailTemplates(){
     	defaultEmailTempates.clear();
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
@@ -401,6 +417,9 @@ public class PreloadDataImpl {
                 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
     }
     
+    /**
+     * Default configuration settings are defined here
+     */
     private void populateEvalConfig(){
     	evalConfigMap.clear();
     	
@@ -485,13 +504,11 @@ public class PreloadDataImpl {
 
         // Default batch performance metrics settings
         evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);
-        
-        log.info("Found " + evalConfigMap.size() + " configurations to try run.");
-    	
+            	
     }
     
     /**
-     * Gets the number of configuration in the database that are defined as preloadable configs
+     * Gets the number of configurations in the database that are defined as preloadable configs
      */
     private long countDefaultEvalConfigInDB(){
     	long defaultConfigCount = 0;
