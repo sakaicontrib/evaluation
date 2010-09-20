@@ -299,7 +299,24 @@ public class EvalEmailConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on '${EvalToolTitle}' in the left navigation menu under ${EvalSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
-		
+
+	 /**
+	  * EmailTemplate subject: Default subject for email job completion notification 
+	  */
+	public static final String EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT = "Email Job for Evaluation: ${EvalTitle} has completed\n";
+	
+	/**
+	 * EmailTemplate message setting:
+	 * This is the default template for when the single email per student option is in effect and an evaluation response is outstanding.
+	 * Replaceable strings:<br/>
+	 * ${JobType} - the ScheduledInvocationCommand jobType name for the eval email job.
+	 * ${NumEmailsSent} - the number of emails sent.
+	 */
+	public static final String EMAIL_JOB_COMPLETED_DEFAULT_TEXT = 
+		"The ${JobType} email job has completed. \n\n" +
+		"${NumEmailsSent} emails were sent.\n";
+	
+	
 	/**
 	 * Email text describing where a user should look for the evaluation tool.
 	 *

@@ -256,6 +256,16 @@ public interface EvalSettings {
      */
     public static final String ENABLE_SINGLE_EMAIL_PER_STUDENT = "ENABLE_SINGLE_EMAIL_PER_STUDENT:java.lang.Boolean";
 
+	/**
+	 * CONSTANT: Enable an email to be sent at completion of an evaluation job - {@link Boolean}, default False
+     */
+    public static final String ENABLE_JOB_COMPLETION_EMAIL = "ENABLE_JOB_COMPLETION_EMAIL:java.lang.Boolean";
+    
+	/**
+	 * CONSTANT: Enable a status of which group you are processing in the email reminder job - {@link Boolean}, default False
+     */
+    public static final String ENABLE_REMINDER_STATUS = "ENABLE_REMINDER_STATUS:java.lang.Boolean";
+    
     /**
      * CONSTANT: Frequency of reminders when one email per student is set. - {@link Integer},default 0}
      */
@@ -393,7 +403,9 @@ public interface EvalSettings {
         REQUIRE_COMMENTS_BLOCK,
         USE_ADMIN_AS_FROM_EMAIL,
         USE_EXPERT_ITEMS,
-        USE_EXPERT_TEMPLATES
+        USE_EXPERT_TEMPLATES,
+        ENABLE_JOB_COMPLETION_EMAIL,
+        ENABLE_REMINDER_STATUS
     };
 
     /**

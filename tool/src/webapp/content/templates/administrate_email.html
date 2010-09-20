@@ -29,6 +29,10 @@
                         <input type="text" rsf:id="general-helpdesk-email" id="general-helpdesk-email" />
                     </p>
                     <p class=   "checkbox indnt1">
+					     <input type="checkbox" rsf:id="enable-job-completion-email" />
+					     <label rsf:id="msg=administrate.job.completion.email" for="enable-job-completion-email">Enable sending of job completion email.</label>
+					</p>
+                    <p class=   "checkbox indnt1">
                         <input type="checkbox" rsf:id="general-use-admin-from-email" />
                         <label rsf:id="msg=administrate.use.admin.from.email" for="general-use-admin-from-email">Use evaluation admin email address to send from for notifications (uses the system help address otherwise)</label>
                     </p>
@@ -36,6 +40,10 @@
                         <label rsf:id="msg=controlemail.reminder.defaults" for="default-reminders-frequency-id" class="block">Send reminders... never, daily, etc.</label>
                         <select rsf:id="default-reminders-frequency" id="default-reminders-frequency-id"></select>
                     </p>
+                    <p class=   "checkbox indnt1">
+					     <input type="checkbox" rsf:id="enable-reminder-status" />
+					     <label rsf:id="msg=administrate.enable.reminder.status" for="enable-reminder-status">Enable the job status while reminders are running.</label>
+					</p>
                     <p class=   "longtext indnt1">
                         <label class="block" rsf:id="msg=administrate.email.time.wait.secs" for="eval-time-to-wait-secs">The time in seconds between the creation of an evaluation and the send of the available notification, default 300 (5 mins)</label>
                         <input type="text" rsf:id="eval-time-to-wait-secs" id="eval-time-to-wait-secs" maxlength="5" size="5" value="300" />

@@ -69,6 +69,12 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
                 EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,
                 EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, true); 
         UIInput evalTimeToWaitSecs = AdministrateProducer.makeInput(form, "eval-time-to-wait-secs", EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);
+        
+		/* enable an email to be sent to the admin/helpdesk address when a email job has completed. */
+        AdministrateProducer.makeBoolean(form, "enable-job-completion-email", EvalSettings.ENABLE_JOB_COMPLETION_EMAIL);
+        
+		/* enable the updating of reminder status while remiders are running. */
+        AdministrateProducer.makeBoolean(form, "enable-reminder-status", EvalSettings.ENABLE_REMINDER_STATUS);       
 
         /* one email per course evaluation (default) OR one email per student 
          * having one or more evaluations for which no response has been submitted (UM) */
