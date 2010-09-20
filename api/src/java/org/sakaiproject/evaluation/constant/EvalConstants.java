@@ -604,6 +604,13 @@ public class EvalConstants {
     public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER_SUBJECT = "ConsolidatedReminderSubject";
 
     /**
+     * EmailTemplate type setting:
+     * This identifies a template as the email job completed subject template,
+     * used with the "job-completion-email" notification option
+     */
+    public static final String EMAIL_TEMPLATE_JOB_COMPLETED = "JobCompleted";
+
+    /**
      * Email Delivery option setting:
      * This value send email to the Sakai email system. Use this value when you want to send email to users.
      */

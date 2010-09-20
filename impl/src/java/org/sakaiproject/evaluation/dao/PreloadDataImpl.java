@@ -415,6 +415,10 @@ public class PreloadDataImpl {
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 
                 EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, 
                 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
+    	//job completion email
+    	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_JOB_COMPLETED, EvalEmailConstants.EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT,
+                EvalEmailConstants.EMAIL_JOB_COMPLETED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_JOB_COMPLETED));
+
     }
     
     /**
@@ -501,6 +505,8 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY, 0);
         evalConfigMap.put(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS, 300);
         evalConfigMap.put(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION, false);
+        evalConfigMap.put(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL, false);
+        evalConfigMap.put(EvalSettings.ENABLE_REMINDER_STATUS, false);
 
         // Default batch performance metrics settings
         evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);
