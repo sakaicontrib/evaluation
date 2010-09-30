@@ -27,6 +27,9 @@
     <profiles>
         <profile>
             <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <!-- Sakai dependencies -->
                 <dependency>

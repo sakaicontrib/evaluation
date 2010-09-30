@@ -23,6 +23,9 @@
     <profiles>
         <profile>
             <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <!-- Sakai util -->
                 <dependency>
@@ -69,6 +72,11 @@
                 <dependency>
                     <groupId>org.sakaiproject</groupId>
                     <artifactId>sakai-util-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-scheduler-api</artifactId>
+                    <version>${sakai.version}</version>
                 </dependency>
             </dependencies>
         </profile>

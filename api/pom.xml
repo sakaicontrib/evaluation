@@ -28,6 +28,9 @@
 	<profiles>
 		<profile>
 			<id>full</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>org.sakaiproject</groupId>
