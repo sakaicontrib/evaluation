@@ -78,7 +78,10 @@
             </modules>
         </profile>
         <profile>
-        	<id>sakai2.6</id>
+            <id>sakai2.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>api</module>
                 <module>impl</module>
@@ -87,7 +90,16 @@
             </modules>
         </profile>
         <profile>
-        	<id>sakai2.7</id>
+            <id>sakai2.6</id>
+            <modules>
+                <module>api</module>
+                <module>impl</module>
+                <module>pack</module>
+                <module>tool</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>sakai2.7</id>
             <modules>
                 <module>api</module>
                 <module>impl</module>

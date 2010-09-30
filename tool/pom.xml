@@ -6,7 +6,8 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>1.3-SNAPSHOT</version><!--eval.version-->
+        <version>1.3-SNAPSHOT</version>
+        <!--eval.version-->
     </parent>
     <name>Sakai Evaluation Tool</name>
     <groupId>org.sakaiproject.evaluation</groupId>
@@ -22,123 +23,109 @@
         <rsfutil.version>0.7.4</rsfutil.version>
     </properties>
     <packaging>war</packaging>
-    
-        <profiles>
-    	<profile>
-    		<id>full</id>
-    		<dependencies>
-		        <!-- Sakai dependencies -->
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-authz-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-content-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-entity-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-site-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-tool-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-util-api</artifactId>
-		        </dependency>
 
-		        <!-- Sakai util -->
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-util</artifactId>
-		            <version>${sakai.version}</version>
-		        </dependency>
-		        
-    		</dependencies>
-    	</profile>
-    	<profile>
-    		<id>sakai2.5</id>
-    		<dependencies>
-		        <!-- Sakai dependencies -->
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-authz-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-content-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-entity-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-site-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-tool-api</artifactId>
-		        </dependency>
-		
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-util-api</artifactId>
-		        </dependency>
-
-		        <!-- Sakai util -->
-		        <dependency>
-		            <groupId>org.sakaiproject</groupId>
-		            <artifactId>sakai-util</artifactId>
-		            <version>${sakai.version}</version>
-		        </dependency>
-
-     		</dependencies>
-    	</profile>
-    	<profile>
-    		<id>sakai2.6</id>
-    		<dependencies>
-              <dependency>
-                <groupId>org.sakaiproject.kernel</groupId>
-                <artifactId>sakai-kernel-api</artifactId>
-              </dependency>
-              <dependency>
-                <groupId>org.sakaiproject.kernel</groupId>
-                <artifactId>sakai-kernel-util</artifactId>
-              </dependency>
-    		</dependencies>
-    	</profile>
-    	<profile>
-    		<id>sakai2.7</id>
-    		<dependencies>
-              <dependency>
-                <groupId>org.sakaiproject.kernel</groupId>
-                <artifactId>sakai-kernel-api</artifactId>
-              </dependency>
-              <dependency>
-                <groupId>org.sakaiproject.kernel</groupId>
-                <artifactId>sakai-kernel-util</artifactId>
-              </dependency>
-    		</dependencies>
-    	</profile>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <dependencies>
+                <!-- Sakai dependencies -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-authz-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-content-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-entity-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-site-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-tool-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util-api</artifactId>
+                </dependency>
+                <!-- Sakai util -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.5</id>
+            <dependencies>
+                <!-- Sakai dependencies -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-authz-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-content-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-entity-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-site-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-tool-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util-api</artifactId>
+                </dependency>
+                <!-- Sakai util -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.6</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.7</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
-    
+
 
     <dependencies>
         <!-- Evaluation dependencies -->
@@ -151,11 +138,11 @@
             <groupId>org.sakaiproject.entitybroker</groupId>
             <artifactId>entitybroker-api</artifactId>
         </dependency>
-		
-	    <dependency>
-	      <groupId>org.sakaiproject.entitybroker</groupId>
-	      <artifactId>entitybroker-utils</artifactId>
-	    </dependency>
+
+        <dependency>
+            <groupId>org.sakaiproject.entitybroker</groupId>
+            <artifactId>entitybroker-utils</artifactId>
+        </dependency>
 
         <!-- Servlet dependency -->
         <dependency>
@@ -163,7 +150,7 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
 
-       <!--Apache commons dependencies -->
+        <!--Apache commons dependencies -->
 
         <!-- For Reporting -->
         <dependency>
@@ -222,7 +209,7 @@
             <type>jar</type>
             <!--properties:  war.bundle: true -->
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>3.5-FINAL</version>
@@ -295,26 +282,26 @@
                 </executions>
             </plugin>
             <!-- Compress JavaScript at compile time -->
-		   	<plugin>
-				<groupId>com.mobilvox.ossi.mojo</groupId>
-				<artifactId>maven-js-plugin</artifactId>
-				<version>1.3.1</version>
-				<configuration>
-				  <mergeWarFiles>true</mergeWarFiles>
-				  <classifier>js-compressed</classifier>
-				  <excludes>
-				    <exclude>**/**min.js</exclude>
-				  </excludes>
-				</configuration>
-				<executions>
-				  <execution>
-				    <phase>package</phase>
-				    <goals>
-				      <goal>compress</goal>
-				    </goals>
-				   </execution>
-				 </executions>
-		      </plugin>
+            <plugin>
+                <groupId>com.mobilvox.ossi.mojo</groupId>
+                <artifactId>maven-js-plugin</artifactId>
+                <version>1.3.1</version>
+                <configuration>
+                    <mergeWarFiles>true</mergeWarFiles>
+                    <classifier>js-compressed</classifier>
+                    <excludes>
+                        <exclude>**/**min.js</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
