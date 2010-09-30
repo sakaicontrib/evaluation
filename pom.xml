@@ -32,7 +32,13 @@
     </description>
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
-    <version>1.2.2</version><!--eval.version-->
+    <version>1.3-SNAPSHOT</version><!--eval.version-->
+    <parent>
+        <artifactId>master</artifactId>
+        <groupId>org.sakaiproject</groupId>
+        <version>2.5.4</version>
+        <relativePath>../master/pom.xml</relativePath>
+    </parent>
 
     <properties>
         <hierarchy.version>1.2.5</hierarchy.version>
@@ -40,13 +46,6 @@
         <eb.version>1.3.5</eb.version>
         <sakai.version>2.5.4</sakai.version>
     </properties>
-
-    <parent>
-        <artifactId>master</artifactId>
-        <groupId>org.sakaiproject</groupId>
-        <version>2.5.4</version>
-        <relativePath>../master/pom.xml</relativePath>
-    </parent>
 
     <profiles>
         <profile>
@@ -79,21 +78,39 @@
                 <module>impl/src/ddl</module>
             </modules>
         </profile>
+        <profile>
+        	<id>sakai2.6</id>
+            <modules>
+                <module>api</module>
+                <module>impl</module>
+                <module>pack</module>
+                <module>tool</module>
+            </modules>
+        </profile>
+        <profile>
+        	<id>sakai2.7</id>
+            <modules>
+                <module>api</module>
+                <module>impl</module>
+                <module>pack</module>
+                <module>tool</module>
+            </modules>
+        </profile>
     </profiles>
-
+    
     <!-- handles the management of all related dependencies -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.sakaiproject.evaluation</groupId>
                 <artifactId>sakai-evaluation-api</artifactId>
-                <version>1.2.2</version><!--eval.version-->
+                <version>1.3-SNAPSHOT</version><!--eval.version-->
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.sakaiproject.evaluation</groupId>
                 <artifactId>sakai-evaluation-impl</artifactId>
-                <version>1.2.2</version><!--eval.version-->
+                <version>1.3-SNAPSHOT</version><!--eval.version-->
             </dependency>
             <!-- needed until EB is in the Sakai master dependency management -->
             <dependency>

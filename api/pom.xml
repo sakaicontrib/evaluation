@@ -23,6 +23,67 @@
     <properties>
         <deploy.target>shared</deploy.target>
     </properties>
+    
+    <profiles>
+    	<profile>
+    		<id>full</id>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-util</artifactId>
+		            <!-- Is ${sakai.version} really needed here??  -->
+		            <version>${sakai.version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-api</artifactId>
+		        </dependency>
+		
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.5</id>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-util</artifactId>
+		            <!-- Is ${sakai.version} really needed here??  -->
+		            <version>${sakai.version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-api</artifactId>
+		        </dependency>
+		
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.6</id>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-api</artifactId>
+    			</dependency>
+		        <dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-util</artifactId>
+		        </dependency>
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.7</id>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-api</artifactId>
+    			</dependency>
+		        <dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-util</artifactId>
+		        </dependency>
+    		</dependencies>
+    	</profile>
+    </profiles>
 
     <dependencies>
 
@@ -37,22 +98,12 @@
             <artifactId>entitybroker-api</artifactId>
         </dependency>
 
-        <!-- sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-util</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-api</artifactId>
-        </dependency>
-
+		<!-- sakai dependencies -->
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-scheduler-api</artifactId>
         </dependency>
-
+		        
         <!-- Quartz scheduling -->
         <dependency>
             <groupId>quartz</groupId>

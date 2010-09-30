@@ -22,6 +22,101 @@
         <rsfutil.version>0.7.4</rsfutil.version>
     </properties>
     <packaging>war</packaging>
+    
+        <profiles>
+    	<profile>
+    		<id>full</id>
+    		<dependencies>
+		        <!-- Sakai dependencies -->
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-authz-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-content-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-site-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-tool-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-util-api</artifactId>
+		        </dependency>
+
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.5</id>
+    		<dependencies>
+		        <!-- Sakai dependencies -->
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-authz-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-content-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-entity-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-site-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-tool-api</artifactId>
+		        </dependency>
+		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-util-api</artifactId>
+		        </dependency>
+
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.6</id>
+    		<dependencies>
+              <dependency>
+                <groupId>org.sakaiproject.kernel</groupId>
+                <artifactId>sakai-kernel-api</artifactId>
+              </dependency>
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.7</id>
+    		<dependencies>
+              <dependency>
+                <groupId>org.sakaiproject.kernel</groupId>
+                <artifactId>sakai-kernel-api</artifactId>
+              </dependency>
+    		</dependencies>
+    	</profile>
+    </profiles>
+
+    
 
     <dependencies>
         <!-- Evaluation dependencies -->
@@ -51,37 +146,6 @@
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-util</artifactId>
             <version>${sakai.version}</version>
-        </dependency>
-
-        <!-- Sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-authz-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-content-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-site-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-tool-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util-api</artifactId>
         </dependency>
 
         <!--Apache commons dependencies -->
