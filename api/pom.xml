@@ -102,6 +102,7 @@
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-scheduler-api</artifactId>
+	    <version>${sakai.version}</version>
         </dependency>
 		        
         <!-- Quartz scheduling -->
