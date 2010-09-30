@@ -94,7 +94,14 @@
 		            <artifactId>sakai-util-api</artifactId>
 		        </dependency>
 
-    		</dependencies>
+		        <!-- Sakai util -->
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-util</artifactId>
+		            <version>${sakai.version}</version>
+		        </dependency>
+
+     		</dependencies>
     	</profile>
     	<profile>
     		<id>sakai2.6</id>
@@ -102,6 +109,10 @@
               <dependency>
                 <groupId>org.sakaiproject.kernel</groupId>
                 <artifactId>sakai-kernel-api</artifactId>
+              </dependency>
+              <dependency>
+                <groupId>org.sakaiproject.kernel</groupId>
+                <artifactId>sakai-kernel-util</artifactId>
               </dependency>
     		</dependencies>
     	</profile>
@@ -112,6 +123,11 @@
                 <groupId>org.sakaiproject.kernel</groupId>
                 <artifactId>sakai-kernel-api</artifactId>
               </dependency>
+              <dependency>
+                <groupId>org.sakaiproject.kernel</groupId>
+                <artifactId>sakai-kernel-util</artifactId>
+              </dependency>
+    		</dependencies>
     		</dependencies>
     	</profile>
     </profiles>
@@ -141,14 +157,7 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
 
-        <!-- Sakai util -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
-        <!--Apache commons dependencies -->
+       <!--Apache commons dependencies -->
 
         <!-- For Reporting -->
         <dependency>
