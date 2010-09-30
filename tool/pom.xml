@@ -135,7 +135,6 @@
                 <artifactId>sakai-kernel-util</artifactId>
               </dependency>
     		</dependencies>
-    		</dependencies>
     	</profile>
     </profiles>
 
