@@ -55,6 +55,11 @@
 		            <artifactId>sakai-entity-api</artifactId>
 		        </dependency>
 		
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>sakai-scheduler-api</artifactId>
+			    	<version>${sakai.version}</version>
+		        </dependency>
     		</dependencies>
     	</profile>
     	<profile>
@@ -68,6 +73,12 @@
     				<groupId>org.sakaiproject.kernel</groupId>
     				<artifactId>sakai-kernel-util</artifactId>
 		        </dependency>
+		        <dependency>
+            		<groupId>org.sakaiproject</groupId>
+            		<artifactId>sakai-scheduler-api</artifactId>
+	    		<version>${sakai.version}</version>
+        </dependency>
+		        
     		</dependencies>
     	</profile>
     	<profile>
@@ -81,6 +92,11 @@
     				<groupId>org.sakaiproject.kernel</groupId>
     				<artifactId>sakai-kernel-util</artifactId>
 		        </dependency>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>scheduler-api</artifactId>
+		        </dependency>
+
     		</dependencies>
     	</profile>
     </profiles>
@@ -99,11 +115,6 @@
         </dependency>
 
 		<!-- sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-scheduler-api</artifactId>
-	    <version>${sakai.version}</version>
-        </dependency>
 		        
         <!-- Quartz scheduling -->
         <dependency>
