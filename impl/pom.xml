@@ -6,7 +6,8 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>1.2.2</version><!--eval.version-->
+        <version>1.3-SNAPSHOT</version>
+        <!--eval.version-->
     </parent>
     <name>Sakai Evaluation Impl</name>
     <groupId>org.sakaiproject.evaluation</groupId>
@@ -18,6 +19,167 @@
     <inceptionYear>2006</inceptionYear>
     <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
     <packaging>jar</packaging>
+
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <!-- Sakai util -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-authz-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-component-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-component</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-content-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-email-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-entity-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-site-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-tool-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-user-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-scheduler-api</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.5</id>
+            <dependencies>
+                <!-- Sakai util -->
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-authz-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-component-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-component</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-content-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-email-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-entity-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-site-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-tool-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-user-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-util-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-scheduler-api</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.6</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-component-manager</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject</groupId>
+                    <artifactId>sakai-scheduler-api</artifactId>
+                    <version>${sakai.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.7</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-component-manager</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.scheduler</groupId>
+                    <artifactId>scheduler-api</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <dependencies>
 
@@ -96,68 +258,7 @@
             <version>1.5</version>
         </dependency>
 
-        <!-- Sakai util -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
         <!-- Various Sakai dependencies -->
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-authz-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-component-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-component</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-content-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-email-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-entity-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-scheduler-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-site-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-tool-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-user-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sakaiproject</groupId>
-            <artifactId>sakai-util-api</artifactId>
-        </dependency>
 
         <!-- Apache commons dependencies -->
         <dependency>
