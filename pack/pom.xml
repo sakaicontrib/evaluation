@@ -20,7 +20,7 @@
    <parent>
       <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>1.2.2</version><!--eval.version-->
+      <version>1.3-SNAPSHOT</version><!--eval.version-->
    </parent>
 
    <!-- the components pack should include your dao and logic impl 
