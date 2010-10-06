@@ -5,6 +5,7 @@
 /.springBeans -text
 /.svnignore -text svn_keywords=Date+Revision+Author+URL+Id
 /Evaluation.jws -text
+/README.txt -text
 api/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 api/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=Date+Revision+Author+URL+Id
