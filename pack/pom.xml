@@ -131,7 +131,7 @@
       <scope>provided</scope>
     </dependency>
  
-<!-- Task Stream -->
+<!-- Task Stream 
    <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client-Api</artifactId>
@@ -140,7 +140,7 @@
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client-Impl</artifactId>
     </dependency>
-    
+    -->
   </dependencies>
   <build>
     <resources>

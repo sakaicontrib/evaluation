@@ -21,11 +21,41 @@
   <properties>
     <deploy.target>shared</deploy.target>
   </properties>
+    <profiles>
+    	<profile>
+    		<id>sakai2.6</id>
+    		<activation>
+    			<activeByDefault>true</activeByDefault>
+    		</activation>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-api</artifactId>
+    			</dependency>
+		        <dependency>
+            		<groupId>org.sakaiproject</groupId>
+            		<artifactId>sakai-scheduler-api</artifactId>
+		    		<version>${sakai.version}</version>
+	        	</dependency>
+    		</dependencies>
+    	</profile>
+    	<profile>
+    		<id>sakai2.7</id>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.sakaiproject.kernel</groupId>
+    				<artifactId>sakai-kernel-api</artifactId>
+    			</dependency>
+		        <dependency>
+		            <groupId>org.sakaiproject</groupId>
+		            <artifactId>scheduler-api</artifactId>
+		        </dependency>
+
+    		</dependencies>
+    	</profile>
+    </profiles>
+  
   <dependencies>
-    <dependency>
-      <groupId>org.sakaiproject.kernel</groupId>
-      <artifactId>sakai-kernel-api</artifactId>
-    </dependency>
 <!--org.sakaiprojectsakai-authz-api${sakai.version}-->
 <!-- Apache commons dependencies -->
     <dependency>
@@ -39,20 +69,17 @@
     </dependency>
 <!-- sakai dependencies -->
 <!--org.sakaiprojectsakai-entity-api-->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-scheduler-api</artifactId>
-    </dependency>
 <!-- Quartz scheduling -->
     <dependency>
       <groupId>quartz</groupId>
       <artifactId>quartz</artifactId>
     </dependency>
-  <!-- taskstatus enum -->
+  <!-- taskstatus enum 
      <dependency>
       <groupId>org.sakaiproject.taskstream</groupId>
       <artifactId>TaskStream-Client-Api</artifactId>
     </dependency>
+    -->
   </dependencies>
   <build>
     <sourceDirectory>src/java</sourceDirectory>

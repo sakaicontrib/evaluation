@@ -38,18 +38,30 @@
     <version>2.6-SNAPSHOT</version>
     <relativePath>../master/pom.xml</relativePath>
   </parent>
+  <properties>
+    <tss.client.version>0.1.4</tss.client.version>
+  </properties>
   <profiles>
     <profile>
-      <id>full</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>api</module>
-        <module>impl</module>
-        <module>pack</module>
-        <module>tool</module>
-      </modules>
+    	<id>sakai2.6</id>
+			<activation>
+			  <activeByDefault>true</activeByDefault>
+			</activation>
+        <modules>
+            <module>api</module>
+            <module>impl</module>
+            <module>pack</module>
+            <module>tool</module>
+        </modules>
+    </profile>
+    <profile>
+    	<id>sakai2.7</id>
+        <modules>
+            <module>api</module>
+            <module>impl</module>
+            <module>pack</module>
+            <module>tool</module>
+        </modules>
     </profile>
     <profile>
       <id>tool</id>
@@ -70,7 +82,7 @@
       </modules>
     </profile>
   </profiles>
-<!-- handles the management of all related dependencies -->
+	<!-- handles the management of all related dependencies -->
 
   <dependencyManagement>
     <dependencies>
