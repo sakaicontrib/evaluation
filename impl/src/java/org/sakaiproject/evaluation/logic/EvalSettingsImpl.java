@@ -52,6 +52,7 @@ public class EvalSettingsImpl implements EvalSettings {
     private ConcurrentHashMap<String, EvalConfig> configCache = new ConcurrentHashMap<String, EvalConfig>();
     private HashSet<String> booleanSettings = new HashSet<String>();
 
+    private static final String NULL_VALUE = "NULL";
 
     /**
      * spring init
@@ -98,9 +99,9 @@ public class EvalSettingsImpl implements EvalSettings {
                 // if this boolean is null then make it false instead
                 setting = Boolean.FALSE;
             }
-        } else {
+        } else if (! NULL_VALUE.equals(c.getValue())){
             if (type.equals("java.lang.Boolean")) {
-                setting = new Boolean( c.getValue() );
+            	setting = new Boolean( c.getValue() );
             } else if (type.equals("java.lang.Integer")) {
                 setting = new Integer( c.getValue() );
             } else if (type.equals("java.lang.Float")) {
@@ -123,21 +124,6 @@ public class EvalSettingsImpl implements EvalSettings {
         // retrieve the current setting if it exists
         EvalConfig c = getConfigByName(name, false);
 
-        // unset (clear) this setting by removing the value from the database
-        if (settingValue == null) {
-            if (c != null) {
-                try {
-                    dao.delete(c); // now remove from storage
-                    externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
-                    configCache.put(name, new Null()); // update the cache
-                } catch (Exception e) {
-                    log.error("Could not clear system setting:" + name + ":" + type, e);
-                    return false;
-                }
-            }
-            return true;
-        }
-
         // make sure the type is the one set
         Class<?> typeClass;
         try {
@@ -146,12 +132,19 @@ public class EvalSettingsImpl implements EvalSettings {
             throw new IllegalArgumentException("Invalid class type " + type + " in constant: " + settingConstant, e);
         }
 
-        if ( ! typeClass.isInstance(settingValue) ) {
+        //do not check class type if we a setting a null value
+        if ( ! typeClass.isInstance(settingValue) && ! (settingValue == null || "".equals(settingValue)) ) {
             throw new IllegalArgumentException("Input class type (" + typeClass + ") does not match setting type:" + type);
         }
 
         // create a new setting if needed or update an existing one
-        String value = settingValue.toString();
+        String value = "";
+        if(settingValue == null || "".equals(settingValue)){
+        	value = NULL_VALUE;
+        }else{
+        	value = settingValue.toString();
+        }
+        
         if (c == null) {
             c = new EvalConfig(name, value);
         } else {
