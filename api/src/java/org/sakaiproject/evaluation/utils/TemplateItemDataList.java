@@ -1096,7 +1096,7 @@ public class TemplateItemDataList {
                 }
                 else {
                     // standard handling for single answer items
-                    if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answer.getNumeric())) {
+                    if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answer.getNumeric()) && answer.getNumeric() != null ) {
                         // this numeric answer is not one that should be ignored
                         incrementArraySafely(answer.getNumeric().intValue(), togo);
                     }
