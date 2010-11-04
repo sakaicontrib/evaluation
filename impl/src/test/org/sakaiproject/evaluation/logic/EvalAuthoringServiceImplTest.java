@@ -1172,7 +1172,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)}.
     */
    public void testSaveTemplateItem() {
-	   System.out.println("----> EvalAuthoringServiceImplTest . testSaveTemplateItem()");
       // load up a no items template to work with
       EvalTemplate noItems = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
 
