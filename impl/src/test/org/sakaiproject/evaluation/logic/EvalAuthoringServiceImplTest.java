@@ -1172,12 +1172,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)}.
     */
    public void testSaveTemplateItem() {
+	   System.out.println("----> EvalAuthoringServiceImplTest . testSaveTemplateItem()");
       // load up a no items template to work with
       EvalTemplate noItems = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
 
       // test saving a new templateItem actually creates the linkage in the item and template
       EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
-            EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
+            EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item6, 
             null, EvalConstants.ITEM_CATEGORY_COURSE, 
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             new Integer(3), null, Boolean.FALSE, false, null, null, null);
@@ -1188,10 +1189,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertNotNull( eiTest1.getItem().getTemplateItems() );
       assertNotNull( eiTest1.getTemplate().getTemplateItems() );
       // verify items are there
-      assertEquals( eiTest1.getItem().getId(), etdl.item5.getId() );
+      assertEquals( eiTest1.getItem().getId(), etdl.item6.getId() );
       assertEquals( eiTest1.getTemplate().getId(), noItems.getId() );
       // check if the templateItem is contained in the new sets
-      assertEquals( 4, eiTest1.getItem().getTemplateItems().size() );
+      assertEquals( 2, eiTest1.getItem().getTemplateItems().size() );
       assertEquals( 1, eiTest1.getTemplate().getTemplateItems().size() );
       assertTrue( eiTest1.getItem().getTemplateItems().contains(eiTest1) );
       assertTrue( eiTest1.getTemplate().getTemplateItems().contains(eiTest1) );
@@ -1207,14 +1208,19 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             new Integer(3), null, Boolean.FALSE, false, null, null, null),
             EvalTestDataLoad.ADMIN_USER_ID);
 
-      // test saving valid templateItem with locked item
-      authoringService.saveTemplateItem( new EvalTemplateItem( new Date(), 
-            EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
-            new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-            EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
-            EvalTestDataLoad.MAINT_USER_ID);
-
+      try {
+	      // test saving valid templateItem with locked template
+	      authoringService.saveTemplateItem( new EvalTemplateItem( new Date(), 
+	            EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
+	            new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+	            EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
+	            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
+	            EvalTestDataLoad.MAINT_USER_ID);
+	      fail("Should have thrown exception");
+      } catch(Exception e) {
+    	  assertNotNull(e);
+      }
+      
       // test saving valid templateItem with empty required fields (inherit from item)
       EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
             EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 

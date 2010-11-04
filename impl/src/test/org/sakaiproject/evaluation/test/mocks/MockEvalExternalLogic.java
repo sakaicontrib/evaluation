@@ -854,7 +854,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	}
 
    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message,
-         boolean deferExceptions) {
+         boolean deferExceptions, String disposition) {
       if (from == null || to == null || subject == null || message == null) {
          throw new NullPointerException("All params are required (none can be null)");
       }
@@ -1019,13 +1019,6 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	}
 	
 	public EvalUser getEvalUserByEid(String eid) {
-		return null;
-	}
-
-	public String[] sendEmailsToAddresses(String from, String[] to,
-			String subject, String message, boolean deferExceptions,
-			String disposition) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
