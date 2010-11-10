@@ -320,17 +320,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 	            Collections.sort(unassignedEvalGroups, new ComparatorsUtils.GroupComparatorByTitle());
 	            
 	            //Move current site to top of this list EVALSYS-762.
-	            EvalGroup currentGroup = null;
-	            int count2 = 0, found = 0;
+	            int count2 = 0;
 	            for ( EvalGroup group : unassignedEvalGroups ){
 	            	if ( group.evalGroupId.equals(currentEvalGroupId)){
-	            		currentGroup = group;
-	            		found = count2; // Save current group's list index so later we can remove it
+	            		unassignedEvalGroups.remove(count2);
+                        unassignedEvalGroups.add(0, group);
+                        break;
 	            	}
 	            	count2 ++;
 	            }
-	            unassignedEvalGroups.remove(found);		
-	            unassignedEvalGroups.add(0, currentGroup);
 	            
 				
 	            List<String> assignGroupsIds = new ArrayList<String>();
