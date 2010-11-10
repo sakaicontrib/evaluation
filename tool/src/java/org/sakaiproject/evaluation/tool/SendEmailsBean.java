@@ -35,7 +35,7 @@ public class SendEmailsBean {
     public String evalGroupId;
     public String subject;
     public String message;
-    public String sendToConstant;
+    public String sendTo;
 
     private EvalEmailsLogic emailsLogic;
     public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
@@ -57,7 +57,7 @@ public class SendEmailsBean {
 
         if (EvalUtils.isBlank(subject)
                 || EvalUtils.isBlank(message)
-                || EvalUtils.isBlank(sendToConstant)) {
+                || EvalUtils.isBlank(sendTo)) {
             messages.addMessage( new TargettedMessage("evalnotify.all.required",
                     new Object[] {}, TargettedMessage.SEVERITY_ERROR));
             return "failure";
@@ -67,7 +67,7 @@ public class SendEmailsBean {
         if (evalGroupId != null) {
             evalGroupIds = new String[] {evalGroupId};
         }
-        String[] sent = emailsLogic.sendEmailMessages(message, subject, evaluationId, evalGroupIds, sendToConstant);
+        String[] sent = emailsLogic.sendEmailMessages(message, subject, evaluationId, evalGroupIds, sendTo);
 
         messages.addMessage( new TargettedMessage("evalnotify.sent.mails",
                 new Object[] { sent.length }, TargettedMessage.SEVERITY_INFO));
