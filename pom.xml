@@ -50,6 +50,7 @@
         <profile>
             <id>full</id>
             <activation>
+                <property><name>full</name></property>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
@@ -61,18 +62,27 @@
         </profile>
         <profile>
             <id>tool</id>
+            <activation>
+                <property><name>tool</name></property>
+            </activation>
             <modules>
                 <module>tool</module>
             </modules>
         </profile>
         <profile>
             <id>api</id>
+            <activation>
+                <property><name>api</name></property>
+            </activation>
             <modules>
                 <module>api</module>
             </modules>
         </profile>
         <profile>
             <id>ddl</id>
+            <activation>
+                <property><name>ddl</name></property>
+            </activation>
             <modules>
                 <module>impl/src/ddl</module>
             </modules>
@@ -80,7 +90,7 @@
         <profile>
             <id>sakai2.5</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property><name>sakai2.5</name></property>
             </activation>
             <modules>
                 <module>api</module>
@@ -91,6 +101,9 @@
         </profile>
         <profile>
             <id>sakai2.6</id>
+            <activation>
+                <property><name>sakai2.6</name></property>
+            </activation>
             <modules>
                 <module>api</module>
                 <module>impl</module>
@@ -100,6 +113,9 @@
         </profile>
         <profile>
             <id>sakai2.7</id>
+            <activation>
+                <property><name>sakai2.7</name></property>
+            </activation>
             <modules>
                 <module>api</module>
                 <module>impl</module>
