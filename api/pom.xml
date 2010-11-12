@@ -24,6 +24,9 @@
     <profiles>
     	<profile>
     		<id>sakai2.6</id>
+    		<activation>
+    			<property><name>sakai2.6</name></property>
+    		</activation>
     		<dependencies>
     			<dependency>
     				<groupId>org.sakaiproject.kernel</groupId>
@@ -40,6 +43,7 @@
     		<id>sakai2.7</id>
     		<activation>
     			<activeByDefault>true</activeByDefault>
+    			<property><name>sakai2.7</name></property>
     		</activation>
     		<dependencies>
     			<dependency>
@@ -49,9 +53,8 @@
 		        <dependency>
 		            <groupId>org.sakaiproject.scheduler</groupId>
 		            <artifactId>scheduler-api</artifactId>
-                            <version>${sakai.scheduler.version}</version>
+                    <version>${sakai.scheduler.version}</version>
 		        </dependency>
-
     		</dependencies>
     	</profile>
     </profiles>

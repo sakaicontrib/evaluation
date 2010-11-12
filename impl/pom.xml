@@ -20,6 +20,9 @@
   <profiles>
     	<profile>
     		<id>sakai2.6</id>
+    		<activation>
+    			<property><name>sakai2.6</name></property>
+    		</activation>
     		<dependencies>
     			<dependency>
     				<groupId>org.sakaiproject.kernel</groupId>
@@ -41,6 +44,7 @@
 			    <dependency>
 			      <groupId>org.sakaiproject</groupId>
 			      <artifactId>sakai-coursemanagement-api</artifactId>
+				<version>${sakai.version}</version>
 			    </dependency>
     		</dependencies>
     	</profile>
@@ -48,6 +52,7 @@
     		<id>sakai2.7</id>
     		<activation>
     			<activeByDefault>true</activeByDefault>
+    			<property><name>sakai2.7</name></property>
     		</activation>
     		<dependencies>
     			<dependency>
