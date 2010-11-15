@@ -1112,5 +1112,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		}
 		return template;
 	}
-
+	
+    public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId) {
+    	return null;
+    }
+    
+    
 }

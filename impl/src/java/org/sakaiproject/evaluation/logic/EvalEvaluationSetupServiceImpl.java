@@ -341,8 +341,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         /** OLD WAY / new way is to copy the template when the eval is first saved
         // make sure the template is copied if not in partial state, it is ok to have the original template while in partial state
         if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
-        **/
-        if (isNew) {
+        
+        Nov 2010 -- Adding check for new setting EvalSettings.ENABLE_TEMPLATE_COPYING that is true by 
+        default and allows an instance not to make copies of templates, template-items, items and scales
+        when creating a new template.  http://jira.sakaiproject.org/browse/EVALSYS-863 
+         **/
+        if (isNew && ((Boolean)settings.get(EvalSettings.ENABLE_TEMPLATE_COPYING)).booleanValue()) {
             // copy the template on first time saved - http://jira.sakaiproject.org/jira/browse/EVALSYS-647
             if (template.getCopyOf() == null ||
                     template.isHidden() == false) {
@@ -351,7 +355,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
                 evaluation.setTemplate(copy);
                 template = copy; // set the new template to the template variable
-            }
+	        }
         }
         
         // fill in any default values and nulls here
