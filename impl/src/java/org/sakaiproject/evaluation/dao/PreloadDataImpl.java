@@ -458,6 +458,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.ENABLE_NOT_AVAILABLE, true);
         evalConfigMap.put(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
         evalConfigMap.put(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
+        evalConfigMap.put(EvalSettings.ENABLE_TEMPLATE_COPYING, true);
         evalConfigMap.put(EvalSettings.USE_EXPERT_TEMPLATES, true);
         evalConfigMap.put(EvalSettings.USE_EXPERT_ITEMS, true);
         evalConfigMap.put(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);

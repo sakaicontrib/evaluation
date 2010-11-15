@@ -291,6 +291,7 @@ public class AdministrateProducer implements ViewComponentProducer {
                 sharingLabels, 
                 EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
 
+        makeBoolean(form, "general-template-copying",  EvalSettings.ENABLE_TEMPLATE_COPYING);
         makeBoolean(form, "general-use-date-time",  EvalSettings.EVAL_USE_DATE_TIME);
         makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
         makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 

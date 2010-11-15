@@ -117,6 +117,11 @@ public interface EvalSettings {
     */
    public static final String ENABLE_MY_TOPLINKS = "ENABLE_MY_TOPLINKS:java.lang.Boolean";
    /**
+    * Enable making a copy of a template when saving a new evaluation, this is configured
+    * for the system, and will disable saving an evaluation with a copy of its template
+    */
+   public static final String ENABLE_TEMPLATE_COPYING = "ENABLE_TEMPLATE_COPYING:java.lang.Boolean";
+   /**
      * Enable evaluation taker comments on all non-text answerable items, this is configured
      * on a per item basis, and will disable all comments if turned off
      */
@@ -391,6 +396,7 @@ public interface EvalSettings {
         ENABLE_EVALUATEE_BOX,
         ENABLE_MY_TOPLINKS,
         ENABLE_XLS_REPORT_EXPORT,
+        ENABLE_TEMPLATE_COPYING,
         EVAL_USE_DATE_TIME,
         EVAL_USE_SAME_VIEW_DATES,
         EVAL_USE_STOP_DATE,
