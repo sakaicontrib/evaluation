@@ -317,6 +317,8 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-eval-reopen", EvalSettings.ENABLE_EVAL_REOPEN); 
 
         makeBoolean(form, "general-enable-item-comments", EvalSettings.ENABLE_ITEM_COMMENTS);
+        
+        makeBoolean(form, "general-enable-group-specific-preview", EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
 
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 

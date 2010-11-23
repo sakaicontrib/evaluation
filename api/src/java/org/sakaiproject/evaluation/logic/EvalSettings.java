@@ -191,6 +191,11 @@ public interface EvalSettings {
      * CONSTANT: Display hierarchical nodes names as headers in the take/preview eval views - {@link Boolean}, default False
      */
     public static final String DISPLAY_HIERARCHY_HEADERS = "DISPLAY_HIERARCHY_HEADERS:java.lang.Boolean";
+    
+    /**
+     * CONSTANT: Customize the preview to show labels, titles and names associated with a specific group - {@link Boolean}, default False
+     */
+    public static final String ENABLE_GROUP_SPECIFIC_PREVIEW = "ENABLE_GROUP_SPECIFIC_PREVIEW:java.lang.Boolean";
 
     /**
      * CONSTANT: Allow CSV Export for Reporting - {@link Boolean}, default True
@@ -397,6 +402,7 @@ public interface EvalSettings {
         ENABLE_MY_TOPLINKS,
         ENABLE_XLS_REPORT_EXPORT,
         ENABLE_TEMPLATE_COPYING,
+        ENABLE_GROUP_SPECIFIC_PREVIEW,
         EVAL_USE_DATE_TIME,
         EVAL_USE_SAME_VIEW_DATES,
         EVAL_USE_STOP_DATE,
