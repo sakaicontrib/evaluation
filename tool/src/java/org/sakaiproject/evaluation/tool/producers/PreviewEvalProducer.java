@@ -181,10 +181,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         	}
         }
     	
-    	if(group != null) {
-    		
-    	}
-
         UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
         UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
