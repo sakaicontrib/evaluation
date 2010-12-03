@@ -162,7 +162,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         
         EvalAssignGroup group = null;
         Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
-        if(useGroupSpecificPreview.booleanValue()) {
+        if(useGroupSpecificPreview.booleanValue() && evaluationId != null) {
         	int groupCount = this.evaluationService.countEvaluationGroups(evaluationId, true);
         	if(groupCount == 0) {
         		useGroupSpecificPreview = new Boolean(false);
