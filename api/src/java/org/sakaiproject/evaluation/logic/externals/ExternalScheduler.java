@@ -16,6 +16,8 @@ package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.Date;
 
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 
 
@@ -51,5 +53,14 @@ public interface ExternalScheduler {
     * @return the jobId for the newly created job
     */
    public String createScheduledJob(Date executionDate, Long evaluationId, String jobType);
+   
+   /**
+    * Create and schedule a job using cron-job syntax. 
+    * 
+	* @param cronTrigger
+	* @param jobDetail
+	* @return
+	*/
+   public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail);
 
 }

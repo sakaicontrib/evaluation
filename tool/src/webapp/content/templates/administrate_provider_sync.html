@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="administrate-sync-title">Control Synchronicity of Group Memberships</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css"
+			rel="stylesheet" media="all" />
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css"
+			rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<div class="portletBody">
+			<!-- administrate_provider_sync.html -->
+			<div rsf:id="navIntraTool:" class="navIntraTool"></div>
+			<ul class="breadCrumb">
+				<li style="float: left">
+					<a rsf:id="summary-link" href="summary.html">Summary</a>
+				</li>
+				<li style="float: left">
+					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+				</li>
+				<li class="lastCrumb">
+					<span rsf:id="msg=administrate.sync.breadcrumb.title">Sync Group Members</span>
+				</li>
+			</ul>
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<h3 rsf:id="msg=administrate.sync.page.title">Schedule Synch of Group Members</h3>
+			
+			<form rsf:id="sync-event-form" method="post" action="administrate_provider_sync.html">
+				<fieldset class="visibleFS">
+					<legend rsf:id="msg=administrate.sync.by_event">Sync for specific events</legend>
+					<p class="longtext indnt1">
+						<input type="checkbox" rsf:id="sync-unassigned-on-startup" id="sync-unassigned-on-startup" />
+						<label for="sync-unassigned-on-startup" rsf:id="sync-unassigned-on-startup-note">Sync unassigned on startup</label>
+					</p>
+					<p class="longtext indnt1">
+						<input type="checkbox" rsf:id="sync-on-state-change" id="sync-on-state-change" />
+						<label for="sync-on-state-change" rsf:id="sync-on-state-change-note">Sync when eval state changes</label>
+					</p>
+					<p class="longtext indnt1">
+						<input type="checkbox" rsf:id="sync-on-group-save" id="sync-on-group-save" />
+						<label for="sync-on-group-save" rsf:id="sync-on-group-save-note">Sync on group save</label>
+					</p>
+					<p class="longtext indnt1">
+						<input type="checkbox" rsf:id="sync-on-group-update" id="sync-on-group-update" />
+						<label for="sync-on-group-update" rsf:id="sync-on-group-update-note">Sync on group update</label>
+					</p>
+					<p class="longtext indnt1" rsf:id="sync-select-server-graf:">
+			            <label class="block" rsf:id="sync-select-server-note" for="sync-select-server">Server which handles sync</label>
+			            <select rsf:id="sync-select-server" id="sync-select-server">
+			            </select>
+					</p>
+					<p class="longtext indnt1">
+						<input type="submit" rsf:id="sync-event-submit" />
+					</p>
+				</fieldset>
+			</form>
+			
+			<form rsf:id="sync-cron-form" method="post" action="administrate_provider_sync.html">
+				<fieldset class="visibleFS">
+					<legend rsf:id="msg=administrate.sync.by_time">Sync at specific times</legend>
+					<h4 rsf:id="msg=administrate.sync.cronExpression">Cron</h4>
+					<p class="longtext indnt1">
+						<label class="block" rsf:id="sync-time-note" for="sync-time-id">Cron Expression ?</label>
+						<input rsf:id="sync-time" id="sync-time-id" size="60" type="text" />
+					</p>
+					<h4 rsf:id="msg=administrate.sync.stateList">State List</h4>
+					<p class="longtext indnt1">
+						<input rsf:id="sync-state-partial" id="sync-state-partial-id" type="checkbox" />
+						<label for="sync-state-partial-id" rsf:id="sync-state-partial-note">Not Quite Done</label>
+					</p>
+					<p class="longtext indnt1">
+						<input rsf:id="sync-state-inqueue" id="sync-state-inqueue-id" type="checkbox" />
+						<label for="sync-state-inqueue-id" rsf:id="sync-state-inqueue-note">In A Long Line</label>
+					</p>
+					<p class="longtext indnt1">
+						<input rsf:id="sync-state-active" id="sync-state-active-id" type="checkbox" />
+						<label for="sync-state-active-id" rsf:id="sync-state-active-note">Yup. Working on it.</label>
+					</p>
+					<p class="longtext indnt1">
+						<input rsf:id="sync-state-graceperiod" id="sync-state-graceperiod-id" type="checkbox" />
+						<label for="sync-state-graceperiod-id" rsf:id="sync-state-graceperiod-note">You have more time.</label>
+					</p>
+					<p class="longtext indnt1">
+						<input rsf:id="sync-state-closed" id="sync-state-closed-id" type="checkbox" />
+						<label for="sync-state-closed-id" rsf:id="sync-state-closed-note">Time's UP!</label>
+					</p>
+					<p>
+						<input rsf:id="sync-state-viewable" id="sync-state-viewable-id" type="checkbox" />
+						<label for="sync-state-viewable-id" rsf:id="sync-state-viewable-note">Hear the fat lady sing.</label>
+					</p>
+					<div rsf:id="sync-select-server-div:">
+						<h4 rsf:id="msg=administrate.sync.select.server">Select server</h4>
+						<p class="longtext indnt1">
+				            <label class="block" rsf:id="sync-select-server-note" for="sync-select-server">Server which handles sync</label>
+				            <select rsf:id="sync-select-server" id="sync-select-server">
+				            </select>
+						</p>
+					</div>
+					<p>
+						<input type="submit" rsf:id="sync-cron-submit" value="" />
+					</p>
+				</fieldset>
+			</form>
+			<table rsf:id="trigger-table:">
+				<tr>
+					<th>State List</th>
+					<th>Cron Expression</th>
+					<th>Actions</th>
+					<!-- 
+					<th>Job Group and Job Name</th>
+					<th>Trigger Group and Trigger Name</th>
+					 -->
+				</tr>
+				<tr rsf:id="trigger-row:">
+					<td rsf:id="job-stateList"> </td>
+					<td rsf:id="trigger-cronExpression"> </td>
+					<td>
+						<a rsf:id="delete-job">Bah!</a>
+						<a rsf:id="revise-job">Humbug!</a>
+					</td>
+					<!-- 
+					<td rsf:id="job-name"> </td>
+					<td rsf:id="trigger-name"> </td>
+					 -->
+				</tr>
+			</table>
+			<!-- button for immediate start of sync -->
+			<fieldset class="visibleFS">
+				<form rsf:id="sync-now-form" method="post" action="administrate_provider_sync.html">
+					<input rsf:id="sync-now-submit" type="submit" value="Sync Group Memberships Now" />
+					<span rsf:id="msg=administrate.sync.now">This will start you down the wild wooly
+						path to the process of synchronizing group memberships with the group
+						provider immediately.</span>
+				</form>
+			</fieldset>
+		</div>
+	</body>
+</html>

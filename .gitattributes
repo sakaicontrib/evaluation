@@ -68,6 +68,7 @@ api/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalHierarchyNode.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalScheduledJob.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSync.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -141,6 +142,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSyncImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate-test.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate.cfg.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -194,6 +196,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_ke
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/ProviderSyncBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SendEmailsBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/SetupEvalBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -230,6 +233,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -te
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProviderSyncProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateSearchProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -322,6 +326,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParamete
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameters.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ProviderSyncParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ReportParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/SwitchViewParams.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -442,6 +447,7 @@ tool/src/webapp/content/js/yahoo-calendar-setup.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_email.html -text
+tool/src/webapp/content/templates/administrate_provider_sync.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_search.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id

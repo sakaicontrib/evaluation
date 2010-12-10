@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -575,6 +577,28 @@ public List<EvalGroup> getFilteredEvalGroupsForUser(String arg0, String arg1,
 public boolean isEvalGroupPublished(String evalGroupId) {
 	// TODO Auto-generated method stub
 	return true;
+}
+
+@Override
+public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public Map<String,Map<String, String>> getCronJobs(String jobGroup, String[] propertyNames) {
+	return null;
+}
+
+@Override
+public String getServerId() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public List<String> getServers() {
+	// TODO Auto-generated method stub
+	return null;
 }
 
 }

@@ -24,6 +24,7 @@
       <property name="scheduledInvocationManager"
          ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
       <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
+      <property name="clusterService" ref="org.sakaiproject.cluster.api.ClusterService" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"

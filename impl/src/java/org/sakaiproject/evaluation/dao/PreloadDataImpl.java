@@ -489,6 +489,7 @@ public class PreloadDataImpl {
         // INSTITUTIONAL SPECIFIC
         evalConfigMap.put(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
         evalConfigMap.put(EvalSettings.ENABLE_IMPORTING, false);
+        evalConfigMap.put(EvalSettings.ENABLE_PROVIDER_SYNC, false);
         evalConfigMap.put(EvalSettings.ENABLE_ADHOC_GROUPS, true);
         evalConfigMap.put(EvalSettings.ENABLE_ADHOC_USERS, true);
         evalConfigMap.put(EvalSettings.ENABLE_ITEM_COMMENTS, true);
@@ -511,7 +512,13 @@ public class PreloadDataImpl {
 
         // Default batch performance metrics settings
         evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);
-            	
+        
+        // Default settings for scheduling sync with Group Provider
+        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE, true);
+        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE, false);
+        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE, true);
+        evalConfigMap.put(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP, true);
+	
     }
     
     /**

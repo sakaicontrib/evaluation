@@ -108,7 +108,14 @@ public class AdministrateProducer implements ViewComponentProducer {
 
         UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
                 UIMessage.make("admintesteg.page.title"),
-                new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));           
+                new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));    
+        
+        Boolean enableProviderSync = (Boolean) evalSettings.get(EvalSettings.ENABLE_PROVIDER_SYNC);
+        if(enableProviderSync) {
+        	UIInternalLink.make(tofill, "control-administrate-sync",
+                    UIMessage.make("administrate.sync.page.title"),
+                    new SimpleViewParameters(AdministrateProviderSyncProducer.VIEW_ID));
+        }
 
         // only show Control Importing if enabled
         Boolean enableImporting = (Boolean) evalSettings.get(EvalSettings.ENABLE_IMPORTING);
@@ -175,6 +182,9 @@ public class AdministrateProducer implements ViewComponentProducer {
 
         makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
         UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
+        
+        makeBoolean(form,"admin-enable-provider-sync", EvalSettings.ENABLE_PROVIDER_SYNC);
+        UIMessage.make(form, "admin-enable-provider-sync-note", "administrate.admin.enable.provider.sync");
 
         /*
          * (non-Javadoc)

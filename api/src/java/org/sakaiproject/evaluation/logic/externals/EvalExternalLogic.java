@@ -99,5 +99,13 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
 
+   /**
+    * Get a mapping of all cron jobs within a group, containing info about their triggers and their properties.
+    * @param jobGroup The name of the group for which information is requested.	
+    * @param propertyNames The names of properties whose values should be included.
+    * @return
+    */
+   public abstract Map<String,Map<String, String>> getCronJobs(String jobGroup, String[] propertyNames);
+
 
 }

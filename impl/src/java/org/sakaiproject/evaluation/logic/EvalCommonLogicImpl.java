@@ -30,6 +30,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -584,6 +586,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public String getServerUrl() {
         return externalLogic.getServerUrl();
     }
+    
+	public String getServerId() {
+		return externalLogic.getServerId();
+	}
+
+	public List<String> getServers() {
+		return externalLogic.getServers();
+	}
 
     public String getEntityURL(Serializable evaluationEntity) {
         return externalLogic.getEntityURL(evaluationEntity);
@@ -743,5 +753,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
         return md5;
     }
+
+
+	@Override
+	public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail) {
+		return this.externalLogic.scheduleCronJob(cronTrigger, jobDetail);
+	}
 
 }

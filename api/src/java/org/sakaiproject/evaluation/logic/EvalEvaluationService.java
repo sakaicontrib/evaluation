@@ -95,6 +95,15 @@ public interface EvalEvaluationService {
      */
     public List<EvalEvaluation> getEvaluationsByTermId(String termId);
     
+    /**
+     * Get a list of evaluations with the specified state.
+     * 
+     * @param state the state of one or more {@link EvalEvaluation} objects
+     * @return a list of {@link EvalEvaluation} objects, an empty list if no 
+     * evaluations with a matching state can be found
+     */
+    public List<EvalEvaluation> getEvaluationsByState(String state);
+    
     // EVALUATION STATES
 
     /**
