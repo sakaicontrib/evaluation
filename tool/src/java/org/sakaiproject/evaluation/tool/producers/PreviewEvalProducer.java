@@ -28,7 +28,10 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -156,16 +159,52 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             templateId = eval.getTemplate().getId();
             //template = authoringService.getTemplateById(templateId);
         }
-
+        
+        EvalAssignGroup group = null;
+        String groupDisplayTitle = null;
+        Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
+        if(useGroupSpecificPreview.booleanValue() && evaluationId != null) {
+        	int groupCount = this.evaluationService.countEvaluationGroups(evaluationId, true);
+        	if(groupCount == 0) {
+        		useGroupSpecificPreview = new Boolean(false);
+        	} else if(groupCount == 1) {
+        		Map<Long, List<EvalAssignGroup>> groupMap = this.evaluationService.getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
+        		List<EvalAssignGroup> groups = groupMap.get(evaluationId);
+        		if(groups == null || groups.isEmpty()){
+        			useGroupSpecificPreview = new Boolean(false);
+        		} else {
+        			group = groups.get(0);
+        			evalGroupId = group.getEvalGroupId();
+        			if(evalGroupId == null) {
+        				// the group is unreliable and the default group-title will be used
+        				group = null;
+        				useGroupSpecificPreview = new Boolean(false);
+        			} else {
+        				groupDisplayTitle = commonLogic.getDisplayTitle(evalGroupId);
+        				if(groupDisplayTitle == null) {
+            				// the group is unreliable, but the group-id can be used in place of a group title
+            				group = null;
+            				groupDisplayTitle = evalGroupId;
+            				useGroupSpecificPreview = new Boolean(false);
+        				}
+        			}
+        		}
+        	} else {
+        		// TODO: provide mechanism to select group to preview
+        		useGroupSpecificPreview = new Boolean(false);
+        	}
+        }
+    	
         UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
         UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
         UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
         UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");
-        if (evalGroupId == null) {
+        if (groupDisplayTitle == null) {
             UIMessage.make(groupTitle, "group-title", "previeweval.course.title.default");
+            group = null;
         } else {
-            UIOutput.make(groupTitle, "group-title", commonLogic.getDisplayTitle(evalGroupId) );
+            UIOutput.make(groupTitle, "group-title", groupDisplayTitle);
         }
         
         // show instructions if not null
@@ -175,36 +214,46 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
         }
 
-        // get all items for this template
-        List<EvalTemplateItem> allItems = 
-            authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+        TemplateItemDataList tidl = null;
+        if(group == null) {
+            // get all items for this template
+            List<EvalTemplateItem> allItems = 
+            	authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+            if (allItems.isEmpty()) {
+            	// do nothing
+            } else {
+                // Get the sorted list of all nodes for this set of template items
+                List<EvalHierarchyNode> hierarchyNodes = TemplateItemDataList.makeEvalNodesList(allItems, hierarchyLogic);
 
-        if (allItems.isEmpty()) {
+                // make up 2 fake instructors for this evaluation (to show the instructor added items)
+                List<String> instructors = new ArrayList<String>();
+                instructors.add("fake1");
+                instructors.add("fake2");
+
+                // make the TI data structure
+                Map<String, List<String>> associates = new HashMap<String, List<String>>();
+                associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
+                
+                // add in the TA list if it is enabled
+                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                if (taEnabled.booleanValue()) {
+                    List<String> teachingAssistants = new ArrayList<String>();
+                    teachingAssistants.add("fake1");
+                    teachingAssistants.add("fake2");
+                    associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, teachingAssistants);
+                }
+
+                tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+            }
+        } else {
+        	tidl = new TemplateItemDataList(evaluationId, group.getEvalGroupId(),
+                    evaluationService, authoringService, hierarchyLogic, null);
+        }
+
+        if(tidl == null) {
             // this is an empty template so just display some ugly message
             UIMessage.make(tofill, "noItemsToShow", "no.list.items");   
         } else {
-            // Get the sorted list of all nodes for this set of template items
-            List<EvalHierarchyNode> hierarchyNodes = TemplateItemDataList.makeEvalNodesList(allItems, hierarchyLogic);
-
-            // make up 2 fake instructors for this evaluation (to show the instructor added items)
-            List<String> instructors = new ArrayList<String>();
-            instructors.add("fake1");
-            instructors.add("fake2");
-
-            // make the TI data structure
-            Map<String, List<String>> associates = new HashMap<String, List<String>>();
-            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-            
-            // add in the TA list if it is enabled
-            Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-            if (taEnabled.booleanValue()) {
-                List<String> teachingAssistants = new ArrayList<String>();
-                teachingAssistants.add("fake1");
-                teachingAssistants.add("fake2");
-                associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, teachingAssistants);
-            }
-
-            TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
             int countAssistants = 0;
             int countInstructors = 0;
@@ -214,16 +263,30 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 // handle printing the category header
                 if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !((Boolean)evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY))) {
                     UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
-                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                    String instructorName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
+                } else {
+                	String evaluateeName = null;
+                	String messageKey = null;
+                	if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+                		if(group == null) {
+                			evaluateeName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
+                		} else {
+                			EvalUser user = commonLogic.getEvalUserById(commonLogic.getUserId(tig.associateId));
+                			evaluateeName = user.displayName;
+                		}
+                		messageKey = "takeeval.instructor.questions.header";
+	                    countInstructors ++;
+	                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
+	                	if(group == null) {
+                			evaluateeName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
+	                	} else {
+                			EvalUser user = commonLogic.getEvalUserById(commonLogic.getUserId(tig.associateId));
+                			evaluateeName = user.displayName;
+	                	}
+	                    messageKey = "takeeval.assistant.questions.header";
+	                    countAssistants ++;
+	                }
                     UIMessage.make(categorySectionBranch, "categoryHeader", 
-                            "takeeval.instructor.questions.header", new Object[] { instructorName });
-                    countInstructors ++;
-                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                    String assistantName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
-                    UIMessage.make(categorySectionBranch, "categoryHeader", 
-                            "takeeval.assistant.questions.header", new Object[] { assistantName });
-                    countAssistants ++;
+                            messageKey, new Object[] { evaluateeName });
                 }
 
                 // loop through the hierarchy node groups
