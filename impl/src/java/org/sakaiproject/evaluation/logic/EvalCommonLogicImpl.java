@@ -340,10 +340,9 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public String getDisplayTitle(String evalGroupId) {
         String title = null;
         EvalGroup group = makeEvalGroupObject(evalGroupId);
-        if (group != null 
-                && group.title != null) {
+        if (group != null && group.title != null) {
             title = group.title;
-        }
+        } 
         return title;
     }
 
