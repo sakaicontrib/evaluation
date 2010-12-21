@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
@@ -62,5 +63,20 @@ public interface ExternalScheduler {
 	* @return
 	*/
    public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail);
+
+   /**
+    * Get a mapping of all cron jobs within a group, containing info about their triggers and their properties.
+    * @param jobGroup The name of the group for which information is requested.	
+    * @param propertyNames The names of properties whose values should be included.
+    * @return
+    */
+   public abstract Map<String,Map<String, String>> getCronJobs(String jobGroup, String[] propertyNames);
+
+   /**
+	* @param jobName
+	* @param groupName
+	* @return
+	*/
+   public abstract boolean deleteCronJob(String jobName, String groupName);
 
 }

@@ -601,4 +601,8 @@ public List<String> getServers() {
 	return null;
 }
 
+public boolean deleteCronJob(String jobName, String groupName) {
+	return false;
+}
+
 }

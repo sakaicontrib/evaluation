@@ -22,6 +22,9 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +32,7 @@ import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -45,8 +49,18 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class ProviderSyncBean {
 	
+	public static final String RESULT_FAILURE = "failure";
+	public static final String RESULT_SUCCESS = "success";
+	public static final String PROPNAME_STATE_LIST = "StatusList";
+	public static final String 	JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
+	public static final String SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
+	public static final long MILLISECONDS_PER_MINUTE = 60L * 1000L;
+	public static final long DELAY_IN_MINUTES = 2L;
+
 	private Log logger = LogFactory.getLog(ProviderSyncBean.class);
 	
+	private static final String SPACE = " ";
+
     private EvalExternalLogic externalLogic;
     public void setExternalLogic(EvalExternalLogic externalLogic) {
         this.externalLogic = externalLogic;
@@ -67,6 +81,7 @@ public class ProviderSyncBean {
     public Boolean syncOnGroupSave;
     public Boolean syncOnGroupUpdate;
 
+    public String triggerName;
 	public String cronExpression;
 	
 	public Boolean partial;
@@ -74,6 +89,8 @@ public class ProviderSyncBean {
 	public Boolean active;
 	public Boolean graceperiod;
 	public Boolean closed;
+	
+	public Integer tab;
 	
 	public String syncServerId;
 	
@@ -83,42 +100,40 @@ public class ProviderSyncBean {
 	
 	public String scheduleSync() {
 		logger.info("scheduleSync() ");
+		boolean error = scheduleCronJob();
+		
+		if(this.syncServerId != null) {
+			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
+		}
+		
+		logger.info("scheduleSync() error == " + error);
+		return (error ? RESULT_FAILURE : RESULT_SUCCESS);
+	}
+
+	/**
+	 * Create a new cron job and register it with the job scheduler. Parameters (cron expression and eval states) are read from the
+	 * values updated in the request.
+	 *  
+	 * @return true if the method successfully scheduled the cron job, and false if some error prevented the cron job from being scheduled.
+	 */
+	protected boolean scheduleCronJob() {
 		boolean error = false;
 		if(cronExpression == null || cronExpression.trim().equals("")) { 
-			messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.null", null, TargettedMessage.SEVERITY_ERROR));
+			//messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.null", null, TargettedMessage.SEVERITY_ERROR));
 			error = true;
 			
 		} else if(! CronExpression.isValidExpression(cronExpression)) {
 			// send an error message through targeted messages
-			messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.err", new Object[]{ cronExpression }, TargettedMessage.SEVERITY_ERROR));
+			//messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.err", new Object[]{ cronExpression.trim() }, TargettedMessage.SEVERITY_ERROR));
 			error = true;
 		} 
 
-		StringBuilder stateList = null;
+		String states = null;
 		if(! error) {
-			stateList = new StringBuilder();
-			if(partial != null && partial.booleanValue()) {
-				stateList.append(EvalConstants.EVALUATION_STATE_PARTIAL);
-				stateList.append(" ");
-			}
-			if(inqueue != null && inqueue.booleanValue()) {
-				stateList.append(EvalConstants.EVALUATION_STATE_INQUEUE);
-				stateList.append(" ");
-			}
-			if(active != null && active.booleanValue()) {
-				stateList.append(EvalConstants.EVALUATION_STATE_ACTIVE);
-				stateList.append(" ");
-			}
-			if(graceperiod != null && graceperiod.booleanValue()) {
-				stateList.append(EvalConstants.EVALUATION_STATE_GRACEPERIOD);
-				stateList.append(" ");
-			}
-			if(closed != null && closed.booleanValue()) {
-				stateList.append(EvalConstants.EVALUATION_STATE_CLOSED);
-				stateList.append(" ");
-			}
-			if(stateList.length() == 0) {
-				messages.addMessage(new TargettedMessage("administrate.sync.stateList.null", null, TargettedMessage.SEVERITY_ERROR));
+			
+			states = getStateValues();
+			if(states == null || states.trim().equals("")) {
+				//messages.addMessage(new TargettedMessage("administrate.sync.stateList.null", null, TargettedMessage.SEVERITY_ERROR));
 				error = true;
 			}
 		}
@@ -126,45 +141,74 @@ public class ProviderSyncBean {
 		if(! error){
 			try {
 				String uniqueId = EvalUtils.makeUniqueIdentifier(99);
-				String triggerName = uniqueId ;
+				String triggerName = uniqueId;
 				String triggerGroup = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
 				String jobName = uniqueId;
-				String jobGroup = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
-				CronTrigger trigger = new CronTrigger(triggerName,triggerGroup,jobName,jobGroup,cronExpression);
+				CronTrigger trigger = new CronTrigger(triggerName,triggerGroup,jobName,JOB_GROUP_NAME,cronExpression);
 				logger.info("Created trigger: " + trigger.getCronExpression());
 				
 				//ComponentManager componentManager = (ComponentManager) this.externalLogic.getBean(ComponentManager.class);
 				Object jobClass = ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync");
 				// create job
 				JobDataMap jobDataMap = new JobDataMap();
-				jobDataMap.put("StatusList", stateList.toString());
-				jobDataMap.put(org.sakaiproject.api.app.scheduler.JobBeanWrapper.SPRING_BEAN_NAME, "org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync");
+				jobDataMap.put(PROPNAME_STATE_LIST, states);
+				jobDataMap.put(SPRING_BEAN_NAME, "org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync");
 				JobDetail jobDetail = new JobDetail();
 				jobDetail.setJobDataMap(jobDataMap);
 				jobDetail.setJobClass(jobClass.getClass());
 				
 				jobDetail.setName(jobName);
-				jobDetail.setGroup(jobGroup);
+				jobDetail.setGroup(JOB_GROUP_NAME);
 				
 				externalLogic.scheduleCronJob(trigger, jobDetail);
 				
-				messages.addMessage(new TargettedMessage("administrate.sync.job.success", null, TargettedMessage.SEVERITY_INFO));
+				//messages.addMessage(new TargettedMessage("administrate.sync.job.success", null, TargettedMessage.SEVERITY_INFO));
 				
 			} catch (ParseException e) {
 				// send an error message through targeted messages
-				messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.err", new Object[]{ cronExpression }, TargettedMessage.SEVERITY_ERROR));
+				//messages.addMessage(new TargettedMessage("administrate.sync.cronExpression.err", new Object[]{ cronExpression.trim() }, TargettedMessage.SEVERITY_ERROR));
 				error = true;
 			}
 		}
-		
-		if(this.syncServerId != null) {
-			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
+		return !error;
+	}
+
+	/**
+	 * Read the values of eval states from the request and return them as a space-delimited string.
+	 * 
+	 * @return
+	 */
+	protected String getStateValues() {
+		String states;
+		StringBuilder stateList = new StringBuilder();
+		if(partial != null && partial.booleanValue()) {
+			stateList.append(EvalConstants.EVALUATION_STATE_PARTIAL);
+			stateList.append(" ");
 		}
-		
-		logger.info("scheduleSync() error == " + error);
-		return (error ? "failure" : "success");
+		if(inqueue != null && inqueue.booleanValue()) {
+			stateList.append(EvalConstants.EVALUATION_STATE_INQUEUE);
+			stateList.append(" ");
+		}
+		if(active != null && active.booleanValue()) {
+			stateList.append(EvalConstants.EVALUATION_STATE_ACTIVE);
+			stateList.append(" ");
+		}
+		if(graceperiod != null && graceperiod.booleanValue()) {
+			stateList.append(EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+			stateList.append(" ");
+		}
+		if(closed != null && closed.booleanValue()) {
+			stateList.append(EvalConstants.EVALUATION_STATE_CLOSED);
+			stateList.append(" ");
+		}
+		states = stateList.toString();
+		return states;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String updateSyncEvents() {
 		try {
 			if(syncUnassignedOnStartup == null) {
@@ -198,7 +242,7 @@ public class ProviderSyncBean {
 			// send success message through targeted messages
 			messages.addMessage(new TargettedMessage("administrate.sync.event.saved", null, TargettedMessage.SEVERITY_INFO));
 			
-			return "success";
+			return RESULT_SUCCESS;
 		} catch (Exception e) {
 			logger.warn("error in updateSyncEvents() " + e);
 		}
@@ -206,12 +250,112 @@ public class ProviderSyncBean {
 		// send error message
 		messages.addMessage(new TargettedMessage("administrate.sync.event.failed", null, TargettedMessage.SEVERITY_ERROR));
 		
-		return "failure";
+		return RESULT_FAILURE;
 	}
 	
 	public String updateSync() {
-		logger.info("updateSync() ");
-		return "success";
+		logger.info("updateSync(" + this.triggerName + ") ");
+		boolean success = false;
+		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{PROPNAME_STATE_LIST});
+		if(triggerName == null || triggerName.trim().equals("")) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.update.null", null, TargettedMessage.SEVERITY_ERROR));
+		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.update.failed", new Object[]{triggerName}, TargettedMessage.SEVERITY_ERROR));
+		} else {
+			Map<String,String> job = cronJobs.get(triggerName);
+			if(job == null || job.get("job.name") == null || job.get("job.group") == null) {
+				// error
+				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+			} else {
+				success = this.externalLogic.deleteCronJob(job.get("job.name"), job.get("job.group"));
+				if(success) {
+					success = this.scheduleCronJob();
+				}
+				
+				if(success) {
+					this.messages.addMessage(new TargettedMessage("administrate.sync.update.succeeded", new Object[]{this.cronExpression.trim(), this.getStateValues()}, TargettedMessage.SEVERITY_INFO));			
+				} else {
+					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				}
+			}
+		}
+		
+		if(this.syncServerId != null) {
+			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
+		}
+		
+		return (success ? RESULT_SUCCESS : RESULT_FAILURE);
 	}
 	
+	public String deleteSync() {
+		logger.info("deleteSync(" + this.triggerName + ")");
+		boolean success = false;
+		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{PROPNAME_STATE_LIST});
+		if(triggerName == null || triggerName.trim().equals("")) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.null", null, TargettedMessage.SEVERITY_ERROR));
+		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failed", new Object[]{triggerName}, TargettedMessage.SEVERITY_ERROR));
+		} else {
+			Map<String,String> job = cronJobs.get(triggerName);
+			if(job == null || job.get("job.name") == null || job.get("job.group") == null) {
+				// error
+				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+			} else {
+				success = this.externalLogic.deleteCronJob(job.get("job.name"), job.get("job.group"));
+				if(success) {
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get("trigger.cronExpression").trim(), job.get(PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
+				} else {
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				}
+			}
+		}
+		
+		return (success ? RESULT_SUCCESS : RESULT_FAILURE);
+	}
+	
+	/**
+	 * Schedule a sync of evals by state in the very near future.  The sync is scheduled using 
+	 * a cron job with a time a specific number of minutes from the surrent time, where the delay 
+	 * is determined by the constant DELAY_IN_MINUTES.  The list of eval states is determined by 
+	 * values in the request, as in the scheduleSync method. The sync is done on the default 
+	 * server, which may be updated in processing this request.  
+	 *   
+	 * @return
+	 */
+	public String quickSync() {
+		logger.info("quickSync() ");
+		boolean success = false;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis() + DELAY_IN_MINUTES * MILLISECONDS_PER_MINUTE);
+		StringBuilder buf = new StringBuilder();
+		buf.append(cal.get(Calendar.SECOND));
+		buf.append(SPACE);
+		buf.append(cal.get(Calendar.MINUTE));
+		buf.append(SPACE);
+		buf.append(cal.get(Calendar.HOUR_OF_DAY));
+		buf.append(SPACE);
+		buf.append(cal.get(Calendar.DAY_OF_MONTH));
+		buf.append(SPACE);
+		buf.append(cal.get(Calendar.MONTH) + 1);
+		buf.append(SPACE);
+		buf.append('?');
+		buf.append(SPACE);
+		buf.append(cal.get(Calendar.YEAR));
+		this.cronExpression = buf.toString();
+		logger.info("quickSync() cronExpression == " + cronExpression);
+		
+		if(this.syncServerId != null) {
+			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
+		}		
+		
+		success = this.scheduleCronJob();
+		if(success) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.quick.success", new Object[]{Long.toString(DELAY_IN_MINUTES), this.getStateValues()}, TargettedMessage.SEVERITY_INFO));			
+		} else {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.quick.failure", null, TargettedMessage.SEVERITY_ERROR));			
+		}
+		
+		return (success ? RESULT_SUCCESS : RESULT_FAILURE );
+	}
 }

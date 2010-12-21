@@ -1167,6 +1167,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return cronJobs;
 	}
+	
+	@Override
+	public boolean deleteCronJob(String jobName, String groupName) {
+
+		boolean success = false;
+		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+		try {
+			Scheduler scheduler = scheduleManager.getScheduler();
+			
+			//jobDetail.setJobClass(GroupMembershipSync.class);
+			success = scheduler.deleteJob(jobName, groupName);
+		} catch(SchedulerException e) {
+			log.warn("SchedulerException in scheduleCronJob()", e);
+		}
+		return success;
+	}
 
     public String getContentCollectionId(String siteId) {
         String ret = contentHostingService.getSiteCollection(siteId);
