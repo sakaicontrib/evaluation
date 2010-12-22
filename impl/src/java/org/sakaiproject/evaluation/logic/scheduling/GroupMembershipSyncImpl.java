@@ -12,6 +12,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
@@ -39,10 +40,10 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("GroupMembershipSync.execute()");
+		logger.debug("GroupMembershipSync.execute()");
 		JobDetail jobDetail = context.getJobDetail();
 		JobDataMap data = jobDetail.getJobDataMap();
-		String statusStr = (String) data.get("StatusList");
+		String statusStr = (String) data.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST);
 		if(statusStr == null || statusStr.trim().equals("")) {
 			// better throw something?
 		} else {
@@ -50,14 +51,14 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 
 			for(String state : stateList) {
 				List<EvalEvaluation> evals = evaluationService.getEvaluationsByState(state);
-				logger.info("====> " + state + " evals  ==> " + evals.size());
+				logger.debug("====> " + state + " evals  ==> " + evals.size());
 				 
 				for(EvalEvaluation eval : evals) {
 					if(this.evaluationSetupService instanceof EvalEvaluationSetupServiceImpl) {
-						logger.info("====> " + state + "          ==> " + eval.getEid() + " using impl");
+						logger.debug("====> " + state + "          ==> " + eval.getEid() + " using impl");
 						((EvalEvaluationSetupServiceImpl) this.evaluationSetupService).synchronizeUserAssignmentsForced(eval, null, true);
 					} else {
-						logger.info("====> " + state + "          ==> " + eval.getEid() + " using api");
+						logger.debug("====> " + state + "          ==> " + eval.getEid() + " using api");
 						this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
 					}
 				}
@@ -66,7 +67,7 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 	}
 	
 	public void init() {
-		logger.info("init()");
+		logger.debug("init()");
 	}
 
 }

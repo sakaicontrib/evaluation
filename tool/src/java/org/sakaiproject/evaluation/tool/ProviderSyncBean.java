@@ -23,7 +23,6 @@ package org.sakaiproject.evaluation.tool;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -49,10 +48,11 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class ProviderSyncBean {
 	
+	public static final String JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
+	
 	public static final String RESULT_FAILURE = "failure";
 	public static final String RESULT_SUCCESS = "success";
-	public static final String PROPNAME_STATE_LIST = "StatusList";
-	public static final String 	JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
+	
 	public static final String SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
 	public static final long MILLISECONDS_PER_MINUTE = 60L * 1000L;
 	public static final long DELAY_IN_MINUTES = 2L;
@@ -151,8 +151,8 @@ public class ProviderSyncBean {
 				Object jobClass = ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync");
 				// create job
 				JobDataMap jobDataMap = new JobDataMap();
-				jobDataMap.put(PROPNAME_STATE_LIST, states);
-				jobDataMap.put(SPRING_BEAN_NAME, "org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync");
+				jobDataMap.put(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST, states);
+				jobDataMap.put(SPRING_BEAN_NAME, EvalConstants.GROUP_MEMBERSHIP_SYNC_BEAN_NAME);
 				JobDetail jobDetail = new JobDetail();
 				jobDetail.setJobDataMap(jobDataMap);
 				jobDetail.setJobClass(jobClass.getClass());
@@ -256,7 +256,7 @@ public class ProviderSyncBean {
 	public String updateSync() {
 		logger.info("updateSync(" + this.triggerName + ") ");
 		boolean success = false;
-		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{PROPNAME_STATE_LIST});
+		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST});
 		if(triggerName == null || triggerName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.update.null", null, TargettedMessage.SEVERITY_ERROR));
 		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
@@ -265,7 +265,7 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(triggerName);
 			if(job == null || job.get("job.name") == null || job.get("job.group") == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
 				success = this.externalLogic.deleteCronJob(job.get("job.name"), job.get("job.group"));
 				if(success) {
@@ -275,7 +275,7 @@ public class ProviderSyncBean {
 				if(success) {
 					this.messages.addMessage(new TargettedMessage("administrate.sync.update.succeeded", new Object[]{this.cronExpression.trim(), this.getStateValues()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get("trigger.cronExpression"), job.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}
@@ -290,7 +290,7 @@ public class ProviderSyncBean {
 	public String deleteSync() {
 		logger.info("deleteSync(" + this.triggerName + ")");
 		boolean success = false;
-		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{PROPNAME_STATE_LIST});
+		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME, new String[]{EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST});
 		if(triggerName == null || triggerName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.null", null, TargettedMessage.SEVERITY_ERROR));
 		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
@@ -299,13 +299,13 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(triggerName);
 			if(job == null || job.get("job.name") == null || job.get("job.group") == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
 				success = this.externalLogic.deleteCronJob(job.get("job.name"), job.get("job.group"));
 				if(success) {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get("trigger.cronExpression").trim(), job.get(PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get("trigger.cronExpression").trim(), job.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get("trigger.cronExpression"), job.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}

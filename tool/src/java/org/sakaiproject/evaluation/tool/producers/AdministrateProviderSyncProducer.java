@@ -59,7 +59,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class AdministrateProviderSyncProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 	
-	public static final String PROPNAME_STATE_LIST = ProviderSyncBean.PROPNAME_STATE_LIST;
+	public static final String PROPNAME_STATE_LIST = EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST;
 	public static final String VIEW_ID = "administrate_provider_sync";
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ViewIDReporter#getViewID()
