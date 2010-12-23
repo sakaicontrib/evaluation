@@ -56,14 +56,14 @@ public interface ExternalScheduler {
    /**
     * Create and schedule a job using cron-job syntax for the timing of execution(s) of the job. 
     * The job to be executed is defined by the jobClass parameter along with any data included
-    * in the dataMap parameter. A valid cron expression must be included in the dataMap with the 
-    * key given by EvalConstants.CRON_SCEDULER_CRON_EXPRESSION.  Also, values for jobName, 
-    * jobGroup, triggerName and triggerGroup must be included in the dataMap with keys of 
-    * EvalConstants.CRON_SCHEDULER_JOB_GROUP, EvalConstants.CRON_SCHEDULER_JOB_NAME, 
+    * in the dataMap parameter. A String representing a valid cron expression must be included 
+    * in the dataMap with the key given by EvalConstants.CRON_SCEDULER_CRON_EXPRESSION.  Also, 
+    * values for jobName, jobGroup, triggerName and triggerGroup must be included in the dataMap 
+    * with keys of EvalConstants.CRON_SCHEDULER_JOB_GROUP, EvalConstants.CRON_SCHEDULER_JOB_NAME, 
     * EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, and EvalConstants.CRON_SCHEDULER_TRIGGER_NAME,
     * respectively.  Those key-value pairs will be removed from the dataMap, and all other 
-    * key-value pairs in the dataMap will be provided to an instance of the jobClass each 
-    * time the cron job is executed. 
+    * key-value pairs in the dataMap will be provided to an instance of the jobClass each time 
+    * the cron job is executed. 
 	* @param jobClass The class which is to be executed when the cron job is executed.
 	* @param dataMap The data to be provided to an instance of the jobClass whenever it 
 	* 	executes, as well as key-value pairs as described above.
@@ -73,13 +73,16 @@ public interface ExternalScheduler {
    public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap);
 
    /**
-    * Get a mapping of all cron jobs within a group, containing info about their triggers and their properties.
+    * Get a mapping of all cron jobs within a job group, containing info about their triggers and 
+    * their properties.
     * @param jobGroup The name of the group for which information is requested.	
-    * @return
+    * @return A mapping from the full name of the trigger to a Map containing data about the job and 
+    * 	the trigger.  
     */
    public Map<String,Map<String, String>> getCronJobs(String jobGroup);
 
    /**
+    * Delete a single cron job (and all triggers associated with it).
 	* @param jobName
 	* @param jobGroup
 	* @return

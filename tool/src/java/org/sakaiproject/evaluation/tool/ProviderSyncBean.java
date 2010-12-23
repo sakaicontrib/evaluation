@@ -21,7 +21,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +28,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronExpression;
-import org.quartz.CronTrigger;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -83,8 +79,7 @@ public class ProviderSyncBean {
     public Boolean syncOnGroupSave;
     public Boolean syncOnGroupUpdate;
 
-    // TODO: this should be fullJobName instead of triggerName (in bean, producer, params, etc)
-    public String triggerName;
+    public String fullJobName;
 	public String cronExpression;
 	
 	public Boolean partial;
@@ -244,15 +239,15 @@ public class ProviderSyncBean {
 	}
 	
 	public String updateSync() {
-		logger.info("updateSync(" + this.triggerName + ") ");
+		logger.info("updateSync(" + this.fullJobName + ") ");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME);
-		if(triggerName == null || triggerName.trim().equals("")) {
+		if(fullJobName == null || fullJobName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.update.null", null, TargettedMessage.SEVERITY_ERROR));
-		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
-			this.messages.addMessage(new TargettedMessage("administrate.sync.update.failed", new Object[]{triggerName}, TargettedMessage.SEVERITY_ERROR));
+		} else if(cronJobs == null || cronJobs.get(fullJobName) == null) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.update.failed", new Object[]{fullJobName}, TargettedMessage.SEVERITY_ERROR));
 		} else {
-			Map<String,String> job = cronJobs.get(triggerName);
+			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
 				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
@@ -278,15 +273,15 @@ public class ProviderSyncBean {
 	}
 	
 	public String deleteSync() {
-		logger.info("deleteSync(" + this.triggerName + ")");
+		logger.info("deleteSync(" + this.fullJobName + ")");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME);
-		if(triggerName == null || triggerName.trim().equals("")) {
+		if(fullJobName == null || fullJobName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.null", null, TargettedMessage.SEVERITY_ERROR));
-		} else if(cronJobs == null || cronJobs.get(triggerName) == null) {
-			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failed", new Object[]{triggerName}, TargettedMessage.SEVERITY_ERROR));
+		} else if(cronJobs == null || cronJobs.get(fullJobName) == null) {
+			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failed", new Object[]{fullJobName}, TargettedMessage.SEVERITY_ERROR));
 		} else {
-			Map<String,String> job = cronJobs.get(triggerName);
+			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
 				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					

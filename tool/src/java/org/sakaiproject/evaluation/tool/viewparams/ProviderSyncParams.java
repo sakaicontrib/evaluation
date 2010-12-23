@@ -10,15 +10,15 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * 
  */
 public class ProviderSyncParams extends SimpleViewParameters {
-	public String triggerName;
+	public String fullJobName;
 	//public String jobName;
 	public Integer tab;
 	
 	public ProviderSyncParams(){}
 	
-	public ProviderSyncParams(String viewid, String triggerName) {
+	public ProviderSyncParams(String viewid, String fullJobName) {
 		this.viewID = viewid;
-		this.triggerName = triggerName;
+		this.fullJobName = fullJobName;
 	}
 
 }

@@ -10,11 +10,11 @@ $(document).ready(function(){
     })
     $('.triggerDelete').click(function(e){
 		e.preventDefault();
-		var triggerName = $(this).closest('td').children('span.triggerName').text();
+		var fullJobName = $(this).closest('td').children('span.fullJobName').text();
 		var triggerDeleteConfirm = $(this).closest('td').children('span.triggerDeleteConfirm').text();
 		var decision = confirm(triggerDeleteConfirm);
 		if(decision){
-			$('.syncDeleteForm').find('input.syncDeleteItem').val(triggerName);
+			$('.syncDeleteForm').find('input.syncDeleteItem').val(fullJobName);
 			$('.syncDeleteForm').find('input.syncDeleteSubmit').click();
 		}
 		else{
@@ -23,10 +23,10 @@ $(document).ready(function(){
     })
     $('.triggerRevise').click(function(e){
     	e.preventDefault();
-    	var triggerName = $(this).closest('td').children('span.triggerName').text();
+    	var fullJobName = $(this).closest('td').children('span.fullJobName').text();
     	var triggerCronExpression = $(this).closest('td').children('span.triggerCronExpression').text();
     	var triggerStateList = $(this).closest('td').children('span.triggerStateList').text();
-    	$(this).closest('form').find('.formTriggerName').val(triggerName);
+    	$(this).closest('form').find('.formfullJobName').val(fullJobName);
     	$(this).closest('form').find('.formCronExpression').val(triggerCronExpression);
     	
     	$(this).closest('form').find('input:checkbox').each(function(index,element){
@@ -52,14 +52,6 @@ $(document).ready(function(){
     });
     $('#tabs').bind('tabsselect', function(event, ui) {
     	$('.currentTab').val(ui.index);
-    	//alert('tabselect');
-    	//alert('tabselect ui.index == ' + ui.index);
-    	
-        // Objects available in the function context:
-    	// ui.tab     anchor element of the selected (clicked) tab
-    	// ui.panel   element, that contains the selected/clicked tab contents
-    	// ui.index   zero-based index of the selected (clicked) tab
-
     });
 });
 

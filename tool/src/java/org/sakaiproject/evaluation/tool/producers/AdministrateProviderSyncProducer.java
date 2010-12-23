@@ -111,9 +111,9 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 		}
 		
 		Integer tab = null;
-		String triggerName = null;
+		String fullJobName = null;
 		if(viewparams instanceof ProviderSyncParams) {
-			triggerName = ((ProviderSyncParams) viewparams).triggerName;
+			fullJobName = ((ProviderSyncParams) viewparams).fullJobName;
 			if(((ProviderSyncParams) viewparams).tab != null) {
 				tab = new Integer(((ProviderSyncParams) viewparams).tab);
 			}
@@ -181,13 +181,13 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
         UICommand.make(byEventForm, "sync-event-submit", UIMessage.make("administrate.sync.event.submit"), "#{providerSyncBean.updateSyncEvents}");
 
 		UIForm byTimeForm = UIForm.make(tofill, "by_time-form");
-		UIInput.make(byTimeForm, "by_time-triggerName", "#{providerSyncBean.triggerName}", triggerName);
+		UIInput.make(byTimeForm, "by_time-fullJobName", "#{providerSyncBean.fullJobName}", fullJobName);
 		UIInput.make(byTimeForm, "currentTab", "#{providerSyncBean.tab}", tab.toString());
 		RSFUtil.addResultingViewBinding(byTimeForm, "tab", "#{providerSyncBean.tab}");
 		
 		Map<String,String> reviseCronJob = null;
-		if(triggerName != null) {
-			reviseCronJob = cronJobs.get(triggerName);
+		if(fullJobName != null) {
+			reviseCronJob = cronJobs.get(fullJobName);
 		}
 		
 		String cronExpression = null;
@@ -263,7 +263,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 		UIForm byTimeDeleteForm = UIForm.make(tofill, "by_time-delete-form");
 		UIInput.make(byTimeDeleteForm, "currentTab", "#{providerSyncBean.tab}", tab.toString());
 		RSFUtil.addResultingViewBinding(byTimeDeleteForm, "tab", "#{providerSyncBean.tab}");
-		UIInput.make(byTimeDeleteForm, "by_time-delete-triggerName", "#{providerSyncBean.triggerName}");
+		UIInput.make(byTimeDeleteForm, "by_time-delete-fullJobName", "#{providerSyncBean.fullJobName}");
 		UICommand.make(byTimeDeleteForm, "by_time-delete-submit", "#{providerSyncBean.deleteSync}");
 		
 		UIForm quickSyncForm = UIForm.make(tofill, "quick_sync-form");

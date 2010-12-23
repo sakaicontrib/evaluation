@@ -101,7 +101,7 @@
                     <form rsf:id="by_time-form" action="administrate_provider_sync" method="post"
                         style="border:1px solid #ccc;background:#fff; display:block;">
                         <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
-                        <input rsf:id="by_time-triggerName" name="triggerName" value="" class="formTriggerName"
+                        <input rsf:id="by_time-fullJobName" name="fullJobName" value="" class="formfullJobName"
                             type="hidden" />
                         <div style="padding:1em;">
                             <fieldset id="syncEdit" class="visibleFS" style="display:none">
@@ -188,7 +188,7 @@
                                         <td rsf:id="trigger-stateList"> </td>
                                         <td>
                                         	<span rsf:id="trigger-delete-confirm" style="display:none;" class="triggerDeleteConfirm"></span>
-                                            <span rsf:id="trigger-name" style="display:none;" class="triggerName"></span>
+                                            <span rsf:id="trigger-name" style="display:none;" class="fullJobName"></span>
                                             <span rsf:id="trigger-revise-cronExpression" style="display:none;" class="triggerCronExpression"></span>
                                             <span rsf:id="trigger-revise-stateList" style="display:none;" class="triggerStateList"></span>
                                             <a rsf:id="trigger-delete" class="triggerDelete">Bah!</a>
@@ -210,7 +210,7 @@
                     <form rsf:id="by_time-delete-form" action="administrate_provider_sync" method="post"
                         style="display:none;" class="syncDeleteForm">
                         <input type="text" rsf:id="currentTab" class="currentTab"/>
-                        <input type="text" rsf:id="by_time-delete-triggerName" class="syncDeleteItem" />
+                        <input type="text" rsf:id="by_time-delete-fullJobName" class="syncDeleteItem" />
                         <input type="submit" rsf:id="by_time-delete-submit" class="syncDeleteSubmit" />
                     </form>
                 </div>
