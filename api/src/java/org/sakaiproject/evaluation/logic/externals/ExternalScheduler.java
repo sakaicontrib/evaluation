@@ -17,8 +17,6 @@ package org.sakaiproject.evaluation.logic.externals;
 import java.util.Date;
 import java.util.Map;
 
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 
 
@@ -56,27 +54,36 @@ public interface ExternalScheduler {
    public String createScheduledJob(Date executionDate, Long evaluationId, String jobType);
    
    /**
-    * Create and schedule a job using cron-job syntax. 
-    * 
-	* @param cronTrigger
-	* @param jobDetail
-	* @return
+    * Create and schedule a job using cron-job syntax for the timing of execution(s) of the job. 
+    * The job to be executed is defined by the jobClass parameter along with any data included
+    * in the dataMap parameter. A valid cron expression must be included in the dataMap with the 
+    * key given by EvalConstants.CRON_SCEDULER_CRON_EXPRESSION.  Also, values for jobName, 
+    * jobGroup, triggerName and triggerGroup must be included in the dataMap with keys of 
+    * EvalConstants.CRON_SCHEDULER_JOB_GROUP, EvalConstants.CRON_SCHEDULER_JOB_NAME, 
+    * EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, and EvalConstants.CRON_SCHEDULER_TRIGGER_NAME,
+    * respectively.  Those key-value pairs will be removed from the dataMap, and all other 
+    * key-value pairs in the dataMap will be provided to an instance of the jobClass each 
+    * time the cron job is executed. 
+	* @param jobClass The class which is to be executed when the cron job is executed.
+	* @param dataMap The data to be provided to an instance of the jobClass whenever it 
+	* 	executes, as well as key-value pairs as described above.
+	* @return A string giving the full name of the scheduled job, or null if an error occurred 
+	* 	while attempting to schedule the job.
 	*/
-   public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail);
+   public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap);
 
    /**
     * Get a mapping of all cron jobs within a group, containing info about their triggers and their properties.
     * @param jobGroup The name of the group for which information is requested.	
-    * @param propertyNames The names of properties whose values should be included.
     * @return
     */
-   public abstract Map<String,Map<String, String>> getCronJobs(String jobGroup, String[] propertyNames);
+   public Map<String,Map<String, String>> getCronJobs(String jobGroup);
 
    /**
 	* @param jobName
-	* @param groupName
+	* @param jobGroup
 	* @return
 	*/
-   public abstract boolean deleteCronJob(String jobName, String groupName);
+   public boolean deleteCronJob(String jobName, String jobGroup);
 
 }

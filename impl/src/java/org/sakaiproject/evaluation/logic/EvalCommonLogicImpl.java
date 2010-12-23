@@ -30,8 +30,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -756,15 +754,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
 
 	@Override
-	public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail) {
-		return this.externalLogic.scheduleCronJob(cronTrigger, jobDetail);
+	public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap) {
+		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 
 
 	@Override
-	public Map<String, Map<String, String>> getCronJobs(String jobGroup,
-			String[] propertyNames) {
-		return this.externalLogic.getCronJobs(jobGroup, propertyNames);
+	public Map<String, Map<String, String>> getCronJobs(String jobGroup) {
+		return this.externalLogic.getCronJobs(jobGroup);
 	}
 
 

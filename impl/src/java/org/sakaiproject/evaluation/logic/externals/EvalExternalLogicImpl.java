@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -83,6 +84,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -1116,70 +1118,119 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     }
 
 	@Override
-	public String scheduleCronJob(CronTrigger cronTrigger, JobDetail jobDetail) {
+	public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap) {
 		
+		String jobFullName = null;
 		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+		CronTrigger trigger = null;
+		
+		String triggerName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME);
+		String triggerGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP);
+		String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
+		String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
+		
+		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
+		
 		try {
-			Scheduler scheduler = scheduleManager.getScheduler();
-			//jobDetail.setJobClass(GroupMembershipSync.class);
-			Date date = scheduler.scheduleJob(jobDetail, cronTrigger);
-		} catch(SchedulerException e) {
+			trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
+			if(log.isDebugEnabled()) {
+				log.debug("Created trigger: " + trigger.getCronExpression());
+			}
+		} catch(ParseException e) {
 			log.warn("SchedulerException in scheduleCronJob()", e);
 		}
-		return jobDetail.getFullName();
+		
+		if(trigger != null) {
+			// create job
+			JobDataMap jobDataMap = new JobDataMap();
+			if(dataMap != null) {
+				for(String key : dataMap.keySet()) {
+					jobDataMap.put(key, dataMap.get(key));
+				}
+			}
+			
+			JobDetail jobDetail = new JobDetail();
+			jobDetail.setName(jobName);
+			jobDetail.setGroup(jobGroup);		
+			jobDetail.setJobDataMap(jobDataMap);
+			jobDetail.setJobClass(jobClass);
+			Scheduler scheduler = scheduleManager.getScheduler();
+			if(scheduler == null) {
+				log.warn("Unable to access scheduler", new Throwable());
+			} else {
+				try {
+					Date date = scheduler.scheduleJob(jobDetail, trigger);
+					if(log.isDebugEnabled()) {
+						log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
+					}
+					jobFullName =  jobDetail.getFullName();
+				} catch(SchedulerException e) {
+					log.warn("SchedulerException in scheduleCronJob()", e);
+				}
+			}
+		}
+		return jobFullName;
 	}
 	
 	@Override
-	public Map<String,Map<String, String>> getCronJobs(String jobGroup, String[] propertyNames) {
+	public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
 		Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
 		SchedulerManager schedulerManager = getBean(SchedulerManager.class);
 		Scheduler scheduler = schedulerManager.getScheduler();
-		try {
-			String[] jobNames = scheduler.getJobNames(jobGroup);
-			for(String jobName : jobNames) {
-				JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
-				JobDataMap jobDataMap = job.getJobDataMap();
-				Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
-				for(Trigger trigger : triggers) {
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("job.name", jobName);
-					map.put("job.group", jobGroup);
-					
-					if(propertyNames != null && propertyNames.length > 0) {
-						for(String propName : propertyNames) {
-							if(jobDataMap.containsKey(propName)) {
-								map.put(propName, jobDataMap.getString(propName));
+		if(scheduler == null) {
+			log.warn("Unable to access scheduler", new Throwable());
+		} else {
+			try {
+				String[] jobNames = scheduler.getJobNames(jobGroup);
+				for(String jobName : jobNames) {
+					try {
+						JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
+						JobDataMap jobDataMap = job.getJobDataMap();
+						Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
+						for(Trigger trigger : triggers) {
+							Map<String, String> map = new HashMap<String, String>();
+							map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobName);
+							map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobGroup);
+							
+							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
+							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
+							if(trigger instanceof CronTrigger) {
+								map.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
 							}
+							
+							for(String propName : (Set<String>) jobDataMap.keySet()) {
+								if(jobDataMap.containsKey(propName)) {
+									map.put(propName, jobDataMap.getString(propName));
+								}
+							}
+							
+							cronJobs.put(trigger.getFullName(), map);
 						}
+					} catch(SchedulerException e) {
+						log.warn("SchedulerException processing one trigger in getCronJobs", e);					
 					}
-					
-					map.put("trigger.name", trigger.getName());
-					map.put("trigger.group", trigger.getGroup());
-					if(trigger instanceof CronTrigger) {
-						map.put("trigger.cronExpression", ((CronTrigger) trigger).getCronExpression());
-					}
-					
-					cronJobs.put(trigger.getFullName(), map);
 				}
+			} catch(SchedulerException e) {
+				log.warn("SchedulerException processing one job in getCronJobs", e);
 			}
-		} catch(SchedulerException e) {
-			
 		}
 		return cronJobs;
 	}
 	
 	@Override
-	public boolean deleteCronJob(String jobName, String groupName) {
+	public boolean deleteCronJob(String jobName, String jobGroup) {
 
 		boolean success = false;
 		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
-		try {
-			Scheduler scheduler = scheduleManager.getScheduler();
-			
-			//jobDetail.setJobClass(GroupMembershipSync.class);
-			success = scheduler.deleteJob(jobName, groupName);
-		} catch(SchedulerException e) {
-			log.warn("SchedulerException in scheduleCronJob()", e);
+		Scheduler scheduler = scheduleManager.getScheduler();
+		if(scheduler == null) {
+			log.warn("Unable to access scheduler", new Throwable());
+		} else {
+			try {
+				success = scheduler.deleteJob(jobName, jobGroup);
+			} catch(SchedulerException e) {
+				log.warn("SchedulerException in scheduleCronJob()", e);
+			}
 		}
 		return success;
 	}

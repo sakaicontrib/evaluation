@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.tool.ProviderSyncBean;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.ProviderSyncParams;
@@ -59,7 +60,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class AdministrateProviderSyncProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 	
-	public static final String PROPNAME_STATE_LIST = EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST;
+	public static final String PROPNAME_STATE_LIST = GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST;
 	public static final String VIEW_ID = "administrate_provider_sync";
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ViewIDReporter#getViewID()
@@ -121,7 +122,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 			tab = new Integer(0);
 		}
 		
-		Map<String,Map<String, String>> cronJobs = this.externalLogic.getCronJobs("org.sakaiproject.evaluation.tool.ProviderSyncBean", new String[]{PROPNAME_STATE_LIST});
+		Map<String,Map<String, String>> cronJobs = this.externalLogic.getCronJobs(ProviderSyncBean.JOB_GROUP_NAME);
         List<String> serverIds = this.commonLogic.getServers();
         String syncServerId = (String) this.evalSettings.get(EvalSettings.SYNC_SERVER);
         
@@ -194,7 +195,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 
 		if(reviseCronJob != null) {
 			// select time(s) for this cron job
-			cronExpression = reviseCronJob.get("trigger.cronExpression");
+			cronExpression = reviseCronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
 			stateList = reviseCronJob.get(PROPNAME_STATE_LIST);
 		}
 		
@@ -248,12 +249,12 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 			for(String item : cronJobs.keySet()) {
 				Map<String, String> cronJob = cronJobs.get(item);
 				UIBranchContainer triggerRow = UIBranchContainer.make(triggerTable, "trigger-row:");
-				UIOutput.make(triggerRow, "trigger-cronExpression", cronJob.get("trigger.cronExpression"));
+				UIOutput.make(triggerRow, "trigger-cronExpression", cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION));
 				UIOutput.make(triggerRow, "trigger-stateList", cronJob.get(PROPNAME_STATE_LIST));
 				UIOutput.make(triggerRow, "trigger-name", item);
-				UIOutput.make(triggerRow, "trigger-revise-cronExpression", cronJob.get("trigger.cronExpression"));
+				UIOutput.make(triggerRow, "trigger-revise-cronExpression", cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION));
 				UIOutput.make(triggerRow, "trigger-revise-stateList", cronJob.get(PROPNAME_STATE_LIST));
-				UIMessage.make(triggerRow, "trigger-delete-confirm", "administrate.sync.triggers.delete.confirm", new String[]{cronJob.get("trigger.cronExpression"), cronJob.get(PROPNAME_STATE_LIST)});
+				UIMessage.make(triggerRow, "trigger-delete-confirm", "administrate.sync.triggers.delete.confirm", new String[]{cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), cronJob.get(PROPNAME_STATE_LIST)});
 				UIInternalLink.make(triggerRow, "trigger-delete", UIMessage.make("administrate.sync.triggers.delete"), new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, item));
 				UIInternalLink.make(triggerRow, "trigger-revise", UIMessage.make("administrate.sync.triggers.revise"), new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, item));
 			}

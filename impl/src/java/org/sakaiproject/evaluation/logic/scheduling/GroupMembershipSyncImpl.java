@@ -12,7 +12,6 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
@@ -43,7 +42,7 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 		logger.debug("GroupMembershipSync.execute()");
 		JobDetail jobDetail = context.getJobDetail();
 		JobDataMap data = jobDetail.getJobDataMap();
-		String statusStr = (String) data.get(EvalConstants.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST);
+		String statusStr = (String) data.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST);
 		if(statusStr == null || statusStr.trim().equals("")) {
 			// better throw something?
 		} else {

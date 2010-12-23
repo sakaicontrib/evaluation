@@ -698,13 +698,18 @@ public class EvalConstants {
     public static final String JOB_TYPE_REMINDER = "scheduledReminder";
 
     /**
-     * GroupMembershipSync: Name of class that handles synchronization of group memberships with external group provider.
-     */
-	public static final String GROUP_MEMBERSHIP_SYNC_BEAN_NAME = "org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync";
-
-	/**
-	 * GroupMembershipSync: Key for property containing the list of eval states to be synchronized when memberships are updated.
+	 * ExternalScheduler: When a cron job is created or retrieved through EvalScheduler, a name and group 
+	 * for the trigger and for the job is to be specified in the dataMap. Also the cron expression is to be
+	 * specified in the data map.  These constants are to be used as keys for those values.
 	 */
-	public static final String GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST = "org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync.stateList";
+	public static final String CRON_SCHEDULER_TRIGGER_GROUP = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.triggerGroup";
+
+	public static final String CRON_SCHEDULER_TRIGGER_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.triggerName";
+
+	public static final String CRON_SCHEDULER_JOB_GROUP = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobGroup";
+
+	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
+	
+	public static final String CRON_SCEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
 
 }
