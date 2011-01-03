@@ -1,3 +1,5 @@
+
+
 $(document).ready(function(){
     var initialTab = $('span.initialTab').text();
     var $tabs = $("#tabs").tabs({ selected: initialTab });
@@ -7,6 +9,7 @@ $(document).ready(function(){
         $('#syncEdit').show('slow');
         $(this).hide();
         // TODO: resize
+        setMainFrameHeight(window.id);
     })
     $('.triggerDelete').click(function(e){
 		e.preventDefault();
@@ -37,7 +40,8 @@ $(document).ready(function(){
     	$(this).closest('form').find('.updateSync').show();
     	
         $('#syncEdit').show('slow');
-        $('#addSync').hide();        
+        $('#addSync').hide();
+        setMainFrameHeight(window.id);
     });
     $('.cancelSyncEdit').click(function(e){
     	e.preventDefault();
@@ -49,9 +53,11 @@ $(document).ready(function(){
     	$('#syncEdit').hide('slow');
     	$('#addSync').show();
     	// TODO: resize
+    	setMainFrameHeight(window.id);
     });
     $('#tabs').bind('tabsselect', function(event, ui) {
     	$('.currentTab').val(ui.index);
+    	setMainFrameHeight(window.id);
     });
 });
 
