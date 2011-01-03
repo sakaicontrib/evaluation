@@ -70,7 +70,7 @@ public interface ExternalScheduler {
 	* @return A string giving the full name of the scheduled job, or null if an error occurred 
 	* 	while attempting to schedule the job.
 	*/
-   public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap);
+   public String scheduleCronJob(Class jobClass, Map<String, String> dataMap);
 
    /**
     * Get a mapping of all cron jobs within a job group, containing info about their triggers and 

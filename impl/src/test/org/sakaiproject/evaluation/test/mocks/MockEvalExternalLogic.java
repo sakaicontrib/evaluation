@@ -578,7 +578,7 @@ public boolean isEvalGroupPublished(String evalGroupId) {
 }
 
 @Override
-public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap) {
+public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
 	// TODO Auto-generated method stub
 	return null;
 }

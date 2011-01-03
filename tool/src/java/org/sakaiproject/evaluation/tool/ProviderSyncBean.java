@@ -139,7 +139,7 @@ public class ProviderSyncBean {
 		}
 
 		if(! error){
-			Map<String,Object> dataMap = new HashMap<String, Object>();
+			Map<String,String> dataMap = new HashMap<String, String>();
 			String uniqueId = EvalUtils.makeUniqueIdentifier(99);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, uniqueId);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, JOB_GROUP_NAME);

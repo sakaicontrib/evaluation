@@ -754,7 +754,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
 
 	@Override
-	public String scheduleCronJob(Class jobClass, Map<String, Object> dataMap) {
+	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 
