@@ -270,7 +270,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 		if(group == null) {
                 			evaluateeName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.instructor.2") : messageLocator.getMessage("previeweval.instructor.1");
                 		} else {
-                			EvalUser user = commonLogic.getEvalUserById(commonLogic.getUserId(tig.associateId));
+                			EvalUser user = commonLogic.getEvalUserById(tig.associateId);
                 			evaluateeName = user.displayName;
                 		}
                 		messageKey = "takeeval.instructor.questions.header";
@@ -279,7 +279,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	                	if(group == null) {
                 			evaluateeName = tig.associateId.equals("fake2") ? messageLocator.getMessage("previeweval.ta.2") : messageLocator.getMessage("previeweval.ta.1");
 	                	} else {
-                			EvalUser user = commonLogic.getEvalUserById(commonLogic.getUserId(tig.associateId));
+                			EvalUser user = commonLogic.getEvalUserById(tig.associateId);
                 			evaluateeName = user.displayName;
 	                	}
 	                    messageKey = "takeeval.assistant.questions.header";
