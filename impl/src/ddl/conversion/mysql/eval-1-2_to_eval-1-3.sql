@@ -10,6 +10,7 @@ create table EVAL_ASSIGN_USER (
 	ASSIGN_STATUS varchar(255) not null,
 	LIST_ORDER  integer not null,
 	ASSIGN_GROUP_ID bigint not null,
+	EVALUATION_FK bigint not null,
 	primary key (ID),
 	unique key USER_ID (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK),
   	key ASSIGN_USER_EVALUATION_FKC (EVALUATION_FK),
