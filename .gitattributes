@@ -99,6 +99,8 @@ api/src/java/org/sakaiproject/evaluation/utils/TemplateItemDataList.java svn_key
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/ddl/conversion/mysql/eval-1-2_to_eval-1-3.sql -text
+impl/src/ddl/conversion/oracle/eval-1-2_to_eval-1-3.sql -text
 impl/src/ddl/db2/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/derby/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/hsqldb/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
