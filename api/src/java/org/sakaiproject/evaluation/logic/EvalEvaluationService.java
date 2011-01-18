@@ -98,6 +98,13 @@ public interface EvalEvaluationService {
     // EVALUATION STATES
 
     /**
+     * Set the flag for available email sent to true (i.e., sent)
+     * 
+     * @param evalIds the evaluations whose flags should be set to true
+     */
+    public void setAvailableEmailSent(Long[] evalIds);
+
+    /**
      * Find the current state (in queue, active, closed, etc.) 
      * of the supplied evaluation, this should be used before attempting to
      * delete or save an evaluation as the state determines the updates that

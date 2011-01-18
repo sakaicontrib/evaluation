@@ -184,6 +184,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return search;
     }
 
+	public void setAvailableEmailSent(Long[] evalIds) {
+		for (int i = 0; i < evalIds.length; i++) {
+			Long evaluationId = evalIds[i];
+			EvalEvaluation eval = getEvaluationById(evaluationId);
+			eval.setAvailableEmailSent(Boolean.TRUE);
+			// use dao because evaluation is locked
+			dao.save(eval);
+		}
+	}
+
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationState(java.lang.Long)
      */
