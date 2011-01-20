@@ -181,7 +181,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
     private Boolean unregisteredAllowed;
 
-    private Boolean availableEmailSent;
+    private Boolean availableEmailSent = new Boolean(false);
     
     private Boolean locked;
 

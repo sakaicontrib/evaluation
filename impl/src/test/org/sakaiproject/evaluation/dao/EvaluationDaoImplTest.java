@@ -14,7 +14,9 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -22,6 +24,7 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -105,13 +108,14 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         itemUnlocked.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         itemUnlocked.setLocked(EvalTestDataLoad.UNLOCKED);
         evaluationDao.save( itemUnlocked );
-
+        
         evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
                 etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, false, null,
                 false, null, 
                 EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
                 etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
+        
         evaluationDao.save( evalUnLocked );
 
     }
@@ -130,6 +134,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         List<EvalAssignUser> assignUsers = evaluationDao.findAll(EvalAssignUser.class);
         assertNotNull( assignUsers );
         assertTrue(assignUsers.size() > 20);
+        List<EvalEmailTemplate> emailTemplates = evaluationDao.findAll(EvalEmailTemplate.class);
     }
 
     public void testGetPaticipants() {
@@ -1564,9 +1569,66 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
             assertNotNull(e);
         }
     }
+    
+    public void testGetUser2ConsolidateEmailTemplateMapping() {
+    	Map<String, Map<Long, Date>> mapping1 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	Map<String, Map<Long, Date>> mapping2 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	Map<String, Map<Long, Date>> mapping3 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	Map<String, Map<Long, Date>> mapping4 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	Map<String, Map<Long, Date>> mapping5 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	Map<String, Map<Long, Date>> mapping6 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	assertNotNull(mapping1);
+    	assertEquals(0, mapping1.size());
+    	assertNotNull(mapping2);
+    	assertEquals(2, mapping2.size());
+    	assertNotNull(mapping3);
+    	assertEquals(2, mapping3.size());
+    	assertNotNull(mapping4);
+    	assertEquals(0, mapping4.size());
+    	assertNotNull(mapping5);
+    	assertEquals(2, mapping5.size());
+    	assertNotNull(mapping6);
+    	assertEquals(2, mapping6.size());
+
+    	EvalEvaluation eval = this.evaluationDao.findById(EvalEvaluation.class, this.etdl.evaluationActiveUntaken.getId());
+    	eval.setAvailableEmailSent(true);
+    	this.evaluationDao.save(eval);
+    	
+    	Map<String, Map<Long, Date>> mapping7 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	Map<String, Map<Long, Date>> mapping8 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	Map<String, Map<Long, Date>> mapping9 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	Map<String, Map<Long, Date>> mapping10 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	Map<String, Map<Long, Date>> mapping11 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	Map<String, Map<Long, Date>> mapping12 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	assertNotNull(mapping7);
+    	assertEquals(2, mapping7.size());
+    	assertNotNull(mapping8);
+    	assertEquals(0, mapping8.size());
+    	assertNotNull(mapping9);
+    	assertEquals(2, mapping9.size());
+    	assertNotNull(mapping10);
+    	assertEquals(2, mapping10.size());
+    	assertNotNull(mapping11);
+    	assertEquals(0, mapping11.size());
+    	assertNotNull(mapping12);
+    	assertEquals(2, mapping12.size());
+    	
+    	// tiny test of paging
+    	Map<String, Map<Long, Date>> mapping13 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 0);
+    	assertNotNull(mapping13);
+    	assertEquals(1, mapping13.size());
+    	Map<String, Map<Long, Date>> mapping14 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 1);
+    	assertNotNull(mapping14);
+    	assertEquals(1, mapping14.size());
+    	Map<String, Map<Long, Date>> mapping15 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 2);
+    	assertNotNull(mapping15);
+    	assertEquals(0, mapping15.size());
+    	
+    }
 
     /**
      * Add anything that supports the unit tests below here
      */
 
 }
+//assertEquals(mapping5.size(),100);
