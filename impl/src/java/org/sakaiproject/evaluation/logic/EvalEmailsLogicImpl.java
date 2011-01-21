@@ -16,15 +16,19 @@ package org.sakaiproject.evaluation.logic;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
+import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -71,10 +75,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         this.evaluationService = evaluationService;
     }
 
+    protected JobStatusReporter jobStatusReporter;
+    public void setJobStatusReporter(JobStatusReporter jobStatusReporter) {
+    	this.jobStatusReporter = jobStatusReporter;
+    }
 
     // INIT method
     public void init() {
         log.debug("Init");
+        
+        if(jobStatusReporter == null) {
+        	jobStatusReporter = new LoggingJobStatusReporter();
+        }
     }
 
 
@@ -745,11 +757,110 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         return new EvalEmailMessage(subjectTemplate, messageTemplate, subject, message);
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedAvailableNotifications()
+     */
+	public String[] sendConsolidatedAvailableNotifications() {
+		String jobId = null;
+    	if(this.jobStatusReporter != null) {
+    		jobId = this.jobStatusReporter.reportStarted("Email");
+    	}
+    	Map<String,Map<Long,Date>> userMap = this.evaluationService.getConsolidatedEmailMapping(false,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE,100000,0);
+    	if(jobId != null) {
+    		this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Processing emails to " + userMap.size() + " evaluators");
+    	}
+    	List<String> recipients = processConsolidatedEmails(jobId, userMap);
+		if(jobId != null) {
+			this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Sent emails to " + recipients.size() + " evaluators");
+    		this.jobStatusReporter.reportFinished(jobId);
+    	}
+    	return recipients.toArray(new String[]{});
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedReminderNotifications()
+     */
+	public String[] sendConsolidatedReminderNotifications() {
+		String jobId = null;
+    	if(this.jobStatusReporter != null) {
+    		jobId = this.jobStatusReporter.reportStarted("Email");
+    	}
+    	Map<String,Map<Long,Date>> userMap = this.evaluationService.getConsolidatedEmailMapping(true,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,100000,0);
+    	if(jobId != null) {
+    		this.jobStatusReporter.reportProgress(jobId, "ReminderNotifications", "Processing emails to " + userMap.size() + " evaluators");
+    	}
+    	List<String> recipients = processConsolidatedEmails(jobId, userMap);
+		if(jobId != null) {
+			this.jobStatusReporter.reportProgress(jobId, "ReminderNotifications", "Sent emails to " + recipients.size() + " evaluators");
+    		this.jobStatusReporter.reportFinished(jobId);
+		}
+    	return recipients.toArray(new String[]{});
+    }
+	
 
-    
-    
     // INTERNAL METHODS
     
+	/**
+	 * @param jobId TODO
+	 * @param userMap
+	 * @return
+	 */
+	protected List<String> processConsolidatedEmails(String jobId, Map<String, Map<Long, Date>> userMap) {
+		int reportingInterval = 12;
+		int userCounter = 0;
+		int emailCounter = 0;
+		List<String> recipients = new ArrayList<String>();
+    	for(String userId : userMap.keySet()) {
+    		Map<Long,Date> emailTemplateMap = userMap.get(userId);
+    		for(Long emailTemplateId : emailTemplateMap.keySet()) {
+    			Date earliestDueDate = emailTemplateMap.get(emailTemplateId);
+    			EvalEmailTemplate template = evaluationService.getEmailTemplate(emailTemplateId);
+    			
+    			Map<String, String> replacementValues = new HashMap<String, String>();
+    			// get user's locale
+    			Locale locale = commonLogic.getUserLocale(userId);
+    	        // use a date which is related to the current users locale
+    	        DateFormat df;
+    	        boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+    	        if (useDateTime) {
+    	            // show date and time if date/time enabled
+    	            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
+    	        } else {
+    	            df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+    	        }
+    			// add date to replacementValues
+    			replacementValues.put("EarliestEvalDueDate",df.format(earliestDueDate));
+    			replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
+    			// get eval tool title from settings? from message bundle?
+    			replacementValues.put("EvalToolTitle", "Teaching Evaluations");
+    			String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+    			// we can get it from the eval if needed, but it should come from settings
+    			replacementValues.put("HelpdeskEmail",from);
+    			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
+    			
+				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
+				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
+				try {
+					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+					emailCounter++;
+					recipients.add(userId);
+				} catch(Exception e) {
+					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userId + "). " + e);
+					log.warn("Error trying to send consolidated email to user " + userId, e);
+				}
+
+    		}
+    		userCounter++;
+    		if(userCounter % reportingInterval == 0 && jobId != null) {
+    			this.jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+    		}
+    	}
+		return recipients;
+	}
+	
     /**
      * EVALSYS-916 Send email to the helpdesk user notifying that the job is completed.
      *

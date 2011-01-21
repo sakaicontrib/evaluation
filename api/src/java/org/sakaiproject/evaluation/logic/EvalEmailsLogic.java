@@ -121,6 +121,18 @@ public interface EvalEmailsLogic {
      */
     public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
 
+    /**
+     * 
+     * @return
+     */
+	public String[] sendConsolidatedReminderNotifications();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] sendConsolidatedAvailableNotifications();
+
 
 
 }

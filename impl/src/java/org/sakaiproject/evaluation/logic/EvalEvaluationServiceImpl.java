@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1126,6 +1127,17 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId) {
     	return null;
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConsolidatedEmailMapping(java.lang.Boolean, java.lang.String, int, int)
+     */
+	public Map<String, Map<Long, Date>> getConsolidatedEmailMapping(
+			Boolean availableEmailSent, String emailTemplateType, int pageSize,
+			int page) {
+		
+		return this.dao.getUser2ConsolidateEmailTemplateMapping(availableEmailSent, emailTemplateType, pageSize, page);
+	}
     
     
 }

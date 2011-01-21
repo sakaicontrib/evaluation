@@ -577,4 +577,9 @@ public boolean isEvalGroupPublished(String evalGroupId) {
 	return true;
 }
 
+public String getMyWorkspaceDashboard(String userId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }
