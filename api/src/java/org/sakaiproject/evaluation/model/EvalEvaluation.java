@@ -240,6 +240,13 @@ public class EvalEvaluation implements java.io.Serializable {
      * This is ignored if it is null<br/>
      */
     public Boolean useViewDate;
+   
+   /**
+	* Optional field never used by EVALSYS code. May be used to mark records for bulk actions. 
+	* For example, an import operation might set a value that will be persisted and can be used 
+	* later to select records for export, deletion, etc.  Maximum length is 80 characters.
+	*/
+   public String localSelector;
 
     /**
      * This is an optional listing of eval groups for this evaluation,
@@ -803,4 +810,19 @@ public class EvalEvaluation implements java.io.Serializable {
         this.reminderStatus = reminderStatus;
     }
 
+    /**
+     * @return the localSelector
+     */
+    public String getLocalSelector() {
+        return localSelector;
+    }
+	
+    /**
+     * @param localSelector the localSelector to set
+     */
+    public void setLocalSelector(String localSelector) {
+        this.localSelector = localSelector;
+	}
+	
 }
+

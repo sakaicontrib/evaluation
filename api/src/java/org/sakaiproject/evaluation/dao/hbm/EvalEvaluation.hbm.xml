@@ -149,5 +149,8 @@
         <property name="reminderStatus" type="java.lang.String">
             <column name="REMINDER_STATUS" length="255" />
         </property>
+        <property name="localSelector" type="java.lang.String">
+        	<column name="LOCAL_SELECTOR" length="255" />
+        </property>
     </class>
 </hibernate-mapping>
