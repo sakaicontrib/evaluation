@@ -22,6 +22,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
     </bean>
@@ -51,5 +53,31 @@
         ref="org.sakaiproject.evaluation.logic.imports.EvalImportJob" />
         </bean>
     -->
+
+    <bean id="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync" 
+    	class="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSyncImpl" 
+    	init-method="init" 
+    	singleton="true">
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+    </bean>
+    
+    <!-- this is the helper that will register the above bean with the job scheduler -->
+    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync"
+        class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+        singleton="true" init-method="init">
+        <property name="beanId">
+            <value>org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync</value>
+        </property>
+        <property name="jobName">
+            <value>Group Membership Sync</value>
+        </property>
+        <property name="schedulerManager">
+            <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+        </property>
+    </bean>
+    
 
 </beans>

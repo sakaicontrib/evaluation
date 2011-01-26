@@ -150,6 +150,20 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return evals;
     }
     
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByState(java.lang.String)
+	 */
+	public List<EvalEvaluation> getEvaluationsByState(String state) {
+		log.debug("state: " + state);
+		Search search = new Search();
+		search.addRestriction(new Restriction("state", state));
+		List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
+        for (EvalEvaluation evaluation : evals) {
+            fixupEvaluation(evaluation);
+        }
+        return evals;
+	}
+    
     /**
      * @param templateId unique id of a template (must be set or exception occurs)
      * @return the search which will find evals based on a template id
@@ -1116,6 +1130,5 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId) {
     	return null;
     }
-    
     
 }

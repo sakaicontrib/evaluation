@@ -123,6 +123,16 @@
         <property name="reportingPermissions"
             ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
     </bean>
+    
+    <bean id="providerSyncBean" 
+    	class="org.sakaiproject.evaluation.tool.ProviderSyncBean" 
+    	init-method="init">
+    	<property name="messages" ref="targettedMessageList" />
+    	<property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
 
     <!-- LOCATORS - OTP bean locators here -->
     <bean id="settingsBean"
@@ -270,6 +280,17 @@
         <property name="evalBeanUtils"
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProviderSyncProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="evalSettings" 
+        	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="navBarRenderer" ref="navBarRenderer" />	
+		<property name="messages" ref="targettedMessageList" />
     </bean>
 
     <bean

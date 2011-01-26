@@ -31,7 +31,7 @@
     <!-- the beans listed here are allowed access to values (security) -->
     <bean parent="requestAddressibleParent">
         <property name="value"
-            value="id-defunnel, adhocGroupsBean, adhocGroupMemberRemovalBean,
+            value="id-defunnel, adhocGroupsBean, adhocGroupMemberRemovalBean, providerSyncBean,
 		      setupEvalBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
