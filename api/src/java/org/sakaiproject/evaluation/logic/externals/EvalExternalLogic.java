@@ -88,6 +88,12 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     * Boolean type: if true then quartz imports are enabled, false (default) is disabled
     */
    public static String SETTING_EVAL_QUARTZ_IMPORT = "eval.qrtzImport";
+   /**
+    * Boolean type: if true then missing data that should be supplied by evalsys is allowed 
+    * to bring down the entire server on server during startup.  Otherwise, error messages are logged.
+    * Default is false.
+    */
+   public static String SETTING_EVAL_CAN_KILL_SAKAI = "eval.goAheadAndKillSakaiOnDataLoadingError";
 
    /**
     * @param settingName the name of the setting to retrieve,
