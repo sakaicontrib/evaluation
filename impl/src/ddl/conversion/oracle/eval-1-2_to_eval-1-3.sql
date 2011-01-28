@@ -47,3 +47,8 @@ insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequen
 insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE',1);
 insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE',0);
 insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE',1);
+
+
+insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'ENABLE_ASSISTANT_CATEGORY', 0);                                                                                                                                                                                                                                       
+insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'ENABLE_EVALUATEE_BOX', 0);                                                                                                                                                                                                                                            
+insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'ENABLE_INSTRUCTOR_ASSISTANT_SELECTION', 0);                                                                                                                                                                                                                           

@@ -42,3 +42,7 @@ insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP()
 insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE',true);
 insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE',false);
 insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE',true);
+
+insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'ENABLE_ASSISTANT_CATEGORY', false);                                                                                                                                                                                                                                       
+insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'ENABLE_EVALUATEE_BOX', false);                                                                                                                                                                                                                                            
+insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'ENABLE_INSTRUCTOR_ASSISTANT_SELECTION', false);                                                                                                                                                                                                                           
