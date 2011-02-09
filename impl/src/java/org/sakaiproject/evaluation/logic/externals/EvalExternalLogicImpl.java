@@ -332,7 +332,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             try {
                 User sakaiUser = userDirectoryService.getUser(userId);
                 user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
-                        sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName());
+                        sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
             } catch(UserNotDefinedException ex) {
                 log.debug("Sakai could not get user from userId: " + userId, ex);
             }
@@ -350,7 +350,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         if (sakaiUsers.size() > 0) {
             User sakaiUser = sakaiUsers.iterator().next(); // just get the first one
             user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
-                    sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName());
+                    sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
         }
         return user;
     }
@@ -375,7 +375,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 String userId = entry.getKey();
                 User sakaiUser = entry.getValue();
                 EvalUser user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
-                        sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName());
+                        sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
                 users.put(userId, user);
             }
         }

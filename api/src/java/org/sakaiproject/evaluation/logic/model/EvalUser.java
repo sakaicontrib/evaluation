@@ -54,6 +54,12 @@ public class EvalUser implements Serializable {
      */
     public String displayName;
     /**
+     * EVALSYS-875
+     *  The display ID of this user
+     * or default to the username.
+     */
+    public String displayId;
+    /**
      * The sort name of this user
      * or defaults to username if it cannot be found
      */
@@ -76,7 +82,7 @@ public class EvalUser implements Serializable {
      * @param email email address for this user if they have one
      */
     public EvalUser(String userId, String type, String email) {
-        this(userId, type, email, null, null, null);
+        this(userId, type, email, null, null, null, null);
     }
 
     /**
@@ -87,7 +93,7 @@ public class EvalUser implements Serializable {
      * @param displayName the user display name or default text "--------" if it cannot be found
      */
     public EvalUser(String userId, String type, String email, String username, String displayName) {
-        this(userId, type, email, username, displayName, null);
+        this(userId, type, email, username, displayName, null, null);
     }
 
     /**
@@ -100,7 +106,7 @@ public class EvalUser implements Serializable {
      * @param displayName the user display name or default text "--------" if it cannot be found
      * @param sortName the name to use when sorting users or defaults to username if none set
      */
-    public EvalUser(String userId, String type, String email, String username, String displayName, String sortName) {
+    public EvalUser(String userId, String type, String email, String username, String displayName, String sortName, String displayId) {
         if (userId == null || "".equals(userId)) {
             throw new IllegalArgumentException("userId cannot be null");
         }
@@ -125,6 +131,12 @@ public class EvalUser implements Serializable {
         } else {
             this.sortName = username != null ? username : userId;
         }
+        if (displayId != null && ! "".equals(displayId)) {
+           	this.displayId = displayId;
+        } else {
+           	this.displayId = username;
+        }
+
     }
 
     @Override
