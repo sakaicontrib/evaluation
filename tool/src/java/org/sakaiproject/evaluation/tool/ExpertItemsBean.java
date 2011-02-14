@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -49,6 +50,16 @@ public class ExpertItemsBean {
     public void setAuthoringService(EvalAuthoringService authoringService) {
         this.authoringService = authoringService;
     }
+    
+    /*
+     * Members destined for EL bindings.
+     */
+    public Long eigId;
+    public Long eigParentId;
+    public boolean eigIsNew;
+    public String eigType;
+    public String eigTitle;
+    public String eigDesc;
 
     public ExpertItemsBean() { }
 
@@ -94,4 +105,39 @@ public class ExpertItemsBean {
         return "success";
     }
 
+    public String controlExpertItem() {
+    	
+    	// TODO need checkbox for expert or just assume?
+    	
+    	String currentUserId = commonLogic.getCurrentUserId();
+    	
+    	EvalItemGroup eig;
+    	if (eigIsNew) {
+    		 if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eigType)) {
+    			 eig = new EvalItemGroup(currentUserId, 
+    					 eigType, eigTitle, eigDesc, Boolean.TRUE, null, null);
+    		 } else {
+    			 EvalItemGroup parentIg = authoringService.getItemGroupById(eigParentId);
+    			 eig = new EvalItemGroup(currentUserId, 
+    					 eigType, eigTitle, eigDesc, Boolean.TRUE, parentIg, null);
+    		 }
+    	} else {
+    		eig = authoringService.getItemGroupById(eigId);
+    		eig.setTitle(eigTitle);
+    		eig.setDescription(eigDesc);
+    	}
+    	authoringService.saveItemGroup(eig, currentUserId);
+    		 
+    		 
+    	return "success";
+    	
+    }
+    
+    public String removeExpertItem() {
+
+    	authoringService.removeItemGroup(eigId, commonLogic.getCurrentUserId(), Boolean.FALSE);
+    	
+    	return "success";
+    	
+    }
 }

@@ -238,6 +238,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingPr
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateSearchProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlExpertItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlImportProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -260,6 +261,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/MessagesProducer.java -
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyAdhocGroupProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyExpertItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeGroupsProducer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeProducer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -268,8 +270,10 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProd
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEvalProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewExpertItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveEvalProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveExpertItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveItemProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveScaleProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -325,6 +329,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalViewParameters.jav
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameters.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyExpertItemParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ReportParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/SwitchViewParams.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -454,6 +459,7 @@ tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Da
 tool/src/webapp/content/templates/choose_expert_objective.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_email_templates.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/control_evaluations.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/control_expert_items.html -text
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_import.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_items.html -text svn_keywords=Date+Revision+Author+URL+Id
@@ -472,6 +478,7 @@ tool/src/webapp/content/templates/messages.html -text
 tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_block.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_email.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/modify_expert_item.html -text
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node_groups.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node_perms.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -481,8 +488,10 @@ tool/src/webapp/content/templates/modify_template.html -text svn_keywords=Date+R
 tool/src/webapp/content/templates/modify_template_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_email.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_eval.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/preview_expert_items.html -text
 tool/src/webapp/content/templates/preview_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_evaluation.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/remove_expert_item.html -text
 tool/src/webapp/content/templates/remove_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_scale.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_template.html -text svn_keywords=Date+Revision+Author+URL+Id

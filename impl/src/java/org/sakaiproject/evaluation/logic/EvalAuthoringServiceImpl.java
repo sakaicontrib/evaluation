@@ -431,14 +431,19 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             item.setItemText( commonLogic.cleanupUserStrings(item.getItemText()) );
             item.setDescription( commonLogic.cleanupUserStrings(item.getDescription()) );
             item.setExpertDescription( commonLogic.cleanupUserStrings(item.getExpertDescription()) );
-
+ 
             // save the item
             dao.save(item);
 
             // ensure expert items have a category set
             if (EvalUtils.safeBool(item.getExpert())) {
-                EvalItemGroup eig = dao.findOneBySearch(EvalItemGroup.class, 
-                        new Search("title", EvalConstants.EXPERT_ITEM_CATEGORY_TITLE));
+            	EvalItemGroup eig;
+            	if ((item.getItemGroupId() == null)||(item.getItemGroupId() == 0)) {
+            		eig = dao.findOneBySearch(EvalItemGroup.class, 
+                            new Search("title", EvalConstants.EXPERT_ITEM_CATEGORY_TITLE));
+            	} else {           		
+            		eig = getItemGroupById(item.getItemGroupId());
+            	}
                 if (eig != null) {
                     Set<EvalItem> items = eig.getGroupItems();
                     if (items == null) {
@@ -714,8 +719,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 templateItem.setCategory(item.getCategory());
             }
         }
+        Boolean useResultSharing = (Boolean) settings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
         if (templateItem.getResultsSharing() == null) {
-            templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
+        	if (useResultSharing) {
+        		templateItem.setResultsSharing(EvalConstants.SHARING_ADMIN);
+        	} else {
+        		templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
+        	}
         }
         Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
         if (naAllowed.booleanValue()) {
@@ -1009,6 +1019,27 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     // ITEM GROUPS
 
+    public List<EvalItemGroup> getAllItemGroups(String userId, boolean includeExpert) {
+        log.debug("userId:" + userId + ", includeExpert:" + includeExpert);
+
+        List<EvalItemGroup> eig = new ArrayList<EvalItemGroup>();
+        
+        List<EvalItemGroup> catItemGroups = dao.getItemGroups(null, userId, true, includeExpert);
+        int numItemGroups = catItemGroups.size();
+        for (int i = 0; i < numItemGroups; i++) {
+            EvalItemGroup evalItemGroup = (EvalItemGroup) catItemGroups.get(i);
+            eig.add((EvalItemGroup) catItemGroups.get(i));
+            List<EvalItemGroup> objItemGroups = dao.getItemGroups(evalItemGroup.getId(), userId, true, includeExpert);
+  
+            for (int j = 0; j < objItemGroups.size(); j++) {
+                eig.add((EvalItemGroup) objItemGroups.get(j));
+            }
+  
+        }
+        
+        return eig;
+    }
+
 
     public EvalItemGroup getItemGroupById(Long itemGroupId) {
         log.debug("itemGroupId:" + itemGroupId );
@@ -1052,6 +1083,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         }
 
         return items;
+    }
+    
+    public Long getItemGroupIdByItemId(Long itemId, String userId) {
+        log.debug("itemId:" + itemId );
+        //select eig.* from eval_itemgroup eig, eval_item ei where ei.IG_ITEM_ID = eig.id and ei.id=8
+        Long eigId = dao.getItemGroupIdByItemId(itemId, userId);
+        return eigId;
     }
 
 

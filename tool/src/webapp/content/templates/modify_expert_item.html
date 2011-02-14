@@ -1,0 +1,38 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="page-title">Modify Expert Item</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+<body>
+<div class="portletBody">
+     
+    <h3 rsf:id="modify-location-message">Add/Modify Item Group</h3>
+    <form rsf:id="modify-expertitem-form" method="post">
+    <input rsf:id="expertitem-new" type="hidden" name="expertitem-new"/>
+    <input rsf:id="expertitem-type" type="hidden" name="expertitem-type"/>
+    <input rsf:id="expertitem-parent" type="hidden" name="expertitem-parent"/>
+    <input rsf:id="expertitem-eigId" type="hidden" name="expertitem-eigId"/>
+    	<p class="shorttext"><b><label rsf:id="category-label">Category</label>  <span rsf:id="category">General</span></b></p>
+        <p class="shorttext">
+            <label rsf:id="title-label" for="expertitem-title">Title</label>
+            <input rsf:id="expertitem-title" type="text" maxlength="100" size="30" />
+        </p>
+        <p class="shorttext">
+            <label rsf:id="description-label" for="expertitem-abbr">Description</label>
+            <textarea rsf:id="expertitem-desc" name="expertitem-text-dummy" cols="80" rows="5"></textarea>
+        </p>
+        <div class="act">
+            <input type="submit" rsf:id="save-expertitem-button" value="Save Item" />
+            <a href="control_expertitems.html" rsf:id="cancel-link">Cancel</a>
+        </div>
+    </form>
+</div>
+<script>document.getElementById('expertitem-title').focus();</script>
+</body>
+</html>

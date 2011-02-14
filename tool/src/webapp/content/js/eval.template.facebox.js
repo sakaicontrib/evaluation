@@ -111,6 +111,15 @@ var evalTemplateFacebox = (function() {
             if(page_type === evalTemplateUtils.pages.choose_expert_page){
                 pageTitle = evalTemplateUtils.messageLocator("expert.expert.items");
             }
+            if(page_type === evalTemplateUtils.pages.modify_expert_item_page){
+                pageTitle = evalTemplateUtils.messageLocator("modifyexpertitem.page.title");
+            }else
+            if(page_type === evalTemplateUtils.pages.preview_expert_item_page){
+                pageTitle = evalTemplateUtils.messageLocator("previewexpertitem.page.title");
+            }else
+            if(page_type === evalTemplateUtils.pages.remove_expert_item_page){
+                pageTitle = evalTemplateUtils.messageLocator("removeexpertitem.page.title");
+            }
 
             $("h2.pageHeaderOnPage").hide();
 
@@ -178,7 +187,13 @@ var evalTemplateFacebox = (function() {
                     return false;
                 } else if (pageType === evalTemplateUtils.pages.choose_expert_page){
                     revealFunction = evalTemplateLoaderEvents.choose_expert_category;
-                }
+                }  else if (pageType === evalTemplateUtils.pages.modify_expert_item_page){
+                     revealFunction = evalTemplateLoaderEvents.modify_expert_item;
+                }  else if (pageType === evalTemplateUtils.pages.preview_expert_item_page){
+                     revealFunction = evalTemplateLoaderEvents.preview_expert_item;
+                } else if (pageType === evalTemplateUtils.pages.remove_expert_item_page){
+                     revealFunction = evalTemplateLoaderEvents.remove_expert_item;
+		}
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
                         revealFunction();

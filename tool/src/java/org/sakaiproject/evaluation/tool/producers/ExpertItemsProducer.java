@@ -108,6 +108,10 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
         UIMessage.make(tofill, "description", "expert.description");
 
         UIForm form = UIForm.make(tofill, "insert-items-form");
+        
+        UIBranchContainer expertItemHeaderBranch = UIBranchContainer.make(tofill, "expert-item-header-row:");     	
+       	UIMessage.make(expertItemHeaderBranch, "expert-item-col", "expert.items");
+       	UIBranchContainer selectAllBranch = UIBranchContainer.make(expertItemHeaderBranch, "select-all-col:");
 
         // loop through all expert items
         List<EvalItem> expertItems = authoringService.getItemsInItemGroup(objectiveId, true);

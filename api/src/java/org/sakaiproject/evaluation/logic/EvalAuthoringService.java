@@ -344,6 +344,15 @@ public interface EvalAuthoringService {
    // ITEM GROUPS
 
    /**
+    * Get all item groups, parents and children<br/>
+    * 
+    * @param userId the internal user id (not username)
+    * @param includeExpert if true then include expert groups only, else include non-expert groups only
+    * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
+    */
+   public List<EvalItemGroup> getAllItemGroups(String userId, boolean includeExpert);  
+   
+   /**
     * Get item groups contained within a specific group<br/>
     * <b>Note:</b> If parent is null then get all the highest level groups
     * 
@@ -371,6 +380,15 @@ public interface EvalAuthoringService {
     * @return an {@link EvalItemGroup} object or null if none found
     */
    public EvalItemGroup getItemGroupById(Long itemGroupId);
+   
+   /**
+     * Returns the eval itemgroup id for an item.  If an item is not part of an itemgroup, null.
+     * 
+     * @param itemId the unique id of the EvalItem object
+     * @param userId the internal user Id (of the owner)
+     * @return
+    */
+   public Long getItemGroupIdByItemId(Long itemId, String userId);
 
    /**
     * Save a new item group (category, objective, etc.)<br/>

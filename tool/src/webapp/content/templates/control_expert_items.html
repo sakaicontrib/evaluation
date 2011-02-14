@@ -2,7 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	   <title rsf:id="page-title">My Items</title>
+	   <title rsf:id="page-title">Expert Items</title>
 	   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
@@ -34,10 +34,9 @@
 
 			<ul class="breadCrumb">
 				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-				<li rsf:id="page-title"  class="lastCrumb">My Items</li>
-				<li style="float:right" class="lastCrumb"><a rsf:id="expert-items-link" href="control_expert_items.html"  class="addItem">Expert Items</a></li>
+				<li rsf:id="page-title"  class="lastCrumb">Expert Items</li>
 			</ul>
-						
+			
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
@@ -50,80 +49,76 @@
 						<p rsf:id="items-description" class="instruction">Questions or statements which the evaluator responds to.</p>
 					</div>
 					<div class="listNav">
-						<label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label>
-						<form rsf:id="add-item-form" action="modify_item.html" method="get" class="inlineForm">
-							<select rsf:id="item-classification-list" id="item-classification-list" >
+						<!-- label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label -->
+						<form rsf:id="add-category-form" action="modify_item.html" method="get" class="inlineForm">
+							<!--  select rsf:id="item-classification-list" id="item-classification-list" >
 								<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
 								<option value="modify_essay.html">Short Answer/Essay</option>
 								<option value="modify_header.html">Text Header</option>
-							</select>
-							<input rsf:id="add-item-button" type="submit" value="Add" />
+							</select -->
+							<input rsf:id="add-category-button" type="submit" value="Add Category" />
 						</form>
 					</div>
 			</div>
-			
-			<!-- TODO - make the search part do something -AZ
-			
-			<div style="width:99%;">
-				<div class="divrow">
-					<div class="leftcol" style="font-size:0.9em;">
-						<span rsf:id="search-current" style="font-weight:bold;">Current Search</span> :
-						<span rsf:id="search-current-value">Search Text</span>
-					</div>
-					<div class="rightcol">
-						<form rsf:id="search-form" action="control_items.html" method="get" style="font-size:0.7em;">
-							<input rsf:id="search-box" type="text" size="25" maxlength="100" style="font-size:1em;"/>
-							<input rsf:id="search-command" type="submit" value="Search" style="font-size:1em;"/>
-						</form>
-					</div>
-					<div class="cleaner">&nbsp;</div>
-				</div>
-			</div>
-			-->
-			
+						
 			<!-- This block (list items) is not visible if there are no items visible -->
-            <form rsf:id="copyForm">
-      			<table rsf:id="item-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
-      				<thead class="skip" style="display:none">
+            <form rsf:id="expertForm">
+      			<table rsf:id="expertitem-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
+      				<thead>
       					<tr>
+      					<th id="itemMD">
+      							<span rsf:id="expertitems-category-title"> Category </span>
+      						</th>
       						<th id="itemMD">
-      							<span rsf:id="items-metadata-title">Item title and details</span>
+      							<span rsf:id="expertitems-objective-title"> Objective </span>
+      						</th>
+      						<th id="itemClass">
+							   <span rsf:id="expertitems-description-title"> Description </span>
+      						</th>
+      						<th id="itemClass">
+							   <span rsf:id="expertitems-items-title"> Item </span>
       						</th>
       						<th id="itemAction">
-      							<span rsf:id="items-action-title">Actions</span>
+      							<span rsf:id="expertitems-action-title"> Actions </span>
       						</th>
       						<th id="itemOwner">
-      							<span rsf:id="items-owner-title">Owner</span>
+      							<span rsf:id="expertitems-owner-title"> Owner </span>
       						</th>
       					</tr>
       				</thead>
       				<tbody>	
-      					<tr rsf:id="item-row:">
-      						<td headers="itemMD">
-      							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
-      							<span rsf:id="item-scale" class="instruction">
-      								- Item Scale (the title of the scale and the points in parens)
-      							</span>
-                                <span rsf:id="item-expert" style="font-weight: bold;">
-                                    [<span rsf:id="payload-component">Expert</span></span>
-                                    <span rsf:id="item-expert-cat" style="font-weight: bold;">Category</span>
-							    	<span rsf:id="item-expert-obj" style="font-weight: bold;">Objective</span><b>]</b>
-                               
-      							<div rsf:id="item-text" class="textPanel indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
+      					<tr rsf:id="expertitem-row:">
+      						<td>
+      							<span rsf:id="expertitem-cat" >Category Text </span>
+      						</td>
+							<td>
+								<span rsf:id="expertitem-obj" >Objective Text </span>
+							</td>
+      						<td>
+      							<span rsf:id="expertitem-description" style="display:inline">Description</span>
+      						</td>
+      						<td>
+							    <span rsf:id="expertitem-items"> 12 </span>
       						</td>
       						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
-      							<a rsf:id="item-remove-link" href="remove_item.html" rel="facebox">Delete</a>
-      							<span rsf:id="item-remove-dummy"></span> | 
-      							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
+      							<a rsf:id="expertitem-edit-link" href="modify_expert_item.html" rel="facebox">Edit</a>
       							<span rsf:id="item-modify-dummy"></span> | 
-      							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
+      							<a rsf:id="expertitem-preview-link" href="preview_expertitem.html" rel="facebox">Preview</a> 
+      							<span rsf:id="item-modify-dummy"></span>
+      							<span rsf:id="bar2" > | </span> 
+      							<a rsf:id="expertitem-add-objective-link" href="modify_expert_item.html" rel="facebox">Add Objective</a>
+      							<span rsf:id="item-modify-dummy"></span> 
+      							<span rsf:id="bar3" > | </span> 
+      							<a rsf:id="expertitem-remove-link" href="remove_expert_item.html" rel="facebox">Remove</a>
+      							<span rsf:id="item-remove-dummy"></span> 
+      							<span rsf:id="bar4" > | </span>  
                                 <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
       						</td>
       						<td headers="itemOwner" style="margin:0em 1em;">
-      							<span rsf:id="item-owner">owner displayname</span>
+      							<span rsf:id="expertitem-owner">owner displayname</span>
       						</td>
       					</tr>
-      					<tr rsf:id="item-row:" class="itemsListOddLine">
+      					<!-- tr rsf:id="item-row:" class="itemsListOddLine">
       						<td>
       							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
       							<span rsf:id="item-scale">
@@ -142,7 +137,7 @@
       						<td style="margin:0em 1em;">
       							<span rsf:id="item-owner">owner displayname</span>
       						</td>  
-      					</tr>
+      					</tr -->
       				</tbody>	
       			</table>
             </form>
