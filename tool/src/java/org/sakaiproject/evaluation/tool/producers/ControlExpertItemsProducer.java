@@ -142,7 +142,8 @@ public class ControlExpertItemsProducer implements ViewComponentProducer {
                         new ModifyExpertItemParameters(PreviewExpertItemProducer.VIEW_ID, categoryId, objectiveId, eig.getType(), false));
             		UIOutput.make(itemBranch, "bar2", "|");
             	}
-                if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) {
+                if ((EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) &&
+                	(eig.getGroupItems().size() == 0)) {
                 	UIInternalLink.make(itemBranch, "expertitem-add-objective-link", UIMessage.make("controlexpertitems.add.objective"), 
                         new ModifyExpertItemParameters(ModifyExpertItemProducer.VIEW_ID, categoryId, null, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, true));
                 	UIOutput.make(itemBranch, "bar3", "|");
