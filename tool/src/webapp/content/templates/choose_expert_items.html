@@ -10,7 +10,16 @@
 			$('a[rel*=facebox]').facebox();
 		}); 
    
-</script> 
+		</script>
+		<script type="text/javascript"> 
+	   		var selectAllBox = jQuery('#selectAllNone');
+   			selectAllBox.change( function() {
+   				var onoff = selectAllBox.get(0).checked;
+   				jQuery('.expertitembox').each(function(i) {
+     				this.checked = onoff;
+	  			});
+ 			});
+ 		</script> 
 	</head>
 	
 	<body>
@@ -68,15 +77,17 @@
 		<table  summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:auto;min-width:50%">
 			<caption rsf:id="expert-items-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 			<thead>
-				<tr>
-					<th class="attach" scope="col">&nbsp;&nbsp;</th>
-					<th scope="col">Expert Items</th>
+				<tr rsf:id="expert-item-header-row:">
+					<th rsf:id="select-all-col:">
+						<input id="selectAllNone" type="checkbox" />
+                        <span>All</span></th>
+					<th rsf:id="expert-item-col">Expert Items</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr rsf:id="expert-item-list:">
 					<td>
-						<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
+						<input class="expertitembox" id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
 					</td>
 					<td>
 						<label rsf:id="item-label" for="id1">

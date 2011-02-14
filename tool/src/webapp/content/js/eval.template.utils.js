@@ -131,7 +131,10 @@ var evalTemplateUtils = (function() {
                 choose_expert_page: "choose_expert_category",
                 eb_save_order: "/direct/eval-templateitem/template-items-reorder",
                 eb_block_edit: "/direct/eval-templateitem/modify-block-items",
-                preview_item_page: "preview_item"
+                preview_item_page: "preview_item",
+                modify_expert_item_page: "modify_expert_item",
+                preview_expert_item_page: "preview_expert_items",
+                remove_expert_item_page: "remove_expert_item"
             },
         getPageType: function(url){
             evalTemplateUtils.debug.group("Getting the page type/name");
@@ -140,7 +143,8 @@ var evalTemplateUtils = (function() {
                     regExp = null;
             pagesLoadedByFBwithJs = [ evalTemplateUtils.pages.modify_item_page, evalTemplateUtils.pages.choose_expert_page,
                 evalTemplateUtils.pages.modify_template_page, evalTemplateUtils.pages.modify_block_page,
-                evalTemplateUtils.pages.choose_existing_page, evalTemplateUtils.pages.preview_item_page];
+                evalTemplateUtils.pages.choose_existing_page, evalTemplateUtils.pages.preview_item_page,
+                evalTemplateUtils.pages.modify_expert_item_page, evalTemplateUtils.pages.preview_expert_item_page, evalTemplateUtils.pages.remove_expert_item_page];
             evalTemplateUtils.debug.debug("Pages supported are %s", pagesLoadedByFBwithJs.toString());
             for ( i in pagesLoadedByFBwithJs){
                 if ( typeof pageType == "undefined" ){

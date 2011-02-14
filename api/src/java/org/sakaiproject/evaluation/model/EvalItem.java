@@ -88,10 +88,15 @@ public class EvalItem implements java.io.Serializable {
      */
     private String autoUseTag;
 
-
+    /**
+     * EVALSYS-1026
+     * hold the eval item group id for an expert item to be updated by evalItemGroup
+     * Not part of eval item constructor or dao.
+     */
+    private Long itemGroupId;
+    
+    
     // Constructors
-
-
 
     /** default constructor */
     public EvalItem() {
@@ -303,5 +308,18 @@ public class EvalItem implements java.io.Serializable {
     public void setCompulsory(Boolean compulsory) {
         this.compulsory = compulsory;
     }
+
+    /*
+     * EVALSYS-1026
+     * hold eval item group id for update later by EvalItemGroup
+     * these methods are not included of item constructor or dao
+     */
+	public Long getItemGroupId() {
+		return itemGroupId;
+	}
+
+	public void setItemGroupId(Long itemGroupId) {
+		this.itemGroupId = itemGroupId;
+	}
 
 }

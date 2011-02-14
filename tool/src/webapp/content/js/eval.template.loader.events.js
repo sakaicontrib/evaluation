@@ -228,6 +228,21 @@ var evalTemplateLoaderEvents = (function($) {
             $.facebox.setHeader(evalTemplateUtils.pages.choose_expert_page);
             $('a[rel*=facebox]').facebox();
         },
+        //modify expert item view
+        modify_expert_item: function(){
+            $.facebox.setHeader(evalTemplateUtils.pages.modify_expert_item_page);
+            $('a[rel*=facebox]').facebox();
+        },
+        //preview expert item view
+        preview_expert_item: function(){
+            $.facebox.setHeader(evalTemplateUtils.pages.preview_expert_item_page);
+            $('a[rel*=facebox]').facebox();
+        },        
+        //remove_expert_item view
+        remove_expert_item: function(){
+            $.facebox.setHeader(evalTemplateUtils.pages.remove_expert_item_page);
+            $('a[rel*=facebox]').facebox();
+        },
         preview_item: function(){
             if ($('.blockItemGroup').length > 0){
                 evalsys.instrumentBlockItem();

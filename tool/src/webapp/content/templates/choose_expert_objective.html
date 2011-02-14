@@ -8,8 +8,8 @@
 		<link  href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<link  href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />-->
-         <script type="text/javascript"> 
-		$(document).ready(function() { 
+         <script type="text/javascript">
+		$(document).ready(function() {
 			$.facebox.setHeader($(".portletBody .titleHeader"));
 			$('a[rel*=facebox]').facebox();
 			var opt = {
@@ -23,54 +23,63 @@
 				}
 			};
 			//$('[id=form-branch::insert-items-form]').ajaxForm(opt);
-		}); 
-   
-</script> 
+		});
+
+		</script>
+		<script type="text/javascript">
+	   		var selectAllBox = jQuery('#selectAllNone');
+   			selectAllBox.change( function() {
+   				var onoff = selectAllBox.get(0).checked;
+   				jQuery('.expertitembox').each(function(i) {
+    	 			this.checked = onoff;
+		  		});
+ 			});
+ 		</script>
 	</head>
-	
+
 	<body>
 		<div class="portletBody">
-        
-       <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>			
-			
+
+       <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
+
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
 				</ul>
 			</div>
-	
+
 			<div class=" messageStepGraphic">
-				<div class=" first-noncur-step"> 
+				<div class=" first-noncur-step">
 					<span rsf:id="expert-items" class="expertItem">Expert Items:</span>
-				</div>	
+				</div>
 				<div class=" med-noncur-step">
 					<span>
 						<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
 					</span>
-				</div>	
-				<div class=" med-cur-step">	
+				</div>
+				<div class=" med-cur-step">
 					<span rsf:id="choose-objective-2" class="expertItemCategoryCurrent">(2) Choose Objective</span>
 				</div>
 				<div class=" last-noncur-step">
 					<span rsf:id="choose-items-3" class="expertItemCategory">(3) Choose Items</span>
-				</div>	
+				</div>
 			</div>
-	
+
 			<h3>
-				<span rsf:id="category">Category</span>: 
+				<span rsf:id="category">Category</span>:
 				<span rsf:id="category-current" class="highlight">Current Category</span>
 			</h3>
-	
+
 			<div class="instruction">
 				<div rsf:id="objective-header:">
 					<span rsf:id="objective"  >Objective</span> :
 					<span rsf:id="objective-instructions" class="instruction" >Click on an objective to select items related to it</span>
 				</div>
 			</div>
-			
+
 			<!-- //gsilver: need to come up with a min-width for this table -->
 			<!-- //gsilver:if this list has no items - omit, as it will not validate -->
-			
+
 			<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%">
 				<caption rsf:id="objective-list-summary" class="skip">Column 1 has links used to select objectives, Column 2 has information about these objectives</caption>
 				<thead>
@@ -84,7 +93,7 @@
 						<td>
 							<h5>
 								<a rsf:id="objective-title-link" rel="facebox" href="choose_expert_items.html">objective title</a>
-							</h5>	
+							</h5>
 						</td>
 						<td rsf:id="objective-description">
 							This is the objective description for the expert objective which I expect will be quite long and involved and will explain to the user what items are in this objective and what it is good for
@@ -101,35 +110,37 @@
 					</tr>
 				</tbody>
 			</table>
-			
+
 			<!--//gsilver:not sure how to activate this, so leave alone -->
-			
+
 			<div rsf:id="objective-or-choice:" style="text-align:center;width:100%;">
 				- <span rsf:id="objective-or-text" style="font-weight:bold;text-align:center;width:100%;">OR</span> -
 			</div>
-			
+
 			<div rsf:id="form-branch:">
 				<form rsf:id="insert-items-form" id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
-					<p class="instruction">	
+					<p class="instruction">
 						<span rsf:id="items">Items</span> :
 						<span rsf:id="items-instructions">Check the items you want to use in your template and click the Insert button at the bottom</span>
-					</p>	
-		
+					</p>
+
 					<!-- //gsilver: need to come up with a min-width for this table -->
 					<!-- //gsilver:if this list has no items - omit, as it will not validate -->
-		
+
 					<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%;">
 						<caption rsf:id="item-list-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 						<thead>
-							<tr>
-								<th class="attach" scope="col">&nbsp;</th>
-								<th rsf:id="items" scope="col">Expert Items</th>
+							<tr rsf:id="expert-item-header-row:">
+								<th rsf:id="select-all-col:">
+									<input id="selectAllNone" type="checkbox" />
+						   			<span>All</span></th>
+								<th rsf:id="expert-item-col">Expert Items</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr rsf:id="expert-item-list:">
-								<td >
-									<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
+								<td>
+									<input class="expertitembox" id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
 								</td>
 								<td >
 									<h5>
@@ -137,11 +148,11 @@
 											<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
 										</label>
 									</h5>
-									<div class="instruction">	
+									<div class="instruction">
 										<span rsf:id="item-scale"  class="instruction">Item Scale (the title of the scale and the points in parens)</span>
 										<span rsf:id="item-expert-desc"class="instruction">Expert description (the description of what this item is good for assessing and where it should be used</span>
-									</div>	
-			
+									</div>
+
 								</td>
 							</tr>
 							<tr rsf:id="expert-item-list:">
@@ -164,7 +175,7 @@
 					</p>
 				</form>
 			</div>
-			
+
 		</div>
 	</body>
 </html>

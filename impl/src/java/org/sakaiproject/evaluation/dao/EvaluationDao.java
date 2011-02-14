@@ -224,7 +224,15 @@ public interface EvaluationDao extends GeneralGenericDao {
      */
     public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId,
             boolean includeEmpty, boolean includeExpert);
-
+    /**
+     * Returns the eval itemgroup id for an item.  If an item is not part of an itemgroup, null.
+     * 
+     * @param itemId the unique id of the EvalItem object
+     * @param userId the internal user Id (of the owner)
+     * @return
+     */
+    public Long getItemGroupIdByItemId(Long itemId, String userId);
+    
     /**
      * Get all the templateItems for this template limited by the various hierarchy
      * settings specified, always returns the top hierarchy level set of items,

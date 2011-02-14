@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import static org.sakaiproject.evaluation.utils.EvalUtils.safeBool;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -24,6 +25,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -130,7 +132,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         String itemOwnerName = null; // this is the name of the owner of the item
 
         EvalScale currentScale = null; // this is the current scale (if there is one)
-
+        
         /* these keep track of whether items are locked, we are not tracking TIs because 
          * the user should not be able to get here if the template is locked, if they did then 
          * they cheated so they can get an exception, we don't track scales since if the item
@@ -144,6 +146,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
         Boolean usesComment = null; // whether or not the item uses the comment option
         Boolean compulsory = null; //whether or no this question must be answered
         Long scaleId = null; // this holds the current scale id if there is one
+        Long itemGroupId = null; // this holds the current eval item group id if there is one - EVALSYS-1026
+        
         
         Boolean isGrouped = (groupItemId != null && groupItemId == -1l ); //We are working with an existing child item
         Boolean isGroupable = ( ! isGrouped && groupItemId != null);
@@ -222,7 +226,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                 currentScale = item.getScale();
                 scaleId = currentScale.getId();
             }
-
             EvalUser owner = commonLogic.getEvalUserById( item.getOwner() );
             itemOwnerName = owner.displayName;
             itemClassification = item.getClassification();
@@ -378,16 +381,88 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             form.parameters.add( new UIELBinding(itemOTP + "sharing", EvalConstants.SHARING_PRIVATE) );
         }
 
+        List<EvalItemGroup> itemGroups = authoringService.getAllItemGroups(currentUserId, true);
+        UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
+        
         if (userAdmin && templateId == null && ! isGroupable) {
             // only show the expert items if the user is an admin AND we are modifying the item only
-            UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
-            UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
-            UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
-            UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + "expert", null);
+            //UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
+        	Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
+            if (useExpertItems) {                      
+            	UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
+            	UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
+            	UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + "expert", null);
 
-            UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
-            UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
-            UIInput.make(showItemExpert, "expert-desc", itemOTP + "expertDescription");
+            /*
+             *  EVALSYS-1026
+             *  Creating combo box for expert item groups and matching the item to the 
+             *  item group category or objective
+             */
+            //Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
+            //if (useExpertItems) {                      
+            	ArrayList<String> listExpertCat = new ArrayList<String>();
+            	ArrayList<String> listExpertValues = new ArrayList<String>();
+            	listExpertCat.add("None");
+            	listExpertValues.add("0");
+            	for (int i = 0; i < itemGroups.size(); i++) {
+            		EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
+            		// loop through all expert items
+            		boolean foundItemGroup = false;
+            		if (!foundItemGroup) {
+            			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
+            			for (int j = 0; j < expertItems.size(); j++) {
+            				EvalItem expertItem = (EvalItem) expertItems.get(j);
+            				if (expertItem.getId()== itemId) {
+            					itemGroupId = eig.getId();
+            					foundItemGroup = true;
+            				}	
+            			}
+            		}
+            	
+            		if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) {
+            			listExpertCat.add(eig.getTitle());
+            			listExpertValues.add(eig.getId().toString());
+            		} else {
+            			listExpertCat.add("..." + eig.getTitle());
+            			listExpertValues.add(eig.getId().toString());
+            		}
+            	}
+            	String[] expertValues = listExpertValues.toArray(new String[]{});
+            	UISelect expertList = UISelect.make(
+            		showItemExpert, "item-expert-list", 
+            		expertValues, 
+            		listExpertCat.toArray(new String[]{}), 
+            		itemOTP+"itemGroupId",
+            		itemGroupId != null ? itemGroupId.toString() : expertValues[0]);
+            	expertList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed            
+           
+            	UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
+            	UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
+            	UIMessage.make(showItemExpert, "expert-itemgroup-header", "modifyitem.item.expert.itemgroup.header");
+            	UIInput.make(showItemExpert, "expert-desc", itemOTP + "expertDescription");
+            }
+        } else {
+        	// if an expert item, must carry eval item group along with it.
+        	itemGroupId = new Long(0);
+        	if (templateItemId != null) {
+        		EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
+               	for (int i = 0; i < itemGroups.size(); i++) {
+               		EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
+               		// loop through all expert items
+               		boolean foundItemGroup = false;
+               		if (!foundItemGroup) {
+               			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
+               			for (int j = 0; j < expertItems.size(); j++) {
+               				EvalItem expertItem = (EvalItem) expertItems.get(j);
+               				if (expertItem.getId()== templateItem.getItem().getId()) {
+               					itemGroupId = eig.getId();
+               					foundItemGroup = true;
+               				}	
+               			}
+               		}
+               	} 
+        	}
+        	UIInput.make(showItemExpert, "expertitem-eigId", itemOTP+"itemGroupId", itemGroupId.toString());
         }
 
         // Check to see if should show ITEM display hints

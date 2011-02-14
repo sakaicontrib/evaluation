@@ -16,10 +16,13 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
@@ -38,6 +41,7 @@ import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -50,6 +54,11 @@ public class ControlItemsProducer implements ViewComponentProducer {
     public static String VIEW_ID = "control_items";
     public String getViewID() {
         return VIEW_ID;
+    }
+    
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
     }
 
     private EvalCommonLogic commonLogic;
@@ -83,6 +92,15 @@ public class ControlItemsProducer implements ViewComponentProducer {
          * top links here
          */
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
+
+        // EVALSYS-1026
+        Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
+        if (useExpertItems) {
+        	UIInternalLink.make(tofill, "expert-items-link", 
+                UIMessage.make("controlexpertitems.page.title"), 
+                new SimpleViewParameters(ControlExpertItemsProducer.VIEW_ID)); 
+        }
+        List<EvalItemGroup> itemGroups = authoringService.getAllItemGroups(currentUserId, true);
 
         UIMessage.make(tofill, "items-header", "controlitems.items.header");
         UIMessage.make(tofill, "items-description", "controlitems.items.description");
@@ -124,10 +142,36 @@ public class ControlItemsProducer implements ViewComponentProducer {
 
                 EvalUser owner = commonLogic.getEvalUserById( item.getOwner() );
                 UIOutput.make(itemBranch, "item-owner", owner.displayName );
+                
+                EvalItemGroup evalItemGroup = new EvalItemGroup();
                 if (item.getExpert().booleanValue() == true) {
                     // label expert items
                     UIMessage.make(itemBranch, "item-expert", "controlitems.expert.label");
-                }
+                    for (int j = 0; j < itemGroups.size(); j++) {
+                		EvalItemGroup eig = (EvalItemGroup) itemGroups.get(j);
+                		// loop through all expert items
+                		boolean foundItemGroup = false;
+                		if (!foundItemGroup) {
+                			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
+                			for (int k = 0; k < expertItems.size(); k++) {
+                				EvalItem expertItem = (EvalItem) expertItems.get(k);
+                				if (expertItem.getId()== item.getId()) {
+                					evalItemGroup = eig;
+                					foundItemGroup = true;
+                				}	
+                			}
+                		}
+                    }
+                    if ( EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE.equals(evalItemGroup.getType())) {
+            			// get category for the objective
+            			EvalItemGroup ig = evalItemGroup.getParent();
+            			UIOutput.make(itemBranch, "item-expert-cat", ig.getTitle() + " : ");
+            			UIOutput.make(itemBranch, "item-expert-obj", evalItemGroup.getTitle());
+            		} else {
+            			// expert item is only a cat
+            			UIOutput.make(itemBranch, "item-expert-cat", evalItemGroup.getTitle());
+            		}
+            	}
 
                 UIVerbatim.make(itemBranch, "item-text", item.getItemText());
 

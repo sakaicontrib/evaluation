@@ -880,6 +880,32 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         return results;
     }
 
+    /**
+     * Get item groups contained within a specific group<br/>
+     * <b>Note:</b> If parent is null then get all the highest level groups
+     * 
+     * @param parentItemGroupId the unique id of an {@link EvalItemGroup}, if null then get all the highest level groups
+     * @param userId the internal user id (not username)
+     * @param includeEmpty if true then include all groups (even those with nothing in them), else return only groups
+     * which contain other groups or other items
+     * @param includeExpert if true then include expert groups only, else include non-expert groups only
+     * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
+     */
+    @SuppressWarnings("unchecked")
+    public Long getItemGroupIdByItemId(Long itemId, String userId) {
+
+    	Long itemGroupId = null;
+    	
+    	String hql = "select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id= ?";
+        Object[] params = new Object[] {itemId};
+        
+        List<Long> results = getHibernateTemplate().find(hql, params);
+        if (! results.isEmpty() 
+                && results.get(0) != null) {
+            itemGroupId = results.get(0);
+        }
+        return itemGroupId;    
+    }
 
     /**
      * Get all the templateItems for this template limited by the various hierarchy

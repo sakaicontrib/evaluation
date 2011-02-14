@@ -1,15 +1,15 @@
 /******************************************************************************
  * ExpertObjectiveProducer.java - created by aaronz on 9 Mar 2007
- * 
+ *
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
+ *
+ * A copy of the Educational Community License has been included in this
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
+ *
  * Contributors:
  * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
+ *
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool.producers;
@@ -48,7 +48,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Handles the expert objectives view
- * 
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ExpertObjectiveProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
@@ -157,6 +157,10 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
             UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
             UIForm form = UIForm.make(formBranch, "insert-items-form");
 
+           	UIBranchContainer expertItemHeaderBranch = UIBranchContainer.make(tofill, "expert-item-header-row:");
+           	UIMessage.make(expertItemHeaderBranch, "expert-item-col", "expert.items");
+           	UIBranchContainer selectAllBranch = UIBranchContainer.make(expertItemHeaderBranch, "select-all-col:");
+
             UIMessage.make(form, "items", "expert.items");
             UIMessage.make(form, "items-instructions", "expert.items.instructions");
             UIMessage.make(form, "item-item-list-summary", "expert.items.summary");
@@ -193,7 +197,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
     }
 
 
-    /* 
+    /*
      * (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
