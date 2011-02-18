@@ -98,8 +98,9 @@ public class PDFReportExporter implements ReportExporter {
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
         // calculate the response rate
-        int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
+        //int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+        int responsesCount = evaluationService.countResponses(null,new Long[] {evaluation.getId()},groupIds,null);
+        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), groupIds);
 
         String groupNames = responseAggregator.getCommaSeparatedGroupNames(groupIds);
 

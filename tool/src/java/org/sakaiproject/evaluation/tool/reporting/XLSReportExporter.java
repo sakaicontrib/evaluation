@@ -140,8 +140,9 @@ public class XLSReportExporter implements ReportExporter {
         cellA1.setCellStyle(mainTitleStyle);
 
         // calculate the response rate
-        int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
+        //int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+	int responsesCount = evaluationService.countResponses(null,new Long[] {evaluation.getId()},groupIds,null);
+        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), groupIds);
 
         Row row2 = sheet.createRow(1);
         Cell cellA2 = row2.createCell((short) 0);
