@@ -218,6 +218,8 @@
     <bean class="org.sakaiproject.evaluation.tool.inferrers.ItemVPInferrer" />
 
     <bean class="org.sakaiproject.evaluation.tool.inferrers.ReportsVPInferrer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
     </bean>
