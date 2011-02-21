@@ -583,6 +583,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public String getServerUrl() {
         return externalLogic.getServerUrl();
     }
+    
+	public String getServerId() {
+		return externalLogic.getServerId();
+	}
+
+	public List<String> getServers() {
+		return externalLogic.getServers();
+	}
 
     public String getEntityURL(Serializable evaluationEntity) {
         return externalLogic.getEntityURL(evaluationEntity);
@@ -742,5 +750,23 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
         return md5;
     }
+
+
+	@Override
+	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
+	}
+
+
+	@Override
+	public Map<String, Map<String, String>> getCronJobs(String jobGroup) {
+		return this.externalLogic.getCronJobs(jobGroup);
+	}
+
+
+	@Override
+	public boolean deleteCronJob(String jobName, String groupName) {
+		return this.externalLogic.deleteCronJob(jobName, groupName);
+	}
 
 }

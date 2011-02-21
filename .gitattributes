@@ -68,6 +68,7 @@ api/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalHierarchyNode.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalScheduledJob.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSync.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -145,6 +146,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSyncImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate-test.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/hibernate.cfg.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -198,6 +200,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_ke
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/ProviderSyncBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SendEmailsBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/SetupEvalBean.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -234,6 +237,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -te
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProviderSyncProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateSearchProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -331,6 +335,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameter
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyExpertItemParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ProviderSyncParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ReportParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/SwitchViewParams.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -355,6 +360,7 @@ tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=nativ
 tool/src/webapp/component-templates/render_scaled_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_text_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/css/evaluation_base.css -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/css/jquery-ui-1.8.7.custom.css -text
 tool/src/webapp/content/images/accept.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/add.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
@@ -403,6 +409,7 @@ tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text
 tool/src/webapp/content/js/SakaiRSFWidgets.js -text
 tool/src/webapp/content/js/SakaiTableRenderer.js -text
+tool/src/webapp/content/js/admin.provider.sync.js -text
 tool/src/webapp/content/js/double-list-select.js -text
 tool/src/webapp/content/js/dynamic-list-input.js -text
 tool/src/webapp/content/js/eval.assign.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -431,6 +438,8 @@ tool/src/webapp/content/js/facebox/tr.png -text
 tool/src/webapp/content/js/fluid/Fluid.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/jquery-1.2.6.js -text
+tool/src/webapp/content/js/jquery/jquery-1.4.4.min.js -text
+tool/src/webapp/content/js/jquery/jquery-ui-1.8.7.custom.min.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-all-effects-1.6rc4.packed.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
@@ -451,6 +460,7 @@ tool/src/webapp/content/js/yahoo-calendar-setup.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_email.html -text
+tool/src/webapp/content/templates/administrate_provider_sync.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_search.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id

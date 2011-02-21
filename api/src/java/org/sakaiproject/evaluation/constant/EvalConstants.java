@@ -697,4 +697,19 @@ public class EvalConstants {
      */
     public static final String JOB_TYPE_REMINDER = "scheduledReminder";
 
+    /**
+	 * ExternalScheduler: When a cron job is created or retrieved through EvalScheduler, a name and group 
+	 * for the trigger and for the job is to be specified in the dataMap. Also the cron expression is to be
+	 * specified in the data map.  These constants are to be used as keys for those values.
+	 */
+	public static final String CRON_SCHEDULER_TRIGGER_GROUP = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.triggerGroup";
+
+	public static final String CRON_SCHEDULER_TRIGGER_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.triggerName";
+
+	public static final String CRON_SCHEDULER_JOB_GROUP = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobGroup";
+
+	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
+	
+	public static final String CRON_SCEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
+
 }

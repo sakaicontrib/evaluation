@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -37,11 +38,19 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.CronTrigger;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.sakaiproject.api.app.scheduler.DelayedInvocation;
 import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
+import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.cluster.api.ClusterService;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.content.api.ContentHostingService;
@@ -63,6 +72,7 @@ import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+//import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -74,6 +84,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -191,6 +202,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     protected TimeService timeService;
     public void setTimeService(TimeService timeService) {
         this.timeService = timeService;
+    }
+    
+    protected ClusterService clusterService;
+    public void setClusterService(ClusterService clusterService) {
+    	this.clusterService = clusterService;
     }
 
     public void init() {
@@ -796,6 +812,31 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public String getServerUrl() {
         return serverConfigurationService.getPortalUrl();
     }
+    
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServerId()
+	 */
+	public String getServerId() {
+		return serverConfigurationService.getServerId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServers()
+	 */
+	public List<String> getServers() {
+		List<String> servers = new ArrayList<String>();
+        if(clusterService == null) {
+        	servers.add(this.getServerId());
+        } else {
+	        List serverIds = clusterService.getServers();
+	        if(serverIds == null || serverIds.isEmpty()) {
+	        	servers.add(this.getServerId());
+	        } else {
+	        	servers.addAll((List<String>) serverIds);
+	        }
+        }
+		return servers;
+	}
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.io.Serializable)
@@ -1076,6 +1117,124 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return jobs;
     }
 
+	@Override
+	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+		
+		String jobFullName = null;
+		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+		CronTrigger trigger = null;
+		
+		String triggerName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME);
+		String triggerGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP);
+		String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
+		String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
+		
+		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
+		
+		try {
+			trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
+			if(log.isDebugEnabled()) {
+				log.debug("Created trigger: " + trigger.getCronExpression());
+			}
+		} catch(ParseException e) {
+			log.warn("SchedulerException in scheduleCronJob()", e);
+		}
+		
+		if(trigger != null) {
+			// create job
+			JobDataMap jobDataMap = new JobDataMap();
+			if(dataMap != null) {
+				for(String key : dataMap.keySet()) {
+					jobDataMap.put(key, dataMap.get(key));
+				}
+			}
+			
+			JobDetail jobDetail = new JobDetail();
+			jobDetail.setName(jobName);
+			jobDetail.setGroup(jobGroup);		
+			jobDetail.setJobDataMap(jobDataMap);
+			jobDetail.setJobClass(jobClass);
+			Scheduler scheduler = scheduleManager.getScheduler();
+			if(scheduler == null) {
+				log.warn("Unable to access scheduler", new Throwable());
+			} else {
+				try {
+					Date date = scheduler.scheduleJob(jobDetail, trigger);
+					if(log.isDebugEnabled()) {
+						log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
+					}
+					jobFullName =  jobDetail.getFullName();
+				} catch(SchedulerException e) {
+					log.warn("SchedulerException in scheduleCronJob()", e);
+				}
+			}
+		}
+		return jobFullName;
+	}
+	
+	@Override
+	public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
+		Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
+		SchedulerManager schedulerManager = getBean(SchedulerManager.class);
+		Scheduler scheduler = schedulerManager.getScheduler();
+		if(scheduler == null) {
+			log.warn("Unable to access scheduler", new Throwable());
+		} else {
+			try {
+				String[] jobNames = scheduler.getJobNames(jobGroup);
+				for(String jobName : jobNames) {
+					try {
+						JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
+						JobDataMap jobDataMap = job.getJobDataMap();
+						Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
+						for(Trigger trigger : triggers) {
+							Map<String, String> map = new HashMap<String, String>();
+							map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobName);
+							map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobGroup);
+							
+							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
+							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
+							if(trigger instanceof CronTrigger) {
+								map.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
+							}
+							
+							for(String propName : (Set<String>) jobDataMap.keySet()) {
+								if(jobDataMap.containsKey(propName)) {
+									map.put(propName, jobDataMap.getString(propName));
+								}
+							}
+							
+							cronJobs.put(trigger.getFullName(), map);
+						}
+					} catch(SchedulerException e) {
+						log.warn("SchedulerException processing one trigger in getCronJobs", e);					
+					}
+				}
+			} catch(SchedulerException e) {
+				log.warn("SchedulerException processing one job in getCronJobs", e);
+			}
+		}
+		return cronJobs;
+	}
+	
+	@Override
+	public boolean deleteCronJob(String jobName, String jobGroup) {
+
+		boolean success = false;
+		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+		Scheduler scheduler = scheduleManager.getScheduler();
+		if(scheduler == null) {
+			log.warn("Unable to access scheduler", new Throwable());
+		} else {
+			try {
+				success = scheduler.deleteJob(jobName, jobGroup);
+			} catch(SchedulerException e) {
+				log.warn("SchedulerException in scheduleCronJob()", e);
+			}
+		}
+		return success;
+	}
+
     public String getContentCollectionId(String siteId) {
         String ret = contentHostingService.getSiteCollection(siteId);
         return ret;
@@ -1094,6 +1253,5 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return isEvalGroupPublished;
 	}
-
 
 }

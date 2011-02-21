@@ -126,16 +126,26 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     public void init() {
         log.debug("INIT");
         // update evaluation user assignments for evals with none yet (migration code)
-        List<EvalEvaluation> evals = dao.getEvalsWithoutUserAssignments();
-        if (! evals.isEmpty()) {
-            log.info("Creating user assignments for "+evals.size()+" evals with none yet (auto-migration), may take awhile for a large number of evaluations");
-            int counter = 0;
-            for (EvalEvaluation evaluation : evals) {
-                List<Long> l = synchronizeUserAssignmentsForced(evaluation, null, false);
-                counter += l.size();
-            }
-            log.info("Synchronized "+counter+" user assignments for "+evals.size()+" evals (auto-migration)");
+        
+        Boolean syncUnassignedGroupsOnServerStartup = (Boolean) settings.get(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP);
+        log.debug("syncUnassignedGroupsOnServerStartup == " + syncUnassignedGroupsOnServerStartup);
+        if(syncUnassignedGroupsOnServerStartup == null) {
+        	// use default, true
+        	syncUnassignedGroupsOnServerStartup = new Boolean(true);
         }
+        if(syncUnassignedGroupsOnServerStartup.booleanValue()) {
+            List<EvalEvaluation> evals = dao.getEvalsWithoutUserAssignments();
+            if (! evals.isEmpty()) {
+                log.info("Creating user assignments for "+evals.size()+" evals with none yet (auto-migration), may take awhile for a large number of evaluations");
+                int counter = 0;
+                for (EvalEvaluation evaluation : evals) {
+                    List<Long> l = synchronizeUserAssignmentsForced(evaluation, null, false);
+                    counter += l.size();
+                }
+                log.info("Synchronized "+counter+" user assignments for "+evals.size()+" evals (auto-migration)");
+            }
+        }
+
         // run a timer which ensures that evaluation states are kept up to date
         initiateUpdateStateTimer();
     }
@@ -1286,8 +1296,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             List<EvalAssignHierarchy> results = new ArrayList<EvalAssignHierarchy>(nodeAssignments);
             results.addAll(groupAssignments);
 
-            // sync all the user assignments after the groups are saved
-            synchronizeUserAssignmentsForced(eval, null, ! appendMode);
+            Boolean syncUserAssignmentsOnGroupSave = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE);
+            if(syncUserAssignmentsOnGroupSave == null) {
+            	// use default, true
+            	syncUserAssignmentsOnGroupSave = new Boolean(true);
+            }
+            if(syncUserAssignmentsOnGroupSave.booleanValue()) {
+	            // sync all the user assignments after the groups are saved
+	            synchronizeUserAssignmentsForced(eval, null, ! appendMode);
+            }
 
             return results;
         }
@@ -1391,8 +1408,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 log.info("User ("+userId+") created a new assignGroup ("+assignGroup.getId()+"), " +
                         "linked evalGroupId ("+assignGroup.getEvalGroupId()+") with eval ("+eval.getId()+")");
 
-                // sync the user assignments related to this assign group
-                synchronizeUserAssignmentsForced(eval, assignGroup.getEvalGroupId(), false);
+                Boolean syncUserAssignmentsOnGroupSave = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE);
+                if(syncUserAssignmentsOnGroupSave == null) {
+                	// use default, true
+                	syncUserAssignmentsOnGroupSave = new Boolean(true);
+                }
+                if(syncUserAssignmentsOnGroupSave.booleanValue()) {
+                    // sync the user assignments related to this assign group
+                    synchronizeUserAssignmentsForced(eval, assignGroup.getEvalGroupId(), false);
+                }
             }
         } else {
             // updating an existing AG
@@ -1417,6 +1441,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // allow any other changes
             dao.save(assignGroup);
             log.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
+            
+            Boolean syncUserAssignmentsOnGroupUpdate = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE);
+            if(syncUserAssignmentsOnGroupUpdate == null) {
+            	// if setting is null, use default, false
+            	syncUserAssignmentsOnGroupUpdate = new Boolean(false);
+            }
+            if(syncUserAssignmentsOnGroupUpdate) {
+                // sync the user assignments related to this assign group
+                synchronizeUserAssignmentsForced(eval, assignGroup.getEvalGroupId(), false);
+            }
+
         }
     }
 

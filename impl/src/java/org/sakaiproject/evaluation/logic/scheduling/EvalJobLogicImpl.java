@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
@@ -55,6 +56,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     protected EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
+    }
+    
+    private EvalEvaluationSetupService evaluationSetupService;
+    public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+        this.evaluationSetupService = evaluationSetupService;
     }
 
     protected EvalSettings settings;
@@ -314,6 +320,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     + eval.getTitle() + ". Evaluation in UNKNOWN state");
             throw new RuntimeException("Evaluation '" + eval.getTitle() + "' in UNKNOWN state");
         }
+        
+        Boolean syncGroupAssignments = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE);
+        if(syncGroupAssignments == null) {
+        	// use default value, false
+        	syncGroupAssignments = new Boolean(false);
+        }
 
         if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(state)) {
             // do nothing for partial state evals, they are not created yet and should have nothing scheduled
@@ -368,6 +380,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     commonLogic.deleteScheduledJob(evalScheduledJob.uuid);               
                 }            
             }
+            // do not sync assignments if new state is closed
+            syncGroupAssignments = false;
+        }
+        
+        if(syncGroupAssignments) {
+        	this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
         }
     }
 
