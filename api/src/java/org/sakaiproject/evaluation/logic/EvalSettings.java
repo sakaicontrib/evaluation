@@ -260,6 +260,11 @@ public interface EvalSettings {
      * CONSTANT: Show the import controls and the importing options for importing templates/items/scales/evals - {@link Boolean}, default False
      */
     public static final String ENABLE_IMPORTING = "ENABLE_IMPORTING:java.lang.Boolean";
+    
+    /**
+     * CONSTANT: Show the controls and the options for scheduling synchronization of group memberships with external provider - {@link Boolean}, default False
+     */
+    public static final String ENABLE_PROVIDER_SYNC = "ENABLE_PROVIDER_SYNC:java.lang.Boolean";
 
     /**
      * CONSTANT: Show the email controls and the email options for one-email-per-student notification - {@link Boolean}, default False
@@ -363,6 +368,31 @@ public interface EvalSettings {
      * if this is enabled/true, users can decide to disable the email notification sent out when the eval begins
      */
     public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
+    
+    /**
+     * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.
+     */
+	public static final String SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE = "SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE:java.lang.Boolean";
+	
+    /**
+     * If true, memberships in EvalAssignGroup will be synchronized with the group provider when properties of an existing EvalAssignGroup are updated.  Default is false.
+     */
+	public static final String SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE = "SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE:java.lang.Boolean";
+	
+    /**
+     * If true, memberships in EvalAssignGroup will be synchronized with the group provider when the state of an eval changes.  Default is false.
+     */
+	public static final String SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE = "SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE:java.lang.Boolean";
+	
+    /**
+     * If true, memberships in all unassigned EvalAssignGroup will be synchronized with the group provider on server startup.  Default is true.
+     */
+	public static final String SYNC_UNASSIGNED_GROUPS_ON_STARTUP = "SYNC_UNASSIGNED_GROUPS_ON_STARTUP:java.lang.Boolean";
+	
+	/**
+	 * If this is set, it identifies the server that should handle syncing of evaluations. Otherwise, more than one server may try to sync.  Default is null.
+	 */
+	public static final String SYNC_SERVER = "SYNC_SERVER:java.lang.String";
 
 
     /**
@@ -388,6 +418,7 @@ public interface EvalSettings {
         ENABLE_EVAL_RESPONSE_REMOVAL,
         ENABLE_FILTER_ASSIGNABLE_GROUPS,
         ENABLE_IMPORTING,
+        ENABLE_PROVIDER_SYNC,
         ENABLE_INSTRUCTOR_ASSISTANT_SELECTION,
         ENABLE_ITEM_COMMENTS,
         ENABLE_LIST_OF_TAKERS_EXPORT,
@@ -417,7 +448,11 @@ public interface EvalSettings {
         USE_EXPERT_ITEMS,
         USE_EXPERT_TEMPLATES,
         ENABLE_JOB_COMPLETION_EMAIL,
-        ENABLE_REMINDER_STATUS
+        ENABLE_REMINDER_STATUS,
+        SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE,
+        SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE,
+        SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE,
+        SYNC_UNASSIGNED_GROUPS_ON_STARTUP
     };
 
     /**

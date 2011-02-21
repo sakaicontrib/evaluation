@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
@@ -32,6 +33,18 @@ public interface ExternalEntities {
     * @return the URL directly to the main server portal this tool is installed in
     */
    public String getServerUrl();
+   
+   /**
+    * Get the unique identifier for the server.
+    * @return
+    */
+   public String getServerId();
+   
+   /**
+    * Get a mapping of local servers (e.g. in a cluster) 
+	* @return a mapping of servers from the unique identifier for a server to a display name for that server.
+	*/
+   public List<String> getServers();
 
    /**
     * Get a full URL to a specific entity inside our system,
