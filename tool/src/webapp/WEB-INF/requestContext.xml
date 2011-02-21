@@ -133,6 +133,14 @@
         <property name="messages" ref="targettedMessageList" />
     </bean>
 
+    <bean id="emailSettingsBean"
+        class="org.sakaiproject.evaluation.tool.locators.EmailSettingsWBL">
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="leafParser" ref="generalLeafParser" />
+        <property name="messages" ref="targettedMessageList" />
+    </bean>
+
     <bean id="templateBeanLocator"
         class="org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator">
         <property name="localTemplateLogic" ref="localTemplateLogic" />
@@ -285,6 +293,7 @@
         <property name="evalSettings" 
         	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
+        <property name="dateEvolver" ref="fieldDateInputEvolver" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">

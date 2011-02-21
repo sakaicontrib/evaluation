@@ -35,17 +35,17 @@ public class SettingsWBL implements WriteableBeanLocator {
     public static final String NEW_PREFIX = "new";
     public static String NEW_1 = NEW_PREFIX +"1";
 
-    private EvalSettings evalSettings;
+    protected EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;
     }
 
-    private GeneralLeafParser leafParser;
+    protected GeneralLeafParser leafParser;
     public void setLeafParser(GeneralLeafParser leafParser) {
         this.leafParser = leafParser;
     }
 
-    private TargettedMessageList messages;
+    protected TargettedMessageList messages;
     public void setMessages(TargettedMessageList messages) {
         this.messages = messages;
     }

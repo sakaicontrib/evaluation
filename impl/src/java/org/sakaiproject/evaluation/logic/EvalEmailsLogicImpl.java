@@ -809,7 +809,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	 * @return
 	 */
 	protected List<String> processConsolidatedEmails(String jobId, Map<String, Map<Long, Date>> userMap) {
-		int reportingInterval = 12;
+		Integer reportingInterval = (Integer) this.settings.get(EvalSettings.LOG_PROGRESS_EVERY);
+		if(reportingInterval == null) {
+			// setting reportingInterval to zero results in no incremental reports.
+			reportingInterval = new Integer(0);
+		}
 		int userCounter = 0;
 		int emailCounter = 0;
 		List<String> recipients = new ArrayList<String>();
@@ -853,9 +857,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				}
 
     		}
-    		userCounter++;
-    		if(userCounter % reportingInterval == 0 && jobId != null) {
-    			this.jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+    		if(jobId != null && reportingInterval.intValue() > 0) {
+	    		userCounter++;
+	    		if(userCounter % reportingInterval.intValue() == 0) {
+	    			this.jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+	    		}
     		}
     	}
 		return recipients;
