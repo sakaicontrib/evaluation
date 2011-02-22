@@ -370,6 +370,16 @@ public interface EvalSettings {
     public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
     
     /**
+     * The time and date of the next scheduled reminder.
+     */
+	public static final String NEXT_REMINDER_DATE = "NEXT_REMINDER_DATE:java.util.Date";
+	
+	/**
+	 * The hour of the day (24-hour clock, local time) at which processing of consolidated emails should begin each day. Default: 1 (meaning 1 a.m. local time)
+	 */
+	public static final String CONSOLIDATED_EMAIL_DAILY_START_TIME = "CONSOLIDATED_EMAIL_DAILY_START_TIME:java.lang.Integer";
+
+    /**
      * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.
      */
 	public static final String SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE = "SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE:java.lang.Boolean";

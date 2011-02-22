@@ -425,6 +425,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         evaluation.setReminderFromEmail( commonLogic.cleanupUserStrings(evaluation.getReminderFromEmail()) );
         evaluation.setEvalCategory( commonLogic.cleanupUserStrings(evaluation.getEvalCategory()) );
 
+        // initialize new evaluation with available email sent false
+        if(evaluation.getId() == null) {
+            evaluation.setAvailableEmailSent(new Boolean(false));
+        }
+        
         // save the eval
         dao.save(evaluation);
         log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());

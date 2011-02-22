@@ -300,7 +300,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
         	UISelect.make(selectServerDiv, "quick_sync-server", serverNames, "#{providerSyncBean.syncServerId}",(String) syncServerId);
         }
 
-		UICommand.make(quickSyncForm, "quick_sync-submit", UIMessage.make("administrate.sync.quick_sync.save"), "providerSyncBean.quickSync");	
+		UICommand.make(quickSyncForm, "quick_sync-submit", UIMessage.make("administrate.sync.quick_sync.save"), "#{providerSyncBean.quickSync}");	
 
 	}
 

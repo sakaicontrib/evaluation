@@ -603,4 +603,9 @@ public boolean deleteCronJob(String jobName, String groupName) {
 	return false;
 }
 
+public String getMyWorkspaceDashboard(String userId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }

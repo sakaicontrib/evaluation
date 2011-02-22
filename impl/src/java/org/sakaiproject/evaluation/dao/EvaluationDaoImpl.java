@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
@@ -1722,6 +1723,83 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         }
 
         return releasedLock;
+    }
+
+    /**
+     * Access one page of mappings from user-id's to summary info needed to render consolidated email templates. 
+     * The summary info consists of a template-id (EmailTemplate.ID) and the earliest due date of Active evals 
+     * which use the email template and which the referenced user can take.
+     *    
+     * @param availableEmailSent A boolean value indicating whether the summary data should include evals for which 
+     * 		available emails have been sent (if parameter is Boolean.TRUE) or have not been sent (if parameter is 
+     * 		Boolean.FALSE). A null value indicates all Active evals should be included.
+     * @param emailTemplateType The category of email templates to include in the mapping (either 
+     * 		EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE or EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,
+     * 		but not both)
+     * @param pageSize The maximum number of mappings to return. A mapping consists of a user-id, an email template
+     * 		id and a date.
+     * @param page The zero-based starting page. In other words, return a page of items beginning at index 
+     * 		(pageSize * page).
+     * @return 
+     */
+	public Map<String,Map<Long,Date>> getUser2ConsolidateEmailTemplateMapping(Boolean availableEmailSent, String emailTemplateType, int pageSize, int page) {
+    	StringBuilder buf = new StringBuilder();
+    	buf.append("select user.userId,");
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		buf.append("eval.availableEmailTemplate.id");
+    	} else {
+    		buf.append("eval.reminderEmailTemplate.id");
+    	}
+    	buf.append(",min(eval.dueDate) from EvalAssignUser as user ");
+    	buf.append("inner join user.evaluation as eval where eval.state = '");
+    	buf.append(EvalConstants.EVALUATION_STATE_ACTIVE);
+    	if(availableEmailSent != null && availableEmailSent.booleanValue()) {
+    		buf.append("' and eval.availableEmailSent = true ");
+    	} else if(availableEmailSent != null) {
+    		buf.append("' and eval.availableEmailSent = false ");
+    	} else {
+    		buf.append("' ");
+    	}
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		buf.append(" and eval.availableEmailTemplate.type='");
+
+    	} else {
+    		buf.append(" and eval.reminderEmailTemplate.type='");
+    	}
+    	buf.append(emailTemplateType);
+    	
+    	buf.append("' group by user.userId,");
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		buf.append("eval.availableEmailTemplate.id");
+    	} else {
+    		buf.append("eval.reminderEmailTemplate.id");
+    	}
+    	
+    	Map<String,Map<Long,Date>> rv = new HashMap<String,Map<Long,Date>>();
+    	
+        Query query = getSession().createQuery(buf.toString());
+        query.setFirstResult(pageSize * page);
+        query.setMaxResults(pageSize);
+        List results = query.list();
+
+    	String prevUserId = "";
+    	Map<Long,Date> map = null;
+    	
+		for(int i = 0; i < results.size(); i++) {
+    		Object[] row = (Object[]) results.get(i);
+        	String currentUserId = (String) row[0];
+    		if(currentUserId == null) {
+    			continue;
+    		}
+    		if(! currentUserId.equals(prevUserId)) {
+    			map = new HashMap<Long,Date>();
+    			rv.put(currentUserId, map);
+    			prevUserId = currentUserId;
+    		}
+    		map.put((Long)row[1], (Date)row[2]);
+    	}
+		
+    	return rv;
     }
 
 

@@ -157,7 +157,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
         //Instructor Settings
         UIMessage.make(form, "instructor-settings-header", "administrate.instructor.settings.header");
-        makeBoolean(form, "instructors-eval-create", EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS); 
+        makeBoolean(form, "instructors-eval-create", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS); 
         UIMessage.make(form, "instructors-eval-create-note", "administrate.instructors.eval.create.note");
 
         //Select for whether instructors can view results or not
@@ -177,13 +177,13 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "instructors-view-results", 
                 administrateConfigurableValues, 
                 administrateConfigurableLabels, 
-                EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
+                ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
         UIMessage.make(form, "instructors-view-results-note", "administrate.instructors.view.results.note");
 
-        makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
+        makeBoolean(form, "instructors-email-students", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
         UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
         
-        makeBoolean(form,"admin-enable-provider-sync", EvalSettings.ENABLE_PROVIDER_SYNC);
+        makeBoolean(form,"admin-enable-provider-sync", ADMIN_WBL, EvalSettings.ENABLE_PROVIDER_SYNC);
         UIMessage.make(form, "admin-enable-provider-sync-note", "administrate.admin.enable.provider.sync");
 
         /*
@@ -212,14 +212,14 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "instructors-hierarchy", 
                 hierarchyOptionValues, 
                 hierarchyOptionLabels, 
-                EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, true);
+                ADMIN_WBL, EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, true);
         UIMessage.make(form, "instructors-hierarchy-note", "administrate.instructors.hierarchy.note");
 
         //Select for number of questions instructors can add
         makeSelect(form, "instructors-num-questions", 
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
-                EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, false);
+                ADMIN_WBL, EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, false);
         UIMessage.make(form, "instructors-num-questions-note", "administrate.instructors.num.questions.note");
 
         // Student Settings
@@ -229,21 +229,21 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
                 administrateConfigurableValues, 
                 administrateConfigurableLabels, 
-                EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true); 
+                ADMIN_WBL, EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true); 
         UIMessage.make(form, "students-unanswered-note", "administrate.students.unanswered.note");
 
         //Select for whether student can modify responses upto due date
         makeSelect(form, "students-modify-responses", 
                 administrateConfigurableValues, 
                 administrateConfigurableLabels, 
-                EvalSettings.STUDENT_MODIFY_RESPONSES, true); 
+                ADMIN_WBL, EvalSettings.STUDENT_MODIFY_RESPONSES, true); 
         UIMessage.make(form, "students-modify-responses-note", "administrate.students.modify.responses.note");
 
         //Select for whether students can view results
         makeSelect(form, "students-view-results",
                 administrateConfigurableValues, 
                 administrateConfigurableLabels, 
-                EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
+                ADMIN_WBL, EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
         UIMessage.make(form, "students-view-results-note","administrate.students.view.results.note");
 
         // Administrator Settings
@@ -253,19 +253,19 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "admin-hierarchy-num-questions",
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
-                EvalSettings.ADMIN_ADD_ITEMS_NUMBER, false); 
+                ADMIN_WBL, EvalSettings.ADMIN_ADD_ITEMS_NUMBER, false); 
         UIMessage.make(form, "admin-hierarchy-num-questions-note", "administrate.admin.hierarchy.num.questions.note");
 
-        makeBoolean(form, "admin-view-instructor-added-results", EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS); 
+        makeBoolean(form, "admin-view-instructor-added-results", ADMIN_WBL, EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS); 
         UIMessage.make(form, "admin-view-instructor-added-results-note", "administrate.admin.view.instructor.added.results.note");		
-        makeBoolean(form, "admin-view-below-results", EvalSettings.ADMIN_VIEW_BELOW_RESULTS); 
+        makeBoolean(form, "admin-view-below-results", ADMIN_WBL, EvalSettings.ADMIN_VIEW_BELOW_RESULTS); 
         UIMessage.make(form, "admin-view-below-results-note","administrate.admin.view.below.results.note");		
 
         // HIERARCHY settings
-        makeBoolean(form, "general-display-hierarchy-options", EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+        makeBoolean(form, "general-display-hierarchy-options", ADMIN_WBL, EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
         UIMessage.make(form, "general-display-hierarchy-options-note", "administrate.general.show.hierarchy.information");
 
-        makeBoolean(form, "hierarchy-display-node-headers", EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+        makeBoolean(form, "hierarchy-display-node-headers", ADMIN_WBL, EvalSettings.DISPLAY_HIERARCHY_HEADERS);
         UIMessage.make(form, "hierarchy-display-node-headers-note", "administrate.hierarchy-display-node-headers-note");
 
 
@@ -275,15 +275,15 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "general-responses-before-view",  
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
-                EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
+                ADMIN_WBL, EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
 
-        makeBoolean(form, "general-na-allowed", EvalSettings.ENABLE_NOT_AVAILABLE);
+        makeBoolean(form, "general-na-allowed", ADMIN_WBL, EvalSettings.ENABLE_NOT_AVAILABLE);
 
         // Select for maximum number of questions in a block
         makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
                 EvalToolConstants.PULLDOWN_INTEGER_VALUES,
-                EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, false);
+                ADMIN_WBL, EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, false);
 
         // Select for template sharing and visibility settings
         String[] sharingValues = new String[] {
@@ -299,36 +299,36 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "general-template-sharing",  
                 sharingValues, 
                 sharingLabels, 
-                EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
+                ADMIN_WBL, EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
 
-        makeBoolean(form, "general-template-copying",  EvalSettings.ENABLE_TEMPLATE_COPYING);
-        makeBoolean(form, "general-use-date-time",  EvalSettings.EVAL_USE_DATE_TIME);
-        makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
-        makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 
-        makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
+        makeBoolean(form, "general-template-copying",  ADMIN_WBL, EvalSettings.ENABLE_TEMPLATE_COPYING);
+        makeBoolean(form, "general-use-date-time",  ADMIN_WBL, EvalSettings.EVAL_USE_DATE_TIME);
+        makeBoolean(form, "general-use-stop-date", ADMIN_WBL, EvalSettings.EVAL_USE_STOP_DATE); 
+        makeBoolean(form, "general-use-view-date", ADMIN_WBL, EvalSettings.EVAL_USE_VIEW_DATE); 
+        makeBoolean(form, "general-same-view-date",  ADMIN_WBL, EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
-        makeBoolean(form, "general-enable-administrating-box", EvalSettings.ENABLE_ADMINISTRATING_BOX);
-        makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
-        makeBoolean(form, "general-enable-evaluatee-box", EvalSettings.ENABLE_EVALUATEE_BOX);
-        makeBoolean(form, "general-show-my-toplinks", EvalSettings.ENABLE_MY_TOPLINKS);
-        makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
-        makeBoolean(form, "general-use-eval-term-id", EvalSettings.ENABLE_EVAL_TERM_IDS);
-        makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
+        makeBoolean(form, "general-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
+        makeBoolean(form, "general-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+        makeBoolean(form, "general-enable-evaluatee-box", ADMIN_WBL, EvalSettings.ENABLE_EVALUATEE_BOX);
+        makeBoolean(form, "general-show-my-toplinks", ADMIN_WBL, EvalSettings.ENABLE_MY_TOPLINKS);
+        makeBoolean(form, "general-use-eval-category", ADMIN_WBL, EvalSettings.ENABLE_EVAL_CATEGORIES);
+        makeBoolean(form, "general-use-eval-term-id", ADMIN_WBL, EvalSettings.ENABLE_EVAL_TERM_IDS);
+        makeBoolean(form, "general-enable-response-removal", ADMIN_WBL, EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
 
-        makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+        makeBoolean(form, "general-default-question-category",  ADMIN_WBL, EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
-        makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
-        makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
+        makeBoolean(form, "general-expert-templates", ADMIN_WBL, EvalSettings.USE_EXPERT_TEMPLATES);
+        makeBoolean(form, "general-expert-questions", ADMIN_WBL, EvalSettings.USE_EXPERT_ITEMS);	
 
-        makeBoolean(form, "general-enable-adhoc-groups", EvalSettings.ENABLE_ADHOC_GROUPS);
-        makeBoolean(form, "general-enable-adhoc-users", EvalSettings.ENABLE_ADHOC_USERS); 
+        makeBoolean(form, "general-enable-adhoc-groups", ADMIN_WBL, EvalSettings.ENABLE_ADHOC_GROUPS);
+        makeBoolean(form, "general-enable-adhoc-users", ADMIN_WBL, EvalSettings.ENABLE_ADHOC_USERS); 
 
-        makeBoolean(form, "general-enable-eval-close", EvalSettings.ENABLE_EVAL_EARLY_CLOSE); 
-        makeBoolean(form, "general-enable-eval-reopen", EvalSettings.ENABLE_EVAL_REOPEN); 
+        makeBoolean(form, "general-enable-eval-close", ADMIN_WBL, EvalSettings.ENABLE_EVAL_EARLY_CLOSE); 
+        makeBoolean(form, "general-enable-eval-reopen", ADMIN_WBL, EvalSettings.ENABLE_EVAL_REOPEN); 
 
-        makeBoolean(form, "general-enable-item-comments", EvalSettings.ENABLE_ITEM_COMMENTS);
+        makeBoolean(form, "general-enable-item-comments", ADMIN_WBL, EvalSettings.ENABLE_ITEM_COMMENTS);
         
-        makeBoolean(form, "general-enable-group-specific-preview", EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
+        makeBoolean(form, "general-enable-group-specific-preview", ADMIN_WBL, EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
 
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
@@ -341,16 +341,16 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeSelect(form, "general-mim-time-diff-between-dates",
                 EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
                 EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
-                EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, false); 
+                ADMIN_WBL, EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, false); 
         UIMessage.make(form, "general-mim-time-diff-between-dates-note", "administrate.general.eval.mim.time.diff.between.dates");
 
         // INSTITUTION SPECIFIC SETTINGS
-        makeBoolean(form, "general-item-results-sharing",  EvalSettings.ITEM_USE_RESULTS_SHARING);
-        makeBoolean(form, "general-enable-importing",  EvalSettings.ENABLE_IMPORTING);
-        makeBoolean(form, "general-disable-item-bank", EvalSettings.DISABLE_ITEM_BANK);
-        makeBoolean(form, "general-disable-question-blocks", EvalSettings.DISABLE_QUESTION_BLOCKS);
-        makeBoolean(form, "general-enable-ta-category", EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-        makeBoolean(form, "general-enable-selections", EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        makeBoolean(form, "general-item-results-sharing",  ADMIN_WBL, EvalSettings.ITEM_USE_RESULTS_SHARING);
+        makeBoolean(form, "general-enable-importing",  ADMIN_WBL, EvalSettings.ENABLE_IMPORTING);
+        makeBoolean(form, "general-disable-item-bank", ADMIN_WBL, EvalSettings.DISABLE_ITEM_BANK);
+        makeBoolean(form, "general-disable-question-blocks", ADMIN_WBL, EvalSettings.DISABLE_QUESTION_BLOCKS);
+        makeBoolean(form, "general-enable-ta-category", ADMIN_WBL, EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+        makeBoolean(form, "general-enable-selections", ADMIN_WBL, EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
         //makeBoolean(form, "general-filter-evalgroups", EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);  //TODO: refactor this code EVALSYS-942
         // Save settings button
         // NB no action now required
@@ -368,11 +368,12 @@ public class AdministrateProducer implements ViewComponentProducer {
      * 
      * @param parent the containing UIContainer
      * @param ID the component's RSF id
+     * @param beanId TODO
      * @param adminkey the administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings
      */
-    public static UIBoundBoolean makeBoolean(UIContainer parent, String ID, String adminkey) {
+    public static UIBoundBoolean makeBoolean(UIContainer parent, String ID, String beanId, String adminkey) {
         // Must use "composePath" here since admin keys currently contain periods
-        UIBoundBoolean bb = UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(ADMIN_WBL, adminkey));
+        UIBoundBoolean bb = UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(beanId, adminkey));
         return bb;
     }
 
@@ -386,14 +387,15 @@ public class AdministrateProducer implements ViewComponentProducer {
      * @param ID the component's RSF id
      * @param values the options from which the the user has to choose
      * @param labels the labels for the options from which the user has to choose
+     * @param beanId TODO
      * @param adminkey the administrative setting constant 
      * @param message use message properties if true, do not use message properties if false
      */
-    public static UISelect makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey, boolean message) {
+    public static UISelect makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String beanId, String adminkey, boolean message) {
         UISelect selection = UISelect.make(parent, ID); 
         selection.selection = new UIInput();
         if (adminkey != null) {
-            selection.selection.valuebinding = new ELReference(PathUtil.composePath(ADMIN_WBL, adminkey));
+            selection.selection.valuebinding = new ELReference(PathUtil.composePath(beanId, adminkey));
         }
         UIBoundList selectvalues = new UIBoundList();
         selectvalues.setValue(values);
@@ -415,10 +417,11 @@ public class AdministrateProducer implements ViewComponentProducer {
      * 
      * @param parent the containing UIContainer
      * @param ID the component's RSF id
+     * @param beanId TODO
      * @param adminkey the administrative setting constant
      */
-    public static UIInput makeInput(UIContainer parent, String ID, String adminkey) {
-        UIInput input = UIInput.make(parent, ID, PathUtil.composePath(ADMIN_WBL, adminkey));
+    public static UIInput makeInput(UIContainer parent, String ID, String beanId, String adminkey) {
+        UIInput input = UIInput.make(parent, ID, PathUtil.composePath(beanId, adminkey));
         return input;
     }
 }

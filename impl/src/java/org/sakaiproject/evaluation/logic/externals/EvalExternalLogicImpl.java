@@ -88,7 +88,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
@@ -1253,5 +1255,41 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return isEvalGroupPublished;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getMyWorkspaceDashboard(java.lang.String)
+	 */
+	public String getMyWorkspaceDashboard(String userId) {
+		   String url = null;
+		   try {
+			   String toolPage = null;
+			   //userId is Sakai id
+			   if(userId == null || userId.length() == 0) {
+				   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+			   } else {
+				   String myWorkspaceId = siteService.getUserSiteId(userId);
+				   Site myWorkspace = siteService.getSite(myWorkspaceId);
+				   List<SitePage> pages = myWorkspace.getPages();
+				   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
+					   SitePage page = i.next();
+					   List<ToolConfiguration> tools = page.getTools();
+					   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
+						   ToolConfiguration tc = j.next();
+						   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
+							   toolPage = page.getId();
+							   break;
+}
+					   }
+				   }
+				   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+				   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+				}
+		   } catch (Exception e) {
+			   log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+		   }
+		   return url;
+	}
+
 
 }
