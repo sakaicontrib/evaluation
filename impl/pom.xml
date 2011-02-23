@@ -39,6 +39,10 @@
                     <artifactId>sakai-authz-api</artifactId>
                 </dependency>
                 <dependency>
+					<groupId>org.sakaiproject</groupId>
+					<artifactId>sakai-cluster-api</artifactId>
+                </dependency>
+                <dependency>
                     <groupId>org.sakaiproject</groupId>
                     <artifactId>sakai-component-api</artifactId>
                 </dependency>
