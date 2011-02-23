@@ -67,10 +67,6 @@
 					<groupId>org.sakaiproject</groupId>
 					<artifactId>sakai-component-api</artifactId>
                 </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-scheduler-api</artifactId>
-				</dependency>
             </dependencies>
         </profile>
         <profile>
@@ -87,14 +83,6 @@
                     <groupId>org.sakaiproject.kernel</groupId>
                     <artifactId>sakai-kernel-util</artifactId>
                 </dependency>
-                <dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-component-manager</artifactId>
-                </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-scheduler-api</artifactId>
-				</dependency>
             </dependencies>
         </profile>
         <profile>
@@ -111,14 +99,6 @@
                     <groupId>org.sakaiproject.kernel</groupId>
                     <artifactId>sakai-kernel-util</artifactId>
                 </dependency>
-                <dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-component-manager</artifactId>
-                </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject.scheduler</groupId>
-					<artifactId>scheduler-api</artifactId>
-				</dependency>
             </dependencies>
         </profile>
     </profiles>

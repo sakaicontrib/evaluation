@@ -72,6 +72,9 @@ public interface ExternalScheduler {
 	*/
    public String scheduleCronJob(Class jobClass, Map<String, String> dataMap);
 
+
+   public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap);
+   
    /**
     * Get a mapping of all cron jobs within a job group, containing info about their triggers and 
     * their properties.

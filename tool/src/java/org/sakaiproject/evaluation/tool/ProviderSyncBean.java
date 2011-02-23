@@ -28,11 +28,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronExpression;
-import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
-import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalScheduler;
 import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -51,7 +50,6 @@ public class ProviderSyncBean {
 	public static final String RESULT_FAILURE = "failure";
 	public static final String RESULT_SUCCESS = "success";
 	
-	public static final String SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
 	public static final long MILLISECONDS_PER_MINUTE = 60L * 1000L;
 	public static final long DELAY_IN_MINUTES = 2L;
 
@@ -59,9 +57,9 @@ public class ProviderSyncBean {
 	
 	private static final String SPACE = " ";
 
-    private EvalExternalLogic externalLogic;
-    public void setExternalLogic(EvalExternalLogic externalLogic) {
-        this.externalLogic = externalLogic;
+    private EvalCommonLogic commonLogic;
+    public void setCommonLogic(EvalCommonLogic commonLogic) {
+        this.commonLogic = commonLogic;
     }
     
     private EvalSettings evalSettings;
@@ -146,14 +144,12 @@ public class ProviderSyncBean {
 			dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, uniqueId);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, JOB_GROUP_NAME);
 			
-			dataMap.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, this.cronExpression);
+			dataMap.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, this.cronExpression);
 			
-			dataMap.put(SPRING_BEAN_NAME, GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_BEAN_NAME);
+			dataMap.put(EvalConstants.CRON_SCHEDULER_SPRING_BEAN_NAME, GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_BEAN_NAME);
 			dataMap.put(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST, states);
 
-			Object jobClass = ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync");
-
-			externalLogic.scheduleCronJob(jobClass.getClass(), dataMap);
+			commonLogic.scheduleCronJob("org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync", dataMap);
 		}
 		return !error;
 	}
@@ -241,7 +237,7 @@ public class ProviderSyncBean {
 	public String updateSync() {
 		logger.info("updateSync(" + this.fullJobName + ") ");
 		boolean success = false;
-		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME);
+		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.update.null", null, TargettedMessage.SEVERITY_ERROR));
 		} else if(cronJobs == null || cronJobs.get(fullJobName) == null) {
@@ -250,9 +246,9 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
-				success = this.externalLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
+				success = this.commonLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
 				if(success) {
 					success = this.scheduleCronJob();
 				}
@@ -260,7 +256,7 @@ public class ProviderSyncBean {
 				if(success) {
 					this.messages.addMessage(new TargettedMessage("administrate.sync.update.succeeded", new Object[]{this.cronExpression.trim(), this.getStateValues()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}
@@ -275,7 +271,7 @@ public class ProviderSyncBean {
 	public String deleteSync() {
 		logger.info("deleteSync(" + this.fullJobName + ")");
 		boolean success = false;
-		Map<String,Map<String,String>> cronJobs = this.externalLogic.getCronJobs(JOB_GROUP_NAME);
+		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
 			this.messages.addMessage(new TargettedMessage("administrate.sync.delete.null", null, TargettedMessage.SEVERITY_ERROR));
 		} else if(cronJobs == null || cronJobs.get(fullJobName) == null) {
@@ -284,13 +280,13 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
-				success = this.externalLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
+				success = this.commonLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
 				if(success) {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION).trim(), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION).trim(), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}

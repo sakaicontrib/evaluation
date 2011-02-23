@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.constant;
 
+import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
+
 /**
  * Stores constants for use through the Evaluation services, logic layer, and dao layer
  * Render constants should not be stored here
@@ -710,6 +712,8 @@ public class EvalConstants {
 
 	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
 	
-	public static final String CRON_SCEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
+	public static final String CRON_SCHEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
+
+	public static final String CRON_SCHEDULER_SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
 
 }

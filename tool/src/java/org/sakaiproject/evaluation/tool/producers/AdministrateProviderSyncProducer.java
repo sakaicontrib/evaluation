@@ -195,7 +195,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 
 		if(reviseCronJob != null) {
 			// select time(s) for this cron job
-			cronExpression = reviseCronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
+			cronExpression = reviseCronJob.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
 			stateList = reviseCronJob.get(PROPNAME_STATE_LIST);
 		}
 		
@@ -249,12 +249,12 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 			for(String item : cronJobs.keySet()) {
 				Map<String, String> cronJob = cronJobs.get(item);
 				UIBranchContainer triggerRow = UIBranchContainer.make(triggerTable, "trigger-row:");
-				UIOutput.make(triggerRow, "trigger-cronExpression", cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION));
+				UIOutput.make(triggerRow, "trigger-cronExpression", cronJob.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION));
 				UIOutput.make(triggerRow, "trigger-stateList", cronJob.get(PROPNAME_STATE_LIST));
 				UIOutput.make(triggerRow, "trigger-name", item);
-				UIOutput.make(triggerRow, "trigger-revise-cronExpression", cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION));
+				UIOutput.make(triggerRow, "trigger-revise-cronExpression", cronJob.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION));
 				UIOutput.make(triggerRow, "trigger-revise-stateList", cronJob.get(PROPNAME_STATE_LIST));
-				UIMessage.make(triggerRow, "trigger-delete-confirm", "administrate.sync.triggers.delete.confirm", new String[]{cronJob.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), cronJob.get(PROPNAME_STATE_LIST)});
+				UIMessage.make(triggerRow, "trigger-delete-confirm", "administrate.sync.triggers.delete.confirm", new String[]{cronJob.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), cronJob.get(PROPNAME_STATE_LIST)});
 				UIInternalLink.make(triggerRow, "trigger-delete", UIMessage.make("administrate.sync.triggers.delete"), new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, item));
 				UIInternalLink.make(triggerRow, "trigger-revise", UIMessage.make("administrate.sync.triggers.revise"), new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, item));
 			}
