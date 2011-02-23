@@ -208,6 +208,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void setClusterService(ClusterService clusterService) {
     	this.clusterService = clusterService;
     }
+    
+    protected ComponentManager componentManager;
+    public void setComponentManager(ComponentManager componentManager) {
+    	this.componentManager = componentManager;
+    }
 
     public void init() {
         log.debug("init, register security perms");
@@ -1129,7 +1134,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
 		String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
 		
-		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
+		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
 		
 		try {
 			trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
@@ -1172,7 +1177,27 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return jobFullName;
 	}
 	
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
+	 */
+	public String scheduleCronJob(String jobClassBeanId,
+			Map<String, String> dataMap) {
+		String fullJobName = null;
+		Object jobClass = this.componentManager.get(jobClassBeanId);
+		if(jobClass == null) {
+			throw new IllegalArgumentException(jobClassBeanId + " could not be found");
+		} else {
+			fullJobName = this.scheduleCronJob(jobClass.getClass(), dataMap);
+		}
+		return fullJobName;
+	}
+
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#getCronJobs(java.lang.String)
+	 */
 	public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
 		Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
 		SchedulerManager schedulerManager = getBean(SchedulerManager.class);
@@ -1195,7 +1220,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
 							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
 							if(trigger instanceof CronTrigger) {
-								map.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
+								map.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
 							}
 							
 							for(String propName : (Set<String>) jobDataMap.keySet()) {
@@ -1217,7 +1242,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return cronJobs;
 	}
 	
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#deleteCronJob(java.lang.String, java.lang.String)
+	 */
 	public boolean deleteCronJob(String jobName, String jobGroup) {
 
 		boolean success = false;

@@ -769,4 +769,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		return this.externalLogic.deleteCronJob(jobName, groupName);
 	}
 
+
+	@Override
+	public String scheduleCronJob(String jobClassBeanId,
+			Map<String, String> dataMap) {
+		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);
+	}
+
 }

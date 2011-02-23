@@ -603,4 +603,10 @@ public boolean deleteCronJob(String jobName, String groupName) {
 	return false;
 }
 
+@Override
+public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }
