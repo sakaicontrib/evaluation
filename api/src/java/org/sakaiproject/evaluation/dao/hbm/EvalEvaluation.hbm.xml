@@ -85,7 +85,7 @@
         </property>
         <!-- Have those taking this evaulation been notified that it is available? -->
         <property name="availableEmailSent" type="java.lang.Boolean">
-            <column name="AVAILABLE_EMAIL_SENT" />
+            <column name="AVAILABLE_EMAIL_SENT" default="false"/>
         </property>
         <!-- email template used to send the "eval available" notification message -->
         <many-to-one name="availableEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_AVAILABLE_EMAIL_TEM" lazy="proxy" fetch="select">

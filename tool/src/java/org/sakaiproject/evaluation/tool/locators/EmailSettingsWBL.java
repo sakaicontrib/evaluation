@@ -45,7 +45,9 @@ public class EmailSettingsWBL extends SettingsWBL {
 	
     public void set(String beanname, Object toset) {
     	super.set(beanname, toset);
-    	if(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS.equals(beanname) || EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME.equals(beanname)) {
+    	if(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS.equals(beanname) || 
+    			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME.equals(beanname) || 
+    			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES.equals(beanname)) {
         	logger.info("set(" + beanname + "," + toset + ") ");
     		synchronized(lock) {
     			updateNeeded = true;
@@ -123,6 +125,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 			}
 		}
 		Integer startTime = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME);
+		Integer startMinute = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES);
 		
 		Calendar cal = Calendar.getInstance();
 		
@@ -133,7 +136,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		if(reminderInterval != null && reminderInterval.intValue()  > 0) {
 			cal.set(Calendar.MILLISECOND, 0);
 			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.MINUTE, startMinute);
 			cal.set(Calendar.HOUR_OF_DAY, startTime);
 			
 			Calendar now = Calendar.getInstance();
@@ -153,9 +156,12 @@ public class EmailSettingsWBL extends SettingsWBL {
 	protected String calculateCronExpression() {
 		
 		Integer startTime = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME);
+		Integer startMinute = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES);
 		
 		StringBuilder buf = new StringBuilder();
-		buf.append("0 0 ");
+		buf.append("0 ");
+		buf.append(startMinute.toString());
+		buf.append(" ");
 		buf.append(startTime.toString());
 		buf.append(" ? * * *");
 		logger.info("quickSync() cronExpression == " + buf.toString());

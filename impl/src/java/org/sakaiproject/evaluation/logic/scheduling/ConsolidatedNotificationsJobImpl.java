@@ -93,9 +93,11 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(tdate + reminderInterval * one_day);
 				Integer startTime = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME);
+				Integer startMinute = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES);
+
 				if(startTime != null) {
 					cal.set(Calendar.HOUR_OF_DAY, startTime.intValue());
-					cal.set(Calendar.MINUTE, 0);
+					cal.set(Calendar.MINUTE, startMinute.intValue());
 					cal.set(Calendar.SECOND, 0);
 				}
 				this.evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, cal.getTime());

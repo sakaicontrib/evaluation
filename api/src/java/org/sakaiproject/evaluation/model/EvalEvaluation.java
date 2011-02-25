@@ -344,6 +344,9 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
     	this.sendAvailableNotifications = sendAvailableNotifications;
+    	if(this.availableEmailSent == null) {
+    		this.availableEmailSent = new Boolean(false);
+    	}
     }
 
     @Override

@@ -140,6 +140,11 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
         		EvalToolConstants.PULLDOWN_HOUR_VALUES, 
         		EvalToolConstants.PULLDOWN_HOUR_LABELS, 
         		EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME, true);
+        
+        AdministrateProducer.makeSelect(oneemail, "consolidated-job-start-time-minutes", 
+        		EvalToolConstants.PULLDOWN_MINUTE_VALUES, 
+        		EvalToolConstants.PULLDOWN_MINUTE_LABELS, 
+        		EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES, true);
 
 		UIBranchContainer nextReminderDiv = UIBranchContainer.make(oneemail, "nextReminderDateDiv:");
         generateDatePicker(nextReminderDiv,"nextReminderDate",EvalSettings.NEXT_REMINDER_DATE, nextReminder);

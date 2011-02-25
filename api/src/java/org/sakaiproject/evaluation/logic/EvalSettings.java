@@ -378,6 +378,12 @@ public interface EvalSettings {
 	 * The hour of the day (24-hour clock, local time) at which processing of consolidated emails should begin each day. Default: 1 (meaning 1 a.m. local time)
 	 */
 	public static final String CONSOLIDATED_EMAIL_DAILY_START_TIME = "CONSOLIDATED_EMAIL_DAILY_START_TIME:java.lang.Integer";
+	
+	/**
+	 * The minutes after the hour specified for the hour of the day at which processing of consolidated emails should begin.  Default: 10
+	 */
+	public static final String CONSOLIDATED_EMAIL_DAILY_START_MINUTES = "CONSOLIDATED_EMAIL_DAILY_START_MINUTES:java.lang.Integer";
+
 
     /**
      * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.

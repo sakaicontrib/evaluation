@@ -171,6 +171,17 @@ public class EvalToolConstants {
 		"controlemail.start.hour.16","controlemail.start.hour.17","controlemail.start.hour.18","controlemail.start.hour.19",
 		"controlemail.start.hour.20","controlemail.start.hour.21","controlemail.start.hour.22","controlemail.start.hour.23"
 	};
+	
+	public static final String[] PULLDOWN_MINUTE_VALUES = new String[] {
+		"0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"
+	};
+
+	public static final String[] PULLDOWN_MINUTE_LABELS = new String[] {
+		"controlemail.start.minutes.0", "controlemail.start.minutes.5", "controlemail.start.minutes.10", 
+		"controlemail.start.minutes.15", "controlemail.start.minutes.20", "controlemail.start.minutes.25", 
+		"controlemail.start.minutes.30", "controlemail.start.minutes.35", "controlemail.start.minutes.40", 
+		"controlemail.start.minutes.45", "controlemail.start.minutes.50", "controlemail.start.minutes.55"
+	};
 
 
     /**

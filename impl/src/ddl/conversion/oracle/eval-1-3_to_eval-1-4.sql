@@ -6,3 +6,5 @@ alter table EVAL_EVALUATION add (LOCAL_SELECTOR varchar2(255 char));
 -- If AVAILABLE_EMAIL_SENT is being added, give it a reasonable default -- assume emails have been sent for Active evals and not for others?
 -- update EVAL_EVALUATION set AVAILABLE_EMAIL_SENT='1' where STATE='Active' or STATE='Closed';
 -- update EVAL_EVALUATION set AVAILABLE_EMAIL_SENT='0' where AVAILABLE_EMAIL_SENT is null;
+
+update eval_email_template set template_type='ConsolidatedAvailable' where template_type='SingleEmailAvailable';

@@ -511,6 +511,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL, false);
         evalConfigMap.put(EvalSettings.ENABLE_REMINDER_STATUS, false);
         evalConfigMap.put(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME, 1);
+        evalConfigMap.put(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES, 10);
 
         // Default batch performance metrics settings
         evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);

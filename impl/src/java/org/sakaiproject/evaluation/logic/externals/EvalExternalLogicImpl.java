@@ -1269,6 +1269,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
 			   } else {
 				   String myWorkspaceId = siteService.getUserSiteId(userId);
+				   
 				   Site myWorkspace = siteService.getSite(myWorkspaceId);
 				   List<SitePage> pages = myWorkspace.getPages();
 				   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
@@ -1287,6 +1288,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				}
 		   } catch (Exception e) {
 			   log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+		   }
+		   if(url == null) {
+			   url = getServerUrl();
 		   }
 		   return url;
 	}

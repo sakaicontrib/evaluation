@@ -776,6 +776,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Sent emails to " + recipients.size() + " evaluators");
     		this.jobStatusReporter.reportFinished(jobId);
     	}
+		//this.evaluationService.setAvailableEmailSent(evalIds)
     	return recipients.toArray(new String[]{});
     }
     
@@ -840,21 +841,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     			replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
     			// get eval tool title from settings? from message bundle?
     			replacementValues.put("EvalToolTitle", "Teaching Evaluations");
+    			replacementValues.put("EvalSite", "MyWorkspace");
     			String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
     			// we can get it from the eval if needed, but it should come from settings
     			replacementValues.put("HelpdeskEmail",from);
     			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
-    			
-				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
-				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
-				try {
-					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
-					emailCounter++;
-					recipients.add(userId);
-				} catch(Exception e) {
+    			replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
+    			try {
+    				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
+    				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
+    				if(message == null || subject == null) {
+    					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userId + "). " );
+    					log.warn("Error trying to send consolidated email to user " + userId, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
+    				} else {
+    					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+    					emailCounter++;
+    					recipients.add(userId);
+    				}
+    			} catch (Exception e) {
 					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userId + "). " + e);
 					log.warn("Error trying to send consolidated email to user " + userId, e);
-				}
+    			}
 
     		}
     		if(jobId != null && reportingInterval.intValue() > 0) {

@@ -1751,24 +1751,27 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		buf.append("eval.reminderEmailTemplate.id");
     	}
     	buf.append(",min(eval.dueDate) from EvalAssignUser as user ");
-    	buf.append("inner join user.evaluation as eval where eval.state = '");
-    	buf.append(EvalConstants.EVALUATION_STATE_ACTIVE);
-    	if(availableEmailSent != null && availableEmailSent.booleanValue()) {
-    		buf.append("' and eval.availableEmailSent = true ");
-    	} else if(availableEmailSent != null) {
-    		buf.append("' and eval.availableEmailSent = false ");
-    	} else {
-    		buf.append("' ");
-    	}
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
-    		buf.append(" and eval.availableEmailTemplate.type='");
+    		buf.append("inner join user.evaluation as eval where eval.availableEmailTemplate.type='");
+    		
 
     	} else {
-    		buf.append(" and eval.reminderEmailTemplate.type='");
+    		buf.append("inner join user.evaluation as eval where eval.reminderEmailTemplate.type='");
     	}
     	buf.append(emailTemplateType);
+    	buf.append("' ");
+   	
+//    	buf.append(" and eval.state = '");
+//    	buf.append(EvalConstants.EVALUATION_STATE_ACTIVE);
+//		buf.append("' ");
+		
+    	if(availableEmailSent != null && availableEmailSent.booleanValue()) {
+    		buf.append(" and eval.availableEmailSent = true ");
+    	} else if(availableEmailSent != null) {
+    		buf.append(" and eval.availableEmailSent = false ");
+    	} 
     	
-    	buf.append("' group by user.userId,");
+    	buf.append(" group by user.userId,");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		buf.append("eval.availableEmailTemplate.id");
     	} else {
