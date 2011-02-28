@@ -128,8 +128,8 @@
     	class="org.sakaiproject.evaluation.tool.ProviderSyncBean" 
     	init-method="init">
     	<property name="messages" ref="targettedMessageList" />
-    	<property name="externalLogic"
-            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    	<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
