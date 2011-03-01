@@ -29,7 +29,7 @@ public interface ExternalSecurity {
     * @param userId the internal user id (not username)
     * @return true if the user has admin access, false otherwise
     */
-   public boolean isUserAdmin(String userId);
+   public boolean isUserSakaiAdmin(String userId);
 
    /**
     * Check if a user has a specified permission within a evalGroupId, primarily

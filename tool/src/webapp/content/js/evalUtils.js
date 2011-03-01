@@ -5,8 +5,15 @@
  * @author Antranig Basman - dropbox methods at end
  */
 var EvalSystem = function() {
-	var $ = $ || function() { throw "JQuery undefined"; };
-	var RSF = RSF || function() { throw "RSF JS undefined"; };
+	
+	if (!jQuery) {
+		throw "JQuery undefined";
+	}
+	
+	if (!RSF) {
+		throw "RSF JS undefined";
+	}
+	
 	function $it(elementID) {
 		return document.getElementById(elementID);
 	}
@@ -122,7 +129,27 @@ var EvalSystem = function() {
 				EvalSystem.makeToggle(allTextResponsesId + "Show", allTextResponsesId + "Hide", null, "showtextresponses", false);
 			}
 		},
-	
+		
+		initEvalAdminView: function() {
+			
+			var assignButton = $("input.assignButton");
+			var userEidInput = $("input.userEidInput");
+			
+			var assignCallback = function() {
+				
+				if ($.trim(userEidInput.val()).length == 0) {
+					alert("You must enter a valid user eid.");
+					return false;
+				}
+					
+				return true;
+				
+			};
+			
+			assignButton.click(assignCallback);
+			
+		},
+		
 		/**
 		 * Adds a limitation of numbers only to an input box (inputId),
 		 * displays the numbers only warning in the message area (msgId)

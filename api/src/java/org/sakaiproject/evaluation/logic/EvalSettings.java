@@ -78,7 +78,12 @@ public interface EvalSettings {
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
     public static final String STUDENT_ALLOWED_VIEW_RESULTS = "STUDENT_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
-
+    
+    /**
+     * CONSTANT: Sakai admins are granted admin rights in the Evaluation system - {@link Boolean}, default True
+     */
+    public static final String ENABLE_SAKAI_ADMIN_ACCESS = "ENABLE_SAKAI_ADMIN_ACCESS:java.lang.Boolean";
+    
     /**
      * CONSTANT: Admin is allowed to add this many items to an evaluation from above in the hierarchy - {@link Integer}, default 5
      */
@@ -452,7 +457,8 @@ public interface EvalSettings {
         SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE,
         SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE,
         SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE,
-        SYNC_UNASSIGNED_GROUPS_ON_STARTUP
+        SYNC_UNASSIGNED_GROUPS_ON_STARTUP,
+        ENABLE_SAKAI_ADMIN_ACCESS
     };
 
     /**

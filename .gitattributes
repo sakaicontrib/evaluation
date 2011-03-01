@@ -12,6 +12,7 @@ api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=D
 api/src/java/org/sakaiproject/evaluation/constant/EvalConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalEmailConstants.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvoker.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAdmin.hbm.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -71,6 +72,7 @@ api/src/java/org/sakaiproject/evaluation/logic/model/EvalUser.java svn_keywords=
 api/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSync.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalAdmin.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -115,6 +117,8 @@ impl/src/java/org/sakaiproject/evaluation/aspectj/EvalServicesProfiler.aj -text
 impl/src/java/org/sakaiproject/evaluation/aspectj/ProfilerControl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupport.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalAdhocSupportImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/src/java/org/sakaiproject/evaluation/dao/EvalAdminSupport.java -text
+impl/src/java/org/sakaiproject/evaluation/dao/EvalAdminSupportImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvokerImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -195,6 +199,7 @@ tool/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 tool/project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 tool/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/AdministrateSearchBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/EvalAdminBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalToolConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -241,6 +246,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProviderSyn
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateSearchProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEmailTemplatesProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvalAdminProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlExpertItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+URL+Id
@@ -468,6 +474,7 @@ tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_objective.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_email_templates.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/control_eval_admin.html -text
 tool/src/webapp/content/templates/control_evaluations.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_expert_items.html -text
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id

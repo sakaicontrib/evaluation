@@ -55,7 +55,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       if (securityChecks == null) {
          throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
       }
-
+      
       // setup the mock objects if needed
 
       // create and setup the object to be tested
@@ -177,6 +177,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    public void testSaveScale() {
       String[] options1 = {"Bad", "Average", "Good"};
+      String[] options2 = {"Bad", "Average", "Good"};
+      String[] options3 = {"Bad", "Average", "Good"};
       String test_title = "test scale title";
 
       // test saving a new valid scale
@@ -201,7 +203,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
 
       assertEquals(4, testScale2.getOptions().length);
-      testScale2.setOptions(options1);
+      testScale2.setOptions(options2);
       authoringService.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
       assertEquals(3, testScale2.getOptions().length);
 
@@ -267,7 +269,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.saveScale( new EvalScale( EvalTestDataLoad.MAINT_USER_ID, 
             test_title, EvalConstants.SCALE_MODE_SCALE, 
             EvalConstants.SHARING_PRIVATE, Boolean.FALSE, "description", 
-            EvalConstants.SCALE_IDEAL_LOW, options1,
+            EvalConstants.SCALE_IDEAL_LOW, options3,
             EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 
    }
