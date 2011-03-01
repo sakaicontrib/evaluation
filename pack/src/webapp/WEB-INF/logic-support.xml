@@ -10,10 +10,14 @@
         init-method="init">
         <property name="externalLogic"
             ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+		<property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="adhocSupportLogic"
             ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
+		<property name="evalAdminSupportLogic"
+            ref="org.sakaiproject.evaluation.dao.EvalAdminSupport" />
     </bean>
-
+	
     <!-- utils which require other low level evaluation beans -->
     <bean id="org.sakaiproject.evaluation.beans.EvalBeanUtils"
         class="org.sakaiproject.evaluation.beans.EvalBeanUtils">

@@ -10,6 +10,7 @@
             <list>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
+				<value>org/sakaiproject/evaluation/dao/hbm/EvalAdmin.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
@@ -41,6 +42,7 @@
             <list>
                 <value>org.sakaiproject.evaluation.model.EvalAdhocGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalAdhocUser</value>
+				<value>org.sakaiproject.evaluation.model.EvalAdmin</value>
                 <value>org.sakaiproject.evaluation.model.EvalAnswer</value>
                 <value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
@@ -77,6 +79,11 @@
         <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
+	
+	<bean id="org.sakaiproject.evaluation.dao.EvalAdminSupport"
+		class="org.sakaiproject.evaluation.dao.EvalAdminSupportImpl">
+		<property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+	</bean>
 
     <!-- handles api based retrieval of application settings,
         this is in here because adhoc-dao-support needs it -->
@@ -124,6 +131,7 @@
             <list>
                 <value>org.sakaiproject.evaluation.dao.EvaluationDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
+				<value>org.sakaiproject.evaluation.dao.EvalAdminSupport</value>
                 <value>org.sakaiproject.evaluation.logic.Eval*</value>
                 <value>org.sakaiproject.evaluation.beans.Eval*</value>
                 <value>org.sakaiproject.evaluation.logic.import.Eval*</value>

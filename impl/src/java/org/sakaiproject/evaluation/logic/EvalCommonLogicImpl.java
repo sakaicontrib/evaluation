@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
+import org.sakaiproject.evaluation.dao.EvalAdminSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogicImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -39,6 +40,7 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -68,22 +70,33 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public void setExternalLogic(EvalExternalLogic externalLogic) {
         this.externalLogic = externalLogic;
     }
-
+    
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+    	this.evalSettings = evalSettings;
+    }
+    
     // INTERNAL for adhoc user/group lookups
 
     private EvalAdhocSupport adhocSupportLogic;
     public void setAdhocSupportLogic(EvalAdhocSupport adhocSupportLogic) {
         this.adhocSupportLogic = adhocSupportLogic;
     }
-
+    
+    // support for specifying eval admins
+    
+    private EvalAdminSupport evalAdminSupportLogic;
+    public void setEvalAdminSupportLogic(EvalAdminSupport evalAdminSupportLogic) {
+    	this.evalAdminSupportLogic = evalAdminSupportLogic;
+    }
+    
     // PROVIDERS
 
     private EvalGroupsProvider evalGroupsProvider;
     public void setEvalGroupsProvider(EvalGroupsProvider evalGroupsProvider) {
         this.evalGroupsProvider = evalGroupsProvider;
     }
-
-
+    
     public void init() {
         log.debug("init, register security perms");
 
@@ -104,6 +117,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     public String getAdminUserId() {
         return externalLogic.getAdminUserId();
+    }
+    
+    public List<EvalUser> getSakaiAdmins() {
+    	return externalLogic.getSakaiAdmins();
     }
 
     /**
@@ -268,12 +285,49 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         //    }
         return users;
     }
-
-
+    
+    // sakai and eval admin logic
+    
     public boolean isUserAdmin(String userId) {
-        log.debug("Checking is eval super admin for: " + userId);
-        return externalLogic.isUserAdmin(userId);
+    	
+    	// check if user is a sakai admin and that sakai admins are granted admin rights in the evaluation system
+    	if (((Boolean) evalSettings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS)) && (this.isUserSakaiAdmin(userId)))
+    		return true;
+    	
+    	// check if user is an eval admin
+    	if (this.isUserEvalAdmin(userId))
+    		return true;
+    	
+    	// otherwise, user does not have admin rights
+    	return false;
+    	
     }
+    
+    public boolean isUserSakaiAdmin(String userId) {
+        log.debug("Checking is sakai admin for: " + userId);
+        return externalLogic.isUserSakaiAdmin(userId);
+    }
+    
+    public boolean isUserEvalAdmin(String userId) {
+        log.debug("Checking is eval admin for: " + userId);
+        return evalAdminSupportLogic.isUserEvalAdmin(userId);
+    }
+    
+    public List<EvalAdmin> getEvalAdmins() {
+    	return evalAdminSupportLogic.getEvalAdmins();
+    }
+	
+    public EvalAdmin getEvalAdmin(String userId) {
+    	return evalAdminSupportLogic.getEvalAdmin(userId);
+    }
+	
+	public void assignEvalAdmin(String userId, String assignorUserId) {
+		evalAdminSupportLogic.assignEvalAdmin(userId, assignorUserId);
+	}
+	
+	public void unassignEvalAdmin(String userId) {
+		evalAdminSupportLogic.unassignEvalAdmin(userId);
+	}
 
     public Locale getUserLocale(String userId) {
         log.debug("userId: " + userId);

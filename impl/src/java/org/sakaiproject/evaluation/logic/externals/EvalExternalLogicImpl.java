@@ -49,6 +49,8 @@ import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
+import org.sakaiproject.authz.api.Role;
+import org.sakaiproject.authz.api.RoleAlreadyDefinedException;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.cluster.api.ClusterService;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -257,6 +259,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         // TODO make this pull from a property or something
         return ADMIN_USER_ID;
     }
+    
+    public List<EvalUser> getSakaiAdmins() {
+		
+    	List<String> groupsList = new ArrayList<String>(1);
+		groupsList.add("/site/!admin");
+    	Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
+    	
+    	Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(userIdSet.toArray(new String[userIdSet.size()]));
+    	List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>(sakaiAdminMap.values());
+    	
+    	return sakaiAdminList;
+    	
+	}
 
     /**
      * INTERNAL METHOD<br/>
@@ -440,9 +455,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 
     /* (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserAdmin(java.lang.String)
+     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserSakaiAdmin(java.lang.String)
      */
-    public boolean isUserAdmin(String userId) {
+    public boolean isUserSakaiAdmin(String userId) {
         log.debug("Checking is eval super admin for: " + userId);
         return securityService.isSuperUser(userId);
     }
@@ -703,7 +718,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         if (evalGroupId == null) {
             // special check for the admin user
-            if (isUserAdmin(userId)) {
+            if (isUserSakaiAdmin(userId)) {
                 return true;
             }
             return false;

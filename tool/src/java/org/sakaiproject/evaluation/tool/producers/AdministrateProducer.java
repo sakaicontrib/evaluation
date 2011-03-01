@@ -60,6 +60,11 @@ public class AdministrateProducer implements ViewComponentProducer {
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
+    
+    private EvalEvaluationService evaluationService;
+	public void setEvaluationService(EvalEvaluationService evaluationService) {
+		this.evaluationService = evaluationService;
+	}
 
     private EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
@@ -78,7 +83,8 @@ public class AdministrateProducer implements ViewComponentProducer {
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-        String currentUserId = commonLogic.getCurrentUserId();
+    	
+    	String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         if (! userAdmin) {
@@ -105,6 +111,10 @@ public class AdministrateProducer implements ViewComponentProducer {
         UIInternalLink.make(tofill, "control-reporting-toplink", 
                 UIMessage.make("administrate.top.control.reporting"),
                 new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
+        
+        UIInternalLink.make(tofill, "control-eval-admin-toplink", 
+                UIMessage.make("administrate.top.control.evaladmin"),
+                new SimpleViewParameters(ControlEvalAdminProducer.VIEW_ID));
 
         UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
                 UIMessage.make("admintesteg.page.title"),
@@ -259,7 +269,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "admin-view-instructor-added-results", EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS); 
         UIMessage.make(form, "admin-view-instructor-added-results-note", "administrate.admin.view.instructor.added.results.note");		
         makeBoolean(form, "admin-view-below-results", EvalSettings.ADMIN_VIEW_BELOW_RESULTS); 
-        UIMessage.make(form, "admin-view-below-results-note","administrate.admin.view.below.results.note");		
+        UIMessage.make(form, "admin-view-below-results-note","administrate.admin.view.below.results.note");
 
         // HIERARCHY settings
         makeBoolean(form, "general-display-hierarchy-options", EvalSettings.DISPLAY_HIERARCHY_OPTIONS);

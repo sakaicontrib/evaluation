@@ -322,6 +322,12 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	public String getAdminUserId() {
 	    return EvalTestDataLoad.ADMIN_USER_ID;
 	}
+	
+	public List<EvalUser> getSakaiAdmins() {
+		List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>();
+		sakaiAdminList.add(this.getEvalUserById(EvalTestDataLoad.ADMIN_USER_ID));
+		return sakaiAdminList;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
@@ -393,7 +399,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	/**
 	 * only true for ADMIN_USER_ID
 	 */
-	public boolean isUserAdmin(String userId) {
+	public boolean isUserSakaiAdmin(String userId) {
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
 			return true;
 		}
@@ -556,26 +562,26 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       return users;
    }
 
-public String getContentCollectionId(String siteId) {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public Set<String[]> getUsersByRole(String evalGroupId, String perm) {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public List<EvalGroup> getFilteredEvalGroupsForUser(String arg0, String arg1,
-		String arg2) {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public boolean isEvalGroupPublished(String evalGroupId) {
-	// TODO Auto-generated method stub
-	return true;
-}
+	public String getContentCollectionId(String siteId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Set<String[]> getUsersByRole(String evalGroupId, String perm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public List<EvalGroup> getFilteredEvalGroupsForUser(String arg0, String arg1,
+			String arg2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public boolean isEvalGroupPublished(String evalGroupId) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 @Override
 public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {

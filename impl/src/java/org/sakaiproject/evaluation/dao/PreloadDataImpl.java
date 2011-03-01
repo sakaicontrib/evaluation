@@ -442,6 +442,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
         // Default Admin settings
+        evalConfigMap.put(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS, true);
         evalConfigMap.put(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);
         evalConfigMap.put(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
         evalConfigMap.put(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);

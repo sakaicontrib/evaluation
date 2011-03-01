@@ -98,6 +98,16 @@
             ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
         <property name="messages" ref="targettedMessageList" />
     </bean>
+	
+	<bean id="evalAdminBean" class="org.sakaiproject.evaluation.tool.EvalAdminBean">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="messages" ref="targettedMessageList" />
+    </bean>
 
     <bean id="reportHandlerHook"
         class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
@@ -133,7 +143,7 @@
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
-
+	
     <!-- LOCATORS - OTP bean locators here -->
     <bean id="settingsBean"
         class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
@@ -257,6 +267,8 @@
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
@@ -343,7 +355,15 @@
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
-
+	
+	<bean class="org.sakaiproject.evaluation.tool.producers.ControlEvalAdminProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="settings" 
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
 
     <!-- SUMMARY producers -->
     <bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">

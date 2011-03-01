@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalAdmin;
 
 
 /**
@@ -183,5 +184,53 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
      * @return the list of all adhoc groups that this user owns
      */
     public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId);
-
+    
+    /**
+     * Check if this user has admin access in the evaluation system (whether
+     * as a sakai admin or an eval admin).
+     * 
+     * @param userId the internal user id (not username)
+     * @return true if the user has admin access, false otherwise
+     */
+    public boolean isUserAdmin(String userId);
+    
+    /**
+     * Gets the list of all eval admins.
+     * 
+     * @return a list of EvalAdmin objects
+     */
+    public List<EvalAdmin> getEvalAdmins();
+    
+    /**
+     * Gets the EvalAdmin object representing the user with the specified user id.
+     * Returns null if no user was found.
+     * 
+     * @param userId internal user id (not username)
+     * @return an EvalAdmin object or null if not found
+     */
+	public EvalAdmin getEvalAdmin(String userId);
+	
+	/**
+	 * Assigns a user as an eval admin.
+	 * 
+	 * @param userId internal user id (not username)
+	 * @param assignorUserId internal user id (not username) of the assignor (most likely the current user)
+	 */
+	public void assignEvalAdmin(String userId, String assignorUserId);
+	
+	/**
+	 * Removes a user from the list of eval admins. 
+	 * 
+	 * @param userId internal user id (not username)
+	 */
+	public void unassignEvalAdmin(String userId);
+	
+	/**
+	 * Checks if this user has eval admin rights in the evaluation system.
+	 * 
+	 * @param userId internal user id (not username)
+	 * @return true if the user is an eval admin, false otherwise
+	 */
+	public boolean isUserEvalAdmin(String userId);
+    
 }

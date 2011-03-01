@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+	<class name="org.sakaiproject.evaluation.model.EvalAdmin" table="EVAL_ADMIN" dynamic-insert="false" dynamic-update="false">
+		
+		<id name="id" type="java.lang.Long" unsaved-value="null">
+			<column name="ID" />
+			<generator class="native" />
+		</id>
+		
+		<property name="userId" type="java.lang.String">
+			<column name="USER_ID" not-null="true" length="255" index="eval_eval_admin_user_id" />
+		</property>
+		
+		<property name="assignDate" type="java.util.Date">
+			<column name="ASSIGN_DATE" not-null="true" />
+		</property>
+		
+		<property name="assignorUserId" type="java.lang.String">
+			<column name="ASSIGNOR_USER_ID" not-null="true" length="255" />
+		</property>
+		
+	</class>
+</hibernate-mapping>

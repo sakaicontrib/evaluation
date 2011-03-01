@@ -101,9 +101,9 @@ public class EvalExternalLogicStubTest extends TestCase {
 	 */
 	public void testIsUserAdmin() {
 
-		Assert.assertTrue( external.isUserAdmin(EvalTestDataLoad.ADMIN_USER_ID) );
-		Assert.assertFalse( external.isUserAdmin(EvalTestDataLoad.MAINT_USER_ID) );
-		Assert.assertFalse( external.isUserAdmin(EvalTestDataLoad.USER_ID) );
+		Assert.assertTrue( external.isUserSakaiAdmin(EvalTestDataLoad.ADMIN_USER_ID) );
+		Assert.assertFalse( external.isUserSakaiAdmin(EvalTestDataLoad.MAINT_USER_ID) );
+		Assert.assertFalse( external.isUserSakaiAdmin(EvalTestDataLoad.USER_ID) );
 
 	}
 

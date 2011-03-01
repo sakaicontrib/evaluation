@@ -14,9 +14,11 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 
 
 /**
@@ -40,6 +42,13 @@ public interface ExternalUsers {
      * @return the userId of the super admin
      */
     public String getAdminUserId();
+    
+    /**
+     * Gets the list of users (in the form of EvalUser objects) that have admin rights for the !admin worksite.
+     * 
+     * @return a list of EvalUser objects representing the sakai admins
+     */
+    public List<EvalUser> getSakaiAdmins();
 
     /**
      * Check if a user is anonymous or identified
