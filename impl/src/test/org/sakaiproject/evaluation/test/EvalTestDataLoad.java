@@ -1341,6 +1341,7 @@ public class EvalTestDataLoad {
             String userId = userIds.get(i);
             String type = userTypes.get(i);
             EvalAssignUser userAssign = new EvalAssignUser(userId, assignGroup.getEvalGroupId(), owner, type, EvalAssignUser.STATUS_LINKED);
+            userAssign.setEid("eid-" + userId);
             userAssign.setEvaluation(assignGroup.getEvaluation());
             userAssign.setAssignGroupId(assignGroup.getId());
             dao.save(userAssign);

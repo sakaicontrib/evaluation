@@ -1571,12 +1571,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     }
 
     public void testGetUser2ConsolidateEmailTemplateMapping() {
-    	Map<String, Map<Long, Date>> mapping1 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	Map<String, Map<Long, Date>> mapping2 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	Map<String, Map<Long, Date>> mapping3 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	Map<String, Map<Long, Date>> mapping4 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
-    	Map<String, Map<Long, Date>> mapping5 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
-    	Map<String, Map<Long, Date>> mapping6 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	List<Map<String,Object>> mapping1 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	List<Map<String,Object>> mapping2 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	List<Map<String,Object>> mapping3 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+    	List<Map<String,Object>> mapping4 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	List<Map<String,Object>> mapping5 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+    	List<Map<String,Object>> mapping6 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
     	assertNotNull(mapping1);
     	assertEquals(0, mapping1.size());
     	assertNotNull(mapping2);
@@ -1594,12 +1594,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     	eval.setAvailableEmailSent(true);
     	this.evaluationDao.save(eval);
     	
-    	Map<String, Map<Long, Date>> mapping7 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	Map<String, Map<Long, Date>> mapping8 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	Map<String, Map<Long, Date>> mapping9 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	Map<String, Map<Long, Date>> mapping10 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
-    	Map<String, Map<Long, Date>> mapping11 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
-    	Map<String, Map<Long, Date>> mapping12 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	List<Map<String,Object>> mapping7 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	List<Map<String,Object>> mapping8 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	List<Map<String,Object>> mapping9 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+    	List<Map<String,Object>> mapping10 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	List<Map<String,Object>> mapping11 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+    	List<Map<String,Object>> mapping12 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
     	assertNotNull(mapping7);
     	assertEquals(2, mapping7.size());
     	assertNotNull(mapping8);
@@ -1614,13 +1614,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     	assertEquals(2, mapping12.size());
     	
     	// tiny test of paging
-    	Map<String, Map<Long, Date>> mapping13 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 0);
+    	List<Map<String,Object>> mapping13 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 0);
     	assertNotNull(mapping13);
     	assertEquals(1, mapping13.size());
-    	Map<String, Map<Long, Date>> mapping14 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 1);
+    	List<Map<String,Object>> mapping14 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 1);
     	assertNotNull(mapping14);
     	assertEquals(1, mapping14.size());
-    	Map<String, Map<Long, Date>> mapping15 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 2);
+    	List<Map<String,Object>> mapping15 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 2);
     	assertNotNull(mapping15);
     	assertEquals(0, mapping15.size());
     	

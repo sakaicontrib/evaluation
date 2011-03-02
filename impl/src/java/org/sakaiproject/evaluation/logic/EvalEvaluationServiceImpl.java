@@ -1146,7 +1146,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConsolidatedEmailMapping(java.lang.Boolean, java.lang.String, int, int)
      */
-	public Map<String, Map<Long, Date>> getConsolidatedEmailMapping(
+	public List<Map<String,Object>> getConsolidatedEmailMapping(
 			Boolean availableEmailSent, String emailTemplateType, int pageSize,
 			int page) {
 		

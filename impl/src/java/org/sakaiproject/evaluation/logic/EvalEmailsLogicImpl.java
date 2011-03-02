@@ -767,7 +767,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     	if(this.jobStatusReporter != null) {
     		jobId = this.jobStatusReporter.reportStarted("Email");
     	}
-    	Map<String,Map<Long,Date>> userMap = this.evaluationService.getConsolidatedEmailMapping(false,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE,100000,0);
+    	List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(false,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE,100000,0);
     	if(jobId != null) {
     		this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Processing emails to " + userMap.size() + " evaluators");
     	}
@@ -789,7 +789,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     	if(this.jobStatusReporter != null) {
     		jobId = this.jobStatusReporter.reportStarted("Email");
     	}
-    	Map<String,Map<Long,Date>> userMap = this.evaluationService.getConsolidatedEmailMapping(true,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,100000,0);
+    	List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(true,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,100000,0);
     	if(jobId != null) {
     		this.jobStatusReporter.reportProgress(jobId, "ReminderNotifications", "Processing emails to " + userMap.size() + " evaluators");
     	}
@@ -809,7 +809,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	 * @param userMap
 	 * @return
 	 */
-	protected List<String> processConsolidatedEmails(String jobId, Map<String, Map<Long, Date>> userMap) {
+	protected List<String> processConsolidatedEmails(String jobId, List<Map<String,Object>> userMap) {
 		Integer reportingInterval = (Integer) this.settings.get(EvalSettings.LOG_PROGRESS_EVERY);
 		if(reportingInterval == null) {
 			// setting reportingInterval to zero results in no incremental reports.
@@ -818,52 +818,53 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		int userCounter = 0;
 		int emailCounter = 0;
 		List<String> recipients = new ArrayList<String>();
-    	for(String userId : userMap.keySet()) {
-    		Map<Long,Date> emailTemplateMap = userMap.get(userId);
-    		for(Long emailTemplateId : emailTemplateMap.keySet()) {
-    			Date earliestDueDate = emailTemplateMap.get(emailTemplateId);
-    			EvalEmailTemplate template = evaluationService.getEmailTemplate(emailTemplateId);
+    	for(Map<String,Object> entry : userMap) {
+    		String userId = (String) entry.get(EvalConstants.KEY_USER_ID);
+			String userEid = (String) entry.get(EvalConstants.KEY_USER_EID);
+    		Date earliestDueDate = (Date) entry.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
+    		Long emailTemplateId = (Long) entry.get(EvalConstants.KEY_EMAIL_TEMPLATE_ID);
+    		
+    		EvalEmailTemplate template = evaluationService.getEmailTemplate(emailTemplateId);
     			
-    			Map<String, String> replacementValues = new HashMap<String, String>();
-    			// get user's locale
-    			Locale locale = commonLogic.getUserLocale(userId);
-    	        // use a date which is related to the current users locale
-    	        DateFormat df;
-    	        boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
-    	        if (useDateTime) {
-    	            // show date and time if date/time enabled
-    	            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
-    	        } else {
-    	            df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-    	        }
-    			// add date to replacementValues
-    			replacementValues.put("EarliestEvalDueDate",df.format(earliestDueDate));
-    			replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
-    			// get eval tool title from settings? from message bundle?
-    			replacementValues.put("EvalToolTitle", "Teaching Evaluations");
-    			replacementValues.put("EvalSite", "MyWorkspace");
-    			String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-    			// we can get it from the eval if needed, but it should come from settings
-    			replacementValues.put("HelpdeskEmail",from);
-    			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
-    			replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
-    			try {
-    				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
-    				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
-    				if(message == null || subject == null) {
-    					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userId + "). " );
-    					log.warn("Error trying to send consolidated email to user " + userId, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
-    				} else {
-    					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
-    					emailCounter++;
-    					recipients.add(userId);
-    				}
-    			} catch (Exception e) {
-					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userId + "). " + e);
-					log.warn("Error trying to send consolidated email to user " + userId, e);
-    			}
+    		Map<String, String> replacementValues = new HashMap<String, String>();
+    		// get user's locale
+    		Locale locale = commonLogic.getUserLocale(userId);
+    	    // use a date which is related to the current users locale
+    	    DateFormat df;
+    	    boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+    	    if (useDateTime) {
+	            // show date and time if date/time enabled
+	            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
+    	    } else {
+	            df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+	        }
+			// add date to replacementValues
+			replacementValues.put("EarliestEvalDueDate",df.format(earliestDueDate));
+			replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
+			// get eval tool title from settings? from message bundle?
+			replacementValues.put("EvalToolTitle", "Teaching Evaluations");
+			replacementValues.put("EvalSite", "MyWorkspace");
+			String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+			// we can get it from the eval if needed, but it should come from settings
+			replacementValues.put("HelpdeskEmail",from);
+			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
+			replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
+			try {
+				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
+				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
+				if(message == null || subject == null) {
+					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userEid + "). " );
+					log.warn("Error trying to send consolidated email to user " + userEid, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
+				} else {
+					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+					emailCounter++;
+					recipients.add(userEid);
+				}
+			} catch (Exception e) {
+				this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + userEid + "). " + e);
+				log.warn("Error trying to send consolidated email to user " + userEid, e);
+			}
 
-    		}
     		if(jobId != null && reportingInterval.intValue() > 0) {
 	    		userCounter++;
 	    		if(userCounter % reportingInterval.intValue() == 0) {

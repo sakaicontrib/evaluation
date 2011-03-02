@@ -1726,9 +1726,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     }
 
     /**
-     * Access one page of mappings from user-id's to summary info needed to render consolidated email templates. 
-     * The summary info consists of a template-id (EmailTemplate.ID) and the earliest due date of Active evals 
-     * which use the email template and which the referenced user can take.
+     * Access one page of summary info needed to render consolidated email templates. 
+     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) 
+     * and the earliest due date of Active evals which use the email template and which the 
+     * referenced user can take.
      *    
      * @param availableEmailSent A boolean value indicating whether the summary data should include evals for which 
      * 		available emails have been sent (if parameter is Boolean.TRUE) or have not been sent (if parameter is 
@@ -1742,9 +1743,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * 		(pageSize * page).
      * @return 
      */
-	public Map<String,Map<Long,Date>> getUser2ConsolidateEmailTemplateMapping(Boolean availableEmailSent, String emailTemplateType, int pageSize, int page) {
+	public List<Map<String,Object>>  getUser2ConsolidateEmailTemplateMapping(Boolean availableEmailSent, String emailTemplateType, int pageSize, int page) {
     	StringBuilder buf = new StringBuilder();
-    	buf.append("select user.userId,");
+    	buf.append("select user.userId,user.eid,");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		buf.append("eval.availableEmailTemplate.id");
     	} else {
@@ -1771,14 +1772,14 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		buf.append(" and eval.availableEmailSent = false ");
     	} 
     	
-    	buf.append(" group by user.userId,");
+    	buf.append(" group by user.userId,user.eid,");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		buf.append("eval.availableEmailTemplate.id");
     	} else {
     		buf.append("eval.reminderEmailTemplate.id");
     	}
     	
-    	Map<String,Map<Long,Date>> rv = new HashMap<String,Map<Long,Date>>();
+    	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
     	
         Query query = getSession().createQuery(buf.toString());
         query.setFirstResult(pageSize * page);
@@ -1786,7 +1787,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         List results = query.list();
 
     	String prevUserId = "";
-    	Map<Long,Date> map = null;
+    	Map<String,Object> map = null;
     	
 		for(int i = 0; i < results.size(); i++) {
     		Object[] row = (Object[]) results.get(i);
@@ -1794,12 +1795,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		if(currentUserId == null) {
     			continue;
     		}
-    		if(! currentUserId.equals(prevUserId)) {
-    			map = new HashMap<Long,Date>();
-    			rv.put(currentUserId, map);
-    			prevUserId = currentUserId;
-    		}
-    		map.put((Long)row[1], (Date)row[2]);
+    		
+    		map = new HashMap<String,Object>();
+    		map.put(EvalConstants.KEY_USER_ID, row[0]);
+    		map.put(EvalConstants.KEY_USER_EID, row[1]);
+    		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,(Long)row[2]);
+    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,(Date)row[3]);
+    		rv.add(map);
     	}
 		
     	return rv;

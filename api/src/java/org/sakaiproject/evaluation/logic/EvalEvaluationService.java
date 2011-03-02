@@ -637,9 +637,9 @@ public interface EvalEvaluationService {
 			String order, int startResult, int maxResults);
 
     /**
-     * Access one page of mappings from user-id's to summary info needed to render consolidated email templates. 
-     * The summary info consists of a template-id (EmailTemplate.ID) and the earliest due date of Active evals 
-     * which use the email template and which the referenced user can take.
+     * Access one page of summary info needed to render consolidated email templates. 
+     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) and the earliest 
+     * due date of Active evals which use the email template and which the referenced user can take.
      *    
      * @param availableEmailSent A boolean value indicating whether the summary data should include evals for which 
      * 		available emails have been sent (if parameter is Boolean.TRUE) or have not been sent (if parameter is 
@@ -651,9 +651,14 @@ public interface EvalEvaluationService {
      * 		id and a date.
      * @param page The zero-based starting page. In other words, return a page of items beginning at index 
      * 		(pageSize * page).
-     * @return 
+     * @return A mapping from user-id to data about the evals that user can take. The data for each users is 
+     * 		a mapping from string values (EvalConstants.KEY_USER_ID, EvalConstants.KEY_USER_EID, 
+     * 		EvalConstants.KEY_EMAIL_TEMPLATE_ID and EvalConstants.KEY_EARLIEST_DUE_DATE) to a String 
+     * 		object for EvalConstants.KEY_USER_ID, a String object for EvalConstants.KEY_USER_EID, a Long 
+     * 		object for EvalConstants.KEY_EMAIL_TEMPLATE_ID and a Date object forEvalConstants.KEY_EARLIEST_DUE_DATE).  
+
      */
-	public Map<String, Map<Long, Date>> getConsolidatedEmailMapping(Boolean availableEmailSent, 
+	public List<Map<String, Object>> getConsolidatedEmailMapping(Boolean availableEmailSent, 
 			String emailTemplateType, int pageSize, int page);
 
 }

@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.constant;
 
+import java.util.Date;
+
 /**
  * Stores constants for use through the Evaluation services, logic layer, and dao layer
  * Render constants should not be stored here
@@ -711,5 +713,11 @@ public class EvalConstants {
 	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
 	
 	public static final String CRON_SCEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
+	
+	public static final String KEY_USER_ID = "USER_ID";
+	public static final String KEY_USER_EID = "USER_EID";
+	public static final String KEY_EMAIL_TEMPLATE_ID = "EMAIL_TEMPLATE_ID";
+	public static final String KEY_EARLIEST_DUE_DATE = "EARLIEST_DUE_DATE";
+
 
 }
