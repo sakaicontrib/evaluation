@@ -335,7 +335,10 @@ public class EvalTestDataLoad {
      * Evaluation which has been deleted
      */
     public EvalEvaluation evaluationDeleted;
-
+    /**
+     * Evaluation which is in its grace period 
+     */
+    public EvalEvaluation evaluationGracePeriod;
 
     // EMAIL TEMPLATES
 
@@ -394,6 +397,10 @@ public class EvalTestDataLoad {
      * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationClosedUntaken}
      */
     public EvalAssignGroup assign10;
+    /**
+     * Group Assignment: MAIN_USER_ID, SITE1_REF, {@link #evaluationGracePeriod}
+     */
+    public EvalAssignGroup assign11;
     /**
      * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
      */
@@ -1073,6 +1080,16 @@ public class EvalTestDataLoad {
                 EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
+        
+        // evaluation Complete (ended yesterday, viewable tomorrow), recent close, still 
+        evaluationGracePeriod = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
+                EvalTestDataLoad.ADMIN_USER_ID, "Eval grace period two", null, 
+                threeDaysAgo, yesterday, 
+                tomorrow, tomorrow, false, null,
+                false, null, 
+                EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
+                EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
 
         // email templates
         emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");
@@ -1102,6 +1119,7 @@ public class EvalTestDataLoad {
         dao.save(evaluationViewable);
         dao.save(evaluationProvided);
         dao.save(evaluationDeleted);
+        dao.save(evaluationGracePeriod);
 
 
         // evalGroupId assignments
@@ -1125,6 +1143,9 @@ public class EvalTestDataLoad {
                 evaluationDeleted, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign10 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
                 evaluationClosedUntaken, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        assign11 = new EvalAssignGroup(MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE,
+        		evaluationGracePeriod, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        
         // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
         assignGroupProvided = new EvalAssignGroup( ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
                 evaluationNewAdmin, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
@@ -1143,6 +1164,7 @@ public class EvalTestDataLoad {
         dao.save(assign8);
         dao.save(assign9);
         dao.save(assign10);
+        dao.save(assign11);
         dao.save(assignGroupProvided);
 
         dao.save(assignHier1);
@@ -1159,8 +1181,9 @@ public class EvalTestDataLoad {
         counter += makeUserAssigns(dao, assign8);
         counter += makeUserAssigns(dao, assign9);
         counter += makeUserAssigns(dao, assign10);
-        if (counter != 23) {
-            throw new IllegalStateException("Invalid user assignments creation, 23 != " + counter);
+        counter += makeUserAssigns(dao, assign11);
+        if (counter != 25) {
+            throw new IllegalStateException("Invalid user assignments creation, 25 != " + counter);
         }
 
         // now init response data for the evaluationSetupService

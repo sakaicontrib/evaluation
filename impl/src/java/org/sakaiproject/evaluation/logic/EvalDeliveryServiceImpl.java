@@ -409,7 +409,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
         String state = EvalUtils.getEvaluationState(response.getEvaluation(), false);
-        if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
+        if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)) {
             // admin CAN save responses -AZ
             //       // check admin (admins can never save responses)
             //       if (external.isUserAdmin(userId)) {
