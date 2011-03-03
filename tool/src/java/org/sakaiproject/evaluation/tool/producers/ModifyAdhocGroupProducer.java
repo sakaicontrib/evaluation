@@ -101,9 +101,13 @@ ActionResultInterceptor {
                     if (EvalConstants.USER_TYPE_INTERNAL.equals(evalUser.type)) {
                         UIMessage.make(row, "user-id", "modifyadhocgroup.adhocuser.label");
                     } else {
-                        UIOutput.make(row, "user-id", evalUser.username);
+                        UIOutput.make(row, "user-id", evalUser.displayId);
                     }
-                    UIOutput.make(row, "user-display", evalUser.displayName);
+                    if (EvalConstants.USER_TYPE_INTERNAL.equals(evalUser.type)) {
+                        UIOutput.make(row, "user-display", evalUser.username);
+                    } else {
+                        UIOutput.make(row, "user-display", evalUser.displayName);
+                    }
                     // Remove Button
                     UICommand removeButton = UICommand.make(row, "remove-member",
                     "adhocGroupMemberRemovalBean.removeUser");
