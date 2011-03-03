@@ -452,7 +452,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // get all evaluations for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, null, null, true);
         assertNotNull(evals);
-        assertEquals(5, evals.size());
+        assertEquals(6, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
         assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
         assertTrue(ids.contains( etdl.evaluationActive.getId() ));
@@ -478,7 +478,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // test get for another user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, null, null, true);
         assertNotNull(evals);
-        assertEquals(3, evals.size());
+        assertEquals(4, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
         assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
         assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
@@ -535,7 +535,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     	
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID);
     	assertNotNull(evals);
-    	assertEquals(6, evals.size());
+    	assertEquals(7, evals.size());
     	
     	for(EvalEvaluation eval : evals) {
             List<EvalAssignUser> assignUsers = evaluationService.getParticipantsForEval(eval.getId(), EvalTestDataLoad.MAINT_USER_ID, 
@@ -572,12 +572,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // test getting visible evals for the admin user (should be all)
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false, false);
         assertNotNull(evals);
-        assertEquals(8, evals.size());
+        assertEquals(9, evals.size());
 
         // test getting recent closed evals for the admin user
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false, false);
         assertNotNull(evals);
-        assertEquals(7, evals.size());
+        assertEquals(8, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
         assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 
