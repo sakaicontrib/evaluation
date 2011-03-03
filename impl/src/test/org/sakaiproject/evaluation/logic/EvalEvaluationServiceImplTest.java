@@ -329,7 +329,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         l = evaluationService.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
         assertNotNull(l);
-        assertEquals(10, l.size());
+        assertEquals(11, l.size());
 
         // get all active evals a user is assigned to
         l = evaluationService.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
@@ -1388,7 +1388,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 		//System.out.println("\n\n\n=========================\n\n testCountEvaluations \n\n=========================\n\n\n");
 		String searchString01 = "Eval";
 		int count01 = this.evaluationService.countEvaluations(searchString01);
-		assertEquals(10,count01);
+		assertEquals(11,count01);
 		
 		String searchString02 = "active";
 		int count02 = this.evaluationService.countEvaluations(searchString02);
@@ -1417,13 +1417,13 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 		assertEquals(5, list02.size());
 		
 		List<EvalEvaluation> list03 = this.evaluationService.getEvaluations(searchString, order, 8, 5);
-		assertEquals(2, list03.size());
+		assertEquals(3, list03.size());
 		
 		List<EvalEvaluation> list04 = this.evaluationService.getEvaluations(searchString, order, 0, 25);
-		assertEquals(10, list04.size());
+		assertEquals(11, list04.size());
 
 		List<EvalEvaluation> list05 = this.evaluationService.getEvaluations(searchString, order, 4, 25);
-		assertEquals(6, list05.size());
+		assertEquals(7, list05.size());
 	}
 
 }

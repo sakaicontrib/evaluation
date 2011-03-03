@@ -505,7 +505,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 etdl.evaluationActiveUntaken, new Date());
         deliveryService.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
         assertNotNull(responseNone.getId());
-
+        
+        // test saving a response for a closed evaluation in grace period ok
+        deliveryService.saveResponse( new EvalResponse( EvalTestDataLoad.STUDENT_USER_ID, 
+        		EvalTestDataLoad.SITE1_REF, 
+        		etdl.evaluationGracePeriod, 
+        		new Date()), 
+        		EvalTestDataLoad.STUDENT_USER_ID);
+        
         // test saving a response when admin user is ok
         deliveryService.saveResponse( new EvalResponse( EvalTestDataLoad.ADMIN_USER_ID, 
                 EvalTestDataLoad.SITE1_REF, etdl.evaluationActiveUntaken, 
