@@ -1269,22 +1269,28 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
 			   } else {
 				   String myWorkspaceId = siteService.getUserSiteId(userId);
-				   
-				   Site myWorkspace = siteService.getSite(myWorkspaceId);
-				   List<SitePage> pages = myWorkspace.getPages();
-				   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
-					   SitePage page = i.next();
-					   List<ToolConfiguration> tools = page.getTools();
-					   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
-						   ToolConfiguration tc = j.next();
-						   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
-							   toolPage = page.getId();
-							   break;
-}
+				   if(myWorkspaceId != null && ! myWorkspaceId.trim().equals("")) {
+					   Site myWorkspace = siteService.getSite(myWorkspaceId);
+					   if(myWorkspace != null) {
+						   // find page with eval tool
+						   List<SitePage> pages = myWorkspace.getPages();
+						   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
+							   SitePage page = i.next();
+							   List<ToolConfiguration> tools = page.getTools();
+							   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
+								   ToolConfiguration tc = j.next();
+								   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
+									   toolPage = page.getId();
+									   break;
+								   }
+							   }
+						   }
 					   }
 				   }
-				   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
-				   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+				   if(toolPage != null && ! toolPage.trim().equals("")) {
+					   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+					   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+				   }
 				}
 		   } catch (Exception e) {
 			   log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
