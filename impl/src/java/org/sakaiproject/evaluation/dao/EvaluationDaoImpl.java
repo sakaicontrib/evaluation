@@ -1860,7 +1860,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		if(availableEmailSent == null) {
     			queryBuf.append("user.availableEmailSent is null ");
     		} else {
-    			queryBuf.append("(user.availableEmailSent is not null and user.availableEmailSent < :availableEmailSent) ");
+    			queryBuf.append("(user.availableEmailSent is null or user.availableEmailSent < :availableEmailSent) ");
     			params.put("availableEmailSent", availableEmailSent);
     		}
     	}

@@ -495,13 +495,13 @@ public interface EvaluationDao extends GeneralGenericDao {
 	 * @param emailTemplateType
 	 * @return
 	 */
-	public abstract int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
+	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
 
 	/**
 	 * 
 	 * @return
 	 */
-	public abstract int resetConsolidatedEmailRecipients();
+	public int resetConsolidatedEmailRecipients();
 
 }
