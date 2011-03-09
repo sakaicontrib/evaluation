@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalEmailProcessingData" table="EVAL_EMAIL_PROCESSING_QUEUE" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+    
+    	<property name="eauId" type="java.lang.Long" index="eval_emailq_id">
+    		<column name="EAU_ID" />
+    	</property>
+    	<property name="userId" type="java.lang.String" index="eval_emailq_userid">
+            <column name="USER_ID" length="255" />
+        </property>
+        <property name="emailTemplateId" type="java.lang.Long" index="eval_emailq_id">
+        	<column name="EMAIL_TEMPLATE_ID"></column>
+        </property>
+        <property name="evalDueDate" type="java.util.Date" index="eval_emailq_duedate">
+            <column name="EVAL_DUE_DATE" />
+        </property>
+        <property name="processingStatus" type="java.lang.Byte" >
+        	<column name="PROCESSING_STATUS" />
+        </property>
+	</class>
+</hibernate-mapping>

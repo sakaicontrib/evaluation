@@ -1,10 +1,19 @@
 -- Oracle conversion script - 1.3 to 1.4 
 alter table EVAL_EVALUATION add (LOCAL_SELECTOR varchar2(255 char));
 
--- AVAILABLE_EMAIL_SENT was included in ddl files but not in hibernate mapping files 
--- alter table EVAL_EVALUATION add (AVAILABLE_EMAIL_SENT number(1,0));
--- If AVAILABLE_EMAIL_SENT is being added, give it a reasonable default -- assume emails have been sent for Active evals and not for others?
--- update EVAL_EVALUATION set AVAILABLE_EMAIL_SENT='1' where STATE='Active' or STATE='Closed';
--- update EVAL_EVALUATION set AVAILABLE_EMAIL_SENT='0' where AVAILABLE_EMAIL_SENT is null;
-
 update eval_email_template set template_type='ConsolidatedAvailable' where template_type='SingleEmailAvailable';
+update eval_email_template set template_type='ConsolidatedReminder' where template_type='SingleEmailReminder';
+
+create table EVAL_EMAIL_PROCESSING_QUEUE 
+(
+	ID number(19,0) not null, 
+	EAU_ID number(19,0),  
+	USER_ID varchar2(255), 
+	EMAIL_TEMPLATE_ID number(19,0), 
+	EVAL_DUE_DATE timestamp(6), 
+	PROCESSING_STATUS number(4,0), 
+	primary key (ID)
+);
+
+alter table EVAL_ASSIGN_USER add AVAILABLE_EMAIL_SENT timestamp(6) DEFAULT NULL;
+alter table EVAL_ASSIGN_USER add REMINDER_EMAIL_SENT timestamp(6) DEFAULT NULL;

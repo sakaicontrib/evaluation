@@ -15,6 +15,7 @@
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignUser.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailProcessingData.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>

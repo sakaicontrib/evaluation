@@ -52,6 +52,19 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		if(logRecipients == null) {
 			logRecipients = new Boolean(false);
 		}
+		
+		boolean sendAvailableEmails = true;
+		if(sendAvailableEmails ) {
+			String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications();
+			if(recipients == null) {
+				log.debug("announcements sent: 0");
+			} else {
+				log.debug("announcements sent: " + recipients.length);
+				if(logRecipients.booleanValue() && log.isInfoEnabled()) {
+					this.logRecipients("announcements", recipients);
+				}
+			}
+		}
 
 		int reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS)).intValue();
 		// check if reminders are to be sent
@@ -101,15 +114,6 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					cal.set(Calendar.SECOND, 0);
 				}
 				this.evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, cal.getTime());
-			}
-		}
-		String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications();
-		if(recipients == null) {
-			log.debug("announcements sent: 0");
-		} else {
-			log.debug("announcements sent: " + recipients.length);
-			if(logRecipients.booleanValue() && log.isInfoEnabled()) {
-				this.logRecipients("announcements", recipients);
 			}
 		}
 		

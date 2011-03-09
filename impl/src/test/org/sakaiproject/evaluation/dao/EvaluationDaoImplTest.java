@@ -1571,58 +1571,110 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     }
 
     public void testGetUser2ConsolidateEmailTemplateMapping() {
-    	List<Map<String,Object>> mapping1 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	List<Map<String,Object>> mapping2 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	List<Map<String,Object>> mapping3 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
-    	List<Map<String,Object>> mapping4 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
-    	List<Map<String,Object>> mapping5 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
-    	List<Map<String,Object>> mapping6 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
-    	assertNotNull(mapping1);
-    	assertEquals(0, mapping1.size());
-    	assertNotNull(mapping2);
-    	assertEquals(2, mapping2.size());
-    	assertNotNull(mapping3);
-    	assertEquals(2, mapping3.size());
-    	assertNotNull(mapping4);
-    	assertEquals(0, mapping4.size());
-    	assertNotNull(mapping5);
-    	assertEquals(2, mapping5.size());
-    	assertNotNull(mapping6);
-    	assertEquals(2, mapping6.size());
-
-    	EvalEvaluation eval = this.evaluationDao.findById(EvalEvaluation.class, this.etdl.evaluationActiveUntaken.getId());
-    	eval.setAvailableEmailSent(true);
-    	this.evaluationDao.save(eval);
-    	
-    	List<Map<String,Object>> mapping7 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	List<Map<String,Object>> mapping8 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	List<Map<String,Object>> mapping9 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
-    	List<Map<String,Object>> mapping10 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
-    	List<Map<String,Object>> mapping11 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
-    	List<Map<String,Object>> mapping12 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
-    	assertNotNull(mapping7);
-    	assertEquals(2, mapping7.size());
-    	assertNotNull(mapping8);
-    	assertEquals(0, mapping8.size());
-    	assertNotNull(mapping9);
-    	assertEquals(2, mapping9.size());
-    	assertNotNull(mapping10);
-    	assertEquals(2, mapping10.size());
-    	assertNotNull(mapping11);
-    	assertEquals(0, mapping11.size());
-    	assertNotNull(mapping12);
-    	assertEquals(2, mapping12.size());
-    	
-    	// tiny test of paging
-    	List<Map<String,Object>> mapping13 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 0);
-    	assertNotNull(mapping13);
-    	assertEquals(1, mapping13.size());
-    	List<Map<String,Object>> mapping14 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 1);
-    	assertNotNull(mapping14);
-    	assertEquals(1, mapping14.size());
-    	List<Map<String,Object>> mapping15 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 2);
-    	assertNotNull(mapping15);
-    	assertEquals(0, mapping15.size());
+//    	int count1 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	assertEquals(0,count1);
+//    	List<Map<String,Object>> mapping1 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+//    	assertNotNull(mapping1);
+//    	assertEquals(0, mapping1.size());
+//    	int deletions1 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(0, deletions1);
+//    	
+//    	int count2 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_NOT_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	assertEquals(2,count2);
+//    	List<Map<String,Object>> mapping2 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+//    	assertNotNull(mapping2);
+//    	assertEquals(2, mapping2.size());
+//    	int deletions2 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(2, deletions2);
+//    	
+//    	int count3 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_ALL, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	assertEquals(2,count3);
+//    	List<Map<String,Object>> mapping3 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 100, 0);
+//    	assertNotNull(mapping3);
+//    	assertEquals(2, mapping3.size());
+//    	int deletions3 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(2, deletions3);
+//    	
+//    	int count4 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	assertEquals(0,count4);
+//    	List<Map<String,Object>> mapping4 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+//    	assertNotNull(mapping4);
+//    	assertEquals(0, mapping4.size());
+//    	int deletions4 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(0, deletions4);
+//    	
+//    	int count5 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_NOT_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	assertEquals(2,count5);
+//    	List<Map<String,Object>> mapping5 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+//    	assertNotNull(mapping5);
+//    	assertEquals(2, mapping5.size());
+//    	int deletions5 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(2, deletions5);
+//
+//    	int count6 = this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_ALL, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	assertEquals(2,count6);
+//    	List<Map<String,Object>> mapping6 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 100, 0);
+//    	assertNotNull(mapping6);
+//    	assertEquals(2, mapping6.size());
+//    	int deletions6 = this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertEquals(2, deletions6);
+//
+//    	EvalEvaluation eval = this.evaluationDao.findById(EvalEvaluation.class, this.etdl.evaluationActiveUntaken.getId());
+//    	eval.setAvailableEmailSent(true);
+//    	this.evaluationDao.save(eval);
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	List<Map<String,Object>> mapping7 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping7);
+//    	assertEquals(0, mapping7.size());
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_NOT_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	List<Map<String,Object>> mapping8 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping8);
+//    	assertEquals(2, mapping8.size());
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_ALL, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+//    	List<Map<String,Object>> mapping9 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping9);
+//    	assertEquals(2, mapping9.size());
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	List<Map<String,Object>> mapping10 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(true, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping10);
+//    	assertEquals(2, mapping10.size());
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_NOT_SENT, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	List<Map<String,Object>> mapping11 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping(false, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping11);
+//    	assertEquals(0, mapping11.size());
+//    	
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_ALL, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	List<Map<String,Object>> mapping12 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 12, 0);
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
+//    	assertNotNull(mapping12);
+//    	assertEquals(2, mapping12.size());
+//    	
+//    	// tiny test of paging
+//    	this.evaluationDao.selectConsoliatedEmailRecipients(EvalConstants.AVAILABLE_EMAIL_ALL, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+//    	
+//    	List<Map<String,Object>> mapping13 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 0);
+//    	assertNotNull(mapping13);
+//    	assertEquals(1, mapping13.size());
+//    	
+//    	List<Map<String,Object>> mapping14 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 1);
+//    	assertNotNull(mapping14);
+//    	assertEquals(1, mapping14.size());
+//    	
+//    	List<Map<String,Object>> mapping15 = this.evaluationDao.getUser2ConsolidateEmailTemplateMapping((Boolean) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 1, 2);
+//    	assertNotNull(mapping15);
+//    	assertEquals(0, mapping15.size());
+//
+//    	this.evaluationDao.resetConsolidatedEmailRecipients();
     	
     }
 

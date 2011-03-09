@@ -31,7 +31,7 @@
         DISPLAY_NAME varchar(255),
         primary key (ID)
     );
-
+    
     create table EVAL_ANSWER (
         ID bigint not null auto_increment,
         LAST_MODIFIED datetime not null,
@@ -74,6 +74,23 @@
         primary key (ID)
     );
 
+    create table EVAL_ASSIGN_USER (
+		ID bigint(20) NOT NULL AUTO_INCREMENT,
+		EID varchar(255) DEFAULT NULL,
+		LAST_MODIFIED datetime NOT NULL,
+		OWNER varchar(255) NOT NULL,
+		USER_ID varchar(255) NOT NULL,
+		GROUP_ID varchar(255) NOT NULL,
+		ASSIGN_TYPE varchar(255) NOT NULL,
+		ASSIGN_STATUS varchar(255) NOT NULL,
+		LIST_ORDER int(11) NOT NULL,
+		ASSIGN_GROUP_ID bigint(20) DEFAULT NULL,
+		EVALUATION_FK bigint(20) NOT NULL,
+		AVAILABLE_EMAIL_SENT datetime DEFAULT NULL,
+		REMINDER_EMAIL_SENT datetime DEFAULT NULL,
+  		PRIMARY KEY (ID)
+	);
+
     create table EVAL_CONFIG (
         ID bigint not null auto_increment,
         LAST_MODIFIED datetime not null,
@@ -81,6 +98,18 @@
         VALUE varchar(255) not null,
         primary key (ID)
     );
+    
+    create table EVAL_EMAIL_PROCESSING_QUEUE 
+	(
+		ID bigint not null auto_increment, 
+		EAU_ID bigint,  
+		USER_ID varchar(255), 
+		EMAIL_TEMPLATE_ID bigint, 
+		EVAL_DUE_DATE datetime, 
+		PROCESSING_STATUS tinyint, 
+		primary key (ID)
+	);
+
 
     create table EVAL_EMAIL_TEMPLATE (
         ID bigint not null auto_increment,
@@ -354,7 +383,14 @@
         foreign key (EVALUATION_FK) 
         references EVAL_EVALUATION (ID);
 
-    create index eval_config_name on EVAL_CONFIG (NAME);
+	create index ASSIGN_USER_EVALUATION_FKC on EVAL_ASSIGN_USER (EVALUATION_FK);
+	create unique index ASSIGN_USER_MUL_IDX on EVAL_ASSIGN_USER (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK);
+	
+	alter table EVAL_ASSIGN_USER  
+		add constraint ASSIGN_USER_EVALUATION_FKC 
+		foreign key (EVALUATION_FK) 
+		references eval_evaluation (ID);
+	    create index eval_config_name on EVAL_CONFIG (NAME);
 
     create index eval_templ_type on EVAL_EMAIL_TEMPLATE (TEMPLATE_TYPE);
 

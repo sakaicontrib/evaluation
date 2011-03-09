@@ -16,6 +16,7 @@ api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml -text svn_ke
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalEmailProcessingData.hbm.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -78,6 +79,7 @@ api/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalConfig.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalEmailProcessingData.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalEmailTemplate.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalEvaluation.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalGroupNodes.java -text svn_keywords=Date+Revision+Author+URL+Id
