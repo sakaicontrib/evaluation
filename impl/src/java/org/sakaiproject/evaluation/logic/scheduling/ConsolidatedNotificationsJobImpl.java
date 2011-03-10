@@ -53,8 +53,12 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 			logRecipients = new Boolean(false);
 		}
 		
-		boolean sendAvailableEmails = true;
-		if(sendAvailableEmails ) {
+		Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+		if(sendAvailableEmails == null) {
+			sendAvailableEmails = new Boolean(true);
+		}
+		
+		if(sendAvailableEmails.booleanValue()) {
 			String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications();
 			if(recipients == null) {
 				log.debug("announcements sent: 0");

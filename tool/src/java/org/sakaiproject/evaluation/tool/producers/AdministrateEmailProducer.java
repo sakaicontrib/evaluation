@@ -108,6 +108,10 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
 
         UIInput evalTimeToWaitSecs = AdministrateProducer.makeInput(emailForm, "eval-time-to-wait-secs", EMAIL_SETTINGS_WBL, EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);
 
+        //allow eval begin email notification - eval specific toggle 
+        AdministrateProducer.makeBoolean(emailForm, "allow-eval-begin-email",
+        		EMAIL_SETTINGS_WBL, EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
+        
         // control options for consolidated emails
         
         String nextReminderStr = (String) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
@@ -130,6 +134,8 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
         UISelectLabel.make(emailForm, "email-type-choice-consolidated-label", emailTypeChoice.getFullID(), 1);
 
 		UIBranchContainer oneemail = UIBranchContainer.make(emailForm, "consolidated-email-settings:");
+		
+		AdministrateProducer.makeBoolean(oneemail, "consolidated-send-available", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 
         AdministrateProducer.makeSelect(emailForm, "reminders-frequency-selection",
                 EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
@@ -167,9 +173,6 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
 				  EMAIL_SETTINGS_WBL, EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, true);         
 
        // control the general email options
-        //allow eval begin email notification - eval specific toggle 
-        AdministrateProducer.makeBoolean(emailForm, "allow-eval-begin-email",
-        		EMAIL_SETTINGS_WBL, EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
         AdministrateProducer.makeBoolean(emailForm, "general-use-admin-from-email", EMAIL_SETTINGS_WBL, EvalSettings.USE_ADMIN_AS_FROM_EMAIL);
         AdministrateProducer.makeInput(emailForm, "general-helpdesk-email", EMAIL_SETTINGS_WBL, EvalSettings.FROM_EMAIL_ADDRESS);
 

@@ -1131,7 +1131,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
 		String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
 		
-		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION);
+		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
 		
 		try {
 			trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
@@ -1197,7 +1197,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
 							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
 							if(trigger instanceof CronTrigger) {
-								map.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
+								map.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
 							}
 							
 							for(String propName : (Set<String>) jobDataMap.keySet()) {

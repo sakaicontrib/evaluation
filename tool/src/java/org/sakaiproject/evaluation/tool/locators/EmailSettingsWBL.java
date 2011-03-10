@@ -86,7 +86,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, JOB_GROUP_NAME);
 		dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, JOB_GROUP_NAME);
 		
-		dataMap.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, this.calculateCronExpression());
+		dataMap.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, this.calculateCronExpression());
 		
 		dataMap.put(SPRING_BEAN_NAME, ConsolidatedNotificationsJob.BEAN_NAME);
 
@@ -103,10 +103,8 @@ public class EmailSettingsWBL extends SettingsWBL {
 	 * Calculates appropriate value for next reminder date based on old value for 
 	 * next reminder date, reminder interval and start time.  If reminder interval 
 	 * is zero (or negative or null, which should not be possible), the current value 
-	 * of next reminder date is used if it is not null and the current time is used  
-	 * if the current value of next reminder date is null.  If reminder interval  
-	 * used ...   
-	 * more to come ...
+	 * of next reminder date is used.  
+	 * 
 	 */
 	protected Date calculateNextReminderDate() {
 		Integer reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS));
@@ -164,7 +162,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		buf.append(" ");
 		buf.append(startTime.toString());
 		buf.append(" ? * * *");
-		logger.info("quickSync() cronExpression == " + buf.toString());
+		logger.debug("emailSettings cronExpression == " + buf.toString());
 
 		return buf.toString();
 	}

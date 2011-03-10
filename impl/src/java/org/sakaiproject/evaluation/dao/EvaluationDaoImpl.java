@@ -1756,7 +1756,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	
     	List<Long> updates = new ArrayList<Long>();
     	
-    	Boolean morePages = new Boolean(results.size() > pageSize);
+    	
     	
 		for(int i = 0; i < results.size(); i++) {
     		Object[] row = (Object[]) results.get(i);

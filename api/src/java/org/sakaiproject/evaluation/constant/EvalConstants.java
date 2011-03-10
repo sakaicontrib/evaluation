@@ -712,7 +712,7 @@ public class EvalConstants {
 
 	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
 	
-	public static final String CRON_SCEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
+	public static final String CRON_SCHEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
 	
 	public static final String KEY_USER_ID = "USER_ID";
 	public static final String KEY_USER_EID = "USER_EID";

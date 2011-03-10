@@ -384,6 +384,10 @@ public interface EvalSettings {
 	 */
 	public static final String CONSOLIDATED_EMAIL_DAILY_START_MINUTES = "CONSOLIDATED_EMAIL_DAILY_START_MINUTES:java.lang.Integer";
 
+	/**
+	 * If this is true, available emails should be sent to notify recipients when evals open. Otherwise available emails will not be sent.
+	 */
+	public static final String CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE = "CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE:java.lang.Boolean";
 
     /**
      * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.
@@ -420,6 +424,7 @@ public interface EvalSettings {
         ADMIN_VIEW_BELOW_RESULTS,
         ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
         ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION,
+        CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE,
         DISABLE_ITEM_BANK,
         DISABLE_QUESTION_BLOCKS,
         DISPLAY_HIERARCHY_HEADERS,

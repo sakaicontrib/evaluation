@@ -146,7 +146,7 @@ public class ProviderSyncBean {
 			dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, uniqueId);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, JOB_GROUP_NAME);
 			
-			dataMap.put(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION, this.cronExpression);
+			dataMap.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, this.cronExpression);
 			
 			dataMap.put(SPRING_BEAN_NAME, GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_BEAN_NAME);
 			dataMap.put(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST, states);
@@ -250,7 +250,7 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
 				success = this.externalLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
 				if(success) {
@@ -260,7 +260,7 @@ public class ProviderSyncBean {
 				if(success) {
 					this.messages.addMessage(new TargettedMessage("administrate.sync.update.succeeded", new Object[]{this.cronExpression.trim(), this.getStateValues()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.update.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}
@@ -284,13 +284,13 @@ public class ProviderSyncBean {
 			Map<String,String> job = cronJobs.get(fullJobName);
 			if(job == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME) == null || job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP) == null) {
 				// error
-				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+				this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 			} else {
 				success = this.externalLogic.deleteCronJob(job.get(EvalConstants.CRON_SCHEDULER_JOB_NAME), job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
 				if(success) {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION).trim(), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.succeeded", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION).trim(), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST).trim()}, TargettedMessage.SEVERITY_INFO));			
 				} else {
-					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
+					this.messages.addMessage(new TargettedMessage("administrate.sync.delete.failure", new Object[]{job.get(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION), job.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST)}, TargettedMessage.SEVERITY_ERROR));					
 				}
 			}
 		}

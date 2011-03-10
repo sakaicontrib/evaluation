@@ -11,8 +11,8 @@
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css"
 			rel="stylesheet" media="all" />
-        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
-        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+        <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/jquery/jquery-1.4.4.min.js"></script>
+        <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/evalUtils.js"></script>
 	</head>
 	<body>
 		<div class="portletBody">
@@ -26,7 +26,7 @@
 			<br/>
 			<form  rsf:id="emailcontrol-form" method="post">
 				<span rsf:id="email-type-choice"></span>
-                <div style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
+                <div  class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
                     <p class="checkbox indnt1" style="border: medium none;">
                         <input rsf:id="email-type-choice-individual" checked="checked" id="emailtype1" class="emailtypeChoice"
                             name="emailtype" value="false" type="radio" />
@@ -76,11 +76,19 @@
                                 name="eval-time-to-wait-secs" value="300" size="5" type="text" />
                         &nbsp;<span id="time-wait-errmsg"></span>
                     </p>
+                     <p class="checkbox indnt1">
+                            <input rsf:id="allow-eval-begin-email" name="allow-eval-begin-email" id="allow-eval-begin-email"
+                                value="true" type="checkbox" />
+                            <label for="allow-eval-begin-email"> Allow users to choose whether to
+                                send an initial email notification when creating an evaluation
+                                (otherwise an email notification will always be sent when the
+                                evaluation opens) </label>
+					</p>
 				</fieldset>
 
 				</div>
 				<br/>
-				<div style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
+				<div class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
                     <p class=   "checkbox indnt1">
                         <input rsf:id="email-type-choice-consolidated" id="emailtype2" class="emailtypeChoice" name="emailtype" value="true"
                             type="radio" />
@@ -101,9 +109,13 @@
                             <legend rsf:id="msg=controlemail.consolidated.emails.settings">
                                 <span >Summary Email Options</span>
                             </legend>
-
+		                    <p class="checkbox indnt1">
+		                         <input rsf:id="consolidated-send-available" name="consolidated-send-available" id="consolidated-send-available"
+		                                value="true" type="checkbox" />
+		                         <label rsf:id="msg=controlemail.consolidated.available.enabled" for="consolidated-send-available"> Send notifications when evaluations become active </label>
+							</p>
 		                    <p class="longtext indnt1">
-		                            <label for="reminders-frequency-selection" class="block"> Set
+		                            <label rsf:id="controlemail.reminder.defaults" for="reminders-frequency-selection" class="block"> Set
 		                                the default reminder frequency to use for new evaluations </label>
 		                            <select rsf:id="reminders-frequency-selection" id="reminders-frequency-selection"
 		                                name="reminders-frequency-selection">
@@ -158,14 +170,6 @@
 
 				<div>
 				
-                     <p class="checkbox indnt1">
-                            <input rsf:id="allow-eval-begin-email" name="allow-eval-begin-email" id="allow-eval-begin-email"
-                                value="true" type="checkbox" />
-                            <label for="allow-eval-begin-email"> Allow users to choose whether to
-                                send an initial email notification when creating an evaluation
-                                (otherwise an email notification will always be sent when the
-                                evaluation opens) </label>
-					</p>
 					<p class=   "checkbox indnt1">
                     	<input rsf:id="general-use-admin-from-email" name="general-use-admin-from-email"
                                 id="general-use-admin-from-email" value="true" type="checkbox" />
@@ -191,5 +195,22 @@
         <script rsf:id="initEvalJS">
            EvalSystem.addNumericOnly(eval-time-to-wait-secs, time-wait-errmsg);
         </script>
+        <script type="text/javascript">
+                $(document).ready(function(){
+                    $('fieldset.emailTypeOptions').hide();
+                    $('div.emailTypeOptionsContainer').each(function(){
+                    	if($(this).find('.emailtypeChoice:checked').length > 0) {
+                    		$(this).find('fieldset.emailTypeOptions').fadeIn('slow');
+                    	}	
+                    });
+                    $('.emailtypeChoice').change(function(){
+                        $('fieldset.emailTypeOptions').fadeOut('slow');
+                        if ($(this).attr('checked')) {
+							$(this).closest('div.emailTypeOptionsContainer').find('fieldset.emailTypeOptions').fadeIn('slow');
+                        };
+                        
+                     })
+                })
+       </script> 
 	</body>
 </html>

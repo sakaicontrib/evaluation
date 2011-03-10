@@ -60,7 +60,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
     protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
 
-    protected static final int MIN_BATCH_SIZE = 12;
+    protected static final int MIN_BATCH_SIZE = 10;
 	protected static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
     private EvalCommonLogic commonLogic;
@@ -840,7 +840,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			waitInterval = new Integer(0);
 		}
 		
+		Boolean availableEmailEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+		if(availableEmailEnabled == null) {
+			availableEmailEnabled = new Boolean(false);
+		}
+		
 		Integer reminderFrequency = (Integer) this.settings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS);
+		if(reminderFrequency == null) {
+			// assume daily reminders if not specified
+			reminderFrequency = new Integer(1);
+		}
 
 		String jobId = null;
     	if(this.jobStatusReporter != null) {
@@ -851,7 +860,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     	Date availableEmailSent = new Date(System.currentTimeMillis() - (reminderFrequency.longValue() * MILLISECONDS_PER_DAY));
 		Date reminderEmailSent = new Date();
 		
-		int count = this.evaluationService.selectConsoliatedEmailRecipients(true, availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+		int count = this.evaluationService.selectConsoliatedEmailRecipients(availableEmailEnabled.booleanValue(), availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
     	log.debug("Number of evalAssignUser entities selected for reminder emails: " + count);
     	
     	if(count > 0) {
