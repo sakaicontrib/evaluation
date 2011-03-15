@@ -87,7 +87,11 @@
     		ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 		<property name="evalSettings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    	
+        <property name="externalLogic" 
+        	ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="jobStatusReporter">
+        	<ref bean="org.sakaiproject.evaluation.jobmonitor.JobStatusReporter" />
+        </property>
     </bean>
 
     <!-- this is the helper that will register the above bean with the job scheduler -->
