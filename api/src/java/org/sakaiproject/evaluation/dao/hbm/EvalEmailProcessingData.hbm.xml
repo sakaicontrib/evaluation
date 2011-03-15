@@ -16,6 +16,9 @@
     	<property name="userId" type="java.lang.String" index="eval_emailq_userid">
             <column name="USER_ID" length="255" />
         </property>
+        <property name="groupId" type="java.lang.String">
+            <column name="GROUP_ID" not-null="true" length="255" />
+        </property>
         <property name="emailTemplateId" type="java.lang.Long" index="eval_emailq_id">
         	<column name="EMAIL_TEMPLATE_ID"></column>
         </property>

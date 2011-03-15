@@ -42,13 +42,16 @@ public interface JobStatusReporter
 	
 	/**
 	 * @param jobId
+	 * @param jobFailed TODO
 	 * @param detail
 	 */
-	public void reportError(String jobId, String detail);
+	public void reportError(String jobId, boolean jobFailed, String detail);
 	
 	/**
 	 * @param jobId
+	 * @param jobFinished TODO
+	 * @param detail TODO
 	 */
-	public void reportFinished(String jobId);
+	public void reportFinished(String jobId, boolean jobFinished, String detail);
 
 }

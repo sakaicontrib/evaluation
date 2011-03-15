@@ -58,7 +58,7 @@ public class LoggingJobStatusReporter implements JobStatusReporter {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.jobmonitor.JobStatusReporter#reportError(java.lang.String, java.lang.String)
 	 */
-	public void reportError(String jobId, String detail) {
+	public void reportError(String jobId, boolean jobFailed, String detail) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("JobStatus. Job: ");
 		buf.append(jobId);
@@ -71,7 +71,7 @@ public class LoggingJobStatusReporter implements JobStatusReporter {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.jobmonitor.JobStatusReporter#reportFinished(java.lang.String)
 	 */
-	public void reportFinished(String jobId) {
+	public void reportFinished(String jobId, boolean jobFinished, String detail) {
 		log.info("JobStatus. Job: " + jobId + " Finished.");
 
 	}

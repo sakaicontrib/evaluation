@@ -1159,5 +1159,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	public int resetConsolidatedEmailRecipients() {
 		return this.dao.resetConsolidatedEmailRecipients();
 	}
+	
+	public int countDistinctGroupsInConsolidatedEmailMapping() {
+		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
+	}
     
 }

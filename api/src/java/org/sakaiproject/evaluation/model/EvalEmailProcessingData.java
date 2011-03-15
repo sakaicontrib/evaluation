@@ -13,8 +13,8 @@ import java.util.Date;
 public class EvalEmailProcessingData implements Serializable {
 	protected Long id;
 	protected Long eauId;
-	protected String userEid;
 	protected String userId;
+	protected String groupId;
 	protected Long emailTemplateId;
 	protected Date evalDueDate;
 	protected Byte processingStatus;
@@ -41,18 +41,6 @@ public class EvalEmailProcessingData implements Serializable {
 	 */
 	public void setEauId(Long eauId) {
 		this.eauId = eauId;
-	}
-	/**
-	 * @return the userEid
-	 */
-	public String getUserEid() {
-		return userEid;
-	}
-	/**
-	 * @param userEid the userEid to set
-	 */
-	public void setUserEid(String userEid) {
-		this.userEid = userEid;
 	}
 	/**
 	 * @return the userId
@@ -89,6 +77,18 @@ public class EvalEmailProcessingData implements Serializable {
 	 */
 	public void setEvalDueDate(Date evalDueDate) {
 		this.evalDueDate = evalDueDate;
+	}
+	/**
+	 * @return the groupId
+	 */
+	public String getGroupId() {
+		return groupId;
+	}
+	/**
+	 * @param groupId the groupId to set
+	 */
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 	/**
 	 * @return the availableEmailStatus

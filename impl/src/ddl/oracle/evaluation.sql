@@ -106,7 +106,8 @@
 	(
 		ID number(19,0) not null, 
 		EAU_ID number(19,0),  
-		USER_ID varchar2(255), 
+		USER_ID varchar2(255),
+		GROUP_ID varchar2(255),
 		EMAIL_TEMPLATE_ID number(19,0), 
 		EVAL_DUE_DATE date, 
 		PROCESSING_STATUS number(4,0), 

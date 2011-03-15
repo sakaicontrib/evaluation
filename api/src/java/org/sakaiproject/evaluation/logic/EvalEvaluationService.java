@@ -673,6 +673,8 @@ public interface EvalEvaluationService {
 	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
 	
+	public int countDistinctGroupsInConsolidatedEmailMapping();
+	
 	/**
 	 * 
 	 * @return

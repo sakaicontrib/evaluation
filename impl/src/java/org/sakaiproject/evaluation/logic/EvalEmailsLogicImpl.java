@@ -78,18 +78,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         this.evaluationService = evaluationService;
     }
 
-    protected JobStatusReporter jobStatusReporter;
-    public void setJobStatusReporter(JobStatusReporter jobStatusReporter) {
-    	this.jobStatusReporter = jobStatusReporter;
-    }
-
     // INIT method
     public void init() {
         log.debug("Init");
         
-        if(jobStatusReporter == null) {
-        	jobStatusReporter = new LoggingJobStatusReporter();
-    }
     }
 
 
@@ -765,7 +757,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedAvailableNotifications()
      */
-	public String[] sendConsolidatedAvailableNotifications() {
+	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId) {
 		// need to figure out selection criteria for Consolidated-Available Notifications:
 		// admin settings and individual eval settings determine whether available emails should be sent.
 		// then we can tell whether an announcement has been sent (once eval is Active) by whether the 
@@ -781,12 +773,19 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			waitInterval = new Integer(0);
 		}
 
-		String jobId = null;
-    	if(this.jobStatusReporter != null) {
-    		jobId = this.jobStatusReporter.reportStarted("Email");
-    	}
-    	int count = this.evaluationService.selectConsoliatedEmailRecipients(true, null, true, null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+		if(logRecipients == null) {
+			logRecipients = new Boolean(false);
+		}
+		
+		Date startTime = new Date();
+
+		int count = this.evaluationService.selectConsoliatedEmailRecipients(true, null, true, null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
     	log.debug("Number of evalAssignUser entities selected for available emails: " + count);
+    	if(jobStatusReporter != null) {
+    		jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(count));
+    		jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+    	}
 
     	List<String> recipients = new ArrayList<String>();
     	
@@ -795,10 +794,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	    	List<String> userIds = null;
 	    	do {
 		    	List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(true, batchSize.intValue(), page++);
-		    	if(jobId != null) {
-		    		this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Processing emails to " + userMap.size() + " evaluators");
-		    	}
-		    	userIds = processConsolidatedEmails(jobId, userMap);
+		    	userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
 		    	if(userIds != null) {
 		    		recipients.addAll(userIds);
 		    	}
@@ -807,10 +803,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     	}
     	this.evaluationService.resetConsolidatedEmailRecipients();
     	
-		if(jobId != null) {
-			this.jobStatusReporter.reportProgress(jobId, "AvailableNotifications", "Sent emails to " + recipients.size() + " evaluators");
-    		this.jobStatusReporter.reportFinished(jobId);
-    	}
+		if(jobId != null && jobStatusReporter != null) {
+			jobStatusReporter.reportProgress(jobId, "announcements", calculateElapsedTimeMessage(new Date(), startTime));
+			jobStatusReporter.reportProgress(jobId, "announcementUsers", Integer.toString(recipients.size()));
+		}
 		//this.evaluationService.setAvailableEmailSent(evalIds)
     	return recipients.toArray(new String[]{});
     }
@@ -819,7 +815,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedReminderNotifications()
      */
-	public String[] sendConsolidatedReminderNotifications() {
+	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId) {
 		// need to figure out selection criteria for Consolidated-Reminder Notifications:
 		// admin settings and individual eval settings determine whether available emails should be sent.
 		// admin settings indicate how frequently and at what time of day reminders should be sent. 
@@ -851,40 +847,72 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			reminderFrequency = new Integer(1);
 		}
 
-		String jobId = null;
-    	if(this.jobStatusReporter != null) {
-    		jobId = this.jobStatusReporter.reportStarted("Email");
-    	}
+		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+		if(logRecipients == null) {
+			logRecipients = new Boolean(false);
+		}
+		
     	List<String> recipients = new ArrayList<String>();
     	
-    	Date availableEmailSent = new Date(System.currentTimeMillis() - (reminderFrequency.longValue() * MILLISECONDS_PER_DAY));
+    	Date availableEmailSent = null;
+    	if(availableEmailEnabled.booleanValue()) {
+    		// do not send email to users who have gotten an available email recently (wait number of days specified by reminderFrequency) 
+    		availableEmailSent = new Date(System.currentTimeMillis() - (reminderFrequency.longValue() * MILLISECONDS_PER_DAY));
+    	}
 		Date reminderEmailSent = new Date();
 		
 		int count = this.evaluationService.selectConsoliatedEmailRecipients(availableEmailEnabled.booleanValue(), availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
     	log.debug("Number of evalAssignUser entities selected for reminder emails: " + count);
-    	
+    	if(jobStatusReporter != null) {
+    		jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(count));
+    		jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+    	}
     	if(count > 0) {
         	int page = 0;
         	List<String> userIds = null;
 	    	do {
 	    		List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(false, batchSize.intValue(), page++);
-	    		if(jobId != null) {
-	    			this.jobStatusReporter.reportProgress(jobId, "ReminderNotifications", "Processing emails to " + userMap.size() + " evaluators");
-	    		}
-	    		userIds = processConsolidatedEmails(jobId, userMap);
+	    		userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
 	    		if(userIds != null)
 	    		recipients.addAll(userIds);
 	    		takeShortBreak(waitInterval);
 	    	} while(userIds != null && !userIds.isEmpty());
     	}
     	this.evaluationService.resetConsolidatedEmailRecipients();
-
-		if(jobId != null) {
-			this.jobStatusReporter.reportProgress(jobId, "ReminderNotifications", "Sent emails to " + recipients.size() + " evaluators");
-    		this.jobStatusReporter.reportFinished(jobId);
+    	
+		if(jobId != null && jobStatusReporter != null) {
+			jobStatusReporter.reportProgress(jobId, "reminders", calculateElapsedTimeMessage(new Date(), reminderEmailSent));
+			jobStatusReporter.reportProgress(jobId, "reminderUsers", Integer.toString(recipients.size()));
 		}
     	return recipients.toArray(new String[]{});
     }
+
+	/**
+	 * @param endTime
+	 * @param startTime
+	 * @return
+	 */
+	protected String calculateElapsedTimeMessage(Date endTime, Date startTime) {
+		long elapsedTime = endTime.getTime() - startTime.getTime();
+		long milliseconds = elapsedTime % 1000L;
+		long seconds = elapsedTime / 1000L;
+		StringBuilder buf = new StringBuilder();
+		buf.append(seconds);
+		buf.append(".");
+		if(milliseconds < 10) {
+			buf.append("00");
+		} else if(milliseconds < 100) {
+			buf.append("0");
+		}
+		buf.append(milliseconds);
+		buf.append(" from ");
+		DateFormat df = DateFormat.getTimeInstance();
+		buf.append(df.format(startTime));
+		buf.append(" to ");
+		buf.append(df.format(endTime));
+		String msg = buf.toString();
+		return msg;
+	}
 
 	/**
 	 * @param waitInterval
@@ -907,10 +935,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     
     /**
 	 * @param jobId TODO
-	 * @param userMap
+     * @param userMap
+     * @param jobStatusReporter TODO
 	 * @return
 	 */
-	protected List<String> processConsolidatedEmails(String jobId, List<Map<String,Object>> userMap) {
+	protected List<String> processConsolidatedEmails(String jobId, List<Map<String,Object>> userMap, JobStatusReporter jobStatusReporter) {
 		Integer reportingInterval = (Integer) this.settings.get(EvalSettings.LOG_PROGRESS_EVERY);
 		if(reportingInterval == null) {
 			// setting reportingInterval to zero results in no incremental reports.
@@ -954,7 +983,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
 				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
 				if(message == null || subject == null) {
-					this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + user.displayId + "). " );
+					if(jobStatusReporter != null) {
+						jobStatusReporter.reportError(jobId, false, "Error attempting to send email to user (" + user.displayId + "). " );
+					}
 					log.warn("Error trying to send consolidated email to user " + user.displayId, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
 				} else {
 					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
@@ -962,14 +993,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					recipients.add(user.displayId);
 				}
 			} catch (Exception e) {
-				this.jobStatusReporter.reportError(jobId, "Error attempting to send email to user (" + user.displayId + "). " + e);
+				if(jobStatusReporter != null) {
+					jobStatusReporter.reportError(jobId, false, "Error attempting to send email to user (" + user.displayId + "). " + e);
+				}
 				log.warn("Error trying to send consolidated email to user " + user.displayId, e);
 			}
 
     		if(jobId != null && reportingInterval.intValue() > 0) {
 	    		userCounter++;
 	    		if(userCounter % reportingInterval.intValue() == 0) {
-	    			this.jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+	    			if(jobStatusReporter != null) {
+	    				jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+	    			}
 	    		}
     		}
     	}
@@ -1097,5 +1132,26 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         return eval;
     }
+
+	/*
+	 * 
+	 */
+	protected void logConsolidatedEmailRecipients(String emailType, String[] recipients) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(emailType);
+		buf.append(" sent to ");
+		buf.append(recipients.length);
+		buf.append(" recipients: ");
+		boolean first = true;
+		for(String recipient : recipients) {
+			if(! first) {
+				buf.append(", ");
+			} else {
+				first = false;
+			}
+			buf.append(recipient);
+		}
+		log.info(buf.toString());
+	}
 
 }

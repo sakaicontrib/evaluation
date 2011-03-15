@@ -504,4 +504,6 @@ public interface EvaluationDao extends GeneralGenericDao {
 	 */
 	public int resetConsolidatedEmailRecipients();
 
+	public int countDistinctGroupsInConsolidatedEmailMapping();
+
 }

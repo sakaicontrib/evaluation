@@ -9,6 +9,7 @@ create table EVAL_EMAIL_PROCESSING_QUEUE
 	ID bigint not null auto_increment, 
 	EAU_ID bigint,  
 	USER_ID varchar(255), 
+	GROUP_ID varchar(255),
 	EMAIL_TEMPLATE_ID bigint, 
 	EVAL_DUE_DATE datetime, 
 	PROCESSING_STATUS tinyint, 

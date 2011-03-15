@@ -1725,6 +1725,23 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         return releasedLock;
     }
+    
+    @Override
+	public int countDistinctGroupsInConsolidatedEmailMapping() {
+    	String hql = "select count(distinct groupId) from EvalEmailProcessingData";
+    	Session session = getSession();
+    	
+        Query query = session.createQuery(hql);
+    	
+        List results = query.list();
+        int count = 0;
+        if(results == null || results.isEmpty()) {
+        	// log error
+        } else {
+        	count = ((Integer) results.get(0)).intValue();
+        }
+        return count;
+    }
 
     /**
      * Access one page of summary info needed to render consolidated email templates. 
@@ -1818,7 +1835,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	StringBuilder queryBuf = new StringBuilder();
     	Map<String,Object> params = new HashMap<String,Object>();
     	
-    	queryBuf.append("insert into EvalEmailProcessingData (eauId,userId,emailTemplateId,evalDueDate) select user.id as eauId,user.userId as userId,");
+    	queryBuf.append("insert into EvalEmailProcessingData (eauId,userId,groupId,emailTemplateId,evalDueDate) select user.id as eauId,user.userId as userId,user.evalGroupId as groupId,");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		queryBuf.append("eval.availableEmailTemplate.id as emailTemplateId");
     	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {

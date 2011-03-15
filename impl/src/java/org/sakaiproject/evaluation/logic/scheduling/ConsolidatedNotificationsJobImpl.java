@@ -16,8 +16,11 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
+import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 
 /**
  * 
@@ -25,6 +28,11 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificationsJob {
 	
 	Log log = LogFactory.getLog(ConsolidatedNotificationsJobImpl.class);
+	
+	protected EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
 	
 	protected EvalEmailsLogic emailLogic;
 	public void setEmailLogic(EvalEmailsLogic emailLogic) {
@@ -36,8 +44,30 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		this.evalSettings = evalSettings;
 	}
 	
+    protected JobStatusReporter jobStatusReporter;
+    public void setJobStatusReporter(JobStatusReporter jobStatusReporter) {
+    	log.info("setJobStatusReporter() jobStatusReporter == " + jobStatusReporter);
+    	this.jobStatusReporter = jobStatusReporter;
+    }
+    
+    protected String jobStatusReporterName;
+    public void setJobStatusReporterName(String jobStatusReporterName) {
+    	log.info("setJobStatusReporterName() jobStatusReporterName == " + jobStatusReporterName);
+    	this.jobStatusReporterName = jobStatusReporterName;
+    }
+	
 	public void init() {
 		log.info("init()");
+		
+        if(jobStatusReporter == null) {
+        	if(jobStatusReporterName != null) {
+        		this.jobStatusReporter = this.externalLogic.getBean(JobStatusReporter.class);
+        	}
+        }
+        if(jobStatusReporter == null) {
+        	jobStatusReporter = new LoggingJobStatusReporter();
+
+        }
 	}
 
 	/*
@@ -46,12 +76,11 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	 */
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		log.debug("execute()");
-
-		Boolean logRecipients = (Boolean) this.evalSettings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-		if(logRecipients == null) {
-			logRecipients = new Boolean(false);
-		}
+		log.info("execute()");
+		
+		Date beginTime = new Date();
+	
+		String jobId = this.jobStatusReporter.reportStarted("Email");
 		
 		Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 		if(sendAvailableEmails == null) {
@@ -59,14 +88,11 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		}
 		
 		if(sendAvailableEmails.booleanValue()) {
-			String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications();
+			String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
 			if(recipients == null) {
 				log.debug("announcements sent: 0");
 			} else {
 				log.debug("announcements sent: " + recipients.length);
-				if(logRecipients.booleanValue() && log.isInfoEnabled()) {
-					this.logRecipients("announcements", recipients);
-				}
 			}
 		}
 
@@ -98,14 +124,11 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 			if (tdate >= (rdate - 6L * one_hour)) {
 				
 
-				String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications();
+				String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
 				if(recipients == null) {
 					log.debug("reminders sent: 0");
 				} else {
 					log.debug("reminders sent: " + recipients.length);
-					if(logRecipients.booleanValue() && log.isInfoEnabled()) {
-						this.logRecipients("reminders", recipients);
-					}
 				}
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(tdate + reminderInterval * one_day);
@@ -118,30 +141,36 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					cal.set(Calendar.SECOND, 0);
 				}
 				this.evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, cal.getTime());
+				
+				Date endTime = new Date();
+				
+				//"FINISHED" "summary" The email job took <elapsed-time> seconds to run. It kicked off at <begin-time> and ended at <begin-time>.
+				
+				StringBuilder buf = new StringBuilder();
+				DateFormat df = DateFormat.getTimeInstance();
+				long seconds = endTime.getTime() - beginTime.getTime();
+				long milliseconds = seconds % 1000;
+				seconds = seconds / 1000;
+				
+				buf.append("The email job took ");
+				buf.append(seconds);
+				buf.append(".");
+				if(milliseconds < 10) {
+					buf.append("00");
+				} else if (milliseconds < 100) {
+					buf.append("0");
+				}
+				buf.append(milliseconds);
+				buf.append(" seconds to run. It kicked off at ");
+				buf.append(df.format(beginTime));
+				buf.append(" and ended at ");
+				buf.append(df.format(endTime));
+				buf.append(".");
+				
+				jobStatusReporter.reportFinished(jobId, false, buf.toString());
 			}
 		}
 		
-	}
-
-	/*
-	 * 
-	 */
-	protected void logRecipients(String emailType, String[] recipients) {
-		StringBuilder buf = new StringBuilder();
-		buf.append(emailType);
-		buf.append(" sent to ");
-		buf.append(recipients.length);
-		buf.append(" recipients: ");
-		boolean first = true;
-		for(String recipient : recipients) {
-			if(! first) {
-				buf.append(", ");
-			} else {
-				first = false;
-			}
-			buf.append(recipient);
-		}
-		log.info(buf.toString());
 	}
 
 }
