@@ -45,13 +45,13 @@ public interface JobStatusReporter
 	 * @param jobFailed TODO
 	 * @param detail
 	 */
-	public void reportError(String jobId, boolean jobFailed, String detail);
+	public void reportError(String jobId, boolean jobFailed, String milestone, String detail);
 	
 	/**
 	 * @param jobId
-	 * @param jobFinished TODO
+	 * @param jobFailed TODO
 	 * @param detail TODO
 	 */
-	public void reportFinished(String jobId, boolean jobFinished, String detail);
+	public void reportFinished(String jobId, boolean jobFailed, String milestone, String detail);
 
 }

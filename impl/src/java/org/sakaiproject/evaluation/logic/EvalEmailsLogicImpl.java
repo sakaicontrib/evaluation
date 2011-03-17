@@ -905,7 +905,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			buf.append("0");
 		}
 		buf.append(milliseconds);
-		buf.append(" from ");
+		buf.append(" seconds from ");
 		DateFormat df = DateFormat.getTimeInstance();
 		buf.append(df.format(startTime));
 		buf.append(" to ");
@@ -984,7 +984,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
 				if(message == null || subject == null) {
 					if(jobStatusReporter != null) {
-						jobStatusReporter.reportError(jobId, false, "Error attempting to send email to user (" + user.displayId + "). " );
+						jobStatusReporter.reportError(jobId, false, "error", "Error attempting to send email to user (" + user.displayId + "). ");
 					}
 					log.warn("Error trying to send consolidated email to user " + user.displayId, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
 				} else {
@@ -994,7 +994,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				}
 			} catch (Exception e) {
 				if(jobStatusReporter != null) {
-					jobStatusReporter.reportError(jobId, false, "Error attempting to send email to user (" + user.displayId + "). " + e);
+					jobStatusReporter.reportError(jobId, false, "error", "Error attempting to send email to user (" + user.displayId + "). " + e);
 				}
 				log.warn("Error trying to send consolidated email to user " + user.displayId, e);
 			}

@@ -47,9 +47,9 @@ public class LoggingJobStatusReporter implements JobStatusReporter {
 		StringBuilder buf = new StringBuilder();
 		buf.append("JobStatus. Job: ");
 		buf.append(jobId);
-		buf.append(" Milestone: ");
+		buf.append(". Milestone: ");
 		buf.append(milestone);
-		buf.append(" Detail: ");
+		buf.append(", Detail: ");
 		buf.append(detail);
 		log.info(buf.toString());
 
@@ -58,11 +58,14 @@ public class LoggingJobStatusReporter implements JobStatusReporter {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.jobmonitor.JobStatusReporter#reportError(java.lang.String, java.lang.String)
 	 */
-	public void reportError(String jobId, boolean jobFailed, String detail) {
+	public void reportError(String jobId, boolean jobFailed, String milestone, String detail) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("JobStatus. Job: ");
 		buf.append(jobId);
-		buf.append(" ERROR. Detail: ");
+		buf.append(", ERROR. Job-failed: ");
+		buf.append(jobFailed);
+		buf.append(", Milestone: ");
+		buf.append(", Detail: ");
 		buf.append(detail);
 		log.info(buf.toString());
 
@@ -71,9 +74,16 @@ public class LoggingJobStatusReporter implements JobStatusReporter {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.jobmonitor.JobStatusReporter#reportFinished(java.lang.String)
 	 */
-	public void reportFinished(String jobId, boolean jobFinished, String detail) {
-		log.info("JobStatus. Job: " + jobId + " Finished.");
-
+	public void reportFinished(String jobId, boolean jobFailed, String milestone, String detail) {
+		StringBuilder buf = new StringBuilder();
+		buf.append("JobStatus. Job: ");
+		buf.append(jobId);
+		buf.append(", FINISHED. Job-failed: ");
+		buf.append(jobFailed);
+		buf.append(", Milestone: ");
+		buf.append(", Detail: ");
+		buf.append(detail);
+		log.info(buf.toString());
 	}
 
 }

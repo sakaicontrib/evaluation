@@ -167,7 +167,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				buf.append(df.format(endTime));
 				buf.append(".");
 				
-				jobStatusReporter.reportFinished(jobId, false, buf.toString());
+				jobStatusReporter.reportFinished(jobId, false, "finished", buf.toString());
 			}
 		}
 		
