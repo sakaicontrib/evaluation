@@ -130,6 +130,56 @@ var EvalSystem = function() {
 			}
 		},
 		
+		initModifyHierarchyNodePerms: function(userEidInputId, addUserButtonId, noUserEidErrorMsg, noPermsErrorMsg) {
+			
+			var userEidInput = $(escIdForJquery(userEidInputId));
+			var addUserButton = $(escIdForJquery(addUserButtonId));
+			var savePermsButtons = $('.saveButton input:submit');
+			
+			var isPermSelected = function(targetButton) {
+				
+				var userRow = $(targetButton).parents('tr.userPermsRow');
+				var checkedPerms = $(':checked', userRow);
+				
+				if (checkedPerms.size() == 0)
+					return false;
+				
+				return true;
+				
+			};
+			
+			var validateUserPerms = function(targetButton) {
+				
+				if (!isPermSelected(this)) {
+					alert(noPermsErrorMsg);
+					return false;
+				}
+				
+				return true;
+				
+			};
+			
+			var validateNewUserFields = function() {
+				
+				if (userEidInput.val().trim().length == 0) {
+					alert(noUserEidErrorMsg);
+					return false;
+				}
+				
+				if (!isPermSelected(this)) {
+					alert(noPermsErrorMsg);
+					return false;
+				}
+
+				return true;
+				
+			};
+			
+			addUserButton.click(validateNewUserFields);
+			savePermsButtons.click(validateUserPerms);
+			
+		},
+		
 		initEvalAdminView: function() {
 			
 			var assignButton = $("input.assignButton");

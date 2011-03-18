@@ -1065,3 +1065,44 @@ background-repeat : no-repeat !important;
 .evalAdminTable td {
 	padding: 0 20px;
 }
+
+/* hierarchy node perms page */
+
+table#user-perms-table {
+	margin: 15px 0;
+	border: 1px solid #ccc;
+}
+
+table#user-perms-table thead {
+	background: #aaa;
+}
+
+table#user-perms-table tr {
+	padding: 10px 0;
+}
+
+table#user-perms-table tbody tr:nth-child(2n) {
+	background: #eee;
+}
+
+table#user-perms-table td {
+	padding: 10px;
+}
+
+table#user-perms-table td.userInfo {
+	text-align: center;
+}
+
+table#user-perms-table td.actions {
+	text-align: center;
+}
+
+table#user-perms-table td.userPerms > span:nth-child(2n+1) {
+	clear: left;
+	float: left;
+	width: 140px;
+}
+
+table#user-perms-table td.userPerms > span:nth-child(2n) {
+	float: left;
+}

@@ -116,6 +116,14 @@
         <property name="response" ref="httpServletResponse" />
         <property name="reportExporterBean" ref="reportExporterBean"/>
     </bean>
+	
+	<bean id="hierarchyBean" class="org.sakaiproject.evaluation.tool.HierarchyBean">
+		<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="messages" ref="targettedMessageList" />
+	</bean>
 
 	<!-- Bean override for rootHandlerHook see RSF-123 and CTL-1214 -->
 	<bean id="rootHandlerBean" class="org.sakaiproject.evaluation.tool.utils.RootHandlerBeanOverride" init-method="handle">
@@ -364,7 +372,17 @@
         <property name="settings" 
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
-
+	
+	<bean
+        class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="navBarRenderer" ref="navBarRenderer" />
+		<property name="messageLocator" ref="messageLocator" />
+    </bean>
+	
     <!-- SUMMARY producers -->
     <bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
         <property name="commonLogic"
