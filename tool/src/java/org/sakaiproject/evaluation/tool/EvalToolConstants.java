@@ -389,6 +389,26 @@ public class EvalToolConstants {
         "evalnotify.send.to.responded",
         "evalnotify.send.to.all"
     };
+    
+    /**
+     * This defines the set of all hierarchy permissions. Only the permissions in this
+     * array will be displayed on the modify hierarchy node users screen.
+     */
+    public static final String[] HIERARCHY_PERM_VALUES = {
+    	EvalConstants.HIERARCHY_PERM_VIEW_NODE_DATA,
+    	EvalConstants.HIERARCHY_PERM_VIEW_TREE_DATA,
+    	EvalConstants.HIERARCHY_PERM_CONTROL_NODE_DATA,
+    	EvalConstants.HIERARCHY_PERM_CONTROL_TREE_DATA,
+    	EvalConstants.HIERARCHY_PERM_ASSIGN_EVALUATION
+    };
+    
+    public static final String[] HIERARCHY_PERM_LABELS = {
+    	"modifynodeperms.perm.view.node",
+    	"modifynodeperms.perm.view.tree",
+    	"modifynodeperms.perm.control.node",
+    	"modifynodeperms.perm.control.tree",
+    	"modifynodeperms.perm.assign.eval",
+    };
 
 }
 

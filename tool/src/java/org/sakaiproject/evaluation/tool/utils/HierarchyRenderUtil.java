@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
@@ -193,7 +194,7 @@ public class HierarchyRenderUtil {
 
         // assigned users (permissions)
         UIInternalLink.make(tableRow, "assign-users-link", UIMessage.make("controlhierarchy.assignusers"), 
-                new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
+                new HierarchyNodeParameters(ModifyHierarchyNodePermsProducer.VIEW_ID, node.id));
 
         // if show users is on then we show the full list of all users with perms in this node
         if (showUsers && numberOfAssignedGroups > 0) {

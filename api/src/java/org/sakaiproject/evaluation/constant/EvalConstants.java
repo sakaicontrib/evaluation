@@ -239,7 +239,6 @@ public class EvalConstants {
      */
     public static final String HIERARCHY_PERM_ASSIGN_EVALUATION = "HierarchyAssignEval";
 
-
     /**
      * Permission: User can create, update, delete evaluation templates
      */

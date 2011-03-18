@@ -202,6 +202,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/AdministrateSearchBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalAdminBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalToolConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/HierarchyBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -273,6 +274,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyExpertItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeGroupsProducer.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodePermsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeProducer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
