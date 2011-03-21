@@ -781,15 +781,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Date startTime = new Date();
 
 		int count = this.evaluationService.selectConsoliatedEmailRecipients(true, null, true, null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	log.debug("Number of evalAssignUser entities selected for available emails: " + count);
-    	if(jobStatusReporter != null) {
-    		jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(count));
-    		jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
-    	}
-
+		if(log.isDebugEnabled()) {
+			log.debug("Number of evalAssignUser entities selected for available emails: " + count);
+		}
     	List<String> recipients = new ArrayList<String>();
     	
     	if(count > 0) {
+        	if(jobStatusReporter != null) {
+        		jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(count));
+        		jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+        	}
+
 	    	int page = 0;
 	    	List<String> userIds = null;
 	    	do {
@@ -800,13 +802,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		    	}
 	    		takeShortBreak(waitInterval);
 	    	} while(userIds != null && !userIds.isEmpty());
-    	}
-    	this.evaluationService.resetConsolidatedEmailRecipients();
+	    	
+	    	this.evaluationService.resetConsolidatedEmailRecipients();
+		}
     	
 		if(jobId != null && jobStatusReporter != null) {
 			jobStatusReporter.reportProgress(jobId, "announcements", calculateElapsedTimeMessage(new Date(), startTime));
 			jobStatusReporter.reportProgress(jobId, "announcementUsers", Integer.toString(recipients.size()));
 		}
+    	
 		//this.evaluationService.setAvailableEmailSent(evalIds)
     	return recipients.toArray(new String[]{});
     }
@@ -863,11 +867,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		
 		int count = this.evaluationService.selectConsoliatedEmailRecipients(availableEmailEnabled.booleanValue(), availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
     	log.debug("Number of evalAssignUser entities selected for reminder emails: " + count);
-    	if(jobStatusReporter != null) {
-    		jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(count));
-    		jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
-    	}
     	if(count > 0) {
+        	if(jobStatusReporter != null) {
+        		jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(count));
+        		jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+        	}
         	int page = 0;
         	List<String> userIds = null;
 	    	do {
