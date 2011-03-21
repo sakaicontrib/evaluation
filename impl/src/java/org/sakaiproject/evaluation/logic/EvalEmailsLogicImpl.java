@@ -891,7 +891,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     	return recipients.toArray(new String[]{});
     }
 
+   
+
+    // INTERNAL METHODS
+	
 	/**
+     * INTERNAL METHOD<br/>
 	 * @param endTime
 	 * @param startTime
 	 * @return
@@ -919,6 +924,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
 
 	/**
+     * INTERNAL METHOD<br/>
 	 * @param waitInterval
 	 */
 	protected void takeShortBreak(Integer waitInterval) {
@@ -933,11 +939,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 		}
 	}
-    
-
-    // INTERNAL METHODS
-    
+     
     /**
+     * INTERNAL METHOD<br/>
 	 * @param jobId TODO
      * @param userMap
      * @param jobStatusReporter TODO
@@ -1137,7 +1141,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         return eval;
     }
 
-	/*
+	/**
+     * INTERNAL METHOD<br/>
 	 * 
 	 */
 	protected void logConsolidatedEmailRecipients(String emailType, String[] recipients) {
