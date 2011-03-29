@@ -24,6 +24,7 @@ import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class AdministrateEmailProducer implements ViewComponentProducer {
@@ -177,13 +178,13 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
         AdministrateProducer.makeInput(emailForm, "general-helpdesk-email", EMAIL_SETTINGS_WBL, EvalSettings.FROM_EMAIL_ADDRESS);
 
         
+        //dispose of email by sending to email system, log, or dev/null
+        AdministrateProducer.makeSelect(emailForm, "delivery-option",
+                EvalToolConstants.EMAIL_DELIVERY_VALUES,
+                EvalToolConstants.EMAIL_DELIVERY_LABELS,
+                EMAIL_SETTINGS_WBL, EvalSettings.EMAIL_DELIVERY_OPTION, false);
 
-//
-//        //dispose of email by sending to email system, log, or dev/null
-//        AdministrateProducer.makeSelect(form, "delivery-option",
-//                EvalToolConstants.EMAIL_DELIVERY_VALUES,
-//                EvalToolConstants.EMAIL_DELIVERY_LABELS,
-//                EvalSettings.EMAIL_DELIVERY_OPTION, false);
+
 //
 //        //log email To: addresses
 //        AdministrateProducer.makeBoolean(form, "log-recipients",
@@ -191,8 +192,7 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
 //        
         // Save Settings button
         UICommand.make(emailForm, "saveSettings", UIMessage.make("administrate.save.settings.button"), PathUtil.buildPath(EMAIL_SETTINGS_WBL, "saveSettings"));
-
-
+        
         // this fills in the javascript call
         UIInitBlock.make(tofill, "initEvalJS", "EvalSystem.addNumericOnly", 
                 new Object[] { evalTimeToWaitSecs.getFullID(), "time-wait-errmsg"} );
