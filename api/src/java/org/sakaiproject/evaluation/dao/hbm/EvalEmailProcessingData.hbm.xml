@@ -14,13 +14,13 @@
     		<column name="EAU_ID" />
     	</property>
     	<property name="userId" type="java.lang.String" index="eval_emailq_userid">
-            <column name="USER_ID" length="255" />
+            <column name="USER_ID" length="255" index="eval_user_temp_map"/>
         </property>
         <property name="groupId" type="java.lang.String">
             <column name="GROUP_ID" not-null="true" length="255" />
         </property>
         <property name="emailTemplateId" type="java.lang.Long" index="eval_emailq_id">
-        	<column name="EMAIL_TEMPLATE_ID"></column>
+        	<column name="EMAIL_TEMPLATE_ID"  index="eval_user_temp_map"></column>
         </property>
         <property name="evalDueDate" type="java.util.Date" index="eval_emailq_duedate">
             <column name="EVAL_DUE_DATE" />
