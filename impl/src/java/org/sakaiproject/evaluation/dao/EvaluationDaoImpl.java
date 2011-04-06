@@ -1796,12 +1796,14 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
     		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,(Date)row[2]);
     		rv.add(map);
+    		log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
     		try {
     			Query updateQuery = session.createQuery(updateBuf.toString());
     			updateQuery.setDate(column, new Date());
     			updateQuery.setString("userId", userId);
     			updateQuery.setLong("emailTemplateId", templateId);
     			updateQuery.executeUpdate();
+    			log.info("         --> marked entries for user: " + userId);
     		} catch (Exception e) {
     			log.warn("Error trying to update evalAssignUser.availableEmailStatus to 'being processed'", e);
     		}
