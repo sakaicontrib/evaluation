@@ -1574,24 +1574,24 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
     public void testgetConsolidatedEmailMapping() {
     	
-    	// when no emails have been sent, selecting email recipients in any of several ways should return 2 
+    	// when no emails have been sent, selecting email recipients in any of several ways should return 1 
     	int count = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(2, count);
+    	assertEquals(1, count);
     	int deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions);
+    	assertEquals(1, deletions);
     	count = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(2, count);
+    	assertEquals(1, count);
     	deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions);
+    	assertEquals(1, deletions);
     	
     	// there should be two new evals ready to send announcements to, selected because the value of availableEmailSent is null
     	int count1 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(2,count1);
+    	assertEquals(1,count1);
     	List<Map<String,Object>> mapping1 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
     	assertNotNull(mapping1);
-    	assertEquals(2, mapping1.size());
+    	assertEquals(1, mapping1.size());
     	int deletions1 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions1);
+    	assertEquals(1, deletions1);
     	
     	// Since those announcements have been sent, there should be none yet to be sent
     	int count2 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
@@ -1604,12 +1604,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     	
     	// if we search for notices to be sent and ignore the date, we should find them again
     	int count3 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(2,count3);
+    	assertEquals(1,count3);
     	List<Map<String,Object>> mapping3 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
     	assertNotNull(mapping3);
-    	assertEquals(2, mapping3.size());
+    	assertEquals(1, mapping3.size());
     	int deletions3 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions3);
+    	assertEquals(1, deletions3);
     	
     	// if we search for evals needing reminders based on whether an announcement or reminder has been sent in the past day, we should find none 
     	int count4 = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
@@ -1622,12 +1622,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     	
     	// if we search for evals needing reminders based on whether a reminder has been sent in the past day (ignoring when announcements were sent) we find 2
     	int count5 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(2,count5);
+    	assertEquals(1,count5);
     	List<Map<String,Object>> mapping5 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
     	assertNotNull(mapping5);
-    	assertEquals(2, mapping5.size());
+    	assertEquals(1, mapping5.size());
     	int deletions5 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions5);
+    	assertEquals(1, deletions5);
 
     	// if we do the same search again, we find 0 because they have just been sent 
     	int count6 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
@@ -1640,12 +1640,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
     	// if we search for evals needing reminders as if it were tomorrow, we should find 2
     	int count7 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(2,count7);
+    	assertEquals(1,count7);
     	List<Map<String,Object>> mapping7 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
     	assertNotNull(mapping7);
-    	assertEquals(2, mapping7.size());
+    	assertEquals(1, mapping7.size());
     	int deletions7 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(2, deletions7);
+    	assertEquals(1, deletions7);
 
     }
 

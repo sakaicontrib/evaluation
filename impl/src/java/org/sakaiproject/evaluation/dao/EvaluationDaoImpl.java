@@ -1755,48 +1755,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return 
      */
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
-    	StringBuilder queryBuf = new StringBuilder();
-    	
-    	queryBuf.append("select eauId,userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by eauId,userId,emailTemplateId");
-    	
-    	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
-    	
-    	Session session = getSession();
-    	
-        Query query = session.createQuery(queryBuf.toString());
-        query.setFirstResult(pageSize * page);
-        query.setMaxResults(pageSize);
-        
-        List results = query.list();
+    	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by userId,emailTemplateId";
 
-    	String prevUserId = "";
-    	
-    	List<Long> updates = new ArrayList<Long>();
-    	
-    	
-    	
-		for(int i = 0; i < results.size(); i++) {
-    		Object[] row = (Object[]) results.get(i);
-    		String userId = (String) row[1];
-    		if(userId == null) {
-    			continue;
-    		}
-    		
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		
-    		map.put(EvalConstants.KEY_USER_ID, userId);
-    		//map.put(EvalConstants.KEY_USER_EID, row[1]);
-    		Long templateId = (Long) row[2];
-    		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
-    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,(Date)row[3]);
-    		rv.add(map);
-    		
-    		updates.add((Long) row[0]);
-    	}
-
-		String column = null;
-		
-		// mark selected evalAssignUser objects as being processed
+    	String column = null;
         StringBuilder updateBuf = null;
     	updateBuf = new StringBuilder();
     	updateBuf.append("update EvalAssignUser ");
@@ -1807,17 +1768,44 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
     		column = "reminderEmailSent";
     	}
-    	updateBuf.append("where id = :id ");
+    	updateBuf.append("where id in (select eauId from EvalEmailProcessingData where userId = :userId and emailTemplateId = :emailTemplateId)");
     	
-    	for(Long update : updates) {
+    	
+    	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
+    	
+    	Session session = getSession();
+    	
+        Query query = session.createQuery(query1);
+        query.setFirstResult(pageSize * page);
+        query.setMaxResults(pageSize);
+        
+        List results = query.list();
+
+		for(int i = 0; i < results.size(); i++) {
+    		Object[] row = (Object[]) results.get(i);
+    		String userId = (String) row[0];
+    		if(userId == null) {
+    			continue;
+    		}
+    		
+    		Map<String,Object> map = new HashMap<String,Object>();
+    		
+    		map.put(EvalConstants.KEY_USER_ID, userId);
+    		//map.put(EvalConstants.KEY_USER_EID, row[1]);
+    		Long templateId = (Long) row[1];
+    		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
+    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,(Date)row[2]);
+    		rv.add(map);
     		try {
     			Query updateQuery = session.createQuery(updateBuf.toString());
     			updateQuery.setDate(column, new Date());
-    			updateQuery.setLong("id", update);
+    			updateQuery.setString("userId", userId);
+    			updateQuery.setLong("emailTemplateId", templateId);
     			updateQuery.executeUpdate();
     		} catch (Exception e) {
     			log.warn("Error trying to update evalAssignUser.availableEmailStatus to 'being processed'", e);
     		}
+    		//updates.add((Long) row[0]);
     	}
         
     	return rv;
@@ -1845,60 +1833,36 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	}
     	queryBuf.append(",eval.dueDate as evalDueDate from EvalAssignUser as user ");
 		queryBuf.append("inner join user.evaluation as eval ");
-		boolean whereNeeded = true;
-		boolean andNeeded = false;
+		queryBuf.append("where user.type = :userType ");
+		params.put("userType", EvalAssignUser.TYPE_EVALUATOR);
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
-    		if(whereNeeded) {
-    			queryBuf.append("where ");
-    			whereNeeded = false;
-    			andNeeded = true;
-    		}
-    		queryBuf.append(" eval.availableEmailTemplate.type = :emailTemplateType ");
+    		queryBuf.append("and eval.availableEmailTemplate.type = :emailTemplateType ");
     		params.put("emailTemplateType", emailTemplateType);
     		
     	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
-    		if(whereNeeded) {
-    			queryBuf.append("where ");
-    			whereNeeded = false;
-    			andNeeded = true;
-    		}
-    		queryBuf.append(" eval.reminderEmailTemplate.type = :emailTemplateType ");
+    		queryBuf.append("and eval.reminderEmailTemplate.type = :emailTemplateType ");
     		params.put("emailTemplateType", emailTemplateType);
     	} 
     	
     	if(useAvailableEmailSent) {
-    		if(whereNeeded) {
-    			queryBuf.append("where ");
-    			whereNeeded = false;
-    			andNeeded = true;
-    		} else if(andNeeded) {
-    			queryBuf.append("and ");
-    		}
     		if(availableEmailSent == null) {
-    			queryBuf.append("user.availableEmailSent is null ");
+    			queryBuf.append("and user.availableEmailSent is null ");
     		} else {
-    			queryBuf.append("(user.availableEmailSent is null or user.availableEmailSent < :availableEmailSent) ");
+    			queryBuf.append("and (user.availableEmailSent is null or user.availableEmailSent < :availableEmailSent) ");
     			params.put("availableEmailSent", availableEmailSent);
     		}
     	}
    	
     	if(useReminderEmailSent) {
-    		if(whereNeeded) {
-    			queryBuf.append("where ");
-    			whereNeeded = false;
-    			andNeeded = true;
-    		} else if(andNeeded) {
-    			queryBuf.append("and ");
-    		}
     		if(reminderEmailSent == null) {
-    			queryBuf.append("user.reminderEmailSent is null ");
+    			queryBuf.append("and user.reminderEmailSent is null ");
     		} else {
-    			queryBuf.append("(user.reminderEmailSent is null or user.reminderEmailSent < :reminderEmailSent) ");
+    			queryBuf.append("and (user.reminderEmailSent is null or user.reminderEmailSent < :reminderEmailSent) ");
     			params.put("reminderEmailSent", reminderEmailSent);
     		}
     	}
    	
-    	queryBuf.append(" order by user.userId");
+    	queryBuf.append("order by user.userId");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		queryBuf.append(",eval.availableEmailTemplate.id");
     	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
