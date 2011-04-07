@@ -1825,7 +1825,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		userIdList.add(userId);
     		//updates.add((Long) row[0]);
     	}
-		if(userIdList != null && templateId != null && ! userIdList.isEmpty() ) {
+		if(userIdList == null || templateId == null || userIdList.isEmpty() ) {
+			log.info("Argghhh! userIdList == " + userIdList + "   templateId == " + templateId);
+		} else {
 			// mark eval_assign_user records as sent 
 			try {
     			Query updateQuery = session.createQuery(updateBuf.toString());
