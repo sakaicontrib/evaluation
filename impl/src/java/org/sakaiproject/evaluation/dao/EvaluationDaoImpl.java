@@ -1785,13 +1785,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 
     	List<String> userIdList = new ArrayList<String>();
     	Long previousTemplateId = null;
+    	Long templateId = null;
     	
         List results = query.list();
 
 		for(int i = 0; i < results.size(); i++) {
     		Object[] row = (Object[]) results.get(i);
     		String userId = (String) row[0];
-    		Long templateId = (Long) row[1];
+    		templateId = (Long) row[1];
+    		Date earliestDueDate = (Date)row[2];
     		if(userId == null || templateId == null) {
     			continue;
     		}
@@ -1802,12 +1804,12 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		Map<String,Object> map = new HashMap<String,Object>();
     		
     		map.put(EvalConstants.KEY_USER_ID, userId);
-    		//map.put(EvalConstants.KEY_USER_EID, row[1]);
     		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
-    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,(Date)row[2]);
+    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,earliestDueDate);
     		rv.add(map);
     		log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
     		if(templateId.longValue() != previousTemplateId.longValue() || userIdList.size() > MAX_UPDATE_SIZE) {
+    			// mark eval_assign_user records as sent 
 	    		try {
 	    			Query updateQuery = session.createQuery(updateBuf.toString());
 	    			updateQuery.setDate(column, new Date());
@@ -1823,6 +1825,20 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		userIdList.add(userId);
     		//updates.add((Long) row[0]);
     	}
+		if(userIdList != null && templateId != null && ! userIdList.isEmpty() ) {
+			// mark eval_assign_user records as sent 
+			try {
+    			Query updateQuery = session.createQuery(updateBuf.toString());
+    			updateQuery.setDate(column, new Date());
+    			updateQuery.setParameterList("userIdList", userIdList);
+    			updateQuery.setLong("emailTemplateId", templateId);
+    			updateQuery.executeUpdate();
+    			log.info("         --> marked entries for users: " + userIdList);
+    		} catch (HibernateException e) {
+    			log.warn("Error trying to update evalAssignUser." + column, e);
+    		}
+
+		}
         
     	return rv;
     }
