@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1760,6 +1761,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
     	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
 
+    	log.info("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
     	String column = null;
         StringBuilder updateBuf = null;
     	updateBuf = new StringBuilder();
@@ -1788,6 +1790,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	Long templateId = null;
     	
         List results = query.list();
+        
+        if(results != null) {
+        	log.info("found items from email-processing-queue: " + results.size());
+        }
 
 		for(int i = 0; i < results.size(); i++) {
     		Object[] row = (Object[]) results.get(i);
@@ -1826,7 +1832,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		//updates.add((Long) row[0]);
     	}
 		if(userIdList == null || templateId == null || userIdList.isEmpty() ) {
-			log.info("Argghhh! userIdList == " + userIdList + "   templateId == " + templateId);
+			log.info("Can't mark EvalAssignUser records due to null values: userId == " + userIdList + "   templateId == " + templateId);
 		} else {
 			// mark eval_assign_user records as sent 
 			try {
@@ -1867,7 +1873,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	}
     	queryBuf.append(",eval.dueDate as evalDueDate from EvalAssignUser as user ");
 		queryBuf.append("inner join user.evaluation as eval ");
-		queryBuf.append("where user.type = :userType ");
+		queryBuf.append("where user.type = :userType and eval.startDate <= current_timestamp() ");
 		params.put("userType", EvalAssignUser.TYPE_EVALUATOR);
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		queryBuf.append("and eval.availableEmailTemplate.type = :emailTemplateType ");
