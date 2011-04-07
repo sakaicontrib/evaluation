@@ -1773,7 +1773,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
     		column = "reminderEmailSent";
     	}
-    	updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userIdList in (:userIdList))");
+    	updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId in (:userIdList))");
     	
     	
     	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
