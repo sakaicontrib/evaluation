@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAssignGroup" table="EVAL_ASSIGN_GROUP" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_assigngroup_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
+        <property name="evalGroupId" type="java.lang.String" index="eval_assign_groupid">
+            <column name="group_id" not-null="true" length="255" />
+        </property>
+        <!-- the type of this eval group as assigned -->
+        <property name="evalGroupType" type="java.lang.String">
+            <column name="group_type" not-null="true" length="255" />
+        </property>
+        <!-- This indicates if the instructor has approved the evaluation for this AG -->
+        <property name="instructorApproval" type="java.lang.Boolean">
+            <column name="INSTRUCTOR_APPROVAL" not-null="true" />
+        </property>
+        <!-- can instructors view the results for this AG -->
+        <property name="instructorsViewResults" type="java.lang.Boolean">
+            <column name="INSTRUCTORS_VIEW_RESULTS" not-null="true" />
+        </property>
+        <!-- can students view the results for this AG -->
+        <property name="studentsViewResults" type="java.lang.Boolean">
+            <column name="STUDENTS_VIEW_RESULTS" not-null="true" />
+        </property>
+        <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_COURSE_EVALUATION_FKC" lazy="proxy" fetch="select">
+            <column name="EVALUATION_FK" not-null="true"/>
+        </many-to-one>
+        <!-- the associated hierarchy node id (if there is one) -->
+        <property name="nodeId" type="java.lang.String" index="eval_assign_group_nodeid">
+            <column name="NODE_ID" length="255" />
+        </property>
+        <!-- for storing the instructor/assistant/etc. selection code -->
+        <property name="selectionSettings" type="java.lang.String">
+            <column name="SELECTION_SETTINGS" length="2000" />
+        </property>
+    </class>
+</hibernate-mapping>

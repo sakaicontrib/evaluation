@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAssignUser" table="EVAL_ASSIGN_USER" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_asgnuser_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <property name="userId" type="java.lang.String" index="eval_asgnuser_userid">
+            <column name="USER_ID" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
+        </property>
+        <property name="evalGroupId" type="java.lang.String" index="eval_asgnuser_groupid">
+            <column name="GROUP_ID" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
+        </property>
+        <property name="type" type="java.lang.String" index="eval_asgnuser_type">
+            <column name="ASSIGN_TYPE" not-null="true" length="255" unique-key="uniqueEvalUserGroupType" />
+        </property>
+        <property name="status" type="java.lang.String" index="eval_asgnuser_status">
+            <column name="ASSIGN_STATUS" not-null="true" length="255" />
+        </property>
+        <property name="listOrder" type="integer">
+            <column name="LIST_ORDER" not-null="true" />
+        </property>
+        <!-- linking fields -->
+        <property name="assignGroupId" type="java.lang.Long">
+            <column name="ASSIGN_GROUP_ID" />
+        </property>
+        <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_USER_EVALUATION_FKC" lazy="proxy" fetch="select">
+            <column name="EVALUATION_FK" not-null="true" unique-key="uniqueEvalUserGroupType" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,95 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="modify-block-title">Edit Block</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+	<body>
+		<div class="portletBody">
+
+			<div class="evalEditorSmall">
+				<form name="block_form" id="block_form" rsf:id="blockForm" method="post">
+					<div class="navPanel"></div>
+						<div rsf:id="itemRow:" id="itemRow::1:" class="itemRow" style="display:none;">
+							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
+						</div>
+
+					<span rsf:id="item-header">Blocking items:</span>
+					<span name="itemNo" rsf:id="itemNo">1</span>:
+					<span name="itemClassification" rsf:id="itemClassification">####</span>
+					(<span rsf:id="added-by">added by</span>
+					<span name="userInfo" rsf:id="userInfo">#####</span>)
+					<p>
+						<span rsf:id="scale-type-header">Scale Type:</span>
+						<span name="scaleLabel" rsf:id="scaleLabel" class="highlight">Title of scale (scale points)</span>
+					</p>
+			
+					<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
+					
+					<div>
+						<span rsf:id="block-text-select" />
+						<div rsf:id="block-text-choice:" class="blockText">
+							<input type="radio" name="block-text-radio" rsf:id="block-text-radio" id="block-text-choice::0:block-text-radio" />
+							<label for="block-text-radio" rsf:id="block-text">Block item text</label>
+						</div>
+					</div>
+					
+					<div id="item-text-div">
+						<!--<div rsf:id="item_text:">
+							<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5">
+                            </textarea>
+						</div>-->
+                        <textarea rsf:id="item-text" name="item_text-dummy"  cols="80" rows="5">
+                            </textarea>
+
+					</div>
+					<br />
+
+                    <p class="checkbox">
+                        <input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
+                        <span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span>
+                    </p>
+
+                   <p rsf:id="showNA:" class="checkbox">
+                       <input rsf:id="item_NA" type="checkbox" id="item-na" />
+                       <label rsf:id="add-na-header" for="showNA:::item-na">N/A (not applicable):</label>
+                   </p>
+
+                   <div rsf:id="showItemCategory:">
+                       <b rsf:id="msg=modifyitem.item.category.header">Item Category:</b>
+   
+                       <span rsf:id="item-category-list" />
+                       <span rsf:id="item-category-branch:" class="checkbox">
+                           <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
+                           <label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>                                  
+                       </span>
+                       <span rsf:id="item-category-branch:"  class="checkbox">
+                           <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
+                           <label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
+                       </span>
+                   </div>
+
+                   <!-- DIV tag for node selector renderer -->
+                   <div rsf:id="hierarchyNodeSelector:">
+                     <div>
+                        <h4><span>Hierarchy Assignment:</span></h4>
+                        <select style="font-family: monospace">
+                           <option value="TOP_LEVEL">Top Level</option>
+                           <option value="BIOL_DEPT">+ Biology Dept</option>
+                           <option value="BIOL_101">  - Bio 101</option>
+                        </select>
+                     </div>
+                   </div>
+
+					<p class="act">
+						<input type="hidden" rsf:id="ordered-child-ids" id="ordered-child-ids" />
+						<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="active submit" accesskey="s" />
+						<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';" accesskey="v"/>
+						<input type="button" value="Cancel" class="close" rsf:id="cancel-button"  accesskey="x"/>
+					</p>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

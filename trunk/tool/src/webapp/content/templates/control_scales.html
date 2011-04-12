@@ -1,0 +1,58 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Scale Control</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<div class="portletBody">
+
+           <div rsf:id="navIntraTool:" class="navIntraTool"/>
+			<ul class="breadCrumb"  style="clear:both;height:1.5em">
+				<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+				<li style="float:left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+				<li rsf:id="page-title" class="lastCrumb"  style="float:left">Scales</li>
+				<li style="float:right" class="lastCrumb"><a rsf:id="add-new-scale-link" href="scale_modify.html" class="addItem">Add new scale</a></li>
+			</ul>
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<h3>
+				<span rsf:id="scales-control-heading">Scales Control</span>
+			</h3>	
+			<!--// gsilver: need to know how to add simple messages -->
+			<p class="instruction" rsf:id="scales-control-instruction">A blurb here about this list, underscoring "scales in system" and "scales you own" differences</p>
+
+            <form rsf:id="copyForm">
+      			<ol class="scaleOuterList">
+      				<li rsf:id="verticalDisplay:" class="scaleOuterListLi">
+      					<div class="scaleTitleLine">
+      						<span  class="scaleTitleLineNum" rsf:id="scale-no">#</span>
+      						<div class="scaleTitle" rsf:id="scale-title">Scale title</div>
+      						<div class="itemAction">
+                              <span rsf:id="modify-dummy"></span>
+                              <a rsf:id="modify-link" href="scale_add_modify.html">Modify</a> |
+                              <span rsf:id="remove-dummy"></span>
+                              <a rsf:id="remove-link" href="remove_scale.html">Remove</a> |
+                              <input rsf:id="scale-copy-link" type="submit" class="makeLink" value="Copy" />
+      						</div>
+      					</div>	
+      					<div class="idealScalePoint"><span rsf:id="ideal-scale-point">Ideal scale point:</span> <span rsf:id="ideal-value"  class="highlight">Ideal value</span></div>
+      					<ol class="scaleInnerList">	
+      						<li rsf:id="scaleOptions:">
+      							<span rsf:id="scale-option-label">Scale option label</span>
+      						</li>
+      					</ol>
+      				</li>
+      			</ol>
+            </form>
+		</div>
+	</body>
+</html>

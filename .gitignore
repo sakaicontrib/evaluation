@@ -3,3 +3,8 @@ tool/.classpath
 tool/.project
 tool/m2-target
 tool/src/webapp/content/js/facebox/facebox_og.js
+trunk/m2-target
+trunk/tool/.classpath
+trunk/tool/.project
+trunk/tool/m2-target
+trunk/tool/src/webapp/content/js/facebox/facebox_og.js

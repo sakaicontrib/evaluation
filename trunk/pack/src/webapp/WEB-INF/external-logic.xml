@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- these beans access Sakai services directly -->
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+   <!-- Handles data access to external (to the app) services -->
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"
+	      class="org.sakaiproject.evaluation.logic.externals.EvalExternalLogicImpl"
+	      init-method="init">
+      <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
+      <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
+      <property name="entityBroker" ref="org.sakaiproject.entitybroker.EntityBroker" />
+      <property name="entityManager" ref="org.sakaiproject.entity.api.EntityManager" />
+      <property name="functionManager" ref="org.sakaiproject.authz.api.FunctionManager" />
+      <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+      <property name="serverConfigurationService"
+         ref="org.sakaiproject.component.api.ServerConfigurationService" />
+      <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+      <property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+      <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
+      <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+      <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" /> 
+      <property name="scheduledInvocationManager"
+         ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+      <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
+      <property name="clusterService" ref="org.sakaiproject.cluster.api.ClusterService" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
+	      class="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl"
+	      init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
+
+</beans>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="msg=removescale.page.title">Remove Scale</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js">
+        </script>
+        <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+    <body>
+        <div class="portletBody">
+            <ul class="breadCrumb">
+                <li>
+                    <a rsf:id="summary-link" href="summary.html">Summary</a>
+                </li>
+                <li>
+                    <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+                </li>
+                <li>
+                    <a rsf:id="control-scales-link" href="control_scales.html">Control Scales</a>
+                </li>
+                <li rsf:id="msg=removescale.page.title" class="lastCrumb">
+                    Remove Scale
+                </li>
+            </ul>
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>
+                        Message for user here
+                    </li>
+                </ul>
+            </div>
+            <div class="messageComfirm">
+                <ul>
+                    <li>
+                        <span rsf:id="removescale.confirm.text">Are you sure you want to remove scale (title)? The removal is permanent.</span>
+                    </li>
+                </ul>
+            </div>
+            <div rsf:id="inUse:">
+                <p rsf:id="inUseWarning" class="highlight">
+                    Warning: this scale is currently in use in X items, removing it will only cause it to be hidden
+                </p>
+                <ol>
+                    <li rsf:id="items:">
+                        <span rsf:id="itemInfo">Info about the item</span>
+                    </li>
+                </ol>
+            </div>
+            <div class="act">
+                <form rsf:id="remove-scale-form" method="post" class="inlineForm act">
+                    <input type="submit" value="Remove Scale" rsf:id="remove-scale-remove-button" class="active" accesskey="s" />
+                </form><input type="button" value="Cancel" rsf:id="remove-scale-cancel-button" onclick="javascript:history.go(-1);return false;" accesskey="x"/>
+            </div>
+        </div>
+    </body>
+</html>

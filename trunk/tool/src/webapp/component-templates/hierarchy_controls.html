@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Add Item Control Renderer:</title>
+	<!-- this JS needed to make the pulldown work correctly -->
+	<script rsf:id="scr=contribute-script" type="text/javascript" language="JavaScript" src="../content/js/evalUtils.js"></script>
+</head>
+<body>
+
+<div rsf:id="hierarchy_table_treeview:">
+	<div rsf:id="selectColumnCheckboxes"/>
+    <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+        <thead>
+            <tr>
+                <th rsf:id="node-metadata-header" style="display: none"></th>
+                <th rsf:id="node-select-header">Select</th>
+                <th rsf:id="hierarchy-header">Hierarchy Level</th>
+                <th rsf:id="hierarchy-nodes"></th>
+                <th rsf:id="hierarchy-groups"></th>
+                <th rsf:id="hierarchy-users"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr rsf:id="hierarchy-level-row:">
+                <td rsf:id="node-metadata-cell" style="display: none">
+                    <input id="node-id-input" rsf:id="node-id-input" type="hidden" value="TheNodeID" />
+                    <input id="parent-id-input" rsf:id="parent-id-input" type="hidden" value="TheParentID" />
+                </td>
+                <td rsf:id="row-data" style="text-indent:0em" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
+                <td rsf:id="node-select-cell" width="10%">
+                    <input rsf:id="select-checkbox" class="evalgroupselect" type="checkbox" />
+                </td>
+                <td rsf:id="node-name" style="text-indent:0em" > - Institution Level</td>
+                <td rsf:id="nodes-cell">
+                    <span rsf:id="number-children">3</span>
+                    &nbsp;
+                    <a rsf:id="add-child-link" href="" style="font-size: 0.9em;">Add</a>
+                    <a rsf:id="modify-node-link" href="" style="font-size: 0.9em;">Modify</a>
+                    <form rsf:id="remove-node-form">
+                        <input type="submit" rsf:id="remove-node-button" value="Remove"
+                            style="font-size:0.9em;height:2.1em;margin:0px;padding:0px;" />
+                    </form>
+                </td>
+                <td rsf:id="groups-cell">
+                    <span rsf:id="assign-group-count">67</span>
+                    &nbsp;
+                    <a rsf:id="assign-groups-link" href="" style="font-size: 0.9em;">Assign Groups</a>
+                </td>
+                <td rsf:id="users-cell">
+                    <a rsf:id="assign-users-link" href="" style="font-size: 0.9em;">Assign Users</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

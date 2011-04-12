@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title rsf:id="page-title">Test EvalGroupProvider</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+	<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+
+<body>
+<div class="portletBody">
+
+<div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+<ul class="breadCrumb">
+   <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+   <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+   <li rsf:id="page-title" class="lastCrumb">Test EvalGroup Provider</li>
+</ul>
+
+<div rsf:id="message-for:*" class="alertMessage">
+   <ul style="margin:0px;">
+      <li>Message for user here</li>
+   </ul>
+</div>
+
+<h3 rsf:id="warning-message" style="color:red;"></h3>
+
+<div style="width:99%;">
+	<div class="navPanel">
+		<div class="viewNav">
+			<span rsf:id="current_test_header" style="font-weight:bold;">Currently</span> ::
+			<span rsf:id="current_test_user_header">Username</span>:
+            <span rsf:id="current_test_user"><i>No username</i></span>
+            &nbsp;
+            <span rsf:id="current_test_group_header">GroupId</span>:
+            <span rsf:id="current_test_group"><i>No groupId</i></span>
+		</div>
+		<div class="listNav">
+			<form rsf:id="current_test_form" action="admin_test_evalgroup_provider.html" method="get">
+                <label rsf:id="current_test_user_header">Username</label>
+				<input rsf:id="current_test_user_input" type="text" size="18" maxlength="200" id="a"/>
+                &nbsp;
+                <span rsf:id="current_test_group_header">GroupId</span>
+                <input rsf:id="current_test_group_input" type="text" size="18" maxlength="200" />
+                &nbsp;
+   				<input rsf:id="current_test_form_command" type="submit" value="Test" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<h3 rsf:id="major_test_header">Test Results</h3>
+
+<div rsf:id="tests_list:" style="border:1px black solid;margin-bottom:1em;">
+   <div style="background-color:lightblue;">
+      <span rsf:id="test_method_header" style="font-weight:bold;">Method</span>:
+      <span rsf:id="test_method">getUserIdsForEvalGroups</span>
+   </div>
+   <div>
+      <span rsf:id="test_result_header" style="font-weight:bold;">Results</span>:
+      <span rsf:id="test_result">a bunch of stuff</span>
+   </div>
+   <div>
+      <span rsf:id="test_runtime_header" style="font-weight:bold;">Time to run</span>:
+      <span rsf:id="test_runtime">5 milliseconds</span>
+   </div>
+</div>
+
+</div>
+</body>
+</html>

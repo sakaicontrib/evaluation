@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Add Item Control Renderer:</title>
+	<!-- this JS needed to make the pulldown work correctly -->
+	<script rsf:id="scr=contribute-script" type="text/javascript" language="JavaScript" src="../content/js/evalUtils.js"></script>
+</head>
+<body>
+
+<!-- html template for the text item renderer -AZ -->
+<div rsf:id="render_add_item_control:" style="display:inline;">
+	<form rsf:id="add-item-form" name="add_item_form">
+		<select rsf:id="add-item-classification" id="add-item-classification-selection">
+			<option value="render_scaled_item.html" selected="selected">Scaled/Survey</option>
+			<option value="render_text_item.html">Short Answer/Essay</option>
+			<option value="render_header_item.html">Text Header</option>
+		</select>
+		<input rsf:id="add-item-button" id="add-item-button" type="button" value="Add"
+			onclick="EvalSystem.operateSelectLink(this.id, 'add-item-classification-selection')" />
+	</form>
+</div>
+
+</body>
+</html>

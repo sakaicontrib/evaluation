@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+	
+	<!-- tool entity providers -->
+	<bean
+		parent="org.sakaiproject.entitybroker.entityprovider.AbstractEntityProvider"
+		class="org.sakaiproject.evaluation.tool.entity.EvalResourcesProvider">		
+	</bean>
+
+    <!-- Configure the location of the messages files -->
+    <bean id="messageLocator" class="uk.org.ponder.springutil.SpringMessageLocator">
+        <property name="messageSource">
+            <bean
+                class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+                <property name="basename"
+                    value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
+                <property name="cacheSeconds" value="10" />
+            </bean>
+        </property>
+        <property name="localeGetter" ref="requestLocaleProxy" />
+    </bean>
+
+    <!-- turns on the error logging in the browser (when set false), REMOVE THIS WHEN IN PRODUCTION -->
+    <bean id="redirectOnLevel1Error" class="uk.org.ponder.springutil.BooleanFactory">
+        <property name="value" value="false" />
+    </bean>
+
+    <!-- the beans listed here are allowed access to values (security) -->
+    <bean parent="requestAddressibleParent">
+        <property name="value"
+            value="id-defunnel, adhocGroupsBean, adhocGroupMemberRemovalBean, providerSyncBean,
+		      setupEvalBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
+		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
+		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
+		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
+              emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, assignGroupSelectionSettings, evalAdminBean, hierarchyBean" />
+    </bean>
+
+    <!-- allows us to identify entities used in OTP on the EL path,
+        this maps the OTPized entities to unique OTP root names (e.g. templateBeanLocator, itemWBL) -->
+    <bean parent="entityNameInferrerParent">
+        <property name="value">
+            <bean
+                class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl" />
+        </property>
+    </bean>
+
+    <!-- This has to be true to get around an RSF bug (RSF-40) until it is fixed in 0.7.3 -->
+    <bean id="ignoreFossilizedValues" class="uk.org.ponder.springutil.BooleanFactory">
+        <property name="value" value="true" />
+    </bean>
+
+    <!-- tool logic beans (organizational) -->
+    <bean id="localTemplateLogic"
+        class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+    </bean>
+
+    <bean id="localResponsesLogic"
+        class="org.sakaiproject.evaluation.tool.LocalResponsesLogic">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="responsesLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+    </bean>
+
+
+    <!-- The beans listed here are session beans (they stick around) -->
+    <bean id="myBeanScope" parent="beanScopeParent">
+        <property name="copyPreservingBeans" value="evaluationBean" />
+        <property name="exclusive" value="true" />
+    </bean>
+
+    <bean parent="copyPreservingParent">
+        <property name="value" value="reportsBean" />
+    </bean>
+
+    <bean parent="writeGuardParent">
+        <property name="guardedPath" value="templateItemWBL.*.displayOrder" />
+        <property name="guardMethod" value="templateBBean.saveReorder" />
+    </bean>
+
+    <!-- fills in the templateId in the ViewParams when creating new templates -->
+    <bean parent="actionResultInterceptorParent">
+        <property name="value">
+            <bean
+                class="org.sakaiproject.evaluation.tool.wrapper.TemplateActionResultInterceptor">
+                <property name="templateBeanLocator">
+                    <bean parent="RSACBridgeProxy">
+                        <property name="targetBeanName" value="templateBeanLocator" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- fills in the evaluationId in the ViewParams when creating new evaluations -->
+    <bean parent="actionResultInterceptorParent">
+        <property name="value">
+            <bean
+                class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
+                <property name="evaluationBeanLocator">
+                    <bean parent="RSACBridgeProxy">
+                        <property name="targetBeanName" value="evaluationBeanLocator" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- see CTL-1214, RSF-123, RootHandlerBeanOverride and OverridedServletRoot: 
+         also reportHandlerHook no longer implements HandlerHook -->
+    <!--  
+    <bean parent="handlerHookParent">
+        <property name="value">
+            <bean parent="RSACBridgeProxy">
+                <property name="targetBeanName" value="reportHandlerHook" />
+            </bean>
+        </property>
+    </bean> 
+    -->
+
+    <!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
+    <bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
+        class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
+        <property name="daoInvoker" ref="org.sakaiproject.evaluation.dao.EvalDaoInvoker" />
+    </bean>
+
+    <bean class="uk.org.ponder.rsac.BeanFetchBracketer">
+        <property name="targetBeanName" value="rootHandlerBean" />
+        <property name="wrappingBean"
+            ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+    </bean>
+
+    <!-- the renderers list must line up with the code in the ItemRendererImpl -->
+    <bean id="org.sakaiproject.evaluation.tool.renderers.ItemRenderer"
+        class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl"
+        init-method="init">
+        <property name="renderTypes">
+            <list>
+                <bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer" />
+                <bean
+                    class="org.sakaiproject.evaluation.tool.renderers.MultipleChoiceRenderer" />
+                <bean
+                    class="org.sakaiproject.evaluation.tool.renderers.MultipleAnswerRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
+                    <property name="authoringService"
+                        ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer"
+        class="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer">
+        <property name="viewStateHandler" ref="viewStateHandler" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer"
+        class="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer">
+        <property name="externalHierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+    </bean>
+
+    <!-- Override this definition from RSF-evolvers, to reflect the fact we are
+        serving the RSF components templates from our own webapp (as provided using
+        the "partial WAR" build strategy -->
+    <bean id="componentsTemplateResourceBase" class="java.lang.String">
+        <constructor-arg value="/" />
+    </bean>
+
+    <!-- this needs to contain all item renderer and other evolver html templates,
+        baseDirectory should end with / and not begin with one -->
+    <bean id="evaluationComponentTemplateContributor"
+        parent="templateContributorParent">
+        <property name="baseDirectory" value="component-templates/" />
+        <property name="templateNames"
+            value="render_header_item, render_text_item, render_scaled_item, render_block_item, 
+			     render_multiplechoice_item, render_multipleanswer_item,
+			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector, nav_bar" />
+        <property name="expected" value="true" />
+    </bean>
+
+    <!-- Override the default style of user messages -->
+    <bean id="messageTemplateContributor" parent="templateContributorParent">
+        <property name="baseDirectory" value="component-templates/" />
+        <property name="templateNames" value="Messages" />
+    </bean>
+
+
+    <!-- view param inferrer beans to handle entity urls -->
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.EvaluationVPInferrer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="wrapperInvoker"
+            ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService"/>
+    </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
+
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.ItemVPInferrer" />
+
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.ReportsVPInferrer">
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
+
+    <!-- Reporting Utilities -->
+    <bean id="reportExporterBean" class="org.sakaiproject.evaluation.tool.reporting.ReportExporterBean">
+    	<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="reportingPermissions"
+            ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+        <property name="exportersMap">
+        	<map>
+        		<entry key="csvResultsReport" value-ref="CSVReportExporter"/>
+        		<entry key="xlsResultsReport" value-ref="XLSReportExporter"/>
+        		<entry key="pdfResultsReport" value-ref="PDFReportExporter"/>
+        		<entry key="csvTakersReport" value-ref="CSVTakersExporter"/>
+        	</map>
+        </property>	
+    </bean>
+    <!-- FIXME -->
+    <bean id="CSVTakersExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVTakersReportExporter">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+    <bean id="CSVReportExporter"
+        class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalResponseAggregatorUtil"
+            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
+    <bean id="XLSReportExporter"
+        class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalResponseAggregatorUtil"
+            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
+    <bean id="PDFReportExporter"
+        class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalResponseAggregatorUtil"
+            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil"
+        class="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="externalHierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
+    <!-- This ViewParametersInterceptor is responsible for redirecting the page
+        if there is only group to select from. -->
+    <bean parent="viewParamsInterceptorParent">
+        <property name="value">
+            <bean
+                class="org.sakaiproject.evaluation.tool.reporting.ReportViewParamsInterceptor">
+                <property name="currentViewableReports">
+                    <bean id="currentViewableReportsProxy" parent="RSACBridgeProxy">
+                        <property name="targetBeanName"
+                            value="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- temporary fix until 0.7.3 - enables write guard for all UVB paths -->
+    <!-- 
+        <bean parent="writeGuardParent">
+        <property name="guardedPath" value="UVBBean.paths"/>
+        <property name="guardMethod" value="UVBBean.populate"/>
+        </bean>
+    -->
+
+    <bean id="dateResolver"
+        class="org.sakaiproject.evaluation.tool.locators.DateResolver">
+        <property name="localeGetter" ref="requestLocaleProxy" />
+    </bean>
+
+    <!-- View Params For Reporting Types -->
+    <bean parent="viewParamsRegistrarParent">
+        <property name="viewID" value="csvResultsReport" />
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+
+    <bean parent="viewParamsRegistrarParent">
+        <property name="viewID" value="xlsResultsReport" />
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+
+    <bean parent="viewParamsRegistrarParent">
+        <property name="viewID" value="pdfResultsReport" />
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+    <bean parent="viewParamsRegistrarParent">
+    	<property name="viewID" value="csvTakersReport"/>
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+</beans>

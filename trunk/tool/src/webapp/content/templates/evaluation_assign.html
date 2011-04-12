@@ -1,0 +1,186 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <title rsf:id="msg=assigneval.page.title">Assign Evaluation to groups</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+	    <script rsf:id="JS-facebox" type="text/javascript" src="../js/facebox/facebox.js"></script>
+	    <script rsf:id="JS-facebox-assign" type="text/javascript" src="../js/eval.assign.facebox.js"></script>
+	    <script rsf:id="JS-assign" type="text/javascript" src="../js/eval.assign.js"></script>
+	    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
+	    <link href="../js/facebox/facebox.css" type="text/css" rel="stylesheet" media="all"/> 
+	</head>
+	
+	<body>
+		<div class="portletBody">
+			
+			<div rsf:id="navIntraTool:" class="navIntraTool"/>			
+            <div>
+                <ul class="breadCrumb">
+                <!-- first link in the bcrumb does not seem to be looking in the message.properties for a value -->
+                <li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li><li class="lastCrumb" rsf:id="msg=assigneval.page.title">Assign Evaluation</li>                 
+                </ul>
+            </div>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+
+			<div id="" rsf:id="nogroups-error" style="display:none" class="alertMessage">You need to select at least one eval group or heirarchy node.</div>
+			
+			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
+						
+			<form id="eval-assign-form" rsf:id="eval-assign-form" method="post">
+				<span rsf:id="hierarchyNodeSelectHolder"></span>
+				<span rsf:id="evalGroupSelectHolder"></span>
+			
+				<div rsf:id="hierarchy-node-area:">
+				<!-- 1. Hierarchy Node Assignments                           -->
+				<!-- This entire div will be hidden if hiearchy usage is     -->
+				<!-- disabled in the admin settings                          -->
+					<p>
+						<input rsf:id="use-hierarchynodes-checkbox" id="use-hierarchynodes-checkbox" type="checkbox" />
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
+						<span rsf:id="msg=assigneval.page.hier.title">Assign to Hierarchy Nodes</span>
+					</p>
+					<div rsf:id="hierarchy-assignment-area" id="hierarchy-assignment-area">
+						<div rsf:id="hierarchy-tree-select:">(Tree goes here)</div>
+					</div>
+				</div>
+			
+				<!-- 2. Eval Group Assignments -->
+				<div rsf:id="evalgroups-area:">
+					<p>
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
+						<span rsf:id="msg=assigneval.page.groups.title">Assign to Evaluation Groups</span>
+					</p>
+					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
+						<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+						<p class="elementAlertFront instruction" rsf:id="assign-eval-instructions-group-notpublished">
+						This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
+						
+						<div rsf:id="siteCheckboxes"/>
+						<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+							<thead>
+								<tr>
+									<th class="attach" >
+										<span rsf:id="msg=assigneval.select.header">Select</span>
+									</th>
+									<th>
+										<span rsf:id="msg=assigneval.name.header">Title</span>
+									</th>
+			                        <th>
+			                        	<span rsf:id="select-column-title">Instructors and TAs</span>
+			                        </th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr rsf:id="groups:"> 
+									<td class="attach" >
+										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
+									</td>
+									<td>
+										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
+									</td>
+									<td>
+			                        	<span rsf:id="select-no" class="instruction">You cannot assign to this site, it has no member to take the evaluation.</span>
+			                        	<a rsf:id="select-instructors" href="#" title="Select Instructors"  rel="assignInstructorSelector">Select Instructors (5/5)</a>
+			                            <a rsf:id="select-tas" href="#" title="Select TAs" rel="assignTaSelector" style="margin-left:30px">Select TAs (5/12)</a>
+			                        </td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div rsf:id="use-adhoc-groups-area:">
+				<!-- 3. Use Existing ad-hoc groups                           -->
+				<!-- This div will be hidden if adhoc groups are disabled,   -->
+				<!-- or you have no previous adhoc groups.                   -->
+					<p>
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
+						<span rsf:id="msg=assigneval.page.adhocgroups.title">Assign to an adhoc group.</span>
+					</p>
+					<div rsf:id="adhocgroups-assignment-area" id="adhocgroups-assignment-area">
+						<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group</a>
+						<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+							<thead>
+								<tr>
+									<th class="attach" >
+										<span rsf:id="msg=assigneval.select.header">Select</span>
+									</th>
+									<th>
+										<span rsf:id="msg=assigneval.name.header">Title</span>
+									</th>
+                                    <th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr rsf:id="groups:" id="adhocGroup1:">
+									<td class="attach">
+										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="adhocGroup1:groupTitle" />
+									</td>
+									<td>
+										<label rsf:id="groupTitle" for="adhocGroup1:groupTitle">group title</label>
+                                    </td>
+                                    <td>
+										<a rsf:id="editGroupLink" href="">edit group</a>
+                                        &nbsp;
+                                        <a rsf:id="deleteGroupLink" id="adhocGroup1:deleteGroupLink" style="display:none;" href="#">delete group</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+                    
+				</div>
+				<div id="error" style="display:none" class="messageAlert">
+			        <ul style="margin:0px;">
+			            <li><span rsf:id="msg=assigneval.invalid.selection">Message for user here</span></li>
+			        </ul>
+        		</div>
+
+				<p class="act">	
+					<input id="confirmAssignCourses" rsf:id="confirmAssignCourses" type="submit" name="save_assigned_courses" value="Save Assigned Courses" class="active" accesskey="s" />
+					<input id="" rsf:id="editSettings" type="submit" name="edit_settings" value="Edit Settings" accesskey="r" />
+                    <input id="back-button" rsf:id="back-button" name="back" type="button" value="Back" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
+ 				</p>	
+			
+			</form>
+				
+		</div>
+		
+		<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
+			EvalSystem.initEvalAssignValidation("eval-assign-form","nogroups-error","confirmAssignCourses");
+		</script>
+        <script rsf:id="initJSHierarchyToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "hierarchy-assignment-area", null, true);
+        </script>
+        <script rsf:id="initJSGroupsToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "evalgroups-assignment-area");
+        </script>
+        <script rsf:id="initJSAdhocToggle" type="text/javascript" language="JavaScript">
+            EvalSystem.makeToggle("show-button", "hide-button", "adhocgroups-assignment-area");
+        </script>
+        <script rsf:id="initJavaScriptAdhoc" type="text/javascript" language="JavaScript">
+            EvalSystem.initEvalAssignAdhocDelete(["adhocGroup1:"],"deletedRow");
+        </script>   
+	</body>
+</html>

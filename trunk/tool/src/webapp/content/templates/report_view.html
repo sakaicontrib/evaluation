@@ -1,0 +1,163 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title rsf:id="view-report-title">View Report</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+   <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
+   <meta http-equiv="Pragma" content="no-cache" />   
+   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+   <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+   <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+</head>
+
+<body>
+	<div class="portletBody">
+        <div rsf:id="navIntraTool:" class="navIntraTool"/>
+         
+         <ul class="breadCrumb" style="clear:both;height:1.5em;">
+         	<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+         	<li style="float:left"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
+         	<li rsf:id="view-report-title" style="float:left" class="lastCrumb">View Report</li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="exportListOfEvaluationTakers" href="#" target="_blank" class="exportAction">Export csv of evaluation takers</a></li>
+         </ul>
+
+         <div class="navPanel">
+				 	<div class="viewNav">
+	         <h3 rsf:id="evaluationTitle" style="margin:0;padding:0">Title of the survey</h3>
+				 	</div>
+					<div class="listNav">
+						<ul style="list-style:none;display:inline;margin:0;padding:0">
+            <!-- optionally made visible if there are comments in this report -->
+            <li id="allComments" style="list-style:none;display:inline;margin:0;padding:0 .2em">
+               <span id="allCommentsHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></span>
+               <span id="allCommentsShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></span>
+            </li>
+            <!-- optionally made visible if there are text responses in this report -->
+            <li id="allTextResponses" style="display:none;list-style:none;display:inline;margin:0;padding:0 .2em">
+               <span id="allTextResponsesHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></span>
+               <span id="allTextResponsesShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></span>
+            </li>
+						</ul>
+						</div>
+         </div>
+
+         <div rsf:id="message-for:*" class="alertMessage">
+         	<ul style="margin:0px;">
+         		<li>Message for user here</li>
+         	</ul>
+         </div>
+         
+         <!-- SWG: TODO Temporary Place to put our security message until we
+              hook up the TargettedMessageList -->
+         <div rsf:id="security-warning" class="alertMessage">
+             You do not have permissions to view this page.
+         </div>
+
+         <p class="instruction" rsf:id="selectedGroups">Viewing Groups: Chemistry, Biology, and Biomed</p>
+
+         <!-- this BEGINS the category section -->
+         <div rsf:id="categorySection:">
+            <h3 rsf:id="categoryHeader">Group Items:</h3>
+            <div class="itemListReport">
+               <ol>
+                    <li rsf:id="itemrow:nodeSection">
+                        <div rsf:id="nodeTitle">title for this node section</div>
+                    </li>
+                    <li rsf:id="itemrow:templateItem" style="padding:0">
+                        <!-- DIV tag for rendering block parent text or header text -->
+                        <div rsf:id="textualItem:">
+                          <div rsf:id="itemText" style="margin:1em 0">Textual/header item text here</div>
+                        </div>
+    
+                        <!-- DIV tag for Scaled display -->
+                        <div rsf:id="scaledSurvey:">
+                            <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
+                                <tr class="highLightRow">
+                                    <td width="3%" valign="top">
+                                        <span  rsf:id="itemNum">#</span>.
+                                    </td>
+                                    <td width="70%" valign="top">
+                                        <div rsf:id="itemText">Scaled item question text here</div>
+                                    </td>
+                                    <td class="special">
+                                        <span rsf:id="responsesCount">50 Responses</span>
+                                    </td>
+                                </tr>
+                                <tr rsf:id="choices:">
+                                    <td></td>
+                                    <td>
+                                        <h5><span rsf:id="choiceText">answer choice text</span></h5>
+                                    </td>
+                                    <td class="special">
+                                        <span rsf:id="choiceCount">5 (10%)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div rsf:id="statistics" align="right" style="width: 85%;">0 answers, mean = 0</div><!-- stats -->
+                            <div rsf:id="showComments:" class="showcomments">
+                               <h5 rsf:id="msg=viewreport.comments.header">Comments:</h5>
+                               <span rsf:id="noComments" style="font-style: italic;"></span>
+                               <ol>
+                                  <li rsf:id="comments:">
+                                     <!-- //gsilver: let the list take care of the numbers -->
+                                     <span rsf:id="itemComment">comment here</span>
+                                  </li>
+                               </ol>
+                            </div>
+                        </div>
+    
+                        <!-- DIV tag for Essay type -->
+                        <div rsf:id="essayType:">
+                          <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
+                                <tr class="highLightRow">
+                                    <td width="3%" valign="top">
+                                        <span rsf:id="itemNum">#</span>.
+                                    </td>
+                                    <td width="70%" valign="top">
+                                        <div rsf:id="itemText">Essay item text here</div>
+                                    </td>
+                                    <td class="special">
+                                        <span rsf:id="responsesCount"># Responses</span>
+                                        <div rsf:id="showNA:" style="display: inline;">
+                                            <span rsf:id="msg=reporting.notapplicable.shortlabel">N/A</span>
+                                            :
+                                            <span rsf:id="naCount">5</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div rsf:id="showResponses:" class="showtextresponses">
+                               <span rsf:id="noResponses" style="font-style: italic;"></span>
+                               <ol>
+                                  <li rsf:id="responses:">
+                                     <!-- //gsilver: let the list take care of the numbers -->
+                                     <span rsf:id="itemResponse">essay response here</span>
+                                  </li>   
+                               </ol>
+                            </div>
+                        </div>
+                        <div>&nbsp;</div><!-- spacer -->
+                    </li>
+               </ol>
+            </div>
+         </div>
+
+	</div>
+
+    <!-- javascript initialization block (will be overwritten by RSF) -->
+    <script rsf:id="initJavascript" type="text/javascript" language="JavaScript">
+       // see the evalUtils.js file for more info about the method arguments
+       EvalSystem.initEvalReportView("allComments", "allTextResponses");
+    </script>
+
+</body>
+</html>

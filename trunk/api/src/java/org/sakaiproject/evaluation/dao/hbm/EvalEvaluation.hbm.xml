@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalEvaluation" table="EVAL_EVALUATION" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_evaluation_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the constant indicating the type of eval -->
+        <property name="type" type="java.lang.String" index="eval_eval_type" >
+            <column name="EVAL_TYPE" not-null="true" length="255" default="'Evaluation'" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_eval_owner" >
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- the title of this evaluation -->
+        <property name="title" type="java.lang.String">
+            <column name="TITLE" not-null="true" length="255" />
+        </property>
+        <!-- the instructions for this evaluation -->
+        <property name="instructions" type="text">
+            <column name="INSTRUCTIONS" />
+        </property>
+        <!-- the start date of this evaluation (date users can start taking it), active as of this date -->
+        <property name="startDate" type="java.util.Date" index="eval_eval_startdate">
+            <column name="START_DATE" not-null="true" />
+        </property>
+        <!-- date when users are told the evaluation is ending (notification only) -->
+        <property name="dueDate" type="java.util.Date" index="eval_eval_duedate">
+            <column name="DUE_DATE" not-null="false" />
+        </property>
+        <!-- last date to complete the evaluation, may not submit it or begin taking it after this date, not active after this date -->
+        <property name="stopDate" type="java.util.Date">
+            <column name="STOP_DATE" not-null="false" />
+        </property>
+        <!-- date at which results of this evaluation are visible in general (must be after due date) -->
+        <property name="viewDate" type="java.util.Date" index="eval_eval_viewdate">
+            <column name="VIEW_DATE" not-null="false" />
+        </property>
+        <!-- date at which results are visible to students (override viewDate) -->
+        <property name="studentViewResults" type="java.lang.Boolean">
+            <column name="STUDENT_VIEW_RESULTS" not-null="false" />
+        </property>
+        <!-- date at which results are visible to instructors (override viewDate) -->
+        <property name="instructorViewResults" type="java.lang.Boolean">
+            <column name="INSTRUCTOR_VIEW_RESULTS" not-null="false" />
+        </property>
+        <!-- date at which results are visible to students (override viewDate) -->
+        <property name="studentsDate" type="java.util.Date">
+            <column name="STUDENTS_DATE" not-null="false" />
+        </property>
+        <!-- date at which results are visible to instructors (override viewDate) -->
+        <property name="instructorsDate" type="java.util.Date">
+            <column name="INSTRUCTORS_DATE" not-null="false" />
+        </property>
+        <!-- The current (hopefully) state of this evaluation (Active, Closed, etc.), matches constants -->
+        <property name="state" type="java.lang.String" index="eval_eval_state">
+            <column name="STATE" not-null="true" length="255" />
+        </property>
+        <!-- what options do instructors have for using this evaluation (opt in, opt out, reqd, etc.) -->
+        <property name="instructorOpt" type="java.lang.String">
+            <column name="INSTRUCTOR_OPT" length="255" />
+        </property>
+        <!-- the reminder interval in days -->
+        <property name="reminderDays" type="java.lang.Integer">
+            <column name="REMINDER_DAYS" not-null="true" />
+        </property>
+        <!-- what email address should reminders be sent from -->
+        <property name="reminderFromEmail" type="java.lang.String">
+            <column name="REMINDER_FROM_EMAIL" length="255" />
+        </property>
+        <!-- what term is this evaluation part of (should be a unique term id) -->
+        <property name="termId" type="java.lang.String" index="eval_eval_term">
+            <column name="TERM_ID" length="255" />
+        </property>
+        <!-- email template used to send the "eval available" notification message -->
+        <many-to-one name="availableEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_AVAILABLE_EMAIL_TEM" lazy="proxy" fetch="select">
+            <column name="AVAILABLE_EMAIL_TEMPLATE_FK" />
+        </many-to-one>
+        <!-- email template used to send the "eval reminder" notification message -->
+        <many-to-one name="reminderEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_REMINDER_EMAIL_TEMP" lazy="proxy" fetch="select">
+            <column name="REMINDER_EMAIL_TEMPLATE_FK" />
+        </many-to-one>
+        <!-- the template which contains the main set of items for this evaluation -->
+        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" foreign-key="EVALUATION_TEMPLATE_FKC" lazy="proxy" fetch="select">
+            <column name="TEMPLATE_FK" not-null="true" />
+        </many-to-one>
+        <!-- the responses associated with this evaluation -->
+        <set name="responses" order-by="EVALUATION_FK" lazy="true" fetch="select" inverse="true">
+            <key foreign-key="RESPONSE_EVALUATION_FKC">
+                <column name="EVALUATION_FK" />
+            </key>
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalResponse"/>
+        </set>
+        <!-- set the sharing policy for this evaluation -->
+        <property name="resultsSharing" type="java.lang.String">
+            <column name="RESULTS_SHARING" length="255" not-null="true" default="'visible'" />
+        </property>
+        <!-- users taking the evaluation may leave responses blank if true, else all responses must be filled out to submit -->
+        <property name="blankResponsesAllowed" type="java.lang.Boolean">
+            <column name="BLANK_RESPONSES_ALLOWED" />
+        </property>
+        <!-- users may modify their responses to this eval while the evaluation is still active -->
+        <property name="modifyResponsesAllowed" type="java.lang.Boolean">
+            <column name="MODIFY_RESPONSES_ALLOWED" />
+        </property>
+        <!-- can unregistered students take this evaluation or only official students -->
+        <property name="unregisteredAllowed" type="java.lang.Boolean">
+            <column name="UNREGISTERED_ALLOWED" />
+        </property>
+        <!-- locked evals cannot be removed or modified -->
+        <property name="locked" type="java.lang.Boolean">
+            <column name="LOCKED" />
+        </property>
+        <!-- Controls the type of authentication required for this eval (AUTH, KEY, NONE, etc.) -->
+        <property name="authControl" type="java.lang.String">
+            <column name="AUTH_CONTROL" length="255" />
+        </property>
+        <!-- Allows for categorization of evaluations -->
+        <property name="evalCategory" type="java.lang.String" index="eval_eval_category">
+            <column name="EVAL_CATEGORY" length="255" />
+        </property>
+        <!-- Allows for linking this eval to data automatically when it is created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
+        <property name="autoUseInsertion" type="java.lang.String">
+            <column name="AUTO_USE_INSERTION" length="255" />
+        </property>
+        <!-- for storing the instructor/assistant/etc. selection code -->
+        <property name="selectionSettings" type="java.lang.String">
+            <column name="SELECTION_SETTINGS" length="2000" />
+        </property>
+        <!-- for storing eval specific flag to determine if it should send available emails -->
+        <property name="sendAvailableNotifications" type="java.lang.Boolean">
+            <column name="EMAIL_OPEN_NOTIFICATION" />
+        </property>
+        <!-- track the eval reminder status -->
+        <property name="reminderStatus" type="java.lang.String">
+            <column name="REMINDER_STATUS" length="255" />
+        </property>
+        <property name="localSelector" type="java.lang.String">
+        	<column name="LOCAL_SELECTOR" length="255" />
+        </property>
+    </class>
+</hibernate-mapping>

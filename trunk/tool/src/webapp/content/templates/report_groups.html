@@ -1,0 +1,58 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="report-groups-title">Choose Report Groups</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	  <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	  <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	  <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body>
+		<div class="portletBody">
+
+                   <div rsf:id="navIntraTool:" class="navIntraTool"/>
+			
+			<div>
+				<ul class="breadCrumb">
+					<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+					<li rsf:id="report-groups-title"  class="lastCrumb">Choose Report Groups</li>
+				</ul>
+			</div>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+
+			<!-- SWG: TODO Temporary Place to put our security message until we
+			     hook up the TargettedMessageList -->
+			<div rsf:id="security-warning" class="alertMessage">
+				You do not have permissions to view this page.
+			</div>
+
+			<form name="report_groups_form" rsf:id="report-groups-form" method="post" >
+				
+				<p rsf:id="report-group-main-message" class="instruction">
+					Choose the groups you would like to view results for. Results will be displayed in aggregate.
+				</p>
+				<span rsf:id="selectHolder"></span>
+				<ol>
+					<!--//gsilver: need to make below actual input/label pair -->
+					<li rsf:id="groupRow:" class="checkbox">
+						<input type="checkbox" name="group_check" rsf:id="groupCheck" id="groupCheck"/> 
+						<label rsf:id="groupName" for="groupCheck">group</label>
+					</li>
+				</ol>
+				<p class="act">
+					<input name="view_report" rsf:id="viewReport" type="submit" value="View Report" class="active" accesskey="s" />
+					<input name="cancel_report" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
+				</p>	
+			</form>
+			
+		</div>
+	</body>
+</html>

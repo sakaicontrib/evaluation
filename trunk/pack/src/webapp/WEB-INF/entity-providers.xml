@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+	<!-- place entity provider beans here -->
+	<bean id="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider"
+			class="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProviderImpl">
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+	</bean>
+
+	<bean id="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider"
+			class="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProviderImpl">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+	</bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.entity.AdhocGroupEntityProvider"
+            class="org.sakaiproject.evaluation.logic.entity.AdhocGroupEntityProviderImpl">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+    </bean>
+
+	<bean id="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider"
+			class="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProviderImpl">
+		<property name="evaluationsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+	</bean>
+
+	<bean id="org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider"
+			class="org.sakaiproject.evaluation.logic.entity.TemplateEntityProviderImpl">
+				<property name="authoringService"
+			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="developerHelperService"
+			ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
+	</bean>
+	
+	<bean id="org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider" 
+			class="org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProviderImpl" >
+		<property name="authoringService"
+			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+		<property name="developerHelperService"
+			ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
+		<property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider"
+            class="org.sakaiproject.evaluation.logic.entity.ConfigEntityProviderImpl">
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider"
+            class="org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProviderImpl">
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
+
+</beans>

@@ -1,0 +1,178 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Take Evaluation</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+        <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+        <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script>        
+		<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<script type="text/javascript"  language="JavaScript" src="../js/utils.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalTakeEval.js"></script>
+	</head>
+
+    <!-- supposedly firefox will not cache any pages with unload handlers -->
+    <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
+		<div class="portletBody">
+			<div id="toolTip"></div>
+	<script type="text/javascript">
+			$(document).ready(function(){
+				if ($('.blockItemGroup').length > 0){
+					evalsys.instrumentBlockItem();
+				}
+				if ($('.steppedItemGroup').length > 0){
+					evalsys.instrumentSteppedItem();
+				}
+
+				if ($('.mult-choice-ans').length > 0){
+					evalsys.instrumentMCMAItem();
+				}
+				if ($('.itemListEval').length > 0) {
+					evalsys.instrumentScaleItem();
+				}
+				if ($('.fullDisplayHorizontal').length > 0) {
+					evalsys.instrumentDisplayHorizontal();
+				}
+				$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+			});
+		</script>
+
+
+			<div class="textPanel"> 			
+				<h3 style="display:inline">
+					<span rsf:id="eval-title-header" class="highlight">Evaluation:</span>
+					<span rsf:id="evalTitle">Evaluation title here</span>
+				</h3>
+				<span rsf:id="show-group-title:">
+					(<span rsf:id="group-title-header">Group:</span>
+					<span rsf:id="group-title">Group title here</span>)
+				</span>
+			</div>
+
+			<!--//gsilver: is this "Switch group" functional? because this is where the whitespace is coming from 
+                (AZ: yes, it is all that is functional, the rest inside the tags is just a placeholder) -->
+			<div rsf:id="show-switch-group:" class="navPanel">
+				<div class="viewNav">
+					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
+					<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
+						<select rsf:id="switch-group-list">
+							<option selected="selected">Group 1</option>
+							<option>Group 2</option>
+							<option>Group 3</option>
+						</select>
+						<input rsf:id="switch-group-button" type="submit" value="Switch" />
+					</form>
+				</div>	
+			</div>
+
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>Message for user here</li>
+                </ul>
+            </div>
+
+			<div rsf:id="show-eval-instructions:" class="instruction">
+				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
+				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
+			</div>
+
+		   <div rsf:id="show-eval-note:" class="instruction">
+			   <h5 rsf:id="msg=general.note"  style="display:inline;padding-right:1em">Note:</h5>
+			   <div rsf:id="eval-note-text" style="display:inline">Additional instructional note to the user here</div>
+		   </div>
+
+			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
+			<div rsf:id="msg=takeeval.selection.warn" id="evalSelectWarn" style="display:none;">You are removing an already selected person. Are you sure?</div>
+			
+			
+			<div rsf:id="form-branch:">
+				<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
+                        onsubmit="$(':submit').hide;$('submit_process').show();">
+					
+
+			<!-- Selector for ONE instructor -->
+			<div rsf:id="select-instructor-one:" class="navPanel"  rel="evalinstructorSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.instructor.header.one" for="select-instructor-one-list"> Select Instructor to evaluate:</legend>
+						<select rsf:id="select-instructor-one-list">
+							<option selected="selected">Person 1</option>
+							<option>Person 2</option>
+							<option>Person 3</option>
+						</select>
+                    </fieldset>
+			</div>
+			<!-- Selector for MULTIPLE Instructors -->
+			<div rsf:id="select-instructor-multiple:" class="navPanel" rel="evalinstructorSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.instructor.header.multiple"> Select Instructors to evaluate:</legend>
+					<span rsf:id="select-instructor-multiple-holder:"></span>
+						<div rsf:id="select-instructor-multiple-row:">
+						<input rsf:id="select-instructor-multiple-box" type="checkbox" />
+						<label rsf:id="select-instructor-multiple-label"> Lovemore Nalube</label>
+					</div>
+				</fieldset>
+			</div>
+            <!-- Selector for ONE TA -->
+                        <div rsf:id="select-assistant-one:" class="navPanel"  rel="evalassistantSelector">
+                            <fieldset class="itemListNew">
+                                <legend rsf:id="msg=takeeval.selection.assistant.header.one" for="select-assistant-one-list"> Select TA to evaluate:</legend>
+                                    <select rsf:id="select-assistant-one-list">
+                                        <option selected="selected">Person 1</option>
+                                        <option>Person 2</option>
+                                    </select>
+                             </fieldset>
+                        </div>
+
+						<!-- Selector for MULTIPLE TAs-->
+			<div rsf:id="select-assistant-multiple:" class="navPanel" rel="evalassistantSelector">
+				<fieldset class="itemListNew">
+					<legend rsf:id="msg=takeeval.selection.assistant.header.multiple"> Select TAs to evaluate:</legend>
+					<span rsf:id="select-assistant-multiple-holder:"></span>
+					<div rsf:id="select-assistant-multiple-row:">
+						<input rsf:id="select-assistant-multiple-box" type="checkbox" />
+						<label rsf:id="select-assistant-multiple-label"> Lovemore Nalube</label>
+					</div>
+				</fieldset>
+			</div>
+			
+			<input rsf:id="selectedPeopleInResponse" type="hidden" value=""/>
+
+			<div rsf:id="categorySection:">
+                        <fieldset class="itemListNew">
+                           <legend rsf:id="categoryHeader"> Group Items: </legend>
+                           <ol class="itemListEval">
+                              <li rsf:id="itemrow:nodeSection">
+                                  <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+                              </li>
+                              <li rsf:id="itemrow:templateItem">
+                                 <!-- DIV tag for item renderer -->
+                                 <div rsf:id="renderedItem:">Items get rendered here</div>
+                              </li>
+                           </ol>
+						</fieldset>
+					</div>
+
+					<div class="act">
+                        <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
+						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
+					</div>
+				</form>
+			</div>
+
+</div>
+	</body>
+<!-- need this at the bottom to convince IE to not cache -->
+<head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
+    <meta http-equiv="Pragma" content="no-cache" />
+</head>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="msg=evaluationassignconfirm.page.title">Confirm Assignment</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+    <body>
+        <div class="portletBody">
+            <div rsf:id="navIntraTool:" class="navIntraTool"/>
+            <ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li><li rsf:id="msg=assigneval.page.title">Assign Groups</li><li class="lastCrumb" rsf:id="msg=evaluationassignconfirm.page.title">Confirm Assignment</li>
+            </ul>
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+					<li>Message for user here</li>
+                </ul>
+            </div>
+            <h3 rsf:id="msg=assigneval.page.confirmation.title">Evaluation Assignment Confirmation</h3>
+            <p class="instruction" rsf:id="evalAssignInfo">
+                You have chosen to assign the evaluation (eval title) to the following groups.
+            </p>
+            <p class="instruction" rsf:id="evalAssignInstructions">
+                You may adjust the groups assigned to this evaluation up to the start date of the evaluation (25 May 2007).
+            </p>
+            <table class="itemSummary">
+                <tr>
+                    <th>
+                        <span rsf:id="msg=evalsettings.start.date.header">Start date</span>
+                    </th>
+                    <td>
+                        <span rsf:id="startDate">2:00pm, Sat 3 March</span>
+                    </td>
+                </tr>
+                <tr rsf:id="showDueDate:">
+                    <th>
+                        <span rsf:id="msg=evalsettings.due.date.header">Closing date</span>
+                    </th>
+                    <td>
+                        <span rsf:id="dueDate">2:00pm, Sat 10 March</span>
+                    </td>
+                </tr>
+                <tr rsf:id="showStopDate:">
+                    <th>
+                        <span rsf:id="msg=evalsettings.stop.date.header">Stop date</span>
+                    </th>
+                    <td>
+                        <span rsf:id="stopDate">2:00pm, Sat 10 March</span>
+                    </td>
+                </tr>
+                <tr rsf:id="showViewDate:" class="shorttext">
+                    <th>
+                        <span rsf:id="msg=evalsettings.view.date.header">
+                            View date
+                        </span>
+                    </th>
+                    <td>
+                        <span rsf:id="viewDate">2:00pm, Sat 10 March</span>
+                    </td>
+                </tr>
+            </table>
+
+            <h4 rsf:id="msg=evaluationassignconfirm.courses.selected.header" style="font-weight:bold;">
+                Individual Groups Selected:
+            </h4>
+            <p rsf:id="noGroupsSelected" class="instruction indnt1">No groups selected</p>
+            <table rsf:id="showSelectedGroups:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+                <tr rsf:id="groups:">
+                    <td width="60%">
+                        <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
+                    </td>
+                    <td width="40%">
+                        <span rsf:id="enrollment">20 members</span>&nbsp;<span rsf:id="msg=evaluationassignconfirm.members">members</span>
+                    </td>
+                </tr>
+            </table>
+
+            <div rsf:id="showHierarchy:">
+                <h4 rsf:id="msg=evaluationassignconfirm.hiernodes.selected.header" style="font-weight:bold;">
+                    Individual Hierarchy Nodes Selected:
+                </h4>
+                <span rsf:id="noNodesSelected" class="instruction indnt1">No nodes selected</span>
+                <table rsf:id="showSelectedNodes:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+                    <tr rsf:id="nodes:">
+                        <td width="60%">
+                            <span rsf:id="nodeTitle">Department of Biology</span>
+                        </td>
+                        <td width="40%">
+                            <span rsf:id="nodeAbbr">BIODEPT</span>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+            </div>
+            <div rsf:id="showAdhoc:">
+                <h4 rsf:id="msg=evaluationassignconfirm.adhoc.selected.header" style="font-weight:bold;">
+                    Adhoc Groups Selected:
+                </h4>
+                <p rsf:id="noAdhocSelected" class="instruction indnt1">No groups selected</p>
+                <table rsf:id="showAdhocGroups:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+                    <tr rsf:id="groups:">
+                        <td width="60%">
+                            <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a>)</span>
+                        </td>
+                        <td width="40%">
+                            <span rsf:id="enrollment">10</span>&nbsp;<span rsf:id="msg=evaluationassignconfirm.members"> members</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div rsf:id="showButtons:">
+                <form rsf:id="evalAssignForm" class="inlineForm">
+                    <p class="act">
+                        <input rsf:id="doneAssignment" type="submit" name="done" value="Done" accesskey="s" class="active"/><input rsf:id="cancel-button" name="cancel" type="button" value="Back to Assign Courses" onclick="javascript:history.go(-1);return false;" accesskey="x" />
+                    </p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

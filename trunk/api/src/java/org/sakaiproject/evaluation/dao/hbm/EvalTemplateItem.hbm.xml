@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<!-- This is meant to link an item and template and also store template specific information
+	for a specfic linked item, allows better resuse of items -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalTemplateItem" table="EVAL_TEMPLATEITEM" lazy="false" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_templateitem_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" index="eval_templateitem_owner" />
+        </property>
+        <!-- linkage to the template -->
+        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" fetch="join">
+        	<column name="template_id" not-null="true" />
+        </many-to-one>
+        <!-- linkage to the item -->
+        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join" lazy="false">
+        	<column name="item_id" not-null="true" />
+        </many-to-one>
+        <!-- stores the display order of items in the linked template -->
+        <property name="displayOrder" type="java.lang.Integer">
+            <column name="DISPLAY_ORDER" not-null="true" />
+        </property>
+        <!-- used to determine the type of item (course, instructor, etc.) -->
+        <property name="category" type="java.lang.String">
+            <column name="ITEM_CATEGORY" length="255" not-null="true" />
+        </property>
+        <!-- the hierarchy level of this template item (e.g. instructor, course, college, ...),
+        	from the constants file HIERARCHY_LEVEL -->
+        <property name="hierarchyLevel" type="java.lang.String">
+            <column name="HIERARCHY_LEVEL" length="255" not-null="true" />
+        </property>
+        <!-- this is the unique id of the hierarchy node this template item is at -->
+        <property name="hierarchyNodeId" type="java.lang.String">
+            <column name="HIERARCHY_NODE_ID" length="255" not-null="true" />
+        </property>
+        <!-- how big should the text box be when rendering this item -->
+        <property name="displayRows" type="java.lang.Integer">
+            <column name="DISPLAY_ROWS" />
+        </property>
+        <!-- how should the scale be rendered -->
+        <property name="scaleDisplaySetting" type="java.lang.String">
+            <column name="SCALE_DISPLAY_SETTING" length="255" />
+        </property>
+        <!-- Does the item use Not Available in this template -->
+        <property name="usesNA" type="java.lang.Boolean">
+            <column name="USES_NA" />
+        </property>
+        <property name="usesComment" type="java.lang.Boolean">
+            <column name="USES_COMMENT" />
+        </property>
+        <!-- should this item be compulsory (must be answered) -->
+        <property name="compulsory" type="java.lang.Boolean">
+            <column name="COMPULSORY"/>
+        </property>
+        <!-- is this item the parent item for a block -->
+        <property name="blockParent" type="java.lang.Boolean">
+            <column name="BLOCK_PARENT" />
+        </property>
+        <!-- what is the id of this block (should be the templateItem id of the block parent) -->
+        <property name="blockId" type="java.lang.Long">
+            <column name="BLOCK_ID" index="eval_templateitem_blockid" />
+        </property>
+        <!-- defines the sharing of results related to this item -->
+        <property name="resultsSharing" type="java.lang.String">
+            <column name="RESULTS_SHARING" length="255" />
+        </property>
+        <property name="copyOf" type="java.lang.Long">
+            <column name="COPY_OF" />
+        </property>
+        <property name="hidden" type="java.lang.Boolean">
+            <column name="HIDDEN" />
+        </property>
+        <!-- Allows for linking this data to evals automatically when they are created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
+        <!-- means this item was added to the eval as a result of an auto use insertion -->
+        <property name="autoUseInsertionTag" type="java.lang.String">
+            <column name="AUTO_USE_INSERT_TAG" length="255" />
+        </property>
+    </class>
+</hibernate-mapping>

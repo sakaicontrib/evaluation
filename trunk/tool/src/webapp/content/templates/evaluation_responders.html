@@ -1,0 +1,59 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=evalresponders.page.title">Evaluation Responders</title>
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+
+	<body>
+        <div class="portletBody">
+           <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+            <ul class="breadCrumb">
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+            </ul>
+
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>Message for user here</li>
+                </ul>
+            </div>
+
+            <h3 rsf:id="msg=evalresponders.page.title">Evaluation Responders</h3>
+            <div>
+                <span rsf:id="responseEval" style="font-weight: bold; font-size: 1.1em;"><!-- evalresponders.eval.info -->Responses for Evaluation Title (Start - Due)</span>
+                <span rsf:id="responseStats" style="font-weight: bold;"><!-- evalresponders.stats -->10/100</span>
+                <a rsf:id="responseEmailLink" href="evalaution_notifications.html"><!-- evalresponders.notifications.link -->Send email message to participants</a>
+            </div>
+
+            <div>
+                <div rsf:id="responseGroups:">
+                    <div>
+                        <span rsf:id="responseGroupTitle" style="font-weight: bold;"><!-- evalresponders.group.title -->Group: Title</span>
+                        <span rsf:id="responseGroupStats" style="font-weight: bold;"><!-- evalresponders.stats -->10/100</span>
+                        <a rsf:id="responseGroupEmailLink" href="evalaution_notifications.html"><!-- evalresponders.notifications.link -->Send email message to participants</a>
+                    </div>
+                    <table rsf:id="showGroupResponses:" border="0" cellspacing="0" cellpadding="0" style="width: 90%" class="listHier lines nolines">
+                        <thead>
+                            <tr>
+                                <th><span rsf:id="msg=evalresponders.user.name">Name</span></th>
+                                <th><span rsf:id="msg=evalresponders.status">Status</span></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr rsf:id="responses:">
+                            <td width="50%"><span rsf:id="responseUser">Aaron Zeckoski</span></td>
+                            <td width="30%"><span rsf:id="responseStatus">Incomplete</span></td>
+                            <td width="20%"><!-- maybe put a control here to delete a response --></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+		</div>	
+	</body>
+</html>

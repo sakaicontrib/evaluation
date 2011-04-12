@@ -1,0 +1,56 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="msg=controlhierarchy.page.title">Control Hierarchy</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+<body>
+<div class="portletBody">
+
+     <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+    <ul class="breadCrumb" style="clear: both; height: 1.5em">
+        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li rsf:id="msg=controlhierarchy.page.title" class="lastCrumb" style="float: left">Hierarchy</li>
+    </ul>
+
+    <h3 rsf:id="msg=controlhierarchy.table.hierarchy.header">Control Hierarchy</h3> 
+    <a rsf:id="show-hide-groups" href="">Show/Hide Groups</a> <a rsf:id="show-hide-users" href="">Show/Hide Users</a>
+    <div rsf:id="hierarchy-tree:">
+        <!-- Everything in here is replaced by the html in /evaluation/tool/src/webapp/component-templates/hierarchy_controls.html -->
+        <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <thead>
+                <tr>
+                    <th rsf:id="hierarchy-header">Hierarchy Level</th>
+                    <th rsf:id="items-level-header">Items at this level:</th>
+                    <th rsf:id="assign-groups-header">Assign Groups</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr rsf:id="hierarchy-level-row:">
+                    <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
+                    <td>
+                        <span rsf:id="number-children">3</span>
+                        <a rsf:id="add-child-link" style="font-size:0.9em;" href="">Add</a>
+                        <a rsf:id="modify-node-link" style="font-size:0.9em;" href="">Modify</a>
+                        <form rsf:id="remove-node-form">
+                            <input type="submit" rsf:id="remove-node-button" value="Remove"/>
+                        </form>
+                    </td>
+                    <td>
+                        <a rsf:id="assign-groups-link" href="">Assign Groups</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <a href="" rsf:id="done-link">Done</a>
+</div>
+</body>
+</html>

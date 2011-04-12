@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="api/m2-target/classes" path="api/src/java"/>
+	<classpathentry excluding="**" kind="src" output="api/m2-target/classes" path="api"/>
+	<classpathentry kind="src" output="impl/m2-target/classes" path="impl/src/java"/>
+	<classpathentry kind="src" output="impl/m2-target/test-classes" path="impl/src/test"/>
+	<classpathentry excluding="**" kind="src" output="impl/m2-target/test-classes" path="pack/src/webapp/WEB-INF"/>
+	<classpathentry kind="src" output="tool/m2-target/classes" path="tool/src/java"/>
+	<classpathentry kind="src" output="tool/m2-target/test-classes" path="tool/src/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/uk/org/ponder/ponderutilcore/1.2.4/ponderutilcore-1.2.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dhorwitz/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="m2-target/classes"/>
+</classpath>

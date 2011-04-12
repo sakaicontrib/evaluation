@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalTemplate" table="EVAL_TEMPLATE" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_template_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_template_owner">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- template type, indicates if this is a standard template or an added items template (for now) -->
+        <property name="type" type="java.lang.String">
+            <column name="TYPE" not-null="true" length="255" />
+        </property>
+        <!-- a title for this template -->
+        <property name="title" type="java.lang.String">
+            <column name="TITLE" not-null="true" length="255" />
+        </property>
+        <!-- the description that is displayed only when editing or selecting this template -->
+        <property name="description" type="text">
+            <column name="DESCRIPTION" />
+        </property>
+        <!-- sharing setting for this template (private, public, etc...) -->
+		<property name="sharing" type="java.lang.String" index="eval_template_sharing">
+            <column name="SHARING" not-null="true" length="255" />
+        </property>
+        <!-- is this an expert template -->
+        <property name="expert" type="java.lang.Boolean">
+            <column name="EXPERT" not-null="true" />
+        </property>
+        <!-- the expert description for use of this template -->
+        <property name="expertDescription" type="text" />
+		<!-- maps from templates to items via the itemtemplate joining table -->
+        <set name="templateItems" inverse="true">
+            <key column="template_id" not-null="true" />
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />
+        </set>
+        <!-- locked templates cannot be edited or removed, any template used in an evaluation must be locked also -->
+        <property name="locked" type="java.lang.Boolean">
+            <column name="LOCKED" />
+        </property>
+        <property name="copyOf" type="java.lang.Long">
+            <column name="COPY_OF" />
+        </property>
+        <property name="hidden" type="java.lang.Boolean">
+            <column name="HIDDEN" />
+        </property>
+        <!-- Allows for linking this data to evals automatically when they are created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
+    </class>
+</hibernate-mapping>

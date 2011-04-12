@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Scaled Item Renderer:</title>
+	</head>
+	<body>
+
+		<!-- html template for the scaled item renderer -AZ -->
+		<div rsf:id="render-scaled-item:">
+			<div rsf:id="compactDisplay:" style="clear:both;height:100%;overflow:hidden;vertical-align:top">
+				<!-- Compact DISPLAY -->
+				<div style="float:left;padding:.3em 0;">
+                     <span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span>
+                     <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
+                     <span rsf:id="itemText" style="display:inline" class="label">Item text for compact items goes here</span>
+				</div>
+				<table border="0" cellspacing="0" cellpadding="0" width="10%" style="float:right;" class="itemScalePanel" >
+					<tr>
+						<td rsf:id="showNA:" style="white-space:nowrap" class="itemScalePanelNACell scaleItemLabel">
+							<input type="radio" name="choices" rsf:id="na-input" id="na-input" class="scaleItemLabelNA" /><label rsf:id="na-desc" class="" for="na-input">N/A</label>
+						</td>
+						<td width="5%" nowrap="nowrap"  rsf:id="compactStartContainer:" class="compactDisplayStartGeneric">
+							<span  rsf:id="compactDisplayStart">compactDisplayStart</span>
+						</td>
+						<td width="89%" nowrap="nowrap"  rsf:id="compactRadioContainer:" class="idealScale" style="height:27px;overflow:hidden;">
+							<div rsf:id="dummyRadio"/>
+							<div style="width:100%;position:relative;z-index:4;">
+								<div class="idealScaleBack" style="">
+									<img src="../content/images/ideal-none.jpg" rsf:id="idealImage"  style="width:100%;height:32px;" alt="ideal scale coloring"/>
+								
+								</div>
+
+								<!-- For correct spacing there are 2 sets of radio buttons. This is the fake one -->
+								<div class="scaleChoiceColored">
+									<label rsf:id="scaleOptionColored:" class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValueColored" class="scaleItemInput" /></label>
+									<label rsf:id="scaleOptionColored:" class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValueColored" class="scaleItemInput"/></label>
+									<label rsf:id="scaleOptionColored:" class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValueColored" class="scaleItemInput"/></label>
+								</div>
+							</div>
+
+							<!-- This is the real set of radio buttons -->
+
+								<div class="scaleChoiceNotColored">
+									<label rsf:id="scaleOption:"  class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValue" class="scaleItemInput"/></label>
+									<label rsf:id="scaleOption:"  class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValue" class="scaleItemInput"/></label>
+									<label rsf:id="scaleOption:"  class="scaleItemLabel"><span class="blockChoice skip"></span><input type="radio" name="choices" rsf:id="radioValue" class="scaleItemInput"/></label>
+								</div>
+
+						</td>
+						<td width="5%" nowrap="nowrap" rsf:id="compactEndContainer:" class="compactDisplayEndGeneric">
+							<span rsf:id="compactDisplayEnd">compactDisplayEnd</span>
+						</td>
+					</tr>
+				</table>
+					<div class="itemDoneCheck" style="float:right;height:2.2em;background-position:.25em .5em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+			</div>
+
+			<div rsf:id="fullType:">
+				<!-- Full, Full Colored, Vertical DISPLAY -->
+					<p>
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
+						<span rsf:id="itemText" style="display:inline" class="label">Full or vertical display text here</span>
+					</p>
+
+				<!-- Next row for Full Display, Full Colored, Vertical Display -->
+				<div rsf:id="nextrow:">
+
+					<div rsf:id="verticalDisplay:" class="fullVertical">
+						<!-- DIV tag for Vertical display -->
+						<span rsf:id="dummyRadio" />
+						<ul class="fullVertical mult-choice-ans">
+							<li rsf:id="scaleOption:"  class="check">
+								<label>
+								<input rsf:id="radioValue" type="radio" id="vertical1" name="vertical" />
+								<span rsf:id="radioLabel">vertical label</span>
+								</label>
+							</li>
+							<li rsf:id="scaleOption:" class="check">
+								<label>
+								<input rsf:id="radioValue" type="radio" id="vertical2" name="vertical" />
+								<span for="vertical2"  rsf:id="radioLabel">vertical label</span>
+								</label>
+							</li>
+							<li rsf:id="scaleOption:"  class="check">
+								<label>								
+								<input rsf:id="radioValue" type="radio" id="vertical3" name="vertical" />
+								<span for="vertical3"  rsf:id="radioLabel">vertical label</span>
+								</label>								
+							</li>
+							<li rsf:id="showNA:" class="na">
+								<label><input type="radio" rsf:id="na-input" name="vertical" id="na-input"/> <span rsf:id="na-desc">N/A</span></label>
+							</li>
+						</ul>
+					</div>
+
+         			<div rsf:id="fullDisplay:" style="padding:0;">
+         				<!-- DIV tag for full display  -->
+         				<div rsf:id="dummyRadio" />
+         				<table border="0" cellspacing="0" cellpadding="0" width="100%" class="fullDisplayHorizontalScale fullDisplayHorizontal">
+         					<tr>
+         						<td nowrap="nowrap" align="center" style="height:24px;" rsf:id="scaleOption:">
+         							<span style="padding:.3em .5em">
+												<label for="full1" style="font-weight:bold;" rsf:id="radioLabel">full label</label>
+												<input type="radio" rsf:id="radioValue" id="full1" name="vertical" />
+         							</span>
+         						</td>
+         						<td nowrap="nowrap" align="center" style="height:24px;" rsf:id="scaleOption:">
+											<span style="padding:.3em .5em">
+												<label for="full2" style="font-weight:bold;" rsf:id="radioLabel">full label</label>
+												<input type="radio" rsf:id="radioValue" id="full2" name="vertical" />
+         							</span>
+         						</td>
+         						<td nowrap="nowrap" align="center" style="height:24px;" rsf:id="scaleOption:">
+         							<span style="padding:.3em .5em">
+												<label for="full3" style="font-weight:bold;" rsf:id="radioLabel">full label</label>
+												<input type="radio" rsf:id="radioValue" id="full3" name="vertical" />
+											</span>
+         						</td>
+         						<td nowrap="nowrap" align="center" style="height:24px;" rsf:id="scaleOption:">
+         							<span style="padding:.3em .5em">
+												<label for="full3" style="font-weight:bold;" rsf:id="radioLabel">full label</label>
+												<input type="radio" rsf:id="radioValue" id="full3" name="vertical" />
+											</span>
+         						</td>
+								<td rsf:id="showNA:" class="na">
+         							<span style="padding:.3em .5em">
+										<label rsf:id="na-desc" for="na-input">N/A</label>
+										<input type="radio" rsf:id="na-input" name="vertical" id="na-input"/>
+									</span>	
+								</td>
+
+         					</tr>
+         				</table>
+         			</div>
+					<div rsf:id="fullDisplayColored:"  style="padding: 0;">
+         				<!-- DIV tag for Full Colored display -->
+         				<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
+         					<tr>
+         						<td nowrap="nowrap" valign="middle" style="height:24px;"  class="fullDisplayHorizontalColoredWrapper">
+         							<div style="width:100%;position:relative;">
+         								<div style="width:100%; display:block; position:absolute; z-index:5;">
+         									<img src="../content/images/ideal-none.jpg" style="width:100%;height:32px;" rsf:id="idealImage" alt="ideal scale coloring" />
+         								</div>
+         								<div style="width:100%; display:block; position:relative; z-index:6;background-color:transparent;">
+         									<span rsf:id="dummyRadio" />
+         									<table border="0" cellspacing="0" cellpadding="0" width="100%" class="fullDisplayHorizontal fullDisplayHorizontalScale fullDisplayHorizontalColored">
+         										<tr>
+         											<td rsf:id="scaleOption:">
+					         							<span style="padding:.2em .5em">
+         												<label for="fc1" rsf:id="radioLabel">full colored label</label>
+         												<input type="radio" rsf:id="radioValue" name="vertical" id="fc1" />
+														</span>
+         											</td>
+         											<td rsf:id="scaleOption:">
+					         							<span style="padding:.2em .5em">
+         												<label for="fc2"  rsf:id="radioLabel">full colored label</label>
+         												<input type="radio" rsf:id="radioValue" name="vertical" id="fc2" />
+														</span>
+         											</td>
+         											<td rsf:id="scaleOption:">
+					         							<span style="padding:.2em .5em">
+         												<label for="fc3" rsf:id="radioLabel">full colored label</label>
+         												<input type="radio" rsf:id="radioValue" name="vertical" id="fc3" />
+														</span>
+         											</td>
+         											<td rsf:id="showNA:">
+					         							<span style="padding:.2em .5em">	
+         												<label rsf:id="na-desc" for="fc4">full colored label</label>
+         												<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" />
+														</span>
+         											</td>
+
+         										</tr>
+         									</table>
+         								</div>
+         							</div>
+         						</td>
+         					</tr>
+         				</table>
+         			</div>
+
+				</div>
+			</div>
+
+			<!-- DIV tag for Stepped Display -->
+			<div rsf:id="steppedDisplay:">
+				<!--[if IE 7]>
+					<style type="text/css">
+						td.exclude input {padding:0px;margin:4px;}
+					</style>
+				<![endif]-->
+
+				<table border="0" cellspacing="0" cellpadding="0" width="99%" class="steppedItemGroup">
+					<tr>
+						<td>
+							<table border="0" cellspacing="0" cellpadding="0" width="100%">
+								<tr rsf:id="rowBranch:">
+									<td width="90%">&nbsp;</td>
+									<td width="10%" nowrap="nowrap" align="right" style="padding-right:.4em">
+										<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
+										<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+										<span rsf:id="afterTopLabelBranch:">
+										</span>
+									</td>
+								</tr>
+								<tr rsf:id="rowBranch:">
+									<td width="90%">&nbsp;</td>
+									<td width="10%" nowrap="nowrap" align="right"  style="padding-right:.4em">
+										<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
+										<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+										<span rsf:id="afterTopLabelBranch:">
+											<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+										</span>
+									</td>
+								</tr>
+								<tr rsf:id="rowBranch:">
+									<td width="90%">&nbsp;</td>
+									<td width="10%" nowrap="nowrap" align="right"  style="padding-right:.4em">
+										<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
+										<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+										<span rsf:id="afterTopLabelBranch:">
+											<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+											<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="90%">&nbsp;</td>
+									<td width="10%" nowrap="nowrap" align="right"  style="padding-right:.4em">
+										<label for="choiceNA" rsf:id="na-desc" style="font-weight:bold;">N/A</label>&nbsp;&nbsp;
+										<span rsf:id="bottomLabelBranch:">
+											<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+										</span>
+										<span rsf:id="bottomLabelBranch:">
+											<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+										</span>
+										<span rsf:id="bottomLabelBranch:">
+											<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="exclude answerCell" >
+							<table border="0" cellspacing="0" cellpadding="0" width="100%">
+								<tr>
+									<td width="90%" valign="top">
+											<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
+											<div rsf:id="itemText"  style="display:inline" class="label">Stepped item text here</div>
+									</td>
+									<td align="right" style="white-space:nowrap" valign="middle" class="exclude NACell">
+										<span class="itemDoneCheck">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+										<label class="blockItemLabelNA"><span class="blockChoice"></span><input rsf:id="na-input" type="radio" name="block1" id="choiceNA"  /></label>
+									</td>
+									<td  align="left" nowrap="nowrap" style="height:27px;overflow:hidden;" class="last exclude choiceGroup">
+										<div rsf:id="dummyRadio" />
+										<div rsf:id="coloredChoicesBranch:" style="width:100%;position:relative;">
+											<div style="width:100%;display:block;position:absolute;z-index:5;">
+												<img rsf:id="idealImage" src="../content/images/ideal-high.jpg" style="width:100%;height:28px;" alt="ideal coloring image" />
+											</div>
+
+											<!-- For correct spacing there are 2 sets of radio buttons, this is the one for colored spacing 
+											<div style="width:100%;display:block;position:absolute;z-index:6;background-color:transparent;">-->
+											<div class="blockChoiceColored">
+												<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValueColored" type="radio" name="block1" id="choice1" class="blockItemChoice" /></label>
+												<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValueColored" type="radio" name="block1" id="choice2"  class="blockItemChoice"/></label>
+												<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValueColored" type="radio" name="block1" id="choice3"  class="blockItemChoice"/></label>
+											</div>
+										</div>
+
+										<!-- This is the real set of radio buttons -->
+										<div  class="blockChoiceNotColored">											
+										<label rsf:id="scaleOption:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValue" type="radio" name="block1"  id="choice1"  class="blockItemChoice"/></label>
+										<label rsf:id="scaleOption:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValue" type="radio" name="block1" id="choice2"  class="blockItemChoice"/></label>
+										<label rsf:id="scaleOption:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValue" type="radio" name="block1" id="choice3"  class="blockItemChoice"/></label>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+				</table>
+			</div>
+
+           <!-- the optional comment block to show after the item -->
+           <div rsf:id="showComment:" style="padding: 1em 0 0 0;" class="JSevalComment">
+                <div>
+                    <span rsf:id="msg=comment.label" class="JSlabel editComment" style="display:none; font-weight:bold;">Comment</span>
+                    <span class="JScommentTruncated" style="display:none">  </span>
+                    <a rsf:id="msg=comment.edit" href="#" class="JSedit" style="display:none">Edit comment</a>
+                    <a rsf:id="itemCommentShow" href="#" class="JSshow addItem" >Add a comment</a>
+                    <span rsf:id="msg=comment.warn" class="JSwarn commentWarn" style="display:none"> Warning </span>
+                </div>
+                <div>
+                    <a href="#" rsf:id="msg=comment.hide" style="display:none" class="JShide hideComment">Hide comment</a>
+                </div>
+                <div>
+                    <textarea rsf:id="itemComment" style="display:none" cols="65" rows="3"> Comment text...</textarea>
+                </div>
+           </div>
+	</div>
+    </body>
+</html>

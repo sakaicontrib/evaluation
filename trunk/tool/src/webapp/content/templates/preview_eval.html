@@ -1,0 +1,103 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=previeweval.evaluation.title">Previewing</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
+        <meta http-equiv="Pragma" content="no-cache" />
+
+		<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+        <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+        <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
+
+		<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
+		<!--<script type="text/javascript"  language="JavaScript" src="/library/js/jquery-latest.min.js"></script>-->
+		<script type="text/javascript"  language="JavaScript" src="../js/utils.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+	</head>
+
+    <!-- supposedly firefox will not cache any pages with unload handlers -->
+	<body rsf:id="scr=sakai-body" onunload="parseInt('1')">
+			<div id="toolTip"></div>
+	<script type="text/javascript">
+			$(document).ready(function(){
+				if ($('.blockItemGroup').length > 0){
+					evalsys.instrumentBlockItem();
+				}
+				if ($('.steppedItemGroup').length > 0){
+					evalsys.instrumentSteppedItem();
+				}
+
+
+				if ($('.mult-choice-ans').length > 0){
+					evalsys.instrumentMCMAItem();
+				}
+				if ($('.itemListEval').length > 0) {
+					evalsys.instrumentScaleItem();
+				}
+				if ($('.fullDisplayHorizontal').length > 0) {
+					evalsys.instrumentDisplayHorizontal();
+				}
+				$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+			});
+		</script>
+		<div class="portletBody">
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+				<li rsf:id="msg=previeweval.evaluation.title" class="lastCrumb">Previewing Template/Evaluation</li>
+			</ul>
+
+			<div>
+				<h3 style="display:inline">
+					<span rsf:id="preview-title-prefix" class="highlight">Previewing Evaluation</span><span rsf:id="evalTitle">Evaluation title here</span>
+				</h3>
+				<span rsf:id="show-group-title:" class="instruction">
+					(<span rsf:id="group-title-header">Group:</span>
+					<span rsf:id="group-title">Group title here</span>)
+				</span>
+			</div>
+
+            <div rsf:id="show-eval-instructions-groups" class="previewEvalNote">
+                <h5 rsf:id="msg=previeweval.evaluation.note.title" style="display:inline">Note:</h5>
+                <span rsf:id="msg=previeweval.evaluation.note">
+                    Questions are grouped and displayed by category, in the following order: ‘Group/Course’, Lecturer, Tutor. Repeating sets of questions for lecturers and tutors will be indicated by two placeholder titles. If you have chosen to only evaluate one lecturer or tutor, the second set of questions will not be shown to students.
+                </span>
+            </div>
+
+			<div rsf:id="show-eval-instructions:" style="margin:.5em 0">
+				<h5 rsf:id="eval-instructions-header" style="display:inline">Instructions:</h5>
+				<div rsf:id="eval-instructions" class="instruction" style="display:inline">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</div>
+			</div>
+			
+			<div id="startPreviewItems"></div>
+            <!-- render items -->
+            <div rsf:id="noItemsToShow" style="font-weight: bold; font-size: 1.1em; font-style: italic;"></div>
+            <div rsf:id="categorySection:" class="fake-fieldset itemListNew">
+               <div class="fieldset">
+                  <div rsf:id="categoryHeader" class="legend"> Group Items: </div>
+                  <ol class="itemListEval">
+                     <li rsf:id="itemrow:nodeSection">
+                         <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+                     </li>
+                     <li rsf:id="itemrow:templateItem" class="evalItemTop">
+                        <!-- DIV tag for item renderer -->
+                        <div rsf:id="renderedItem:">Items get rendered here</div>
+                     </li>
+                  </ol>
+               </div>
+            </div>
+
+		</div>
+	</body>
+    <!-- need this at the bottom to convince IE to not cache -->
+    <head>
+        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT" />
+        <meta http-equiv="Pragma" content="no-cache" />
+    </head>
+</html>

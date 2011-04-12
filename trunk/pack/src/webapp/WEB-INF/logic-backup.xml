@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<!-- some of these beans access Sakai services directly -->
+<beans>
+
+    <!-- email notifications -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
+        class="org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl"
+        init-method="init">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
+
+    <!-- jobs processing -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
+        class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+    </bean>
+
+    <!-- imports -->
+    <!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ
+        <bean id="org.sakaiproject.evaluation.logic.imports.EvalImport"
+        class="org.sakaiproject.evaluation.logic.imports.EvalImportImpl"
+        init-method="init">
+        <property name="EvalEvaluationSetupService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+        <property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+        <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="authoringService"
+        ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+        </bean>
+        
+        <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportLogic"
+        class="org.sakaiproject.evaluation.logic.imports.EvalImportLogicImpl"
+        init-method="init"> 
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="evalImport"
+        ref="org.sakaiproject.evaluation.logic.imports.EvalImport" />
+        <property name="evalImportJob"
+        ref="org.sakaiproject.evaluation.logic.imports.EvalImportJob" />
+        </bean>
+    -->
+
+    <bean id="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync" 
+    	class="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSyncImpl" 
+    	init-method="init" 
+    	singleton="true">
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evaluationSetupService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+    </bean>
+    
+    <!-- this is the helper that will register the above bean with the job scheduler -->
+    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync"
+        class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+        singleton="true" init-method="init">
+        <property name="beanId">
+            <value>org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync</value>
+        </property>
+        <property name="jobName">
+            <value>Group Membership Sync</value>
+        </property>
+        <property name="schedulerManager">
+            <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+        </property>
+    </bean>
+    
+
+</beans>

@@ -1,0 +1,68 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="page-title">Control Hierarchy</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+        <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/jquery/jquery.js"></script>
+    </head>
+<body>
+<div class="portletBody">
+     <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+    <ul class="breadCrumb" style="clear: both; height: 1.5em">
+        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li style="float: left"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+        <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
+    </ul>
+    <h3 rsf:id="assign-groups-title">Assign groups for a hierarchy node</h3>
+    <!-- 
+    <p>
+      <span>Filter</span>
+      <input type="text" value="" id="filterinput" />
+    </p>
+    -->
+    <form rsf:id="assign-groups-form">
+        <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <thead>
+                <tr>
+                    <th width="3%">
+                        <input id="selectAllNone" type="checkbox" />
+                        <span rsf:id="select-header">Select</span>
+                    </th>
+                    <th rsf:id="title-header">Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr rsf:id="group-row:">
+                    <td>
+                        <input class=" groupcheckbox "rsf:id="group-checkbox" type="checkbox" />
+                    </td>
+                    <td>
+                        <label rsf:id="group-title">Group Title</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="act"> 
+            <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button" class="active" accesskey="s" />
+            <a href="" rsf:id="cancel-link">Cancel</a> 
+        </p>    
+    </form>
+</div>
+<script>
+  var selectAllBox = jQuery('#selectAllNone');
+  selectAllBox.change( function() {
+  var onoff = selectAllBox.get(0).checked;
+  jQuery('.groupcheckbox').each(function(i) {
+    this.checked = onoff;
+  });
+});
+</script>
+</body>
+</html>

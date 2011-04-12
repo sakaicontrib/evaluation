@@ -1,0 +1,110 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=controlemail.page.title">Email Settings Control</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+	</head>
+	<body>
+		<div class="portletBody">
+		    <div rsf:id="navIntraTool:" class="navIntraTool"/>
+			<div rsf:id="message-for:*" class="alertMessage">
+   				<ul style="margin:0px;">
+      				<li>Message for user here</li>
+   				</ul>
+			</div>
+
+			<h3 rsf:id="msg=controlemail.title">Control Email</h3>
+			<form  rsf:id="emailcontrol-form" method="post">
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.options">Email options</span></legend>
+                    <p class=   "longtext indnt1">
+                        <label class="block" rsf:id="msg=administrate.general.helpdesk.email.note" for="general-helpdesk-email">Helpdesk email address (email messages appear to come from this email address by default)</label>
+                        <input type="text" rsf:id="general-helpdesk-email" id="general-helpdesk-email" />
+                    </p>
+                    <p class=   "checkbox indnt1">
+					     <input type="checkbox" rsf:id="enable-job-completion-email" />
+					     <label rsf:id="msg=administrate.job.completion.email" for="enable-job-completion-email">Enable sending of job completion email.</label>
+					</p>
+                    <p class=   "checkbox indnt1">
+                        <input type="checkbox" rsf:id="general-use-admin-from-email" />
+                        <label rsf:id="msg=administrate.use.admin.from.email" for="general-use-admin-from-email">Use evaluation admin email address to send from for notifications (uses the system help address otherwise)</label>
+                    </p>
+                    <p class=   "longtext indnt1">
+                        <label rsf:id="msg=controlemail.reminder.defaults" for="default-reminders-frequency-id" class="block">Send reminders... never, daily, etc.</label>
+                        <select rsf:id="default-reminders-frequency" id="default-reminders-frequency-id"></select>
+                    </p>
+                    <p class=   "checkbox indnt1">
+					     <input type="checkbox" rsf:id="enable-reminder-status" />
+					     <label rsf:id="msg=administrate.enable.reminder.status" for="enable-reminder-status">Enable the job status while reminders are running.</label>
+					</p>
+                    <p class=   "longtext indnt1">
+                        <label class="block" rsf:id="msg=administrate.email.time.wait.secs" for="eval-time-to-wait-secs">The time in seconds between the creation of an evaluation and the send of the available notification, default 300 (5 mins)</label>
+                        <input type="text" rsf:id="eval-time-to-wait-secs" id="eval-time-to-wait-secs" maxlength="5" size="5" value="300" />
+                        &nbsp;<span id="time-wait-errmsg"></span>
+                    </p>
+                    <p class=   "checkbox indnt1">
+                        <input type="checkbox" rsf:id="allow-eval-begin-email" />
+                        <label rsf:id="msg=administrate.email.allow.initial.notification.override" for="allow-eval-begin-email">Allow users to choose whether to send an initial email notification when creating an evaluation (otherwise an email notification will always be sent when the evaluation opens) </label>
+                    </p>
+				</fieldset>
+
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.single.email.settings">One Email Per Student</span></legend>
+                    <p class=   "checkbox indnt1">
+                        <input type="checkbox" rsf:id="emailtype" name="emailtype"  id="emailtype-id" />
+                        <label rsf:id="msg=controlemail.single.email" for="emailtype-id">Enable single email per student</label>
+                    </p>
+                    <p class="instruction" rsf:id="msg=controlemail.instructions">
+                        The implementation of single email per student (UM) requires a daily Quartz job that does the email processing.
+                        This job must be running before evaluations begin if this option is chosen.
+                        <br /><br />
+                    </p>
+                    <div rsf:id="one-email-settings:">
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.reminder.frequency" for="send-reminders-id" class="block">Send reminders... never, daily, etc.</label>
+							<select rsf:id="send-reminders" id="send-reminders-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.log.progress.every" for="log-progress-every-id" class="block">Log progress every... 10, 25, 50 etc.</label>
+							<select rsf:id="log-progress-every" id="log-progress-every-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.batch.size" for="email-batch-size-id" class="block">Number of emails to send as a batch</label>
+							<select rsf:id="email-batch-size" id="email-batch-size-id"></select>
+						</p>
+						<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.wait.interval" for="wait-interval-id" class="block">Seconds to wait between sending batches of email</label>
+							<select rsf:id="wait-interval" id="wait-interval-id"></select>
+						</p>
+    				</div>
+                </fieldset>
+
+				<fieldset  class="visibleFS"><legend><span rsf:id="msg=controlemail.delivery.control">Control Email Delivery</span></legend>
+					<p class=	"longtext indnt1">
+						<label rsf:id="msg=controlemail.header" for="delivery-option-id" class="block">Email delivery options</label>
+						<select rsf:id="delivery-option" id="delivery-option-id"></select>
+					</p>
+					<p class=   "checkbox indnt1">
+						<input type="checkbox" rsf:id="log-recipients" id="log-recipients-id" />
+						<label rsf:id="msg=controlemail.log.recipients" for="log-recipients-id">Log email recipient addresses in the server log</label>
+					</p>
+				</fieldset>
+
+                <p class="act">
+                    <input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
+                    <input type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />
+                </p>
+            </form>
+		</div>
+
+        <script rsf:id="initEvalJS">
+           EvalSystem.addNumericOnly(eval-time-to-wait-secs, time-wait-errmsg);
+        </script>
+	</body>
+</html>
