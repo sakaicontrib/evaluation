@@ -127,6 +127,17 @@ public class EvalAssignUser implements java.io.Serializable {
      * use the {@link AssignComparatorByOrder} to order things
      */
     protected int listOrder;
+    
+    /**
+     * This stores the last time at which an available email was sent 
+     * to this user for this eval.
+     */
+    protected Date availableEmailSent;
+    /**
+     * This stores the last time at which a reminder email was sent 
+     * to this user for this eval.
+     */
+    protected Date reminderEmailSent;
 
     // Constructors
 
@@ -289,7 +300,35 @@ public class EvalAssignUser implements java.io.Serializable {
 
     // validation methods
 
-    public static void validateNotEmpty(String str, String name) {
+	/**
+	 * @return the availableEmailSent
+	 */
+	public Date getAvailableEmailSent() {
+		return availableEmailSent;
+	}
+
+	/**
+	 * @param availableEmailSent the availableEmailSent to set
+	 */
+	public void setAvailableEmailSent(Date availableEmailSent) {
+		this.availableEmailSent = availableEmailSent;
+	}
+
+	/**
+	 * @return the reminderEmailSent
+	 */
+	public Date getReminderEmailSent() {
+		return reminderEmailSent;
+	}
+
+	/**
+	 * @param reminderEmailSent the reminderEmailSent to set
+	 */
+	public void setReminderEmailSent(Date reminderEmailSent) {
+		this.reminderEmailSent = reminderEmailSent;
+	}
+
+	public static void validateNotEmpty(String str, String name) {
         if (str == null || "".equals(str)) {
             throw new IllegalArgumentException(name + " cannot be null or empty string");
         }

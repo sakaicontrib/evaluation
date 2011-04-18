@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -464,5 +465,45 @@ public interface EvaluationDao extends GeneralGenericDao {
      * @return true if a lock was released, false if not, null if failure
      */
     public Boolean releaseLock(String lockId, String executerId);
+
+    /**
+     * Access one page of summary info needed to render consolidated email templates. 
+     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) and the earliest 
+     * due date of Active evals which use the email template and which the referenced user can take.
+     * @param sendingAvailableEmails TODO
+     * @param pageSize The maximum number of mappings to return. A mapping consists of a user-id, an email template
+     * 		id and a date.
+     * @param page The zero-based starting page. In other words, return a page of items beginning at index 
+     * 		(pageSize * page).
+     * @return A mapping from user-id to data about the evals that user can take. The data for each users is 
+     * 		a mapping from string values (EvalConstants.KEY_USER_ID, EvalConstants.KEY_USER_EID, 
+     * 		EvalConstants.KEY_EMAIL_TEMPLATE_ID and EvalConstants.KEY_EARLIEST_DUE_DATE) to a String 
+     * 		object for EvalConstants.KEY_USER_ID, a String object for EvalConstants.KEY_USER_EID, a Long 
+     * 		object for EvalConstants.KEY_EMAIL_TEMPLATE_ID and a Date object forEvalConstants.KEY_EARLIEST_DUE_DATE).  
+     */
+	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
+
+	/**
+	 * Build the email processing queue by adding one record for each evalAssignUser record 
+	 * matching the search criteria.  Search criteria are determined based on the values of 
+	 * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
+	 * EvalEmailTemplate.emailTemplateType.   
+	 * @param useAvailableEmailSent TODO
+	 * @param availableEmailSent 
+	 * @param useReminderEmailSent TODO
+	 * @param reminderEmailSent TODO
+	 * @param emailTemplateType
+	 * @return
+	 */
+	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
+			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int resetConsolidatedEmailRecipients();
+
+	public int countDistinctGroupsInConsolidatedEmailMapping();
 
 }

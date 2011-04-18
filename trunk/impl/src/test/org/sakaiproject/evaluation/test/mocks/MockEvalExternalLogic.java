@@ -583,36 +583,43 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		return true;
 	}
 
-@Override
-public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
-	// TODO Auto-generated method stub
-	return null;
+	@Override
+	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
+		return null;
+	}
+	
+	@Override
+	public String getServerId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<String> getServers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public boolean deleteCronJob(String jobName, String groupName) {
+		return false;
+	}
+	
+	@Override
+	public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getMyWorkspaceDashboard(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 
-public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
-	return null;
-}
 
-@Override
-public String getServerId() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-@Override
-public List<String> getServers() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public boolean deleteCronJob(String jobName, String groupName) {
-	return false;
-}
-
-@Override
-public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-}
