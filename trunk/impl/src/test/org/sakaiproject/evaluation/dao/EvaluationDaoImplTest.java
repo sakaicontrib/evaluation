@@ -1577,7 +1577,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         }
     }
 
-    public void testgetConsolidatedEmailMapping() {
+    public void testGetConsolidatedEmailMapping() {
     	
     	// when no emails have been sent, selecting email recipients in any of several ways should return 1 
     	int count = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);

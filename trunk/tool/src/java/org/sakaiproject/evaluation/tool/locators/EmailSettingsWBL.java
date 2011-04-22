@@ -18,9 +18,7 @@ import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * 
