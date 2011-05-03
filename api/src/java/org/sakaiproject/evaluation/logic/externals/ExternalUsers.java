@@ -80,4 +80,12 @@ public interface ExternalUsers {
      */
     public Locale getUserLocale(String userId);
 
+	/**
+	 * Get the URL to go to a the evaluation tool in a user's MyWorkspace.
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public String getMyWorkspaceDashboard(String userId);
+
 }

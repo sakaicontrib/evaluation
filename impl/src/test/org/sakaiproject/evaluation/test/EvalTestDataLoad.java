@@ -354,6 +354,14 @@ public class EvalTestDataLoad {
      * Email Template: owned by maint user, used in {@link #evaluationActive} as reminder
      */
     public EvalEmailTemplate emailTemplate3;
+    /**
+     * Email Template: type Consolidated Reminder , owned by maint user, used in {@link #evaluationActive} as reminder
+     */
+    public EvalEmailTemplate emailTemplate4;
+    /**
+     * Email Template: type Consolidated Reminder , owned by maint user, used in {@link #evaluationActive} as reminder
+     */
+    public EvalEmailTemplate emailTemplate5;
 
     // ASSIGNMENTS
     /**
@@ -1098,6 +1106,8 @@ public class EvalTestDataLoad {
         evaluationNew.setReminderEmailTemplate(emailTemplate2);
         emailTemplate3 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, "Email Subject 3", "Email Template 3"); 
         evaluationActive.setReminderEmailTemplate(emailTemplate3);
+        emailTemplate4 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, "Email Subject 4", "Email Template 4"); 
+        emailTemplate5 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, "Email Subject 5", "Email Template 5"); 
 
         // adding EID's to test EvalEvaluationService.getEmailTemplateByEid()
         // http://jira.sakaiproject.org/browse/EVALSYS-851
@@ -1108,6 +1118,11 @@ public class EvalTestDataLoad {
         dao.save(emailTemplate1);
         dao.save(emailTemplate2);
         dao.save(emailTemplate3);
+        dao.save(emailTemplate4);
+        dao.save(emailTemplate5);
+
+        evaluationActiveUntaken.setAvailableEmailTemplate(emailTemplate4);
+        evaluationActiveUntaken.setReminderEmailTemplate(emailTemplate5);
 
         dao.save(evaluationPartial);
         dao.save(evaluationNew);
@@ -1349,6 +1364,7 @@ public class EvalTestDataLoad {
             String userId = userIds.get(i);
             String type = userTypes.get(i);
             EvalAssignUser userAssign = new EvalAssignUser(userId, assignGroup.getEvalGroupId(), owner, type, EvalAssignUser.STATUS_LINKED);
+            userAssign.setEid("eid-" + userId);
             userAssign.setEvaluation(assignGroup.getEvaluation());
             userAssign.setAssignGroupId(assignGroup.getId());
             dao.save(userAssign);

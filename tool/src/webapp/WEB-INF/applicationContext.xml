@@ -34,7 +34,7 @@
             value="id-defunnel, adhocGroupsBean, adhocGroupMemberRemovalBean, providerSyncBean,
 		      setupEvalBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
-		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
+		      evaluationBeanLocator, takeEvalBean, settingsBean, emailSettingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
               emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, assignGroupSelectionSettings, evalAdminBean, hierarchyBean" />
     </bean>

@@ -181,6 +181,8 @@ public class EvalEvaluation implements java.io.Serializable {
 
     private Boolean unregisteredAllowed;
 
+    private Boolean availableEmailSent = new Boolean(false);
+    
     private Boolean locked;
 
     private String authControl;
@@ -342,6 +344,9 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
     	this.sendAvailableNotifications = sendAvailableNotifications;
+    	if(this.availableEmailSent == null) {
+    		this.availableEmailSent = new Boolean(false);
+    	}
     }
 
     @Override
@@ -500,9 +505,17 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
     }
 
+   public Boolean getAvailableEmailSent() {
+	      return availableEmailSent;
+   }
+   
     public EvalEmailTemplate getAvailableEmailTemplate() {
         return availableEmailTemplate;
     }
+
+   public void setAvailableEmailSent(Boolean availableEmailSent) {
+	      this.availableEmailSent = availableEmailSent;
+   }
 
     public void setAvailableEmailTemplate(EvalEmailTemplate availableEmailTemplate) {
         this.availableEmailTemplate = availableEmailTemplate;

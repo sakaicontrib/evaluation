@@ -334,6 +334,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return externalLogic.getUserLocale(userId);
     }
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getMyWorkspaceDashboard(java.lang.String)
+	 */
+	public String getMyWorkspaceDashboard(String userId) {
+		return this.externalLogic.getMyWorkspaceDashboard(userId);
+	}
+
     public EvalGroup makeEvalGroupObject(String evalGroupId) {
         if (evalGroupId == null) {
             throw new IllegalArgumentException("evalGroupId cannot be null");

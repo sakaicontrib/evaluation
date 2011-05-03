@@ -74,6 +74,26 @@
         primary key (ID)
     );
 
+    create table EVAL_ASSIGN_USER (
+		ID number(19,0) NOT NULL AUTO_INCREMENT,
+		EID varchar2(255) DEFAULT NULL,
+		LAST_MODIFIED timestamp(6) NOT NULL,
+		OWNER varchar2(255) NOT NULL,
+		USER_ID varchar2(255) NOT NULL,
+		GROUP_ID varchar2(255) NOT NULL,
+		ASSIGN_TYPE varchar2(255) NOT NULL,
+		ASSIGN_STATUS varchar(255) NOT NULL,
+		LIST_ORDER number(11,0) NOT NULL,
+		ASSIGN_GROUP_ID number(19,0) DEFAULT NULL,
+		EVALUATION_FK number(19,0) NOT NULL,
+		AVAILABLE_EMAIL_SENT timestamp(6) DEFAULT NULL,
+		REMINDER_EMAIL_SENT timestamp(6) DEFAULT NULL,
+  		PRIMARY KEY (ID),
+  		UNIQUE KEY USER_ID (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK),
+  		KEY ASSIGN_USER_EVALUATION_FKC (EVALUATION_FK),
+  		CONSTRAINT ASSIGN_USER_EVALUATION_FKC FOREIGN KEY (EVALUATION_FK) REFERENCES eval_evaluation (ID)
+	);
+
     create table EVAL_CONFIG (
         ID number(19,0) not null,
         LAST_MODIFIED date not null,
@@ -81,6 +101,18 @@
         VALUE varchar2(255) not null,
         primary key (ID)
     );
+    
+    create table EVAL_EMAIL_PROCESSING_QUEUE 
+	(
+		ID number(19,0) not null, 
+		EAU_ID number(19,0),  
+		USER_ID varchar2(255),
+		GROUP_ID varchar2(255),
+		EMAIL_TEMPLATE_ID number(19,0), 
+		EVAL_DUE_DATE date, 
+		PROCESSING_STATUS number(4,0), 
+		primary key (ID)
+	);
 
     create table EVAL_EMAIL_TEMPLATE (
         ID number(19,0) not null,

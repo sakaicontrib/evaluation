@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -121,6 +122,18 @@ public interface EvalEmailsLogic {
      */
     public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
 
+    /**
+     * 
+     * @param jobStatusReporter TODO
+     * @return
+     */
+	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId);
 
+	/**
+	 * 
+	 * @param jobStatusReporter TODO
+	 * @return
+	 */
+	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId);
 
 }
