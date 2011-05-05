@@ -968,11 +968,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
         // check the type constant
         Long emailTemplateId = null;
-        if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+        if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)
+        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateTypeConstant)) {
             if (eval.getAvailableEmailTemplate() != null) {
                 emailTemplateId = eval.getAvailableEmailTemplate().getId();
             }
-        } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+        } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)
+        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equals(emailTemplateTypeConstant)) {
             if (eval.getReminderEmailTemplate() != null) {
                 emailTemplateId = eval.getReminderEmailTemplate().getId();
             }
