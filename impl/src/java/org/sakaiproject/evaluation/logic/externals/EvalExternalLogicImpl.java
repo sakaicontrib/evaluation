@@ -74,6 +74,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -1027,9 +1028,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     @SuppressWarnings("deprecation")
     public String cleanupUserStrings(String userSubmittedString) {
-        // clean up the string using Sakai text format (should stop XSS)
-        // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-        return FormattedText.processFormattedText(userSubmittedString, new StringBuffer());
+        return EvalUtils.cleanupHtmlPtags(userSubmittedString);
     }
 
     /* (non-Javadoc)
