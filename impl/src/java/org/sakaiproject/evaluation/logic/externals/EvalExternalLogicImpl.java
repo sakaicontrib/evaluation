@@ -1088,9 +1088,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     @SuppressWarnings("deprecation")
     public String cleanupUserStrings(String userSubmittedString) {
-        // clean up the string using Sakai text format (should stop XSS)
-        // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-        return FormattedText.processFormattedText(userSubmittedString, new StringBuffer());
+       return EvalUtils.cleanupHtmlPtags(userSubmittedString);
     }
 
     /* (non-Javadoc)
