@@ -627,6 +627,7 @@ form{ margin: 0; display: inline }
 	margin: 0;
 	background-color: transparent;
 	border: none;
+    display:inline-block;
 	text-decoration: underline;
 	cursor: pointer; /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
 	overflow: visible
