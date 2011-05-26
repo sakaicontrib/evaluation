@@ -214,8 +214,8 @@ public class AdhocGroupsBean {
             || data == null
             || EvalUtils.isBlank(data.trim())
             || data.matches("[ \t\r\n]+")) {
-         messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers",
-               new Object[] { "NONE" }, TargettedMessage.SEVERITY_ERROR ));
+         //messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers",
+         //      new Object[] { "NONE" }, TargettedMessage.SEVERITY_ERROR ));
          return;
       }
 
