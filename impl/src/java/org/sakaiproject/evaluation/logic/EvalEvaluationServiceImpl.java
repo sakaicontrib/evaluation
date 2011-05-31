@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -197,6 +198,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         );
         return search;
     }
+
+	public void setAvailableEmailSent(Long[] evalIds) {
+		for (int i = 0; i < evalIds.length; i++) {
+			Long evaluationId = evalIds[i];
+			EvalEvaluation eval = getEvaluationById(evaluationId);
+			eval.setAvailableEmailSent(Boolean.TRUE);
+			// use dao because evaluation is locked
+			dao.save(eval);
+		}
+	}
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationState(java.lang.Long)
@@ -957,11 +968,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
         // check the type constant
         Long emailTemplateId = null;
-        if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+        if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)
+        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateTypeConstant)) {
             if (eval.getAvailableEmailTemplate() != null) {
                 emailTemplateId = eval.getAvailableEmailTemplate().getId();
             }
-        } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+        } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)
+        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equals(emailTemplateTypeConstant)) {
             if (eval.getReminderEmailTemplate() != null) {
                 emailTemplateId = eval.getReminderEmailTemplate().getId();
             }
@@ -1130,5 +1143,27 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId) {
     	return null;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConsolidatedEmailMapping(java.lang.Boolean, java.lang.String, int, int)
+     */
+	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
+		
+		return this.dao.getConsolidatedEmailMapping(sendingAvailableEmails, pageSize, page);
+	}
+    
+	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
+			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
+		return this.dao.selectConsolidatedEmailRecipients(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent, emailTemplateType);
+	}
+	
+	public int resetConsolidatedEmailRecipients() {
+		return this.dao.resetConsolidatedEmailRecipients();
+	}
+	
+	public int countDistinctGroupsInConsolidatedEmailMapping() {
+		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
+	}
     
 }

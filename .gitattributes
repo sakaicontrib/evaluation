@@ -27,6 +27,7 @@ api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml -text svn_
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/jobmonitor/JobStatusReporter.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalCommonLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryService.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -69,6 +70,7 @@ api/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalHierarchyNode.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalScheduledJob.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/scheduling/ConsolidatedNotificationsJob.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSync.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -78,6 +80,7 @@ api/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalConfig.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalEmailProcessingData.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalEmailTemplate.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalEvaluation.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalGroupNodes.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -104,8 +107,10 @@ impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/ddl/conversion/mysql/eval-1-2_to_eval-1-3.sql -text
 impl/src/ddl/conversion/mysql/eval-1-3_to_eval-1-3.sql -text
+impl/src/ddl/conversion/mysql/eval-1-3_to_eval-1-4.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/conversion/oracle/eval-1-2_to_eval-1-3.sql -text
 impl/src/ddl/conversion/oracle/eval-1-3_to_eval-1-3.sql -text
+impl/src/ddl/conversion/oracle/eval-1-3_to_eval-1-4.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/db2/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/derby/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/hsqldb/evaluation.sql svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -124,6 +129,7 @@ impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_key
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDaoImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/PreloadDataImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/jobmonitor/LoggingJobStatusReporter.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalCommonLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryServiceImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -148,6 +154,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModi
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/scheduling/ConsolidatedNotificationsJobImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSyncImpl.java -text
@@ -226,6 +233,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/AdhocGroupsBean.java svn
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AssignGroupSelectionSettings.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/DateResolver.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/EmailSettingsWBL.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EmailTemplateWBL.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id

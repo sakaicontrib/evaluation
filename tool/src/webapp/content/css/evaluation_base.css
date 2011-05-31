@@ -469,26 +469,22 @@ remove input width in template and use these instead
 
 #toolTip{padding:3px;border:1px solid #ccc;position:absolute;z-index:10;background:#ffe;display:none}
 .questionCell{
-	width:90%
+	width:60%
 }
 
-.answerCell{        
-
+.answerCell{
 }
 .NACell{
-	
+	width:28px !important;padding-right:.5em;
 }
-
 .blockChoiceColored{
 	width:100%;display:block;position:absolute;z-index:6;background-color:transparent;
-    text-align:right;
-    
 }
 .blockChoiceColored label.blockItemLabelSelected {
 	background:#fff;
 }
 .blockChoiceNotColored{
-text-align:right;
+
 }
 .blockChoiceNotColored label.blockItemLabelSelected {
 	background:#ccc;
@@ -519,14 +515,10 @@ label.blockItemLabel input, label.blockItemLabelNA input{margin:3px 0px !importa
 label.blockItemLabel:hover{
 	background:#fff;
 }
-
 .itemDoneCheck{
-    padding-right:10px !important
 }
 .itemDoneCheckShow{
-	background:  url(../images/tick.png) center right  no-repeat;
-}
-.NACell{
+	background:  url(../images/tick.png) center left  no-repeat;
 }
 .blockItemHeaderHilite{
 	color:#09C
@@ -627,7 +619,6 @@ form{ margin: 0; display: inline }
 	margin: 0;
 	background-color: transparent;
 	border: none;
-    display:inline-block;
 	text-decoration: underline;
 	cursor: pointer; /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
 	overflow: visible

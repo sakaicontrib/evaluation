@@ -28,7 +28,7 @@ public class EvalConstants {
      * The current version of the application for updating purposes,
      * this should always be the NEXT version of the tool if this is trunk code
      */
-    public static String APP_VERSION = "1.3.0-RC2"; 
+    public static String APP_VERSION = "1.2.2-RC3"; 
 
     public static String SVN_REVISION = "$Revision$";
     public static String SVN_LAST_UPDATE = "$Date$";
@@ -712,7 +712,19 @@ public class EvalConstants {
 	public static final String CRON_SCHEDULER_JOB_NAME = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.jobName";
 	
 	public static final String CRON_SCHEDULER_CRON_EXPRESSION = "org.sakaiproject.evaluation.logic.externals.ExternalScheduler.cronExpression";
-
+	
 	public static final String CRON_SCHEDULER_SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
+
+	public static final String KEY_USER_ID = "USER_ID";
+	public static final String KEY_USER_EID = "USER_EID";
+	public static final String KEY_EMAIL_TEMPLATE_ID = "EMAIL_TEMPLATE_ID";
+	public static final String KEY_EARLIEST_DUE_DATE = "EARLIEST_DUE_DATE";
+	public static final String KEY_MORE_PAGES = "MORE_PAGES";
+
+	public static final byte AVAILABLE_EMAIL_NOT_SENT = 00;
+	public static final byte AVAILABLE_EMAIL_BEING_PROCESSED = 01;
+	public static final byte AVAILABLE_EMAIL_SENT = 02;
+	public static final byte AVAILABLE_EMAIL_ALL = 077;
+
 
 }

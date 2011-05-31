@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
@@ -73,6 +77,8 @@ import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
 public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements EvaluationDao {
 
     private static Log log = LogFactory.getLog(EvaluationDaoImpl.class);
+
+    protected static final int MAX_UPDATE_SIZE = 999;
 
     public void init() {
         log.debug("init");
@@ -1723,6 +1729,201 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         return releasedLock;
     }
+    
+    @Override
+	public int countDistinctGroupsInConsolidatedEmailMapping() {
+    	String hql = "select count(distinct groupId) from EvalEmailProcessingData";
+    	Session session = getSession();
+    	
+        Query query = session.createQuery(hql);
+    	
+        List results = query.list();
+        int count = 0;
+        if(results == null || results.isEmpty()) {
+        	// log error
+        } else {
+        	count = ((Integer) results.get(0)).intValue();
+        }
+        return count;
+    }
+
+    /**
+     * Access one page of summary info needed to render consolidated email templates. 
+     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) 
+     * and the earliest due date of Active evals which use the email template and which the 
+     * referenced user can take.
+     * @param pageSize The maximum number of mappings to return. A mapping consists of a user-id, an email template
+     * 		id and a date.
+     * @param page The zero-based starting page. In other words, return a page of items beginning at index 
+     * 		(pageSize * page).
+     * @return 
+     */
+	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
+    	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
+    	
+    	log.info("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
+    	String column = null;
+        StringBuilder updateBuf = null;
+    	updateBuf = new StringBuilder();
+    	updateBuf.append("update EvalAssignUser ");
+    	if(sendingAvailableEmails) {
+    		updateBuf.append("set availableEmailSent = :availableEmailSent ");
+    		column = "availableEmailSent";
+    	} else {
+    		updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
+    		column = "reminderEmailSent";
+    	}
+    	updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId in (:userIdList))");
+    	
+    	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
+    	
+    	Session session = getSession();
+    	
+        Query query = session.createQuery(query1);
+        query.setFirstResult(pageSize * page);
+        query.setMaxResults(pageSize);
+        
+    	List<String> userIdList = new ArrayList<String>();
+    	Long previousTemplateId = null;
+    	Long templateId = null;
+    	
+        List results = query.list();
+
+        if(results != null) {
+        	log.info("found items from email-processing-queue: " + results.size());
+        }
+    	
+		for(int i = 0; i < results.size(); i++) {
+    		Object[] row = (Object[]) results.get(i);
+    		String userId = (String) row[0];
+    		templateId = (Long) row[1];
+    		Date earliestDueDate = (Date)row[2];
+    		if(userId == null || templateId == null) {
+    			continue;
+    		}
+    		if(previousTemplateId == null ) {
+    			previousTemplateId = templateId;
+    		}
+    		
+    		Map<String,Object> map = new HashMap<String,Object>();
+    		
+    		map.put(EvalConstants.KEY_USER_ID, userId);
+    		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
+    		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,earliestDueDate);
+    		rv.add(map);
+    		log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
+    		if(templateId.longValue() != previousTemplateId.longValue() || userIdList.size() > MAX_UPDATE_SIZE) {
+    			// mark eval_assign_user records as sent 
+	    		try {
+	    			Query updateQuery = session.createQuery(updateBuf.toString());
+	    			updateQuery.setDate(column, new Date());
+	    			updateQuery.setParameterList("userIdList", userIdList);
+	    			updateQuery.setLong("emailTemplateId", templateId);
+	    			updateQuery.executeUpdate();
+	    			log.info("         --> marked entries for users: " + userIdList);
+	    		} catch (HibernateException e) {
+	    			log.warn("Error trying to update evalAssignUser." + column, e);
+    	}
+	    		userIdList.clear();
+    		}
+    		userIdList.add(userId);
+    		//updates.add((Long) row[0]);
+    	}
+		if(userIdList == null || templateId == null || userIdList.isEmpty() ) {
+			log.info("Can't mark EvalAssignUser records due to null values: userId == " + userIdList + "   templateId == " + templateId);
+    	} else {
+			// mark eval_assign_user records as sent 
+    		try {
+    			Query updateQuery = session.createQuery(updateBuf.toString());
+    			updateQuery.setDate(column, new Date());
+    			updateQuery.setParameterList("userIdList", userIdList);
+    			updateQuery.setLong("emailTemplateId", templateId);
+    			updateQuery.executeUpdate();
+    			log.info("         --> marked entries for users: " + userIdList);
+    		} catch (HibernateException e) {
+    			log.warn("Error trying to update evalAssignUser." + column, e);
+    		}
+
+    	}
+        
+    	return rv;
+    }
+	
+	@Override
+	public int resetConsolidatedEmailRecipients() {
+		String deleteHql = "delete from EvalEmailProcessingData";
+		Query query = getSession().createQuery(deleteHql);
+		return query.executeUpdate();
+	}
+	
+	@Override
+	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent, Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
+    	StringBuilder queryBuf = new StringBuilder();
+    	Map<String,Object> params = new HashMap<String,Object>();
+    	
+    	queryBuf.append("insert into EvalEmailProcessingData (eauId,userId,groupId,emailTemplateId,evalDueDate) select user.id as eauId,user.userId as userId,user.evalGroupId as groupId,");
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append("eval.availableEmailTemplate.id as emailTemplateId");
+    	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append("eval.reminderEmailTemplate.id as emailTemplateId");
+    	} else {
+    		queryBuf.append("'' as emailTemplateId");
+    	}
+    	queryBuf.append(",eval.dueDate as evalDueDate from EvalAssignUser as user ");
+		queryBuf.append("inner join user.evaluation as eval ");
+		queryBuf.append("where user.type = :userType and eval.startDate <= current_timestamp() ");
+		params.put("userType", EvalAssignUser.TYPE_EVALUATOR);
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append("and eval.availableEmailTemplate.type = :emailTemplateType ");
+    		params.put("emailTemplateType", emailTemplateType);
+    		
+    	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append("and eval.reminderEmailTemplate.type = :emailTemplateType ");
+    		params.put("emailTemplateType", emailTemplateType);
+    	} 
+    	
+    	if(useAvailableEmailSent) {
+    		if(availableEmailSent == null) {
+    			queryBuf.append("and user.availableEmailSent is null ");
+    		} else {
+    			queryBuf.append("and (user.availableEmailSent is null or user.availableEmailSent < :availableEmailSent) ");
+    			params.put("availableEmailSent", availableEmailSent);
+    		}
+    	}
+   	
+    	if(useReminderEmailSent) {
+    		if(reminderEmailSent == null) {
+    			queryBuf.append("and user.reminderEmailSent is null ");
+    		} else {
+    			queryBuf.append("and (user.reminderEmailSent is null or user.reminderEmailSent < :reminderEmailSent) ");
+    			params.put("reminderEmailSent", reminderEmailSent);
+    		}
+    	}
+   	
+    	queryBuf.append(" order by user.userId");
+    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append(",eval.availableEmailTemplate.id");
+    	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
+    		queryBuf.append(",eval.reminderEmailTemplate.id");
+    	}
+    	
+    	queryBuf.append(",eval.dueDate");
+		
+    	Query query = getSession().createQuery(queryBuf.toString());
+    	
+    	for(Map.Entry<String,Object> entry : params.entrySet()) {
+    		if(entry.getValue() instanceof Date) {
+    			query.setDate(entry.getKey(), (Date) entry.getValue());
+    		} else if(entry.getValue() instanceof String) {
+    			query.setString(entry.getKey(), (String) entry.getValue());
+    		}
+    	}
+    	
+    	int count = query.executeUpdate();
+    	log.debug("Rows inserted into EVAL_EMAIL_PROCESSING_QUEUE: " + count);
+    	return count;
+		
+	}
 
 
     /**

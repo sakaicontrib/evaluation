@@ -157,6 +157,33 @@ public class EvalToolConstants {
         "Log email to the server log. This mode may be used in development to check the content of email messages.", 
     "Do not send email. This mode may be used for safer testing, when you don't want to accidentally send email to real users."};
 
+	public static final String[] PULLDOWN_HOUR_VALUES = new String[] {
+		"0","1","2","3","4","5","6","7",
+		"8","9","10","11","12","13","14","15",
+		"16","17","18","19","20","21","22","23"
+	};
+
+	public static final String[] PULLDOWN_HOUR_LABELS = new String[] {
+		"controlemail.start.hour.0","controlemail.start.hour.1","controlemail.start.hour.2","controlemail.start.hour.3",
+		"controlemail.start.hour.4","controlemail.start.hour.5","controlemail.start.hour.6","controlemail.start.hour.7",
+		"controlemail.start.hour.8","controlemail.start.hour.9","controlemail.start.hour.10","controlemail.start.hour.11",
+		"controlemail.start.hour.12","controlemail.start.hour.13","controlemail.start.hour.14","controlemail.start.hour.15",
+		"controlemail.start.hour.16","controlemail.start.hour.17","controlemail.start.hour.18","controlemail.start.hour.19",
+		"controlemail.start.hour.20","controlemail.start.hour.21","controlemail.start.hour.22","controlemail.start.hour.23"
+	};
+	
+	public static final String[] PULLDOWN_MINUTE_VALUES = new String[] {
+		"0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"
+	};
+
+	public static final String[] PULLDOWN_MINUTE_LABELS = new String[] {
+		"controlemail.start.minutes.0", "controlemail.start.minutes.5", "controlemail.start.minutes.10", 
+		"controlemail.start.minutes.15", "controlemail.start.minutes.20", "controlemail.start.minutes.25", 
+		"controlemail.start.minutes.30", "controlemail.start.minutes.35", "controlemail.start.minutes.40", 
+		"controlemail.start.minutes.45", "controlemail.start.minutes.50", "controlemail.start.minutes.55"
+	};
+
+
     /**
      * Evaluation/Email Settings: Page pulldown constants for reminder interval
      */
