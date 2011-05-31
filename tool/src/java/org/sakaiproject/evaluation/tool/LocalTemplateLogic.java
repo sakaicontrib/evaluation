@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -217,10 +216,7 @@ public class LocalTemplateLogic {
       EvalScale currScale = new EvalScale(commonLogic.getCurrentUserId(), 
             null, EvalConstants.SCALE_MODE_SCALE, 
             EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
-      // EVALSYS-1089
-      //currScale.setOptions(EvalToolConstants.defaultInitialScaleValues);
-      currScale.setOptions(Arrays.copyOf(EvalToolConstants.defaultInitialScaleValues, 
-    		EvalToolConstants.defaultInitialScaleValues.length));
+      currScale.setOptions(EvalToolConstants.defaultInitialScaleValues);
       currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }

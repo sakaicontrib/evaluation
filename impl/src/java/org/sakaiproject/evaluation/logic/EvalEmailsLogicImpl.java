@@ -16,19 +16,24 @@ package org.sakaiproject.evaluation.logic;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
+import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -46,7 +51,7 @@ import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
  */
 public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
-    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
+	private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
     // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
     protected final String EVENT_EMAIL_CREATED =                      "eval.email.eval.created";
@@ -55,6 +60,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
     protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
 
+    protected static final int MIN_BATCH_SIZE = 10;
+	protected static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -71,10 +78,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         this.evaluationService = evaluationService;
     }
 
-
     // INIT method
     public void init() {
         log.debug("Init");
+        
     }
 
 
@@ -745,11 +752,273 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         return new EvalEmailMessage(subjectTemplate, messageTemplate, subject, message);
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedAvailableNotifications()
+     */
+	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId) {
+		// need to figure out selection criteria for Consolidated-Available Notifications:
+		// admin settings and individual eval settings determine whether available emails should be sent.
+		// then we can tell whether an announcement has been sent (once eval is Active) by whether the 
+		// EvalAssignUser.availableEmailSent column is null (no email sent) or contains a date (indicating
+		// the date and approximate time when the email was sent to that user).
+		
+		Integer batchSize = (Integer) this.settings.get(EvalSettings.EMAIL_BATCH_SIZE);
+		if(batchSize == null || batchSize.intValue() < MIN_BATCH_SIZE) {
+			batchSize = new Integer(MIN_BATCH_SIZE);
+		}
+		Integer waitInterval = (Integer) this.settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
+		if(waitInterval == null || waitInterval.intValue() < 0) {
+			waitInterval = new Integer(0);
+		}
 
+		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+		if(logRecipients == null) {
+			logRecipients = new Boolean(false);
+		}
+		
+		Date startTime = new Date();
+
+		int count = this.evaluationService.selectConsoliatedEmailRecipients(true, null, true, null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+		if(log.isDebugEnabled()) {
+			log.debug("Number of evalAssignUser entities selected for available emails: " + count);
+		}
+    	List<String> recipients = new ArrayList<String>();
+    	
+    	if(count > 0) {
+        	if(jobStatusReporter != null) {
+        		jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(count));
+        		jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+        	}
+
+	    	int page = 0;
+	    	List<String> userIds = null;
+	    	do {
+		    	List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(true, batchSize.intValue(), page++);
+		    	userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
+		    	if(userIds != null) {
+		    		recipients.addAll(userIds);
+		    	}
+	    		takeShortBreak(waitInterval);
+	    	} while(userIds != null && !userIds.isEmpty());
+	    	
+	    	this.evaluationService.resetConsolidatedEmailRecipients();
+		}
+    	
+		if(jobId != null && jobStatusReporter != null) {
+			jobStatusReporter.reportProgress(jobId, "announcements", calculateElapsedTimeMessage(new Date(), startTime));
+			jobStatusReporter.reportProgress(jobId, "announcementUsers", Integer.toString(recipients.size()));
+		}
+    	
+		//this.evaluationService.setAvailableEmailSent(evalIds)
+    	return recipients.toArray(new String[]{});
+    }
     
-    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedReminderNotifications()
+     */
+	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId) {
+		// need to figure out selection criteria for Consolidated-Reminder Notifications:
+		// admin settings and individual eval settings determine whether available emails should be sent.
+		// admin settings indicate how frequently and at what time of day reminders should be sent. 
+		// We can tell whether a reminder has been sent (once eval is Active) by whether the 
+		// EvalAssignUser.reminderEmailSent column is null (no email sent) or contains a date (indicating
+		// the date and approximate time when the email was sent to that user). 
+		
+		// If available email is being sent, the first reminder should be n days later (where n is the frequency
+		// of sending reminders).  Otherwise, the first reminder should be sent the next time reminders are sent 
+		// after the eval becomes Active.  Reminders should be repeated every n days.
+		
+		Integer batchSize = (Integer) this.settings.get(EvalSettings.EMAIL_BATCH_SIZE);
+		if(batchSize == null || batchSize.intValue() < MIN_BATCH_SIZE) {
+			batchSize = new Integer(MIN_BATCH_SIZE);
+		}
+		Integer waitInterval = (Integer) this.settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
+		if(waitInterval == null || waitInterval.intValue() < 0) {
+			waitInterval = new Integer(0);
+		}
+		
+		Boolean availableEmailEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+		if(availableEmailEnabled == null) {
+			availableEmailEnabled = new Boolean(false);
+		}
+		
+		Integer reminderFrequency = (Integer) this.settings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS);
+		if(reminderFrequency == null) {
+			// assume daily reminders if not specified
+			reminderFrequency = new Integer(1);
+		}
+
+		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
+		if(logRecipients == null) {
+			logRecipients = new Boolean(false);
+		}
+		
+    	List<String> recipients = new ArrayList<String>();
+    	
+    	Date availableEmailSent = null;
+    	if(availableEmailEnabled.booleanValue()) {
+    		// do not send email to users who have gotten an available email recently (wait number of days specified by reminderFrequency) 
+    		availableEmailSent = new Date(System.currentTimeMillis() - (reminderFrequency.longValue() * MILLISECONDS_PER_DAY));
+    	}
+		Date reminderEmailSent = new Date();
+		
+		int count = this.evaluationService.selectConsoliatedEmailRecipients(availableEmailEnabled.booleanValue(), availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+    	log.debug("Number of evalAssignUser entities selected for reminder emails: " + count);
+    	if(count > 0) {
+        	if(jobStatusReporter != null) {
+        		jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(count));
+        		jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
+        	}
+        	int page = 0;
+        	List<String> userIds = null;
+	    	do {
+	    		List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(false, batchSize.intValue(), page++);
+	    		userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
+	    		if(userIds != null)
+	    		recipients.addAll(userIds);
+	    		takeShortBreak(waitInterval);
+	    	} while(userIds != null && !userIds.isEmpty());
+    	}
+    	this.evaluationService.resetConsolidatedEmailRecipients();
+    	
+		if(jobId != null && jobStatusReporter != null) {
+			jobStatusReporter.reportProgress(jobId, "reminders", calculateElapsedTimeMessage(new Date(), reminderEmailSent));
+			jobStatusReporter.reportProgress(jobId, "reminderUsers", Integer.toString(recipients.size()));
+		}
+    	return recipients.toArray(new String[]{});
+    }
+
+   
+
     // INTERNAL METHODS
-    
+	
+	/**
+     * INTERNAL METHOD<br/>
+	 * @param endTime
+	 * @param startTime
+	 * @return
+	 */
+	protected String calculateElapsedTimeMessage(Date endTime, Date startTime) {
+		long elapsedTime = endTime.getTime() - startTime.getTime();
+		long milliseconds = elapsedTime % 1000L;
+		long seconds = elapsedTime / 1000L;
+		StringBuilder buf = new StringBuilder();
+		buf.append(seconds);
+		buf.append(".");
+		if(milliseconds < 10) {
+			buf.append("00");
+		} else if(milliseconds < 100) {
+			buf.append("0");
+		}
+		buf.append(milliseconds);
+		buf.append(" seconds from ");
+		DateFormat df = DateFormat.getTimeInstance();
+		buf.append(df.format(startTime));
+		buf.append(" to ");
+		buf.append(df.format(endTime));
+		String msg = buf.toString();
+		return msg;
+	}
+
+	/**
+     * INTERNAL METHOD<br/>
+	 * @param waitInterval
+	 */
+	protected void takeShortBreak(Integer waitInterval) {
+		if(waitInterval.longValue() > 0L) {
+			if(log.isDebugEnabled()) {
+				log.debug("Starting wait interval during email processing (in seconds): " + waitInterval);
+			}
+			try {
+				Thread.sleep(waitInterval.longValue() * 1000L);
+			} catch (InterruptedException e) {
+				log.warn("InterruptedException while waiting during email processing: " + e);
+			}
+		}
+	}
+     
+    /**
+     * INTERNAL METHOD<br/>
+	 * @param jobId TODO
+     * @param userMap
+     * @param jobStatusReporter TODO
+	 * @return
+	 */
+	protected List<String> processConsolidatedEmails(String jobId, List<Map<String,Object>> userMap, JobStatusReporter jobStatusReporter) {
+		Integer reportingInterval = (Integer) this.settings.get(EvalSettings.LOG_PROGRESS_EVERY);
+		if(reportingInterval == null) {
+			// setting reportingInterval to zero results in no incremental reports.
+			reportingInterval = new Integer(0);
+		}
+		int userCounter = 0;
+		int emailCounter = 0;
+		List<String> recipients = new ArrayList<String>();
+    	for(Map<String,Object> entry : userMap) {
+    		String userId = (String) entry.get(EvalConstants.KEY_USER_ID);
+    		Date earliestDueDate = (Date) entry.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
+    		Long emailTemplateId = (Long) entry.get(EvalConstants.KEY_EMAIL_TEMPLATE_ID);
+    		
+    		EvalEmailTemplate template = evaluationService.getEmailTemplate(emailTemplateId);
+    			
+    		Map<String, String> replacementValues = new HashMap<String, String>();
+    		EvalUser user = commonLogic.getEvalUserById(userId);
+    		// get user's locale
+    		Locale locale = commonLogic.getUserLocale(userId);
+    	    // use a date which is related to the current users locale
+    	    DateFormat df;
+    	    boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+    	    if (useDateTime) {
+	            // show date and time if date/time enabled
+	            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
+    	    } else {
+	            df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+	        }
+			// add date to replacementValues
+			replacementValues.put("EarliestEvalDueDate",df.format(earliestDueDate));
+			replacementValues.put("EvalCLE", commonLogic.getConfigurationSetting("ui.service", "Sakai"));
+			// get eval tool title from settings? from message bundle?
+			replacementValues.put("EvalToolTitle", "Teaching Evaluations");
+			replacementValues.put("EvalSite", "MyWorkspace");
+			String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+			// we can get it from the eval if needed, but it should come from settings
+			replacementValues.put("HelpdeskEmail",from);
+			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
+			replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
+			try {
+				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);
+				String subject = TextTemplateLogicUtils.processTextTemplate(template.getSubject(), replacementValues);
+				if(message == null || subject == null) {
+					if(jobStatusReporter != null) {
+						jobStatusReporter.reportError(jobId, false, "error", "Error attempting to send email to user (" + user.displayId + "). ");
+					}
+					log.warn("Error trying to send consolidated email to user " + user.displayId, new RuntimeException("\nsubject == " + subject + "\nmessage == " + message));
+				} else {
+					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
+					emailCounter++;
+					recipients.add(user.displayId);
+				}
+			} catch (Exception e) {
+				if(jobStatusReporter != null) {
+					jobStatusReporter.reportError(jobId, false, "error", "Error attempting to send email to user (" + user.displayId + "). " + e);
+				}
+				log.warn("Error trying to send consolidated email to user " + user.displayId, e);
+			}
+
+    		if(jobId != null && reportingInterval.intValue() > 0) {
+	    		userCounter++;
+	    		if(userCounter % reportingInterval.intValue() == 0) {
+	    			if(jobStatusReporter != null) {
+	    				jobStatusReporter.reportProgress(jobId, "ProcessingEmails", "Processed " + userCounter + " of " + userMap.size() + " evaluatees and sent " + emailCounter + " emails.");
+	    			}
+	    		}
+    		}
+    	}
+		return recipients;
+	}
+	
     /**
      * EVALSYS-916 Send email to the helpdesk user notifying that the job is completed.
      *
@@ -871,5 +1140,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         return eval;
     }
+
+	/**
+     * INTERNAL METHOD<br/>
+	 * 
+	 */
+	protected void logConsolidatedEmailRecipients(String emailType, String[] recipients) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(emailType);
+		buf.append(" sent to ");
+		buf.append(recipients.length);
+		buf.append(" recipients: ");
+		boolean first = true;
+		for(String recipient : recipients) {
+			if(! first) {
+				buf.append(", ");
+			} else {
+				first = false;
+			}
+			buf.append(recipient);
+		}
+		log.info(buf.toString());
+	}
 
 }

@@ -45,27 +45,27 @@ public class AdministrateReportingProducer implements ViewComponentProducer {
         UIForm form = UIForm.make(tofill, "settings-form");
         
         // Allow CSV Export
-        AdministrateProducer.makeBoolean(form, "allow-csv-export", EvalSettings.ENABLE_CSV_REPORT_EXPORT);
+        AdministrateProducer.makeBoolean(form, "allow-csv-export", AdministrateProducer.ADMIN_WBL, EvalSettings.ENABLE_CSV_REPORT_EXPORT);
         UIMessage.make(form, "allow-csv-export-note", "controlreporting.enable.csv.label");
         
         // Allow XLS Export
-        AdministrateProducer.makeBoolean(form, "allow-xls-export", EvalSettings.ENABLE_XLS_REPORT_EXPORT);
+        AdministrateProducer.makeBoolean(form, "allow-xls-export", AdministrateProducer.ADMIN_WBL, EvalSettings.ENABLE_XLS_REPORT_EXPORT);
         UIMessage.make(form, "allow-xls-export-note", "controlreporting.enable.xls.label");
         
         // Allow PDF Export
-        AdministrateProducer.makeBoolean(form, "allow-pdf-export", EvalSettings.ENABLE_PDF_REPORT_EXPORT);
+        AdministrateProducer.makeBoolean(form, "allow-pdf-export", AdministrateProducer.ADMIN_WBL, EvalSettings.ENABLE_PDF_REPORT_EXPORT);
         UIMessage.make(form, "allow-pdf-export-note", "controlreporting.enable.pdf.label");
         
         // Enable PDF Banner
-        AdministrateProducer.makeBoolean(form, "include-pdf-banner-image", EvalSettings.ENABLE_PDF_REPORT_BANNER);
+        AdministrateProducer.makeBoolean(form, "include-pdf-banner-image", AdministrateProducer.ADMIN_WBL, EvalSettings.ENABLE_PDF_REPORT_BANNER);
         UIMessage.make(form, "include-pdf-banner-image-note", "controlreporting.enable.pdfbanner.label");
         
         // Set the location in Resources of the PDF Banner
-        AdministrateProducer.makeInput(form, "pdf-banner-image-location", EvalSettings.PDF_BANNER_IMAGE_LOCATION);
+        AdministrateProducer.makeInput(form, "pdf-banner-image-location", AdministrateProducer.ADMIN_WBL, EvalSettings.PDF_BANNER_IMAGE_LOCATION);
         UIMessage.make(form, "pdf-banner-image-location-note", "controlreporting.pdfbanner.location.label");
         
         // Allow CSV Export
-        AdministrateProducer.makeBoolean(form, "allow-list-of-takers-export", EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
+        AdministrateProducer.makeBoolean(form, "allow-list-of-takers-export", AdministrateProducer.ADMIN_WBL, EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
         UIMessage.make(form, "allow-list-of-takers-export-note", "controlreporting.enable.list.of.takers.label");
 
         

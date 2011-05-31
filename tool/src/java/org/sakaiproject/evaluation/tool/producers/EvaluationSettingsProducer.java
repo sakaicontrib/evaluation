@@ -409,11 +409,27 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
         }
 
 
-        // EVALUATION REMINDERS SECTION
+        // EVALUATION NOTIFICATIONS SECTION
+        // if Consolidated Emails are being used, use the default ConsolidatedAvailable template for available emails 
+        // and the default ConsolidatedReminder email for reminder emails
+        // Otherwise, use the default Available template and the default Reminder template
+        Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+        if(consolidatedEmailsEnabled == null) {
+        	consolidatedEmailsEnabled = new Boolean(false);
+        }
+        
+        String availableTemplate = EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
+        String reminderTemplate = EvalConstants.EMAIL_TEMPLATE_REMINDER;
+        
+        if(consolidatedEmailsEnabled.booleanValue()) {
+            availableTemplate = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE;
+            reminderTemplate = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER;
+            
+        }
 
         // email available template link
         UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), 
-                new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluation.getId()) );
+                new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, availableTemplate, evaluation.getId()) );
 
         // toggle opening email
         Boolean allowsendAvailableNotifications = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
@@ -426,16 +442,21 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 	        UIMessage.make(form, "enable-mass-email-label", "evalsettings.general.enable.email.onbegin");
         }
         
-        // email reminder control
-        UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
-                EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true) ) {
-            RSFUtils.disableComponent(reminderDaysSelect);
+        // render this only if *NOT* using consolidated emails
+        UISelect reminderDaysSelect = null;
+        if(! consolidatedEmailsEnabled.booleanValue()) {
+        	UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
+	        // email reminder control
+	        reminderDaysSelect = UISelect.make(evaluation_reminder_area, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
+	                EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
+	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true) ) {
+	            RSFUtils.disableComponent(reminderDaysSelect);
+	        }
         }
 
         // email reminder template link
         UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), 
-                new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, evaluation.getId()) );
+                new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, reminderTemplate, evaluation.getId()) );
 
         // email from address control
         //      String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
@@ -448,10 +469,14 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
         //              defaultEmail = owner.email;
         //          }
         //      }
-        UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", 
-                new Object[] {new ELReference(evaluationOTP + "reminderFromEmail")});
-        UIInput.make(form, "reminderFromEmail", evaluationOTP + "reminderFromEmail");
-
+        
+        // render this only if *NOT* using consolidated emails 
+        if(! consolidatedEmailsEnabled.booleanValue()) {
+        	UIBranchContainer reminderFromAddress = UIBranchContainer.make(form, "reminderFromAddress:");
+	        UIMessage.make(reminderFromAddress, "eval-from-email-note", "evalsettings.email.sent.from", 
+	                new Object[] {new ELReference(evaluationOTP + "reminderFromEmail")});
+	        UIInput.make(reminderFromAddress, "reminderFromEmail", evaluationOTP + "reminderFromEmail");
+        }
 
         // EVALUATION EXTRAS SECTION
         Boolean categoriesEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
@@ -496,9 +521,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
         // this fills in the javascript call (areaId, selectId, selectValue, reminderId)
         // NOTE: RSF bug causes us to have to generate the ids manually (http://www.caret.cam.ac.uk/jira/browse/RSF-65)
-        UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalSettings", 
-                new Object[] {"evaluation_reminder_area", authControlSelect.getFullID() + "-selection", 
-                EvalConstants.EVALUATION_AUTHCONTROL_NONE, reminderDaysSelect.getFullID() + "-selection"});
+        if(reminderDaysSelect != null) {
+	        UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalSettings", 
+	                new Object[] {"evaluation_reminder_area", authControlSelect.getFullID() + "-selection", 
+	                EvalConstants.EVALUATION_AUTHCONTROL_NONE, reminderDaysSelect.getFullID() + "-selection"});
+        }
 
     }
 

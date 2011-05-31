@@ -79,5 +79,31 @@
         </property>
     </bean>
     
+    <bean id="org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob"
+    	class="org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJobImpl"
+    	init-method="init"
+    	singleton="true">
+    	<property name="emailLogic"
+    		ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+		<property name="evalSettings" 
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="externalLogic" 
+        	ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    </bean>
 
+    <!-- this is the helper that will register the above bean with the job scheduler -->
+    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.ConsolidatedNotificationsJob"
+        class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+        singleton="true" init-method="init">
+        <property name="beanId">
+            <value>org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob</value>
+        </property>
+        <property name="jobName">
+            <value>Consolidated Notifications</value>
+        </property>
+        <property name="schedulerManager">
+            <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+        </property>
+    </bean>
+    
 </beans>
