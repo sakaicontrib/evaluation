@@ -33,6 +33,9 @@
 	      	  <p>
 	          		<span rsf:id="msg=modifyadhocgroup.title.label">Give this group a name:</span>
 	          		<input rsf:id="group-name-input" type="text" />
+                                <!-- style="display:none;" causes a problem for chrome
+                                    so instead of hiding it, I have positioned the fiels off the screen! -->
+                                <input rsf:id="dummy-button" type="submit" value="save_group" style="position:absolute;top:-1000px" />
 	          </p>
 	          <p rsf:id="no-members-message">There are currently no members in this group.</p>
 	          <div rsf:id="existing-members">
