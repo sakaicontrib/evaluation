@@ -632,6 +632,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         return allowed;
     }
 
+    public boolean canViewEvaluation(String userId, Long evaluationId) {
+      
+        String evalStatus = updateEvaluationState(evaluationId);
+        if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus) ||
+             EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus) ) {
+           return false;
+        }
+        return true;
+    }
+
     // EVAL AND ASSIGN GROUPS
 
     public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved) {

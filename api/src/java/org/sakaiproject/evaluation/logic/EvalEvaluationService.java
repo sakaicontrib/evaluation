@@ -218,6 +218,16 @@ public interface EvalEvaluationService {
      */
     public boolean canRemoveEvaluation(String userId, Long evaluationId);
 
+    /**
+     * Test if an evaluation can be viewed at this time by this user,
+     * this tests the dates of the evaluation against the user permissions,
+     * ignores locking
+     *
+     * @param userId the internal user id (not username)
+     * @param evaluationId the id of an {@link EvalEvaluation} object
+     * @return true if the evaluation can be viewed, false otherwise
+     */
+    public boolean canViewEvaluation(String userId, Long evaluationId);
 
     // USER ASSIGNMENTS
 
