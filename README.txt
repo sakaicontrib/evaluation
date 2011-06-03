@@ -38,18 +38,16 @@ hard-coded version of sakai in the parent element of evalsys's root pom. By defa
 like this:
 
     <parent>
+    	<groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
-        <groupId>org.sakaiproject</groupId>
-        <version>2.5.4</version>
-        <relativePath>../master/pom.xml</relativePath>
+        <version>2.7.1</version>
     </parent>
 
-If you want to build with sakai 2.6.3 instead of sakai 2.5.4, you would change that as follows 
+If you want to build with sakai 2.6.3 instead of sakai 2.7.1, you would change that as follows 
 before building/deploying:
 
     <parent>
+    	<groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
-        <groupId>org.sakaiproject</groupId>
         <version>2.6.3</version>
-        <relativePath>../master/pom.xml</relativePath>
     </parent>
