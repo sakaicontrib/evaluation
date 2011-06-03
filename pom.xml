@@ -111,6 +111,18 @@
                 <module>tool</module>
             </modules>
         </profile>
+        <profile>
+            <id>sakai2.8</id>
+            <activation>
+                <property><name>sakai2.8</name></property>
+            </activation>
+            <modules>
+                <module>api</module>
+                <module>impl</module>
+                <module>pack</module>
+                <module>tool</module>
+            </modules>
+        </profile>
     </profiles>
 
     <!-- handles the management of all related dependencies -->
