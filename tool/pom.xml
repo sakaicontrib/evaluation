@@ -28,7 +28,6 @@
         <profile>
             <id>sakai2.5</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
                 <property><name>sakai2.5</name></property>
             </activation>
             <dependencies>
@@ -101,6 +100,7 @@
             <id>sakai2.7</id>
 			<activation> 
 				<property><name>sakai2.7</name></property>
+                <activeByDefault>true</activeByDefault>
 			</activation>
             <dependencies>
                 <dependency>
