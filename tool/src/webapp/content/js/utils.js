@@ -190,13 +190,13 @@ evalsys.instrumentScaleItem = function(){
     
 };
 
-evalsys.instrumentDisplayHorizontal = function(){
-    $('.fullDisplayHorizontalScale').each(function(){
-        $(this).find('input:checked').parent('span').addClass('labelSelected');
-    });
-    $('.fullDisplayHorizontalScale').find('input').click(function(){
-        $(this).parents('table').find('span').removeClass('labelSelected');
-        $(this).parent('span').addClass('labelSelected');
-    });
-    
+evalsys.instrumentDisplayHorizontal= function() {
+	$('.fullDisplayHorizontalColoredWrapper').each( function() {
+		$(this).find('input:checked').parent('span').addClass('labelSelected');
+	});
+	$('.fullDisplayHorizontalColoredWrapper').find('input').click( function() {
+		$(this).parents('table').find('span').removeClass('labelSelected');
+		$(this).parent('span').parent('.na').find('span').removeClass('labelSelected');
+		$(this).parent('span').addClass('labelSelected');
+	});
 };

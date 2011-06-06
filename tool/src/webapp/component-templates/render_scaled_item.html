@@ -59,7 +59,7 @@
 
 			<div rsf:id="fullType:">
 				<!-- Full, Full Colored, Vertical DISPLAY -->
-					<p>
+					<p style="padding-right:100px;">
 						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
 						<span rsf:id="itemText" style="display:inline" class="label">Full or vertical display text here</span>
 					</p>
@@ -124,15 +124,15 @@
 												<input type="radio" rsf:id="radioValue" id="full3" name="vertical" />
 											</span>
          						</td>
-								<td rsf:id="showNA:" class="na">
-         							<span style="padding:.3em .5em">
-										<label rsf:id="na-desc" for="na-input">N/A</label>
-										<input type="radio" rsf:id="na-input" name="vertical" id="na-input"/>
-									</span>	
-								</td>
-
          					</tr>
          				</table>
+   							<div rsf:id="showNA:" style="width:auto;float:right;margin-top:-65px;">
+                            	<span style="padding:.2em .5em;border:1px solid #ccc;background:transparent">
+                                	<label rsf:id="na-desc" for="fc4" style="font-weight:bold;">full colored label</label>
+                                    <input type="radio"  rsf:id="na-input" name="vertical" id="fc4" />
+                                </span>
+                           </div>
+   
          			</div>
 					<div rsf:id="fullDisplayColored:"  style="padding: 0;">
          				<!-- DIV tag for Full Colored display -->
@@ -165,15 +165,15 @@
          												<input type="radio" rsf:id="radioValue" name="vertical" id="fc3" />
 														</span>
          											</td>
-         											<td rsf:id="showNA:">
-					         							<span style="padding:.2em .5em">	
-         												<label rsf:id="na-desc" for="fc4">full colored label</label>
-         												<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" />
-														</span>
-         											</td>
-
          										</tr>
          									</table>
+											<div rsf:id="showNA:" style="width:auto;float:right;margin-top:-65px;">
+                                                    <span style="padding:.2em .5em;border:1px solid #ccc;background:#fff">	
+                                                        <label rsf:id="na-desc" for="fc4" style="font-weight:bold;">full colored label</label>
+                                                        <input type="radio"  rsf:id="na-input" name="vertical" id="fc4" />
+                                                   </span>
+                                            </div>
+
          								</div>
          							</div>
          						</td>
