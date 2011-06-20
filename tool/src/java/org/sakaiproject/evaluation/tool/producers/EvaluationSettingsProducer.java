@@ -189,7 +189,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                     // force the due and stop dates to something reasonable
                     Calendar calendar = new GregorianCalendar();
                     calendar.setTime( new Date() );
-                    calendar.add(Calendar.DATE, 1);
+                    //calendar.add(Calendar.DATE, 1); EVALSYS-1116
+                    calendar.add(Calendar.DATE, 2);
+                    calendar.add(Calendar.MINUTE, -1);
                     reOpenDueDate = calendar.getTime();
 
                     Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
