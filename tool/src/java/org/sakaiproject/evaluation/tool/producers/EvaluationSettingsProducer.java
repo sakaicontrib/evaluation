@@ -326,6 +326,10 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
             .decorate( new UILabelTargetDecorator(choice) );
         }
 
+        //EVALSYS-1117 
+        if (((Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS)).booleanValue()) {
+        	UIMessage.make(form, "resultsviewableadminnote", "evalsettings.results.viewable.admin.note");
+        }
 
         // show the view date only if allowed by system settings
         if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
