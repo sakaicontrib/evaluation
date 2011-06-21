@@ -203,15 +203,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void setTimeService(TimeService timeService) {
         this.timeService = timeService;
     }
-    
+
     protected ClusterService clusterService;
     public void setClusterService(ClusterService clusterService) {
-    	this.clusterService = clusterService;
-    }
-    
-    protected ComponentManager componentManager;
-    public void setComponentManager(ComponentManager componentManager) {
-    	this.componentManager = componentManager;
+        this.clusterService = clusterService;
     }
 
     public void init() {
@@ -257,19 +252,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         // TODO make this pull from a property or something
         return ADMIN_USER_ID;
     }
-    
+
     public List<EvalUser> getSakaiAdmins() {
-		
-    	List<String> groupsList = new ArrayList<String>(1);
-		groupsList.add("/site/!admin");
-    	Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
-    	
-    	Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(userIdSet.toArray(new String[userIdSet.size()]));
-    	List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>(sakaiAdminMap.values());
-    	
-    	return sakaiAdminList;
-    	
-	}
+
+        List<String> groupsList = new ArrayList<String>(1);
+        groupsList.add("/site/!admin");
+        Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
+
+        Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(userIdSet.toArray(new String[userIdSet.size()]));
+        List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>(sakaiAdminMap.values());
+
+        return sakaiAdminList;
+
+    }
 
     /**
      * INTERNAL METHOD<br/>
@@ -564,7 +559,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             }
         }
-        
+
         return count;
     }
 
@@ -576,44 +571,44 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         return getEvalGroups(userId, permission, false, null);
     }
-    
+
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId) {
-    	log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
+        log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
 
         return getEvalGroups(userId, permission, true, currentSiteId);
     }
-    
-	private List<EvalGroup>getEvalGroups(String userId, String permission, boolean filterSites, String currentSiteId) {
-    	List<EvalGroup> l = new ArrayList<EvalGroup>();
+
+    private List<EvalGroup>getEvalGroups(String userId, String permission, boolean filterSites, String currentSiteId) {
+        List<EvalGroup> l = new ArrayList<EvalGroup>();
 
         // get the groups from Sakai
         Set<String> authzGroupIds = 
             authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
-        
+
         Site currentSite = null;
         if ( filterSites && currentSiteId != null ){
-	        try {
-				currentSite = siteService.getSite(currentSiteId);
-			} catch (IdUnusedException e1) {
-				// invalid site Id returned
-	            throw new RuntimeException("Could not get site from siteId:" + currentSiteId);
-			}
+            try {
+                currentSite = siteService.getSite(currentSiteId);
+            } catch (IdUnusedException e1) {
+                // invalid site Id returned
+                throw new RuntimeException("Could not get site from siteId:" + currentSiteId);
+            }
         }
         long currentSiteTerm = 0l;
         boolean isCurrentSiteTermDefined = true;
         if ( currentSite != null && currentSite.getProperties() != null ){
-			try {
-				currentSiteTerm = currentSite.getProperties().getLongProperty(SITE_TERM);
-			} catch (EntityPropertyNotDefinedException e) {
-				isCurrentSiteTermDefined = false;
-			} catch (EntityPropertyTypeException e) {
-				isCurrentSiteTermDefined = false;
-			}
+            try {
+                currentSiteTerm = currentSite.getProperties().getLongProperty(SITE_TERM);
+            } catch (EntityPropertyNotDefinedException e) {
+                isCurrentSiteTermDefined = false;
+            } catch (EntityPropertyTypeException e) {
+                isCurrentSiteTermDefined = false;
+            }
         }else{
-        	isCurrentSiteTermDefined = false;
+            isCurrentSiteTermDefined = false;
         }
         Iterator<String> it = authzGroupIds.iterator();
         while (it.hasNext()) {
@@ -628,26 +623,36 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String siteId = r.getId();
                         try {
                             Site site = siteService.getSite(siteId);
-                            if (filterSites && currentSite != null && currentSite.getType() != null){
-                            	//only process sites that have the same type as the current one, if type is not stipulated simply add all sites
-                            	if ( currentSite.getType().equals(site.getType()) ){
-                            		//We only check terms if current site has term defined, otherwise just add this site to the list
-                            		if ( isCurrentSiteTermDefined && site.getProperties() !=null){
-		                                long siteTerm = 0l;
-										try {
-											siteTerm = site.getProperties().getLongProperty(SITE_TERM);
-										} catch (EntityPropertyNotDefinedException e) {} catch (EntityPropertyTypeException e) {}
-										//add this site to list only if it has the same term as the current site
-		                                if ( currentSiteTerm == siteTerm ){
-		                                	l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
-		                                }
-			                        }else{
-			                        	l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
-			                        }
+                            boolean addSite = false;
+                            if (filterSites && currentSite != null && currentSite.getType() != null) {
+                                // only process sites that have the same type as the current one, if
+                                // type is not stipulated simply add all sites
+                                if (currentSite.getType().equals(site.getType())) {
+                                    // We only check terms if current site has term defined,
+                                    // otherwise just add this site to the list
+                                    if (isCurrentSiteTermDefined && site.getProperties() != null) {
+                                        long siteTerm = 0l;
+                                        try {
+                                            siteTerm = site.getProperties().getLongProperty(SITE_TERM);
+                                        } catch (EntityPropertyNotDefinedException e) {
+                                            // IGNORE
+                                        } catch (EntityPropertyTypeException e) {
+                                            // IGNORE
+                                        }
+                                        // add this site to list only if it has the same term as the current site
+                                        if (currentSiteTerm == siteTerm) {
+                                            addSite = true;
+                                        }
+                                    } else {
+                                        addSite = true;
+                                    }
                                 }
-		                    }else{
-		                    	l.add(new EvalGroup(r.getReference(), site.getTitle(),  getContextType(r.getType())));
-                          }
+                            } else {
+                                addSite = true;
+                            }
+                            if (addSite) {
+                                l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
+                            }
                         } catch (IdUnusedException e) {
                             // invalid site Id returned
                             throw new RuntimeException("Could not get site from siteId:" + siteId);
@@ -660,8 +665,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         if (group == null) {
                             throw new RuntimeException("Could not get group from group id:" + groupId);
                         }
-                        l.add(new EvalGroup(r.getReference(), group.getTitle(), 
-                                getContextType(r.getType())));
+                        l.add(new EvalGroup(r.getReference(), group.getTitle(), getContextType(r.getType())));
                     }
                 }
             }
@@ -784,7 +788,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                     exceptionTracker += e.getMessage() + " :: ";
                     log.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
                     if (log.isDebugEnabled()) {
-                    	e.printStackTrace();
+                        e.printStackTrace();
                     }
                     continue;
                 } else {
@@ -826,32 +830,32 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public String getServerUrl() {
         return serverConfigurationService.getPortalUrl();
     }
-    
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServerId()
-	 */
-	public String getServerId() {
-		return serverConfigurationService.getServerId();
-	}
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServers()
-	 */
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServerId()
+     */
+    public String getServerId() {
+        return serverConfigurationService.getServerId();
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServers()
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<String> getServers() {
-		List<String> servers = new ArrayList<String>();
+    public List<String> getServers() {
+        List<String> servers = new ArrayList<String>();
         if(clusterService == null) {
-        	servers.add(this.getServerId());
+            servers.add(this.getServerId());
         } else {
-	        List serverIds = clusterService.getServers();
-	        if(serverIds == null || serverIds.isEmpty()) {
-	        	servers.add(this.getServerId());
-	        } else {
-	        	servers.addAll((List<String>) serverIds);
-	        }
+            List serverIds = clusterService.getServers();
+            if(serverIds == null || serverIds.isEmpty()) {
+                servers.add(this.getServerId());
+            } else {
+                servers.addAll((List<String>) serverIds);
+            }
         }
-		return servers;
-	}
+        return servers;
+    }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.io.Serializable)
@@ -1132,213 +1136,219 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return jobs;
     }
 
-    /**
-     * TODO - please document this
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
      */
     @SuppressWarnings("rawtypes")
     public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
-		
-		String jobFullName = null;
-		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
-		CronTrigger trigger = null;
-		
-		String triggerName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME);
-		String triggerGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP);
-		String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
-		String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
-		
-		String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
-		
-		try {
-			trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
-			if(log.isDebugEnabled()) {
-				log.debug("Created trigger: " + trigger.getCronExpression());
-			}
-		} catch(ParseException e) {
-			log.warn("SchedulerException in scheduleCronJob()", e);
-		}
-		
-		if(trigger != null) {
-			// create job
-			JobDataMap jobDataMap = new JobDataMap();
-			if(dataMap != null) {
-				for(String key : dataMap.keySet()) {
-					jobDataMap.put(key, dataMap.get(key));
-				}
-			}
-			
-			JobDetail jobDetail = new JobDetail();
-			jobDetail.setName(jobName);
-			jobDetail.setGroup(jobGroup);		
-			jobDetail.setJobDataMap(jobDataMap);
-			jobDetail.setJobClass(jobClass);
-			Scheduler scheduler = scheduleManager.getScheduler();
-			if(scheduler == null) {
-				log.warn("Unable to access scheduler", new Throwable());
-			} else {
-				try {
-					Date date = scheduler.scheduleJob(jobDetail, trigger);
-					if(log.isDebugEnabled()) {
-						log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
-					}
-					jobFullName =  jobDetail.getFullName();
-				} catch(SchedulerException e) {
-					log.warn("SchedulerException in scheduleCronJob()", e);
-				}
-			}
-		}
-		return jobFullName;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
-	 */
-	public String scheduleCronJob(String jobClassBeanId,
-			Map<String, String> dataMap) {
-		String fullJobName = null;
-		Object jobClass = this.componentManager.get(jobClassBeanId);
-		if(jobClass == null) {
-			throw new IllegalArgumentException(jobClassBeanId + " could not be found");
-		} else {
-			fullJobName = this.scheduleCronJob(jobClass.getClass(), dataMap);
-		}
-		return fullJobName;
-	}
 
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#getCronJobs(java.lang.String)
-	 */
-	public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
-		Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
-		SchedulerManager schedulerManager = getBean(SchedulerManager.class);
-		Scheduler scheduler = schedulerManager.getScheduler();
-		if(scheduler == null) {
-			log.warn("Unable to access scheduler", new Throwable());
-		} else {
-			try {
-				String[] jobNames = scheduler.getJobNames(jobGroup);
-				for(String jobName : jobNames) {
-					try {
-						JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
-						JobDataMap jobDataMap = job.getJobDataMap();
-						Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
-						for(Trigger trigger : triggers) {
-							Map<String, String> map = new HashMap<String, String>();
-							map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobName);
-							map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobGroup);
-							
-							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
-							map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
-							if(trigger instanceof CronTrigger) {
-								map.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
-							}
-							
-							for(String propName : (Set<String>) jobDataMap.keySet()) {
-								if(jobDataMap.containsKey(propName)) {
-									map.put(propName, jobDataMap.getString(propName));
-								}
-							}
-							
-							cronJobs.put(trigger.getFullName(), map);
-						}
-					} catch(SchedulerException e) {
-						log.warn("SchedulerException processing one trigger in getCronJobs", e);					
-					}
-				}
-			} catch(SchedulerException e) {
-				log.warn("SchedulerException processing one job in getCronJobs", e);
-			}
-		}
-		return cronJobs;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#deleteCronJob(java.lang.String, java.lang.String)
-	 */
-	public boolean deleteCronJob(String jobName, String jobGroup) {
+        String jobFullName = null;
+        SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+        CronTrigger trigger = null;
 
-		boolean success = false;
-		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
-		Scheduler scheduler = scheduleManager.getScheduler();
-		if(scheduler == null) {
-			log.warn("Unable to access scheduler", new Throwable());
-		} else {
-			try {
-				success = scheduler.deleteJob(jobName, jobGroup);
-			} catch(SchedulerException e) {
-				log.warn("SchedulerException in scheduleCronJob()", e);
-			}
-		}
-		return success;
-	}
+        String triggerName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME);
+        String triggerGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP);
+        String jobName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_NAME);
+        String jobGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_JOB_GROUP);
 
+        String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
+
+        try {
+            trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
+            if(log.isDebugEnabled()) {
+                log.debug("Created trigger: " + trigger.getCronExpression());
+            }
+        } catch(ParseException e) {
+            log.warn("SchedulerException in scheduleCronJob()", e);
+        }
+
+        if(trigger != null) {
+            // create job
+            JobDataMap jobDataMap = new JobDataMap();
+            if(dataMap != null) {
+                for(String key : dataMap.keySet()) {
+                    jobDataMap.put(key, dataMap.get(key));
+                }
+            }
+
+            JobDetail jobDetail = new JobDetail();
+            jobDetail.setName(jobName);
+            jobDetail.setGroup(jobGroup);		
+            jobDetail.setJobDataMap(jobDataMap);
+            jobDetail.setJobClass(jobClass);
+            Scheduler scheduler = scheduleManager.getScheduler();
+            if(scheduler == null) {
+                log.warn("Unable to access scheduler", new Throwable());
+            } else {
+                try {
+                    Date date = scheduler.scheduleJob(jobDetail, trigger);
+                    if(log.isDebugEnabled()) {
+                        log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
+                    }
+                    jobFullName =  jobDetail.getFullName();
+                } catch(SchedulerException e) {
+                    log.warn("SchedulerException in scheduleCronJob()", e);
+                }
+            }
+        }
+        return jobFullName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
+     */
+    public String scheduleCronJob(String jobClassBeanId,
+            Map<String, String> dataMap) {
+        String fullJobName = null;
+        Object jobClass = ComponentManager.get(jobClassBeanId);
+        if (jobClass == null) {
+            throw new IllegalArgumentException(jobClassBeanId + " could not be found");
+        } else {
+            fullJobName = this.scheduleCronJob(jobClass.getClass(), dataMap);
+        }
+        return fullJobName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#getCronJobs(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
+        Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
+        SchedulerManager schedulerManager = getBean(SchedulerManager.class);
+        Scheduler scheduler = schedulerManager.getScheduler();
+        if (scheduler == null) {
+            log.warn("Unable to access scheduler", new Throwable());
+        } else {
+            try {
+                String[] jobNames = scheduler.getJobNames(jobGroup);
+                for(String jobName : jobNames) {
+                    try {
+                        JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
+                        JobDataMap jobDataMap = job.getJobDataMap();
+                        Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
+                        for(Trigger trigger : triggers) {
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobName);
+                            map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobGroup);
+
+                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
+                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
+                            if(trigger instanceof CronTrigger) {
+                                map.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
+                            }
+
+                            for(String propName : (Set<String>) jobDataMap.keySet()) {
+                                if(jobDataMap.containsKey(propName)) {
+                                    map.put(propName, jobDataMap.getString(propName));
+                                }
+                            }
+
+                            cronJobs.put(trigger.getFullName(), map);
+                        }
+                    } catch(SchedulerException e) {
+                        log.warn("SchedulerException processing one trigger in getCronJobs", e);					
+                    }
+                }
+            } catch(SchedulerException e) {
+                log.warn("SchedulerException processing one job in getCronJobs", e);
+            }
+        }
+        return cronJobs;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#deleteCronJob(java.lang.String, java.lang.String)
+     */
+    public boolean deleteCronJob(String jobName, String jobGroup) {
+
+        boolean success = false;
+        SchedulerManager scheduleManager = getBean(SchedulerManager.class);
+        Scheduler scheduler = scheduleManager.getScheduler();
+        if(scheduler == null) {
+            log.warn("Unable to access scheduler", new Throwable());
+        } else {
+            try {
+                success = scheduler.deleteJob(jobName, jobGroup);
+            } catch(SchedulerException e) {
+                log.warn("SchedulerException in scheduleCronJob()", e);
+            }
+        }
+        return success;
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalContent#getContentCollectionId(java.lang.String)
+     */
     public String getContentCollectionId(String siteId) {
         String ret = contentHostingService.getSiteCollection(siteId);
         return ret;
     }
-    
-	public boolean isEvalGroupPublished(String evalGroupId) {
-		//unless the site is specifically flagged as unpublished, assume it is published.
-		boolean isEvalGroupPublished = true; 
-		if( evalGroupId != null){
-			try{
-				Site site = siteService.getSite(evalGroupId.replaceAll("/site/", ""));
-				isEvalGroupPublished = site.isPublished();
-			}catch(IdUnusedException e){
-				log.debug(e);
-			} 
-		}
-		return isEvalGroupPublished;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getMyWorkspaceDashboard(java.lang.String)
-	 */
-	public String getMyWorkspaceDashboard(String userId) {
-		   String url = null;
-		   try {
-			   String toolPage = null;
-			   //userId is Sakai id
-			   if(userId == null || userId.length() == 0) {
-				   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
-			   } else {
-				   String myWorkspaceId = siteService.getUserSiteId(userId);
-				   if(myWorkspaceId != null && ! myWorkspaceId.trim().equals("")) {
-					   Site myWorkspace = siteService.getSite(myWorkspaceId);
-					   if(myWorkspace != null) {
-						   // find page with eval tool
-						   List<SitePage> pages = myWorkspace.getPages();
-						   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
-							   SitePage page = i.next();
-							   List<ToolConfiguration> tools = page.getTools();
-							   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
-								   ToolConfiguration tc = j.next();
-								   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
-									   toolPage = page.getId();
-									   break;
-								   }
-							   }
-						   }
-					   }
-				   }
-				   if(toolPage != null && ! toolPage.trim().equals("")) {
-					   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
-					   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
-				   }
-				}
-		   } catch (Exception e) {
-			   log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
-		   }
-		   if(url == null) {
-			   url = getServerUrl();
-		   }
-		   return url;
-	}
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#isEvalGroupPublished(java.lang.String)
+     */
+    public boolean isEvalGroupPublished(String evalGroupId) {
+        //unless the site is specifically flagged as unpublished, assume it is published.
+        boolean isEvalGroupPublished = true; 
+        if( evalGroupId != null){
+            try{
+                Site site = siteService.getSite(evalGroupId.replaceAll("/site/", ""));
+                isEvalGroupPublished = site.isPublished();
+            }catch(IdUnusedException e){
+                log.debug(e);
+            } 
+        }
+        return isEvalGroupPublished;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getMyWorkspaceDashboard(java.lang.String)
+     */
+    public String getMyWorkspaceDashboard(String userId) {
+        String url = null;
+        try {
+            String toolPage = null;
+            //userId is Sakai id
+            if(userId == null || userId.length() == 0) {
+                log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+            } else {
+                String myWorkspaceId = siteService.getUserSiteId(userId);
+                if(myWorkspaceId != null && ! myWorkspaceId.trim().equals("")) {
+                    Site myWorkspace = siteService.getSite(myWorkspaceId);
+                    if(myWorkspace != null) {
+                        // find page with eval tool
+                        List<SitePage> pages = myWorkspace.getPages();
+                        for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
+                            SitePage page = i.next();
+                            List<ToolConfiguration> tools = page.getTools();
+                            for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
+                                ToolConfiguration tc = j.next();
+                                if (tc.getToolId().equals("sakai.rsf.evaluation")) {
+                                    toolPage = page.getId();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if(toolPage != null && ! toolPage.trim().equals("")) {
+                    // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+                    url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+        }
+        if(url == null) {
+            url = getServerUrl();
+        }
+        return url;
+    }
 
 
 }
