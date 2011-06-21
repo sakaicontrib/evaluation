@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -1729,8 +1727,11 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         return releasedLock;
     }
-    
-    @Override
+
+    /**
+     * TODO - please document this
+     */
+    @SuppressWarnings("rawtypes")
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
     	String hql = "select count(distinct groupId) from EvalEmailProcessingData";
     	Session session = getSession();
@@ -1756,8 +1757,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * 		id and a date.
      * @param page The zero-based starting page. In other words, return a page of items beginning at index 
      * 		(pageSize * page).
-     * @return 
+     * @return map of email mappings
      */
+    @SuppressWarnings("rawtypes")
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
     	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
     	
@@ -1848,15 +1850,19 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         
     	return rv;
     }
-	
-	@Override
+
+    /**
+     * TODO - please document this
+     */
 	public int resetConsolidatedEmailRecipients() {
 		String deleteHql = "delete from EvalEmailProcessingData";
 		Query query = getSession().createQuery(deleteHql);
 		return query.executeUpdate();
 	}
 	
-	@Override
+    /**
+     * TODO - please document this
+     */
 	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent, Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
     	StringBuilder queryBuf = new StringBuilder();
     	Map<String,Object> params = new HashMap<String,Object>();

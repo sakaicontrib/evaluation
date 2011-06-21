@@ -4,7 +4,6 @@
 package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,8 +14,6 @@ import org.quartz.JobExecutionException;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
-import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
@@ -37,7 +34,6 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
         this.evaluationSetupService = evaluationSetupService;
     }
 
-	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("GroupMembershipSync.execute()");
 		JobDetail jobDetail = context.getJobDetail();
