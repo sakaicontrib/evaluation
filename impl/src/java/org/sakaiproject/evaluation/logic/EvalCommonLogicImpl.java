@@ -431,7 +431,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return count;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
         log.debug("userId: " + userId + ", permission: " + permission);
 
@@ -813,26 +813,19 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return md5;
     }
 
-
-	@Override
+    @SuppressWarnings("rawtypes")
 	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 
-
-	@Override
 	public Map<String, Map<String, String>> getCronJobs(String jobGroup) {
 		return this.externalLogic.getCronJobs(jobGroup);
 	}
 
-
-	@Override
 	public boolean deleteCronJob(String jobName, String groupName) {
 		return this.externalLogic.deleteCronJob(jobName, groupName);
 	}
 
-
-	@Override
 	public String scheduleCronJob(String jobClassBeanId,
 			Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);

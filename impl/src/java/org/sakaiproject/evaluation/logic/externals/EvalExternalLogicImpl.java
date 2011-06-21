@@ -28,10 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -49,8 +49,6 @@ import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
-import org.sakaiproject.authz.api.Role;
-import org.sakaiproject.authz.api.RoleAlreadyDefinedException;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.cluster.api.ClusterService;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -74,7 +72,6 @@ import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
-//import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -86,7 +83,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -381,7 +377,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserByEmail(java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public EvalUser getEvalUserByEmail(String email) {
         EvalUser user = makeInvalidUser(null, email);
         Collection<User> sakaiUsers = userDirectoryService.findUsersByEmail(email);
@@ -553,7 +548,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public int countEvalGroupsForUser(String userId, String permission) {
         log.debug("userId: " + userId + ", permission: " + permission);
 
@@ -592,7 +586,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return getEvalGroups(userId, permission, true, currentSiteId);
     }
     
-    @SuppressWarnings("unchecked")
 	private List<EvalGroup>getEvalGroups(String userId, String permission, boolean filterSites, String currentSiteId) {
     	List<EvalGroup> l = new ArrayList<EvalGroup>();
 
@@ -690,7 +683,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
         Set<String> userIds = new HashSet<String>();
 
@@ -845,6 +837,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEntities#getServers()
 	 */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<String> getServers() {
 		List<String> servers = new ArrayList<String>();
         if(clusterService == null) {
@@ -1139,8 +1132,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return jobs;
     }
 
-	@Override
-	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+    /**
+     * TODO - please document this
+     */
+    @SuppressWarnings("rawtypes")
+    public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
 		
 		String jobFullName = null;
 		SchedulerManager scheduleManager = getBean(SchedulerManager.class);
