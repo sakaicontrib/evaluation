@@ -34,7 +34,7 @@ public class SelectedEvaluationUsersLocator implements BeanLocator {
 			EvaluationUserSelection thisSelection = localStore.get(groupId);
 			return thisSelection.orderingInstructors;
 		}
-		return null;
+		return new String[0];
 	}
 	
 
@@ -43,7 +43,7 @@ public class SelectedEvaluationUsersLocator implements BeanLocator {
 			EvaluationUserSelection thisSelection = localStore.get(groupId);
 			return thisSelection.orderingAssistants;
 		} 
-		return null;
+        return new String[0];
 	}
 	
 	public String[] getDeselectedInstructors(String groupId) {
@@ -51,7 +51,7 @@ public class SelectedEvaluationUsersLocator implements BeanLocator {
 			EvaluationUserSelection thisSelection = localStore.get(groupId);
 			return thisSelection.deselectedInstructors;
 		}
-		return null;
+        return new String[0];
 	}
 	
 
@@ -60,7 +60,7 @@ public class SelectedEvaluationUsersLocator implements BeanLocator {
 			EvaluationUserSelection thisSelection = localStore.get(groupId);
 			return thisSelection.deselectedAssistants;
 		} 
-		return null;
+        return new String[0];
 	}
 	
 	public class EvaluationUserSelection {
