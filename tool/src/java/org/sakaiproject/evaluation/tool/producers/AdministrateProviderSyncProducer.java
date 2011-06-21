@@ -62,10 +62,10 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 	
 	public static final String PROPNAME_STATE_LIST = GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST;
 	public static final String VIEW_ID = "administrate_provider_sync";
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ViewIDReporter#getViewID()
 	 */
-	@Override
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -99,7 +99,6 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
-	@Override
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		// 
