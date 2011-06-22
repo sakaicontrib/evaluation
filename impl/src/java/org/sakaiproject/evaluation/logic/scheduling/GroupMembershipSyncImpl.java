@@ -46,14 +46,48 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 
 			for(String state : stateList) {
 				List<EvalEvaluation> evals = evaluationService.getEvaluationsByState(state);
-				logger.debug("====> " + state + " evals  ==> " + evals.size());
+				if(logger.isDebugEnabled()) {
+					StringBuilder buf = new StringBuilder();
+					buf.append("====> ");
+					buf.append(state);
+					buf.append(" evals  ==> ");
+					buf.append(evals.size());
+					logger.debug(buf.toString());
+				}
 				 
 				for(EvalEvaluation eval : evals) {
 					if(this.evaluationSetupService instanceof EvalEvaluationSetupServiceImpl) {
-						logger.debug("====> " + state + "          ==> " + eval.getEid() + " using impl");
-						((EvalEvaluationSetupServiceImpl) this.evaluationSetupService).synchronizeUserAssignmentsForced(eval, null, true);
+						if(logger.isDebugEnabled()) {
+							StringBuilder buf = new StringBuilder();
+							buf.append("====> ");
+							buf.append(state);
+							buf.append("          ==> ");
+							buf.append(eval.getEid());
+							buf.append(" using impl");
+							logger.debug(buf.toString());
+						}
+						try {
+							((EvalEvaluationSetupServiceImpl) this.evaluationSetupService).synchronizeUserAssignmentsForced(eval, null, true);
+						} catch(IllegalStateException e) {
+							StringBuilder buf = new StringBuilder();
+							buf.append("Unable to user assignments for eval (");
+							buf.append(eval.getId());
+							buf.append(") due to IllegalStateException: ");
+							buf.append(e.getMessage());
+							logger.warn(buf.toString());
+							
+							// TODO: should update the state so it is not selected next time ??
+						}
 					} else {
-						logger.debug("====> " + state + "          ==> " + eval.getEid() + " using api");
+						if(logger.isDebugEnabled()) {
+							StringBuilder buf = new StringBuilder();
+							buf.append("====> ");
+							buf.append(state);
+							buf.append("          ==> ");
+							buf.append(eval.getEid());
+							buf.append(" using api");
+							logger.debug(buf.toString());
+						}
 						this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
 					}
 				}
