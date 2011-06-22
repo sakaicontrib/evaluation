@@ -72,7 +72,23 @@ public interface ExternalScheduler {
 	*/
    public String scheduleCronJob(Class jobClass, Map<String, String> dataMap);
 
-
+   /**
+    * Create and schedule a job using cron-job syntax for the timing of execution(s) of the job. 
+    * The job to be executed is defined by the jobClassBeanId parameter along with any data included
+    * in the dataMap parameter. A String representing a valid cron expression must be included 
+    * in the dataMap with the key given by EvalConstants.CRON_SCEDULER_CRON_EXPRESSION.  Also, 
+    * values for jobName, jobGroup, triggerName and triggerGroup must be included in the dataMap 
+    * with keys of EvalConstants.CRON_SCHEDULER_JOB_GROUP, EvalConstants.CRON_SCHEDULER_JOB_NAME, 
+    * EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, and EvalConstants.CRON_SCHEDULER_TRIGGER_NAME,
+    * respectively.  Those key-value pairs will be removed from the dataMap, and all other 
+    * key-value pairs in the dataMap will be provided to an instance of the jobClass each time 
+    * the cron job is executed. 
+    * @param jobClassBeanId The full bean id to locate class which is to be executed when the cron job is executed.
+	* @param dataMap The data to be provided to an instance of the jobClass whenever it 
+	* 	executes, as well as key-value pairs as described above.
+	* @return A string giving the full name of the scheduled job, or null if an error occurred 
+	* 	while attempting to schedule the job.
+    */
    public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap);
    
    /**

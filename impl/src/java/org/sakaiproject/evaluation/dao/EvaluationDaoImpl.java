@@ -1728,8 +1728,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         return releasedLock;
     }
 
-    /**
-     * TODO - please document this
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#countDistinctGroupsInConsolidatedEmailMapping()
      */
     @SuppressWarnings("rawtypes")
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
@@ -1851,8 +1852,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	return rv;
     }
 
-    /**
-     * TODO - please document this
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#resetConsolidatedEmailRecipients()
      */
 	public int resetConsolidatedEmailRecipients() {
 		String deleteHql = "delete from EvalEmailProcessingData";
@@ -1860,8 +1862,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 		return query.executeUpdate();
 	}
 	
-    /**
-     * TODO - please document this
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectConsolidatedEmailRecipients(boolean, java.util.Date, boolean, java.util.Date, java.lang.String)
      */
 	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent, Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
     	StringBuilder queryBuf = new StringBuilder();

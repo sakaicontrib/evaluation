@@ -672,22 +672,28 @@ public interface EvalEvaluationService {
 	public List<Map<String, Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
 
 	/**
-	 * 
-	 * @param useAvailableEmailSent
-	 * @param availableEmailSent
-	 * @param useReminderEmailSent
-	 * @param reminderEmailSent
-	 * @param emailTemplateType
+	 * Retrieve the email processing queue by adding one record for each evalAssignUser record 
+	 * matching the search criteria.  Search criteria are determined based on the values of 
+	 * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
+	 * EvalEmailTemplate.emailTemplateType.   
+	 * @param useAvailableEmailSent Should be true if the availableEmailSent date should be used in selecting records.
+	 * @param availableEmailSent The date to use if querying by availableEmailSent.
+	 * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
+	 * @param reminderEmailSent The date to use if querying by reminderEmailSent.
+	 * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
 	 * @return
 	 */
 	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
 	
+	/**
+	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
+	 * @return
+	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping();
 	
 	/**
-	 * 
-	 * @return
+	 * Remove all records from the the email processing queue and report the number of items removed.
 	 */
 	public int resetConsolidatedEmailRecipients();
 
