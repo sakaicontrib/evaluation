@@ -386,12 +386,15 @@
 
 	create index ASSIGN_USER_EVALUATION_FKC on EVAL_ASSIGN_USER (EVALUATION_FK);
 	create unique index ASSIGN_USER_MUL_IDX on EVAL_ASSIGN_USER (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK);
+	create index ASSIGN_USER_AES_IDX on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
+	create index ASSIGN_USER_RES_IDX on EVAL_ASSIGN_USER (REMINDER_EMAIL_SENT);
 	
 	alter table EVAL_ASSIGN_USER  
 		add constraint ASSIGN_USER_EVALUATION_FKC 
 		foreign key (EVALUATION_FK) 
 		references eval_evaluation (ID);
-	    create index eval_config_name on EVAL_CONFIG (NAME);
+	
+	create index eval_config_name on EVAL_CONFIG (NAME);
 
     create index eval_templ_type on EVAL_EMAIL_TEMPLATE (TEMPLATE_TYPE);
 

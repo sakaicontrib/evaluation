@@ -12,7 +12,7 @@ create table EVAL_ASSIGN_USER (
 	ASSIGN_GROUP_ID bigint not null,
 	EVALUATION_FK bigint not null,
 	primary key (ID),
-	unique key USER_ID (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK),
+	unique key ASSIGN_USER_MUL_IDX (USER_ID,GROUP_ID,ASSIGN_TYPE,EVALUATION_FK),
   	key ASSIGN_USER_EVALUATION_FKC (EVALUATION_FK),
   	constraint ASSIGN_USER_EVALUATION_FKC foreign key (EVALUATION_FK) references eval_evaluation (ID)
 );
