@@ -23,7 +23,9 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 
 /**
- * 
+ * ConsolidatedNotificationsJobImpl is the default mechanism for sending consolidated 
+ * notifications about evaluations. It is invoked by a chron job if enabled and scheduled 
+ * through the admin's "Control Email Settings" page in sakai.
  */
 public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificationsJob {
 	
@@ -81,6 +83,8 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		Date beginTime = new Date();
 	
 		String jobId = this.jobStatusReporter.reportStarted("Email");
+		String serverId = this.externalLogic.getServerId();
+		this.jobStatusReporter.reportProgress(jobId, "server-id", serverId);
 		
 		Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 		if(sendAvailableEmails == null) {

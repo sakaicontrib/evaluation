@@ -813,19 +813,35 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return md5;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
+     */
     @SuppressWarnings("rawtypes")
 	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 
-	public Map<String, Map<String, String>> getCronJobs(String jobGroup) {
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#getCronJobs(java.lang.String)
+	 */
+    public Map<String, Map<String, String>> getCronJobs(String jobGroup) {
 		return this.externalLogic.getCronJobs(jobGroup);
 	}
 
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#deleteCronJob(java.lang.String, java.lang.String)
+     */
 	public boolean deleteCronJob(String jobName, String groupName) {
 		return this.externalLogic.deleteCronJob(jobName, groupName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
+	 */
 	public String scheduleCronJob(String jobClassBeanId,
 			Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);

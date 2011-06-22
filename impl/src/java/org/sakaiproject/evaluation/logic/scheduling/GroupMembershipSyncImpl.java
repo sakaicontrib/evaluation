@@ -34,6 +34,10 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
         this.evaluationSetupService = evaluationSetupService;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
+     */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("GroupMembershipSync.execute()");
 		JobDetail jobDetail = context.getJobDetail();
