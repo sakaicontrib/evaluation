@@ -419,7 +419,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
         Boolean allowEmailOpenNotification = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
         if (allowEmailOpenNotification){
 	        boolean toggleSendMail = evaluation.getSendAvailableNotifications() == null ? Boolean.TRUE : evaluation.getSendAvailableNotifications();
-	        UIBoundBoolean sendOpeningEmail = UIBoundBoolean.make(form, "enable-mass-email", evaluationOTP + "emailOpenNotification", toggleSendMail);
+	        UIBoundBoolean sendOpeningEmail = UIBoundBoolean.make(form, "enable-mass-email", evaluationOTP + "sendAvailableNotifications", toggleSendMail);
 	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
 	            RSFUtils.disableComponent(sendOpeningEmail);
 	        }
