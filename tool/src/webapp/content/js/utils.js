@@ -23,10 +23,17 @@ evalsys.instrumentBlockItem = function(){
 	     $('#toolTip').text(text);
 	        var width = $('#toolTip').width();
 	        var pos = $(this).parents('.answerCell').find('.NACell').position();
+                var reposition = 1;
+ 
+                if($("div#startPreviewItems").length !== 0){
+                  reposition += $("div#startPreviewItems").position().top;
+                  reposition  += 30; //adjust a little
+                };
+
 	        $(this).find('input').attr('title', '');
 	
 	        $('#toolTip').css({
-	            'top': pos.top + 1,
+	            'top': pos.top + reposition,
 	            'left': pos.left - width - 25
 	        });
 	       $('#toolTip').show();
