@@ -428,7 +428,9 @@ td.fullDisplayHorizontalColoredWrapper {
 	background: transparent url(../images/table_go.png) center left no-repeat
 }
 .emailItem{
-    padding-left: 2em;
+    margin-left: 2em;
+    display: block;
+    height: 15px;
     background: transparent url(../images/email-send.png) center left no-repeat
 }
 /*see block items*/
