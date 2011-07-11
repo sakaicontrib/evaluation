@@ -67,8 +67,6 @@ public class NavBarRenderer {
         }
         
         renderLink(joint, SummaryProducer.VIEW_ID, "summary.page.title");
-
-
         
         if(adminAllowedToSee || showMyToplinks) {
         	
@@ -80,8 +78,8 @@ public class NavBarRenderer {
         		renderLink(joint, ControlTemplatesProducer.VIEW_ID, "controltemplates.page.title");
         		if (adminAllowedToSee || ! hideQuestionBank) {
         			renderLink(joint, ControlItemsProducer.VIEW_ID, "controlitems.page.title");
-        			renderLink(joint, ControlScalesProducer.VIEW_ID, "controlscales.page.title");
         		}
+        		renderLink(joint, ControlScalesProducer.VIEW_ID, "controlscales.page.title");
         	}
 
         	if (adminAllowedToSee || canBeginEvaluation) {
