@@ -39,6 +39,21 @@
       <dispatcher>FORWARD</dispatcher>
       <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
+  
+  <filter>
+      <filter-name>MyServletFilter</filter-name>
+      <filter-class>org.sakaiproject.evaluation.tool.utils.EvalServletFilter</filter-class>
+   </filter>
+
+   <!-- Define filter mappings for the defined filters -->
+   <filter-mapping>
+      <filter-name>MyServletFilter</filter-name>
+      <servlet-name>sakai.rsf.evaluation</servlet-name>
+      <dispatcher>REQUEST</dispatcher>
+      <dispatcher>FORWARD</dispatcher>
+      <dispatcher>INCLUDE</dispatcher>
+   </filter-mapping>
+  
       
   <listener>
     <listener-class>org.sakaiproject.util.ToolListener</listener-class>
