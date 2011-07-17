@@ -38,7 +38,7 @@ public class EvalReportsEntityProviderImpl implements EvalReportsEntityProvider,
         Long evaluationId;
         try {
             evaluationId = new Long(id);
-            if (evaluationService.canViewEvaluation(null, evaluationId)) {
+            if (evaluationService.checkEvaluationExists(evaluationId)) {
                 return true;
             }
         } catch (NumberFormatException e) {
