@@ -147,6 +147,10 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         if (groupIds != null && groupIds.length == 0) {
             canViewResponses = false;
         }
+        // Don't allow access to deleted evaluations.
+        else if (EvalConstants.EVALUATION_STATE_DELETED.equals(evaluation.getState())) {
+        	canViewResponses = false;
+        }
         // 1) Is this user an admin or evaluation owner
         // 2) Is this user the evaluation owner?
         else if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
