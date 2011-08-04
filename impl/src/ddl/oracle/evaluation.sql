@@ -114,7 +114,10 @@
 		primary key (ID)
 	);
 
-    create table EVAL_EMAIL_TEMPLATE (
+	create index EVAL_EPQ_USER_ID_IDX on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID); 
+	create index EVAL_EPQ_TEMPLATE_ID_IDX on EVAL_EMAIL_PROCESSING_QUEUE (EMAIL_TEMPLATE_ID); 
+
+	create table EVAL_EMAIL_TEMPLATE (
         ID number(19,0) not null,
         LAST_MODIFIED date not null,
         OWNER varchar2(255) not null,

@@ -1764,19 +1764,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
     	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
     	
-    	log.info("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
-    	String column = null;
-        StringBuilder updateBuf = null;
-    	updateBuf = new StringBuilder();
-    	updateBuf.append("update EvalAssignUser ");
-    	if(sendingAvailableEmails) {
-    		updateBuf.append("set availableEmailSent = :availableEmailSent ");
-    		column = "availableEmailSent";
-    	} else {
-    		updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
-    		column = "reminderEmailSent";
+    	if(log.isDebugEnabled()) {
+    		log.debug("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
     	}
-    	updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId in (:userIdList))");
     	
     	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
     	
@@ -1817,17 +1807,8 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
     		if(templateId.longValue() != previousTemplateId.longValue() || userIdList.size() > MAX_UPDATE_SIZE) {
     			// mark eval_assign_user records as sent 
-	    		try {
-	    			Query updateQuery = session.createQuery(updateBuf.toString());
-	    			updateQuery.setDate(column, new Date());
-	    			updateQuery.setParameterList("userIdList", userIdList);
-	    			updateQuery.setLong("emailTemplateId", templateId);
-	    			updateQuery.executeUpdate();
-	    			log.info("         --> marked entries for users: " + userIdList);
-	    		} catch (HibernateException e) {
-	    			log.warn("Error trying to update evalAssignUser." + column, e);
-    	}
-	    		userIdList.clear();
+    	    	markRecordsAsSent(session, sendingAvailableEmails, templateId,
+						userIdList);
     		}
     		userIdList.add(userId);
     		//updates.add((Long) row[0]);
@@ -1836,21 +1817,53 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 			log.info("Can't mark EvalAssignUser records due to null values: userId == " + userIdList + "   templateId == " + templateId);
     	} else {
 			// mark eval_assign_user records as sent 
-    		try {
-    			Query updateQuery = session.createQuery(updateBuf.toString());
-    			updateQuery.setDate(column, new Date());
-    			updateQuery.setParameterList("userIdList", userIdList);
-    			updateQuery.setLong("emailTemplateId", templateId);
-    			updateQuery.executeUpdate();
-    			log.info("         --> marked entries for users: " + userIdList);
-    		} catch (HibernateException e) {
-    			log.warn("Error trying to update evalAssignUser." + column, e);
-    		}
+	    	markRecordsAsSent(session, sendingAvailableEmails, templateId,
+					userIdList);
 
     	}
         
     	return rv;
     }
+
+	/**
+	 * 
+	 * @param session
+	 * @param sendingAvailableEmails
+	 * @param templateId
+	 * @param userIdList
+	 */
+	protected void markRecordsAsSent(Session session,
+			boolean sendingAvailableEmails, Long templateId,
+			List<String> userIdList) {
+		String column = null;
+		StringBuilder updateBuf = null;
+		updateBuf = new StringBuilder();
+		updateBuf.append("update EvalAssignUser ");
+		if(sendingAvailableEmails) {
+			updateBuf.append("set availableEmailSent = :availableEmailSent ");
+			column = "availableEmailSent";
+		} else {
+			updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
+			column = "reminderEmailSent";
+		}
+		updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId = :userId)");
+
+		for(String userId : userIdList) {
+			try {
+				Query updateQuery = session.createQuery(updateBuf.toString());
+				updateQuery.setDate(column, new Date());
+				updateQuery.setString("userId", userId);
+				updateQuery.setLong("emailTemplateId", templateId);
+				updateQuery.executeUpdate();
+			} catch (HibernateException e) {
+				log.warn("Error trying to update evalAssignUser. " + userId, e);
+			}
+		}
+		if(log.isDebugEnabled()) {
+			log.debug("         --> marked entries for users: " + userIdList);
+		}
+		userIdList.clear();
+	}
 
     /*
      * (non-Javadoc)
