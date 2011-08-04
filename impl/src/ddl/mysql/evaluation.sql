@@ -111,6 +111,8 @@
 		primary key (ID)
 	);
 
+	create index EVAL_EPQ_USER_ID_IDX on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID); 
+	create index EVAL_EPQ_TEMPLATE_ID_IDX on EVAL_EMAIL_PROCESSING_QUEUE (EMAIL_TEMPLATE_ID); 
 
     create table EVAL_EMAIL_TEMPLATE (
         ID bigint not null auto_increment,
