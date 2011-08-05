@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -1835,26 +1836,45 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	protected void markRecordsAsSent(Session session,
 			boolean sendingAvailableEmails, Long templateId,
 			List<String> userIdList) {
-		String column = null;
-		StringBuilder updateBuf = null;
-		updateBuf = new StringBuilder();
-		updateBuf.append("update EvalAssignUser ");
-		if(sendingAvailableEmails) {
-			updateBuf.append("set availableEmailSent = :availableEmailSent ");
-			column = "availableEmailSent";
-		} else {
-			updateBuf.append("set reminderEmailSent = :reminderEmailSent ");
-			column = "reminderEmailSent";
-		}
-		updateBuf.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId = :userId)");
 
+		Query updateQuery = null;
+		if("mysql".equalsIgnoreCase(this.getDialect())) {
+			// update EVAL_ASSIGN_USER eau, EVAL_EMAIL_PROCESSING_QUEUE epq 
+			// set eau.AVAILABLE_EMAIL_SENT=:dateSent where eau.id = epq.EAU_ID 
+			// and epq.USER_ID=:userId and epq.EMAIL_TEMPLATE_ID=:templateId;
+			StringBuilder sqlBuffer = new StringBuilder();
+			sqlBuffer.append("update EVAL_ASSIGN_USER eau, EVAL_EMAIL_PROCESSING_QUEUE epq ");
+			if(sendingAvailableEmails) {
+				sqlBuffer.append("set eau.AVAILABLE_EMAIL_SENT=:dateSent ");
+			} else {
+				sqlBuffer.append("set eau.REMINDER_EMAIL_SENT=:dateSent ");
+			}
+			sqlBuffer.append("where eau.id = epq.EAU_ID and epq.USER_ID=:userId and epq.EMAIL_TEMPLATE_ID=:templateId");
+			
+			updateQuery = session.createSQLQuery(sqlBuffer.toString());
+			
+		} else {
+			StringBuilder hqlBuffer = new StringBuilder();
+			hqlBuffer.append("update EvalAssignUser ");
+			if(sendingAvailableEmails) {
+				hqlBuffer.append("set availableEmailSent = :dateSent ");
+			} else {
+				hqlBuffer.append("set reminderEmailSent = :dateSent ");
+			}
+			hqlBuffer.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId = :userId)");
+			
+			updateQuery = session.createQuery(hqlBuffer.toString());
+		}
+		
+		updateQuery.setDate("dateSent", new Date());
+		updateQuery.setLong("emailTemplateId", templateId);
+		
 		for(String userId : userIdList) {
 			try {
-				Query updateQuery = session.createQuery(updateBuf.toString());
-				updateQuery.setDate(column, new Date());
+				
 				updateQuery.setString("userId", userId);
-				updateQuery.setLong("emailTemplateId", templateId);
 				updateQuery.executeUpdate();
+				
 			} catch (HibernateException e) {
 				log.warn("Error trying to update evalAssignUser. " + userId, e);
 			}
@@ -1965,5 +1985,25 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         }
     }
 
-
+    protected String getDialect() {
+    	String dialect = "default";
+    	Properties properties = org.hibernate.cfg.Environment.getProperties();
+    	String dialectName = properties.getProperty("hibernate.dialect","org.hibernate.dialect.HSQLDialect");
+    	if(dialectName.startsWith("org.hibernate.dialect.MySQL")) {
+    		dialect = "mysql";
+    	} else if(dialectName.startsWith("org.hibernate.dialect.Oracle")) {
+    		dialect = "oracle";
+    	} else if("org.hibernate.dialect.HSQLDialect".equals(dialectName)) {
+    		dialect = "hsqldb";
+    	} else if(dialectName.startsWith("org.hibernate.dialect.DB2")) {
+    		dialect = "db2";
+    	} else if(dialectName.startsWith("org.hibernate.dialect.Derby")) {
+    		dialect = "derby";
+    	} else if(dialectName.startsWith("org.hibernate.dialect.SQLServer")) {
+    		dialect = "mssql";
+    	} else if(dialectName.startsWith("org.hibernate.dialect.PostgreSQL")) {
+    		dialect = "postgres";
+    	}
+    	return dialect;
+    }
 }
