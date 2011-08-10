@@ -1350,5 +1350,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return url;
     }
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getDatabaseVendor()
+	 */
+	public String getDatabaseVendor() {
+		
+		String vendor = null;
+		org.sakaiproject.db.api.SqlService sqlService = (org.sakaiproject.db.api.SqlService) this.getBean(org.sakaiproject.db.api.SqlService.class);
+		if(sqlService != null) {
+			vendor = sqlService.getVendor();
+		}
+		return vendor;
+	}
+
 
 }
