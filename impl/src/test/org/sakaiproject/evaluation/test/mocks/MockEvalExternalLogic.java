@@ -617,6 +617,14 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return null;
     }
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getDatabaseVendor()
+	 */
+	public String getDatabaseVendor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 
 
