@@ -1837,8 +1837,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 			boolean sendingAvailableEmails, Long templateId,
 			List<String> userIdList) {
 
+		
 		Query updateQuery = null;
-		if("mysql".equalsIgnoreCase(this.getDialect())) {
+		String dialect = this.getDialect();
+		if(log.isDebugEnabled()) {
+			log.debug("markRecordsAsSent() dialect == " + dialect); 
+		}
+		if("mysql".equalsIgnoreCase(dialect)) {
 			// update EVAL_ASSIGN_USER eau, EVAL_EMAIL_PROCESSING_QUEUE epq 
 			// set eau.AVAILABLE_EMAIL_SENT=:dateSent where eau.id = epq.EAU_ID 
 			// and epq.USER_ID=:userId and epq.EMAIL_TEMPLATE_ID=:templateId;
@@ -1849,7 +1854,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 			} else {
 				sqlBuffer.append("set eau.REMINDER_EMAIL_SENT=:dateSent ");
 			}
-			sqlBuffer.append("where eau.id = epq.EAU_ID and epq.USER_ID=:userId and epq.EMAIL_TEMPLATE_ID=:templateId");
+			sqlBuffer.append("where eau.id = epq.EAU_ID and epq.USER_ID=:userId and epq.EMAIL_TEMPLATE_ID=:emailTemplateId");
 			
 			updateQuery = session.createSQLQuery(sqlBuffer.toString());
 			
@@ -1941,15 +1946,6 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     			params.put("reminderEmailSent", reminderEmailSent);
     		}
     	}
-   	
-    	queryBuf.append(" order by user.userId");
-    	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
-    		queryBuf.append(",eval.availableEmailTemplate.id");
-    	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
-    		queryBuf.append(",eval.reminderEmailTemplate.id");
-    	}
-    	
-    	queryBuf.append(",eval.dueDate");
 		
     	Query query = getSession().createQuery(queryBuf.toString());
     	
@@ -1988,8 +1984,30 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     protected String getDialect() {
     	String dialect = "default";
     	Properties properties = org.hibernate.cfg.Environment.getProperties();
-    	String dialectName = properties.getProperty("hibernate.dialect","org.hibernate.dialect.HSQLDialect");
-    	if(dialectName.startsWith("org.hibernate.dialect.MySQL")) {
+    	String dialectName = properties.getProperty("hibernate.dialect");
+    	if(dialectName == null) {
+    		dialectName = properties.getProperty("dialect");
+    	}
+    	if(dialectName == null) {
+    		StringBuilder buf = new StringBuilder("getDialect() properties: \n");
+    		for(String name : properties.stringPropertyNames()) {
+    			buf.append("     ");
+    			buf.append(name);
+    			buf.append(" --> ");
+    			buf.append(properties.getProperty(name));
+    			buf.append("\n");
+    		}
+    		log.debug(buf);
+    	}
+    	if(dialectName == null) {
+    		
+    	}
+    	
+    	if(log.isDebugEnabled()) {
+    		log.info("getDialect() dialectName == " + dialectName);
+    	}
+    	
+    	if(dialectName == null || dialectName.startsWith("org.hibernate.dialect.MySQL")) {
     		dialect = "mysql";
     	} else if(dialectName.startsWith("org.hibernate.dialect.Oracle")) {
     		dialect = "oracle";
@@ -2003,6 +2021,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		dialect = "mssql";
     	} else if(dialectName.startsWith("org.hibernate.dialect.PostgreSQL")) {
     		dialect = "postgres";
+    	}
+    	if(log.isDebugEnabled()) {
+    		log.info("getDialect() dialect == " + dialect);
     	}
     	return dialect;
     }
