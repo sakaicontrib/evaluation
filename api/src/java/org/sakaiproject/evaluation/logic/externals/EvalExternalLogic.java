@@ -105,6 +105,4 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
    
-   public String getDatabaseVendor();
-
 }
