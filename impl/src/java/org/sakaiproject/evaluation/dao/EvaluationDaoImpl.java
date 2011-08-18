@@ -1869,6 +1869,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 		if(log.isDebugEnabled()) {
 			log.debug("         --> marked entries for users: " + userIdList);
 		}
+		session.flush();
 		userIdList.clear();
 	}
 
