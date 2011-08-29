@@ -145,14 +145,18 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         String evalState = evaluationService.returnAndFixEvalState(eval, true);
         Date now = new Date();
 
-        // dispatch to send email and/or schedule jobs based on jobType
-        if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
+		Boolean useConsolidatedNotifications = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+
+        // dispatch to send email and/or schedule jobs based on jobType but if 
+		// consolidated emails are enabled, no scheduled emails are not enabled
+		if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
             // if opt-in, opt-out, or questions addable, notify instructors
             sendCreatedEmail(evaluationId);
 
         } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
             // Consider flag wrt sending a mass email notifying users of opening. Send mail if flag is not set.
-            boolean sendMail = ( eval.getSendAvailableNotifications() == null ? true : eval.getSendAvailableNotifications() );
+            boolean sendMail = ( eval.getSendAvailableNotifications() == null ? true : eval.getSendAvailableNotifications() ) 
+            				&& ! useConsolidatedNotifications;
             if (sendMail){
                 sendAvailableEmail(evaluationId);
             }
@@ -161,11 +165,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                 scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
             }
             int reminderDays = eval.getReminderDaysInt();
-            if (reminderDays != 0) {
+            if (reminderDays != 0 && ! useConsolidatedNotifications) {
                 scheduleReminder(eval.getId());
             }
 
-        } else if (EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
+        } else if (EvalConstants.JOB_TYPE_REMINDER.equals(jobType) && ! useConsolidatedNotifications) {
+        	
             int reminderDays = eval.getReminderDaysInt();
             if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                     && reminderDays != 0) {
@@ -237,7 +242,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     // PRIVATE METHODS
 
 
-    /**
+	/**
      * @param evaluationId
      * @return
      */
