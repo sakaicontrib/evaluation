@@ -161,6 +161,7 @@
         AUTO_USE_TAG varchar2(255),
         AUTO_USE_INSERTION varchar2(255),
         LOCAL_SELECTOR varchar2(255 char),
+        AVAILABLE_EMAIL_SENT NUMBER(1,0),
         primary key (ID)
     );
 

@@ -130,6 +130,7 @@
         AUTO_USE_TAG varchar(255),
         AUTO_USE_INSERTION varchar(255),
         LOCAL_SELECTOR varchar(255),
+        AVAILABLE_EMAIL_SENT bit, 
         primary key (ID)
     );
 
