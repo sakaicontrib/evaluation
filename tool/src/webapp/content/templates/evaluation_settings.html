@@ -152,11 +152,11 @@
                     </div>
 					<table class="listHier" border="0" cellspacing="0" cellpadding="0" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
 						<tr rsf:id="showResultsToStudents:" id="showResultsToStudents">
-							<td width="50%" class="checkbox">
+							<td width="33%" class="checkbox">
 								<input rsf:id="studentViewResults" type="checkbox" name="student_view_results" id="studentViewResults" />
 								<label rsf:id="studentViewResults_label"for="studentViewResults">Students in the courses this evaluation is assigned to</label>
 							</td>
-							<td width="50%" class="shorttext">
+							<td width="33%" class="shorttext">
 								<span rsf:id="studentsViewDate_label">Results viewable on "View Date"</span>
 								<span rsf:id="studentsViewDate:">
 									<input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
@@ -165,11 +165,15 @@
 							</td>
 						</tr>
 						<tr rsf:id="showResultsToInst:" id="showResultsToInst">
-							<td width="50%" class="checkbox">
+							<td class="checkbox">
 								<input rsf:id="instructorViewResults" type="checkbox" name="instructor_view_results" id="instructorViewResults" />
 								<label rsf:id="instructorViewResults_label" for="instructorViewResults">Instructors in the courses this evaluation is assigned to</label>
 							</td>
-							<td width="50%" class="shorttext">
+							<td class="checkbox">
+								<input rsf:id="instructorViewAllResults" type="checkbox" name="instructor_view_all_results" id="instructorViewAllResults" />
+								<label rsf:id="instructorViewAllResults_label" for="instructorViewAllResults">Instructors can view responses to questions about other instructors.</label>
+							</td>
+							<td class="shorttext">
 								<span rsf:id="instructorsViewDate_label">Results viewable on "View Date"</span>
 								<span rsf:id="instructorsViewDate:" >
 									<input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>

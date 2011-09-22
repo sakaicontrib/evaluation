@@ -56,6 +56,7 @@
         group_type varchar(255) not null,
         INSTRUCTOR_APPROVAL tinyint not null,
         INSTRUCTORS_VIEW_RESULTS tinyint not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS tinyint not null,
         STUDENTS_VIEW_RESULTS tinyint not null,
         EVALUATION_FK numeric(19,0) not null,
         NODE_ID varchar(255) null,
@@ -69,6 +70,7 @@
         NODE_ID varchar(255) not null,
         INSTRUCTOR_APPROVAL tinyint not null,
         INSTRUCTORS_VIEW_RESULTS tinyint not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS tinyint not null,
         STUDENTS_VIEW_RESULTS tinyint not null,
         EVALUATION_FK numeric(19,0) not null,
         primary key (ID)
@@ -107,6 +109,7 @@
         VIEW_DATE datetime null,
         STUDENT_VIEW_RESULTS tinyint null,
         INSTRUCTOR_VIEW_RESULTS tinyint null,
+        INSTRUCTOR_VIEW_ALL_RESULTS tinyint null,
         STUDENTS_DATE datetime null,
         INSTRUCTORS_DATE datetime null,
         STATE varchar(255) not null,

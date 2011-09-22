@@ -79,6 +79,8 @@ public class EvalEvaluation implements java.io.Serializable {
      * {@link #instructorsDate} to be nulled out out when the evaluation is saved if set to false
      */
     private boolean instructorViewResults;
+    
+    private Boolean instructorViewAllResults;
 
     /**
      * An encoded string which indicates the stored selection settings for this evaluation,
@@ -280,10 +282,7 @@ public class EvalEvaluation implements java.io.Serializable {
             Integer reminderDays, EvalTemplate template) {
         this(type, owner, title, null, startDate, dueDate, stopDate, viewDate, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null);
     }
-
-    /**
-     * full constructor without email flag
-     */
+    
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
             Date studentsDate, boolean instructorViewResults, Date instructorsDate, String state,
@@ -294,7 +293,26 @@ public class EvalEvaluation implements java.io.Serializable {
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
             String authControl, String evalCategory, String selectionSettings) {
     	
-    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorsDate, state,
+    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, Boolean.TRUE, instructorsDate, state,
+                resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
+                authControl, evalCategory, selectionSettings, Boolean.TRUE);
+    }
+
+    /**
+     * full constructor without email flag
+     */
+    public EvalEvaluation(String type, String owner, String title, String instructions,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
+            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
+            String resultsSharing, String instructorOpt, Integer reminderDays,
+            String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
+            EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed,
+            Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
+            String authControl, String evalCategory, String selectionSettings) {
+    	
+    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
                 authControl, evalCategory, selectionSettings, Boolean.TRUE);
@@ -305,7 +323,7 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
-            Date studentsDate, boolean instructorViewResults, Date instructorsDate, String state,
+            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
             String resultsSharing, String instructorOpt, Integer reminderDays,
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
@@ -325,6 +343,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.studentViewResults = studentViewResults;
         this.studentsDate = studentsDate;
         this.instructorViewResults = instructorViewResults;
+        this.instructorViewAllResults = instructorViewAllResults;
         this.instructorsDate = instructorsDate;
         this.state = state;
         this.instructorOpt = instructorOpt;
@@ -784,6 +803,14 @@ public class EvalEvaluation implements java.io.Serializable {
 
     public void setInstructorViewResults(boolean instructorViewResults) {
         this.instructorViewResults = instructorViewResults;
+    }
+    
+    public Boolean getInstructorViewAllResults() {
+        return instructorViewAllResults;
+    }
+    
+    public void setInstructorViewAllResults(Boolean instructorViewAllResults) {
+        this.instructorViewAllResults = instructorViewAllResults;
     }
 
     public String getSelectionSettings() {

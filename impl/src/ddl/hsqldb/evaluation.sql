@@ -58,6 +58,7 @@
         group_type varchar(255) not null,
         INSTRUCTOR_APPROVAL bit not null,
         INSTRUCTORS_VIEW_RESULTS bit not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bit not null,
         STUDENTS_VIEW_RESULTS bit not null,
         EVALUATION_FK bigint not null,
         NODE_ID varchar(255),
@@ -71,6 +72,7 @@
         NODE_ID varchar(255) not null,
         INSTRUCTOR_APPROVAL bit not null,
         INSTRUCTORS_VIEW_RESULTS bit not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bit not null,
         STUDENTS_VIEW_RESULTS bit not null,
         EVALUATION_FK bigint not null,
         primary key (ID)
@@ -110,6 +112,7 @@
         VIEW_DATE timestamp,
         STUDENT_VIEW_RESULTS bit,
         INSTRUCTOR_VIEW_RESULTS bit,
+        INSTRUCTOR_VIEW_ALL_RESULTS bit,
         STUDENTS_DATE timestamp,
         INSTRUCTORS_DATE timestamp,
         STATE varchar(255) not null,

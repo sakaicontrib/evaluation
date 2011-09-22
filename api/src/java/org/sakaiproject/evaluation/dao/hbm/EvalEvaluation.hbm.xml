@@ -55,6 +55,9 @@
         <property name="instructorViewResults" type="java.lang.Boolean">
             <column name="INSTRUCTOR_VIEW_RESULTS" not-null="false" />
         </property>
+        <property name="instructorViewAllResults" type="java.lang.Boolean">
+            <column name="INSTRUCTOR_VIEW_ALL_RESULTS" not-null="false" default="null" />
+        </property>
         <!-- date at which results are visible to students (override viewDate) -->
         <property name="studentsDate" type="java.util.Date">
             <column name="STUDENTS_DATE" not-null="false" />

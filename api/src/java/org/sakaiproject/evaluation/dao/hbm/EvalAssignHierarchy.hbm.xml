@@ -28,6 +28,9 @@
         <property name="instructorsViewResults" type="java.lang.Boolean">
             <column name="INSTRUCTORS_VIEW_RESULTS" not-null="true" />
         </property>
+        <property name="instructorsViewAllResults" type="java.lang.Boolean">
+            <column name="INSTRUCTORS_VIEW_ALL_RESULTS" not-null="false"  />
+        </property>
         <!-- can students view the results for this group (this setting will be inherited by all groups under this node) -->
         <property name="studentsViewResults" type="java.lang.Boolean">
             <column name="STUDENTS_VIEW_RESULTS" not-null="true" />
