@@ -85,6 +85,10 @@ public class XLSReportExporter implements ReportExporter {
          * DTIs 7) check answersmap for an answer, if there put in cell, if missing, insert blank 8)
          * done
          */
+         
+         Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+         String currentUserId = commonLogic.getCurrentUserId();
+         String evalOwner = evaluation.getOwner();
 
         // 1 Make TIDL
     	TemplateItemDataList tidl = getEvalTIDL(evaluation, groupIds);
@@ -174,6 +178,16 @@ public class XLSReportExporter implements ReportExporter {
         Row questionTextRow = sheet.createRow(QUESTION_TEXT_ROW);
         short headerCount = 1;
         for (DataTemplateItem dti : dtiList) {
+            
+            if (!instructorViewAllResults // If the eval is so configured,
+              && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+              && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+              && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+              && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                // skip items that aren't for the current user
+                continue;
+            }
+            
             Cell cell = questionTypeRow.createCell(headerCount);
 
             setPlainStringCell(cell, responseAggregator.getHeaderLabelForItemType(dti
@@ -227,6 +241,16 @@ public class XLSReportExporter implements ReportExporter {
             // 6) loop over DTIs
             short dtiCounter = 1;
             for (DataTemplateItem dti : dtiList) {
+                
+                if (!instructorViewAllResults // If the eval is so configured,
+                  && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+                  && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                  && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                    //skip instructor items that aren't for the current user
+                    continue;
+                }
+                
                 // 7) check answersmap for an answer, if there put in cell, if missing, insert blank
                 EvalAnswer answer = dti.getAnswer(responseId);
                 Cell responseCell = row.createCell(dtiCounter);

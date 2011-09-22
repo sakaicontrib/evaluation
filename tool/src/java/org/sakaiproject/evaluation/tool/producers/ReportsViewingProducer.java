@@ -212,7 +212,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                 // loop through the TIGs and handle each associated category
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
                     // check if we should render any of these items at all
-                    if (! renderAnyBasedOnOptions(tig.getTemplateItems())) {
+                    Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+                    
+                    if (! renderAnyBasedOnOptions(tig.getTemplateItems(), commonLogic.getEvalUserById( tig.associateId ), evaluation.getOwner(), instructorViewAllResults)) {
                         continue;
                     }
                     UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
@@ -440,6 +442,24 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             }
         }
         return renderAny;
+    }
+    
+    private boolean renderAnyBasedOnOptions(List<EvalTemplateItem> templateItems, EvalUser associatedUser, String owner, Boolean instructorViewAllResults) {
+        //TODO check for course item types.
+        String currentUserId = commonLogic.getCurrentUserId();
+        log.debug("ViewAll: "+instructorViewAllResults+", Current user: "+currentUserId+", Item user: "+associatedUser.userId+", Owner: "+owner);
+                
+        if (!"invalid:null".equals(associatedUser.userId)   // if this is a instructor question
+          && !commonLogic.isUserAdmin(currentUserId)   // and currentUser is not admin
+          && !currentUserId.equals(owner)   // and currentUser is not the creator of this evaluation
+          && !instructorViewAllResults //  and the evaluation has been so configured...
+          && !currentUserId.equals(associatedUser.userId)) {
+            // don't show currentUser results for other instructors
+            return false;
+        } else {
+            return renderAnyBasedOnOptions(templateItems);
+        }
+        
     }
 
     /**

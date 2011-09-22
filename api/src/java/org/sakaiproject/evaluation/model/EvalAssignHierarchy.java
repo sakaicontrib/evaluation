@@ -30,6 +30,8 @@ public class EvalAssignHierarchy implements java.io.Serializable {
     protected Boolean instructorApproval;
 
     protected Boolean instructorsViewResults;
+    
+    protected Boolean instructorsViewAllResults;
 
     protected Boolean studentsViewResults;
 
@@ -74,18 +76,25 @@ public class EvalAssignHierarchy implements java.io.Serializable {
     public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation) {
         this(owner, nodeId, evaluation, null, null, null, null, null);
     }
+    
+    public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation,
+            Boolean instructorApproval, Boolean instructorsViewResults, Boolean studentsViewResults, 
+            String instructorSelection, String assistantSelection) {
+        this(owner, nodeId, evaluation, instructorApproval, instructorsViewResults, null, studentsViewResults, instructorSelection, assistantSelection);
+    }
 
     /** 
      * full constructor
      */
     public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation,
-            Boolean instructorApproval, Boolean instructorsViewResults, Boolean studentsViewResults, 
+            Boolean instructorApproval, Boolean instructorsViewResults, Boolean instructorsViewAllResults, Boolean studentsViewResults, 
             String instructorSelection, String assistantSelection) {
         this.lastModified = new Date();
         this.owner = owner;
         this.nodeId = nodeId;
         this.instructorApproval = instructorApproval;
         this.instructorsViewResults = instructorsViewResults;
+        this.instructorsViewAllResults = instructorsViewAllResults;
         this.studentsViewResults = studentsViewResults;
         setEvaluation(evaluation);
     }
@@ -136,6 +145,14 @@ public class EvalAssignHierarchy implements java.io.Serializable {
 
     public void setInstructorsViewResults(Boolean instructorsViewResults) {
         this.instructorsViewResults = instructorsViewResults;
+    }
+    
+    public Boolean getInstructorsViewAllResults() {
+        return instructorsViewAllResults;
+    }
+    
+    public void setInstructorsViewAllResults(Boolean instructorsViewAllResults) {
+        this.instructorsViewAllResults = instructorsViewAllResults;
     }
 
     public Boolean getStudentsViewResults() {

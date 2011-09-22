@@ -49,6 +49,9 @@ public interface EvalSettings {
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
     public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
+    
+    public static final String INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS:java.lang.Boolean";
+    
     /**
      * CONSTANT: Is the instructor allowed to send email reminders to students - {@link Boolean}, default True
      */
@@ -489,6 +492,7 @@ public interface EvalSettings {
      */
     public static String[] TERNARY_BOOLEAN_SETTINGS = {
         INSTRUCTOR_ALLOWED_VIEW_RESULTS,
+        INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS,
         STUDENT_ALLOWED_LEAVE_UNANSWERED,
         STUDENT_MODIFY_RESPONSES,
         STUDENT_ALLOWED_VIEW_RESULTS

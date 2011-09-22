@@ -1700,6 +1700,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 eah.setInstructorsViewResults(instViewResults);
             }
         }
+        if (eah.getInstructorsViewAllResults() == null) {
+            Boolean instViewAllResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
+            if (instViewAllResults == null) {
+                if (eval.getInstructorViewAllResults()) {
+                    eah.setInstructorsViewAllResults( Boolean.TRUE );
+                } else {
+                    eah.setInstructorsViewAllResults( Boolean.FALSE );
+                }
+            } else {
+                eah.setInstructorsViewAllResults(instViewAllResults);
+            }
+        }
+        
         // setStudentsViewResults
         if (eah.getStudentsViewResults() == null) {
             Boolean studViewResults = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);

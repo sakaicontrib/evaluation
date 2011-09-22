@@ -215,6 +215,10 @@ public class EvalBeanUtils {
         if (instructorsView != null) {
             eval.setInstructorViewResults( instructorsView );
         }
+        Boolean instructorsAllView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
+        if (instructorsAllView != null) {
+            eval.setInstructorViewAllResults( instructorsAllView );
+        }
 
         if (eval.getResultsSharing() == null) {
             eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
@@ -222,9 +226,11 @@ public class EvalBeanUtils {
         if (EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing())) {
             eval.setStudentViewResults(  false );
             eval.setInstructorViewResults( false );
+            eval.setInstructorViewAllResults( false );
         } else if (EvalConstants.SHARING_PUBLIC.equals(eval.getResultsSharing())) {
             eval.setStudentViewResults( true );
             eval.setInstructorViewResults( true );
+            eval.setInstructorViewAllResults( true );
             studentsDate = eval.getViewDate();
             eval.setStudentsDate(studentsDate);
             instructorsDate = eval.getViewDate();

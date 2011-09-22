@@ -56,6 +56,7 @@
         group_type varchar(255) not null,
         INSTRUCTOR_APPROVAL bool not null,
         INSTRUCTORS_VIEW_RESULTS bool not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bool not null,
         STUDENTS_VIEW_RESULTS bool not null,
         EVALUATION_FK int8 not null,
         NODE_ID varchar(255),
@@ -69,6 +70,7 @@
         NODE_ID varchar(255) not null,
         INSTRUCTOR_APPROVAL bool not null,
         INSTRUCTORS_VIEW_RESULTS bool not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bool not null,
         STUDENTS_VIEW_RESULTS bool not null,
         EVALUATION_FK int8 not null,
         primary key (ID)
@@ -107,6 +109,7 @@
         VIEW_DATE timestamp,
         STUDENT_VIEW_RESULTS bool,
         INSTRUCTOR_VIEW_RESULTS bool,
+        INSTRUCTOR_VIEW_ALL_RESULTS bool,
         STUDENTS_DATE timestamp,
         INSTRUCTORS_DATE timestamp,
         STATE varchar(255) not null,

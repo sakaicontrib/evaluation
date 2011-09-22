@@ -353,12 +353,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
         // Instructor view date
         Boolean instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+        Boolean instructorViewAllResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
         UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
         generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
                 evaluationOTP + "instructorViewResults", instructorViewResults, form, 
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
+        //System.out.println("System setting: "+instructorViewResults+", binding: "+evaluationOTP + "instructorViewResults");
+        generateSettingsControlledCheckbox(showResultsToInst, "instructorViewAllResults",
+                evaluationOTP + "instructorViewAllResults", instructorViewAllResults, form,
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
+        //System.out.println("System setting: "+instructorViewAllResults+", binding: "+evaluationOTP + "instructorViewAllResults");
         generateViewDateControl(showResultsToInst, "instructorsViewDate", 
                 evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
+        
 
 
         // RESPONDENT SETTINGS

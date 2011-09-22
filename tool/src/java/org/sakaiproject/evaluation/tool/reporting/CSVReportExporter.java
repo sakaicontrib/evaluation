@@ -51,6 +51,10 @@ public class CSVReportExporter implements ReportExporter {
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
         CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
+        
+        Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+        String currentUserId = commonLogic.getCurrentUserId();
+        String evalOwner = evaluation.getOwner();
 
         // 1 Make TIDL
         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation.getId(), groupIds);
@@ -63,6 +67,16 @@ public class CSVReportExporter implements ReportExporter {
         List<String> questionTypeRow = new ArrayList<String>();
         List<String> questionTextRow = new ArrayList<String>();
         for (DataTemplateItem dti : dtiList) {
+            
+            if (!instructorViewAllResults // If the eval is so configured,
+              && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+              && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+              && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+              && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                //skip instructor items that aren't for the current user
+                continue;
+            }
+            
             questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti
                     .getTemplateItemType()));
             questionTextRow.add(commonLogic.makePlainTextFromHTML(dti.templateItem.getItem()
@@ -105,6 +119,16 @@ public class CSVReportExporter implements ReportExporter {
             // 6) loop over DTIs
             List<String> nextResponseRow = new ArrayList<String>();
             for (DataTemplateItem dti : dtiList) {
+                
+                if (!instructorViewAllResults // If the eval is so configured,
+                  && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+                  && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                  && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                    //skip instructor items that aren't for the current user
+                    continue;
+                }
+                
                 EvalAnswer answer = dti.getAnswer(responseId);
                 if (answer != null) {
                     nextResponseRow.add(responseAggregator.formatForSpreadSheet(answer

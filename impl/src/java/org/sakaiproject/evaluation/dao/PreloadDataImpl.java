@@ -430,6 +430,7 @@ public class PreloadDataImpl {
     	// Default Instructor system settings
     	evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
         evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
+        evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS, null);
         evalConfigMap.put(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
         // NOTE: leave this out to default to use the setting in the evaluation
         evalConfigMap.put(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_REQUIRED);

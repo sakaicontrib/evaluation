@@ -82,6 +82,9 @@ public class PDFReportExporter implements ReportExporter {
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
 
         EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
+        Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+        String currentUserId = commonLogic.getCurrentUserId();
+        String evalOwner = evaluation.getOwner();
 
         Boolean useBannerImage = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER);
         byte[] bannerImageBytes = null;
@@ -126,6 +129,16 @@ public class PDFReportExporter implements ReportExporter {
         // Loop through the major group types: Course Questions, Instructor Questions, etc.
         int renderedItemCount = 0;
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+            
+            if (!instructorViewAllResults   // If the eval is so configured,
+              && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+              && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+              && !EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
+              && !currentUserId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
+                // skip items that aren't for the current user
+                continue;
+            }
+            
             // Print the type of the next group we're doing
             if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
                 evalPDFReportBuilder.addSectionHeader(messageLocator
@@ -159,6 +172,16 @@ public class PDFReportExporter implements ReportExporter {
                                                                               // children
                 for (int i = 0; i < dtis.size(); i++) {
                     DataTemplateItem dti = dtis.get(i);
+                    
+                    if (!instructorViewAllResults // If the eval is so configured,
+                      && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
+                      && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
+                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                      && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                        //skip instructor items that aren't for the current user
+                        continue;
+                    }
+                    
                     renderDataTemplateItem(evalPDFReportBuilder, dti);
                     renderedItemCount++;
                 }
