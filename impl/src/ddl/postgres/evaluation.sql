@@ -32,6 +32,14 @@
         primary key (ID)
     );
 
+    create table EVAL_ADMIN (
+        ID int8 not null,
+        USER_ID varchar(255) not null,
+        ASSIGN_DATE timestamp not null,
+        ASSIGNOR_USER_ID varchar(255) not null,
+        primary key (ID)
+    );
+
     create table EVAL_ANSWER (
         ID int8 not null,
         LAST_MODIFIED timestamp not null,
@@ -56,10 +64,11 @@
         group_type varchar(255) not null,
         INSTRUCTOR_APPROVAL bool not null,
         INSTRUCTORS_VIEW_RESULTS bool not null,
-        INSTRUCTORS_VIEW_ALL_RESULTS bool not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bool,
         STUDENTS_VIEW_RESULTS bool not null,
         EVALUATION_FK int8 not null,
         NODE_ID varchar(255),
+        SELECTION_SETTINGS varchar(2000),
         primary key (ID)
     );
 
@@ -70,10 +79,28 @@
         NODE_ID varchar(255) not null,
         INSTRUCTOR_APPROVAL bool not null,
         INSTRUCTORS_VIEW_RESULTS bool not null,
-        INSTRUCTORS_VIEW_ALL_RESULTS bool not null,
+        INSTRUCTORS_VIEW_ALL_RESULTS bool,
         STUDENTS_VIEW_RESULTS bool not null,
         EVALUATION_FK int8 not null,
         primary key (ID)
+    );
+
+    create table EVAL_ASSIGN_USER (
+        ID int8 not null,
+        EID varchar(255),
+        LAST_MODIFIED timestamp not null,
+        OWNER varchar(255) not null,
+        USER_ID varchar(255) not null,
+        GROUP_ID varchar(255) not null,
+        ASSIGN_TYPE varchar(255) not null,
+        ASSIGN_STATUS varchar(255) not null,
+        LIST_ORDER int4 not null,
+        AVAILABLE_EMAIL_SENT timestamp,
+        REMINDER_EMAIL_SENT timestamp,
+        ASSIGN_GROUP_ID int8,
+        EVALUATION_FK int8 not null,
+        primary key (ID),
+        unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
 
     create table EVAL_CONFIG (
@@ -81,6 +108,17 @@
         LAST_MODIFIED timestamp not null,
         NAME varchar(255) not null unique,
         VALUE varchar(255) not null,
+        primary key (ID)
+    );
+
+    create table EVAL_EMAIL_PROCESSING_QUEUE (
+        ID int8 not null,
+        EAU_ID int8,
+        USER_ID varchar(255),
+        GROUP_ID varchar(255) not null,
+        EMAIL_TEMPLATE_ID int8,
+        EVAL_DUE_DATE timestamp,
+        PROCESSING_STATUS int2,
         primary key (ID)
     );
 
@@ -92,6 +130,7 @@
         SUBJECT text not null,
         MESSAGE text not null,
         defaultType varchar(255),
+        EID varchar(255),
         primary key (ID)
     );
 
@@ -109,7 +148,7 @@
         VIEW_DATE timestamp,
         STUDENT_VIEW_RESULTS bool,
         INSTRUCTOR_VIEW_RESULTS bool,
-        INSTRUCTOR_VIEW_ALL_RESULTS bool,
+        INSTRUCTOR_VIEW_ALL_RESULTS bool default null,
         STUDENTS_DATE timestamp,
         INSTRUCTORS_DATE timestamp,
         STATE varchar(255) not null,
@@ -117,6 +156,7 @@
         REMINDER_DAYS int4 not null,
         REMINDER_FROM_EMAIL varchar(255),
         TERM_ID varchar(255),
+        AVAILABLE_EMAIL_SENT bool default false,
         AVAILABLE_EMAIL_TEMPLATE_FK int8,
         REMINDER_EMAIL_TEMPLATE_FK int8,
         TEMPLATE_FK int8 not null,
@@ -129,8 +169,10 @@
         EVAL_CATEGORY varchar(255),
         AUTO_USE_TAG varchar(255),
         AUTO_USE_INSERTION varchar(255),
+        SELECTION_SETTINGS varchar(2000),
+        EMAIL_OPEN_NOTIFICATION bool,
+        REMINDER_STATUS varchar(255),
         LOCAL_SELECTOR varchar(255),
-        AVAILABLE_EMAIL_SENT bool,
         primary key (ID)
     );
 
@@ -164,6 +206,7 @@
         USES_COMMENT bool,
         DISPLAY_ROWS int4,
         SCALE_DISPLAY_SETTING varchar(255),
+        COMPULSORY bool,
         CATEGORY varchar(255),
         LOCKED bool,
         COPY_OF int8,
@@ -199,10 +242,12 @@
         OWNER varchar(255) not null,
         GROUP_ID varchar(255) not null,
         START_TIME timestamp not null,
+        COMMENT_RESPONSE text,
+        SELECTIONS_CODE text,
         END_TIME timestamp,
         EVALUATION_FK int8 not null,
-        COMMENT_RESPONSE text,
-        primary key (ID)
+        primary key (ID),
+        unique (OWNER, GROUP_ID, EVALUATION_FK)
     );
 
     create table EVAL_SCALE (
@@ -281,6 +326,7 @@
         SCALE_DISPLAY_SETTING varchar(255),
         USES_NA bool,
         USES_COMMENT bool,
+        COMPULSORY bool,
         BLOCK_PARENT bool,
         BLOCK_ID int8,
         RESULTS_SHARING varchar(255),
@@ -316,7 +362,14 @@
 
     create index eval_ahuser_type on EVAL_ADHOC_USER (USER_TYPE);
 
+    create index eval_eval_admin_user_id on EVAL_ADMIN (USER_ID);
+
     create index eval_answer_num on EVAL_ANSWER (NUM_ANSWER);
+
+    alter table EVAL_ANSWER 
+        add constraint ANSWER_RESPONSE_FKC 
+        foreign key (RESPONSE_FK) 
+        references EVAL_RESPONSE;
 
     alter table EVAL_ANSWER 
         add constraint ANSWER_ITEM_FKC 
@@ -328,16 +381,11 @@
         foreign key (TEMPLATEITEM_FK) 
         references EVAL_TEMPLATEITEM;
 
-    alter table EVAL_ANSWER 
-        add constraint ANSWER_RESPONSE_FKC 
-        foreign key (RESPONSE_FK) 
-        references EVAL_RESPONSE;
-
-    create index eval_assign_groupid on EVAL_ASSIGN_GROUP (group_id);
-
     create index eval_assigngroup_eid on EVAL_ASSIGN_GROUP (EID);
 
     create index eval_assign_group_nodeid on EVAL_ASSIGN_GROUP (NODE_ID);
+
+    create index eval_assign_groupid on EVAL_ASSIGN_GROUP (group_id);
 
     alter table EVAL_ASSIGN_GROUP 
         add constraint ASSIGN_COURSE_EVALUATION_FKC 
@@ -351,29 +399,63 @@
         foreign key (EVALUATION_FK) 
         references EVAL_EVALUATION;
 
+    create index eval_asgnuser_userid on EVAL_ASSIGN_USER (USER_ID);
+
+    create index eval_asgnuser_eid on EVAL_ASSIGN_USER (EID);
+
+    create index eval_asgnuser_reminderSent on EVAL_ASSIGN_USER (REMINDER_EMAIL_SENT);
+
+    create index eval_asgnuser_status on EVAL_ASSIGN_USER (ASSIGN_STATUS);
+
+    create index eval_asgnuser_groupid on EVAL_ASSIGN_USER (GROUP_ID);
+
+    create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
+
+    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
+
+    alter table EVAL_ASSIGN_USER 
+        add constraint ASSIGN_USER_EVALUATION_FKC 
+        foreign key (EVALUATION_FK) 
+        references EVAL_EVALUATION;
+
     create index eval_config_name on EVAL_CONFIG (NAME);
 
-    create index eval_templ_type on EVAL_EMAIL_TEMPLATE (TEMPLATE_TYPE);
+    create index eval_user_temp_map on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID, EMAIL_TEMPLATE_ID);
+
+    create index eval_emailq_duedate on EVAL_EMAIL_PROCESSING_QUEUE (EVAL_DUE_DATE);
+
+    create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
+
+    create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID);
 
     create index eval_templ_owner on EVAL_EMAIL_TEMPLATE (OWNER);
 
-    create index eval_eval_term on EVAL_EVALUATION (TERM_ID);
+    create index eval_templ_type on EVAL_EMAIL_TEMPLATE (TEMPLATE_TYPE);
 
-    create index eval_eval_startdate on EVAL_EVALUATION (START_DATE);
-
-    create index eval_eval_owner on EVAL_EVALUATION (OWNER);
+    create index eval_templ_eid on EVAL_EMAIL_TEMPLATE (EID);
 
     create index eval_eval_state on EVAL_EVALUATION (STATE);
 
-    create index eval_eval_duedate on EVAL_EVALUATION (DUE_DATE);
+    create index eval_eval_viewdate on EVAL_EVALUATION (VIEW_DATE);
 
     create index eval_eval_category on EVAL_EVALUATION (EVAL_CATEGORY);
 
-    create index eval_eval_viewdate on EVAL_EVALUATION (VIEW_DATE);
+    create index eval_eval_term on EVAL_EVALUATION (TERM_ID);
+
+    create index eval_eval_type on EVAL_EVALUATION (EVAL_TYPE);
+
+    create index eval_eval_owner on EVAL_EVALUATION (OWNER);
+
+    create index eval_eval_duedate on EVAL_EVALUATION (DUE_DATE);
+
+    create index eval_eval_startdate on EVAL_EVALUATION (START_DATE);
 
     create index eval_evaluation_eid on EVAL_EVALUATION (EID);
 
-    create index eval_eval_type on EVAL_EVALUATION (EVAL_TYPE);
+    alter table EVAL_EVALUATION 
+        add constraint EVALUATION_REMINDER_EMAIL_TEMP 
+        foreign key (REMINDER_EMAIL_TEMPLATE_FK) 
+        references EVAL_EMAIL_TEMPLATE;
 
     alter table EVAL_EVALUATION 
         add constraint EVALUATION_AVAILABLE_EMAIL_TEM 
@@ -385,11 +467,6 @@
         foreign key (TEMPLATE_FK) 
         references EVAL_TEMPLATE;
 
-    alter table EVAL_EVALUATION 
-        add constraint EVALUATION_REMINDER_EMAIL_TEMP 
-        foreign key (REMINDER_EMAIL_TEMPLATE_FK) 
-        references EVAL_EMAIL_TEMPLATE;
-
     create index eval_group_nodeid on EVAL_GROUPNODES (NODE_ID);
 
     alter table EVAL_GROUPNODES_GROUPS 
@@ -397,29 +474,29 @@
         foreign key (ID) 
         references EVAL_GROUPNODES;
 
-    create index eval_item_eid on EVAL_ITEM (EID);
+    create index eval_item_owner on EVAL_ITEM (OWNER);
 
     create index eval_item_sharing on EVAL_ITEM (SHARING);
 
-    create index eval_item_owner on EVAL_ITEM (OWNER);
+    create index eval_item_eid on EVAL_ITEM (EID);
 
     create index eval_item_expert on EVAL_ITEM (EXPERT);
-
-    alter table EVAL_ITEM 
-        add constraint FKD19984D6F71AFC2F 
-        foreign key (IG_ITEM_ID) 
-        references EVAL_ITEMGROUP;
 
     alter table EVAL_ITEM 
         add constraint ITEM_SCALE_FKC 
         foreign key (SCALE_FK) 
         references EVAL_SCALE;
 
+    alter table EVAL_ITEM 
+        add constraint FKD19984D6F71AFC2F 
+        foreign key (IG_ITEM_ID) 
+        references EVAL_ITEMGROUP;
+
+    create index eval_itemgroup_owner on EVAL_ITEMGROUP (OWNER);
+
     create index eval_itemgroup_type on EVAL_ITEMGROUP (type);
 
     create index eval_itemgroup_expert on EVAL_ITEMGROUP (EXPERT);
-
-    create index eval_itemgroup_owner on EVAL_ITEMGROUP (OWNER);
 
     alter table EVAL_ITEMGROUP 
         add constraint ITEM_GROUP_PARENT_FKC 
@@ -437,13 +514,13 @@
         foreign key (EVALUATION_FK) 
         references EVAL_EVALUATION;
 
-    create index eval_scale_mode on EVAL_SCALE (SCALE_MODE);
+    create index eval_scale_owner on EVAL_SCALE (OWNER);
 
-    create index eval_scale_eid on EVAL_SCALE (EID);
+    create index eval_scale_mode on EVAL_SCALE (SCALE_MODE);
 
     create index eval_scale_sharing on EVAL_SCALE (SHARING);
 
-    create index eval_scale_owner on EVAL_SCALE (OWNER);
+    create index eval_scale_eid on EVAL_SCALE (EID);
 
     alter table EVAL_SCALE_OPTIONS 
         add constraint FKE8093A06DEE55A42 
@@ -456,15 +533,15 @@
 
     create index eval_tagsmeta_tag on EVAL_TAGS_META (TAG);
 
-    create index eval_template_owner on EVAL_TEMPLATE (OWNER);
+    create index eval_template_sharing on EVAL_TEMPLATE (SHARING);
 
     create index eval_template_eid on EVAL_TEMPLATE (EID);
 
-    create index eval_template_sharing on EVAL_TEMPLATE (SHARING);
-
-    create index eval_templateitem_eid on EVAL_TEMPLATEITEM (EID);
+    create index eval_template_owner on EVAL_TEMPLATE (OWNER);
 
     create index eval_templateitem_blockid on EVAL_TEMPLATEITEM (BLOCK_ID);
+
+    create index eval_templateitem_eid on EVAL_TEMPLATEITEM (EID);
 
     create index eval_templateitem_owner on EVAL_TEMPLATEITEM (OWNER);
 
@@ -478,12 +555,12 @@
         foreign key (template_id) 
         references EVAL_TEMPLATE;
 
-    create index eval_trans_class on EVAL_TRANSLATION (OBJECT_CLASS);
-
-    create index eval_trans_objectid on EVAL_TRANSLATION (OBJECT_ID);
-
     create index eval_trans_field on EVAL_TRANSLATION (FIELD_NAME);
 
     create index eval_trans_langcode on EVAL_TRANSLATION (LANGUAGE_CODE);
+
+    create index eval_trans_class on EVAL_TRANSLATION (OBJECT_CLASS);
+
+    create index eval_trans_objectid on EVAL_TRANSLATION (OBJECT_ID);
 
     create sequence hibernate_sequence;

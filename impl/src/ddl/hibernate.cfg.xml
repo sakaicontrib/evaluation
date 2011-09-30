@@ -8,10 +8,13 @@
             this should be the classpath location (typically after the src directory) -->
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAdmin.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAssignUser.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalEmailProcessingData.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml" />
