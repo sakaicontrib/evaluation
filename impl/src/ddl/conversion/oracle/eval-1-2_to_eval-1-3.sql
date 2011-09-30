@@ -1,17 +1,20 @@
 /* Oracle conversion script */
 create table EVAL_ASSIGN_USER (
-	ID number(19,0) not null,
-	EID varchar2(255 char), 
-	LAST_MODIFIED timestamp(6) not null,
-	OWNER varchar2(255 char) not null,
-	USER_ID varchar2(255 char) not null,
-	GROUP_ID varchar2(255 char) not null,
-	ASSIGN_TYPE varchar2(255 char) not null,
-	ASSIGN_STATUS varchar2(255 char) not null,
-	LIST_ORDER  number(10,0) not null,
-	ASSIGN_GROUP_ID number(19,0) not null,
-    EVALUATION_FK NUMBER(19,0) not null,
-	primary key (ID)
+    ID number(19,0) not null,
+    EID varchar2(255),
+    LAST_MODIFIED date not null,
+    OWNER varchar2(255) not null,
+    USER_ID varchar2(255) not null,
+    GROUP_ID varchar2(255) not null,
+    ASSIGN_TYPE varchar2(255) not null,
+    ASSIGN_STATUS varchar2(255) not null,
+    LIST_ORDER number(10,0) not null,
+    AVAILABLE_EMAIL_SENT date,
+    REMINDER_EMAIL_SENT date,
+    ASSIGN_GROUP_ID number(19,0),
+    EVALUATION_FK number(19,0) not null,
+    primary key (ID),
+    unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
 );
 
 create index ASSIGN_USER_EVALUATION_FKC on EVAL_ASSIGN_USER (EVALUATION_FK);

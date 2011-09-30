@@ -16,17 +16,44 @@ create table EVAL_EMAIL_PROCESSING_QUEUE
 	primary key (ID)
 );
 
-create index EVAL_EPQ_UITI_IDX on EVAL_EMAIL_PROCESSING_QUEUE (EMAIL_TEMPLATE_ID,USER_ID); 
+create index eval_user_temp_map on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID, EMAIL_TEMPLATE_ID);
+create index eval_emailq_duedate on EVAL_EMAIL_PROCESSING_QUEUE (EVAL_DUE_DATE);
+create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
+create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID);
 
 alter table EVAL_ASSIGN_USER add AVAILABLE_EMAIL_SENT timestamp(6) DEFAULT NULL;
 alter table EVAL_ASSIGN_USER add REMINDER_EMAIL_SENT timestamp(6) DEFAULT NULL;
 create index ASSIGN_USER_AES_IDX on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
-create index ASSIGN_USER_RES_IDX on EVAL_ASSIGN_USER (REMINDER_EMAIL_SENT);
+create index eval_asgnuser_userid on EVAL_ASSIGN_USER (USER_ID);
+create index eval_asgnuser_eid on EVAL_ASSIGN_USER (EID);
+create index eval_asgnuser_reminderSent on EVAL_ASSIGN_USER (REMINDER_EMAIL_SENT);
+create index eval_asgnuser_status on EVAL_ASSIGN_USER (ASSIGN_STATUS);
+create index eval_asgnuser_groupid on EVAL_ASSIGN_USER (GROUP_ID);
+create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
+create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
+alter table EVAL_ASSIGN_USER add constraint ASSIGN_USER_EVALUATION_FKC foreign key (EVALUATION_FK) references EVAL_EVALUATION;
 
 insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE',1);
 
 alter table eval_evaluation add  (AVAILABLE_EMAIL_SENT NUMBER(1,0));
-
 alter table EVAL_EVALUATION add (INSTRUCTOR_VIEW_ALL_RESULTS NUMBER(1,0));
+
 alter table EVAL_ASSIGN_HIERARCHY add (INSTRUCTORS_VIEW_ALL_RESULTS NUMBER(1,0));
 alter table EVAL_ASSIGN_GROUP add (INSTRUCTORS_VIEW_ALL_RESULTS NUMBER(1,0));
+
+alter table EVAL_EMAIL_TEMPLATE add (EID varchar2(255));
+create index eval_templ_eid on EVAL_EMAIL_TEMPLATE (EID);
+
+create table EVAL_ADMIN (
+    ID number(19,0) not null,
+    USER_ID varchar2(255) not null,
+    ASSIGN_DATE date not null,
+    ASSIGNOR_USER_ID varchar2(255) not null,
+    primary key (ID)
+);
+
+create index eval_eval_admin_user_id on EVAL_ADMIN (USER_ID);
+
+create unique index EVAL_RESP_OGE_IDX on EVAL_RESPONSE (OWNER, GROUP_ID, EVALUATION_FK);
+
+
