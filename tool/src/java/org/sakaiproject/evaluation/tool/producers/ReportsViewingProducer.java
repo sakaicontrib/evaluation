@@ -212,7 +212,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                 // loop through the TIGs and handle each associated category
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
                     // check if we should render any of these items at all
-                    Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+                    Boolean instructorViewAllResults = evaluation.getInstructorViewAllResults() == null ? Boolean.FALSE : (boolean) evaluation.getInstructorViewAllResults();
                     
                     if (! renderAnyBasedOnOptions(tig.getTemplateItems(), commonLogic.getEvalUserById( tig.associateId ), evaluation.getOwner(), instructorViewAllResults)) {
                         continue;
