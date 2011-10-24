@@ -54,6 +54,8 @@ create table EVAL_ADMIN (
 
 create index eval_eval_admin_user_id on EVAL_ADMIN (USER_ID);
 
+insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequence.NEXTVAL,CURRENT_TIMESTAMP(6),'ENABLE_SAKAI_ADMIN_ACCESS','true');
+
 create unique index EVAL_RESP_OGE_IDX on EVAL_RESPONSE (OWNER, GROUP_ID, EVALUATION_FK);
 
 
