@@ -59,6 +59,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     protected final String EVENT_EMAIL_GROUP_AVAILABLE =              "eval.email.evalgroup.available";
     protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
     protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
+    protected final String EVENT_EMAIL_SUBMISSION =                   "eval.email.eval.submission";
 
     protected static final int MIN_BATCH_SIZE = 10;
 	protected static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
@@ -702,6 +703,20 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 replacementValues.put("ShowAddItemsText", "true");
             }
         }
+        
+        Boolean canEditResponses = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
+		
+		if (canEditResponses == null){
+			if(EvalUtils.safeBool(eval.getModifyResponsesAllowed(), false)){
+				replacementValues.put("ShowAllowEditResponsesText", "true");
+			}else{
+				replacementValues.put("ShowAllowEditResponsesText", "false");
+			}
+		}else if (canEditResponses){
+			replacementValues.put("ShowAllowEditResponsesText", "true");
+		}else{
+			replacementValues.put("ShowAllowEditResponsesText", "false");
+		}
 
         // ensure that the if-then variables are set to false if they are unset
         if (! replacementValues.containsKey("ShowAddItemsText")) {
@@ -713,7 +728,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         if (! replacementValues.containsKey("ShowOptOutText")) {
             replacementValues.put("ShowOptOutText", "false");
         }
+        if (! replacementValues.containsKey("ShowAllowEditResponsesText")) {
+            replacementValues.put("ShowAllowEditResponsesText", "false");
+        }
 
+        // generate URLs to the evaluation
         // generate URLs to the evaluation
         String evalEntityURL = null;
         if (group != null && group.evalGroupId != null) {
@@ -744,7 +763,21 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("EvalToolTitle", "Evaluation System");
         replacementValues.put("EvalSite", groupTitle);
         replacementValues.put("MyWorkspaceDashboard", evalEntityURL);
-
+        
+		String timeStamp =  df.format(new Date());
+		replacementValues.put("TimeStamp", timeStamp);
+		
+		//handle the username variable if we can get the user
+		String name = "";
+		try{
+			String currentUserId = commonLogic.getCurrentUserId();
+	        EvalUser user = commonLogic.getEvalUserById(currentUserId);
+	        name = user.displayName;
+		}catch (Exception e) {
+			//not populating the username variable with anything proper. We could not get a valid user.
+		}
+		replacementValues.put("UserName", name);
+		
         String message = TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
         String subject = null;
         if (subjectTemplate != null) {
@@ -752,7 +785,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         return new EvalEmailMessage(subjectTemplate, messageTemplate, subject, message);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedAvailableNotifications()
@@ -1162,5 +1195,37 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		log.info(buf.toString());
 	}
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalSubmissionConfirmationEmail(java.lang.Long)
+     */
+ 	public String sendEvalSubmissionConfirmationEmail(String userId, Long evaluationId) {
+ 		String to = null;
+		Boolean sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+		
+		if(sendConfirmation.booleanValue()) {
+			EvalEmailTemplate template = null;
+			Map<String, String> replacementValues = new HashMap<String, String>();
+			
+			EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+			String evalTitle = eval.getTitle();
+			String from = getFromEmailOrFail(eval);
+			//get the template
+			template = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, evaluationId);
+			if(template != null) {
+				//make email and do the variable substitutions
+				EvalEmailMessage em = makeEmailMessage(template.getMessage(), template.getSubject(), eval, null);
+
+                // send the actual email for this user
+                String[] emailAddresses = sendUsersEmails(from, new String[]{userId}, em.subject, em.message);
+                if(emailAddresses.length > 0){
+	                log.info("Sent Submission Confirmation email to " + userId + ". (attempted to send to "+emailAddresses.length+")");	                
+	                commonLogic.registerEntityEvent(EVENT_EMAIL_SUBMISSION, EvalEvaluation.class, eval.getId().toString());
+                }
+			}
+		}
+ 		return to;
+ 	}
 
 }

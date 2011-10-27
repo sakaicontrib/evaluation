@@ -85,7 +85,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         this.authoringService = authoringService;
     }
 
-
+    private EvalEmailsLogic emailsLogic;
+    public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
+       this.emailsLogic = emailsLogic;
+    }
 
     // INIT method
     public void init() {
@@ -201,6 +204,16 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             } else {
                 commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
             }
+            
+            //send an confirmation email to the responder 
+            try {
+            	if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL)).booleanValue()) {
+                	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
+                  }
+            }catch(Exception e){
+            	log.debug("Unable to send the confirmation email to user: " + userId);
+            }
+            
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
             log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
                     "evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +

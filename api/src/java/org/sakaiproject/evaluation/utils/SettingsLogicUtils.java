@@ -14,6 +14,9 @@
 
 package org.sakaiproject.evaluation.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * This is a weird location but it will have to do for now,
  * This util has a set of static methods which are used to process data
@@ -24,6 +27,8 @@ package org.sakaiproject.evaluation.utils;
 public class SettingsLogicUtils {
 
    public static final String DEFAULT_TYPE = "java.lang.String";
+   
+   protected static SimpleDateFormat df;
 
    /**
     * Get the name associated with a settings constant, if this constant does not
@@ -84,4 +89,19 @@ public class SettingsLogicUtils {
       return constant.trim();
    }
 
+   /**
+	 * A utility method to get a formatted String from a Date
+	 * @param the Date to be formated
+	 * @return the String representation of the Date
+	 */
+	public static String getStringFromDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		if(df == null) {
+			df = new SimpleDateFormat();
+		}
+		String formatted = df.format(date);
+		return formatted;
+	}
 }
