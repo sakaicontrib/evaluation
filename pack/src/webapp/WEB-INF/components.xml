@@ -68,6 +68,8 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="emailsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
     </bean>
 
 

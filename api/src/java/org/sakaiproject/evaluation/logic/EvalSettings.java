@@ -378,6 +378,11 @@ public interface EvalSettings {
     public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
     
     /**
+     * CONSTANT: Send an email confirmation that a response to an evaluation was submitted (Instructors might require proof). - {@link Boolean}, default False
+     */
+    public static final String ENABLE_SUBMISSION_CONFIRMATION_EMAIL = "ENABLE_SUBMISSION_CONFIRMATION_EMAIL:java.lang.Boolean";
+    
+    /**
      * The time and date of the next scheduled reminder.
      */
 	public static final String NEXT_REMINDER_DATE = "NEXT_REMINDER_DATE:java.util.Date";
@@ -455,6 +460,7 @@ public interface EvalSettings {
         ENABLE_PDF_REPORT_BANNER,
         ENABLE_PDF_REPORT_EXPORT,
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
+        ENABLE_SUBMISSION_CONFIRMATION_EMAIL,
         ENABLE_SUMMARY_SITES_BOX,
         ENABLE_ASSISTANT_CATEGORY,
         ENABLE_ADMINISTRATING_BOX,

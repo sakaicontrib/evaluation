@@ -316,17 +316,38 @@ public class EvalEmailConstants {
 		"The ${JobType} email job has completed. \n\n" +
 		"${NumEmailsSent} emails were sent.\n";
 	
-	
-	/**
-	 * Email text describing where a user should look for the evaluation tool.
-	 *
-	public static final String EMAIL_EVALUATION_SITE = "My Workspace";
-	*/
-	
-	/**
-	 * Email text describing to a user what the evaluation tool is called.
-	 *
-	public static final String EMAIL_EVALUATION_TOOL = "Course Evaluations";
-	*/
-
+    /**
+     * EmailTemplate subject: Default subject for submission confirmation
+     */
+    public static final String EMAIL_SUBMITTED_DEFAULT_SUBJECT = "${EvalTitle} submission confirmation";
+		
+    /**
+     * Sent as submission confirmation when response had been saved to the database
+     * 
+     * Replaceable strings:<br/>
+     * ${UserName} - the name used in salutation
+     * ${EvalToolTitle} - the title of the evaluation tool seen by users of the tool (e.g., "Teaching Questionnaires")
+     * ${EvalTitle} - the title of this evaluation
+     * ${TimeStamp} - the time of evaluation submission
+     */
+    public static final String EMAIL_SUBMITTED_DEFAULT_TEXT = 
+	   "This message is a confirmation of your submission for ${EvalTitle}.  " +
+	   "It was submitted on ${TimeStamp}.  Thank you for helping the University maintain and improve the quality of its teaching.\n\n" +
+	   "Please save this message for your records.\n\n" +
+	   "Note that all student responses are kept confidential." +
+	   "<#elseif ShowAllowEditResponsesText == \"true\">\n" +
+	   "You may edit your evaluation responses up until the close date for this evaluation.\n" +
+      "</#if>\n";
+   
+		/**
+		 * Email text describing where a user should look for the evaluation tool.
+		 *
+		public static final String EMAIL_EVALUATION_SITE = "My Workspace";
+		*/
+		
+		/**
+		 * Email text describing to a user what the evaluation tool is called.
+		 *
+		public static final String EMAIL_EVALUATION_TOOL = "Course Evaluations";
+		*/
 }

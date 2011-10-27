@@ -136,4 +136,12 @@ public interface EvalEmailsLogic {
 	 */
 	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId);
 
+    /**
+     * Send confirmation to a user that an evaluation has been submitted (might be required by Instructor)
+     * @param evalId the id of an EvalEvaluation object
+     * @param userId the UUID of the user to send this email to
+     * @return the email address of the user
+     */
+    public String sendEvalSubmissionConfirmationEmail(String userId, Long evalId);
+    
 }

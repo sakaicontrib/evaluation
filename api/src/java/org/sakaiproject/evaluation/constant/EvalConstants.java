@@ -603,6 +603,12 @@ public class EvalConstants {
      * used with the "single-email-per-user" email notification option
      */
     public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER_SUBJECT = "ConsolidatedReminderSubject";
+    /**
+     * EmailTemplate type setting:
+     * This identifies a template as the "evaluation submitted template",
+     * used as a confirmation message when the evaluation is submitted
+     */
+    public static final String EMAIL_TEMPLATE_SUBMITTED = "Submitted";
 
     /**
      * EmailTemplate type setting:
