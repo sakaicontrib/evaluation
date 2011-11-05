@@ -61,17 +61,28 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
         Map<String, Boolean> togo = delivered.get(name);
         if (togo == null) {
             // FIXME Should this really use the hardcoded "admin" user id?
-            List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
+            List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
             Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(name);
             Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();
-            for (EvalGroup group: evalGroups) {
-                if (assignedGroupIds.contains(group.evalGroupId)) {
-                    assignedGroups.put(group.evalGroupId, Boolean.TRUE);
-                }
-                else {
-                    assignedGroups.put(group.evalGroupId, Boolean.FALSE);
-                }
+            //for (EvalGroup group: evalGroups) {
+            //    if (assignedGroupIds.contains(group.evalGroupId)) {
+            //        assignedGroups.put(group.evalGroupId, Boolean.TRUE);
+            //    }
+            //    else {
+            //        assignedGroups.put(group.evalGroupId, Boolean.FALSE);
+            //    }
+            //}
+            // instead of above, we're going to add all hierarchy provided groups, regardless of if user is enrolled.
+            // then, add the rest of user's groups as possible option with false
+            for (String assignedGroupId : assignedGroupIds) {
+              assignedGroups.put(assignedGroupId, Boolean.TRUE);
             }
+            for (EvalGroup group: evalGroups) {
+              if (!assignedGroupIds.contains(group.evalGroupId)) {
+                assignedGroups.put(group.evalGroupId, Boolean.FALSE);
+              }
+            }
+
             togo = assignedGroups;
             delivered.put(name, togo);
         }
