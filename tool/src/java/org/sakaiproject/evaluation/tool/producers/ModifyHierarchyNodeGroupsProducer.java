@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -31,7 +32,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
     public static final String VIEW_ID = "modify_hierarchy_node_groups";
-
+    
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
@@ -46,7 +47,7 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
-
+	
     public String getViewID() {
         return VIEW_ID;
     }
@@ -71,6 +72,34 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
 
         // NOTE: This appears to be a legitimate use of the the perms check - maybe should use the user assignments? -AZ
         List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getAdminUserId(), EvalConstants.PERM_BE_EVALUATED);
+        
+        // Add the groups provided by our external hierarchy, if any...
+        Set<String> hierarchyEvalGroupIds = hierarchyLogic.getEvalGroupsForNode(params.nodeId);
+        
+        for (String hierarchyEvalGroupId : hierarchyEvalGroupIds) {
+            EvalGroup c = null;
+            try {
+                c = commonLogic.makeEvalGroupObject("/site/"+hierarchyEvalGroupId.substring(6));
+            } catch (Exception e) {
+                System.out.println("Exception: " + e.getMessage());
+            }
+            if (c != null) {
+                int dupe = 0;
+                for (EvalGroup evalGroup : evalGroups) {
+                    if (evalGroup.title.equals(c.title)) {
+                        dupe = 1;
+                    }
+                }
+                if (dupe == 1) {
+                    //System.out.println(hierarchyEvalGroupId+" is already in the list, so I won't add it.");
+                } else {
+                    evalGroups.add(c);
+                    //System.out.println("Have added "+hierarchyEvalGroupId+"to list of evalgroups.");
+                }
+            } else {
+                System.out.println("Could not get an evalgroup for "+hierarchyEvalGroupId);
+            }
+        }
 
         Collections.sort(evalGroups, new Comparator<EvalGroup>() {
             public int compare(final EvalGroup e1, final EvalGroup e2) {
