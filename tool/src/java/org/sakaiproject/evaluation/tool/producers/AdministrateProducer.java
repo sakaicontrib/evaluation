@@ -328,7 +328,9 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-default-question-category",  ADMIN_WBL, EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
         makeBoolean(form, "general-expert-templates", ADMIN_WBL, EvalSettings.USE_EXPERT_TEMPLATES);
-        makeBoolean(form, "general-expert-questions", ADMIN_WBL, EvalSettings.USE_EXPERT_ITEMS);	
+        makeBoolean(form, "general-expert-questions", ADMIN_WBL, EvalSettings.USE_EXPERT_ITEMS);
+        
+        makeBoolean(form, "general-view-results-ignore-dates", ADMIN_WBL, EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
 
         makeBoolean(form, "general-enable-adhoc-groups", ADMIN_WBL, EvalSettings.ENABLE_ADHOC_GROUPS);
         makeBoolean(form, "general-enable-adhoc-users", ADMIN_WBL, EvalSettings.ENABLE_ADHOC_USERS); 

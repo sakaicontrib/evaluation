@@ -264,9 +264,15 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
 
       // create active evaluations header and link
+      Boolean viewResultsIgnoreDate = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+      
       if (activeEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "active-eval-listing:");
 
+         if(viewResultsIgnoreDate) {
+          	 UIOutput.make(evalListing, "controlevaluations-eval-report-header", 
+          			 UIMessage.make("controlevaluations.eval.report.header").getValue());
+         }
          for (int i = 0; i < activeEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) activeEvals.get(i);
 
@@ -313,6 +319,23 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                         new Object[] { responseString } );
             }
 
+            if(viewResultsIgnoreDate) {
+           	
+            	UIOutput.make(evaluationRow, "active-eval-view-report-node");	
+            	
+            	if (responsesNeeded == 0) {                    
+                    
+                    UIInternalLink.make(evaluationRow, "activeEvalViewReportLink", UIMessage.make("controlevaluations.active.report.title"), new ReportParameters(
+                    		ReportChooseGroupsProducer.VIEW_ID, evaluation.getId()));
+                } else {
+                    
+                    UIMessage.make(evaluationRow, "active-eval-view-report-item", 
+                    		UIMessage.make(
+                    				"controlevaluations.eval.report.awaiting.responses", 
+                    				new Object[] { responsesNeeded }).getValue());
+                }
+            }
+            
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
             // TODO add support for evals that do not close - summary.label.nevercloses
             UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getSafeDueDate()));

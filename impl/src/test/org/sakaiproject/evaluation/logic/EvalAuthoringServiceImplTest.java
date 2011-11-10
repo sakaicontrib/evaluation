@@ -78,9 +78,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the full count of preloaded items
       assertEquals(18, evaluationDao.countAll(EvalItemGroup.class) );
 
-      assertEquals(10, evaluationDao.countAll(EvalTemplate.class) );
+      assertEquals(11, evaluationDao.countAll(EvalTemplate.class) );
       List<EvalTemplate> templates1 = evaluationDao.findAll(EvalTemplate.class);
-      assertEquals(10, templates1.size());
+      assertEquals(11, templates1.size());
    }
 
    public void testPreloadedItemData() {
@@ -2263,7 +2263,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test getting all templates for admin user (should include all templates)
       l = authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
       assertNotNull(l);
-      assertEquals(9, l.size());
+      assertEquals(10, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.templateAdmin.getId() ));
       assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
@@ -2273,6 +2273,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.templateUser.getId() ));
       assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
       assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
+      assertTrue(ids.contains( etdl.evalsys_1007_templateUser01.getId() ));
 
       assertTrue(ids.contains( etdl.templateEid.getId() ));
 
@@ -2318,12 +2319,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test using SHARING_OWNER same as null (getting all templates)
       l = authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_OWNER, true);
       assertNotNull(l);
-      assertEquals(9, l.size());
+      assertEquals(10, l.size());
 
       // test getting private templates for admin (admin should see all private)
       l = authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE, true);
       assertNotNull(l);
-      assertEquals(6, l.size());
+      assertEquals(7, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.templateAdmin.getId() ));
       assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
@@ -2331,6 +2332,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.templateUser.getId() ));
       assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
       assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
+      assertTrue(ids.contains( etdl.evalsys_1007_templateUser01.getId() ));
 
       // test getting non-empty private templates for admin
       l = authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE, false);

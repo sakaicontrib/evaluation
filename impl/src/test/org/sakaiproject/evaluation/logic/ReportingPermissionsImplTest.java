@@ -198,6 +198,87 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
    }
 
+   public void testGetViewableGroupsForEvalAndUserByRole_activeIgnoreViewDates() {
+	  Set<String> evalGroupIds = null;
+	  EvalEvaluation eval = null;
+
+	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
+	  /*
+	   * set instructor and student view results to configurable
+	   * they are set to true on the evaluations
+	   */	  
+	  settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
+      settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
+
+	  //test STATE = active 
+	  //test maintain user can view active evaluation 
+	  eval = evaluationService.getEvaluationById(etdl.evaluationActive_viewIgnoreDates.getId());
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_MAINT_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign03.getEvalGroupId()) );
+
+	  //test normal user can view active evaluation
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign03.getEvalGroupId()) );
+   }
+	
+   public void testGetViewableGroupsForEvalAndUserByRole_dueIgnoreViewDates() {
+	  Set<String> evalGroupIds = null;
+	  EvalEvaluation eval = null;
+
+	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
+	  /*
+	   * set instructor and student view results to configurable
+	   * they are set to true on the evaluations
+	   */	  
+	  settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
+      settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
+	  
+	  //test STATE = due 
+	  //test maintain user can view active evaluation 
+	  eval = evaluationService.getEvaluationById(etdl.evaluationDue_viewIgnoreDates.getId());
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_MAINT_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign02.getEvalGroupId()) );
+
+	  //test normal user can view active evaluation
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign02.getEvalGroupId()) );
+   }
+	
+   public void testGetViewableGroupsForEvalAndUserByRole_closedIgnoreViewDates() {
+	
+	  Set<String> evalGroupIds = null;
+	  EvalEvaluation eval = null;
+
+	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
+	  /*
+	   * set instructor and student view results to configurable
+	   * they are set to true on the evaluations
+	   */	  
+	  settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
+      settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
+	  
+	  //test STATE = closed 
+	  //test maintain user can view active evaluation 
+	  eval = evaluationService.getEvaluationById(etdl.evaluationClosed_viewIgnoreDates.getId());
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_MAINT_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign01.getEvalGroupId()) );
+
+	  //test normal user can view active evaluation
+	  evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.EVALSYS_1007_USER_ID_01, null);
+	  assertNotNull(evalGroupIds);
+	  assertEquals(1, evalGroupIds.size());
+	  assertTrue( evalGroupIds.contains(etdl.evalsys_1007_assign01.getEvalGroupId()) );
+   }
 
    // public methods
 

@@ -246,6 +246,8 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
             typeToEvalGroupId.get(type).add(eau.getEvalGroupId());
         }
 
+        Boolean viewSurveyResultsIgnoreDates = (Boolean) evalSettings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+        
         boolean allowedInstructor = false;
         if ( typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATEE) ) {
             Boolean instructorAllowedViewResults = (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
@@ -253,7 +255,8 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
                 if (eval.getInstructorViewResults()) {
                     Date checkDate = eval.getInstructorsDate();
                     if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
-                            || (checkDate != null && checkDate.after( new Date() )) ) {
+                            || (checkDate != null && checkDate.after( new Date() )) 
+                            || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
                         // user is allowed to view based on state and settings so check the groups below
                         allowedInstructor = true;
                     }
@@ -277,7 +280,8 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
                 if (eval.getStudentViewResults()) {
                     Date checkDate = eval.getStudentsDate();
                     if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
-                            || (checkDate != null && checkDate.after( new Date() )) ) {
+                            || (checkDate != null && checkDate.after( new Date() )) 
+                            || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
                         // user is allowed to view based on state and settings so check the groups below
                         allowedStudent = true;
                     }
