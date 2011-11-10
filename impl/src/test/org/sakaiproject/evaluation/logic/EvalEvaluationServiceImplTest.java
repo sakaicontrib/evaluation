@@ -244,7 +244,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         }
 
         // TODO - add tests for changing state when checked
-    }
+    }    
 
     @SuppressWarnings("deprecation")
     public void testGetUserIdsTakingEvalInGroup() {

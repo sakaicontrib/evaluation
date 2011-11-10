@@ -347,7 +347,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 } else {
                     // From the not-owned evals show those that are available
                     // for viewing results
-                    if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    String forcedViewableState = calculateViewability(evaluation.getState());
+					if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
                         newEvals.add(evaluation);
                     }
                 }
@@ -376,6 +377,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                 UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
+                evalState = calculateViewability(evalState);
                 
  				makeDateComponent(evalrow, eval, evalState, "evalAdminDateLabel", "evalAdminDate", "evalAdminStatus");
 
@@ -465,6 +467,21 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
         }
 
     }
+
+	private String calculateViewability(String state) {
+		Boolean viewResultsIgnoreDate = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+		
+		if(viewResultsIgnoreDate != null && viewResultsIgnoreDate) {
+			if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ||
+				EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ||
+				EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
+				
+				return EvalConstants.EVALUATION_STATE_VIEWABLE;
+			} 
+		}
+		
+		return state;
+	}
 
 	/**
 	 * @param evalrow

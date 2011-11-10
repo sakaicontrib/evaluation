@@ -378,6 +378,12 @@ public interface EvalSettings {
     public static final String ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION = "ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION:java.lang.Boolean";
     
     /**
+     * if this is enabled/true, users who can see evaluation results will not be
+     * restricted by a view/due/stop date 
+     */
+    public static final String VIEW_SURVEY_RESULTS_IGNORE_DATES = "VIEW_SURVEY_RESULTS_IGNORE_DATES:java.lang.Boolean";
+    
+    /**
      * CONSTANT: Send an email confirmation that a response to an evaluation was submitted (Instructors might require proof). - {@link Boolean}, default False
      */
     public static final String ENABLE_SUBMISSION_CONFIRMATION_EMAIL = "ENABLE_SUBMISSION_CONFIRMATION_EMAIL:java.lang.Boolean";
@@ -482,6 +488,7 @@ public interface EvalSettings {
         USE_ADMIN_AS_FROM_EMAIL,
         USE_EXPERT_ITEMS,
         USE_EXPERT_TEMPLATES,
+        VIEW_SURVEY_RESULTS_IGNORE_DATES,
         ENABLE_JOB_COMPLETION_EMAIL,
         ENABLE_REMINDER_STATUS,
         SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE,
