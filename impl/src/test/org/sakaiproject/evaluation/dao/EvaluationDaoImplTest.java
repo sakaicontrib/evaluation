@@ -309,7 +309,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
                 null, new String[] {EvalConstants.SHARING_PRIVATE}, 
                 props, values, comparisons, order, options, 0, 0);
         assertNotNull(l);
-        assertEquals(7, l.size());
+        assertEquals(8, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         assertTrue(ids.contains( etdl.templateAdmin.getId() ));
         assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
@@ -317,6 +317,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertTrue(ids.contains( etdl.templateUser.getId() ));
         assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
         assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
+        assertTrue(ids.contains( etdl.templateUser_4.getId() ));
         assertTrue(ids.contains( etdl.evalsys_1007_templateUser01.getId() ));
 
         // all private non-empty templates
@@ -348,7 +349,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
                 null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
                 props, values, comparisons, order, options, 0, 0);
         assertNotNull(l);
-        assertEquals(10, l.size());
+        assertEquals(11, l.size());
 
         // all non-empty templates (admin would use this)
         l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
@@ -401,7 +402,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
                 null, new String[] {EvalConstants.SHARING_PRIVATE}, 
                 props, values, comparisons, options);
-        assertEquals(7, count);
+        assertEquals(8, count);
 
         // all private non-empty templates (admin only)
         count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
@@ -419,7 +420,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
                 null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
                 props, values, comparisons, options);
-        assertEquals(10, count);
+        assertEquals(11, count);
 
         // all non-empty templates (admin would use this)
         count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 

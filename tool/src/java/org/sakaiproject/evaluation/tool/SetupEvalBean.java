@@ -400,6 +400,7 @@ public class SetupEvalBean {
 	 * before adding the new ones
 	 */
 	public String completeConfirmAction() {
+		System.out.println("SetupEvalBean.completeConfirmAction()");
 		if (evaluationId == null) {
 			throw new IllegalArgumentException(
 					"evaluationId and emailTemplateId cannot be null");
@@ -420,15 +421,17 @@ public class SetupEvalBean {
 			nodes = new HashSet<EvalHierarchyNode>();
 		}
 
+		EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+		
 		// at least 1 node or group must be selected
-		if (selectedGroupIDs.length == 0 && nodes.isEmpty()) {
+		if (selectedGroupIDs.length == 0 && nodes.isEmpty()
+				&& !EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
 			messages.addMessage(new TargettedMessage(
 					"assigneval.invalid.selection", new Object[] {},
 					TargettedMessage.SEVERITY_ERROR));
 			return "fail";
 		}
 
-		EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
 		if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
 			// save eval and assign groups
 

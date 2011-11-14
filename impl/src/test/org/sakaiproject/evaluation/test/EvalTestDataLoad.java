@@ -67,6 +67,7 @@ public class EvalTestDataLoad {
     public final static String ADMIN_USER_NAME = "admin";
     public final static String ADMIN_USER_DISPLAY = "Administrator";
     public final static String MAINT_USER_ID = "main-22222222";
+    public final static String MAINT_USER_ID_3 = "main-33333333";
     public final static String EVALSYS_1007_MAINT_USER_ID_01 = "main-00001007";
     public final static String MAINT_USER_NAME = "maintainer";
     public final static String MAINT_USER_DISPLAY = "Maint User";
@@ -273,6 +274,11 @@ public class EvalTestDataLoad {
      */
     public EvalTemplate evalsys_1007_templateUser01;
     /**
+     * Template used by user, private, USER_ID_4 owns, locked
+     * <br/>Uses {@link #item1} and {@link #item5}
+     */
+    public EvalTemplate templateUser_4;    
+    /**
      * Template not being used, private, USER_ID owns, unlocked, expert
      * <br/>Uses {@link #item6}
      */
@@ -343,6 +349,10 @@ public class EvalTestDataLoad {
      * Evaluation which has been deleted
      */
     public EvalEvaluation evaluationDeleted;
+    /**
+     * Evaluation which is partial, has no auth not required and no assigned groups
+     */
+    public EvalEvaluation evaluationPartial_noAuthNoGroups;
     /**
      * Evaluation which is in its grace period 
      */
@@ -778,6 +788,10 @@ public class EvalTestDataLoad {
                 "Template user", "description", 
                 EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "expert desc", 
                 null, LOCKED, false);
+        templateUser_4 = new EvalTemplate(MAINT_USER_ID_3, EvalConstants.TEMPLATE_TYPE_STANDARD, 
+               "Template user 4", "description", 
+                EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "expert desc", 
+                null, LOCKED, false);
 
         templateEid = new EvalTemplate(ADMIN_USER_ID, EvalConstants.TEMPLATE_TYPE_STANDARD, 
                 "Template Eid", "description", 
@@ -797,6 +811,7 @@ public class EvalTestDataLoad {
         dao.save(templateUserUnused);
         dao.save(templateAdminBlock);
         dao.save(templateAdminComplex);
+        dao.save(templateUser_4);
         dao.save(evalsys_1007_templateUser01);
 
         dao.save(templateEid);
@@ -1159,7 +1174,12 @@ public class EvalTestDataLoad {
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
         
-
+        evaluationPartial_noAuthNoGroups = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID_3, "evaluationInque_noAuthNoGroups", null, 
+                tomorrow, fourDaysFuture, null, null, false, null, false, null, 
+                EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                templateUser_4, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
+                UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
+        
         // email templates
         emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");
         evaluationNew.setAvailableEmailTemplate(emailTemplate1);
@@ -1200,6 +1220,7 @@ public class EvalTestDataLoad {
         dao.save(evaluationActive_viewIgnoreDates);
         dao.save(evaluationDue_viewIgnoreDates);
         dao.save(evaluationClosed_viewIgnoreDates);
+        dao.save(evaluationPartial_noAuthNoGroups);
 
         // evalGroupId assignments
         assign1 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 

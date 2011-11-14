@@ -250,23 +250,37 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
         String currentSiteId = EntityReference.getIdFromRef(currentEvalGroupId);
 
         // get the groups that this user is allowed to assign evals to
-        List<EvalGroup> evalGroups = new ArrayList<EvalGroup>();
+        List<EvalGroup> assignEvalGroups = new ArrayList<EvalGroup>();
         // for backwards compatibility we will pull the list of groups the user is being evaluated in as well and merge it in
         List<EvalGroup> beEvalGroups = new ArrayList<EvalGroup>();
         
         Boolean isGroupFilterEnabled = (Boolean) settings.get(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);
 
         if( isGroupFilterEnabled ){
-	        evalGroups = commonLogic.getFilteredEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION, currentSiteId);  
+	        assignEvalGroups = commonLogic.getFilteredEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION, currentSiteId);
 	        beEvalGroups = commonLogic.getFilteredEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED, currentSiteId);  
         }else{
-        	evalGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION);
+        	assignEvalGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_ASSIGN_EVALUATION);
         	beEvalGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+        }
+               
+        /*
+         * EVALSYS-987- Side effect
+         * remove ad hoc groups from view as they are handled already in another 
+         * section in the same view. 
+         */
+        List<EvalGroup> evalGroups = new ArrayList<EvalGroup>();
+        for (EvalGroup evalGroup : assignEvalGroups) {
+        	if (! evalGroups.contains(evalGroup)
+        		&& !EvalConstants.GROUP_TYPE_ADHOC.equals(evalGroup.type)) {
+        			evalGroups.add(evalGroup);
+        	}
         }
         
         for (EvalGroup evalGroup : beEvalGroups) {
-            if (! evalGroups.contains(evalGroup)) {
-                evalGroups.add(evalGroup);
+            if (! evalGroups.contains(evalGroup)
+            	&& !EvalConstants.GROUP_TYPE_ADHOC.equals(evalGroup.type)) {
+            		evalGroups.add(evalGroup);
             }
         }
 
@@ -561,8 +575,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             // can check for now.
             UIMessage assignErrorDiv = UIMessage.make(tofill, "nogroups-error", "assigneval.invalid.selection");
 
+            boolean anonymousAllowed = false;
+            if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
+            	anonymousAllowed = true;
+            }
             UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.initEvalAssignValidation",
-                    new Object[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()});
+                    new Object[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID(), anonymousAllowed});
         }
         
     }
