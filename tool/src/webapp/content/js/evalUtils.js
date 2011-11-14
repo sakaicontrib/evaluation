@@ -70,7 +70,7 @@ var EvalSystem = function() {
 		 * @errorDivId A Div with an already translated message we can light up.
 		 * @submitButtonId The button that is doing the submitting.
 		 */
-		initEvalAssignValidation: function(formId, errorDivId, submitButtonId) {
+		initEvalAssignValidation: function(formId, errorDivId, submitButtonId, anonymousAllowed) {
 			var form = $(escIdForJquery(formId));
 			var errorDiv = $(escIdForJquery(errorDivId));
 			var submitButton = $(escIdForJquery(submitButtonId));
@@ -89,6 +89,11 @@ var EvalSystem = function() {
 			var onAssignClick = function(event) {
 				passes = false;
 				var n = $(".evalgroupselect:checked").length;
+				
+				// EVALSYS-987
+				if (anonymousAllowed == "true") { 
+					n++;
+				}
 				if (n > 0) {
 					passes=true;
 				}

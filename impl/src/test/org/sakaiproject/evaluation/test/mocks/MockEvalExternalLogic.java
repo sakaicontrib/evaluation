@@ -343,7 +343,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         if (userId.equals(EvalTestDataLoad.USER_ID) 
                 ||	userId.equals(EvalTestDataLoad.MAINT_USER_ID) 
                 ||	userId.equals(EvalTestDataLoad.ADMIN_USER_ID)
-                || userId.equals(EvalTestDataLoad.STUDENT_USER_ID)) {
+                || userId.equals(EvalTestDataLoad.STUDENT_USER_ID) 
+        		|| userId.equals(EvalTestDataLoad.MAINT_USER_ID_3)) {
             return false;
         }
         return true;

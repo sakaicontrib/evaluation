@@ -42,6 +42,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -1172,8 +1173,24 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             nodeIds = new String[] {};
         }
 
-        if (evalGroupIds.length == 0 && nodeIds.length == 0) {
+        if (evalGroupIds.length == 0 && nodeIds.length == 0 
+        		&& !EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
             throw new IllegalArgumentException("Cannot assign an evaluation to 0 nodes and 0 groups, you must pass in at least one node id or group id");
+        }
+        
+        /*
+         * EVALSYS-987
+         * create a new ad hoc group if the evaluation has no groups and does 
+         * not require authentication 
+         */
+        if(evalGroupIds.length == 0 && nodeIds.length == 0 
+        		&& EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
+        	String adhocGroupTitle = "Public ad-hoc group for " + eval.getTitle();
+			EvalAdhocGroup group = new EvalAdhocGroup(commonLogic.getCurrentUserId(), adhocGroupTitle);
+        	commonLogic.saveAdhocGroup(group);
+            group.setEvaluateeIds(new String[] {commonLogic.getCurrentUserId()});
+            commonLogic.saveAdhocGroup(group);
+            evalGroupIds = new String[] {group.getEvalGroupId()};
         }
 
         // check if this evaluation can be modified

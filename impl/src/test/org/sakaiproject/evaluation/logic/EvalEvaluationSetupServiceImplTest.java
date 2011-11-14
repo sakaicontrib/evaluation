@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -1252,6 +1251,32 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
         assertNotNull(assignGroups);
         assertTrue(assignGroups.size() == 2);
+    }
+    
+    public void testSetEvalAssignments_noAuthnNoGroups() {
+
+        List<EvalAssignGroup> assignGroups = null;
+        externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID_3);
+        Long evaluationId = etdl.evaluationPartial_noAuthNoGroups.getId();
+        assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
+        assertNotNull(assignGroups);
+        assertTrue(assignGroups.size() == 0);
+
+        evaluationSetupService.setEvalAssignments(evaluationId, null, null, false);
+
+        assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
+        assertNotNull(assignGroups);
+        assertTrue(assignGroups.size() == 1);
+        
+        EvalAssignGroup evalAssignGroup = assignGroups.get(0);
+        assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, evalAssignGroup.getOwner());
+        assertEquals(EvalConstants.GROUP_TYPE_PROVIDED, evalAssignGroup.getEvalGroupType());
+        
+        List<EvalAssignUser> participantsForEval = evaluationDao.getParticipantsForEval(evaluationId, null, null, null, 
+        		null, null, null);
+        
+        assertEquals(1, participantsForEval.size());
+        assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, participantsForEval.get(0).getUserId());
     }
 
 }
