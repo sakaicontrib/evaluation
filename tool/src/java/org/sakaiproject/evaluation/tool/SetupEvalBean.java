@@ -38,6 +38,7 @@ import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidEvalCategoryException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -400,7 +401,7 @@ public class SetupEvalBean {
 	 * before adding the new ones
 	 */
 	public String completeConfirmAction() {
-		System.out.println("SetupEvalBean.completeConfirmAction()");
+		
 		if (evaluationId == null) {
 			throw new IllegalArgumentException(
 					"evaluationId and emailTemplateId cannot be null");
@@ -431,6 +432,44 @@ public class SetupEvalBean {
 					TargettedMessage.SEVERITY_ERROR));
 			return "fail";
 		}
+				
+		//TODO xxxselectedHierarchyNodeIDs
+		if(!EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
+			String [] evalGroupIDs = 
+				new String[selectedHierarchyNodeIDs.length + selectedGroupIDs.length];
+		 
+			int i = 0;
+			for(i =0;i<selectedHierarchyNodeIDs.length;i++) {
+				evalGroupIDs[i] = selectedHierarchyNodeIDs[i]; 
+			}
+		
+			for(;i<selectedHierarchyNodeIDs.length+selectedGroupIDs.length;i++) {
+				evalGroupIDs[i] = selectedGroupIDs[i - selectedHierarchyNodeIDs.length];
+			}
+
+			Set<String> userIdsForEvalGroup = null;
+			for(i = 0;i<evalGroupIDs.length;i++) {
+				userIdsForEvalGroup = commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_BE_EVALUATED);
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE));
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION));
+			}
+		
+			for (String userId : userIdsForEvalGroup) {
+	
+				//ignore invalid users
+                if(EvalUser.USER_TYPE_INVALID.equals(commonLogic.getEvalUsersByIds(new String[] {userId}).get(0).type)) {
+                    continue;
+                }
+				
+				if(commonLogic.isUserAnonymous(userId)) {
+					EvalUser user = commonLogic.getEvalUsersByIds(new String[] {userId}).get(0);
+					messages.addMessage(new TargettedMessage(
+							"assigneval.invalid.user", new Object[] {user.username},
+							TargettedMessage.SEVERITY_ERROR));
+					return "fail";
+				}
+			}
+		}		
 
 		if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
 			// save eval and assign groups
