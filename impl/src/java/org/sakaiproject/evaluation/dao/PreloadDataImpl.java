@@ -480,6 +480,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.ENABLE_EVAL_REOPEN, true);
         evalConfigMap.put(EvalSettings.ENABLE_MY_TOPLINKS, true);
         evalConfigMap.put(EvalSettings.ENABLE_ADMINISTRATING_BOX, true);
+        evalConfigMap.put(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND, false);
         evalConfigMap.put(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW, false);
 
         // REPORTING

@@ -501,10 +501,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         l = evaluationDao.getEvaluationsByEvalGroups(
                 new String[] {EvalTestDataLoad.SITE1_REF}, true, null, null, 0, 0);
         assertNotNull(l);
-        assertEquals(2, l.size());
+        assertEquals(3, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         assertTrue(ids.contains( etdl.evaluationActive.getId() ));
         assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
 
         l = evaluationDao.getEvaluationsByEvalGroups(
                 new String[] {EvalTestDataLoad.SITE2_REF}, true, null, null, 0, 0);
@@ -523,9 +524,10 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         l = evaluationDao.getEvaluationsByEvalGroups(
                 new String[] {EvalTestDataLoad.SITE2_REF}, true, null, true, 0, 0);
         assertNotNull(l);
-        assertEquals(1, l.size());
+        assertEquals(2, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
 
         // test getting from an invalid evalGroupId
         l = evaluationDao.getEvaluationsByEvalGroups(
@@ -640,17 +642,28 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         // test getting all evals
         l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 0, false);
         assertNotNull(l);
-        assertEquals(13, l.size());
+        assertEquals(19, l.size());
         // check the order
         ids = EvalTestDataLoad.makeIdList(l);
-        assertEquals(ids.get(0), etdl.evaluationViewable.getId() );
-        assertEquals(ids.get(1), etdl.evaluationClosed_viewIgnoreDates.getId() );
-        assertEquals(ids.get(2), etdl.evaluationClosed.getId() );
-        assertEquals(ids.get(3), etdl.evaluationClosedUntaken.getId() );
+        assertEquals(ids.get(0), etdl.evaluationViewable.getId());
+        assertEquals(ids.get(1), etdl.evaluationClosed_viewIgnoreDates.getId());
+        assertEquals(ids.get(2), etdl.evaluationClosed.getId());
+        assertEquals(ids.get(3), etdl.evaluationClosedUntaken.getId());
         assertEquals(ids.get(4), etdl.evaluationGracePeriod.getId());
-        assertEquals(ids.get(5), etdl.evaluationDue_viewIgnoreDates.getId() );
-        assertEquals(ids.get(6), etdl.evaluationActive.getId() );
-        assertEquals(ids.get(7), etdl.evaluationProvided.getId() );
+        assertEquals(ids.get(5), etdl.evaluationDue_viewIgnoreDates.getId());
+        assertEquals(ids.get(6), etdl.evaluationActive.getId());
+        assertEquals(ids.get(7), etdl.evaluationProvided.getId());
+        assertEquals(ids.get(8), etdl.evaluationActiveUntaken.getId());
+        assertEquals(ids.get(9), etdl.evaluationActive_viewIgnoreDates.getId());
+        assertEquals(ids.get(10), evalUnLocked.getId());
+        assertEquals(ids.get(11), etdl.evaluationNewAdmin.getId());
+        assertEquals(ids.get(12), etdl.evaluationNew.getId());
+        assertEquals(ids.get(13), etdl.evaluation_allRoleAssignments_allRolesParticipate.getId());
+        assertEquals(ids.get(14), etdl.evaluation_allRoleAssignments_notAllRolesParticipate.getId());
+        assertEquals(ids.get(15), etdl.evaluation_noAssignments_allRolesParticipate.getId());
+        assertEquals(ids.get(16), etdl.evaluation_noAssignments_notAllRolesParticipate.getId());
+        assertEquals(ids.get(17), etdl.evaluation_simpleAssignments_allRolesParticipate.getId());
+        assertEquals(ids.get(18), etdl.evaluation_simpleAssignments_notAllRolesParticipate.getId());
 
         // test getting all evals with limit
         l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 4, false);
@@ -663,14 +676,16 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(ids.get(2), etdl.evaluationClosed.getId() );
         assertEquals(ids.get(3), etdl.evaluationClosedUntaken.getId() );
 
-        l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 3, 3, false);
+        l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 3, 5, false);
         assertNotNull(l);
-        assertEquals(3, l.size());
+        assertEquals(5, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         // check order and return values
         assertEquals(ids.get(0), etdl.evaluationClosedUntaken.getId() );
         assertEquals(ids.get(1), etdl.evaluationGracePeriod.getId() );
         assertEquals(ids.get(2), etdl.evaluationDue_viewIgnoreDates.getId() );
+        assertEquals(ids.get(3), etdl.evaluationActive.getId() );
+        assertEquals(ids.get(4), etdl.evaluationProvided.getId() );
 
         // test filtering by owner
         l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, null, null, 0, 0, false);

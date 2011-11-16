@@ -121,6 +121,10 @@
         <property name="modifyResponsesAllowed" type="java.lang.Boolean">
             <column name="MODIFY_RESPONSES_ALLOWED" />
         </property>
+        <!-- if true then all roles will be included in the list of evaluators -->
+        <property name="allRolesParticipate" type="java.lang.Boolean">
+            <column name="ALL_ROLES_PARTICIPATE" />
+        </property>
         <!-- can unregistered students take this evaluation or only official students -->
         <property name="unregisteredAllowed" type="java.lang.Boolean">
             <column name="UNREGISTERED_ALLOWED" />

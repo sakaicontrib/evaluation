@@ -384,8 +384,39 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
         generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
                 "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form,
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
-
-
+        
+        Boolean allRolesCanParticipate = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
+        
+        /* 
+         * before active show the setting depending on the administrator setting
+         * only 
+         */
+        if(EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, false) ) {
+        	
+        	if(!Boolean.FALSE.equals(allRolesCanParticipate)) {
+        		
+        		UIBranchContainer showAllRolesCanParticipate = UIBranchContainer.make(form, "showAllRolesCanParticipate:");
+        		
+        		generateSettingsControlledCheckbox(showAllRolesCanParticipate, 
+        				"allRolesParticipate", evaluationOTP + "allRolesParticipate", allRolesCanParticipate, form,
+        				EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        	}
+        } 
+        /*
+         * otherwise show the setting depending on what was initially set when 
+         * the evaluation was created OR on the administrator setting
+         */
+        else {
+        	if(evaluation.getAllRolesParticipate() || 
+        			!Boolean.FALSE.equals(allRolesCanParticipate)) {
+        		
+        		UIBranchContainer showAllRolesCanParticipate = UIBranchContainer.make(form, "showAllRolesCanParticipate:");
+        		
+        		generateSettingsControlledCheckbox(showAllRolesCanParticipate, 
+        				"allRolesParticipate", evaluationOTP + "allRolesParticipate", allRolesCanParticipate, form,
+        				EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        	}
+        }
 
         // ADMIN SETTINGS SECTION
 
