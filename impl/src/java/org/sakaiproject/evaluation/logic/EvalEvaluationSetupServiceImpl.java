@@ -749,9 +749,23 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      */
     private String[] getGroupIdsForUserToEvaluate(String userId, boolean activeOnly) {
         String[] evalGroupIds = null;
-        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(null, userId, null, 
-                EvalAssignUser.TYPE_EVALUATOR, null, null, 
-                (activeOnly ? EvalConstants.EVALUATION_STATE_ACTIVE : null) );
+        List<EvalAssignUser> userAssignments = null;
+        
+        if(activeOnly) {
+        	
+        	userAssignments = evaluationService.getParticipantsForEval(null, userId, null, 
+        			EvalAssignUser.TYPE_EVALUATOR, null, null, 
+        		EvalConstants.EVALUATION_STATE_ACTIVE);
+        	
+        	userAssignments.addAll(evaluationService.getParticipantsForEval(null, userId, null, 
+        			EvalAssignUser.TYPE_EVALUATOR, null, null, 
+        			EvalConstants.EVALUATION_STATE_GRACEPERIOD));
+        } else {
+        	
+        	userAssignments = evaluationService.getParticipantsForEval(null, userId, null, 
+        			EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+        }
+      
         Set<String> egidSet = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
         if (!egidSet.isEmpty()) {
             // create array of all assigned groupIds where this user is instructor
@@ -932,6 +946,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             Set<String> currentEvaluated = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_BE_EVALUATED);
             Set<String> currentAssistants = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_ASSISTANT_ROLE);
             Set<String> currentTakers = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_TAKE_EVALUATION);
+                        
+            if(evaluation.getAllRolesParticipate()) {
+            	currentTakers.addAll(currentAssistants);
+            	currentTakers.addAll(currentEvaluated);
+            }
+           
             HashSet<String> currentAll = new HashSet<String>();
             currentAll.addAll(currentEvaluated);
             currentAll.addAll(currentAssistants);

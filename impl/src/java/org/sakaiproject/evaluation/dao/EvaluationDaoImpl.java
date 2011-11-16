@@ -469,7 +469,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * 
      * @param evalGroupIds an array of eval group IDs to get associated evals for, 
      * can be empty or null but only anonymous evals will be returned
-     * @param activeOnly if true, only include active evaluations, 
+     * @param activeOnly if true, only include active (and grace period) evaluations, 
      * if false only include inactive (inqueue, graceperiod, closed, viewable), 
      * if null, include all evaluations (except partial and deleted)
      * @param approvedOnly if true, include the evaluations for groups which have been instructor approved only,
@@ -561,8 +561,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             String activeHQL = "";
             if (activeOnly != null) {
                 if (activeOnly) {
-                    activeHQL = " and eval.state = :activeState ";
+                	activeHQL = " and ( eval.state = :activeState or eval.state = :graceState) ";
                     params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
+                    params.put("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
                 } else {
                     activeHQL = " and (eval.state = :queueState or eval.state = :graceState or eval.state = :closedState or eval.state = :viewState) ";
                     params.put("queueState", EvalConstants.EVALUATION_STATE_INQUEUE);

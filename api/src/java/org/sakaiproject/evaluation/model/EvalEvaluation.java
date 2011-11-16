@@ -180,6 +180,11 @@ public class EvalEvaluation implements java.io.Serializable {
      * if true then responses may be changed during active eval period
      */
     private Boolean modifyResponsesAllowed;
+    
+    /**
+     * if true then all roles will be included in the list of evaluators
+     */
+    private Boolean allRolesParticipate;    
 
     private Boolean unregisteredAllowed;
 
@@ -298,7 +303,7 @@ public class EvalEvaluation implements java.io.Serializable {
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
                 authControl, evalCategory, selectionSettings, Boolean.TRUE);
     }
-
+    
     /**
      * full constructor without email flag
      */
@@ -309,13 +314,32 @@ public class EvalEvaluation implements java.io.Serializable {
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
-            Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
+            Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked, 
             String authControl, String evalCategory, String selectionSettings) {
     	
     	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
-                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
-                authControl, evalCategory, selectionSettings, Boolean.TRUE);
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked, authControl,
+                evalCategory, selectionSettings, Boolean.TRUE);
+    }
+    
+    /**
+     * full constructor without all rolls can participate
+     */
+    public EvalEvaluation(String type, String owner, String title, String instructions,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
+            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
+            String resultsSharing, String instructorOpt, Integer reminderDays,
+            String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
+            EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
+            Boolean unregisteredAllowed, Boolean locked, String authControl,
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification){
+    	
+    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
+                resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
+                evalCategory, selectionSettings, Boolean.TRUE);
     }
     
     /**
@@ -327,9 +351,9 @@ public class EvalEvaluation implements java.io.Serializable {
             String resultsSharing, String instructorOpt, Integer reminderDays,
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
-            Set<EvalResponse> responses, Boolean blankResponsesAllowed,
-            Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-            String authControl, String evalCategory, String selectionSettings, Boolean sendAvailableNotifications) {
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
+            Boolean unregisteredAllowed, Boolean allRolesParticipate,  Boolean locked, String authControl,
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
     	
         this.lastModified = new Date();
         this.type = type;
@@ -357,15 +381,13 @@ public class EvalEvaluation implements java.io.Serializable {
         this.resultsSharing = resultsSharing;
         this.blankResponsesAllowed = blankResponsesAllowed;
         this.modifyResponsesAllowed = modifyResponsesAllowed;
+        this.allRolesParticipate = allRolesParticipate;
         this.unregisteredAllowed = unregisteredAllowed;
         this.locked = locked;
         this.authControl = authControl;
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
-    	this.sendAvailableNotifications = sendAvailableNotifications;
-    	if(this.availableEmailSent == null) {
-    		this.availableEmailSent = new Boolean(false);
-    	}
+    	this.sendAvailableNotifications = emailOpenNotification;
     }
 
     @Override
@@ -627,6 +649,14 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setModifyResponsesAllowed(Boolean modifyResponsesAllowed) {
         this.modifyResponsesAllowed = modifyResponsesAllowed;
     }
+    
+    public Boolean getAllRolesParticipate() {
+		return allRolesParticipate;
+	}
+    
+    public void setAllRolesParticipate(Boolean allRolesParticipate) {
+		this.allRolesParticipate = allRolesParticipate;
+ 	}  
 
     public String getOwner() {
         return owner;
@@ -808,11 +838,11 @@ public class EvalEvaluation implements java.io.Serializable {
     public Boolean getInstructorViewAllResults() {
         return instructorViewAllResults;
     }
-    
-    public void setInstructorViewAllResults(Boolean instructorViewAllResults) {
+
+    public void setInstructorViewAllResults(boolean instructorViewAllResults) {
         this.instructorViewAllResults = instructorViewAllResults;
     }
-
+    
     public String getSelectionSettings() {
         return selectionSettings;
     }
