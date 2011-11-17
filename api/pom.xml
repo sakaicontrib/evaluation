@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>evaluation</artifactId>
 		<groupId>org.sakaiproject</groupId>
-		<version>1.3-SNAPSHOT</version>
+		<version>1.4-SNAPSHOT</version>
 		<!--eval.version-->
 	</parent>
 	<name>Sakai Evaluation API</name>
