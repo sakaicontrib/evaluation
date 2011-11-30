@@ -111,6 +111,26 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>sakai2.9</id>
+			<activation> 
+				<property><name>sakai2.9</name></property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.sakaiproject.kernel</groupId>
+					<artifactId>sakai-kernel-api</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.sakaiproject.kernel</groupId>
+					<artifactId>sakai-kernel-util</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.sakaiproject.scheduler</groupId>
+					<artifactId>scheduler-api</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 	<dependencies>
 
