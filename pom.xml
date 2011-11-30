@@ -123,6 +123,18 @@
                 <module>tool</module>
             </modules>
         </profile>
+        <profile>
+            <id>sakai2.9</id>
+            <activation>
+                <property><name>sakai2.9</name></property>
+            </activation>
+            <modules>
+                <module>api</module>
+                <module>impl</module>
+                <module>pack</module>
+                <module>tool</module>
+            </modules>
+        </profile>
     </profiles>
 
     <!-- handles the management of all related dependencies -->
@@ -200,6 +212,18 @@
             <url>http://source.sakaiproject.org/maven2</url>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sakai-maven2-snapshots</id>
+            <name>Sakai Maven Repo</name>
+            <layout>default</layout>
+            <url>http://source.sakaiproject.org/maven2-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
         <repository>
