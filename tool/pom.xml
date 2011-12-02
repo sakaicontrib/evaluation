@@ -18,6 +18,11 @@
     </organization>
     <inceptionYear>2005</inceptionYear>
 
+    <properties>
+        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
+        <rsfutil.version>0.8-SNAPSHOT</rsfutil.version>
+    </properties>
+
     <packaging>war</packaging>
 
     <profiles>
