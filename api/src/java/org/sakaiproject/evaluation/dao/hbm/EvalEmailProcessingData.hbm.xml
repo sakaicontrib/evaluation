@@ -22,6 +22,12 @@
         <property name="emailTemplateId" type="java.lang.Long" index="eval_emailq_id">
         	<column name="EMAIL_TEMPLATE_ID"  index="eval_user_temp_map"></column>
         </property>
+    	<property name="evalId" type="java.lang.Long" index="eval_emailq_evalid">
+    		<column name="EVALUATION_ID" />
+    	</property>
+    	<property name="responseId" type="java.lang.Long">
+    		<column name="RESPONSE_ID" />
+    	</property>
         <property name="evalDueDate" type="java.util.Date" index="eval_emailq_duedate">
             <column name="EVAL_DUE_DATE" />
         </property>

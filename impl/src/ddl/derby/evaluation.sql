@@ -99,6 +99,7 @@
         REMINDER_EMAIL_SENT timestamp,
         ASSIGN_GROUP_ID bigint,
         EVALUATION_FK bigint not null,
+        COMPLETED_DATE timestamp,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
@@ -119,9 +120,11 @@
         EMAIL_TEMPLATE_ID bigint,
         EVAL_DUE_DATE timestamp,
         PROCESSING_STATUS smallint,
+        EVALUATION_ID bigint,
+        RESPONSE_ID bigint,
         primary key (ID)
     );
-
+    
     create table EVAL_EMAIL_TEMPLATE (
         ID bigint not null,
         LAST_MODIFIED timestamp not null,
@@ -412,6 +415,8 @@
     create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
 
     create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
+    
+    create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
 
     alter table EVAL_ASSIGN_USER 
         add constraint ASSIGN_USER_EVALUATION_FKC 
@@ -427,6 +432,8 @@
     create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
 
     create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID);
+    
+    create index eval_emailq_evalid on EVAL_EMAIL_PROCESSING_QUEUE (EVALUATION_ID);
 
     create index eval_templ_owner on EVAL_EMAIL_TEMPLATE (OWNER);
 
