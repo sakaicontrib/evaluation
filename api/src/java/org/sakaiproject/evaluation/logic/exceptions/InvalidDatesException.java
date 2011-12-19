@@ -22,22 +22,24 @@ package org.sakaiproject.evaluation.logic.exceptions;
  */
 public class InvalidDatesException extends RuntimeException {
 
-   /**
-    * The date field which is invalid
-    */
-   public String dateField;
+    private static final long serialVersionUID = 1L;
 
-   public String messageKey = "evalsettings.invalid.dates";
+    /**
+     * The date field which is invalid
+     */
+    public String dateField;
 
-   public InvalidDatesException(String message, String dateField) {
-      super(message);
-      this.dateField = dateField;
-   }
+    public String messageKey = "evalsettings.invalid.dates";
 
-   public InvalidDatesException(String message, String dateField, String messageKey) {
-      super(message);
-      this.dateField = dateField;
-      this.messageKey = messageKey;
-   }   
+    public InvalidDatesException(String message, String dateField) {
+        super(message);
+        this.dateField = dateField;
+    }
+
+    public InvalidDatesException(String message, String dateField, String messageKey) {
+        super(message);
+        this.dateField = dateField;
+        this.messageKey = messageKey;
+    }   
 
 }

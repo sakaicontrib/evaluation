@@ -22,25 +22,27 @@ package org.sakaiproject.evaluation.logic.exceptions;
  */
 public class BlankRequiredFieldException extends RuntimeException {
 
-   /**
-    * This is the name of property/field which is blank
-    */
-   public String fieldName;
-   /**
-    * This is the message key used to tell the user what field they must fill in,
-    * {0} should be the fieldname
-    */
-   public String messageKey = "general.blank.required.field.user.message";
+    private static final long serialVersionUID = 1L;
 
-   public BlankRequiredFieldException(String message, String fieldName) {
-      super(message);
-      this.fieldName = fieldName;
-   }
+    /**
+     * This is the name of property/field which is blank
+     */
+    public String fieldName;
+    /**
+     * This is the message key used to tell the user what field they must fill in,
+     * {0} should be the fieldname
+     */
+    public String messageKey = "general.blank.required.field.user.message";
 
-   public BlankRequiredFieldException(String message, String fieldName, String messageKey) {
-      super(message);
-      this.fieldName = fieldName;
-      this.messageKey = messageKey;
-   }
-   
+    public BlankRequiredFieldException(String message, String fieldName) {
+        super(message);
+        this.fieldName = fieldName;
+    }
+
+    public BlankRequiredFieldException(String message, String fieldName, String messageKey) {
+        super(message);
+        this.fieldName = fieldName;
+        this.messageKey = messageKey;
+    }
+
 }

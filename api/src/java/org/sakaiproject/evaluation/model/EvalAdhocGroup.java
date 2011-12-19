@@ -23,6 +23,8 @@ import java.util.Date;
  */
 public class EvalAdhocGroup implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public final static String ADHOC_ID_PREFIX = "adhoc-group:";
 
     /**

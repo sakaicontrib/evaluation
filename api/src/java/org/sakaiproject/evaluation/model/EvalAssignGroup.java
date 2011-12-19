@@ -19,6 +19,8 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public static final String SELECTION_OPTION_ALL = "all"; 
     public static final String SELECTION_OPTION_ONE = "one";
     public static final String SELECTION_OPTION_MULTIPLE = "multiple";

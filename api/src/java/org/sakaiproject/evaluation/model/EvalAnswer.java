@@ -24,6 +24,8 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalAnswer implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // Fields
 
     private Long id;

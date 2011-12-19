@@ -7,6 +7,8 @@ import java.util.Date;
  */
 public class EvalConfig implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // Fields    
 
     private Long id;

@@ -17,6 +17,8 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalEvaluation implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // Fields
 
     private Long id;
