@@ -176,6 +176,7 @@
         EMAIL_OPEN_NOTIFICATION tinyint null,
         REMINDER_STATUS varchar(255) null,
         LOCAL_SELECTOR varchar(255) null,
+        ALL_ROLES_PARTICIPATE tinyint,
         primary key (ID)
     );
 
