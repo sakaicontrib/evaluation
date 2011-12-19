@@ -12,6 +12,8 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
  */
 public class EvalEmailTemplate implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // Fields    
 
     private Long id;

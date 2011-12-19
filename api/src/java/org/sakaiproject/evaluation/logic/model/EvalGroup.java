@@ -27,7 +27,9 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
  */
 public class EvalGroup implements Serializable {
 
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * The evalGroup ID string which is the unique identifier for this
 	 */
 	public String evalGroupId;

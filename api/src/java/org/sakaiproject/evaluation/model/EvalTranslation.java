@@ -24,108 +24,110 @@ import java.util.Date;
  */
 public class EvalTranslation implements java.io.Serializable {
 
-   private Long id;
-   private Date lastModified;
-   /**
-    * the language code of the translated string,
-    * e.g. en_US, en_GB, etc.
-    */
-   private String languageCode;
-   /**
-    * the object class of the thing which contains the field we are translating
-    */
-   private String objectClass;
-   /**
-    * Unique id for the object of the class indicated
-    */
-   private String objectId;
-   /**
-    * the name of the field on the object
-    */
-   private String fieldName;
-   /**
-    * The translation of this field value into the language indicated by the language code
-    */
-   private String translation;
+    private static final long serialVersionUID = 1L;
 
-   public EvalTranslation() {
-   }
+    private Long id;
+    private Date lastModified;
+    /**
+     * the language code of the translated string,
+     * e.g. en_US, en_GB, etc.
+     */
+    private String languageCode;
+    /**
+     * the object class of the thing which contains the field we are translating
+     */
+    private String objectClass;
+    /**
+     * Unique id for the object of the class indicated
+     */
+    private String objectId;
+    /**
+     * the name of the field on the object
+     */
+    private String fieldName;
+    /**
+     * The translation of this field value into the language indicated by the language code
+     */
+    private String translation;
 
-   /**
-    * MINIMAL constructor
-    * 
-    * @param languageCode
-    * @param objectClass
-    * @param objectId
-    * @param fieldName
-    * @param translation
-    */
-   public EvalTranslation(String languageCode, String objectClass, String objectId,
-         String fieldName, String translation) {
-      if (this.lastModified == null) {
-         this.lastModified = new Date();
-      }
-      this.languageCode = languageCode;
-      this.objectClass = objectClass;
-      this.objectId = objectId;
-      this.fieldName = fieldName;
-      this.translation = translation;
-   }
+    public EvalTranslation() {
+    }
 
-   public Long getId() {
-      return id;
-   }
+    /**
+     * MINIMAL constructor
+     * 
+     * @param languageCode
+     * @param objectClass
+     * @param objectId
+     * @param fieldName
+     * @param translation
+     */
+    public EvalTranslation(String languageCode, String objectClass, String objectId,
+            String fieldName, String translation) {
+        if (this.lastModified == null) {
+            this.lastModified = new Date();
+        }
+        this.languageCode = languageCode;
+        this.objectClass = objectClass;
+        this.objectId = objectId;
+        this.fieldName = fieldName;
+        this.translation = translation;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public Date getLastModified() {
-      return lastModified;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setLastModified(Date lastModified) {
-      this.lastModified = lastModified;
-   }
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-   public String getLanguageCode() {
-      return languageCode;
-   }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-   public void setLanguageCode(String languageCode) {
-      this.languageCode = languageCode;
-   }
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-   public String getObjectClass() {
-      return objectClass;
-   }
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
-   public void setObjectClass(String objectClass) {
-      this.objectClass = objectClass;
-   }
+    public String getObjectClass() {
+        return objectClass;
+    }
 
-   public String getObjectId() {
-      return objectId;
-   }
+    public void setObjectClass(String objectClass) {
+        this.objectClass = objectClass;
+    }
 
-   public void setObjectId(String objectId) {
-      this.objectId = objectId;
-   }
+    public String getObjectId() {
+        return objectId;
+    }
 
-   public String getFieldName() {
-      return fieldName;
-   }
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
 
-   public void setFieldName(String fieldName) {
-      this.fieldName = fieldName;
-   }
+    public String getFieldName() {
+        return fieldName;
+    }
 
-   public String getTranslation() {
-      return translation;
-   }
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
 
-   public void setTranslation(String translation) {
-      this.translation = translation;
-   }
+    public String getTranslation() {
+        return translation;
+    }
+
+    public void setTranslation(String translation) {
+        this.translation = translation;
+    }
 
 }

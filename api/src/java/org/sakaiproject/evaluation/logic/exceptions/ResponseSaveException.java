@@ -22,6 +22,8 @@ package org.sakaiproject.evaluation.logic.exceptions;
  */
 public class ResponseSaveException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public static String TYPE_MISSING_REQUIRED_ANSWERS = "missingRequiredAnswers";
     public static String TYPE_CANNOT_TAKE_EVAL = "userCannotTakeEval";
     public static String TYPE_BLANK_RESPONSE = "blankResponse";

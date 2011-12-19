@@ -28,6 +28,8 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
  */
 public class EvalUser implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public static final String USER_TYPE_UNKNOWN = EvalConstants.USER_TYPE_UNKNOWN;
     public static final String USER_TYPE_ANONYMOUS = EvalConstants.USER_TYPE_ANONYMOUS;
     public static final String USER_TYPE_EXTERNAL = EvalConstants.USER_TYPE_EXTERNAL;

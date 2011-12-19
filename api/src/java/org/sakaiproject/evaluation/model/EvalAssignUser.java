@@ -30,6 +30,8 @@ import java.util.Date;
  */
 public class EvalAssignUser implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * STATUS: indicates the assignment is active and in use and should be synchronized if the related
      * assign groups/hierarchy nodes change, all assignments related to groups are created in this state, 

@@ -23,82 +23,84 @@ import java.util.Date;
  */
 public class EvalTags implements java.io.Serializable {
 
-   private Long id;
-   private Date lastModified;
-   /**
-    * The tag to associate with this entity
-    */
-   private String tag;
-   /**
-    * the entity type for the thing being tagged,
-    * this should probably be the entity prefix and not the actual object type
-    */
-   private String entityType;
-   /**
-    * the unique id of the thing being tagged (unique within the prefix anyway) 
-    */
-   private String entityId;
+    private static final long serialVersionUID = 1L;
 
-   public EvalTags() {
-   }
+    private Long id;
+    private Date lastModified;
+    /**
+     * The tag to associate with this entity
+     */
+    private String tag;
+    /**
+     * the entity type for the thing being tagged,
+     * this should probably be the entity prefix and not the actual object type
+     */
+    private String entityType;
+    /**
+     * the unique id of the thing being tagged (unique within the prefix anyway) 
+     */
+    private String entityId;
 
-   /**
-    * MINIMAL constructor
-    * 
-    * @param tag the tag to associate with this entity
-    * @param entityType entity type for the thing being tagged,
-    * this should probably be the entity prefix and not the actual object type
-    * @param entityId unique id of the thing being tagged
-    */
-   public EvalTags(String tag, String entityType, String entityId) {
-      if (this.lastModified == null) {
-         this.lastModified = new Date();
-      }
-      this.tag = tag;
-      this.entityType = entityType;
-      this.entityId = entityId;
-   }
+    public EvalTags() {
+    }
 
-   // GETTERS AND SETTERS
+    /**
+     * MINIMAL constructor
+     * 
+     * @param tag the tag to associate with this entity
+     * @param entityType entity type for the thing being tagged,
+     * this should probably be the entity prefix and not the actual object type
+     * @param entityId unique id of the thing being tagged
+     */
+    public EvalTags(String tag, String entityType, String entityId) {
+        if (this.lastModified == null) {
+            this.lastModified = new Date();
+        }
+        this.tag = tag;
+        this.entityType = entityType;
+        this.entityId = entityId;
+    }
 
-   public Long getId() {
-      return id;
-   }
+    // GETTERS AND SETTERS
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public Date getLastModified() {
-      return lastModified;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setLastModified(Date lastModified) {
-      this.lastModified = lastModified;
-   }
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-   public String getTag() {
-      return tag;
-   }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-   public void setTag(String tag) {
-      this.tag = tag;
-   }
+    public String getTag() {
+        return tag;
+    }
 
-   public String getEntityType() {
-      return entityType;
-   }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-   public void setEntityType(String entityType) {
-      this.entityType = entityType;
-   }
+    public String getEntityType() {
+        return entityType;
+    }
 
-   public String getEntityId() {
-      return entityId;
-   }
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
 
-   public void setEntityId(String entityId) {
-      this.entityId = entityId;
-   }
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(String entityId) {
+        this.entityId = entityId;
+    }
 
 }

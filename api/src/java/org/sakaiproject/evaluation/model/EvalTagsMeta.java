@@ -24,94 +24,96 @@ import java.util.Date;
  */
 public class EvalTagsMeta implements java.io.Serializable {
 
-   private Long id;
-   private Date lastModified;
-   private String owner;
-   private String tag;
-   private String title;
-   private String description;
+    private static final long serialVersionUID = 1L;
 
-   public EvalTagsMeta() {}
+    private Long id;
+    private Date lastModified;
+    private String owner;
+    private String tag;
+    private String title;
+    private String description;
 
-   /**
-    * MINIMAL constructor
-    * 
-    * @param tag
-    * @param owner internal userId of the creator of this tag (the person who can change the meta data)
-    * @param title
-    */
-   public EvalTagsMeta(String tag, String owner, String title) {
-      if (this.lastModified == null) { this.lastModified = new Date(); }
-      this.owner = owner;
-      this.tag = tag;
-      this.title = title;
-   }
+    public EvalTagsMeta() {}
 
-   /**
-    * FULL constructor
-    * 
-    * @param tag
-    * @param owner internal userId of the creator of this tag (the person who can change the meta data)
-    * @param title
-    * @param description
-    */
-   public EvalTagsMeta(String tag, String owner, String title, String description) {
-      if (this.lastModified == null) { this.lastModified = new Date(); }
-      this.owner = owner;
-      this.tag = tag;
-      this.title = title;
-      this.description = description;
-   }
+    /**
+     * MINIMAL constructor
+     * 
+     * @param tag
+     * @param owner internal userId of the creator of this tag (the person who can change the meta data)
+     * @param title
+     */
+    public EvalTagsMeta(String tag, String owner, String title) {
+        if (this.lastModified == null) { this.lastModified = new Date(); }
+        this.owner = owner;
+        this.tag = tag;
+        this.title = title;
+    }
 
-   // GETTERS AND SETTERS
+    /**
+     * FULL constructor
+     * 
+     * @param tag
+     * @param owner internal userId of the creator of this tag (the person who can change the meta data)
+     * @param title
+     * @param description
+     */
+    public EvalTagsMeta(String tag, String owner, String title, String description) {
+        if (this.lastModified == null) { this.lastModified = new Date(); }
+        this.owner = owner;
+        this.tag = tag;
+        this.title = title;
+        this.description = description;
+    }
 
-   public Long getId() {
-      return id;
-   }
+    // GETTERS AND SETTERS
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public Date getLastModified() {
-      return lastModified;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setLastModified(Date lastModified) {
-      this.lastModified = lastModified;
-   }
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-   public String getOwner() {
-      return owner;
-   }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-   public void setOwner(String owner) {
-      this.owner = owner;
-   }
+    public String getOwner() {
+        return owner;
+    }
 
-   public String getTag() {
-      return tag;
-   }
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-   public void setTag(String tag) {
-      this.tag = tag;
-   }
+    public String getTag() {
+        return tag;
+    }
 
-   public String getTitle() {
-      return title;
-   }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-   public void setTitle(String title) {
-      this.title = title;
-   }
+    public String getTitle() {
+        return title;
+    }
 
-   public String getDescription() {
-      return description;
-   }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-   public void setDescription(String description) {
-      this.description = description;
-   }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 
 }
