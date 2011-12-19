@@ -176,6 +176,7 @@
         EMAIL_OPEN_NOTIFICATION bool,
         REMINDER_STATUS varchar(255),
         LOCAL_SELECTOR varchar(255),
+        ALL_ROLES_PARTICIPATE bool,
         primary key (ID)
     );
 

@@ -176,6 +176,7 @@
         EMAIL_OPEN_NOTIFICATION number(1,0),
         REMINDER_STATUS varchar2(255),
         LOCAL_SELECTOR varchar2(255),
+        ALL_ROLES_PARTICIPATE number(1,0),
         primary key (ID)
     );
 
