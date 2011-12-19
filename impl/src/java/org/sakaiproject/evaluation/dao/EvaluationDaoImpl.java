@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,6 +39,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -1889,10 +1892,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectConsolidatedEmailRecipients(boolean, java.util.Date, boolean, java.util.Date, java.lang.String)
      */
 	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent, Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
+		int count = 0;
+		try {
     	StringBuilder queryBuf = new StringBuilder();
     	Map<String,Object> params = new HashMap<String,Object>();
     	
-    	queryBuf.append("insert into EvalEmailProcessingData (eauId,userId,groupId,emailTemplateId,evalDueDate) select user.id as eauId,user.userId as userId,user.evalGroupId as groupId,");
+	    	queryBuf.append("insert into EvalEmailProcessingData (eauId,userId,groupId,emailTemplateId,evalId,evalDueDate) ");
+	    	queryBuf.append("select user.id as eauId,user.userId as userId,user.evalGroupId as groupId, ");
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		queryBuf.append("eval.availableEmailTemplate.id as emailTemplateId");
     	} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType)) {
@@ -1900,9 +1906,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	} else {
     		queryBuf.append("'' as emailTemplateId");
     	}
-    	queryBuf.append(",eval.dueDate as evalDueDate from EvalAssignUser as user ");
+	    	queryBuf.append(",eval.id as evalId, eval.dueDate as evalDueDate ");
+	    	queryBuf.append("from EvalAssignUser as user ");
 		queryBuf.append("inner join user.evaluation as eval ");
-		queryBuf.append("where user.type = :userType and eval.startDate <= current_timestamp() ");
+			queryBuf.append("where user.type = :userType and eval.startDate <= current_timestamp() and user.completedDate is null ");
 		params.put("userType", EvalAssignUser.TYPE_EVALUATOR);
     	if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(emailTemplateType)) {
     		queryBuf.append("and eval.availableEmailTemplate.type = :emailTemplateType ");
@@ -1941,12 +1948,14 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		}
     	}
     	
-    	int count = query.executeUpdate();
+	    	count = query.executeUpdate();
     	log.debug("Rows inserted into EVAL_EMAIL_PROCESSING_QUEUE: " + count);
-    	return count;
+		} catch(Exception e) {
+			log.warn("error processing consolidated-email query: " + e);
+		}
 		
+    	return count;
 	}
-
 
     /**
      * Cleans up lock if there was a failure

@@ -49,6 +49,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
                 <value>org.sakaiproject.evaluation.model.EvalAssignUser</value>
                 <value>org.sakaiproject.evaluation.model.EvalConfig</value>
+                <value>org.sakaiproject.evaluation.model.EvalEmailProcessingData</value>
                 <value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
                 <value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
                 <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>

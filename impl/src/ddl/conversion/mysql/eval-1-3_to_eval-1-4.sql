@@ -12,12 +12,17 @@ create table EVAL_EMAIL_PROCESSING_QUEUE
 	GROUP_ID varchar(255),
 	EMAIL_TEMPLATE_ID bigint, 
 	EVAL_DUE_DATE datetime, 
-	PROCESSING_STATUS tinyint, 
+	PROCESSING_STATUS tinyint,
+	EVALUATION_ID bigint,
+	RESPONSE_ID bigint,
 	primary key (ID)
 );
 
-create index EVAL_EPQ_UITI_IDX on EVAL_EMAIL_PROCESSING_QUEUE (EMAIL_TEMPLATE_ID,USER_ID); 
- 
+create index eval_user_temp_map on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID, EMAIL_TEMPLATE_ID);
+create index eval_emailq_duedate on EVAL_EMAIL_PROCESSING_QUEUE (EVAL_DUE_DATE);
+create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
+create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID); 
+create index eval_emailq_evalid on EVAL_EMAIL_PROCESSING_QUEUE (EVALUATION_ID);
 
 alter table EVAL_ASSIGN_GROUP add column AVAILABLE_EMAIL_SENT datetime DEFAULT NULL;
 alter table EVAL_ASSIGN_GROUP add column REMINDER_EMAIL_SENT datetime DEFAULT NULL;
@@ -31,3 +36,7 @@ alter table eval_evaluation add (AVAILABLE_EMAIL_SENT bit);
 alter table EVAL_EVALUATION add (INSTRUCTOR_VIEW_ALL_RESULTS bit);
 alter table EVAL_ASSIGN_HIERARCHY add (INSTRUCTORS_VIEW_ALL_RESULTS bit);
 alter table EVAL_ASSIGN_GROUP add (INSTRUCTORS_VIEW_ALL_RESULTS bit);
+
+alter table EVAL_ASSIGN_USER add (COMPLETED_DATE datetime);
+create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+

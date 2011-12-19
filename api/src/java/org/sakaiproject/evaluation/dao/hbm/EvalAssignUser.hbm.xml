@@ -39,6 +39,9 @@
         <property name="reminderEmailSent" type="java.util.Date" index="eval_asgnuser_reminderSent">
         	<column name="REMINDER_EMAIL_SENT" />
         </property>
+        <property name="completedDate" type="java.util.Date" index="eval_asgnuser_completedDate">
+        	<column name="COMPLETED_DATE" />
+        </property>
         <!-- linking fields -->
         <property name="assignGroupId" type="java.lang.Long">
             <column name="ASSIGN_GROUP_ID" />
