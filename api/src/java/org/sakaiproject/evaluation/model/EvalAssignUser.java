@@ -138,6 +138,11 @@ public class EvalAssignUser implements java.io.Serializable {
      * to this user for this eval.
      */
     protected Date reminderEmailSent;
+    /**
+     * This stores the last time at which this user saved a response
+     * for this eval.
+     */
+    protected Date completedDate;
 
     // Constructors
 
@@ -326,6 +331,20 @@ public class EvalAssignUser implements java.io.Serializable {
 	 */
 	public void setReminderEmailSent(Date reminderEmailSent) {
 		this.reminderEmailSent = reminderEmailSent;
+	}
+
+	/**
+	 * @return the completedDate
+	 */
+	public Date getCompletedDate() {
+		return completedDate;
+	}
+
+	/**
+	 * @param completedDate the completedDate to set
+	 */
+	public void setCompletedDate(Date completedDate) {
+		this.completedDate = completedDate;
 	}
 
 	public static void validateNotEmpty(String str, String name) {

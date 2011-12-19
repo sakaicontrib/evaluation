@@ -12,14 +12,18 @@ create table EVAL_EMAIL_PROCESSING_QUEUE
 	GROUP_ID varchar2(255),
 	EMAIL_TEMPLATE_ID number(19,0), 
 	EVAL_DUE_DATE timestamp(6), 
-	PROCESSING_STATUS number(4,0), 
+	PROCESSING_STATUS number(4,0),
+	EVALUATION_ID number(19,0),
+	RESPONSE_ID number(19,0),
 	primary key (ID)
 );
 
 create index eval_user_temp_map on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID, EMAIL_TEMPLATE_ID);
 create index eval_emailq_duedate on EVAL_EMAIL_PROCESSING_QUEUE (EVAL_DUE_DATE);
 create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
-create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID);
+create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID); 
+create index eval_emailq_evalid on EVAL_EMAIL_PROCESSING_QUEUE (EVALUATION_ID);
+
 
 alter table EVAL_ASSIGN_USER add AVAILABLE_EMAIL_SENT timestamp(6) DEFAULT NULL;
 alter table EVAL_ASSIGN_USER add REMINDER_EMAIL_SENT timestamp(6) DEFAULT NULL;
@@ -58,4 +62,6 @@ insert into EVAL_CONFIG (ID,LAST_MODIFIED, NAME, VALUE) VALUES (hibernate_sequen
 
 create unique index EVAL_RESP_OGE_IDX on EVAL_RESPONSE (OWNER, GROUP_ID, EVALUATION_FK);
 
+alter table EVAL_ASSIGN_USER add (COMPLETED_DATE date);
+create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
 

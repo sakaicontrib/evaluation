@@ -16,7 +16,9 @@ public class EvalEmailProcessingData implements Serializable {
 	protected String userId;
 	protected String groupId;
 	protected Long emailTemplateId;
+	protected Long evalId;
 	protected Date evalDueDate;
+	protected Long responseId;
 	protected Byte processingStatus;
 	/**
 	 * @return the id
@@ -89,6 +91,30 @@ public class EvalEmailProcessingData implements Serializable {
 	 */
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+	/**
+	 * @return the evalId
+	 */
+	public Long getEvalId() {
+		return evalId;
+	}
+	/**
+	 * @param evalId the evalId to set
+	 */
+	public void setEvalId(Long evalId) {
+		this.evalId = evalId;
+	}
+	/**
+	 * @return the responseId
+	 */
+	public Long getResponseId() {
+		return responseId;
+	}
+	/**
+	 * @param responseId the responseId to set
+	 */
+	public void setResponseId(Long responseId) {
+		this.responseId = responseId;
 	}
 	/**
 	 * @return the availableEmailStatus
