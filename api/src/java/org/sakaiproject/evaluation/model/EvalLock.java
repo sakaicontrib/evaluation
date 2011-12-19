@@ -8,6 +8,8 @@ import java.util.Date;
  */
 public class EvalLock implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
 	private Long id;
 
 	private Date lastModified;

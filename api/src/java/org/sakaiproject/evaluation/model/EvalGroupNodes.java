@@ -10,68 +10,70 @@ import java.util.Date;
  */
 public class EvalGroupNodes implements java.io.Serializable {
 
-   // Fields
+    private static final long serialVersionUID = 1L;
 
-   private Long id;
+    // Fields
 
-   private Date lastModified;
+    private Long id;
 
-   private String nodeId;
+    private Date lastModified;
 
-   private String[] evalGroups;
+    private String nodeId;
 
-   // Constructors
+    private String[] evalGroups;
 
-   /** default constructor */
-   public EvalGroupNodes() {
-   }
+    // Constructors
 
-   /** minimal constructor */
-   public EvalGroupNodes(Date lastModified, String nodeId) {
-      this.lastModified = lastModified;
-      this.nodeId = nodeId;
-   }
+    /** default constructor */
+    public EvalGroupNodes() {
+    }
 
-   /** full constructor */
-   public EvalGroupNodes(Date lastModified, String nodeId, String[] evalGroups) {
-      super();
-      this.lastModified = lastModified;
-      this.nodeId = nodeId;
-      this.evalGroups = evalGroups;
-   }
+    /** minimal constructor */
+    public EvalGroupNodes(Date lastModified, String nodeId) {
+        this.lastModified = lastModified;
+        this.nodeId = nodeId;
+    }
 
-   // Property accessors
+    /** full constructor */
+    public EvalGroupNodes(Date lastModified, String nodeId, String[] evalGroups) {
+        super();
+        this.lastModified = lastModified;
+        this.nodeId = nodeId;
+        this.evalGroups = evalGroups;
+    }
 
-   public String[] getEvalGroups() {
-      return evalGroups;
-   }
+    // Property accessors
 
-   public void setEvalGroups(String[] evalGroups) {
-      this.evalGroups = evalGroups;
-   }
+    public String[] getEvalGroups() {
+        return evalGroups;
+    }
 
-   public Long getId() {
-      return id;
-   }
+    public void setEvalGroups(String[] evalGroups) {
+        this.evalGroups = evalGroups;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public Date getLastModified() {
-      return lastModified;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setLastModified(Date lastModified) {
-      this.lastModified = lastModified;
-   }
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-   public String getNodeId() {
-      return nodeId;
-   }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-   public void setNodeId(String nodeId) {
-      this.nodeId = nodeId;
-   }
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
 
 }

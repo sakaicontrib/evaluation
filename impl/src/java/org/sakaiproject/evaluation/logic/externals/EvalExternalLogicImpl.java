@@ -1139,8 +1139,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
      */
-    @SuppressWarnings("rawtypes")
-    public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+    public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap) {
 
         String jobFullName = null;
         SchedulerManager scheduleManager = getBean(SchedulerManager.class);

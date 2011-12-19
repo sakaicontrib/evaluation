@@ -23,6 +23,8 @@ import java.util.Date;
  */
 public class EvalAdhocUser implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public final static String TYPE_EVALUATOR = "evaluator";
     public final static String TYPE_EVALUATEE = "evaluatee";
 

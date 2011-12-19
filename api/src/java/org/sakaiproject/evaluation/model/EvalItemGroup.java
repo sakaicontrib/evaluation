@@ -12,6 +12,8 @@ import java.util.Set;
  */
 public class EvalItemGroup implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // Fields
 
     private Long id;

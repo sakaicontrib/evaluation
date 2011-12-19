@@ -817,8 +817,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
      */
-    @SuppressWarnings("rawtypes")
-	public String scheduleCronJob(Class jobClass, Map<String, String> dataMap) {
+	public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 

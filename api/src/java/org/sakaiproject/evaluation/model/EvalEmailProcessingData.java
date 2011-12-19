@@ -11,7 +11,10 @@ import java.util.Date;
  *
  */
 public class EvalEmailProcessingData implements Serializable {
-	protected Long id;
+
+    private static final long serialVersionUID = 1L;
+
+    protected Long id;
 	protected Long eauId;
 	protected String userId;
 	protected String groupId;
