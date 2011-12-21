@@ -1,49 +1,125 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
-	<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
-		<title rsf:id="msg=controlemail.page.title">Email Settings Control</title>
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css"
-			rel="stylesheet" media="all" />
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css"
-			rel="stylesheet" media="all" />
-		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script>
-        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-	</head>
-	<body>
-		<div class="portletBody">
-			<div rsf:id="navIntraTool:" class="navIntraTool"></div>
-			<div rsf:id="message-for:*" class="alertMessage">
-   				<ul style="margin:0px;">
-      				<li>Message for user here</li>
-   				</ul>
+<head>
+	<title rsf:id="msg=controlemail.page.title">Email Settings Control</title>
+    <!-- standard on all pages -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <!-- end standard on all pages -->
+
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+<body>
+	<div class="portletBody">
+		<div rsf:id="navIntraTool:" class="navIntraTool"></div>
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+  				<li>Message for user here</li>
+			</ul>
+		</div>
+		<h3 rsf:id="msg=controlemail.title">Control Email</h3>
+		<br/>
+		<form  rsf:id="emailcontrol-form" method="post">
+			<span rsf:id="email-type-choice"></span>
+            <div  class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
+                <p class="checkbox indnt1" style="border: medium none;">
+                    <input rsf:id="email-type-choice-individual" checked="checked" id="emailtype1" class="emailtypeChoice"
+                        name="emailtype" value="false" type="radio" />
+                    <label rsf:id="email-type-choice-individual-label" for="emailtype1"> Send <strong>one email per student per
+                            evaluation</strong>
+                    </label>
+                </p>
+                <p rsf:id="msg=controlemail.individual.emails.explain" class="instruction textPanelFooter indnt3" style="padding: 3px;"> This will
+                    mean that Pat Student will get five emails if she has five evaluations. </p>
+                <fieldset class="visibleFS indnt3 emailtype1 emailTypeOptions" style="">
+                    <legend>
+                        <span rsf:id="msg=controlemail.individual.emails.settings">One email per student per evaluation options</span>
+                    </legend>
+                <p class=   "longtext indnt1">
+                            <label for="default-reminders-frequency-selection" class="block"> Set
+                                the default reminder frequency to use for new evaluations </label>
+                            <select rsf:id="default-reminders-frequency-selection" id="default-reminders-frequency-selection"
+                                name="default-reminders-frequency-selection">
+                                <option value="0" selected="selected">Never</option>
+                                <option value="1">Daily</option>
+                                <option value="2">Every other day</option>
+                                <option value="3">Every 3 days</option>
+                                <option value="4">Every 4 days</option>
+                                <option value="5">Every 5 days</option>
+                                <option value="6">Every 6 days</option>
+                                <option value="7">Every week</option>
+                                <option value="-1">24 hours before the survey closes</option>
+                            </select>
+                </p>
+                <p class=   "checkbox indnt1">
+                        <input rsf:id="enable-job-completion-email" name="enable-job-completion-email"
+                            id="enable-job-completion-email" value="true" type="checkbox" />
+                        <label for="enable-job-completion-email"> Enable an email to be sent to
+                            the evaluation admin when an email job has completed </label>
+				</p>
+                <p class=   "checkbox indnt1">
+                        <input rsf:id="enable-reminder-status" name="enable-reminder-status" id="enable-reminder-status"
+                            value="true" type="checkbox" />
+                        <label for="enable-reminder-status"> Enable the job status while
+                            reminders are running. </label>
+                </p>
+                <p class=   "longtext indnt1">
+                        <label for="eval-time-to-wait-secs" class="block"> The time in seconds
+                            between the creation of an evaluation and the send of the available
+                            notification, default 300 (5 mins) </label>
+                        <input rsf:id="eval-time-to-wait-secs" id="eval-time-to-wait-secs" maxlength="5"
+                            name="eval-time-to-wait-secs" value="300" size="5" type="text" />
+                    &nbsp;<span id="time-wait-errmsg"></span>
+                </p>
+                 <p class="checkbox indnt1">
+                        <input rsf:id="allow-eval-begin-email" name="allow-eval-begin-email" id="allow-eval-begin-email"
+                            value="true" type="checkbox" />
+                        <label for="allow-eval-begin-email"> Allow users to choose whether to
+                            send an initial email notification when creating an evaluation
+                            (otherwise an email notification will always be sent when the
+                            evaluation opens) </label>
+				</p>
+			</fieldset>
+
 			</div>
-			<h3 rsf:id="msg=controlemail.title">Control Email</h3>
 			<br/>
-			<form  rsf:id="emailcontrol-form" method="post">
-				<span rsf:id="email-type-choice"></span>
-                <div  class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
-                    <p class="checkbox indnt1" style="border: medium none;">
-                        <input rsf:id="email-type-choice-individual" checked="checked" id="emailtype1" class="emailtypeChoice"
-                            name="emailtype" value="false" type="radio" />
-                        <label rsf:id="email-type-choice-individual-label" for="emailtype1"> Send <strong>one email per student per
-                                evaluation</strong>
-                        </label>
-                    </p>
-                    <p rsf:id="msg=controlemail.individual.emails.explain" class="instruction textPanelFooter indnt3" style="padding: 3px;"> This will
-                        mean that Pat Student will get five emails if she has five evaluations. </p>
-                    <fieldset class="visibleFS indnt3 emailtype1 emailTypeOptions" style="">
-                        <legend>
-                            <span rsf:id="msg=controlemail.individual.emails.settings">One email per student per evaluation options</span>
+			<div class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
+                <p class=   "checkbox indnt1">
+                    <input rsf:id="email-type-choice-consolidated" id="emailtype2" class="emailtypeChoice" name="emailtype" value="true"
+                        type="radio" />
+                    <label rsf:id="email-type-choice-consolidated-label" for="emailtype2"> Send <strong>summary emails</strong>. The default
+                        is to send one email per student per email template. </label>
+                </p>
+                <p rsf:id="msg=controlemail.consolidated.emails.explain" class="instruction textPanelFooter indnt3" style="padding: 3px;"> This will
+                    mean that if Pat Student has five evaluations of the same type she will get
+                    one summary email about it. If she has two evaluations using the "Chemistry"
+                    email template and four evaluations using the "Biology" email template, she
+                    will get two emails. <br />
+                    <br />The single email per student implementation uses a daily Quartz job to
+                    process email. This job must be running when evaluations begin. </p>
+
+                
+                <div rsf:id="consolidated-email-settings:">
+                    <fieldset class="visibleFS indnt3 emailtype2 emailTypeOptions">
+                        <legend rsf:id="msg=controlemail.consolidated.emails.settings">
+                            <span >Summary Email Options</span>
                         </legend>
-                    <p class=   "longtext indnt1">
-	                            <label for="default-reminders-frequency-selection" class="block"> Set
+	                    <p class="checkbox indnt1">
+	                         <input rsf:id="consolidated-send-available" name="consolidated-send-available" id="consolidated-send-available"
+	                                value="true" type="checkbox" />
+	                         <label rsf:id="msg=controlemail.consolidated.available.enabled" for="consolidated-send-available"> Send notifications when evaluations become active </label>
+						</p>
+	                    <p class="longtext indnt1">
+	                            <label rsf:id="msg=controlemail.reminder.defaults" for="reminders-frequency-selection" class="block"> Set
 	                                the default reminder frequency to use for new evaluations </label>
-	                            <select rsf:id="default-reminders-frequency-selection" id="default-reminders-frequency-selection"
-	                                name="default-reminders-frequency-selection">
+	                            <select rsf:id="reminders-frequency-selection" id="reminders-frequency-selection"
+	                                name="reminders-frequency-selection">
 	                                <option value="0" selected="selected">Never</option>
 	                                <option value="1">Daily</option>
 	                                <option value="2">Every other day</option>
@@ -54,170 +130,96 @@
 	                                <option value="7">Every week</option>
 	                                <option value="-1">24 hours before the survey closes</option>
 	                            </select>
-                    </p>
-                    <p class=   "checkbox indnt1">
-                            <input rsf:id="enable-job-completion-email" name="enable-job-completion-email"
-                                id="enable-job-completion-email" value="true" type="checkbox" />
-                            <label for="enable-job-completion-email"> Enable an email to be sent to
-                                the evaluation admin when an email job has completed </label>
-					</p>
-                    <p class=   "checkbox indnt1">
-                            <input rsf:id="enable-reminder-status" name="enable-reminder-status" id="enable-reminder-status"
-                                value="true" type="checkbox" />
-                            <label for="enable-reminder-status"> Enable the job status while
-                                reminders are running. </label>
-                    </p>
-                    <p class=   "longtext indnt1">
-                            <label for="eval-time-to-wait-secs" class="block"> The time in seconds
-                                between the creation of an evaluation and the send of the available
-                                notification, default 300 (5 mins) </label>
-                            <input rsf:id="eval-time-to-wait-secs" id="eval-time-to-wait-secs" maxlength="5"
-                                name="eval-time-to-wait-secs" value="300" size="5" type="text" />
-                        &nbsp;<span id="time-wait-errmsg"></span>
-                    </p>
-                     <p class="checkbox indnt1">
-                            <input rsf:id="allow-eval-begin-email" name="allow-eval-begin-email" id="allow-eval-begin-email"
-                                value="true" type="checkbox" />
-                            <label for="allow-eval-begin-email"> Allow users to choose whether to
-                                send an initial email notification when creating an evaluation
-                                (otherwise an email notification will always be sent when the
-                                evaluation opens) </label>
-					</p>
-				</fieldset>
-
-				</div>
-				<br/>
-				<div class="emailTypeOptionsContainer" style="border: 1px solid rgb(204, 204, 204); -moz-border-radius: 5px 5px 5px 5px; padding: 10px; background: none repeat scroll 0% 0% rgb(255, 255, 238);">
-                    <p class=   "checkbox indnt1">
-                        <input rsf:id="email-type-choice-consolidated" id="emailtype2" class="emailtypeChoice" name="emailtype" value="true"
-                            type="radio" />
-                        <label rsf:id="email-type-choice-consolidated-label" for="emailtype2"> Send <strong>summary emails</strong>. The default
-                            is to send one email per student per email template. </label>
-                    </p>
-                    <p rsf:id="msg=controlemail.consolidated.emails.explain" class="instruction textPanelFooter indnt3" style="padding: 3px;"> This will
-                        mean that if Pat Student has five evaluations of the same type she will get
-                        one summary email about it. If she has two evaluations using the "Chemistry"
-                        email template and four evaluations using the "Biology" email template, she
-                        will get two emails. <br />
-                        <br />The single email per student implementation uses a daily Quartz job to
-                        process email. This job must be running when evaluations begin. </p>
-
-                    
-                    <div rsf:id="consolidated-email-settings:">
-                        <fieldset class="visibleFS indnt3 emailtype2 emailTypeOptions">
-                            <legend rsf:id="msg=controlemail.consolidated.emails.settings">
-                                <span >Summary Email Options</span>
-                            </legend>
-		                    <p class="checkbox indnt1">
-		                         <input rsf:id="consolidated-send-available" name="consolidated-send-available" id="consolidated-send-available"
-		                                value="true" type="checkbox" />
-		                         <label rsf:id="msg=controlemail.consolidated.available.enabled" for="consolidated-send-available"> Send notifications when evaluations become active </label>
-							</p>
-		                    <p class="longtext indnt1">
-		                            <label rsf:id="msg=controlemail.reminder.defaults" for="reminders-frequency-selection" class="block"> Set
-		                                the default reminder frequency to use for new evaluations </label>
-		                            <select rsf:id="reminders-frequency-selection" id="reminders-frequency-selection"
-		                                name="reminders-frequency-selection">
-		                                <option value="0" selected="selected">Never</option>
-		                                <option value="1">Daily</option>
-		                                <option value="2">Every other day</option>
-		                                <option value="3">Every 3 days</option>
-		                                <option value="4">Every 4 days</option>
-		                                <option value="5">Every 5 days</option>
-		                                <option value="6">Every 6 days</option>
-		                                <option value="7">Every week</option>
-		                                <option value="-1">24 hours before the survey closes</option>
-		                            </select>
-                    </p>
-						<p class=	"longtext indnt1">
-								<label rsf:id="msg=controlemail.job-start-time" for="consolidated-job-start-time" class="block">When do I begin?</label>
-								<select rsf:id="consolidated-job-start-time" id="consolidated-job-start-time"></select>
-								<select rsf:id="consolidated-job-start-time-minutes" id="consolidated-job-start-time-minutes"></select>
-						</p>
-							<div rsf:id="nextReminderDateDiv:" class="longtext indnt1">
-								<label rsf:id="msg=controlemail.next-reminder-date" for="nextReminderDate:::date-field" class="block">Next reminder date/time </label>
-								<span rsf:id="nextReminderDate:" class="block">
-									<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-									<img src="../images/calendar.gif" />
-								</span>
-								<div rsf:id="msg=controlemail.setting-reminder-date" class="instruction textPanelFooter block indnt1">
-									Evaluation ends on this date, no more responses after this date
-								</div>
-							</div>
-						<p class=	"longtext indnt1">
-								<label rsf:id="msg=controlemail.log.progress.every"
-									for="log-progress-every-id" class="block">Log progress every... 10,
-									25, 50 etc.</label>
-							<select rsf:id="log-progress-every" id="log-progress-every-id"></select>
-						</p>
-						<p class=	"longtext indnt1">
-								<label rsf:id="msg=controlemail.batch.size" for="email-batch-size-id"
-									class="block">Number of emails to send as a batch</label>
-							<select rsf:id="email-batch-size" id="email-batch-size-id"></select>
-						</p>
-						<p class=	"longtext indnt1">
-								<label rsf:id="msg=controlemail.wait.interval" for="wait-interval-id"
-									class="block">Seconds to wait between sending batches of
-									email</label>
-							<select rsf:id="wait-interval" id="wait-interval-id"></select>
-						</p>
-
-                        </fieldset> 
-    				</div>
-                    <br/>
-                </div>
-
-				<div>
-					<p class=   "checkbox indnt1">
-						<input type="checkbox" rsf:id="send-submitted" id="send-submitted-id" />
-						<label rsf:id="msg=controlemail.send.submitted" for="send-submitted-id">Send evaluation submission email to submitter</label>
-					</p>
-				
-					<p class=	"longtext indnt1">
-						<label rsf:id="msg=controlemail.header" for="delivery-option-id" class="block">Email delivery options</label>
-						<select rsf:id="delivery-option" id="delivery-option-id"></select>
-					</p>
-					<p class=   "checkbox indnt1">
-                    	<input rsf:id="general-use-admin-from-email" name="general-use-admin-from-email"
-                                id="general-use-admin-from-email" value="true" type="checkbox" />
-                        <label for="general-use-admin-from-email" rsf:id="msg=controlemail.use-admin-from-address"> Use evaluation admin email
-                                address to send from for notifications (uses the system help address
-                                otherwise) </label>
-					</p>
-                     <p class="longtext indnt1">
-                         <label for="general-helpdesk-email" class="block">
-                             Helpdesk email address (email messages appear to come from this email address by default)
-                         </label>
-                         <input rsf:id="general-helpdesk-email" id="general-helpdesk-email" name="general-helpdesk-email" value="helpdesk@institution.edu" type="text"/>
-                     </p>
-
-				</div>			
-                <p class="act">
-            		<input rsf:id="saveSettings" value="Save Settings" class="active" accesskey="s" type="submit"/>
-            		<input value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" type="button"/>
                 </p>
-            </form>
+					<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.job-start-time" for="consolidated-job-start-time" class="block">When do I begin?</label>
+							<select rsf:id="consolidated-job-start-time" id="consolidated-job-start-time"></select>
+							<select rsf:id="consolidated-job-start-time-minutes" id="consolidated-job-start-time-minutes"></select>
+					</p>
+						<div rsf:id="nextReminderDateDiv:" class="longtext indnt1">
+							<label rsf:id="msg=controlemail.next-reminder-date" for="nextReminderDate:::date-field" class="block">Next reminder date/time </label>
+							<span rsf:id="nextReminderDate:" class="block">
+								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+								<img src="../images/calendar.gif" />
+							</span>
+							<div rsf:id="msg=controlemail.setting-reminder-date" class="instruction textPanelFooter block indnt1">
+								Evaluation ends on this date, no more responses after this date
+							</div>
+						</div>
+					<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.log.progress.every"
+								for="log-progress-every-id" class="block">Log progress every... 10,
+								25, 50 etc.</label>
+						<select rsf:id="log-progress-every" id="log-progress-every-id"></select>
+					</p>
+					<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.batch.size" for="email-batch-size-id"
+								class="block">Number of emails to send as a batch</label>
+						<select rsf:id="email-batch-size" id="email-batch-size-id"></select>
+					</p>
+					<p class=	"longtext indnt1">
+							<label rsf:id="msg=controlemail.wait.interval" for="wait-interval-id"
+								class="block">Seconds to wait between sending batches of
+								email</label>
+						<select rsf:id="wait-interval" id="wait-interval-id"></select>
+					</p>
+
+                    </fieldset> 
+				</div>
+                <br/>
+            </div>
+
+			<div>
+				<p class=   "checkbox indnt1">
+					<input type="checkbox" rsf:id="send-submitted" id="send-submitted-id" />
+					<label rsf:id="msg=controlemail.send.submitted" for="send-submitted-id">Send evaluation submission email to submitter</label>
+				</p>
 			
-		</div>
-        <script rsf:id="initEvalJS">
-           EvalSystem.addNumericOnly(eval-time-to-wait-secs, time-wait-errmsg);
-        </script>
-        <script type="text/javascript">
-                $(document).ready(function(){
-                    $('fieldset.emailTypeOptions').hide();
-                    $('div.emailTypeOptionsContainer').each(function(){
-                    	if($(this).find('.emailtypeChoice:checked').length > 0) {
-                    		$(this).find('fieldset.emailTypeOptions').fadeIn('slow');
-                    	}	
-                    });
-                    $('.emailtypeChoice').change(function(){
-                        $('fieldset.emailTypeOptions').fadeOut('slow');
-                        if ($(this).attr('checked')) {
-							$(this).closest('div.emailTypeOptionsContainer').find('fieldset.emailTypeOptions').fadeIn('slow');
-                        };
-                        
-                     })
-                })
-       </script> 
-	</body>
+				<p class=	"longtext indnt1">
+					<label rsf:id="msg=controlemail.header" for="delivery-option-id" class="block">Email delivery options</label>
+					<select rsf:id="delivery-option" id="delivery-option-id"></select>
+				</p>
+				<p class=   "checkbox indnt1">
+                	<input rsf:id="general-use-admin-from-email" name="general-use-admin-from-email"
+                            id="general-use-admin-from-email" value="true" type="checkbox" />
+                    <label for="general-use-admin-from-email" rsf:id="msg=controlemail.use-admin-from-address"> Use evaluation admin email
+                            address to send from for notifications (uses the system help address
+                            otherwise) </label>
+				</p>
+                 <p class="longtext indnt1">
+                     <label for="general-helpdesk-email" class="block">
+                         Helpdesk email address (email messages appear to come from this email address by default)
+                     </label>
+                     <input rsf:id="general-helpdesk-email" id="general-helpdesk-email" name="general-helpdesk-email" value="helpdesk@institution.edu" type="text"/>
+                 </p>
+
+			</div>			
+            <p class="act">
+        		<input rsf:id="saveSettings" value="Save Settings" class="active" accesskey="s" type="submit"/>
+        		<input value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" type="button"/>
+            </p>
+        </form>
+		
+	</div>
+    <script rsf:id="initEvalJS">
+       EvalSystem.addNumericOnly(eval-time-to-wait-secs, time-wait-errmsg);
+    </script>
+    <script type="text/javascript">
+            $(document).ready(function(){
+                $('fieldset.emailTypeOptions').hide();
+                $('div.emailTypeOptionsContainer').each(function(){
+                	if($(this).find('.emailtypeChoice:checked').length > 0) {
+                		$(this).find('fieldset.emailTypeOptions').fadeIn('slow');
+                	}	
+                });
+                $('.emailtypeChoice').change(function(){
+                    $('fieldset.emailTypeOptions').fadeOut('slow');
+                    if ($(this).attr('checked')) {
+						$(this).closest('div.emailTypeOptionsContainer').find('fieldset.emailTypeOptions').fadeIn('slow');
+                    };
+                    
+                 })
+            })
+   </script> 
+</body>
 </html>

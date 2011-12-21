@@ -1,116 +1,120 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title rsf:id="administrate-title">Administrate</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
-        <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
-        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-	</head>
-	<body>
-		<div class="portletBody">
-			
-			<div class="navIntraTool">
-				<a rsf:id="administrate-link" href="administrate.html" class="inactive">Administrate</a>
-				<a rsf:id="summary-link" href="summary.html">Summary</a>
-				<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-				<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
-				<a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
-				<a rsf:id="control-emailtemplates-link" href="control_email_templates.html">My Email Templates</a>
-			</div>
-			
-			<ul class="breadCrumb" style="clear: both; height: 1.5em">
-				<li style="float: left">
-					<a rsf:id="summary-link" href="summary.html">Summary</a>
-				</li>
-				<li style="float: left">
-					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-				</li>
-				<li rsf:id="control-eval-admin-title" class="lastCrumb" style="float: left">
-					Control Eval Admin
-				</li>
-			</ul>
-			
-			<div rsf:id="message-for:*" class="alertMessage">
-				<ul style="margin:0px;">
-					<li>Message for user here</li>
-				</ul>
-			</div>
-			
-			<p class="instruction" rsf:id="control-eval-admin-note">Note about how users cannot remove their own admin rights</p>
-			
-			<form rsf:id="eval-admin-form">
-				
-				<table class="evalAdminTable">
-					
-					<thead>
-						<tr>
-							<th rsf:id="user-info-header">User Info</th>
-							<th rsf:id="assignor-info-header">Assignor Info</th>
-							<th rsf:id="actions-header">Actions</th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						
-						<tr rsf:id="eval-admin:">
-							<td rsf:id="user-info">[display-name] ([user-eid])</td>
-							<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
-							<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
-						</tr>
-						
-					</tbody>
-					
-					<tfoot>
-						
-						<tr id="assign-fields">
-							
-							<td class="assignEvalAdmin" colspan="2">
-								<label for="user-eid-input" rsf:id="user-eid-label">Assign New Eval Admin: </label>
-								<input type="text" rsf:id="user-eid-input" class="userEidInput" />
-							</td>
-							
-							<td><input type="submit" rsf:id="assign-button" class="assignButton" value="Assign" /></td>
-							
-						</tr>
-						
-					</tfoot>
-					
-				</table>
-				
-				<table class="evalAdminTable">
-					
-					<thead>
-						<tr>
-							<th rsf:id="sakai-admins-header"></th>
-						</tr>
-						<tr>
-							<th>
-								<span rsf:id="sakai-admin-access-status">Sakai admin access is enabled/disabled.</span>
-								<input type="submit" rsf:id="toggle-sakai-admin-access-button" value="Enable/Disable" />
-							</th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						<tr rsf:id="sakai-admin:">
-							<td rsf:id="sakai-admin-info">[display-name] ([user-eid])</td>
-						</tr>
-					</tbody>
-					
-				</table>
-				
-			</form>
-			
-			<script type="text/javascript" rsf:id="init-js">
-				EvalSystem.initEvalAdminView();
-			</script>
-			
+<head>
+	<title rsf:id="administrate-title">Administrate</title>
+    <!-- standard on all pages -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <!-- end standard on all pages -->
+
+	<script src="../js/jquery/jquery.js" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/rsf.js" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
+
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+<body>
+	<div class="portletBody">
+		
+		<div class="navIntraTool">
+			<a rsf:id="administrate-link" href="administrate.html" class="inactive">Administrate</a>
+			<a rsf:id="summary-link" href="summary.html">Summary</a>
+			<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+			<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+			<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+			<a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+			<a rsf:id="control-emailtemplates-link" href="control_email_templates.html">My Email Templates</a>
 		</div>
-	</body>
+		
+		<ul class="breadCrumb" style="clear: both; height: 1.5em">
+			<li style="float: left">
+				<a rsf:id="summary-link" href="summary.html">Summary</a>
+			</li>
+			<li style="float: left">
+				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+			</li>
+			<li rsf:id="control-eval-admin-title" class="lastCrumb" style="float: left">
+				Control Eval Admin
+			</li>
+		</ul>
+		
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+				<li>Message for user here</li>
+			</ul>
+		</div>
+		
+		<p class="instruction" rsf:id="control-eval-admin-note">Note about how users cannot remove their own admin rights</p>
+		
+		<form rsf:id="eval-admin-form">
+			
+			<table class="evalAdminTable">
+				
+				<thead>
+					<tr>
+						<th rsf:id="user-info-header">User Info</th>
+						<th rsf:id="assignor-info-header">Assignor Info</th>
+						<th rsf:id="actions-header">Actions</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					
+					<tr rsf:id="eval-admin:">
+						<td rsf:id="user-info">[display-name] ([user-eid])</td>
+						<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
+						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
+					</tr>
+					
+				</tbody>
+				
+				<tfoot>
+					
+					<tr id="assign-fields">
+						
+						<td class="assignEvalAdmin" colspan="2">
+							<label for="user-eid-input" rsf:id="user-eid-label">Assign New Eval Admin: </label>
+							<input type="text" rsf:id="user-eid-input" class="userEidInput" />
+						</td>
+						
+						<td><input type="submit" rsf:id="assign-button" class="assignButton" value="Assign" /></td>
+						
+					</tr>
+					
+				</tfoot>
+				
+			</table>
+			
+			<table class="evalAdminTable">
+				
+				<thead>
+					<tr>
+						<th rsf:id="sakai-admins-header"></th>
+					</tr>
+					<tr>
+						<th>
+							<span rsf:id="sakai-admin-access-status">Sakai admin access is enabled/disabled.</span>
+							<input type="submit" rsf:id="toggle-sakai-admin-access-button" value="Enable/Disable" />
+						</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr rsf:id="sakai-admin:">
+						<td rsf:id="sakai-admin-info">[display-name] ([user-eid])</td>
+					</tr>
+				</tbody>
+				
+			</table>
+			
+		</form>
+		
+		<script type="text/javascript" rsf:id="init-js">
+			EvalSystem.initEvalAdminView();
+		</script>
+		
+	</div>
+</body>
 </html>
