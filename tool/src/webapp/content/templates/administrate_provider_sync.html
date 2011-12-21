@@ -1,273 +1,275 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title rsf:id="administrate-sync-title">Control Synchronicity of Group Memberships</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css"
-            rel="stylesheet" media="all" />
-        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css"
-            rel="stylesheet" media="all" />
-        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-        <script type="text/javascript" src="../js/jquery/jquery-1.4.4.min.js"></script>
-        <script type="text/javascript" src="../js/jquery/jquery-ui-1.8.7.custom.min.js"></script>
-        <script type="text/javascript" src="../js/admin.provider.sync.js"></script>
-        <link href="../css/jquery-ui-1.8.7.custom.css" type="text/css" rel="stylesheet" media="all" />
-        <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    </head>
-    <body>
-        <div class="portletBody">
-            <!-- administrate_provider_sync.html -->
-            <div rsf:id="navIntraTool:" class="navIntraTool"></div>
-            <ul class="breadCrumb">
-                <li style="float: left">
-                    <a rsf:id="summary-link" href="summary.html">Summary</a>
+<head>
+    <title rsf:id="administrate-sync-title">Control Synchronicity of Group Memberships</title>
+    <!-- standard on all pages -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <!-- end standard on all pages -->
+
+    <script type="text/javascript" src="../js/jquery/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery-ui-1.8.7.custom.min.js"></script>
+    <script type="text/javascript" src="../js/admin.provider.sync.js"></script>
+
+    <link href="../css/jquery-ui-1.8.7.custom.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+<body>
+    <div class="portletBody">
+        <!-- administrate_provider_sync.html -->
+        <div rsf:id="navIntraTool:" class="navIntraTool"></div>
+        <ul class="breadCrumb">
+            <li style="float: left">
+                <a rsf:id="summary-link" href="summary.html">Summary</a>
+            </li>
+            <li style="float: left">
+                <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            </li>
+            <li class="lastCrumb">
+                <span rsf:id="msg=administrate.sync.breadcrumb.title">Sync Group Members</span>
+            </li>
+        </ul>
+        <div rsf:id="message-for:*" class="alertMessage">
+            <ul style="margin:0px;">
+                <li>Message for user here</li>
+            </ul>
+        </div>
+        <h3 rsf:id="msg=administrate.sync.page.title">Schedule Synch of Group Members</h3>
+        <span rsf:id="initial-tab" class="initialTab" style="display:none"></span>
+        <div id="tabs" style="margin:1em 0">
+            <ul>
+                <li>
+                    <a href="#tabs-1"><span rsd:id="msg=administrate.sync.by_event.tab">By
+                            trigger/event</span></a>
                 </li>
-                <li style="float: left">
-                    <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+                <li>
+                    <a href="#tabs-2"><span rsf:id="msg=administrate.sync.by_time.tab">By
+                            time/state</span></a>
                 </li>
-                <li class="lastCrumb">
-                    <span rsf:id="msg=administrate.sync.breadcrumb.title">Sync Group Members</span>
+                <li>
+                    <a href="#tabs-3"><span rsf:id="msg=administrate.sync.quick.tab">Quick
+                            sync</span></a>
                 </li>
             </ul>
-            <div rsf:id="message-for:*" class="alertMessage">
-                <ul style="margin:0px;">
-                    <li>Message for user here</li>
-                </ul>
+            <div id="tabs-1">
+                <form rsf:id="by_event-form" action="administrate_provider_sync" method="post"
+                    style="border:1px solid #ccc;background:#fff; display:block;">
+                    <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
+                    <div style="padding:1em;">
+                        <p class="instruction"
+                            rsf:id="msg=administrate.sync.by_event.instruction"> Sync
+                            memberships when the following happens </p>
+                        <p class="longtext indnt1">
+                            <input type="checkbox" rsf:id="sync-unassigned-on-startup"
+                                id="sync-unassigned-on-startup" />
+                            <label for="sync-unassigned-on-startup"
+                                rsf:id="sync-unassigned-on-startup-note">Sync unassigned on
+                                startup</label>
+                        </p>
+                        <p class="longtext indnt1">
+                            <input type="checkbox" rsf:id="sync-on-state-change"
+                                id="sync-on-state-change" />
+                            <label for="sync-on-state-change" rsf:id="sync-on-state-change-note"
+                                >Sync when eval state changes</label>
+                        </p>
+                        <p class="longtext indnt1">
+                            <input type="checkbox" rsf:id="sync-on-group-save"
+                                id="sync-on-group-save" />
+                            <label for="sync-on-group-save" rsf:id="sync-on-group-save-note"
+                                >Sync on group save</label>
+                        </p>
+                        <p class="longtext indnt1">
+                            <input type="checkbox" rsf:id="sync-on-group-update"
+                                id="sync-on-group-update" />
+                            <label for="sync-on-group-update" rsf:id="sync-on-group-update-note"
+                                >Sync on group update</label>
+                        </p>
+                        <p class="longtext indnt1" rsf:id="sync-select-server-graf:">
+                            <label class="block" rsf:id="sync-select-server-note"
+                                for="sync-select-server">Server which handles sync</label>
+                            <select rsf:id="sync-select-server" id="sync-select-server"
+                            > </select>
+                        </p>
+                        <p class="longtext indnt1">
+                            <input type="submit" rsf:id="sync-event-submit" />
+                        </p>
+                    </div>
+                </form>
             </div>
-            <h3 rsf:id="msg=administrate.sync.page.title">Schedule Synch of Group Members</h3>
-            <span rsf:id="initial-tab" class="initialTab" style="display:none"></span>
-            <div id="tabs" style="margin:1em 0">
-                <ul>
-                    <li>
-                        <a href="#tabs-1"><span rsd:id="msg=administrate.sync.by_event.tab">By
-                                trigger/event</span></a>
-                    </li>
-                    <li>
-                        <a href="#tabs-2"><span rsf:id="msg=administrate.sync.by_time.tab">By
-                                time/state</span></a>
-                    </li>
-                    <li>
-                        <a href="#tabs-3"><span rsf:id="msg=administrate.sync.quick.tab">Quick
-                                sync</span></a>
-                    </li>
-                </ul>
-                <div id="tabs-1">
-                    <form rsf:id="by_event-form" action="administrate_provider_sync" method="post"
-                        style="border:1px solid #ccc;background:#fff; display:block;">
-                        <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
-                        <div style="padding:1em;">
-                            <p class="instruction"
-                                rsf:id="msg=administrate.sync.by_event.instruction"> Sync
-                                memberships when the following happens </p>
-                            <p class="longtext indnt1">
-                                <input type="checkbox" rsf:id="sync-unassigned-on-startup"
-                                    id="sync-unassigned-on-startup" />
-                                <label for="sync-unassigned-on-startup"
-                                    rsf:id="sync-unassigned-on-startup-note">Sync unassigned on
-                                    startup</label>
-                            </p>
-                            <p class="longtext indnt1">
-                                <input type="checkbox" rsf:id="sync-on-state-change"
-                                    id="sync-on-state-change" />
-                                <label for="sync-on-state-change" rsf:id="sync-on-state-change-note"
-                                    >Sync when eval state changes</label>
-                            </p>
-                            <p class="longtext indnt1">
-                                <input type="checkbox" rsf:id="sync-on-group-save"
-                                    id="sync-on-group-save" />
-                                <label for="sync-on-group-save" rsf:id="sync-on-group-save-note"
-                                    >Sync on group save</label>
-                            </p>
-                            <p class="longtext indnt1">
-                                <input type="checkbox" rsf:id="sync-on-group-update"
-                                    id="sync-on-group-update" />
-                                <label for="sync-on-group-update" rsf:id="sync-on-group-update-note"
-                                    >Sync on group update</label>
-                            </p>
-                            <p class="longtext indnt1" rsf:id="sync-select-server-graf:">
-                                <label class="block" rsf:id="sync-select-server-note"
-                                    for="sync-select-server">Server which handles sync</label>
-                                <select rsf:id="sync-select-server" id="sync-select-server"
-                                > </select>
-                            </p>
-                            <p class="longtext indnt1">
-                                <input type="submit" rsf:id="sync-event-submit" />
-                            </p>
-                        </div>
-                    </form>
-                </div>
-                <div id="tabs-2">
-                    <form rsf:id="by_time-form" action="administrate_provider_sync" method="post"
-                        style="border:1px solid #ccc;background:#fff; display:block;">
-                        <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
-                        <input rsf:id="by_time-fullJobName" name="fullJobName" value="" class="formfullJobName"
-                            type="hidden" />
-                        <div style="padding:1em;">
-                            <fieldset id="syncEdit" class="visibleFS" style="display:none">
-                                <legend rsf:id="msg=administrate.sync.by_time.instruction"> Schedule
-                                    a sync at a specific time on evaluations in a specific state </legend>
-                                <p class="longtext">
-                                    <span class="block">
-                                        <label rsf:id="by_time-cronExpression-note"
-                                            for="by_time-cronExpression"> Cron Expression: </label>
-                                        <span class="textPanelFooter">
-                                            <a rsf:id="by_time-cronTutorial" target="_blank">Cron Trigger Tutorial</a>
-                                        </span>
+            <div id="tabs-2">
+                <form rsf:id="by_time-form" action="administrate_provider_sync" method="post"
+                    style="border:1px solid #ccc;background:#fff; display:block;">
+                    <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
+                    <input rsf:id="by_time-fullJobName" name="fullJobName" value="" class="formfullJobName"
+                        type="hidden" />
+                    <div style="padding:1em;">
+                        <fieldset id="syncEdit" class="visibleFS" style="display:none">
+                            <legend rsf:id="msg=administrate.sync.by_time.instruction"> Schedule
+                                a sync at a specific time on evaluations in a specific state </legend>
+                            <p class="longtext">
+                                <span class="block">
+                                    <label rsf:id="by_time-cronExpression-note"
+                                        for="by_time-cronExpression"> Cron Expression: </label>
+                                    <span class="textPanelFooter">
+                                        <a rsf:id="by_time-cronTutorial" target="_blank">Cron Trigger Tutorial</a>
                                     </span>
-                                    <input rsf:id="by_time-cronExpression" id="by_time-cronExpression" name="by_time-cronExpression"
-                                        value="" size="60" type="text" class="formCronExpression" />
-                                </p>
-                                <p rsf:id="msg=administrate.sync.by_time.stateList">Eval State:</p>
-                                <p class="longtext">
-                                    <input rsf:id="by_time-state-partial" id="by_time-state-partial"
-                                        name="by_time-state-partial" value="true" checked="checked"
-                                        type="checkbox"  />
-                                    <label rsf:id="by_time-state-partial-note"
-                                        for="by_time-state-partial"> Partial </label>
-                                    <span rsf:id="by_time-state-name-partial" class="formStateName" style="display:none;"></span>
-                                </p>
-                                <p class="longtext">
-                                    <input rsf:id="by_time-state-inqueue" id="by_time-state-inqueue"
-                                        name="by_time-state-inqueue" value="true" checked="checked"
-                                        type="checkbox" />
-                                    <label rsf:id="by_time-state-inqueue-note"
-                                        for="by_time-state-inqueue"> In Queue </label>
-                                    <span rsf:id="by_time-state-name-inqueue" class="formStateName" style="display:none;"></span>
-                                </p>
-                                <p class="longtext">
-                                    <input rsf:id="by_time-state-active" id="by_time-state-active"
-                                        name="by_time-state-active" value="true" checked="checked"
-                                        type="checkbox" />
-                                    <label rsf:id="by_time-state-active-note"
-                                        for="by_time-state-active"> Active </label>
-                                    <span rsf:id="by_time-state-name-active" class="formStateName" style="display:none;"></span>
-                                </p>
-                                <p class="longtext">
-                                    <input rsf:id="by_time-state-graceperiod"
-                                        id="by_time-state-graceperiod"
-                                        name="by_time-state-graceperiod" value="true"
-                                        checked="checked" type="checkbox" />
-                                    <label rsf:id="by_time-state-graceperiod-note"
-                                        for="by_time-state-graceperiod"> Grace Period </label>
-                                    <span rsf:id="by_time-state-name-graceperiod" class="formStateName" style="display:none;"></span>
-                                </p>
-                                <p class="longtext">
-                                    <input rsf:id="by_time-state-closed" id="by_time-state-closed"
-                                        name="by_time-state-closed" value="true" type="checkbox" />
-                                    <label rsf:id="by_time-state-closed-note"
-                                        for="by_time-state-closed"> Closed </label>
-                                    <span rsf:id="by_time-state-name-closed" class="formStateName" style="display:none;"></span>
-                                </p>
-                                <p class="longtext" rsf:id="by_time-server-div:">
-                                    <label for="by_time-server-note" class="block"> Select server to
-                                        handle all syncing of eval group memberships </label>
-                                    <select rsf:id="by_time-server" id="by_time-server"> </select>
-                                </p>
-                                <p>
-                                    <input rsf:id="by_time-create-submit" value="Schedule Sync" type="submit" class="createSync" />
-                                    <input rsf:id="by_time-revise-submit" value="Patch Up an Existing Sync" type="submit" class="updateSync" style="display:none;" />
-                           			<!-- TODO: i18n for cancel button -->
-                                    <input type="button" value="Cancel" class="cancelSyncEdit"/>
-                                </p>
-                            </fieldset>
-                            <p rsf:id="by_time-no_triggers">Can't get no satisfaction'</p>
-                            <table rsf:id="trigger-table:" id="scheduledSyncs" class="listHier"
-                                style="width:90%" cellpadding="0" cellspacing="0">
-                                <tbody>
-                                    <tr>
-                                        <th rsf:id="msg=administrate.sync.triggers.cronExpression">
-                                            Cron Expression </th>
-                                        <th rsf:id="msg=administrate.sync.triggers.states"> State
-                                            List </th>
-                                        <th rsf:id="msg=administrate.sync.triggers.actions"> Actions
-                                        </th>
-                                    </tr>
-                                    <tr rsf:id="trigger-row:">
-                                        <td rsf:id="trigger-cronExpression"> </td>
-                                        <td rsf:id="trigger-stateList"> </td>
-                                        <td>
-                                        	<span rsf:id="trigger-delete-confirm" style="display:none;" class="triggerDeleteConfirm"></span>
-                                            <span rsf:id="trigger-name" style="display:none;" class="fullJobName"></span>
-                                            <span rsf:id="trigger-revise-cronExpression" style="display:none;" class="triggerCronExpression"></span>
-                                            <span rsf:id="trigger-revise-stateList" style="display:none;" class="triggerStateList"></span>
-                                            <a rsf:id="trigger-delete" class="triggerDelete">Bah!</a>
-                                            <a rsf:id="trigger-revise" class="triggerRevise">Humbug!</a>
-                                        </td>
-                                        <!-- 
-									<td rsf:id="job-name"> </td>
-									<td rsf:id="trigger-name"> </td>
-									 -->
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p class="act">
-                           		<!-- TODO: i18n for button -->
-                                <a id="addSync" href="#">Add sync</a>
+                                </span>
+                                <input rsf:id="by_time-cronExpression" id="by_time-cronExpression" name="by_time-cronExpression"
+                                    value="" size="60" type="text" class="formCronExpression" />
                             </p>
-                        </div>
-                    </form>
-                    <form rsf:id="by_time-delete-form" action="administrate_provider_sync" method="post"
-                        style="display:none;" class="syncDeleteForm">
-                        <input type="text" rsf:id="currentTab" class="currentTab"/>
-                        <input type="text" rsf:id="by_time-delete-fullJobName" class="syncDeleteItem" />
-                        <input type="submit" rsf:id="by_time-delete-submit" class="syncDeleteSubmit" />
-                    </form>
-                </div>
-                <div id="tabs-3">
-                    <form rsf:id="quick_sync-form" action="X" method="post" class="textPanel"
-                        style="border:1px solid #ccc;background:#fff; display:block;">
-                        <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
-                        <div style="padding:1em;">
-                            <p rsf:id="msg=administrate.sync.quick_sync.states" class="instruction">
-                                Run quick sync on evaluations that are: </p>
-                            <p class="checkbox">
-                                <input rsf:id="quick_sync-state-partial"
-                                    id="quick_sync-state-partial" type="checkbox" />
-                                <label rsf:id="quick_sync-state-partial-note"
-                                    for="quick_sync-state-partial"> Partial </label>
+                            <p rsf:id="msg=administrate.sync.by_time.stateList">Eval State:</p>
+                            <p class="longtext">
+                                <input rsf:id="by_time-state-partial" id="by_time-state-partial"
+                                    name="by_time-state-partial" value="true" checked="checked"
+                                    type="checkbox"  />
+                                <label rsf:id="by_time-state-partial-note"
+                                    for="by_time-state-partial"> Partial </label>
+                                <span rsf:id="by_time-state-name-partial" class="formStateName" style="display:none;"></span>
                             </p>
-                            <p class="checkbox">
-                                <input rsf:id="quick_sync-state-inqueue"
-                                    id="quick_sync-state-inqueue" type="checkbox" />
-                                <label rsf:id="quick_sync-state-inqueue-note"
-                                    for="quick_sync-state-inqueue"> In Queue </label>
-                            </p>
-                            <p class="checkbox">
-                                <input rsf:id="quick_sync-state-active" id="quick_sync-state-active"
+                            <p class="longtext">
+                                <input rsf:id="by_time-state-inqueue" id="by_time-state-inqueue"
+                                    name="by_time-state-inqueue" value="true" checked="checked"
                                     type="checkbox" />
-                                <label rsf:id="quick_sync-state-active-note"
-                                    for="quick_sync-state-active"> Active </label>
+                                <label rsf:id="by_time-state-inqueue-note"
+                                    for="by_time-state-inqueue"> In Queue </label>
+                                <span rsf:id="by_time-state-name-inqueue" class="formStateName" style="display:none;"></span>
                             </p>
-                            <p class="checkbox">
-                                <input rsf:id="quick_sync-state-graceperiod"
-                                    id="quick_sync-state-graceperiod" type="checkbox" />
-                                <label rsf:id="quick_sync-state-graceperiod-note"
-                                    for="quick_sync-state-graceperiod"> Grace Period </label>
-                            </p>
-                            <p class="checkbox">
-                                <input rsf:id="quick_sync-state-closed" id="quick_sync-state-closed"
+                            <p class="longtext">
+                                <input rsf:id="by_time-state-active" id="by_time-state-active"
+                                    name="by_time-state-active" value="true" checked="checked"
                                     type="checkbox" />
-                                <label rsf:id="quick_sync-state-closed-note"
-                                    for="quick_sync-state-closed"> Closed </label>
+                                <label rsf:id="by_time-state-active-note"
+                                    for="by_time-state-active"> Active </label>
+                                <span rsf:id="by_time-state-name-active" class="formStateName" style="display:none;"></span>
                             </p>
-                            <p rsf:id="quick_sync-server-div:" class="longtext">
-                                <label rsf:id="quick_sync-server-note" for="quick_sync-server"
-                                    class="block"> Select server to handle all syncing of eval group
-                                    memberships </label>
-                                <select rsf:id="quick_sync-server" id="quick_sync-server">
-                                    <option value="www.sakaiproject.org"
-                                        >www.sakaiproject.org</option>
-                                </select>
+                            <p class="longtext">
+                                <input rsf:id="by_time-state-graceperiod"
+                                    id="by_time-state-graceperiod"
+                                    name="by_time-state-graceperiod" value="true"
+                                    checked="checked" type="checkbox" />
+                                <label rsf:id="by_time-state-graceperiod-note"
+                                    for="by_time-state-graceperiod"> Grace Period </label>
+                                <span rsf:id="by_time-state-name-graceperiod" class="formStateName" style="display:none;"></span>
                             </p>
-                            <p class="act">
-                                <input rsf:id="quick_sync-submit" name="x" value="Run Sync Now"
-                                    type="submit" />
+                            <p class="longtext">
+                                <input rsf:id="by_time-state-closed" id="by_time-state-closed"
+                                    name="by_time-state-closed" value="true" type="checkbox" />
+                                <label rsf:id="by_time-state-closed-note"
+                                    for="by_time-state-closed"> Closed </label>
+                                <span rsf:id="by_time-state-name-closed" class="formStateName" style="display:none;"></span>
                             </p>
-                        </div>
-                    </form>
-                </div>
+                            <p class="longtext" rsf:id="by_time-server-div:">
+                                <label for="by_time-server-note" class="block"> Select server to
+                                    handle all syncing of eval group memberships </label>
+                                <select rsf:id="by_time-server" id="by_time-server"> </select>
+                            </p>
+                            <p>
+                                <input rsf:id="by_time-create-submit" value="Schedule Sync" type="submit" class="createSync" />
+                                <input rsf:id="by_time-revise-submit" value="Patch Up an Existing Sync" type="submit" class="updateSync" style="display:none;" />
+                       			<!-- TODO: i18n for cancel button -->
+                                <input type="button" value="Cancel" class="cancelSyncEdit"/>
+                            </p>
+                        </fieldset>
+                        <p rsf:id="by_time-no_triggers">Can't get no satisfaction'</p>
+                        <table rsf:id="trigger-table:" id="scheduledSyncs" class="listHier"
+                            style="width:90%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <th rsf:id="msg=administrate.sync.triggers.cronExpression">
+                                        Cron Expression </th>
+                                    <th rsf:id="msg=administrate.sync.triggers.states"> State
+                                        List </th>
+                                    <th rsf:id="msg=administrate.sync.triggers.actions"> Actions
+                                    </th>
+                                </tr>
+                                <tr rsf:id="trigger-row:">
+                                    <td rsf:id="trigger-cronExpression"> </td>
+                                    <td rsf:id="trigger-stateList"> </td>
+                                    <td>
+                                    	<span rsf:id="trigger-delete-confirm" style="display:none;" class="triggerDeleteConfirm"></span>
+                                        <span rsf:id="trigger-name" style="display:none;" class="fullJobName"></span>
+                                        <span rsf:id="trigger-revise-cronExpression" style="display:none;" class="triggerCronExpression"></span>
+                                        <span rsf:id="trigger-revise-stateList" style="display:none;" class="triggerStateList"></span>
+                                        <a rsf:id="trigger-delete" class="triggerDelete">Bah!</a>
+                                        <a rsf:id="trigger-revise" class="triggerRevise">Humbug!</a>
+                                    </td>
+                                    <!-- 
+								<td rsf:id="job-name"> </td>
+								<td rsf:id="trigger-name"> </td>
+								 -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="act">
+                       		<!-- TODO: i18n for button -->
+                            <a id="addSync" href="#">Add sync</a>
+                        </p>
+                    </div>
+                </form>
+                <form rsf:id="by_time-delete-form" action="administrate_provider_sync" method="post"
+                    style="display:none;" class="syncDeleteForm">
+                    <input type="text" rsf:id="currentTab" class="currentTab"/>
+                    <input type="text" rsf:id="by_time-delete-fullJobName" class="syncDeleteItem" />
+                    <input type="submit" rsf:id="by_time-delete-submit" class="syncDeleteSubmit" />
+                </form>
+            </div>
+            <div id="tabs-3">
+                <form rsf:id="quick_sync-form" action="X" method="post" class="textPanel"
+                    style="border:1px solid #ccc;background:#fff; display:block;">
+                    <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
+                    <div style="padding:1em;">
+                        <p rsf:id="msg=administrate.sync.quick_sync.states" class="instruction">
+                            Run quick sync on evaluations that are: </p>
+                        <p class="checkbox">
+                            <input rsf:id="quick_sync-state-partial"
+                                id="quick_sync-state-partial" type="checkbox" />
+                            <label rsf:id="quick_sync-state-partial-note"
+                                for="quick_sync-state-partial"> Partial </label>
+                        </p>
+                        <p class="checkbox">
+                            <input rsf:id="quick_sync-state-inqueue"
+                                id="quick_sync-state-inqueue" type="checkbox" />
+                            <label rsf:id="quick_sync-state-inqueue-note"
+                                for="quick_sync-state-inqueue"> In Queue </label>
+                        </p>
+                        <p class="checkbox">
+                            <input rsf:id="quick_sync-state-active" id="quick_sync-state-active"
+                                type="checkbox" />
+                            <label rsf:id="quick_sync-state-active-note"
+                                for="quick_sync-state-active"> Active </label>
+                        </p>
+                        <p class="checkbox">
+                            <input rsf:id="quick_sync-state-graceperiod"
+                                id="quick_sync-state-graceperiod" type="checkbox" />
+                            <label rsf:id="quick_sync-state-graceperiod-note"
+                                for="quick_sync-state-graceperiod"> Grace Period </label>
+                        </p>
+                        <p class="checkbox">
+                            <input rsf:id="quick_sync-state-closed" id="quick_sync-state-closed"
+                                type="checkbox" />
+                            <label rsf:id="quick_sync-state-closed-note"
+                                for="quick_sync-state-closed"> Closed </label>
+                        </p>
+                        <p rsf:id="quick_sync-server-div:" class="longtext">
+                            <label rsf:id="quick_sync-server-note" for="quick_sync-server"
+                                class="block"> Select server to handle all syncing of eval group
+                                memberships </label>
+                            <select rsf:id="quick_sync-server" id="quick_sync-server">
+                                <option value="www.sakaiproject.org"
+                                    >www.sakaiproject.org</option>
+                            </select>
+                        </p>
+                        <p class="act">
+                            <input rsf:id="quick_sync-submit" name="x" value="Run Sync Now"
+                                type="submit" />
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
-    </body>
+    </div>
+</body>
 </html>
