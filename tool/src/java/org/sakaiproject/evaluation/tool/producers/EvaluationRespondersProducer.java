@@ -43,7 +43,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -53,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationRespondersProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
+public class EvaluationRespondersProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
     public static final String VIEW_ID = "evaluation_responders";
     public String getViewID() {
@@ -88,7 +87,7 @@ public class EvaluationRespondersProducer implements ViewComponentProducer, View
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);

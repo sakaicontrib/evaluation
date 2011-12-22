@@ -31,7 +31,6 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -40,7 +39,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlScalesProducer implements ViewComponentProducer {
+public class ControlScalesProducer extends EvalCommonProducer {
 
     public static final String VIEW_ID = "control_scales";
     public String getViewID() {
@@ -64,7 +63,7 @@ public class ControlScalesProducer implements ViewComponentProducer {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
 
         /*

@@ -10,6 +10,7 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 <body>
 <div class="portletBody">
@@ -46,7 +47,6 @@
 			<a rsf:id="control-administrate-search"  href="administrate_search.html" class="goToList">Search</a>
 		</li>
 		<li style="float:right" class=" lastCrumb">
-			<!-- string added to bundle as administrate.top.control.search -->
 			<a rsf:id="control-administrate-sync"  href="administrate_provider_sync.html" class="goToList">Sync Group Members</a>
 		</li>
 	</ul>
@@ -304,8 +304,12 @@
         <!--<p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-filter-evalgroups" />
             <label rsf:id="msg=administrate.general.enable.filtered.evalgroups" for="general-filter-evalgroups">Only show sites with the same type and term as the current site when assigning evaluations </label>
+        </p>-->
+        <p class="longtext indnt1">
+            <label class="block" rsf:id="general-local-css-path-note" for="general-local-css-path-id">Local CSS path (includes the CSS at this path on all pages if set)</label>
+            <input rsf:id="general-local-css-path" id="general-local-css-path-id" size="72" maxlength="200" type="text"/>
         </p>
-    --></fieldset>
+    </fieldset>
 
     <p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
     <input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  

@@ -12,7 +12,6 @@ import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -24,12 +23,11 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class ModifyHierarchyNodePermsProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ModifyHierarchyNodePermsProducer extends EvalCommonProducer implements ViewParamsReporter {
 	
 	public static final String VIEW_ID = "modify_hierarchy_node_perms";
 	public String getViewID() {
@@ -55,8 +53,8 @@ public class ModifyHierarchyNodePermsProducer implements ViewComponentProducer, 
     public void setMessageLocator(MessageLocator messageLocator) {
     	this.messageLocator = messageLocator;
     }
-	
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+	public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean userAdmin = commonLogic.isUserAdmin(currentUserId);

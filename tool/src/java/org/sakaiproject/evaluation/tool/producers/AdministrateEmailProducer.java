@@ -23,11 +23,9 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-public class AdministrateEmailProducer implements ViewComponentProducer {
+public class AdministrateEmailProducer extends EvalCommonProducer {
 
     /**
      * This is used for navigation within the system.
@@ -36,8 +34,6 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
     public String getViewID() {
         return VIEW_ID;
     }
-
-	private static final int REMINDER_FREQUENCY_LIMIT = 8;
 
 	public static final String EMAIL_SETTINGS_WBL = "emailSettingsBean";
 	
@@ -65,7 +61,7 @@ public class AdministrateEmailProducer implements ViewComponentProducer {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+    public void fill(UIContainer tofill, ViewParameters viewparams,
             ComponentChecker checker) {
 
         String currentUserId = commonLogic.getCurrentUserId();

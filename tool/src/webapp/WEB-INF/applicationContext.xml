@@ -311,6 +311,16 @@
         </property>
     </bean>
 
+    <!-- special bean that runs on all producers -->
+    <bean id="org.sakaiproject.evaluation.tool.CommonProducerBean"
+        class="org.sakaiproject.evaluation.tool.CommonProducerBean"
+        init-method="init">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+
     <!-- temporary fix until 0.7.3 - enables write guard for all UVB paths -->
     <!-- 
         <bean parent="writeGuardParent">
@@ -342,9 +352,11 @@
         <property name="viewParamsClass"
             value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
+
     <bean parent="viewParamsRegistrarParent">
     	<property name="viewID" value="csvTakersReport"/>
         <property name="viewParamsClass"
             value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
+
 </beans>

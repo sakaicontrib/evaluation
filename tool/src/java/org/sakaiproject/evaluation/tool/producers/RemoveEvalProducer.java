@@ -35,7 +35,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -46,7 +45,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class RemoveEvalProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     public static final String VIEW_ID = "remove_evaluation";
     public String getViewID() {
@@ -66,7 +65,7 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
                 new SimpleViewParameters(SummaryProducer.VIEW_ID));
@@ -126,7 +125,7 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List togo = new ArrayList();
         togo.add(new NavigationCase("success", new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID)));

@@ -280,25 +280,26 @@
     </bean>
 
     <!-- producers below here -->
+    <!-- NOTE: cannot use parent beans in RSF producers -->
 
     <!-- ADMINISTRATE producers -->
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-		<property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="navBarRenderer" ref="navBarRenderer" />	
+		<property name="navBarRenderer" ref="navBarRenderer" />
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateSearchProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -313,6 +314,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProviderSyncProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="externalLogic"
@@ -323,14 +325,15 @@
 		<property name="messages" ref="targettedMessageList" />
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
     
     <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateEmailProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings" 
@@ -340,6 +343,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
@@ -351,14 +355,15 @@
 
     <!-- HIERARCHY - Views for Controlling and Administering the Hierarchy -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
         <property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
@@ -366,8 +371,8 @@
 		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
@@ -376,6 +381,7 @@
     </bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlEvalAdminProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -384,8 +390,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 	
-	<bean
-        class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
@@ -396,6 +402,7 @@
 	
     <!-- SUMMARY producers -->
     <bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -417,6 +424,7 @@
 
     <!-- TEMPLATES -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -426,6 +434,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
@@ -433,6 +442,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -442,8 +452,8 @@
 
 
     <!-- TEMPLATE ITEMS -->
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="localTemplateLogic" ref="localTemplateLogic" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
@@ -462,6 +472,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -472,6 +483,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -482,7 +494,8 @@
 
     <!-- ITEMS -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
-       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
+        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -491,10 +504,11 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
-       <property name="commonLogic"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-       <property name="authoringService"
+        <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
@@ -503,6 +517,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"
@@ -510,6 +525,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -522,6 +538,7 @@
 
     <!-- EXPERT items views -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlExpertItemsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -530,6 +547,7 @@
     </bean>
     
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyExpertItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -538,6 +556,7 @@
     </bean>
     
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewExpertItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -547,6 +566,7 @@
     
     
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveExpertItemProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="external"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -555,6 +575,7 @@
     
     
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -563,6 +584,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertObjectiveProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -571,12 +593,14 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ExpertItemsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />     
     </bean>
 
     <!-- SCALES -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -585,6 +609,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -595,6 +620,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="external"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -604,6 +630,7 @@
 
     <!-- EVALUATIONS -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -620,6 +647,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationCreateProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="authoringService"
@@ -629,6 +657,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
@@ -643,6 +672,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -659,6 +689,7 @@
     </bean>
 	
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignSelectProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -675,8 +706,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -688,8 +719,8 @@
 		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignmentsProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignmentsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -701,12 +732,14 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="locale" ref="requestLocale" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationNotificationsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -716,6 +749,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -728,8 +762,8 @@
 
 
     <!-- EMAIL TEMPLATES -->
-    <bean
-        class="org.sakaiproject.evaluation.tool.producers.ControlEmailTemplatesProducer">
+    <bean class="org.sakaiproject.evaluation.tool.producers.ControlEmailTemplatesProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -738,11 +772,13 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
@@ -751,6 +787,7 @@
 
     <!-- TAKE EVALUATION -->
     <bean class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -771,6 +808,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -788,6 +826,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="evaluationSetupService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
         <property name="evaluationService"
@@ -803,6 +842,7 @@
 
     <!-- REPORTING -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -819,6 +859,7 @@
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evaluationService"
@@ -830,6 +871,7 @@
 
     <!-- Adhoc Group Views -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyAdhocGroupProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="adhocGroupsBean" ref="adhocGroupsBean" />

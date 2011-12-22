@@ -36,7 +36,6 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -47,8 +46,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Rick Moyer (rmoyer@umd.edu) 
  */
-
-public class PreviewExpertItemProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class PreviewExpertItemProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     public static final String VIEW_ID = "preview_expert_items";
     public String getViewID() {
@@ -74,7 +72,7 @@ public class PreviewExpertItemProducer implements ViewComponentProducer, ViewPar
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
     	UIMessage.make(tofill, "page-title", "previewexpertitem.page.title");
     	
@@ -130,7 +128,7 @@ public class PreviewExpertItemProducer implements ViewComponentProducer, ViewPar
         return new ModifyExpertItemParameters();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List cases = new ArrayList();
         cases.add(new NavigationCase(null, new SimpleViewParameters(ControlExpertItemsProducer.VIEW_ID)));

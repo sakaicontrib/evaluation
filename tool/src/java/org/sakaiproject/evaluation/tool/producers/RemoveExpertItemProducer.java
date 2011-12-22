@@ -19,12 +19,9 @@ import java.util.List;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
-import org.sakaiproject.evaluation.tool.ExpertItemsBean;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyExpertItemParameters;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -34,7 +31,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -46,7 +42,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Rick Moyer (rmoyer@umd.edu)
  */
-public class RemoveExpertItemProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class RemoveExpertItemProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
    public static final String VIEW_ID = "remove_expert_item";
    public String getViewID() {
@@ -66,7 +62,7 @@ public class RemoveExpertItemProducer implements ViewComponentProducer, ViewPara
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       String beanBinding = "expertItemsBean.";
       String actionBinding = "removeExpertItem";
@@ -98,7 +94,7 @@ public class RemoveExpertItemProducer implements ViewComponentProducer, ViewPara
     * (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public List reportNavigationCases() {
       List togo = new ArrayList();
       togo.add(new NavigationCase("success", new SimpleViewParameters(ControlExpertItemsProducer.VIEW_ID)));

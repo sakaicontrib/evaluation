@@ -31,19 +31,15 @@ import org.sakaiproject.tool.api.ToolSession;
 import uk.ac.cam.caret.sakai.rsf.helper.HelperViewParameters;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class ControlImportProducer implements ViewComponentProducer, ViewParamsReporter,
-        NavigationCaseReporter {
+public class ControlImportProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     // helper tool
     public static final String HELPER = "sakai.filepicker";
@@ -78,7 +74,7 @@ public class ControlImportProducer implements ViewComponentProducer, ViewParamsR
 		this.navBarRenderer = navBarRenderer;
 	}
 
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+    public void fill(UIContainer tofill, ViewParameters viewparams,
             ComponentChecker checker) {
 
         String currentUserId = commonLogic.getCurrentUserId();
@@ -107,7 +103,7 @@ public class ControlImportProducer implements ViewComponentProducer, ViewParamsR
         UICommand.make(tofill, HelperViewParameters.POST_HELPER_BINDING, "#{importBean.process}");
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List l = new ArrayList();
         l.add(new NavigationCase("importing",

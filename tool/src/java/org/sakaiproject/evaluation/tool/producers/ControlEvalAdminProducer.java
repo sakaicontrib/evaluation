@@ -1,8 +1,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -19,15 +17,11 @@ import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.decorators.UIAlternativeTextDecorator;
-import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-public class ControlEvalAdminProducer implements ViewComponentProducer {
+public class ControlEvalAdminProducer extends EvalCommonProducer {
 	
 	public static String VIEW_ID = "control_eval_admin";
 	public String getViewID() {
@@ -49,7 +43,7 @@ public class ControlEvalAdminProducer implements ViewComponentProducer {
         this.settings = settings;
     }
 
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+	public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
 		String currentUserId = commonLogic.getCurrentUserId();
 		boolean isAdmin = commonLogic.isUserAdmin(currentUserId);
