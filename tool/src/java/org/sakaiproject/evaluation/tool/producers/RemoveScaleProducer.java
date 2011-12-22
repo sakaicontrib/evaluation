@@ -32,7 +32,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -43,7 +42,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class RemoveScaleProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
    public static final String VIEW_ID = "remove_scale";
    public String getViewID() {
@@ -65,7 +64,7 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       String beanBinding = "templateBBean.";
       String actionBinding = "deleteScaleAction";

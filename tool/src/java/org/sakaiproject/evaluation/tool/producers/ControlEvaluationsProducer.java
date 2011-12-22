@@ -48,7 +48,6 @@ import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -56,7 +55,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlEvaluationsProducer implements ViewComponentProducer {
+public class ControlEvaluationsProducer extends EvalCommonProducer {
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ViewComponentProducer#getViewID()
@@ -110,7 +109,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       String actionBean = "setupEvalBean.";
       boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
@@ -278,7 +277,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "active-eval-row:", evaluation.getId().toString());
 
-            UIInternalLink evalTitleLink = UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
+            UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   commonLogic.getEntityURL(evaluation));

@@ -16,25 +16,20 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.beanutil.PathUtil;
-import uk.org.ponder.rsf.components.ELReference;
-import uk.org.ponder.rsf.components.UIBoundBoolean;
-import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -45,7 +40,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class AdministrateProducer implements ViewComponentProducer {
+public class AdministrateProducer extends EvalCommonProducer {
 
     /**
      * This is used for navigation within the system.
@@ -60,11 +55,6 @@ public class AdministrateProducer implements ViewComponentProducer {
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
-    
-    private EvalEvaluationService evaluationService;
-	public void setEvaluationService(EvalEvaluationService evaluationService) {
-		this.evaluationService = evaluationService;
-	}
 
     private EvalSettings evalSettings;
     public void setEvalSettings(EvalSettings evalSettings) {
@@ -73,18 +63,14 @@ public class AdministrateProducer implements ViewComponentProducer {
 
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
-		this.navBarRenderer = navBarRenderer;
-	}
-    
+        this.navBarRenderer = navBarRenderer;
+    }
+
     // Used to prepare the path for WritableBeanLocator
     public static final String ADMIN_WBL = "settingsBean";
 
-    /* (non-Javadoc)
-     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-     */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-    	
-    	String currentUserId = commonLogic.getCurrentUserId();
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+        String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         if (! userAdmin) {
@@ -111,7 +97,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         UIInternalLink.make(tofill, "control-reporting-toplink", 
                 UIMessage.make("administrate.top.control.reporting"),
                 new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
-        
+
         UIInternalLink.make(tofill, "control-eval-admin-toplink", 
                 UIMessage.make("administrate.top.control.evaladmin"),
                 new SimpleViewParameters(ControlEvalAdminProducer.VIEW_ID));
@@ -119,10 +105,10 @@ public class AdministrateProducer implements ViewComponentProducer {
         UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
                 UIMessage.make("admintesteg.page.title"),
                 new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));    
-        
+
         Boolean enableProviderSync = (Boolean) evalSettings.get(EvalSettings.ENABLE_PROVIDER_SYNC);
         if(enableProviderSync) {
-        	UIInternalLink.make(tofill, "control-administrate-sync",
+            UIInternalLink.make(tofill, "control-administrate-sync",
                     UIMessage.make("administrate.sync.page.title"),
                     new SimpleViewParameters(AdministrateProviderSyncProducer.VIEW_ID));
         }
@@ -192,7 +178,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
         makeBoolean(form, "instructors-email-students", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
         UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
-        
+
         makeBoolean(form,"admin-enable-provider-sync", ADMIN_WBL, EvalSettings.ENABLE_PROVIDER_SYNC);
         UIMessage.make(form, "admin-enable-provider-sync-note", "administrate.admin.enable.provider.sync");
 
@@ -310,16 +296,16 @@ public class AdministrateProducer implements ViewComponentProducer {
                 sharingValues, 
                 sharingLabels, 
                 ADMIN_WBL, EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
-      
+
         //Select for whether all roles can take the survey
         makeSelect(form, "all-roles-participate",
                 administrateConfigurableValues, 
                 administrateConfigurableLabels, 
                 ADMIN_WBL, EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND, true);
-        
+
         UIMessage.make(form, "all-roles-participate-note","administrate.general.all.roles.participate.note");
-         
-        
+
+
         makeBoolean(form, "general-template-copying",  ADMIN_WBL, EvalSettings.ENABLE_TEMPLATE_COPYING);
         makeBoolean(form, "general-use-date-time",  ADMIN_WBL, EvalSettings.EVAL_USE_DATE_TIME);
         makeBoolean(form, "general-use-stop-date", ADMIN_WBL, EvalSettings.EVAL_USE_STOP_DATE); 
@@ -338,7 +324,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
         makeBoolean(form, "general-expert-templates", ADMIN_WBL, EvalSettings.USE_EXPERT_TEMPLATES);
         makeBoolean(form, "general-expert-questions", ADMIN_WBL, EvalSettings.USE_EXPERT_ITEMS);
-        
+
         makeBoolean(form, "general-view-results-ignore-dates", ADMIN_WBL, EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
 
         makeBoolean(form, "general-enable-adhoc-groups", ADMIN_WBL, EvalSettings.ENABLE_ADHOC_GROUPS);
@@ -348,7 +334,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-eval-reopen", ADMIN_WBL, EvalSettings.ENABLE_EVAL_REOPEN); 
 
         makeBoolean(form, "general-enable-item-comments", ADMIN_WBL, EvalSettings.ENABLE_ITEM_COMMENTS);
-        
+
         makeBoolean(form, "general-enable-group-specific-preview", ADMIN_WBL, EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
 
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
@@ -373,6 +359,10 @@ public class AdministrateProducer implements ViewComponentProducer {
         makeBoolean(form, "general-enable-ta-category", ADMIN_WBL, EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         makeBoolean(form, "general-enable-selections", ADMIN_WBL, EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
         //makeBoolean(form, "general-filter-evalgroups", EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);  //TODO: refactor this code EVALSYS-942
+        UIInput.make(form, "general-local-css-path", PathUtil.composePath(ADMIN_WBL, EvalSettings.LOCAL_CSS_PATH), 
+                EvalUtils.safeStringSetting(evalSettings, EvalSettings.LOCAL_CSS_PATH));
+        UIMessage.make(form, "general-local-css-path-note","administrate.general.local.css.path.note");
+
         // Save settings button
         // NB no action now required
         UICommand.make(form, "saveSettings", UIMessage.make("administrate.save.settings.button"), null);	
@@ -380,69 +370,7 @@ public class AdministrateProducer implements ViewComponentProducer {
         UIForm resetForm = UIForm.make(tofill, "cache-reset-form");
         UICommand.make(resetForm, "cache-reset-submit", 
                 UIMessage.make("administrate.reset.button"), 
-                ADMIN_WBL + ".resetConfigCache");    
-        
+                ADMIN_WBL + ".resetConfigCache");
     }
 
-    /**
-     * Construct a UIBoundBoolean administrative setting component
-     * 
-     * @param parent the containing UIContainer
-     * @param ID the component's RSF id
-     * @param beanId TODO
-     * @param adminkey the administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings
-     */
-    public static UIBoundBoolean makeBoolean(UIContainer parent, String ID, String beanId, String adminkey) {
-        // Must use "composePath" here since admin keys currently contain periods
-        UIBoundBoolean bb = UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(beanId, adminkey));
-        return bb;
-    }
-
-    /**
-     * Construct a UISelect administrative setting component
-     * 
-     * Values and labels are contained in org.sakaiproject.evaluation.tool.EvalToolConstants.<br />
-     * Administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings<br />
-     * 
-     * @param parent the containing UIContainer
-     * @param ID the component's RSF id
-     * @param values the options from which the the user has to choose
-     * @param labels the labels for the options from which the user has to choose
-     * @param beanId TODO
-     * @param adminkey the administrative setting constant 
-     * @param message use message properties if true, do not use message properties if false
-     */
-    public static UISelect makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String beanId, String adminkey, boolean message) {
-        UISelect selection = UISelect.make(parent, ID); 
-        selection.selection = new UIInput();
-        if (adminkey != null) {
-            selection.selection.valuebinding = new ELReference(PathUtil.composePath(beanId, adminkey));
-        }
-        UIBoundList selectvalues = new UIBoundList();
-        selectvalues.setValue(values);
-        selection.optionlist = selectvalues;
-        UIBoundList selectlabels = new UIBoundList();
-        selectlabels.setValue(labels);
-        selection.optionnames = selectlabels;   
-
-        if (message) {
-            selection.setMessageKeys();
-        }
-        return selection;
-    }
-
-    /**
-     * Construct a UIInput administrative setting component
-     * 
-     * Administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings.<br />
-     * 
-     * @param parent the containing UIContainer
-     * @param ID the component's RSF id
-     * @param beanId TODO
-     * @param adminkey the administrative setting constant
-     */
-    public static UIInput makeInput(UIContainer parent, String ID, String beanId, String adminkey) {
-        UIInput input = UIInput.make(parent, ID, PathUtil.composePath(beanId, adminkey));
-        return input;
-    }
 }

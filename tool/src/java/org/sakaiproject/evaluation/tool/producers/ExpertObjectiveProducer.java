@@ -42,7 +42,6 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -51,7 +50,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ExpertObjectiveProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class ExpertObjectiveProducer extends EvalCommonProducer implements NavigationCaseReporter, ViewParamsReporter {
 
     /**
      * Used for navigation within the system, this must match with the template name
@@ -78,7 +77,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
@@ -159,7 +158,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 
            	UIBranchContainer expertItemHeaderBranch = UIBranchContainer.make(tofill, "expert-item-header-row:");
            	UIMessage.make(expertItemHeaderBranch, "expert-item-col", "expert.items");
-           	UIBranchContainer selectAllBranch = UIBranchContainer.make(expertItemHeaderBranch, "select-all-col:");
+           	UIBranchContainer.make(expertItemHeaderBranch, "select-all-col:");
 
             UIMessage.make(form, "items", "expert.items");
             UIMessage.make(form, "items-instructions", "expert.items.instructions");
@@ -201,7 +200,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
      * (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List i = new ArrayList();
         i.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null) ) );

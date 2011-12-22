@@ -55,8 +55,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -67,7 +65,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
  */
-public class ReportsViewingProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ReportsViewingProducer extends EvalCommonProducer implements ViewParamsReporter {
+
     private static Log log = LogFactory.getLog(ReportsViewingProducer.class);
 
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
@@ -125,7 +124,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         ReportParameters reportViewParams = (ReportParameters) viewparams;
         String currentUserId = commonLogic.getCurrentUserId();
 

@@ -8,7 +8,6 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -16,7 +15,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * This producer renders GUI for viewing the Eval Hierarchy as well as 
  * modifying the hierarchy.  It can only be viewed by Sakai System Administrators.
  */
-public class ControlHierarchyProducer implements ViewComponentProducer {
+public class ControlHierarchyProducer extends EvalCommonProducer {
 
     public static final String VIEW_ID = "control_hierarchy";
     public String getViewID() {
@@ -38,7 +37,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
 		this.navBarRenderer = navBarRenderer;
 	}
 
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);

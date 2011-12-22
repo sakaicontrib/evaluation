@@ -20,7 +20,6 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -31,7 +30,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steven Githens
  */
-public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ReportChooseGroupsProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "report_groups";
     public String getViewID() {
@@ -57,10 +56,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewPa
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         ReportParameters reportViewParams = (ReportParameters) viewparams;
         Long evaluationId = reportViewParams.evaluationId;

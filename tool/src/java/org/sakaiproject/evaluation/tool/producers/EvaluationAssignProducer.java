@@ -24,8 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -68,7 +66,6 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -84,9 +81,9 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
  */
 @SuppressWarnings("deprecation")
-public class EvaluationAssignProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
+public class EvaluationAssignProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 	
-	private static Log log = LogFactory.getLog(EvaluationAssignProducer.class);
+	//private static Log log = LogFactory.getLog(EvaluationAssignProducer.class);
 
     public static final String VIEW_ID = "evaluation_assign";
     public String getViewID() {
@@ -137,7 +134,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();

@@ -42,7 +42,6 @@ import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -53,8 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Rui Feng (fengr@vt.edu)
  * @author "Rick Moyer" <rmoyer@umd.edu>
  */
-public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor,
-NavigationCaseReporter {
+public class ModifyBlockProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor, NavigationCaseReporter {
 
     public static final String VIEW_ID = "modify_block";
     public String getViewID() {
@@ -85,7 +83,7 @@ NavigationCaseReporter {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+    public void fill(UIContainer tofill, ViewParameters viewparams,
             ComponentChecker checker) {
 
         BlockIdsParameters evParameters = (BlockIdsParameters) viewparams;
@@ -368,7 +366,7 @@ NavigationCaseReporter {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List i = new ArrayList();
 

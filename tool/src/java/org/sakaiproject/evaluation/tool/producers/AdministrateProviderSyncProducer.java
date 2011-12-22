@@ -50,7 +50,6 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -58,7 +57,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * AdministrateProviderSyncProducer
  *
  */
-public class AdministrateProviderSyncProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class AdministrateProviderSyncProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 	
 	public static final String PROPNAME_STATE_LIST = GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST;
 	public static final String VIEW_ID = "administrate_provider_sync";
@@ -99,7 +98,7 @@ public class AdministrateProviderSyncProducer implements ViewComponentProducer, 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+	public void fill(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		// 
 		String currentUserId = commonLogic.getCurrentUserId();

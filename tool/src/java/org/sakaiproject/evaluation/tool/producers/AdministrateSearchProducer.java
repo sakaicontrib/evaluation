@@ -53,17 +53,13 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * 
  * AdministrateSearchProducer
- * 
  */
-public class AdministrateSearchProducer implements ViewComponentProducer, ViewParamsReporter 
-{
+public class AdministrateSearchProducer extends EvalCommonProducer implements ViewParamsReporter {
 	public static int PAGE_SIZE = 20;
 
 	/**
@@ -113,8 +109,7 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) 
-	{
+	public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String searchString = "";
 		int page = 0;
 		if(viewparams instanceof AdminSearchViewParameters)
@@ -143,7 +138,7 @@ public class AdministrateSearchProducer implements ViewComponentProducer, ViewPa
 		
 		//System Settings
 		UIForm searchForm = UIForm.make(tofill, "search-form");
-		UIInput searchInput = UIInput.make(searchForm, "search-input", 
+		UIInput.make(searchForm, "search-input", 
 				"#{administrateSearchBean.searchString}", searchString);
 		RSFUtil.addResultingViewBinding(searchForm, "searchString", "#{administrateSearchBean.searchString}");
 		UICommand.make(searchForm, "search-text", 

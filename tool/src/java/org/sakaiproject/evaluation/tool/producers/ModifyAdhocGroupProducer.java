@@ -23,7 +23,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -35,8 +34,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author sgithens
  * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
-public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewParamsReporter,
-ActionResultInterceptor {
+public class ModifyAdhocGroupProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
     public static final String VIEW_ID = "modify_adhoc_group";
     public String getViewID() {
@@ -53,7 +51,7 @@ ActionResultInterceptor {
         this.adhocGroupsBean = adhocGroupsBean;
     }
 
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+    public void fill(UIContainer tofill, ViewParameters viewparams,
             ComponentChecker checker) {
         AdhocGroupParams params = (AdhocGroupParams) viewparams;
         String curUserId = commonLogic.getCurrentUserId();

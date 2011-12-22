@@ -32,11 +32,10 @@ import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class EvaluationAssignSelectProducer implements ViewComponentProducer, ViewParamsReporter{
+public class EvaluationAssignSelectProducer extends EvalCommonProducer implements ViewParamsReporter{
 	
 	public static final String VIEW_ID = "evaluation_assign_select";
 
@@ -57,7 +56,7 @@ public class EvaluationAssignSelectProducer implements ViewComponentProducer, Vi
         this.settings = settings;
     }
   
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+	public void fill(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		String groupTitle = "", evalGroupId = "", selectType = "";  //Hold values passed via URL. selectType refers to what type of role is being show eg. Instructor or Assistant
 		Long evalId;

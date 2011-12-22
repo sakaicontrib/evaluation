@@ -68,7 +68,6 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -80,7 +79,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationSettingsProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
+public class EvaluationSettingsProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
     public static final String VIEW_ID = "evaluation_settings";
     public String getViewID() {
@@ -130,7 +129,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
         if (evalViewParams.evaluationId == null) {

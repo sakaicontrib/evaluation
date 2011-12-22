@@ -27,12 +27,10 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -43,7 +41,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckosi [rewrite]
  * @author Rui Feng (fengr@vt.edu)
  */
-public class RemoveTemplateProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class RemoveTemplateProducer extends EvalCommonProducer implements NavigationCaseReporter, ViewParamsReporter {
 
 	public static final String VIEW_ID = "remove_template";
 	public String getViewID(){
@@ -67,7 +65,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+	public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
 		String currentUserId = commonLogic.getCurrentUserId();
 
@@ -105,7 +103,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
    public List reportNavigationCases() {
 		List i = new ArrayList();
 		i.add(new NavigationCase("success", new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID)));

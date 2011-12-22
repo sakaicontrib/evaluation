@@ -19,7 +19,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -32,7 +31,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * This producer handles both cases, new nodes and existing nodes, making use
  * of the EL syntax in HierarchyNodeLocator. 
  */
-public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class ModifyHierarchyNodeProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     public static final String VIEW_ID = "modify_hierarchy_node";
     public String getViewID() {
@@ -54,7 +53,7 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
 		this.navBarRenderer = navBarRenderer;
 	}
     
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
@@ -107,7 +106,7 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         return new ModifyHierarchyNodeParameters();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List cases = new ArrayList();
         cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));

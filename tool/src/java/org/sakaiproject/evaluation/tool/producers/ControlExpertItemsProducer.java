@@ -22,7 +22,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
-import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyExpertItemParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -34,7 +33,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -43,7 +41,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  * @author Rick Moyer (rmoyer@umd.edu)
  */
-public class ControlExpertItemsProducer implements ViewComponentProducer {
+public class ControlExpertItemsProducer extends EvalCommonProducer {
 
     public static String VIEW_ID = "control_expert_items";
     public String getViewID() {
@@ -68,14 +66,14 @@ public class ControlExpertItemsProducer implements ViewComponentProducer {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // page title
         UIMessage.make(tofill, "page-title", "controlexpertitems.page.title");
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
-        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+        //boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         /*
          * top links here
