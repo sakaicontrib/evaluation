@@ -1,149 +1,152 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-	   <title rsf:id="page-title">Expert Items</title>
-	   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-	   <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
-<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
-<link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
-<script src="../js/facebox/facebox.js" type="text/javascript"></script>
-<script type="text/javascript" language="JavaScript" src="/library/editor/FCKeditor/fckeditor.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/SakaiRSFWidgets.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/fluid/Fluid.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/evalAjax.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/eval.template.facebox.js"></script>
+<head>
+    <title rsf:id="page-title">Expert Items</title>
+    <!-- standard on all pages -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <!-- end standard on all pages -->
+
+    <script src="/library/editor/FCKeditor/fckeditor.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+    <script src="../js/facebox/facebox.js" type="text/javascript"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/SakaiRSFWidgets.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/fluid/Fluid.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/evalAjax.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/eval.template.facebox.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.events.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.myitems.loader.js"></script>        
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
-	</head>
-	
-	<body>
-		<div class="portletBody">
 
-           <div rsf:id="navIntraTool:" class="navIntraTool"/>
+    <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+<body>
+	<div class="portletBody">
 
-			<ul class="breadCrumb">
-				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-				<li rsf:id="page-title"  class="lastCrumb">Expert Items</li>
-			</ul>
-			
-			<div rsf:id="message-for:*" class="alertMessage">
-				<ul style="margin:0px;">
-					<li>Message for user here</li>
-				</ul>
-			</div>
-			
-			<div class="navPanel">
-					<div class="viewNav">
-						<h3><span rsf:id="items-header">Items</span></h3>
-						<p rsf:id="items-description" class="instruction">Questions or statements which the evaluator responds to.</p>
-					</div>
-					<div class="listNav">
-						<!-- label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label -->
-						<form rsf:id="add-category-form" action="modify_item.html" method="get" class="inlineForm">
-							<!--  select rsf:id="item-classification-list" id="item-classification-list" >
-								<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
-								<option value="modify_essay.html">Short Answer/Essay</option>
-								<option value="modify_header.html">Text Header</option>
-							</select -->
-							<input rsf:id="add-category-button" type="submit" value="Add Category" />
-						</form>
-					</div>
-			</div>
-						
-			<!-- This block (list items) is not visible if there are no items visible -->
-            <form rsf:id="expertForm">
-      			<table rsf:id="expertitem-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
-      				<thead>
-      					<tr>
-      					<th id="itemMD">
-      							<span rsf:id="expertitems-category-title"> Category </span>
-      						</th>
-      						<th id="itemMD">
-      							<span rsf:id="expertitems-objective-title"> Objective </span>
-      						</th>
-      						<th id="itemClass">
-							   <span rsf:id="expertitems-description-title"> Description </span>
-      						</th>
-      						<th id="itemClass">
-							   <span rsf:id="expertitems-items-title"> Item </span>
-      						</th>
-      						<th id="itemAction">
-      							<span rsf:id="expertitems-action-title"> Actions </span>
-      						</th>
-      						<th id="itemOwner">
-      							<span rsf:id="expertitems-owner-title"> Owner </span>
-      						</th>
-      					</tr>
-      				</thead>
-      				<tbody>	
-      					<tr rsf:id="expertitem-row:">
-      						<td>
-      							<span rsf:id="expertitem-cat" >Category Text </span>
-      						</td>
-							<td>
-								<span rsf:id="expertitem-obj" >Objective Text </span>
-							</td>
-      						<td>
-      							<span rsf:id="expertitem-description" style="display:inline">Description</span>
-      						</td>
-      						<td>
-							    <span rsf:id="expertitem-items"> 12 </span>
-      						</td>
-      						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
-      							<a rsf:id="expertitem-edit-link" href="modify_expert_item.html" rel="facebox">Edit</a>
-      							<span rsf:id="item-modify-dummy"></span> | 
-      							<a rsf:id="expertitem-preview-link" href="preview_expertitem.html" rel="facebox">Preview</a> 
-      							<span rsf:id="item-modify-dummy"></span>
-      							<span rsf:id="bar2" > | </span> 
-      							<a rsf:id="expertitem-add-objective-link" href="modify_expert_item.html" rel="facebox">Add Objective</a>
-      							<span rsf:id="item-modify-dummy"></span> 
-      							<span rsf:id="bar3" > | </span> 
-      							<a rsf:id="expertitem-remove-link" href="remove_expert_item.html" rel="facebox">Remove</a>
-      							<span rsf:id="item-remove-dummy"></span> 
-      							<span rsf:id="bar4" > | </span>  
-                                <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
-      						</td>
-      						<td headers="itemOwner" style="margin:0em 1em;">
-      							<span rsf:id="expertitem-owner">owner displayname</span>
-      						</td>
-      					</tr>
-      					<!-- tr rsf:id="item-row:" class="itemsListOddLine">
-      						<td>
-      							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
-      							<span rsf:id="item-scale">
-      								- Item Scale (the title of the scale and the points in parens)
-      							</span>
-      							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
-      						</td>
-      						<td class="itemAction"  style="white-space:nowrap">
-      							<a rsf:id="item-remove-link" href="remove_item.html" rel="facebox">Delete</a>
-      							<span rsf:id="item-remove-dummy"></span> |
-      							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
-      							<span rsf:id="item-modify-dummy"></span> |
-      							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
-                                <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
-      						</td>
-      						<td style="margin:0em 1em;">
-      							<span rsf:id="item-owner">owner displayname</span>
-      						</td>  
-      					</tr -->
-      				</tbody>	
-      			</table>
-            </form>
-			
-			<div rsf:id="no-items" class="instruction">No items available</div>
+       <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+		<ul class="breadCrumb">
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li rsf:id="page-title"  class="lastCrumb">Expert Items</li>
+		</ul>
 		
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+				<li>Message for user here</li>
+			</ul>
 		</div>
-	</body>
+		
+		<div class="navPanel">
+				<div class="viewNav">
+					<h3><span rsf:id="items-header">Items</span></h3>
+					<p rsf:id="items-description" class="instruction">Questions or statements which the evaluator responds to.</p>
+				</div>
+				<div class="listNav">
+					<!-- label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label -->
+					<form rsf:id="add-category-form" action="modify_item.html" method="get" class="inlineForm">
+						<!--  select rsf:id="item-classification-list" id="item-classification-list" >
+							<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+							<option value="modify_essay.html">Short Answer/Essay</option>
+							<option value="modify_header.html">Text Header</option>
+						</select -->
+						<input rsf:id="add-category-button" type="submit" value="Add Category" />
+					</form>
+				</div>
+		</div>
+					
+		<!-- This block (list items) is not visible if there are no items visible -->
+        <form rsf:id="expertForm">
+  			<table rsf:id="expertitem-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
+  				<thead>
+  					<tr>
+  					<th id="itemMD">
+  							<span rsf:id="expertitems-category-title"> Category </span>
+  						</th>
+  						<th id="itemMD">
+  							<span rsf:id="expertitems-objective-title"> Objective </span>
+  						</th>
+  						<th id="itemClass">
+						   <span rsf:id="expertitems-description-title"> Description </span>
+  						</th>
+  						<th id="itemClass">
+						   <span rsf:id="expertitems-items-title"> Item </span>
+  						</th>
+  						<th id="itemAction">
+  							<span rsf:id="expertitems-action-title"> Actions </span>
+  						</th>
+  						<th id="itemOwner">
+  							<span rsf:id="expertitems-owner-title"> Owner </span>
+  						</th>
+  					</tr>
+  				</thead>
+  				<tbody>	
+  					<tr rsf:id="expertitem-row:">
+  						<td>
+  							<span rsf:id="expertitem-cat" >Category Text </span>
+  						</td>
+						<td>
+							<span rsf:id="expertitem-obj" >Objective Text </span>
+						</td>
+  						<td>
+  							<span rsf:id="expertitem-description" style="display:inline">Description</span>
+  						</td>
+  						<td>
+						    <span rsf:id="expertitem-items"> 12 </span>
+  						</td>
+  						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
+  							<a rsf:id="expertitem-edit-link" href="modify_expert_item.html" rel="facebox">Edit</a>
+  							<span rsf:id="item-modify-dummy"></span> | 
+  							<a rsf:id="expertitem-preview-link" href="preview_expertitem.html" rel="facebox">Preview</a> 
+  							<span rsf:id="item-modify-dummy"></span>
+  							<span rsf:id="bar2" > | </span> 
+  							<a rsf:id="expertitem-add-objective-link" href="modify_expert_item.html" rel="facebox">Add Objective</a>
+  							<span rsf:id="item-modify-dummy"></span> 
+  							<span rsf:id="bar3" > | </span> 
+  							<a rsf:id="expertitem-remove-link" href="remove_expert_item.html" rel="facebox">Remove</a>
+  							<span rsf:id="item-remove-dummy"></span> 
+  							<span rsf:id="bar4" > | </span>  
+                            <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+  						</td>
+  						<td headers="itemOwner" style="margin:0em 1em;">
+  							<span rsf:id="expertitem-owner">owner displayname</span>
+  						</td>
+  					</tr>
+  					<!-- tr rsf:id="item-row:" class="itemsListOddLine">
+  						<td>
+  							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
+  							<span rsf:id="item-scale">
+  								- Item Scale (the title of the scale and the points in parens)
+  							</span>
+  							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
+  						</td>
+  						<td class="itemAction"  style="white-space:nowrap">
+  							<a rsf:id="item-remove-link" href="remove_item.html" rel="facebox">Delete</a>
+  							<span rsf:id="item-remove-dummy"></span> |
+  							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
+  							<span rsf:id="item-modify-dummy"></span> |
+  							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
+                            <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+  						</td>
+  						<td style="margin:0em 1em;">
+  							<span rsf:id="item-owner">owner displayname</span>
+  						</td>  
+  					</tr -->
+  				</tbody>	
+  			</table>
+        </form>
+		
+		<div rsf:id="no-items" class="instruction">No items available</div>
+	
+	</div>
+</body>
 </html>
