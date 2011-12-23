@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,10 +52,10 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -86,7 +85,6 @@ import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -97,7 +95,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
+public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
     private static final String SELECT_KEY_ASSISTANT = "assistant";
     private static final String SELECT_KEY_INSTRUCTOR = "instructor";
@@ -182,7 +180,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // force the headers to expire this - http://jira.sakaiproject.org/jira/browse/EVALSYS-621
         RenderingUtils.setNoCacheHeaders(httpServletResponse);

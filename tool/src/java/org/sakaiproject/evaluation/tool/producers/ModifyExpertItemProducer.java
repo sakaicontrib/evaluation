@@ -20,11 +20,9 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
-import org.sakaiproject.evaluation.tool.ExpertItemsBean;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyExpertItemParameters;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
@@ -35,7 +33,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -47,7 +44,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Rick Moyer (rmoyer@umd.edu) 
  */
-public class ModifyExpertItemProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class ModifyExpertItemProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     public static final String VIEW_ID = "modify_expert_item";
     public String getViewID() {
@@ -68,8 +65,8 @@ public class ModifyExpertItemProducer implements ViewComponentProducer, ViewPara
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
-    
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
@@ -95,8 +92,8 @@ public class ModifyExpertItemProducer implements ViewComponentProducer, ViewPara
         UIForm form = UIForm.make(tofill, "modify-expertitem-form");
         
         Long eigId;
-        UIInput.make(form, "expertitem-new", "expertItemsBean.eigIsNew", bIsNew.toString());
-        UIInput.make(form, "expertitem-type", "expertItemsBean.eigType", params.type);
+        UIInput.make(form, "expertitem-new", eigBean+"eigIsNew", bIsNew.toString());
+        UIInput.make(form, "expertitem-type", eigBean+"eigType", params.type);
         if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(params.type)) {
         	eigId = params.categoryId;
         	UIMessage.make(form, "title-label", "modifyexpertitem.title.cat.label");
@@ -112,10 +109,10 @@ public class ModifyExpertItemProducer implements ViewComponentProducer, ViewPara
         		EvalItemGroup eigParent = authoringService.getItemGroupById(params.categoryId);
         		UIMessage.make(form, "category-label", "modifyexpertitem.title.cat.label");
         		UIOutput.make(form, "category", eigParent.getTitle());
-        		UIInput.make(form, "expertitem-parent", "expertItemsBean.eigParentId", params.categoryId.toString());
+        		UIInput.make(form, "expertitem-parent", eigBean+"eigParentId", params.categoryId.toString());
         	}
         } else {
-        	UIInput.make(form, "expertitem-eigId", "expertItemsBean.eigId", eigId.toString());
+        	UIInput.make(form, "expertitem-eigId", eigBean+"eigId", eigId.toString());
         	eig = authoringService.getItemGroupById(eigId);
         }
         
@@ -123,9 +120,9 @@ public class ModifyExpertItemProducer implements ViewComponentProducer, ViewPara
          * The Submission Form
          */
         
-        UIInput.make(form, "expertitem-title", "expertItemsBean.eigTitle", eig.getTitle());
+        UIInput.make(form, "expertitem-title", eigBean+"eigTitle", eig.getTitle());
 
-        UIInput.make(form, "expertitem-desc", "expertItemsBean.eigDesc", eig.getDescription());
+        UIInput.make(form, "expertitem-desc", eigBean+"eigDesc", eig.getDescription());
         UIMessage.make(form, "description-label", "modifyexpertitem.description.label");
 
         UICommand.make(form, "save-expertitem-button", UIMessage.make("modifyexpertitem.save"), "expertItemsBean.controlExpertItem");
@@ -136,7 +133,7 @@ public class ModifyExpertItemProducer implements ViewComponentProducer, ViewPara
         return new ModifyExpertItemParameters();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List cases = new ArrayList();
         cases.add(new NavigationCase(null, new SimpleViewParameters(ControlExpertItemsProducer.VIEW_ID)));

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
@@ -44,7 +43,6 @@ import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -54,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvaluationCreateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class EvaluationCreateProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
    public static final String VIEW_ID = "evaluation_create";
    public String getViewID() {
@@ -79,12 +77,12 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
    private NavBarRenderer navBarRenderer;
    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
-	}
-   
+   }
+
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
       String currentUserId = commonLogic.getCurrentUserId();
@@ -167,7 +165,7 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public List reportNavigationCases() {
       List togo = new ArrayList();
       // the evaluationId should get filled in by the org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor.java

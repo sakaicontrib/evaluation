@@ -31,7 +31,6 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -42,7 +41,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu) 
  */
-public class PreviewItemProducer implements ViewComponentProducer, ViewParamsReporter {
+public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "preview_item";
     public String getViewID() {
@@ -63,7 +62,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
         // get templateItem to preview from VPs
         ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;

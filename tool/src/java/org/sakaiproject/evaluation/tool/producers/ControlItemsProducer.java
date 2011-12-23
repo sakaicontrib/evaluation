@@ -40,7 +40,6 @@ import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -49,7 +48,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlItemsProducer implements ViewComponentProducer {
+public class ControlItemsProducer extends EvalCommonProducer {
 
     public static String VIEW_ID = "control_items";
     public String getViewID() {
@@ -79,7 +78,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // page title
         UIMessage.make(tofill, "page-title", "controlitems.page.title");

@@ -25,7 +25,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -34,7 +33,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class PreviewEmailProducer implements ViewComponentProducer, ViewParamsReporter {
+public class PreviewEmailProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "preview_email";
     public String getViewID() {
@@ -47,7 +46,7 @@ public class PreviewEmailProducer implements ViewComponentProducer, ViewParamsRe
     }
 
 
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
         if (emailViewParams.templateId == null 

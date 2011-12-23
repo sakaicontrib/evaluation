@@ -434,6 +434,12 @@ public interface EvalSettings {
 	 */
 	public static final String SYNC_SERVER = "SYNC_SERVER:java.lang.String";
 
+	/**
+	 * If this is set then the local CSS file identified at the given path will be loaded on all pages,
+	 * if not set or blank or null then this does nothing
+	 */
+    public static final String LOCAL_CSS_PATH = "LOCAL_CSS_PATH:java.lang.String";
+
 
     /**
      * This is here to identify all the boolean ONLY settings in the system,

@@ -38,7 +38,6 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -50,7 +49,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class ModifyTemplateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class ModifyTemplateProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
 
     public static final String VIEW_ID = "modify_template";
     public String getViewID() {
@@ -77,7 +76,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
      * 2-1) no template been save in DAO 2-2) existing template in DAO
      * 
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
@@ -181,7 +180,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List togo = new ArrayList();
         togo.add(new NavigationCase(new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null)));

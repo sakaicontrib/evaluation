@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +51,6 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.DefaultView;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -62,7 +60,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class SummaryProducer implements ViewComponentProducer, DefaultView, NavigationCaseReporter {
+public class SummaryProducer extends EvalCommonProducer implements DefaultView, NavigationCaseReporter {
 
     private final int maxGroupsToDisplay = 5;
 
@@ -129,7 +127,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
      * .rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters,
      * uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
@@ -551,7 +549,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 	}
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List reportNavigationCases() {
         List i = new ArrayList();
         i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));

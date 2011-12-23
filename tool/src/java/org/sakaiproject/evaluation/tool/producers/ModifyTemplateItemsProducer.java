@@ -63,8 +63,6 @@ import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -74,7 +72,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ModifyTemplateItemsProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "modify_template_items"; //$NON-NLS-1$
     public String getViewID() {
@@ -131,7 +129,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
      * page 2) access this page through links on Control Panel or other 3) access
      * this page through "Save" button on Template page
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();

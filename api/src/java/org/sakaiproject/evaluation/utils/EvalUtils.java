@@ -763,4 +763,19 @@ public class EvalUtils {
         return result;
     }
 
+    /**
+     * @param evalSettings the settings service
+     * @param settingConstant the constant ID
+     * @return the setting if one is found or empty string if not set or blank (also trims the result)
+     */
+    public static String safeStringSetting(EvalSettings evalSettings, String settingConstant) {
+        String value = (String) evalSettings.get(settingConstant);
+        if (value != null) {
+            value = value.trim();
+        } else {
+            value = "";
+        }
+        return value;
+    }
+
 }

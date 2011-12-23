@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
@@ -27,13 +26,11 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -43,7 +40,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
+public class ModifyEmailProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
    public static final String VIEW_ID = "modify_email";
    public String getViewID() {
@@ -65,7 +62,7 @@ public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsRep
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // handle the input params for the view
       EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;

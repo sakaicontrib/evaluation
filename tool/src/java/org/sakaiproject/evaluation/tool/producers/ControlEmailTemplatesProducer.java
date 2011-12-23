@@ -36,7 +36,6 @@ import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -45,7 +44,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlEmailTemplatesProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ControlEmailTemplatesProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "control_email_templates";
     public String getViewID() {
@@ -75,7 +74,7 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         SwitchViewParams svp = (SwitchViewParams) viewparams;
 

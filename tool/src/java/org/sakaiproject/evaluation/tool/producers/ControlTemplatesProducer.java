@@ -38,7 +38,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -47,7 +46,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlTemplatesProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ControlTemplatesProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ViewComponentProducer#getViewID()
@@ -79,7 +78,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer, ViewPara
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // use a date which is related to the current users locale
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
