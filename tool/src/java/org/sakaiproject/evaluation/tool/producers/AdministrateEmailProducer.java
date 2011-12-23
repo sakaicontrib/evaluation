@@ -169,6 +169,9 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
                     EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,
 				  EMAIL_SETTINGS_WBL, EvalSettings.SINGLE_EMAIL_REMINDER_DAYS, true);         
 
+        // Send submission confirmation?
+        AdministrateProducer.makeBoolean(emailForm, "send-submitted", EMAIL_SETTINGS_WBL, EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+        
        // control the general email options
         AdministrateProducer.makeBoolean(emailForm, "general-use-admin-from-email", EMAIL_SETTINGS_WBL, EvalSettings.USE_ADMIN_AS_FROM_EMAIL);
         AdministrateProducer.makeInput(emailForm, "general-helpdesk-email", EMAIL_SETTINGS_WBL, EvalSettings.FROM_EMAIL_ADDRESS);
