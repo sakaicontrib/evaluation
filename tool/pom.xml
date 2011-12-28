@@ -235,8 +235,8 @@
 				<property><name>sakai2.9</name></property>
 			</activation>
 		    <properties>
-                <rsfutil.version>0.8-SNAPSHOT</rsfutil.version>
-                <sakairsf.version>0.8-SNAPSHOT</sakairsf.version>
+                <rsfutil.version>0.7.5</rsfutil.version>
+                <sakairsf.version>0.7.5</sakairsf.version>
 		    </properties>
             <dependencies>
                 <dependency>
