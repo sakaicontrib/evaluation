@@ -62,6 +62,9 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evaluationSetupService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="externalLogic" 
+        	ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
     </bean>
     
     <!-- this is the helper that will register the above bean with the job scheduler -->
