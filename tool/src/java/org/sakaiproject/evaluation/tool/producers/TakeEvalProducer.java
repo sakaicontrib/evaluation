@@ -562,6 +562,13 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 
                 }
 
+                if (response != null && !response.complete) {
+                    UIOutput.make(tofill, "saveEvaluationWithoutSubmitWarning", null);
+                }
+                Boolean saveEvaluationWithoutSubmit = (Boolean) evalSettings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+                if (saveEvaluationWithoutSubmit && (response == null || !response.complete)) {
+                    UICommand.make(form, "saveEvaluationWithoutSubmit", UIMessage.make("takeeval.save.button"), "#{takeEvalBean.saveEvaluationWithoutSubmit}");
+                }
                 UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
             } else {
                 // user cannot access eval so give them a sad message

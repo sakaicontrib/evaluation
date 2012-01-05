@@ -62,6 +62,37 @@ public class TakeEvalBean {
     public void setMessages(TargettedMessageList messages) {
         this.messages = messages;
     }
+    
+    public String saveEvaluationWithoutSubmit() {
+        log.debug("save evaluation without submit");
+        try {
+            Map<String, String[]> selectionOptions = new HashMap<String, String[]>();
+            if (selectioninstructorIds != null) {
+                selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, selectioninstructorIds);
+                }
+            if (selectionassistantIds != null) {
+                selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, selectionassistantIds); 
+            }
+            responseBeanLocator.saveAll(eval, evalGroupId, startDate, selectionOptions, false);
+        } catch (ResponseSaveException e) {
+            String messageKey = "unknown.caps";
+            if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
+                messageKey = "takeeval.user.must.answer.all.exception";
+            } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {
+                messageKey = "takeeval.user.blank.response.exception";
+            } else if (ResponseSaveException.TYPE_CANNOT_TAKE_EVAL.equals(e.type)) {
+                messageKey = "takeeval.user.cannot.take.now.exception";
+            } else {
+                messageKey = "takeeval.user.cannot.save.reponse";
+            }
+            messages.addMessage(new TargettedMessage(messageKey, e));
+            return "failure";
+        }
+        messages.addMessage(new TargettedMessage("evaluations.take.message", new Object[] {
+                eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) },
+                TargettedMessage.SEVERITY_INFO));
+        return "success";
+    }
 
     public String submitEvaluation() {
         log.debug("submit evaluation");

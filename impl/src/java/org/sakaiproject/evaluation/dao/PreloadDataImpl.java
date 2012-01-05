@@ -123,7 +123,6 @@ public class PreloadDataImpl {
      * fail, just comment out or do not include the setting you want to "save" as
      * null to have the effect without causing a failure
      */
-    @SuppressWarnings("unchecked")
 	public void preloadEvalConfig() {
         // check if there are any EvalConfig items present in the defaults map
     	if( evalConfigMap.size() == 0){
@@ -139,9 +138,9 @@ public class PreloadDataImpl {
         
         //Now lets check and make sure that each default config in this file is actually in the DB. Load those that are loaded.
         int countNewConfigs = 0;
-        Iterator evalConfigMapIt = evalConfigMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> evalConfigMapIt = evalConfigMap.entrySet().iterator();
         while (evalConfigMapIt.hasNext()) {
-            Map.Entry<String, Object> configuration = (Map.Entry<String, Object>) evalConfigMapIt.next();
+            Map.Entry<String, Object> configuration = evalConfigMapIt.next();
             String configName = configuration.getKey();
             Object configValue = configuration.getValue();
             
@@ -440,6 +439,7 @@ public class PreloadDataImpl {
         // Default Student settings
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
         evalConfigMap.put(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
+        evalConfigMap.put(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, false);
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
         // Default Admin settings

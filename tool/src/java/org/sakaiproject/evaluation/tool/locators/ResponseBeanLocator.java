@@ -61,8 +61,14 @@ public class ResponseBeanLocator implements BeanLocator {
     Map<String, EvalResponse> getDeliveredBeans() {
         return delivered;
     }
-
+    
     public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionOptions) {
+        boolean isEvalComplete = true;
+        saveAll(eval, evalGroupId, startDate, selectionOptions, isEvalComplete);
+        
+    }
+
+    public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionOptions, boolean isEvalComplete) {
         for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
             String key = it.next();
             EvalResponse response = (EvalResponse) delivered.get(key);
@@ -82,7 +88,9 @@ public class ResponseBeanLocator implements BeanLocator {
                 response.setStartTime(startDate);
             }
             // saving so set the endTime to now
-            response.setEndTime(new Date());
+            if (isEvalComplete) {
+                response.setEndTime(new Date());
+            }
             localResponsesLogic.saveResponse(response);
         }
     }
