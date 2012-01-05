@@ -1,4 +1,8 @@
-/m2-target
+/.classpath
+/.project
+/.settings
+/bin
+/target
 tool/.classpath
 tool/.project
 tool/m2-target
