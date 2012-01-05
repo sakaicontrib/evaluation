@@ -253,6 +253,12 @@ public class EvalBeanUtils {
         if (eval.getUnregisteredAllowed() == null) {
             eval.setUnregisteredAllowed(Boolean.FALSE);
         }
+        
+        if (eval.getAllRolesParticipate() == null) {
+        	Boolean allRolesParticipate = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
+            if (allRolesParticipate == null) { allRolesParticipate = false; }
+            eval.setAllRolesParticipate(allRolesParticipate);
+        }
 
         // fix up the reminder days to the default
         if (eval.getReminderDays() == null) {
