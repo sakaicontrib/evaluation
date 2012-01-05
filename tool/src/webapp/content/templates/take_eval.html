@@ -81,6 +81,7 @@
                 <li>Message for user here</li>
             </ul>
         </div>
+        <div class="alertMessage" rsf:id="saveEvaluationWithoutSubmitWarning">Evaluation has been Saved but not Submitted</div>
 
 		<div rsf:id="show-eval-instructions:" class="instruction">
 			<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
@@ -163,7 +164,9 @@
 					</fieldset>
 				</div>
 
+                <div class="alertMessage" rsf:id="saveEvaluationWithoutSubmitWarning">Evaluation has been Saved but not Submitted</div>
 				<div class="act">
+                    <input rsf:id="saveEvaluationWithoutSubmit" id="save_eval_without_submit" type="submit" value="Save without Submit" />
                     <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
 						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
 					</div>

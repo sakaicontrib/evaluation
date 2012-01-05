@@ -77,6 +77,12 @@ public interface EvalSettings {
      */
     public static final String STUDENT_MODIFY_RESPONSES = "STUDENT_MODIFY_RESPONSES:java.lang.Boolean";
     /**
+     * CONSTANT: Student is allowed to save a survey without submitting it.  A typical use case would be for a long
+     * survey, the student can begin editing it, save their work, and then comeback to it at a later time without
+     * having to reenter their information
+     */
+    public static final String STUDENT_SAVE_WITHOUT_SUBMIT = "STUDENT_SAVE_WITHOUT_SUBMIT:java.lang.Boolean";
+    /**
      * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
@@ -515,6 +521,7 @@ public interface EvalSettings {
         INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS,
         STUDENT_ALLOWED_LEAVE_UNANSWERED,
         STUDENT_MODIFY_RESPONSES,
+        STUDENT_SAVE_WITHOUT_SUBMIT,
         STUDENT_ALLOWED_VIEW_RESULTS,
         ALLOW_ALL_SITE_ROLES_TO_RESPOND
     };
