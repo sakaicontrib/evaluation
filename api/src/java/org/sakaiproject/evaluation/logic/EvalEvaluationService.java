@@ -682,6 +682,13 @@ public interface EvalEvaluationService {
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping();
 	
+   /**
+    * getInProgressEvaluationOwners returns a set of Owner ID that have a saved
+    * but not submitted evaluation response
+    * @return a set of User IDs that have a response that is saved but not completed
+    */
+	public Set<String> getInProgressEvaluationOwners();
+
 	/**
 	 * Remove all records from the the email processing queue and report the number of items removed.
 	 */

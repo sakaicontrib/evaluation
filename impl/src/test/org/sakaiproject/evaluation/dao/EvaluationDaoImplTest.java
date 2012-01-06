@@ -55,7 +55,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     private EvalItem itemLocked;
     private EvalItem itemUnlocked;
     private EvalEvaluation evalUnLocked;
-    
+
     protected static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
     protected String[] getConfigLocations() {
@@ -119,7 +119,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
                 EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
                 etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        
+
         evaluationDao.save( evalUnLocked );
 
     }
@@ -138,7 +138,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         List<EvalAssignUser> assignUsers = evaluationDao.findAll(EvalAssignUser.class);
         assertNotNull( assignUsers );
         assertTrue(assignUsers.size() > 20);
-        List<EvalEmailTemplate> emailTemplates = evaluationDao.findAll(EvalEmailTemplate.class);
+        evaluationDao.findAll(EvalEmailTemplate.class);
     }
 
     public void testGetPaticipants() {
@@ -1144,11 +1144,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertTrue(evalGroupIds.contains(etdl.assign4.getEvalGroupId()));
 
         // check for mixture - not in the test data
-//        evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalAssignUser.TYPE_EVALUATEE, null);
-//        assertNotNull(evalGroupIds);
-//        assertEquals(2, evalGroupIds.size());
-//        assertTrue(evalGroupIds.contains(etdl.assign7.getEvalGroupId()));
-//        assertTrue(evalGroupIds.contains(etdl.assignGroupProvided.getEvalGroupId()));
+        //        evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalAssignUser.TYPE_EVALUATEE, null);
+        //        assertNotNull(evalGroupIds);
+        //        assertEquals(2, evalGroupIds.size());
+        //        assertTrue(evalGroupIds.contains(etdl.assign7.getEvalGroupId()));
+        //        assertTrue(evalGroupIds.contains(etdl.assignGroupProvided.getEvalGroupId()));
 
         evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalAssignUser.TYPE_EVALUATOR, null);
         assertNotNull(evalGroupIds);
@@ -1600,113 +1600,143 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     }
 
     public void testGetConsolidatedEmailMapping() {
-    	
-    	// when no emails have been sent, selecting email recipients in any of several ways should return 1 
-    	int count = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(1, count);
-    	int deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions);
-    	count = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(1, count);
-    	deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions);
-    	
-    	// there should be two new evals ready to send announcements to, selected because the value of availableEmailSent is null
-    	int count1 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(1,count1);
-    	List<Map<String,Object>> mapping1 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
-    	assertNotNull(mapping1);
-    	assertEquals(1, mapping1.size());
-    	int deletions1 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions1);
-    	
-    	// Since those announcements have been sent, there should be none yet to be sent
-    	int count2 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(0,count2);
-    	List<Map<String,Object>> mapping2 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
-    	assertNotNull(mapping2);
-    	assertEquals(0, mapping2.size());
-    	int deletions2 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(0, deletions2);
-    	
-    	// if we search for notices to be sent and ignore the date, we should find them again
-    	int count3 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-    	assertEquals(1,count3);
-    	List<Map<String,Object>> mapping3 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
-    	assertNotNull(mapping3);
-    	assertEquals(1, mapping3.size());
-    	int deletions3 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions3);
-    	
-    	// if we search for evals needing reminders based on whether an announcement or reminder has been sent in the past day, we should find none 
-    	int count4 = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(0,count4);
-    	List<Map<String,Object>> mapping4 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
-    	assertNotNull(mapping4);
-    	assertEquals(0, mapping4.size());
-    	int deletions4 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(0, deletions4);
-    	
-    	// if we search for evals needing reminders based on whether a reminder has been sent in the past day (ignoring when announcements were sent) we find 2
-    	int count5 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(1,count5);
-    	List<Map<String,Object>> mapping5 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
-    	assertNotNull(mapping5);
-    	assertEquals(1, mapping5.size());
-    	int deletions5 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions5);
 
-    	// if we do the same search again, we find 0 because they have just been sent 
-    	int count6 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(0,count6);
-    	List<Map<String,Object>> mapping6 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
-    	assertNotNull(mapping6);
-    	assertEquals(0, mapping6.size());
-    	int deletions6 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(0, deletions6);
+        // when no emails have been sent, selecting email recipients in any of several ways should return 1 
+        int count = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+        assertEquals(1, count);
+        int deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions);
+        count = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+        assertEquals(1, count);
+        deletions = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions);
 
-    	// if we search for evals needing reminders as if it were tomorrow, we should find 1
-    	int count7 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(1,count7);
-    	List<Map<String,Object>> mapping7 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
-    	assertNotNull(mapping7);
-    	assertEquals(1, mapping7.size());
-    	int deletions7 = this.evaluationDao.resetConsolidatedEmailRecipients();
-    	assertEquals(1, deletions7);
+        // there should be two new evals ready to send announcements to, selected because the value of availableEmailSent is null
+        int count1 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+        assertEquals(1,count1);
+        List<Map<String,Object>> mapping1 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
+        assertNotNull(mapping1);
+        assertEquals(1, mapping1.size());
+        int deletions1 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions1);
 
-    	// if we search for evals needing reminders as if it were tomorrow, we should find 1
-    	int count8 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(1,count8);
-    	List<EvalEmailProcessingData> list = evaluationDao.findBySearch(EvalEmailProcessingData.class, new Search());
-    	assertNotNull(list);
-    	assertEquals(1,list.size());
-    	
-    	// now if we reset the queue and update "completedDate" for the EvalAssignUser associated with that user and eval, we should find no evals needing notifications
-    	this.evaluationDao.resetConsolidatedEmailRecipients();
-    	EvalEmailProcessingData eepd = list.get(0);
+        // Since those announcements have been sent, there should be none yet to be sent
+        int count2 = this.evaluationDao.selectConsolidatedEmailRecipients(true, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+        assertEquals(0,count2);
+        List<Map<String,Object>> mapping2 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
+        assertNotNull(mapping2);
+        assertEquals(0, mapping2.size());
+        int deletions2 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(0, deletions2);
+
+        // if we search for notices to be sent and ignore the date, we should find them again
+        int count3 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, false, (Date) null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+        assertEquals(1,count3);
+        List<Map<String,Object>> mapping3 = this.evaluationDao.getConsolidatedEmailMapping(true, 100, 0);
+        assertNotNull(mapping3);
+        assertEquals(1, mapping3.size());
+        int deletions3 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions3);
+
+        // if we search for evals needing reminders based on whether an announcement or reminder has been sent in the past day, we should find none 
+        int count4 = this.evaluationDao.selectConsolidatedEmailRecipients(true, new Date(), true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(0,count4);
+        List<Map<String,Object>> mapping4 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
+        assertNotNull(mapping4);
+        assertEquals(0, mapping4.size());
+        int deletions4 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(0, deletions4);
+
+        // if we search for evals needing reminders based on whether a reminder has been sent in the past day (ignoring when announcements were sent) we find 2
+        int count5 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(1,count5);
+        List<Map<String,Object>> mapping5 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
+        assertNotNull(mapping5);
+        assertEquals(1, mapping5.size());
+        int deletions5 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions5);
+
+        // if we do the same search again, we find 0 because they have just been sent 
+        int count6 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(0,count6);
+        List<Map<String,Object>> mapping6 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
+        assertNotNull(mapping6);
+        assertEquals(0, mapping6.size());
+        int deletions6 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(0, deletions6);
+
+        // if we search for evals needing reminders as if it were tomorrow, we should find 1
+        int count7 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(1,count7);
+        List<Map<String,Object>> mapping7 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
+        assertNotNull(mapping7);
+        assertEquals(1, mapping7.size());
+        int deletions7 = this.evaluationDao.resetConsolidatedEmailRecipients();
+        assertEquals(1, deletions7);
+
+        // if we search for evals needing reminders as if it were tomorrow, we should find 1
+        int count8 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(1,count8);
+        List<EvalEmailProcessingData> list = evaluationDao.findBySearch(EvalEmailProcessingData.class, new Search());
+        assertNotNull(list);
+        assertEquals(1,list.size());
+
+        // now if we reset the queue and update "completedDate" for the EvalAssignUser associated with that user and eval, we should find no evals needing notifications
+        this.evaluationDao.resetConsolidatedEmailRecipients();
+        EvalEmailProcessingData eepd = list.get(0);
         // update EvalAssignUser with completed time
-    	EvalEvaluation evaluation = evaluationDao.findById(EvalEvaluation.class, eepd.getEvalId());
+        EvalEvaluation evaluation = evaluationDao.findById(EvalEvaluation.class, eepd.getEvalId());
         String[] properties = new String[]{"userId", "evaluation", "evalGroupId"}; // 
         Object[] values = new Object[]{eepd.getUserId(), evaluation, eepd.getGroupId()}; // 
         List<EvalAssignUser> eaus = evaluationDao.findAll(EvalAssignUser.class);
+        assertNotNull(eaus);
         EvalAssignUser eau = evaluationDao.findOneBySearch(EvalAssignUser.class, new Search(properties, values));
         assertNotNull(eau);
-        Long eauId = null;
-        if(eau == null) {
-        	
-        } else {
-        	eauId = eau.getId();
-        	eau.setCompletedDate(new Date());
-        	evaluationDao.update(eau);
-    }
+        if (eau != null) {
+            Long eauId = eau.getId();
+            assertNotNull(eauId);
+            eau.setCompletedDate(new Date());
+            evaluationDao.update(eau);
+        }
         EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
         assertNotNull(eau0);
         assertNotNull(eau0.getCompletedDate());
-    	int count9 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	assertEquals(0,count9);
-    	List<Map<String,Object>> mapping9 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
-    	assertNotNull(mapping9);
-    	assertEquals(0, mapping9.size());
+        int count9 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+        assertEquals(0,count9);
+        List<Map<String,Object>> mapping9 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
+        assertNotNull(mapping9);
+        assertEquals(0, mapping9.size());
+    }
+
+    /**
+     * testResponsesSavedInProgress checks to see how many responses have been saved but not submitted
+     * for both active and inactive evaluations.  This depends on evaluations being open or closed and 
+     * having an incomplete response associated with it.
+     */
+    public void testGetResponsesSavedInProgress() {
+        // add an incomplete response to an active evaluation
+        EvalResponse responseActive = etdl.response1;
+        EvalEvaluation evalActive = etdl.evaluationActive;
+        responseActive.setEndTime(null);
+        responseActive.setEvaluation(evalActive);
+        this.evaluationDao.save(responseActive);    	
+
+        // add an incomplete response to a closed evaluation
+        EvalResponse responseInactive = etdl.response2;
+        EvalEvaluation evalInactive = etdl.evaluationClosed;
+        responseInactive.setEndTime(null);
+        responseInactive.setEvaluation(evalInactive);
+        this.evaluationDao.save(responseInactive);
+
+        List<EvalResponse> evalOpenResponses = this.evaluationDao.getResponsesSavedInProgress(true);
+        assertNotNull(evalOpenResponses);
+        assertEquals(1, evalOpenResponses.size());
+        assertEquals(evalOpenResponses.get(0).getId(), responseActive.getId());
+
+        List<EvalResponse> evalClosedResponses = this.evaluationDao.getResponsesSavedInProgress(false);
+        assertNotNull(evalClosedResponses);
+        assertEquals(1, evalClosedResponses.size());
+        assertEquals(evalClosedResponses.get(0).getId(), responseInactive.getId());
     }
 
     /**

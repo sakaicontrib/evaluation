@@ -505,6 +505,17 @@ public interface EvaluationDao extends GeneralGenericDao {
 	public int resetConsolidatedEmailRecipients();
 
 	/**
+	 * Returns a list of evaluation responses that have been saved but not 
+	 * submitted (completed)
+	 * @param activeEvaluationsOnly If true, only responses assigned to an 
+	 * evaluations that is currently in an Active state will be returned.  If 
+	 * false, only responses assigned to an evaluations not in an Active state 
+	 * will be returned.
+ 	 * @return a List of EvalResponse objects
+	 */
+	public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly);
+
+	/**
 	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
 	 * @return
 	 */

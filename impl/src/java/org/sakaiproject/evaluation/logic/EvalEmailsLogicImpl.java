@@ -410,7 +410,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                             + evaluationId + ") and group (" + group.evalGroupId + ")");
                 }
 
-                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
+                EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, includeConstant);
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -646,6 +646,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      */
     public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
             EvalGroup group) {
+    	String includeConstant = null;
+    	return makeEmailMessage(messageTemplate, subjectTemplate, eval, group, includeConstant);
+    }
+    
+    public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
+    		EvalGroup group, String includeConstant) {
         // replace the text of the template with real values
     	Map<String, String> replacementValues = new HashMap<String, String>();
         replacementValues.put("EvalTitle", eval.getTitle());
@@ -730,6 +736,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         if (! replacementValues.containsKey("ShowAllowEditResponsesText")) {
             replacementValues.put("ShowAllowEditResponsesText", "false");
+        }
+        if (! replacementValues.containsKey("InProgress")) {
+        	replacementValues.put("InProgress", (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant) ? "true" : "false"));
         }
 
         // generate URLs to the evaluation
@@ -989,6 +998,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		int userCounter = 0;
 		int emailCounter = 0;
 		List<String> recipients = new ArrayList<String>();
+		Set<String> inProgressEvaluationOwners = new HashSet<String>();
+		boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL);
+		if (saveWithoutSubmit) {
+		    inProgressEvaluationOwners = evaluationService.getInProgressEvaluationOwners();
+		}
     	for(Map<String,Object> entry : userMap) {
     		String userId = (String) entry.get(EvalConstants.KEY_USER_ID);
     		Date earliestDueDate = (Date) entry.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
@@ -1019,6 +1033,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// we can get it from the eval if needed, but it should come from settings
 			replacementValues.put("HelpdeskEmail",from);
 			replacementValues.put("MyWorkspaceDashboard", commonLogic.getMyWorkspaceDashboard(userId));
+			replacementValues.put("InProgress", (inProgressEvaluationOwners.contains(userId) ? "true" : "false"));
 			replacementValues.put("URLtoSystem", commonLogic.getServerUrl());
 			try {
 				String message = TextTemplateLogicUtils.processTextTemplate(template.getMessage(), replacementValues);

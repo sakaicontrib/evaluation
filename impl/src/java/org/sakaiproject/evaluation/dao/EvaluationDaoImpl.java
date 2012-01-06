@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.dao;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -32,14 +29,12 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.StatelessSession;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -83,7 +78,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
     protected static final int MAX_UPDATE_SIZE = 999;
 
-	private String dialect;
+	//private String dialect = "mysql";
 
     public void init() {
         log.debug("init");
@@ -259,6 +254,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
                 // do nothing
+            } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
+                userFilter = getResponseIncompleteUserIds(evaluationId, groupIds);
+                includeFilterUsers = true;
             } else {
                 throw new IllegalArgumentException("Unknown includeConstant: " + includeConstant);
             }
@@ -1201,7 +1199,54 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         return responseUsers;
     }
 
+    /**
+     * Get all the users who have saved but not completed a response to an evaluation
+     * and optionally within group(s) assigned to that evaluation
+     * 
+     * @param evaluationId a unique id for an {@link EvalEvaluation}
+     * @param evalGroupIds the unique eval group ids associated with this evaluation,
+     * can be null or empty to get all responses for this evaluation
+     * @return a set of internal userIds
+     */
+    private Set<String> getResponseIncompleteUserIds(Long evaluationId, String[] evalGroupIds) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        String groupsHQL = "";
+        if (evalGroupIds != null && evalGroupIds.length > 0) {
+            groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
+            params.put("evalGroupIds", evalGroupIds);
+        }
+        params.put("evaluationId", evaluationId);
+        String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
+            + " and response.endTime is null " + groupsHQL + " order by response.id";
+        List<?> results = executeHqlQuery(hql, params, 0, 0);
+        // put the results into a set and convert them to strings
+        Set<String> responseUsers = new HashSet<String>();
+        for (Object object : results) {
+            responseUsers.add((String) object);
+        }
+        return responseUsers;        
+    }
 
+    /** getResponsesSavedInProgress returns a List of EvalResponses that have been saved
+     * but not submitted, meaning that they will not be included in any statistics.
+     * @param activeEvaluationsOnly If true, only include responses associated with Evaluations
+     * that are still open.  If false, only include respones associated with Evaluations that are closed
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getResponsesSavedInProgress()
+     */
+    @SuppressWarnings("unchecked")
+    public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        String evalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+        params.put("evalState", evalState);
+        String hql = "SELECT response from EvalResponse as response where response.endTime is null";         		
+        if (activeEvaluationsOnly) {
+        	hql += " and response.evaluation.state = :evalState"; 
+        } else {
+        	hql += " and response.evaluation.state != :evalState";
+        }
+        List<EvalResponse> results = (List<EvalResponse>) executeHqlQuery(hql, params, 0, 0);
+        return results;
+    }
 
     /**
      * Get all the evalGroupIds for an evaluation which are viewable by

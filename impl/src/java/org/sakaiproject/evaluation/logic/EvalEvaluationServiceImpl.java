@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1170,6 +1171,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 		return this.dao.resetConsolidatedEmailRecipients();
 	}
 	
+ 	public Set<String> getInProgressEvaluationOwners() {
+ 		boolean activeEvaluationsOnly = true;
+ 		List<EvalResponse> responses = this.dao.getResponsesSavedInProgress(activeEvaluationsOnly);
+ 		Set<String> results = new HashSet<String>();
+ 		for (EvalResponse response : responses) {
+ 			results.add(response.getOwner());
+ 		}
+ 		return results;
+ 	}     
+ 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countDistinctGroupsInConsolidatedEmailMapping()

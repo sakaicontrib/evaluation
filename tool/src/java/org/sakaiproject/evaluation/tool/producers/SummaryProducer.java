@@ -170,7 +170,7 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
                 evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
             }
 
-            List<EvalResponse> evalResponses = deliveryService.getEvaluationResponsesForUser(currentUserId, evalIds, true);
+            List<EvalResponse> evalResponses = deliveryService.getEvaluationResponsesForUser(currentUserId, evalIds, null);
 
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) itEvals.next();
@@ -229,6 +229,12 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
                             // modify
                             UIOutput.make(evalcourserow, "evaluationCourseLink_disabled", title);
                         }
+                    } else if (response != null && response.getEndTime() == null) {
+                        // there is an in progress for this eval/group
+                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+                                new EvalViewParameters(TakeEvalProducer.VIEW_ID,
+                                        eval.getId(), response.getId(), groupId));
+                        status = "summary.status.inprogress";
                     } else {
                         // no response yet for this eval/group
                         // take eval link when pending

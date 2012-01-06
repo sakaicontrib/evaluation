@@ -175,6 +175,10 @@ public class EvalEmailConstants {
       "\n" +
       "We are still awaiting the completion of an evaluation (${EvalTitle}) for: ${EvalGroupTitle}. \n" +
       "\n" +
+      "<#if InProgress == \"true\">" +
+      "This evaluation has been saved but not completed.  You will need to " +
+      "complete and submit this evaluation before it is included in the consolidated results.\n\n" +
+      "</#if>" +
       "You may access the evaluation at: \n" +
       "${URLtoTakeEval} \n" +
       "If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
@@ -282,6 +286,10 @@ public class EvalEmailConstants {
 		"are asked to fill out ${EvalToolTitle} in the ${EvalSite} area of ${EvalCLE}, which is " +
 		"available from this link:\n\n" +
 		"	${MyWorkspaceDashboard}\n\n" + 
+		"<#if InProgress==\"true\">" +
+		"Some evaluations have been saved but not completed.  You will need to " +
+		"complete and submit these evaluations before they are included in the consolidated results.\n\n" +
+		"</#if>" + 
 		"You will need to provide a logion name and password to access the ${EvalToolTitle} " + 
 		"site.  This identification is required to ensure that only authorized students " +
 		"submit questionnaires  and that each student submits only one questionnaire per class.  Note, however, " +
