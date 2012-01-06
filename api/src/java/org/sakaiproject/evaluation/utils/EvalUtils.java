@@ -237,6 +237,7 @@ public class EvalUtils {
     public static boolean validateEmailIncludeConstant(String includeConstant) {
         if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant) ||
                 EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant) ||
+                EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant) ||
                 EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant) ) {
             // all is ok
         } else {

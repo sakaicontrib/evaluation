@@ -717,7 +717,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, includeConstant);
             if (log.isDebugEnabled())
                 log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId,  EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
+            if (log.isDebugEnabled()) {
+                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));                
         }
+    }
     }
 
     /**

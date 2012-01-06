@@ -53,6 +53,10 @@ public class EvalConstants {
      */
     public final static String EVAL_INCLUDE_NONTAKERS = "nontakers";
     /**
+     * Eval Takers: Include all users who have saved a response but not submitted
+     */
+    public final static String EVAL_INCLUDE_IN_PROGRESS = "InProgress";
+    /**
      * Eval Takers: Include all users who have responded to the evaluation
      */
     public final static String EVAL_INCLUDE_RESPONDENTS = "respondents";
