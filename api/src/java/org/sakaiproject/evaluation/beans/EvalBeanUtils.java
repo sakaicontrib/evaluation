@@ -215,11 +215,20 @@ public class EvalBeanUtils {
         if (instructorsView != null) {
             eval.setInstructorViewResults( instructorsView );
         }
-        Boolean instructorsAllView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
-        if (instructorsAllView != null) {
-            eval.setInstructorViewAllResults( instructorsAllView );
+        
+        // Added by EVALSYS-1063. Modified by EVALSYS-1176.
+        // Will modify the value of EvalEvaluation.instructorViewAllResults property iff current value is null.
+        // Will use value of EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS setting if available, false otherwise.
+        Boolean instructorsAllView = eval.getInstructorViewAllResults();
+        if(instructorsAllView == null) {
+        	Boolean instructorsAllViewSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
+        	if (instructorsAllViewSetting == null) {
+        		eval.setInstructorViewAllResults( Boolean.FALSE );
+        	} else {
+        		eval.setInstructorViewAllResults( instructorsAllViewSetting );
+        	}
         }
-
+        
         if (eval.getResultsSharing() == null) {
             eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
         }
