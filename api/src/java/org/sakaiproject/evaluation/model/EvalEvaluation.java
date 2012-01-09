@@ -310,8 +310,8 @@ public class EvalEvaluation implements java.io.Serializable {
      * full constructor without email flag
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
-            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
-            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
+            Date studentsDate, Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate, String state,
             String resultsSharing, String instructorOpt, Integer reminderDays,
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
@@ -329,8 +329,8 @@ public class EvalEvaluation implements java.io.Serializable {
      * full constructor without all rolls can participate
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
-            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
-            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
+            Date studentsDate, Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate, String state,
             String resultsSharing, String instructorOpt, Integer reminderDays,
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
@@ -348,8 +348,8 @@ public class EvalEvaluation implements java.io.Serializable {
      * full constructor
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
-            Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
-            Date studentsDate, boolean instructorViewResults, boolean instructorViewAllResults, Date instructorsDate, String state,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
+            Date studentsDate, Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate, String state,
             String resultsSharing, String instructorOpt, Integer reminderDays,
             String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
@@ -841,7 +841,7 @@ public class EvalEvaluation implements java.io.Serializable {
         return instructorViewAllResults;
     }
 
-    public void setInstructorViewAllResults(boolean instructorViewAllResults) {
+    public void setInstructorViewAllResults(Boolean instructorViewAllResults) {
         this.instructorViewAllResults = instructorViewAllResults;
     }
     
