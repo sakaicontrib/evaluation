@@ -417,7 +417,10 @@ public class PreloadDataImpl {
     	//job completion email
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_JOB_COMPLETED, EvalEmailConstants.EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT,
                 EvalEmailConstants.EMAIL_JOB_COMPLETED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_JOB_COMPLETED));
-
+    	//submission confirmation template
+    	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_SUBMITTED, 
+    			EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_SUBMITTED_DEFAULT_TEXT, 
+    			EvalConstants.EMAIL_TEMPLATE_SUBMITTED));
     }
     
     /**
