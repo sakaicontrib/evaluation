@@ -1104,12 +1104,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         // get all templates
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
         assertNotNull(l);
-        assertEquals(13, l.size());
+        // EVALSYS-1179 added submitted-confirmation email, increasing total count to 14
+        assertEquals(14, l.size());
 
         // get only default templates
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
         assertNotNull(l);
-        assertEquals(8, l.size());
+        // EVALSYS-1179 added submitted-confirmation email, increasing default count to 9
+        assertEquals(9, l.size());
         for (EvalEmailTemplate emailTemplate : l) {
             assertNotNull(emailTemplate.getDefaultType());
         }
@@ -1141,6 +1143,18 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, false);
         assertNotNull(l);
         assertEquals(2, l.size());
+
+        // EVALSYS-1179 added test cases for retrieving default submitted-confirmation email template (should be one)
+        l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_SUBMITTED, true);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        assertNotNull(l.get(0).getDefaultType());
+        assertEquals(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, l.get(0).getType());
+
+        // EVALSYS-1179 added test cases for retrieving non-default submitted-confirmation email template (should be none)
+        l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_SUBMITTED, false);
+        assertNotNull(l);
+        assertEquals(0, l.size());
 
         // TODO check permissions for non-admin
 
