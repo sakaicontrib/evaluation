@@ -31,6 +31,50 @@
          <h3 rsf:id="msg=summary.page.title">Evaluations dashboard</h3>
          <p rsf:id="msg=summary.page.instruction" class="instruction">Quick links to evaluation items</p>
          <p rsf:id="instructor-instructions" class="instruction"></p>
+         
+                    <!-- this is a duplicate of below.  Only one of these two boxes should be shown -->        
+                    <div rsf:id="evalAdminBoxTop:"  class="summaryBox" />
+                    
+                    <div rsf:id="evalResponsesBox:"  class="summaryBox">
+                        <h4 rsf:id="msg=summary.responses.title" style="margin-left:.5em">Evaluations in which I may be evaluated</h4>
+                        <div class="innerPanel">
+                            <form rsf:id="evalResponsesForm" action="evaluation_settings.html">
+                                <p rsf:id="summary-be-evaluated-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
+                                <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                                            <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+                                            <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+                                            <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr rsf:id="evalResponsesList:">
+                                            <td align="left">
+                                                <a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+                                                <a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+                                            </td>
+                                            <td align="left" nowrap="nowrap">
+                                                <span rsf:id="evalResponsesStartDate">09/20/2005</span>
+                                            </td>
+                                            <td nowrap="nowrap">
+                                                <span rsf:id="evalResponsesDueDate">09/20/2005</span>
+                                            </td>
+                                            <td nowrap="nowrap">
+                                                <a rsf:id="evalResponsesDisplayLink" href="evaluation_respnoders.html">2 of 39</a>
+                                                <span rsf:id="evalResponsesDisplay">2 of 39</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>  
+                    </div>
+                    
+                    <!-- this is a duplicate of above.  Only one of these two boxes should be shown -->
+                    <div rsf:id="evalAdminBoxBottom:"  class="summaryBox" />
+                    
 	      			<div rsf:id="evaluationsBox:" class="summaryBox">
 	      				<h4 rsf:id="msg=summary.evaluations.title" style="margin-left:.5em">Current evaluations I need to take</h4>
 	
@@ -39,32 +83,31 @@
 	      				<div rsf:id="evaluationsList:" class="innerPanel">
 	      				<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
 							<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
-								<tr>
-									<th rsf:id="evaluationTitleTitle" colspan="2" style="white-space:normal;">
-										Evaluation title
-									</th>
-									<th rsf:id="msg=summary.evaluations.starts.title">
-										Starts
-									</th>
-									<th rsf:id="msg=summary.evaluations.ends.title">
-										Ends
-									</th>
-								</tr>
-								<tr rsf:id="evaluationsCourseList:">
-									<td style="width:20em">
-										<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
-	                                    <span rsf:id="evaluationCourseLink_disabled" />
-									</td>
-									<td>
-										<span rsf:id="evaluationCourseStatus">Completed</span>
-									</td>
-									<td>
-										<span rsf:id="evaluationStartDate">09/20/2005</span>
-									</td>
-									<td>
-										<span rsf:id="evaluationDueDate">09/27/2005</span>
-									</td>	
-								</tr>
+							    <thead>
+    								<tr>
+	   								    <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space:normal;">Evaluation</th>
+		  							    <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
+			 						    <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+									    <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+								    </tr>
+								</thead>
+								<tbody>
+								    <tr rsf:id="evaluationsCourseList:">
+									   <td style="width:20em">
+										  <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
+	                                      <span rsf:id="evaluationCourseLink_disabled" />
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationCourseStatus">Completed</span>
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationStartDate">09/20/2005</span>
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationDueDate">09/27/2005</span>
+									   </td>	
+								    </tr>
+								</tbody>
 							</table>
 						</div>
 					</div>
@@ -116,81 +159,6 @@
 							</table>
 						</div>	
 					</div>
-					<div rsf:id="evalResponsesBox:"  class="summaryBox">
-						<h4 rsf:id="msg=summary.responses.title" style="margin-left:.5em">Evaluations in which I may be evaluated</h4>
-	      				<div class="innerPanel">
-	      					<form rsf:id="evalResponsesForm" action="evaluation_settings.html">
-	      						<p rsf:id="summary-be-evaluated-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
-	      						<table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
-	      							<thead>
-	      								<tr>
-		      								<th rsf:id="summary-responses-evaltitle">
-												Evaluation title
-											</th>
-											<th rsf:id="summary-responses-state">
-												State
-											</th>
-											<th rsf:id="summary-responses-date">
-												Date
-											</th>
-											<th rsf:id="summary-responses-responses">
-												Responses
-											</th>
-	      								</tr>
-	      							</thead>
-	      							<tbody>
-	      								<tr rsf:id="evalResponsesList:">
-	      									<td align="left" width="50%">
-	      										<a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
-	      										<a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">Title (preview)</a>
-	      									</td>
-	      									<td align="left" width="10%" nowrap="nowrap">
-	      										<span rsf:id="evalResponsesStatus">State</span>
-	      									</td>
-	      									<td width="25%" nowrap="nowrap">
-	      										<span rsf:id="evalResponsesDateLabel">Starts</span>: 
-	      										<span rsf:id="evalResponsesDate">09/20/2005</span>
-	      									</td>
-	      									<td width="15%" nowrap="nowrap">
-	      										<span rsf:id="evalResponsesDisplay">2 of 39</span>
-	      									</td>
-	      								</tr>
-	      							</tbody>
-	      						</table>
-	      					</form>
-	      				</div>	
-	      			</div>
-	      			<div rsf:id="evalAdminBox:"  class="summaryBox">
-	      				<h4 style="margin-left:.5em"><a rsf:id="evaladmin-title-link" href="control_panel.html">Evaluations I am creating or administering</a><span rsf:id="evaladmin-title"></span></h4>
-	      				<div class="innerPanel">
-	      					<form rsf:id="evalAdminForm" action="evaluation_settings.html">
-	      						<table cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
-	      							<thead>
-	      								<tr>
-	      									<th>Title</th>
-	      									<th>Status</th>
-	      									<th>Date</th>
-	      								</tr>
-	      							</thead>
-	      							<tbody>
-	      								<tr rsf:id="evalAdminList:">
-	      									<td align="left" width="50%">
-	      									<a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
-	      									<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
-	      									</td>
-	      									<td align="left" width="25%" nowrap="nowrap">
-	      										<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
-	      									</td>
-	      									<td width="25%" nowrap="nowrap">
-	      										<span rsf:id="evalAdminDateLabel">Starts</span>: 
-	      										<span rsf:id="evalAdminDate">09/20/2005</span>
-	      									</td>
-	      								</tr>
-	      							</tbody>
-	      						</table>
-	      					</form>
-	      				</div>	
-	      			</div>
 	</div>
 </body>
 </html>

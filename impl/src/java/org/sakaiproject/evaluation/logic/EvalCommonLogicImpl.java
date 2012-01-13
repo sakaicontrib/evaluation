@@ -525,6 +525,21 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return userIds;
     }
 
+	public String calculateViewability(String state) {
+		Boolean viewResultsIgnoreDate = (Boolean) evalSettings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+		
+		if(viewResultsIgnoreDate != null && viewResultsIgnoreDate) {
+			if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ||
+				EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ||
+				EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
+				
+				return EvalConstants.EVALUATION_STATE_VIEWABLE;
+			} 
+		}
+		
+		return state;
+	}
+    
     public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
 
         /* NOTE: false checks end up being really costly and should probably be cached
