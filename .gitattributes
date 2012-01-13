@@ -306,10 +306,14 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -t
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/UserAvailableEvalsDataView.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/AddItemControlRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/AdminBoxRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/BeEvaluatedBoxRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/EvaluateBoxRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyNodeSelectorRenderer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyTreeNodeSelectRenderer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/HumanDateRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.java svn_keywords=Date+Revision+Author+URL+Id

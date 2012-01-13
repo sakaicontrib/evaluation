@@ -211,6 +211,16 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
 	public EvalAdmin getEvalAdmin(String userId);
 	
 	/**
+	 * calculateViewability() takes a state and determines if the state
+	 * should be viewable, based on system settings
+	 * <p>EvalSettings.VIEW_SURVEY_RESULTS_IGNORE, if set, will promote some
+	 * states to EvalConstants.EVALUATION_STATE_VIEWABLE
+	 * @param state one of the states listed in EvalConstants, such as EVALUATION_STATE_ACTIVE
+	 * @return the original state or EVALUATION_STATE_VIEWABLE if the view can be promoted
+	 */
+	public String calculateViewability(String state);
+	
+	/**
 	 * Assigns a user as an eval admin.
 	 * 
 	 * @param userId internal user id (not username)
