@@ -101,7 +101,7 @@ public class EvaluationCreateProducer extends EvalCommonProducer implements View
 
       UIInput.make(form, "title", evaluationOTP + ".title");
       UIInput instructions = UIInput.make(form, "instructions:", evaluationOTP + ".instructions");
-      instructions.decorate( new UITextDimensionsDecorator(100, 4) );
+      //instructions.decorate( new UITextDimensionsDecorator(100, 4) ); // causes crash in RSF 0.7.5 - EVALSYS-1189
       richTextEvolver.evolveTextInput(instructions);
 
       // Make bottom table containing the list of templates if no template set
