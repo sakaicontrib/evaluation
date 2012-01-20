@@ -219,7 +219,9 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             // this sets the ideal color setting
             if ((firstTemplateItem.getScaleDisplaySetting() != null)
                     && (firstTemplateItem.getScaleDisplaySetting()
-                            .equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))) {
+                            .equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED) ||
+                        firstTemplateItem.getScaleDisplaySetting()
+                            .equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED))) {
                 UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
             } else {
                 UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
@@ -334,6 +336,21 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
 
             }
 
+            // render the scale select
+            String commonDisplayOTP = "templateItemWBL." + (modify ? evParameters.templateItemIds.toString() : TemplateItemWBL.NEW_1) + ".";
+            String scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;  
+            if (modify && blockItemList.size() == 1) {
+            	scaleDisplaySetting = blockItemList.get(0).getScaleDisplaySetting();
+            	if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting)) {
+            		scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED;
+            	} else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting)) {
+            		scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;
+            	}
+            }
+            renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
+                    EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_VALUES, 
+                    EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS);
+            
             UIInput.make(form, "ordered-child-ids", "#{templateBBean.orderedChildIds}");
 
             UIMessage.make(form, "cancel-button", "general.cancel.button");
@@ -362,6 +379,14 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
         UIVerbatim.make(radiobranch, "item-text", templateItem.getItem().getItemText());
     }
 
+    private void renderScaleDisplaySelect(UIForm form, String commonDisplayOTP,
+            String scaleDisplaySetting, String[] values, String[] lables) {
+        UIBranchContainer showScaleDisplay = UIBranchContainer.make(form, "show-scale-display:");
+        UIMessage.make(showScaleDisplay, "scale-display-header", "modifyitem.scale.display.header");
+        UISelect.make(showScaleDisplay, "scale-display-list", 
+                values, lables, commonDisplayOTP + "scaleDisplaySetting",
+                scaleDisplaySetting).setMessageKeys();
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
