@@ -404,6 +404,7 @@ public class TemplateBBean {
 
                 parent.setTemplate(templateItem.getTemplate());
                 parent.getItem().setScale(templateItem.getItem().getScale());
+                parent.getItem().setScaleDisplaySetting(parent.getScaleDisplaySetting());
 
                 parent.setBlockParent(Boolean.TRUE);
                 parent.getItem().setClassification(EvalConstants.ITEM_TYPE_BLOCK_PARENT);
@@ -504,6 +505,7 @@ public class TemplateBBean {
         } else { // modify block
             // update the parent
             EvalTemplateItem parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
+            parent.getItem().setScaleDisplaySetting(parent.getScaleDisplaySetting());
             setIdealColorForBlockParent(parent);
             try {
                 localTemplateLogic.saveItem(parent.getItem());
@@ -547,15 +549,23 @@ public class TemplateBBean {
     }
 
     private void setIdealColorForBlockParent(EvalTemplateItem parent) {
-
-        if ((idealColor != null) && (idealColor == Boolean.TRUE)) {
-            parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
-            parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
-        } else {
-            parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
-            parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
-        }
-
+    	if (idealColor != null && (idealColor == Boolean.TRUE)) {
+    		if (parent.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) {
+    			parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
+              	parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);    			
+    		} else if (parent.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)) {
+    			parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED);
+              	parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED);    			    			
+    		}
+    	} else {
+    		if (parent.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) {
+    			parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
+              	parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);    			
+    		} else if (parent.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)) {
+    			parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX);
+              	parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX);    			    			
+    		}    		
+    	}
     }
 
 }
