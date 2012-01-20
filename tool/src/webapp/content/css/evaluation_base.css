@@ -1112,3 +1112,11 @@ table#user-perms-table td.userPerms > span:nth-child(2n+1) {
 table#user-perms-table td.userPerms > span:nth-child(2n) {
 	float: left;
 }
+
+.matrixHeader {
+	float: right;
+	overflow: hidden;
+	width: 28px;
+	font-weight: bold;
+	text-align: center;
+}

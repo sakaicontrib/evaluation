@@ -94,6 +94,16 @@ public class EvalToolConstants {
         "templateitem.scale.select.steppedc",
         "templateitem.scale.select.vertical"
     };
+    
+    public static String[] SCALE_DISPLAY_GROUP_SETTING_VALUES = new String[] {
+    	EvalConstants.ITEM_SCALE_DISPLAY_MATRIX,
+    	EvalConstants.ITEM_SCALE_DISPLAY_STEPPED
+    };
+    
+    public static String[] SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS = new String[] {
+    	"templateitem.scale.select.matrix",
+    	"templateitem.scale.select.stepped"
+    };
 
 
     // For pulldowns which show the multiple choices display settings

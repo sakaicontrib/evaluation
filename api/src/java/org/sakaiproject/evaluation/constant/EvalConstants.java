@@ -497,6 +497,19 @@ public class EvalConstants {
     public static final String ITEM_SCALE_DISPLAY_VERTICAL = "Vertical";
 
     /**
+     * Item scale display (scaleDisplaySetting) setting:
+     * Display a row of labels across the top of the answer, used for block displays
+     */
+    public static final String ITEM_SCALE_DISPLAY_MATRIX = "Matrix";
+    
+    /**
+     * Item scale display (scaleDisplaySetting) setting:
+     * Display a row of labels across the top of the answer, used for block displays,
+     * colored option for Matrix display
+     */
+    public static final String ITEM_SCALE_DISPLAY_MATRIX_COLORED = "MatrixColored";
+    
+    /**
      * Template/Item shared setting: Template/Item is controlled by the owner<br/>
      * (This is a special setting and only used for setting the system setting, don't
      * store this setting in a template or item, it makes no sense)<br/>
