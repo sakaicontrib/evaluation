@@ -101,13 +101,11 @@ public class BlockRenderer implements ItemRenderer {
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
 
-        if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED) ||
-                templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED) ) {
-
             UIBranchContainer blockStepped = UIBranchContainer.make(container, "blockStepped:");
 
             // setup simple variables to make code more clear
-            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
+            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) || 
+            		EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting);
 
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = Integer.toString(optionCount - count);
@@ -148,37 +146,51 @@ public class BlockRenderer implements ItemRenderer {
             // render the stepped labels and images
             int scaleLength = scaleValues.length;
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
-            for (int j = 0; j < limit; ++j) {
-                UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowBranch:", j+"");
+            
+            if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED) ||
+                    templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED) ) {
+            
+	            for (int j = 0; j < limit; ++j) {
+	                UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowBranch:", j+"");
 
-                // put in the block header text (only once)
-                if (j == 0) {
-                    UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText());
-                    headerText.decorators =
-                        new DecoratorList(new UIFreeAttributeDecorator( MapUtil.make("rowspan", (optionCount + 1) + "") ));
-                    // add render markers if they are set for this block parent
-                    if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
-                        rowBranch.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-                    } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
-                        rowBranch.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
-                    }
-                }
-
-                // Actual label
-                UISelectLabel.make(rowBranch, "topLabel", selectIDLabel, j);
-
-                // Corner Image
-                UILink.make(rowBranch, "cornerImage", EvalToolConstants.STEPPED_IMAGE_URLS[0]);
-
-                // This branch container is created to help in creating the middle images after the LABEL
-                for (int k = 0; k < j; ++k) {
-                    UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", k+"");
-                    UILink.make(afterTopLabelBranch, "middleImage", EvalToolConstants.STEPPED_IMAGE_URLS[1]);	
-                }
-
-                // the down arrow images
-                UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", j+"");
-                UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
+	                // put in the block header text (only once)
+	                if (j == 0) {
+	                    UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText());
+	                    headerText.decorators =
+	                        new DecoratorList(new UIFreeAttributeDecorator( MapUtil.make("rowspan", (optionCount + 1) + "") ));
+	                    // add render markers if they are set for this block parent
+	                    if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
+	                        rowBranch.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+	                    } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+	                        rowBranch.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+	                    }
+	                }
+	
+	                // Actual label
+	                UISelectLabel.make(rowBranch, "topLabel", selectIDLabel, j);
+	
+	                // Corner Image
+	                UILink.make(rowBranch, "cornerImage", EvalToolConstants.STEPPED_IMAGE_URLS[0]);
+	
+	                // This branch container is created to help in creating the middle images after the LABEL
+	                for (int k = 0; k < j; ++k) {
+	                    UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", k+"");
+	                    UILink.make(afterTopLabelBranch, "middleImage", EvalToolConstants.STEPPED_IMAGE_URLS[1]);	
+	                }
+	
+	                // the down arrow images
+	                UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", j+"");
+	                UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
+	            }
+            } else if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX) ||
+            		templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)) {
+            	
+                UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowMatrixBranch:");
+                UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText());
+	            for (int j = 0; j < limit; ++j) {	
+	                // Actual label
+	                UISelectLabel.make(rowBranch, "headerLabel:", selectIDLabel, j);	
+	            }
             }
 
             // the child items rendering loop
@@ -241,7 +253,6 @@ public class BlockRenderer implements ItemRenderer {
                     }
                 }
 
-            }
         }
 
         return container;
