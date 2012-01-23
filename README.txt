@@ -25,7 +25,7 @@ not depend on the sakai version).
 For example, to do a full build of evaluation with Sakai 2.7, you might enter the following 
 maven command on the command line: 
 
-	mvn clean install -P  sakai2.7
+	mvn clean install -P sakai2.7
 
 You can specify multiple profiles. These are used by various contrib projects in sakai to avoid 
 having to have patches or attempt to maintain multiple branches of the same code if the only 
