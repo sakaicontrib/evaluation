@@ -8,15 +8,29 @@
 	<body>
 		
 		<!-- html template for the text item renderer -AZ -->
-		<div rsf:id="render-text-item:">
+		<div rsf:id="render-text-item:" class="item text">
+			<h5 class="title">
+				<span rsf:id="itemNum" class="number">0</span>
+				<span class="delineator">
+					<span class="paren">)</span>
+					<span class="dot">.</span>
+				</span>
+				<span class="required">*</span>
+				<span rsf:id="itemText" class="label">Item text label.</span>
+
+				<!-- Previous
 				<span rsf:id="itemNum">0</span>.&nbsp;
 				<div rsf:id="itemText" style="display:inline"></div>
-			<textarea rsf:id="essayBox" cols="65" rows="3" style="display:block"></textarea>
-			<label rsf:id="showNA:">
-				<input type="checkbox" rsf:id="itemNA" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
-			</label>
-
-		</div>
+				-->
+			</h5>
+			<div class="content">
+				<textarea rsf:id="essayBox"></textarea>
+				<label rsf:id="showNA:">
+					<input type="checkbox" rsf:id="itemNA" id="itemNA" />
+					<label rsf:id="descNA" for="itemNA">N/A</label>
+				</label>
+			</div> <!-- end content -->
+		</div> <!-- end item -->
 	
 	</body>
 </html>
