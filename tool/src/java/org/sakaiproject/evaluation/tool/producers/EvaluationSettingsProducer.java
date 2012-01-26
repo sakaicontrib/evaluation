@@ -218,7 +218,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 
         if ( EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true) ) {
             UIInput instructionsInput = UIInput.make(form, "instructions:", evaluationOTP + "instructions");
-            instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
+            //instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4)); // causes crash in RSF 0.7.5 - EVALSYS-1192
             richTextEvolver.evolveTextInput(instructionsInput);
         } else {
             UIVerbatim.make(tofill, "instructions_disabled", evaluation.getInstructions());
