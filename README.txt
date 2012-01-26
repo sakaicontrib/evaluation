@@ -25,7 +25,7 @@ not depend on the sakai version).
 For example, to do a full build of evaluation with Sakai 2.7, you might enter the following 
 maven command on the command line: 
 
-	mvn clean install -P sakai2.7
+	mvn clean install -D sakai2.7
 
 You can specify multiple profiles. These are used by various contrib projects in sakai to avoid 
 having to have patches or attempt to maintain multiple branches of the same code if the only 
@@ -51,3 +51,7 @@ before building/deploying:
         <artifactId>master</artifactId>
         <version>2.6.3</version>
     </parent>
+
+Dependencies: https://source.sakaiproject.org/contrib/caret/hierarchy/
+- This of evaluations requires https://source.sakaiproject.org/contrib/caret/hierarchy/tags/hierarchy-1.2.6/
+
