@@ -456,10 +456,11 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         // if Consolidated Emails are being used, use the default ConsolidatedAvailable template for available emails 
         // and the default ConsolidatedReminder email for reminder emails
         // Otherwise, use the default Available template and the default Reminder template
-        Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+        Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+        //Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE); // This checks the wrong property -- EVALSYS-1191
         if(consolidatedEmailsEnabled == null) {
         	consolidatedEmailsEnabled = new Boolean(false);
-        }
+        } 
         
         String availableTemplate = EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
         String reminderTemplate = EvalConstants.EMAIL_TEMPLATE_REMINDER;
