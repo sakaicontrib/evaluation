@@ -51,3 +51,7 @@ before building/deploying:
         <artifactId>master</artifactId>
         <version>2.6.3</version>
     </parent>
+
+Dependencies: https://source.sakaiproject.org/contrib/caret/hierarchy/
+- This of evaluations requires https://source.sakaiproject.org/contrib/caret/hierarchy/tags/hierarchy-1.2.6/
+
