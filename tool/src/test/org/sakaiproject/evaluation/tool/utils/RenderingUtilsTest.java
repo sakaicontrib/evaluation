@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
 import org.junit.Test;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils.AnswersMean;
 
@@ -58,6 +59,48 @@ public class RenderingUtilsTest {
         } catch (IllegalArgumentException e) {
             assertNotNull(e.getMessage());
         }
+    }
+    
+    @Test
+    public void testGetMatrixLabels() {
+    	String[] scaleOptions0 = {"a", "b"};
+    	List<String> labels0 = RenderingUtils.getMatrixLabels(scaleOptions0);
+    	assertEquals(2, labels0.size());
+    	assertEquals("a", labels0.get(0));
+    	assertEquals("b", labels0.get(1));
+    	
+    	String[] scaleOptions1 = {"a", "b", "c"};
+    	List<String> labels1 = RenderingUtils.getMatrixLabels(scaleOptions1);
+    	assertEquals(2, labels1.size());
+    	assertEquals("a", labels1.get(0));
+    	assertEquals("c", labels1.get(1));
+    	
+    	String[] scaleOptions2 = {"a", "b", "c", "d"};
+    	List<String> labels2 = RenderingUtils.getMatrixLabels(scaleOptions2);
+    	assertEquals(2, labels2.size());
+    	assertEquals("a", labels2.get(0));
+    	assertEquals("d", labels2.get(1));
+    	
+    	String[] scaleOptions3 = {"a", "b", "c", "d", "e"};
+    	List<String> labels3 = RenderingUtils.getMatrixLabels(scaleOptions3);
+    	assertEquals(3, labels3.size());
+    	assertEquals("a", labels3.get(0));
+    	assertEquals("e", labels3.get(1));
+    	assertEquals("c", labels3.get(2));
+    	
+    	String[] scaleOptions4 = {"a", "b", "c", "d", "e", "f"};
+    	List<String> labels4 = RenderingUtils.getMatrixLabels(scaleOptions4);
+    	assertEquals(3, labels4.size());
+    	assertEquals("a", labels4.get(0));
+    	assertEquals("f", labels4.get(1));
+    	assertEquals("c", labels4.get(2));
+    	
+    	String[] scaleOptions5 = {"a", "b", "c", "d", "e", "f", "g"};
+    	List<String> labels5 = RenderingUtils.getMatrixLabels(scaleOptions5);
+    	assertEquals(3, labels5.size());
+    	assertEquals("a", labels5.get(0));
+    	assertEquals("g", labels5.get(1));
+    	assertEquals("d", labels5.get(2));
     }
 
 }

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,36 @@ public class RenderingUtils {
             this.meanText = df.format(mean);
         }
 
+    }
+    
+    /**
+     * getMatrixLabels() creates a list of either 2 or 3 labels that
+     * will be displayed above the Matrix rendered scale.  By definition,
+     * no scales will have 0 or 1 entries; there will always be at least 2.
+     * The third entry will only be included if there are 5 or more
+     * entries.  
+     * <p>If the list contains a 3rd element, the 3rd element will be the middle
+     * label.  We always know that the 1st element is the beinning and the 
+     * second element is the end.
+     * <p>2 entries in returns 2 entries (beginning and end)
+     * <br>3 entries in returns 2 entries (beginning and end)
+     * <br>4 entries in returns 2 entries (beginning and end)
+     * <br>5 entries or more returns 3 entries (beginning, end, and middle)
+     * <p>For scales with 5 or more entries, the middle entry of the scale will
+     * be returned.  For lists with an even number of elements, the element before
+     * the middle will be returned (i.e. a 6 element scale will return 1st, 3rd, and 6th)
+     * @param scaleOptions
+     * @return
+     */
+    public static List<String> getMatrixLabels(String[] scaleOptions) {
+    	List<String> list = new ArrayList<String>();
+    	list.add(scaleOptions[0]);
+    	list.add(scaleOptions[scaleOptions.length - 1]);
+    	if (scaleOptions.length > 4) {
+    		int middleIndex = (scaleOptions.length - 1) / 2;
+    		list.add(scaleOptions[middleIndex]);
+    	}
+    	return list;
     }
 
     /**

@@ -10,6 +10,69 @@
 <!-- html template for the block item renderer -AZ -->
 <div rsf:id="render-block-item:">
 
+		<div rsf:id="matrixGroupDisplay:">
+		<div class="evaluation">
+		<div class="content">
+		<!--
+		==================== 
+		MATRIX BLOCK DISPLAY
+		====================
+		 -->
+		<div class="item-group matrix">
+			<h5 class="title">
+				<span rsf:id="matrixGroupTitle" class="label">Text heading for an item group.</span>
+			</h5>
+			<div class="content">
+				
+				<fieldset>
+					<legend>
+						<span class="response-type">Scale Response:</span>
+						<span rsf:id="label-start" class="response-scale-start">Not at all</span>
+						<span class="response-scale-delineator"> - </span>
+						<span rsf:id="label-middle" class="response-scale-middle">Sometimes</span>
+						<span class="response-scale-delineator"> - </span>
+						<span rsf:id="label-end" class="response-scale-end">Very</span>
+					</legend>
+			
+					<div rsf:id="matrixDisplay:" class="item scale">
+						<div class="matrix">
+							<h5 class="title">
+								<span rsf:id="itemNum" class="number">1</span>
+								<span class="delineator">
+									<span class="paren">)</span>
+									<span class="dot">.</span>
+								</span>
+								<span class="required">*</span>
+								<span rsf:id="itemText" class="label">This is UCB's new scale display.</span>
+							</h5>
+							<div class="content">
+								<fieldset>
+									<div rsf:id="response-list:">
+										<div rsf:id="childRadio" />
+										<ol class="response-list">
+											<li rsf:id="scaleOption:">
+												<label>
+													<input rsf:id="radioValue" type="radio" id="block1" name="block1"/>
+													<span rsf:id="radioValueLabel">Label 1</span>
+												</label>
+											</li>
+										</ol>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div> <!-- end item -->			
+				</fieldset>
+
+			</div> <!-- end content -->
+		</div> <!-- end item-group -->
+	</div>			
+	</div>
+	</div>			
+			
+
+
+
 <!--  DIV tag for Block type: Stepped display -->
 <div rsf:id="blockStepped:">
 	<!--[if IE 7]>
@@ -23,12 +86,6 @@
 	<tr>
 		<td>
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
-				<tr rsf:id="blockRowMatrixBranch:">
-					<td rsf:id="itemText" style="padding:.2em;" valign="bottom" class="questionCell"></td>
-					<td nowrap="nowrap" align="right" class="answerCell">
-						<span rsf:id="headerLabel:" class="matrixHeader actualHeader">Label</span>
-					</td>
-				</tr>
 				<tr rsf:id="blockRowBranch:">
 					<td rsf:id="itemText" width="90%" rowspan="4" style="padding:5px;" valign="bottom" class="fakeHeader">
 					<!-- //gsilver:this should really be an h4 for the main text, a list for the sub-items  -->
