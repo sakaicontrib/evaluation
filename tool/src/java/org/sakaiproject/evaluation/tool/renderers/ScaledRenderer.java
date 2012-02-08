@@ -14,12 +14,14 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 
@@ -218,6 +220,67 @@ public class ScaledRenderer implements ItemRenderer {
                 UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc");//.decorate( new UILabelTargetDecorator(choice));
             }
 
+            // new item display logic
+        } else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(scaleDisplaySetting)) {
+        	// build the question row container and apply decorations
+            UIBranchContainer matrix = UIBranchContainer.make(container, "matrixDisplay:");
+            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+                matrix.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+                matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+            }
+            
+            // display header labels
+            List<String> headerLabels = RenderingUtils.getMatrixLabels(scaleOptions);
+            UIOutput.make(container, "label-start", headerLabels.get(0));
+            UIOutput.make(container, "label-end", headerLabels.get(1));
+            if (headerLabels.size() == 3) {
+            	UIOutput.make(container, "label-middle", headerLabels.get(2));
+            }
+            
+            // display question text
+            UIOutput.make(matrix, "itemNum", displayNumber+"" ); //$NON-NLS-2$
+            UIVerbatim.make(matrix, "itemText", templateItem.getItem().getItemText());
+            
+            // setup simple variables to make code more clear
+            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
+
+            UIBranchContainer coloredBranch = null;
+            if (colored) {
+                coloredBranch = UIBranchContainer.make(matrix, "coloredChoicesBranch:");
+                UILink.make(coloredBranch, "idealImage", ScaledUtils.getIdealImageURL(scale));
+            }
+
+            for (int count = 1; count <= optionCount; count++) {
+                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleLabels[optionCount - count] = scaleOptions[count-1];
+            }
+
+            if (usesNA) {
+                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
+                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
+            }
+
+            UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
+            UISelect radios = UISelect.make(rowBranch, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+            String selectID = radios.getFullID();
+
+            if (disabled) {
+                radios.selection.willinput = false;
+                radios.selection.fossilize = false;
+            }
+
+            int scaleLength = scaleValues.length;
+            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
+            UISelectLabel[] labels = new UISelectLabel[limit];
+            UISelectChoice[] choices = new UISelectChoice[limit];
+            
+            
+            for (int j = 0; j < limit; ++j) {
+                    UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", j+"");
+                    choices[j] = UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
+                    UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[scaleLabels.length - j - 1]);
+            }
 
         } else if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) ) {

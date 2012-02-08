@@ -5,6 +5,126 @@ var utils = utils ||
 var evalsys = evalsys ||
 {};
 
+evalsys.instrumentMatrixItem = function() {
+	/////////////////////////////////
+	// Scales
+	/////////////////////////////////
+
+	// Runs methods for assigning widths to elements of the individual and grouped scale items.
+
+	// Needs to fire as soon as the document is ready.
+
+	// Compact Scale
+	/////////////////////////////////
+	// To achieve the inline display of the title and the content, both block elements are floated with css.
+	// This is great except when the title is long enough to overlap the floated content.
+	// In that scenario, the title is pushing the content to the next line.
+	// To prevent that, will calculate and set the space available to the title.
+	// Calculate itemWidth and contentWidth.
+	// Then set: titleWidth = itemWidth - contentWidth.
+
+	// Method for calculating and setting the title width.
+	setScaleTitleWidth = function() {
+		// Scope: define variables for this function.
+		var scaleItems, itemWidth, contentWidth, titleWidth;
+
+		// Init: set the variable values.
+		scaleItems = $(".scale");
+		itemWidth = null;
+		contentWidth = null;
+		titleWidth = null;
+
+		// Apply: do stuff using the variables.
+		// For each scale item, determine item and content width, then set title width.
+		$.each(scaleItems, function(index, value) {
+			var container = $(value);
+			itemWidth = container.innerWidth();
+			contentWidth = container.find(".content").outerWidth();
+			titleWidth = itemWidth - contentWidth - 20;
+			container.find(".title").attr("style", "width:" + titleWidth + "px;");
+		});
+
+		// Console for debugging.
+		//console.debug("scaleItems", scaleItems, "itemWidth", itemWidth, "contentWidth", contentWidth, "titleWidth", titleWidth);
+	};
+
+	// Grouped Items
+	/////////////////////////////////
+	// Similar to Compact Scales above, grouped scale items have the overal scale descriptor (legend) inline with the group title.
+	// Different than the individual scale item, however, in the item-group both elements are positioned absolutely via css.
+	// Because of that setup, both elements need to be given widths to match the item-group content and not overlap.
+
+	// Method for calculating and setting the title and legend widths of grouped items.
+	setGroupedItemsWidths = function() {
+		// Scope: define variables for this function.
+		var itemGroups, groupWidth, scaleWidth, legendWidth, titleWidth;
+
+		// Init: set the variable values.
+		itemGroups = $(".item-group");
+		groupWidth = null;
+		scaleWidth = null;
+		legendWidth = null;
+		titleWidth = null;
+
+		// Apply: do stuff using the variables.
+		// For each scale item, determine item and content width, then set title width.
+		$.each(itemGroups, function(index, value) {
+			// Scope
+			var container, scale, legend, title;
+			// Init
+			container = $(value);
+			scale = container.find("> .content > fieldset > .item .content .response-list");
+			legend = container.find("> .content > fieldset > legend");
+			title = container.find("> .title");
+			// Apply
+			groupWidth = container.innerWidth();
+			scaleWidth = scale.outerWidth();
+			legendWidth = scaleWidth;
+			titleWidth = groupWidth - legendWidth - 20;
+			legend.attr("style", "width:" + legendWidth + "px;");
+			title.attr("style", "width:" + titleWidth + "px;");
+		});
+
+		// Console for debugging.
+		console.debug("itemGroups", itemGroups, "groupWidth", groupWidth, "scaleWidth", scaleWidth, "legendWidth", legendWidth, "titleWidth", titleWidth);
+	};
+
+	// Also needs to fire when the browser window is resized.
+	$(window).resize(function() {
+		setScaleTitleWidth();
+		setGroupedItemsWidths();	
+	});
+	
+	setScaleTitleWidth();
+	setGroupedItemsWidths();
+
+	/////////////////////////////////
+	// Response List Behavior
+	/////////////////////////////////
+	// Natural form behavior: clicking the label checks/unchecks associated checkbox or radio button.
+	// Orignally had the click event trigger on the wrapping label.
+	// Discovered, however, that the event double-triggers on both the label and the input.
+	// Because the click event on the label triggers a click event on the corresponding input.
+	// This results in the function running twice.
+	// Therefore, as it is coded now, the click event that triggers the function comes only from the input.
+	// Which is also triggered when the label is clicked.
+	// This results in the function properly executing once.
+	// And allows for either the label or the input to be clicked in the UI.
+
+	// mark initially selected inputs with "selected" class so that labels display correctly
+	$('.response-list input:checked').parent("label").addClass('selected');
+	
+	// when inputs are clicked, add "selected" class so that labels display correctly
+	var responseItems = $(".response-list input");	
+	responseItems.click(function(event){
+		var parentResponseList = $(event.target).parents(".response-list");
+		var inputItems = $(".selected", parentResponseList);
+		inputItems.removeClass("selected");
+		$(event.target).parent("label").addClass("selected");
+	});
+
+};
+
 evalsys.instrumentBlockItem = function(){
     $('label.blockItemLabel,label.blockItemLabelNA').click(function(){
 		var choiceGroup = $(this).parents('.choiceGroup');

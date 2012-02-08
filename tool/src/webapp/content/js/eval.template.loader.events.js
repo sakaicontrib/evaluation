@@ -247,6 +247,9 @@ var evalTemplateLoaderEvents = (function($) {
             if ($('.blockItemGroup').length > 0){
                 evalsys.instrumentBlockItem();
             }
+            if ($('.matrix').length > 0) {
+            	evalsys.instrumentMatrixItem();
+            }
             if ($('.steppedItemGroup').length > 0){
                 evalsys.instrumentSteppedItem();
             }
