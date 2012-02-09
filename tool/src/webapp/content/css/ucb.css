@@ -392,3 +392,8 @@
 .evaluation .matrix legend {
   color: black;
 }
+
+/* line 170, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.preview-item .highlightPanel {
+  border: none;
+}
