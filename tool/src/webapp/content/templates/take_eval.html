@@ -24,32 +24,32 @@
 
 <!-- supposedly firefox will not cache any pages with unload handlers -->
 <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
-	<div class="portletBody">
+	<div class="portletBody evaluation">
 		<div id="toolTip"></div>
-<script type="text/javascript">
-		$(document).ready(function(){
-			if ($('.blockItemGroup').length > 0){
-				evalsys.instrumentBlockItem();
-			}
-			if ($('.steppedItemGroup').length > 0){
-				evalsys.instrumentSteppedItem();
-			}
-			if ($('.matrix').length > 0){
-				evalsys.instrumentMatrixItem();
-			}
+		<script type="text/javascript">
+			$(document).ready(function(){
+				if ($('.blockItemGroup').length > 0){
+					evalsys.instrumentBlockItem();
+				}
+				if ($('.steppedItemGroup').length > 0){
+					evalsys.instrumentSteppedItem();
+				}
+				if ($('.matrix').length > 0){
+					evalsys.instrumentMatrixItem();
+				}
 
-			if ($('.mult-choice-ans').length > 0){
-				evalsys.instrumentMCMAItem();
-			}
-			if ($('.itemListEval').length > 0) {
-				evalsys.instrumentScaleItem();
-			}
-			if ($('.fullDisplayHorizontal').length > 0) {
-				evalsys.instrumentDisplayHorizontal();
-			}
-			$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
-		});
-	</script>
+				if ($('.mult-choice-ans').length > 0){
+					evalsys.instrumentMCMAItem();
+				}
+				if ($('.itemListEval').length > 0) {
+					evalsys.instrumentScaleItem();
+				}
+				if ($('.fullDisplayHorizontal').length > 0) {
+					evalsys.instrumentDisplayHorizontal();
+				}
+				$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+			});
+		</script>
 
 
 		<div class="textPanel"> 			
@@ -91,79 +91,80 @@
 			<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
 		</div>
 
-	   <div rsf:id="show-eval-note:" class="instruction">
+		<div rsf:id="show-eval-note:" class="instruction">
 		   <h5 rsf:id="msg=general.note"  style="display:inline;padding-right:1em">Note:</h5>
 		   <div rsf:id="eval-note-text" style="display:inline">Additional instructional note to the user here</div>
-	   </div>
+		</div>
 
 		<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
 		<div rsf:id="msg=takeeval.selection.warn" id="evalSelectWarn" style="display:none;">You are removing an already selected person. Are you sure?</div>
 		
 		
-		<div rsf:id="form-branch:">
+		<div rsf:id="form-branch:" class="content">
 			<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
                     onsubmit="$(':submit').hide;$('submit_process').show();">
-				
-
-		<!-- Selector for ONE instructor -->
-		<div rsf:id="select-instructor-one:" class="navPanel"  rel="evalinstructorSelector">
-			<fieldset class="itemListNew">
-				<legend rsf:id="msg=takeeval.selection.instructor.header.one" for="select-instructor-one-list"> Select Instructor to evaluate:</legend>
-					<select rsf:id="select-instructor-one-list">
-						<option selected="selected">Person 1</option>
-						<option>Person 2</option>
-						<option>Person 3</option>
-					</select>
-                </fieldset>
-		</div>
-		<!-- Selector for MULTIPLE Instructors -->
-		<div rsf:id="select-instructor-multiple:" class="navPanel" rel="evalinstructorSelector">
-			<fieldset class="itemListNew">
-				<legend rsf:id="msg=takeeval.selection.instructor.header.multiple"> Select Instructors to evaluate:</legend>
-				<span rsf:id="select-instructor-multiple-holder:"></span>
-					<div rsf:id="select-instructor-multiple-row:">
-					<input rsf:id="select-instructor-multiple-box" type="checkbox" />
-					<label rsf:id="select-instructor-multiple-label"> Lovemore Nalube</label>
-				</div>
-			</fieldset>
-		</div>
-        <!-- Selector for ONE TA -->
-                    <div rsf:id="select-assistant-one:" class="navPanel"  rel="evalassistantSelector">
-                        <fieldset class="itemListNew">
-                            <legend rsf:id="msg=takeeval.selection.assistant.header.one" for="select-assistant-one-list"> Select TA to evaluate:</legend>
-                                <select rsf:id="select-assistant-one-list">
-                                    <option selected="selected">Person 1</option>
-                                    <option>Person 2</option>
-                                </select>
-                         </fieldset>
-                    </div>
-
-					<!-- Selector for MULTIPLE TAs-->
-		<div rsf:id="select-assistant-multiple:" class="navPanel" rel="evalassistantSelector">
-			<fieldset class="itemListNew">
-				<legend rsf:id="msg=takeeval.selection.assistant.header.multiple"> Select TAs to evaluate:</legend>
-				<span rsf:id="select-assistant-multiple-holder:"></span>
-				<div rsf:id="select-assistant-multiple-row:">
-					<input rsf:id="select-assistant-multiple-box" type="checkbox" />
-					<label rsf:id="select-assistant-multiple-label"> Lovemore Nalube</label>
-				</div>
-			</fieldset>
-		</div>
 		
-		<input rsf:id="selectedPeopleInResponse" type="hidden" value=""/>
+				<div rsf:id="select-instructor-one:" class="navPanel"  rel="evalinstructorSelector">
+				<!-- Selector for ONE instructor -->
+					<fieldset class="itemListNew">
+						<legend rsf:id="msg=takeeval.selection.instructor.header.one" for="select-instructor-one-list"> Select Instructor to evaluate:</legend>
+						<select rsf:id="select-instructor-one-list">
+							<option selected="selected">Person 1</option>
+							<option>Person 2</option>
+							<option>Person 3</option>
+						</select>
+		            </fieldset>
+				</div>
+				
+				<div rsf:id="select-instructor-multiple:" class="navPanel" rel="evalinstructorSelector">
+				<!-- Selector for MULTIPLE Instructors -->
+					<fieldset class="itemListNew">
+						<legend rsf:id="msg=takeeval.selection.instructor.header.multiple"> Select Instructors to evaluate:</legend>
+						<span rsf:id="select-instructor-multiple-holder:"></span>
+							<div rsf:id="select-instructor-multiple-row:">
+							<input rsf:id="select-instructor-multiple-box" type="checkbox" />
+							<label rsf:id="select-instructor-multiple-label"> Lovemore Nalube</label>
+						</div>
+					</fieldset>
+				</div>
+		        
+		        <div rsf:id="select-assistant-one:" class="navPanel"  rel="evalassistantSelector">
+		        <!-- Selector for ONE TA -->
+		            <fieldset class="itemListNew">
+		                <legend rsf:id="msg=takeeval.selection.assistant.header.one" for="select-assistant-one-list"> Select TA to evaluate:</legend>
+		                <select rsf:id="select-assistant-one-list">
+		                    <option selected="selected">Person 1</option>
+		                    <option>Person 2</option>
+		                </select>
+		             </fieldset>
+		        </div>
 
-		<div rsf:id="categorySection:">
-                    <fieldset class="itemListNew">
-                       <legend rsf:id="categoryHeader"> Group Items: </legend>
-                       <ol class="itemListEval">
-                          <li rsf:id="itemrow:nodeSection">
-                              <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
-                          </li>
-                          <li rsf:id="itemrow:templateItem">
-                             <!-- DIV tag for item renderer -->
-                             <div rsf:id="renderedItem:">Items get rendered here</div>
-                          </li>
-                       </ol>
+				<div rsf:id="select-assistant-multiple:" class="navPanel" rel="evalassistantSelector">
+				<!-- Selector for MULTIPLE TAs-->
+					<fieldset class="itemListNew">
+						<legend rsf:id="msg=takeeval.selection.assistant.header.multiple"> Select TAs to evaluate:</legend>
+						<span rsf:id="select-assistant-multiple-holder:"></span>
+						<div rsf:id="select-assistant-multiple-row:">
+							<input rsf:id="select-assistant-multiple-box" type="checkbox" />
+							<label rsf:id="select-assistant-multiple-label"> Lovemore Nalube</label>
+						</div>
+					</fieldset>
+				</div>
+				
+				<input rsf:id="selectedPeopleInResponse" type="hidden" value=""/>
+
+				<div rsf:id="categorySection:">
+		            <fieldset class="itemListNew">
+		               <legend rsf:id="categoryHeader"> Group Items: </legend>
+		               <ol class="itemListEval">
+		                  <li rsf:id="itemrow:nodeSection">
+		                      <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+		                  </li>
+		                  <li rsf:id="itemrow:templateItem">
+		                     <!-- DIV tag for item renderer -->
+		                     <div rsf:id="renderedItem:">Items get rendered here</div>
+		                  </li>
+		               </ol>
 					</fieldset>
 				</div>
 
@@ -171,10 +172,10 @@
 				<div class="act">
                     <input rsf:id="saveEvaluationWithoutSubmit" id="save_eval_without_submit" type="submit" value="Save without Submit" />
                     <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
-						<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
-					</div>
-				</form>
-			</div>
+					<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
+				</div>
+			</form>
+		</div>
 
     </div>
 </body>

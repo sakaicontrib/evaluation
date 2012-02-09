@@ -1,0 +1,378 @@
+/* line 29, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item {
+  margin-bottom: 15px;
+}
+/* line 31, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+/* line 35, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title span {
+  display: inline-block;
+}
+/* line 38, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title .number {
+  position: absolute;
+  width: 2em;
+  text-align: right;
+}
+/* line 43, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title .delineator, .evaluation .item .title .required {
+  position: absolute;
+}
+/* line 46, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title .delineator {
+  left: 2em;
+}
+/* line 49, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title .required {
+  left: 2.5em;
+  display: none;
+}
+/* line 53, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .title .label {
+  margin-left: 40px;
+}
+/* line 57, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .compulsory .title .required {
+  display: inline-block;
+}
+/* line 60, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .content {
+  margin-left: 40px;
+}
+/* line 71, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item .content textarea {
+  width: 90%;
+  min-width: 600px;
+  min-height: 5em;
+  margin: 15px;
+}
+/* line 84, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix {
+  min-width: 800px;
+}
+/* line 86, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix .title {
+  min-width: 49%;
+}
+/* line 89, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+/* line 93, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset legend {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  text-align: left;
+}
+/* line 98, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset legend .response-type, .evaluation .matrix fieldset legend .response-scale-delineator {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+/* line 101, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset legend .response-scale-end {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+/* line 106, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset legend .response-scale-middle {
+  position: absolute;
+  top: 0;
+  left: 40%;
+  text-align: center;
+}
+/* line 120, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix {
+  position: relative;
+  zoom: 1;
+  margin: 2em 0 1em 0;
+}
+/* line 66, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+.evaluation .scale .matrix:before, .evaluation .scale .matrix:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+/* line 72, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+.evaluation .scale .matrix:after {
+  clear: both;
+}
+/* line 125, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .title {
+  float: left;
+}
+/* line 128, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content {
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  float: right;
+}
+/* line 10, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content ol, .evaluation .scale .matrix .content ul, .evaluation .scale .matrix .content li {
+  margin: 0;
+  padding: 0;
+}
+/* line 14, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content li {
+  list-style-type: none;
+  display: inline-block;
+}
+/* line 134, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content fieldset {
+  position: relative;
+}
+/* line 136, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content fieldset legend {
+  top: -1.5em;
+}
+/* line 142, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content label {
+  display: inline-block;
+  padding: 5px 15px;
+  font-size: 80%;
+  font-weight: bold;
+  line-height: 100%;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  -o-border-radius: 4px / 4px;
+  -ms-border-radius: 4px / 4px;
+  -khtml-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+}
+/* line 144, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content label span {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+/* line 157, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group {
+  position: relative;
+  zoom: 1;
+  margin-bottom: 15px;
+}
+/* line 66, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+.evaluation .item-group:before, .evaluation .item-group:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+/* line 72, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+.evaluation .item-group:after {
+  clear: both;
+}
+/* line 161, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group > .title {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  margin: 0;
+}
+/* line 166, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group > .title .label {
+  display: inline-block;
+  margin-left: 40px;
+}
+/* line 171, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group > .content {
+  display: inline-block;
+  width: 100%;
+  margin-top: 1.5em;
+}
+/* line 175, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group > .content > fieldset {
+  display: inline-block;
+  width: 100%;
+}
+/* line 178, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group > .content > fieldset legend {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+/* line 185, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group .item {
+  display: block;
+  margin: 0;
+}
+/* line 188, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group .item .title {
+  margin: 0;
+  padding-top: 15px;
+}
+/* line 191, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group .item .title .label {
+  padding-left: 5px;
+}
+/* line 195, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group .item .matrix {
+  margin: 0;
+}
+/* line 198, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .item-group .item legend {
+  display: none;
+}
+/* line 208, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+.evaluation .itemListEval > li {
+  margin: 0;
+  padding: 0 !important;
+}
+
+/* line 12, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+.portletBody .summaryBox h4 {
+  font-size: 1.5em;
+  margin: 0.3em 0;
+  padding: 0.1em 0 0 0;
+}
+/* line 22, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+.portletBody .title {
+  font-size: 100%;
+  font-weight: bold;
+}
+/* line 28, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+.portletBody .matrix legend {
+  font-weight: normal;
+  font-size: 90%;
+}
+/* line 37, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+.portletBody .item-group .item .title .label {
+  font-weight: normal;
+}
+
+/* line 75, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.portletBody .summaryBox .listHier th, .portletBody .summaryBox .listHier td {
+  border: none !important;
+  padding: 0 1em;
+}
+/* line 79, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.portletBody .summaryBox .listHier td {
+  padding: 0.5em 1em;
+}
+/* line 82, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.portletBody .summaryBox .listHier tr:nth-child(odd) {
+  background-color: #f7f7f7;
+}
+
+/* line 94, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content fieldset {
+  border: none;
+}
+/* line 96, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content fieldset legend {
+  padding: 0;
+  margin: 0;
+}
+/* line 102, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .itemListEval li, .evaluation .content .itemListEval .itemScalePanel, .evaluation .content .itemListEval .fullVertical li, .evaluation .content .itemListEval .fullDisplayHorizontal li {
+  border: none !important;
+}
+/* line 105, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .itemListEval .itemsListOddLine {
+  background: none;
+}
+/* line 109, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .item {
+  border-bottom: 1px solid #edf0f4;
+}
+/* line 111, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .item .title {
+  color: black;
+}
+/* line 113, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .item .title .delineator .dot {
+  display: none;
+}
+/* line 116, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .item .title .required {
+  color: #bb1111;
+}
+/* line 122, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .response-list label {
+  font-family: verdana, sans-serif;
+  font-size: 11px;
+  color: gray;
+  text-shadow: none;
+  background: white;
+  border: 1px solid white;
+}
+/* line 26, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .response-list label:hover, .evaluation .content .response-list label:focus {
+  color: #444444;
+  background: #ee4444;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #ffa500));
+  background-image: -webkit-linear-gradient(#ffffff, #ffa500);
+  background-image: -moz-linear-gradient(#ffffff, #ffa500);
+  background-image: -o-linear-gradient(#ffffff, #ffa500);
+  background-image: -ms-linear-gradient(#ffffff, #ffa500);
+  background-image: linear-gradient(#ffffff, #ffa500);
+  border-color: #ffa500;
+}
+/* line 125, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .response-list .selected {
+  font-family: verdana, sans-serif;
+  font-size: 11px;
+  color: white;
+  text-shadow: none;
+  background: #264c83;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
+  background-image: -webkit-linear-gradient(#3163ab, #1b355b);
+  background-image: -moz-linear-gradient(#3163ab, #1b355b);
+  background-image: -o-linear-gradient(#3163ab, #1b355b);
+  background-image: -ms-linear-gradient(#3163ab, #1b355b);
+  background-image: linear-gradient(#3163ab, #1b355b);
+  border: 1px solid #0f1e34;
+}
+/* line 38, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .response-list .selected:hover, .evaluation .content .response-list .selected:focus {
+  color: white;
+  background: #264c83;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
+  background-image: -webkit-linear-gradient(#3163ab, #1b355b);
+  background-image: -moz-linear-gradient(#3163ab, #1b355b);
+  background-image: -o-linear-gradient(#3163ab, #1b355b);
+  background-image: -ms-linear-gradient(#3163ab, #1b355b);
+  background-image: linear-gradient(#3163ab, #1b355b);
+  border-color: #0f1e34;
+}
+/* line 132, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .item-group {
+  border-bottom: 2px solid #e6e6e6;
+}
+/* line 134, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .item-group .title {
+  color: black;
+}
+/* line 137, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .item-group .item {
+  border-top: 2px solid #e6e6e6;
+  border-bottom: none;
+}
+/* line 147, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .matrix legend {
+  color: black;
+}

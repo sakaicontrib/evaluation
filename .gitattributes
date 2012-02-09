@@ -382,9 +382,9 @@ tool/src/webapp/component-templates/render_multipleanswer_item.html svneol=nativ
 tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_scaled_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_text_item.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/css/evals.css -text
 tool/src/webapp/content/css/evaluation_base.css -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/css/jquery-ui-1.8.7.custom.css -text
+tool/src/webapp/content/css/ucb.css -text
 tool/src/webapp/content/images/accept.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/add.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
