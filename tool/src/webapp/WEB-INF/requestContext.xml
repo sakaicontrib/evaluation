@@ -30,6 +30,8 @@
     <bean id="humanDateRenderer" class="org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer"
         init-method="init" >
         <property name="locale" ref="requestLocale" />
+        <property name="settings" 
+        	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>        
     
     <bean id="adminBoxRenderer" class="org.sakaiproject.evaluation.tool.renderers.AdminBoxRenderer"

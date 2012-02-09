@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.sakaiproject.evaluation.logic.EvalSettings;
+
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -33,8 +35,18 @@ public class HumanDateRenderer {
        this.locale = locale;
     }
     
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+        this.settings = settings;
+    }
+    
     public void init() {
-        df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);        
+        boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+        if (useDateTime) {
+        	df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+        } else {
+        	df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        }
     }
     
     /**
