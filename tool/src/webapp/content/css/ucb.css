@@ -283,35 +283,51 @@
   border: none;
 }
 /* line 96, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
-.evaluation .content fieldset legend {
+.evaluation .content fieldset > legend {
   padding: 0;
   margin: 0;
 }
-/* line 102, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
-.evaluation .content .itemListEval li, .evaluation .content .itemListEval .itemScalePanel, .evaluation .content .itemListEval .fullVertical li, .evaluation .content .itemListEval .fullDisplayHorizontal li {
+/* line 101, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .fake-fieldset, .evaluation .content .fieldset, .evaluation .content .legend {
+  border: none;
+}
+/* line 104, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .legend {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  position: static;
+}
+/* line 111, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .itemListNew, .evaluation .content .itemListEval {
+  border: none;
+}
+/* line 113, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .itemListNew li, .evaluation .content .itemListNew .itemScalePanel, .evaluation .content .itemListNew .fullVertical li, .evaluation .content .itemListNew .fullDisplayHorizontal li, .evaluation .content .itemListEval li, .evaluation .content .itemListEval .itemScalePanel, .evaluation .content .itemListEval .fullVertical li, .evaluation .content .itemListEval .fullDisplayHorizontal li {
   border: none !important;
 }
-/* line 105, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
-.evaluation .content .itemListEval .itemsListOddLine {
+/* line 116, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+.evaluation .content .itemListNew .itemsListOddLine, .evaluation .content .itemListEval .itemsListOddLine {
   background: none;
 }
-/* line 109, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 120, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .item {
   border-bottom: 1px solid #edf0f4;
 }
-/* line 111, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 122, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .item .title {
   color: black;
 }
-/* line 113, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 124, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .item .title .delineator .dot {
   display: none;
 }
-/* line 116, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 127, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .item .title .required {
   color: #bb1111;
 }
-/* line 122, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 133, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .response-list label {
   font-family: verdana, sans-serif;
   font-size: 11px;
@@ -332,7 +348,7 @@
   background-image: linear-gradient(#ffffff, #ffa500);
   border-color: #ffa500;
 }
-/* line 125, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 136, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .content .response-list .selected {
   font-family: verdana, sans-serif;
   font-size: 11px;
@@ -359,20 +375,20 @@
   background-image: linear-gradient(#3163ab, #1b355b);
   border-color: #0f1e34;
 }
-/* line 132, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 143, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .item-group {
   border-bottom: 2px solid #e6e6e6;
 }
-/* line 134, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 145, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .item-group .title {
   color: black;
 }
-/* line 137, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 148, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .item-group .item {
   border-top: 2px solid #e6e6e6;
   border-bottom: none;
 }
-/* line 147, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 158, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
 .evaluation .matrix legend {
   color: black;
 }
