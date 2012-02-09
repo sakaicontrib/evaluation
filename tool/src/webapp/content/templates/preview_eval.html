@@ -24,8 +24,8 @@
 </head>
 <!-- supposedly firefox will not cache any pages with unload handlers -->
 <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
-		<div id="toolTip"></div>
-<script type="text/javascript">
+	<div id="toolTip"></div>
+	<script type="text/javascript">
 		$(document).ready(function(){
 			if ($('.blockItemGroup').length > 0){
 				evalsys.instrumentBlockItem();
@@ -50,7 +50,7 @@
 			$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
 		});
 	</script>
-	<div class="portletBody">
+	<div class="portletBody evaluation preview">
 		<ul class="breadCrumb">
 			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
 			<li rsf:id="msg=previeweval.evaluation.title" class="lastCrumb">Previewing Template/Evaluation</li>
@@ -78,28 +78,30 @@
 			<div rsf:id="eval-instructions" class="instruction" style="display:inline">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</div>
 		</div>
 		
-		<div id="startPreviewItems"></div>
-        <!-- render items -->
-        <div rsf:id="noItemsToShow" style="font-weight: bold; font-size: 1.1em; font-style: italic;"></div>
-        <div rsf:id="categorySection:" class="fake-fieldset itemListNew">
-           <div class="fieldset">
-              <div rsf:id="categoryHeader" class="legend"> Group Items: </div>
-              <ol class="itemListEval">
-                 <li rsf:id="itemrow:nodeSection">
-                     <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
-                 </li>
-                 <li rsf:id="itemrow:templateItem" class="evalItemTop">
-                    <!-- DIV tag for item renderer -->
-                    <div rsf:id="renderedItem:">Items get rendered here</div>
-                 </li>
-              </ol>
-           </div>
-        </div>
-		<p class="act">
-			<a href="#" onclick="javascript:history.go(-1);return false;" accesskey="x">
-				<span rsf:id="msg=general.back.button">[ Back ]</span>
-			</a>
-		</p>
+		<div class="content">
+			<div id="startPreviewItems"></div>
+	        <!-- render items -->
+	        <div rsf:id="noItemsToShow" style="font-weight: bold; font-size: 1.1em; font-style: italic;"></div>
+	        <div rsf:id="categorySection:" class="fake-fieldset itemListNew">
+	           <div class="fieldset">
+	              <div rsf:id="categoryHeader" class="legend"> Group Items: </div>
+	              <ol class="itemListEval">
+	                 <li rsf:id="itemrow:nodeSection">
+	                     <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+	                 </li>
+	                 <li rsf:id="itemrow:templateItem" class="evalItemTop">
+	                    <!-- DIV tag for item renderer -->
+	                    <div rsf:id="renderedItem:">Items get rendered here</div>
+	                 </li>
+	              </ol>
+	           </div>
+	        </div>
+			<p class="act">
+				<a href="#" onclick="javascript:history.go(-1);return false;" accesskey="x">
+					<span rsf:id="msg=general.back.button">[ Back ]</span>
+				</a>
+			</p>
+		</div>
 		
 	</div>
 </body>
