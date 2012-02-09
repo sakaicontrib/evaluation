@@ -218,7 +218,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 
         if ( EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true) ) {
             UIInput instructionsInput = UIInput.make(form, "instructions:", evaluationOTP + "instructions");
-            instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
+            //instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4)); // causes crash in RSF 0.7.5 - EVALSYS-1192
             richTextEvolver.evolveTextInput(instructionsInput);
         } else {
             UIVerbatim.make(tofill, "instructions_disabled", evaluation.getInstructions());
@@ -456,10 +456,11 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         // if Consolidated Emails are being used, use the default ConsolidatedAvailable template for available emails 
         // and the default ConsolidatedReminder email for reminder emails
         // Otherwise, use the default Available template and the default Reminder template
-        Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+        Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+        //Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE); // This checks the wrong property -- EVALSYS-1191
         if(consolidatedEmailsEnabled == null) {
         	consolidatedEmailsEnabled = new Boolean(false);
-        }
+        } 
         
         String availableTemplate = EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
         String reminderTemplate = EvalConstants.EMAIL_TEMPLATE_REMINDER;
