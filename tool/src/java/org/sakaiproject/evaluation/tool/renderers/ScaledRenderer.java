@@ -256,11 +256,6 @@ public class ScaledRenderer implements ItemRenderer {
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
             }
 
-            if (usesNA) {
-                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
-                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
-            }
-
             UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
             UISelect radios = UISelect.make(rowBranch, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
             String selectID = radios.getFullID();
@@ -271,8 +266,7 @@ public class ScaledRenderer implements ItemRenderer {
             }
 
             int scaleLength = scaleValues.length;
-            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
-            UISelectLabel[] labels = new UISelectLabel[limit];
+            int limit = scaleLength;
             UISelectChoice[] choices = new UISelectChoice[limit];
             
             
