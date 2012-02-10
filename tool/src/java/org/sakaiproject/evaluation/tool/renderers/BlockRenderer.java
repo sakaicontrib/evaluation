@@ -130,15 +130,17 @@ public class BlockRenderer implements ItemRenderer {
                 
             	// build the question row container and apply decorations
 	            UIBranchContainer matrix = UIBranchContainer.make(matrixGroup, "matrixDisplay:", j+"");
-	            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
-	                matrix.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
-	            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
-	                matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
-	            }
 	            
                 // get the child item
                 EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
                 EvalItem childItem = childTemplateItem.getItem();
+                
+	            Map<String, Object> childRenderProperties = (Map<String, Object>) renderProperties.get("child-" + childTemplateItem.getId());
+	            if (childRenderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+	                matrix.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+	            } else if ( childRenderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+	                matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+	            }	            
 	            
 	            // display question text
 	            UIOutput.make(matrix, "itemNum", Integer.valueOf(displayNumber + j).toString() ); //$NON-NLS-2$
