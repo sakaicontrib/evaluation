@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -92,6 +93,10 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
 
         // render the close button
         UIMessage.make(tofill, "close-button", "general.close.window.button");
+        
+        // initialize javascript at end of page load
+        UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem",
+                new Object[] {});
     }
 
     /* (non-Javadoc)

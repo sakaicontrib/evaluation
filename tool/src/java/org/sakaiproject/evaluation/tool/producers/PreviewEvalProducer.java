@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -315,6 +316,10 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
             if ( countAssistants > 0 || countInstructors > 0 ){
             	UIOutput.make(tofill, "show-eval-instructions-groups");
             }
+            
+            // initialize javascript at end of page load
+            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem",
+                    new Object[] {});
         }
 
     }

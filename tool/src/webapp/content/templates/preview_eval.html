@@ -17,6 +17,7 @@
 	<script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 
     <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -32,10 +33,6 @@
 			}
 			if ($('.steppedItemGroup').length > 0){
 				evalsys.instrumentSteppedItem();
-			}
-
-			if ($('.matrix').length > 0) {
-				evalsys.instrumentMatrixItem();
 			}
 
 			if ($('.mult-choice-ans').length > 0){
@@ -104,6 +101,9 @@
 		</div>
 		
 	</div>
+	<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
+		EvalSystem.instrumentMatrixItem();		
+	</script>
 </body>
 <!-- need this at the bottom to convince IE to not cache -->
 <head>
