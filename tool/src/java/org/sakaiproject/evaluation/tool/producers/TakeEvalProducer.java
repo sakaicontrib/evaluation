@@ -66,6 +66,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -577,6 +578,10 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         new String[] {current.displayName, current.email, current.username});
                 log.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
             }
+            
+            // initialize javascript at end of page load
+            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem",
+                    new Object[] {});
         }
     }
     
