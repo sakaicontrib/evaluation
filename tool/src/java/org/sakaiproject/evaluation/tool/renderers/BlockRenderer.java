@@ -145,11 +145,6 @@ public class BlockRenderer implements ItemRenderer {
 	            // display question text
 	            UIOutput.make(matrix, "itemNum", Integer.valueOf(displayNumber + j).toString() ); //$NON-NLS-2$
 	            UIVerbatim.make(matrix, "itemText", childItem.getItemText());
-	            	
-	           if (usesNA) {
-	                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
-	                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
-	            }
             
 	            UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
 	            	
@@ -167,7 +162,7 @@ public class BlockRenderer implements ItemRenderer {
 	            }
 	
 	            int scaleLength = scaleValues.length;
-	            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
+	            int limit = scaleLength;
 	            
 	            for (int k = 0; k < limit; ++k) {
                     UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", k+"");
