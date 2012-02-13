@@ -114,6 +114,11 @@ public class BlockRenderer implements ItemRenderer {
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
             }
             
+            if (usesNA) {
+                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
+                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
+            }
+            
             UIBranchContainer matrixGroup = UIBranchContainer.make(container, "matrixGroupDisplay:");
             
             // display header labels
@@ -123,6 +128,9 @@ public class BlockRenderer implements ItemRenderer {
             if (headerLabels.size() == 3) {
             	UIOutput.make(matrixGroup, "label-middle", headerLabels.get(2));
             }            
+            if (usesNA) {
+            	UIOutput.make(matrixGroup,"label-na", "NA");
+            }
         	UIVerbatim.make(matrixGroup, "matrixGroupTitle", templateItem.getItem().getItemText());
         	
         	// iterate through each question in the block
@@ -162,12 +170,19 @@ public class BlockRenderer implements ItemRenderer {
 	            }
 	
 	            int scaleLength = scaleValues.length;
-	            int limit = scaleLength;
+	            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
 	            
 	            for (int k = 0; k < limit; ++k) {
                     UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", k+"");
                     UISelectChoice.make(radioBranchSecond, "radioValue", selectID, k);
                     UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[scaleLabels.length - k - 1]);
+	            }
+	            
+	            // display the N/A radio button if needed
+	            if (usesNA) {
+	            	UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
+	                UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+	                UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc");
 	            }
             }
         	
