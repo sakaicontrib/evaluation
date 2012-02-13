@@ -175,7 +175,10 @@ public class BlockRenderer implements ItemRenderer {
 	            for (int k = 0; k < limit; ++k) {
                     UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", k+"");
                     UISelectChoice.make(radioBranchSecond, "radioValue", selectID, k);
-                    UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[scaleLabels.length - k - 1]);
+                    // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
+                    // an empty label is appended; ignore that one too 
+                    int labelIndex = scaleLabels.length - k - (usesNA ? 2 : 1);
+                    UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[labelIndex]);
 	            }
 	            
 	            // display the N/A radio button if needed
