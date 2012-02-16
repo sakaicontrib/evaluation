@@ -99,12 +99,14 @@ public class EvalToolConstants {
     
     public static String[] SCALE_DISPLAY_GROUP_SETTING_VALUES = new String[] {
     	EvalConstants.ITEM_SCALE_DISPLAY_MATRIX,
-    	EvalConstants.ITEM_SCALE_DISPLAY_STEPPED
+    	EvalConstants.ITEM_SCALE_DISPLAY_STEPPED,
+        EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED
     };
     
     public static String[] SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS = new String[] {
     	"templateitem.scale.select.matrix",
-    	"templateitem.scale.select.stepped"
+    	"templateitem.scale.select.stepped",
+        "templateitem.scale.select.steppedc"
     };
 
 

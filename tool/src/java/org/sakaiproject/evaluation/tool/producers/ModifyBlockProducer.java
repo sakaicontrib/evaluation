@@ -216,17 +216,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
 
             itemPath = "templateItemWBL." + blockId;
 
-            // this sets the ideal color setting
-            if ((firstTemplateItem.getScaleDisplaySetting() != null)
-                    && (firstTemplateItem.getScaleDisplaySetting()
-                            .equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED) ||
-                        firstTemplateItem.getScaleDisplaySetting()
-                            .equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED))) {
-                UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
-            } else {
-                UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
-            }
-
             /*
              * If the system setting (admin setting) for
              * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to show the
@@ -341,11 +330,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             String scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;  
             if (modify && blockItemList.size() == 1) {
             	scaleDisplaySetting = blockItemList.get(0).getScaleDisplaySetting();
-            	if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting)) {
-            		scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED;
-            	} else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting)) {
-            		scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;
-            	}
             }
             renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
                     EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_VALUES, 
