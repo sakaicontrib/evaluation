@@ -1,0 +1,173 @@
+//====================================
+// GRAPHICS
+//====================================
+// These styles define brand application and visual presentation.
+// All image references should be included here.
+
+@mixin button-style($type) {
+  font-family: verdana, sans-serif;
+  font-size: 11px;
+  @if $type == dark {
+		color: $graylight;
+		@include text-shadow(rgba($black,.7) 0 -1px 1px);
+		background: $dgraydarkest;
+		@include background-image(linear-gradient($dgraydarker, $dgraydarkest));
+		border: 1px solid $dgraydarkest;
+		&:hover, &:focus {
+			color: $white;
+			background: $black;
+			@include background-image(linear-gradient($dgraydarkest, $black));
+		}
+  } @else if $type == light {
+    color: $graydark;
+    text-shadow: none;
+    background: $white;
+    border: 1px solid $white;
+    &:hover, &:focus {
+      color: $text;
+      background: $c5lighter;
+      @include background-image(linear-gradient($white, $c5));
+      border-color: $c5;
+    }
+  } @else if $type == selected {
+    color: $white;
+    text-shadow: none;
+    background: $c1;
+    @include background-image(linear-gradient($c1light, $c1dark));
+    border: 1px solid $c1darker;
+    &:hover, &:focus {
+      color: $white;
+      background: $c1;
+      @include background-image(linear-gradient($c1light, $c1dark));
+      border-color: $c1darker;
+    }
+	} @else if $type == cancel {
+		color: $graydark;
+		text-shadow: none;
+		background: $graylightest;
+		@include background-image(linear-gradient($graylightest, $graylight));
+		border: 1px solid $graylight;
+		&:hover, &:focus {
+			color: $c1;
+			background: $white;
+			@include background-image(linear-gradient($white, $graylightest));
+		}
+	} @else {
+		color: $white;
+		@include text-shadow(rgba($black,.5) 0 -1px 1px);
+		background: $c5;
+		@include background-image(linear-gradient($c5light, $c5dark));
+		border: 1px solid $c5dark;
+		&:hover, &:focus {
+			background: $c5dark;
+			@include background-image(linear-gradient($c5light, $c5));
+		}
+	}
+}
+
+.portletBody {
+
+  /////////////////////////
+  // Dashboard
+  /////////////////////////
+  .summaryBox {
+    .listHier { 
+      th, td {
+        border: none !important;
+        padding: 0 1em;
+      }
+      td {
+        padding: 0.5em 1em;
+      }
+      tr:nth-child(odd) {
+        background-color: #f7f7f7;
+      }
+    }
+  }
+} //end portletBody
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+.evaluation {
+  .content {
+    fieldset {
+      border: none;
+      > legend {
+        padding: 0;
+        margin: 0;
+      }
+    }
+    .fake-fieldset, .fieldset, .legend {
+      border: none;
+    }
+    .legend {
+      margin: 0;
+      padding: 0;
+      top: 0;
+      left: 0;
+      position: static;
+    }
+    .itemListNew, .itemListEval {
+      border: none;
+      li, .itemScalePanel, .fullVertical li, .fullDisplayHorizontal li {
+        border: none !important;
+      }
+      .itemsListOddLine {
+        background: none;
+      }
+    }
+    .item {
+      border-bottom: 1px solid $c2lighter;
+      .title {
+        color: $black;
+        .delineator .dot {
+          display: none;
+        }
+        .required {
+          color: $c4;
+        }
+      }
+    }
+    .response-list {
+      label {
+        @include button-style(light);
+      }
+      .selected {
+        @include button-style(selected);
+      }
+    }
+
+  } //end content
+
+  .item-group {
+    border-bottom: 2px solid $graylightest;
+    .title {
+      color: $black; 
+    }
+    .item {
+      border-top: 2px solid $graylightest;
+      border-bottom: none;
+      .title {
+        
+      }
+    }
+  } //end item-group
+
+  .matrix {
+      legend {
+        color: $black;
+      }
+  }
+
+} //end evaluation
+
+
+/////////////////////////
+// Preview
+/////////////////////////
+.preview-item {
+  .highlightPanel {
+    border: none;
+  }
+} 

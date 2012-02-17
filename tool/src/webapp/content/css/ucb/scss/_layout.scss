@@ -1,0 +1,218 @@
+//====================================
+// LAYOUT
+//====================================
+// These styles set a clean baseline layout.
+// Only layout related styles should be included here:
+// height, width, margin, padding, position, etc.
+
+// Mixin for inline lists
+@mixin horizontal-list() {
+  ol, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    list-style-type: none;
+    display: inline-block;
+  }
+}
+
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+.evaluation {
+
+/////////////////////////
+// Item
+/////////////////////////
+  .item {
+    margin-bottom: 15px;
+    .title {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      span {
+        display: inline-block;
+      }
+      .number {
+        position: absolute;
+        width: 2em;
+        text-align: right;
+      }
+      .delineator, .required {
+        position: absolute;
+      }
+      .delineator {
+        left: 2em;
+      }
+      .required {
+        left: 2.5em;
+        display: none;
+      }
+      .label {
+        margin-left: 40px;
+      }
+    }
+    .compulsory .title .required {
+        display: inline-block;
+    }
+    .content {
+      margin-left: 40px;
+    }
+  } // end item
+
+
+/////////////////////////
+// Text Item
+/////////////////////////
+  .item {
+    .content {
+      textarea {
+        width: 90%;
+        min-width: 600px;
+        min-height: 5em;
+        margin: 15px;
+      }
+    }
+  } // end text item
+
+
+/////////////////////////
+// Matrix Display
+/////////////////////////
+  .matrix {
+    min-width: 800px;
+    .title {
+      min-width: 49%;
+    }
+    fieldset {
+      margin: 0;
+      padding: 0;
+      border: none;
+      legend {
+        position: absolute;
+        right: 0;
+        width: 100%;
+        text-align: center;
+        .response-type, .response-scale-delineator {
+          @include visuallyhidden();
+        }
+        .response-scale-end {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+        .response-scale-start {
+          position: absolute;
+          top: 0;
+          left: 0%;
+        }
+      }
+    } // end fieldset
+  } // end matrix
+
+/////////////////////////
+// Scale Item
+/////////////////////////
+  .scale {
+    .matrix {
+      position: relative;
+      @include clearfix();
+      
+      margin: 2em 0 1em 0;
+      .title {
+        float: left;
+        padding-top: 8px;
+      }
+      .content {
+        margin: 0;
+        padding: 0;
+        text-align: right;
+        float: right;
+        @include horizontal-list();
+        fieldset {
+          position: relative;
+          legend {
+            top: -1.5em;
+          }
+        }
+        .response-list {
+          li {
+            margin: 0;
+            padding: 0 !important;
+          }
+        }
+        label {
+          margin: 0;
+          @include button(); 
+          span {
+            @include visuallyhidden();
+          }
+        }
+      }
+    } // end matrix
+
+  } // end scale
+
+
+/////////////////////////
+// Grouped Items
+/////////////////////////
+  .item-group {
+    position: relative;
+    @include clearfix();
+    margin-bottom: 15px;
+    > .title {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      margin: 0;
+      .label {
+        display: inline-block;
+        margin-left: 40px;
+      }
+    }
+    > .content {
+      display: inline-block;
+      width: 100%;
+      margin-top: 1.5em;
+      > fieldset {
+        display: inline-block;
+        width: 100%;
+        legend {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+        }
+      }
+    }
+    .item {
+      display: block;
+      margin: 0;
+      .title {
+        margin: 0;
+        .label {
+          padding-left: 5px;
+        }
+      }
+      .matrix {
+        margin: 0;
+      }
+      legend {
+        display: none;
+      }
+    }
+  }
+
+/////////////////////////
+// Evaluation List
+/////////////////////////
+  .itemListEval {
+    > li {
+      margin: 0;
+      padding: 0 !important;
+    }
+  }
+
+} //end namespace
