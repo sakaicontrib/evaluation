@@ -1,77 +1,77 @@
-/* line 29, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 29, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item {
   margin-bottom: 15px;
 }
-/* line 31, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 31, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title {
   position: relative;
   margin: 0;
   padding: 0;
 }
-/* line 35, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 35, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title span {
   display: inline-block;
 }
-/* line 38, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 38, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title .number {
   position: absolute;
   width: 2em;
   text-align: right;
 }
-/* line 43, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 43, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title .delineator, .evaluation .item .title .required {
   position: absolute;
 }
-/* line 46, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 46, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title .delineator {
   left: 2em;
 }
-/* line 49, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 49, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title .required {
   left: 2.5em;
   display: none;
 }
-/* line 53, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 53, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .title .label {
   margin-left: 40px;
 }
-/* line 57, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 57, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .compulsory .title .required {
   display: inline-block;
 }
-/* line 60, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 60, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .content {
   margin-left: 40px;
 }
-/* line 71, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 71, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item .content textarea {
   width: 90%;
   min-width: 600px;
   min-height: 5em;
   margin: 15px;
 }
-/* line 84, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 84, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix {
   min-width: 800px;
 }
-/* line 86, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 86, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix .title {
   min-width: 49%;
 }
-/* line 89, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 89, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix fieldset {
   margin: 0;
   padding: 0;
   border: none;
 }
-/* line 93, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 93, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix fieldset legend {
   position: absolute;
   right: 0;
   width: 100%;
-  text-align: left;
+  text-align: center;
 }
-/* line 98, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 98, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix fieldset legend .response-type, .evaluation .matrix fieldset legend .response-scale-delineator {
   border: 0;
   clip: rect(0 0 0 0);
@@ -82,67 +82,73 @@
   position: absolute;
   width: 1px;
 }
-/* line 101, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 101, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .matrix fieldset legend .response-scale-end {
   position: absolute;
   top: 0;
   right: 0;
 }
-/* line 106, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
-.evaluation .matrix fieldset legend .response-scale-middle {
+/* line 106, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
+.evaluation .matrix fieldset legend .response-scale-start {
   position: absolute;
   top: 0;
-  left: 40%;
-  text-align: center;
+  left: 0%;
 }
-/* line 120, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 119, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix {
   position: relative;
   zoom: 1;
   margin: 2em 0 1em 0;
 }
-/* line 66, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+/* line 66, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_helpers.scss */
 .evaluation .scale .matrix:before, .evaluation .scale .matrix:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-/* line 72, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+/* line 72, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_helpers.scss */
 .evaluation .scale .matrix:after {
   clear: both;
 }
-/* line 125, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 124, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .title {
   float: left;
+  padding-top: 8px;
 }
-/* line 128, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 128, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content {
   margin: 0;
   padding: 0;
   text-align: right;
   float: right;
 }
-/* line 10, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 10, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content ol, .evaluation .scale .matrix .content ul, .evaluation .scale .matrix .content li {
   margin: 0;
   padding: 0;
 }
-/* line 14, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 14, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content li {
   list-style-type: none;
   display: inline-block;
 }
-/* line 134, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 134, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content fieldset {
   position: relative;
 }
-/* line 136, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 136, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content fieldset legend {
   top: -1.5em;
 }
-/* line 142, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 141, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
+.evaluation .scale .matrix .content .response-list li {
+  margin: 0;
+  padding: 0 !important;
+}
+/* line 146, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content label {
+  margin: 0;
   display: inline-block;
   padding: 5px 15px;
   font-size: 80%;
@@ -158,7 +164,7 @@
   -khtml-border-radius: 4px / 4px;
   border-radius: 4px / 4px;
 }
-/* line 144, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 149, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .scale .matrix .content label span {
   border: 0;
   clip: rect(0 0 0 0);
@@ -169,129 +175,128 @@
   position: absolute;
   width: 1px;
 }
-/* line 157, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 162, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group {
   position: relative;
   zoom: 1;
   margin-bottom: 15px;
 }
-/* line 66, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+/* line 66, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_helpers.scss */
 .evaluation .item-group:before, .evaluation .item-group:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-/* line 72, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_helpers.scss */
+/* line 72, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_helpers.scss */
 .evaluation .item-group:after {
   clear: both;
 }
-/* line 161, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 166, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group > .title {
   position: absolute;
   top: -2px;
   left: 0;
   margin: 0;
 }
-/* line 166, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 171, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group > .title .label {
   display: inline-block;
   margin-left: 40px;
 }
-/* line 171, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 176, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group > .content {
   display: inline-block;
   width: 100%;
   margin-top: 1.5em;
 }
-/* line 175, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 180, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group > .content > fieldset {
   display: inline-block;
   width: 100%;
 }
-/* line 178, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 183, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group > .content > fieldset legend {
   position: absolute;
   top: 0px;
   right: 0px;
 }
-/* line 185, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 190, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group .item {
   display: block;
   margin: 0;
 }
-/* line 188, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 193, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group .item .title {
   margin: 0;
-  padding-top: 15px;
 }
-/* line 191, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 195, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group .item .title .label {
   padding-left: 5px;
 }
-/* line 195, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 199, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group .item .matrix {
   margin: 0;
 }
-/* line 198, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 202, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .item-group .item legend {
   display: none;
 }
-/* line 208, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_layout.scss */
+/* line 212, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_layout.scss */
 .evaluation .itemListEval > li {
   margin: 0;
   padding: 0 !important;
 }
 
-/* line 12, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+/* line 12, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_typography.scss */
 .portletBody .summaryBox h4 {
   font-size: 1.5em;
   margin: 0.3em 0;
   padding: 0.1em 0 0 0;
 }
-/* line 22, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+/* line 22, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_typography.scss */
 .portletBody .title {
   font-size: 100%;
   font-weight: bold;
 }
-/* line 28, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+/* line 28, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_typography.scss */
 .portletBody .matrix legend {
   font-weight: normal;
   font-size: 90%;
 }
-/* line 37, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_typography.scss */
+/* line 37, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_typography.scss */
 .portletBody .item-group .item .title .label {
   font-weight: normal;
 }
 
-/* line 75, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 75, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .portletBody .summaryBox .listHier th, .portletBody .summaryBox .listHier td {
   border: none !important;
   padding: 0 1em;
 }
-/* line 79, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 79, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .portletBody .summaryBox .listHier td {
   padding: 0.5em 1em;
 }
-/* line 82, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 82, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .portletBody .summaryBox .listHier tr:nth-child(odd) {
   background-color: #f7f7f7;
 }
 
-/* line 94, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 94, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content fieldset {
   border: none;
 }
-/* line 96, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 96, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content fieldset > legend {
   padding: 0;
   margin: 0;
 }
-/* line 101, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 101, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .fake-fieldset, .evaluation .content .fieldset, .evaluation .content .legend {
   border: none;
 }
-/* line 104, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 104, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .legend {
   margin: 0;
   padding: 0;
@@ -299,35 +304,35 @@
   left: 0;
   position: static;
 }
-/* line 111, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 111, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .itemListNew, .evaluation .content .itemListEval {
   border: none;
 }
-/* line 113, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 113, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .itemListNew li, .evaluation .content .itemListNew .itemScalePanel, .evaluation .content .itemListNew .fullVertical li, .evaluation .content .itemListNew .fullDisplayHorizontal li, .evaluation .content .itemListEval li, .evaluation .content .itemListEval .itemScalePanel, .evaluation .content .itemListEval .fullVertical li, .evaluation .content .itemListEval .fullDisplayHorizontal li {
   border: none !important;
 }
-/* line 116, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 116, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .itemListNew .itemsListOddLine, .evaluation .content .itemListEval .itemsListOddLine {
   background: none;
 }
-/* line 120, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 120, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .item {
   border-bottom: 1px solid #edf0f4;
 }
-/* line 122, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 122, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .item .title {
   color: black;
 }
-/* line 124, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 124, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .item .title .delineator .dot {
   display: none;
 }
-/* line 127, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 127, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .item .title .required {
   color: #bb1111;
 }
-/* line 133, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 133, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .response-list label {
   font-family: verdana, sans-serif;
   font-size: 11px;
@@ -336,7 +341,7 @@
   background: white;
   border: 1px solid white;
 }
-/* line 26, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 26, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .response-list label:hover, .evaluation .content .response-list label:focus {
   color: #444444;
   background: #ee4444;
@@ -348,7 +353,7 @@
   background-image: linear-gradient(#ffffff, #ffa500);
   border-color: #ffa500;
 }
-/* line 136, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 136, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .response-list .selected {
   font-family: verdana, sans-serif;
   font-size: 11px;
@@ -363,7 +368,7 @@
   background-image: linear-gradient(#3163ab, #1b355b);
   border: 1px solid #0f1e34;
 }
-/* line 38, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 38, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .content .response-list .selected:hover, .evaluation .content .response-list .selected:focus {
   color: white;
   background: #264c83;
@@ -375,25 +380,25 @@
   background-image: linear-gradient(#3163ab, #1b355b);
   border-color: #0f1e34;
 }
-/* line 143, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 143, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .item-group {
   border-bottom: 2px solid #e6e6e6;
 }
-/* line 145, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 145, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .item-group .title {
   color: black;
 }
-/* line 148, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 148, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .item-group .item {
   border-top: 2px solid #e6e6e6;
   border-bottom: none;
 }
-/* line 158, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 158, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .evaluation .matrix legend {
   color: black;
 }
 
-/* line 170, ../../../../sakai-src-2.7.2/reference/library/src/webapp/skin/bspace/ucb/scss/_graphics.scss */
+/* line 170, ../../../../sakai-src-2.7.2/evaluation/unicon-ucb/tool/src/webapp/content/css/ucb/scss/_graphics.scss */
 .preview-item .highlightPanel {
   border: none;
 }
