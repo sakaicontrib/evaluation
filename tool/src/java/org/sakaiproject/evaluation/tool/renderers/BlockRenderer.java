@@ -39,6 +39,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
@@ -186,7 +187,10 @@ public class BlockRenderer implements ItemRenderer {
 	            
 	            // display the N/A radio button always; use CSS to hide if not needed (via the "use-na" class (above)
 	            UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
-                UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+                UISelectChoice naChoice = UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+                if (!usesNA) {
+                	naChoice.decorate( new UIDisabledDecorator());
+                }
                 UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc");
             }
         	
