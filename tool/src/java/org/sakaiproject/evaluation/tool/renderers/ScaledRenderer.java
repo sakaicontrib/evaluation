@@ -230,6 +230,10 @@ public class ScaledRenderer implements ItemRenderer {
                 matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
             
+            if (usesNA) {
+            	matrix.decorate( new UIStyleDecorator("use-na") );
+            }
+            
             // display header labels
             List<String> headerLabels = RenderingUtils.getMatrixLabels(scaleOptions);
             UIOutput.make(container, "label-start", headerLabels.get(0));
@@ -237,9 +241,8 @@ public class ScaledRenderer implements ItemRenderer {
             if (headerLabels.size() == 3) {
             	UIOutput.make(container, "label-middle", headerLabels.get(2));
             }
-            if (usesNA) {
-            	UIOutput.make(container,"label-na", "NA");
-            }
+            
+            UIOutput.make(container,"label-na", "NA");
             
             // display question text
             UIOutput.make(matrix, "itemNum", displayNumber+"" ); //$NON-NLS-2$
