@@ -142,6 +142,9 @@ public class BlockRenderer implements ItemRenderer {
                 
             	// build the question row container and apply decorations
 	            UIBranchContainer matrix = UIBranchContainer.make(matrixGroup, "matrixDisplay:", j+"");
+	            if (usesNA) {
+	            	matrix.decorate( new UIStyleDecorator("use-na") );
+	            }
 	            
                 // get the child item
                 EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
