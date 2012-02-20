@@ -103,10 +103,13 @@
           top: 0;
           right: 0;
         }
-        .response-scale-start {
+        .response-scale-start, .response-scale-na {
           position: absolute;
           top: 0;
-          left: 0%;
+          left: 0;
+        }
+        .response-scale-na {
+          left: 15px;
         }
       }
     } // end fieldset
@@ -213,6 +216,13 @@
       margin: 0;
       padding: 0 !important;
     }
+  }
+
+/////////////////////////
+// Comment
+/////////////////////////
+  .JSevalComment {
+    margin: 0 0 15px 55px;
   }
 
 } //end namespace
