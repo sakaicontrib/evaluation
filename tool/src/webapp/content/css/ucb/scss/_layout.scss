@@ -106,10 +106,16 @@
         .response-scale-start, .response-scale-na {
           position: absolute;
           top: 0;
-          left: 0;
+        }
+        .response-scale-start {
+          left: 48px;
         }
         .response-scale-na {
           left: 15px;
+        }
+        .response-scale-middle {
+          position: relative;
+          left: 24px;
         }
       }
     } // end fieldset
@@ -204,6 +210,22 @@
       }
       legend {
         display: none;
+      }
+    }
+  }
+
+/////////////////////////
+// N/A Option
+/////////////////////////
+  .matrix {
+    .response-scale-na, .na {
+      visibility: hidden !important;
+    }
+  }
+  .use-na {
+    .matrix {
+      .response-scale-na, .na {
+        visibility: visible !important;
       }
     }
   }
