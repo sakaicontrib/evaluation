@@ -36,6 +36,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
@@ -291,10 +292,11 @@ public class ScaledRenderer implements ItemRenderer {
             }
 
             // display the N/A radio button if needed
-            if (usesNA) {
-            	UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
-                UISelectChoice choice = UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
-                UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc"); //.decorate( new UILabelTargetDecorator(choice));
+        	UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
+            UISelectChoice choice = UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+            UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc"); //.decorate( new UILabelTargetDecorator(choice));                
+            if (!usesNA) {
+            	choice.decorate( new UIDisabledDecorator());
             }
             
         } else if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(scaleDisplaySetting) ||
