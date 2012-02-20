@@ -121,6 +121,10 @@ public class BlockRenderer implements ItemRenderer {
             
             UIBranchContainer matrixGroup = UIBranchContainer.make(container, "matrixGroupDisplay:");
             
+            if (usesNA) {
+            	matrixGroup.decorate( new UIStyleDecorator("use-na") );
+            }
+            
             // display header labels
             List<String> headerLabels = RenderingUtils.getMatrixLabels(scaleOptions);
             UIOutput.make(matrixGroup, "label-start", headerLabels.get(0));
@@ -128,9 +132,8 @@ public class BlockRenderer implements ItemRenderer {
             if (headerLabels.size() == 3) {
             	UIOutput.make(matrixGroup, "label-middle", headerLabels.get(2));
             }            
-            if (usesNA) {
-            	UIOutput.make(matrixGroup,"label-na", "NA");
-            }
+            
+           	UIOutput.make(matrixGroup,"label-na", "NA");
         	UIVerbatim.make(matrixGroup, "matrixGroupTitle", templateItem.getItem().getItemText());
         	
         	// iterate through each question in the block
@@ -181,12 +184,10 @@ public class BlockRenderer implements ItemRenderer {
                     UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[labelIndex]);
 	            }
 	            
-	            // display the N/A radio button if needed
-	            if (usesNA) {
-	            	UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
-	                UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
-	                UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc");
-	            }
+	            // display the N/A radio button always; use CSS to hide if not needed (via the "use-na" class (above)
+	            UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
+                UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+                UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc");
             }
         	
         ////////////////
