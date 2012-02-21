@@ -506,6 +506,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_KEY.equals(eval.getAuthControl()) ) {
                     // if this uses a key then only the key matters
                     // TODO add key check
+                	log.info("Evaluation key (" + eval.getAuthControl() + ") is not a valid evaluation authcontrol key");
                     allowed = false;
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl()) ) {
                     if (commonLogic.isUserAdmin(userId) ) {
@@ -529,6 +530,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                                     // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
                                     allowed = true;
                                 } else {
+                                	log.info("User (" + userId + ") is not in a valid group for evaluation (" + evaluationId + ")");
                                     allowed = false;
                                 }
                             }
