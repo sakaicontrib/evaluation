@@ -547,7 +547,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                                     // cannot modify responses
                                     // check if the user already took this evaluation for this group
                                     EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
-                                    if (response != null) {
+                                    if (response != null && response.complete && response.isSubmitted()) {
                                         // user already has a response saved for this evaluation and evalGroupId
                                         log.info("User (" + userId + ") cannot take evaluation (" + evaluationId 
                                                 + ") again in this group (" + evalGroupId 
