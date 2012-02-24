@@ -6,7 +6,7 @@
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
         <version>1.4-SNAPSHOT</version><!--eval.version-->
-        <relativePath>../../../../pom.xml</relativePath>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
     <name>Sakai Evaluation DB DDL generator</name>
     <groupId>org.sakaiproject.evaluation</groupId>
