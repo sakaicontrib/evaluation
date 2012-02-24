@@ -97,9 +97,9 @@
         LIST_ORDER integer not null,
         AVAILABLE_EMAIL_SENT timestamp,
         REMINDER_EMAIL_SENT timestamp,
+        COMPLETED_DATE timestamp,
         ASSIGN_GROUP_ID bigint,
         EVALUATION_FK bigint not null,
-        COMPLETED_DATE timestamp,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
@@ -118,13 +118,13 @@
         USER_ID varchar(255),
         GROUP_ID varchar(255) not null,
         EMAIL_TEMPLATE_ID bigint,
-        EVAL_DUE_DATE timestamp,
-        PROCESSING_STATUS smallint,
         EVALUATION_ID bigint,
         RESPONSE_ID bigint,
+        EVAL_DUE_DATE timestamp,
+        PROCESSING_STATUS smallint,
         primary key (ID)
     );
-    
+
     create table EVAL_EMAIL_TEMPLATE (
         ID bigint not null,
         LAST_MODIFIED timestamp not null,
@@ -159,13 +159,14 @@
         REMINDER_DAYS integer not null,
         REMINDER_FROM_EMAIL varchar(255),
         TERM_ID varchar(255),
-        AVAILABLE_EMAIL_SENT smallint default false,
+        AVAILABLE_EMAIL_SENT smallint default 0,
         AVAILABLE_EMAIL_TEMPLATE_FK bigint,
         REMINDER_EMAIL_TEMPLATE_FK bigint,
         TEMPLATE_FK bigint not null,
         RESULTS_SHARING varchar(255) default 'visible' not null,
         BLANK_RESPONSES_ALLOWED smallint,
         MODIFY_RESPONSES_ALLOWED smallint,
+        ALL_ROLES_PARTICIPATE smallint,
         UNREGISTERED_ALLOWED smallint,
         LOCKED smallint,
         AUTH_CONTROL varchar(255),
@@ -176,7 +177,6 @@
         EMAIL_OPEN_NOTIFICATION smallint,
         REMINDER_STATUS varchar(255),
         LOCAL_SELECTOR varchar(255),
-        ALL_ROLES_PARTICIPATE smallint,
         primary key (ID)
     );
 
@@ -415,9 +415,9 @@
 
     create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
 
-    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
-    
     create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+
+    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
 
     alter table EVAL_ASSIGN_USER 
         add constraint ASSIGN_USER_EVALUATION_FKC 
@@ -433,7 +433,7 @@
     create index eval_emailq_userid on EVAL_EMAIL_PROCESSING_QUEUE (USER_ID);
 
     create index eval_emailq_id on EVAL_EMAIL_PROCESSING_QUEUE (EAU_ID, EMAIL_TEMPLATE_ID);
-    
+
     create index eval_emailq_evalid on EVAL_EMAIL_PROCESSING_QUEUE (EVALUATION_ID);
 
     create index eval_templ_owner on EVAL_EMAIL_TEMPLATE (OWNER);
