@@ -97,9 +97,9 @@
         LIST_ORDER int4 not null,
         AVAILABLE_EMAIL_SENT timestamp,
         REMINDER_EMAIL_SENT timestamp,
+        COMPLETED_DATE timestamp,
         ASSIGN_GROUP_ID int8,
         EVALUATION_FK int8 not null,
-        COMPLETED_DATE timestamp,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
@@ -118,10 +118,10 @@
         USER_ID varchar(255),
         GROUP_ID varchar(255) not null,
         EMAIL_TEMPLATE_ID int8,
-        EVAL_DUE_DATE timestamp,
-        PROCESSING_STATUS int2,
         EVALUATION_ID int8,
         RESPONSE_ID int8,
+        EVAL_DUE_DATE timestamp,
+        PROCESSING_STATUS int2,
         primary key (ID)
     );
 
@@ -159,13 +159,14 @@
         REMINDER_DAYS int4 not null,
         REMINDER_FROM_EMAIL varchar(255),
         TERM_ID varchar(255),
-        AVAILABLE_EMAIL_SENT bool default false,
+        AVAILABLE_EMAIL_SENT bool default 0,
         AVAILABLE_EMAIL_TEMPLATE_FK int8,
         REMINDER_EMAIL_TEMPLATE_FK int8,
         TEMPLATE_FK int8 not null,
         RESULTS_SHARING varchar(255) default 'visible' not null,
         BLANK_RESPONSES_ALLOWED bool,
         MODIFY_RESPONSES_ALLOWED bool,
+        ALL_ROLES_PARTICIPATE bool,
         UNREGISTERED_ALLOWED bool,
         LOCKED bool,
         AUTH_CONTROL varchar(255),
@@ -176,7 +177,6 @@
         EMAIL_OPEN_NOTIFICATION bool,
         REMINDER_STATUS varchar(255),
         LOCAL_SELECTOR varchar(255),
-        ALL_ROLES_PARTICIPATE bool,
         primary key (ID)
     );
 
@@ -415,9 +415,9 @@
 
     create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
 
-    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
-
     create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+
+    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
 
     alter table EVAL_ASSIGN_USER 
         add constraint ASSIGN_USER_EVALUATION_FKC 

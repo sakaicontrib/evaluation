@@ -97,9 +97,9 @@
         LIST_ORDER int not null,
         AVAILABLE_EMAIL_SENT datetime null,
         REMINDER_EMAIL_SENT datetime null,
+        COMPLETED_DATE datetime null,
         ASSIGN_GROUP_ID numeric(19,0) null,
         EVALUATION_FK numeric(19,0) not null,
-        COMPLETED_DATE datetime,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
@@ -118,10 +118,10 @@
         USER_ID varchar(255) null,
         GROUP_ID varchar(255) not null,
         EMAIL_TEMPLATE_ID numeric(19,0) null,
+        EVALUATION_ID numeric(19,0) null,
+        RESPONSE_ID numeric(19,0) null,
         EVAL_DUE_DATE datetime null,
         PROCESSING_STATUS tinyint null,
-        EVALUATION_ID number(19,0),
-        RESPONSE_ID number(19,0),
         primary key (ID)
     );
 
@@ -159,13 +159,14 @@
         REMINDER_DAYS int not null,
         REMINDER_FROM_EMAIL varchar(255) null,
         TERM_ID varchar(255) null,
-        AVAILABLE_EMAIL_SENT tinyint default false null,
+        AVAILABLE_EMAIL_SENT tinyint default 0 null,
         AVAILABLE_EMAIL_TEMPLATE_FK numeric(19,0) null,
         REMINDER_EMAIL_TEMPLATE_FK numeric(19,0) null,
         TEMPLATE_FK numeric(19,0) not null,
         RESULTS_SHARING varchar(255) default 'visible' not null,
         BLANK_RESPONSES_ALLOWED tinyint null,
         MODIFY_RESPONSES_ALLOWED tinyint null,
+        ALL_ROLES_PARTICIPATE tinyint null,
         UNREGISTERED_ALLOWED tinyint null,
         LOCKED tinyint null,
         AUTH_CONTROL varchar(255) null,
@@ -176,7 +177,6 @@
         EMAIL_OPEN_NOTIFICATION tinyint null,
         REMINDER_STATUS varchar(255) null,
         LOCAL_SELECTOR varchar(255) null,
-        ALL_ROLES_PARTICIPATE tinyint,
         primary key (ID)
     );
 
@@ -415,9 +415,9 @@
 
     create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
 
-    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
-
     create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+
+    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
 
     alter table EVAL_ASSIGN_USER 
         add constraint ASSIGN_USER_EVALUATION_FKC 

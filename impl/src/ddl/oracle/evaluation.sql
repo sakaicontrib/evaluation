@@ -97,9 +97,9 @@
         LIST_ORDER number(10,0) not null,
         AVAILABLE_EMAIL_SENT date,
         REMINDER_EMAIL_SENT date,
+        COMPLETED_DATE date,
         ASSIGN_GROUP_ID number(19,0),
         EVALUATION_FK number(19,0) not null,
-        COMPLETED_DATE date,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
     );
@@ -118,10 +118,10 @@
         USER_ID varchar2(255),
         GROUP_ID varchar2(255) not null,
         EMAIL_TEMPLATE_ID number(19,0),
-        EVAL_DUE_DATE date,
-        PROCESSING_STATUS number(3,0),
         EVALUATION_ID number(19,0),
         RESPONSE_ID number(19,0),
+        EVAL_DUE_DATE date,
+        PROCESSING_STATUS number(3,0),
         primary key (ID)
     );
 
@@ -159,13 +159,14 @@
         REMINDER_DAYS number(10,0) not null,
         REMINDER_FROM_EMAIL varchar2(255),
         TERM_ID varchar2(255),
-        AVAILABLE_EMAIL_SENT number(1,0) default false,
+        AVAILABLE_EMAIL_SENT number(1,0) default 0,
         AVAILABLE_EMAIL_TEMPLATE_FK number(19,0),
         REMINDER_EMAIL_TEMPLATE_FK number(19,0),
         TEMPLATE_FK number(19,0) not null,
         RESULTS_SHARING varchar2(255) default 'visible' not null,
         BLANK_RESPONSES_ALLOWED number(1,0),
         MODIFY_RESPONSES_ALLOWED number(1,0),
+        ALL_ROLES_PARTICIPATE number(1,0),
         UNREGISTERED_ALLOWED number(1,0),
         LOCKED number(1,0),
         AUTH_CONTROL varchar2(255),
@@ -176,7 +177,6 @@
         EMAIL_OPEN_NOTIFICATION number(1,0),
         REMINDER_STATUS varchar2(255),
         LOCAL_SELECTOR varchar2(255),
-        ALL_ROLES_PARTICIPATE number(1,0),
         primary key (ID)
     );
 
@@ -415,9 +415,9 @@
 
     create index eval_asgnuser_type on EVAL_ASSIGN_USER (ASSIGN_TYPE);
 
-    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
-
     create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+
+    create index eval_asgnuser_availableSent on EVAL_ASSIGN_USER (AVAILABLE_EMAIL_SENT);
 
     alter table EVAL_ASSIGN_USER 
         add constraint ASSIGN_USER_EVALUATION_FKC 
