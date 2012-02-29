@@ -4,7 +4,7 @@
         USER_ID varchar(255) not null,
         EVALUATEES_INDEX integer not null,
         primary key (GROUP_ID, EVALUATEES_INDEX)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ADHOC_GROUP (
         ID bigint not null auto_increment,
@@ -12,14 +12,14 @@
         OWNER varchar(255) not null,
         TITLE varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ADHOC_PARTICIPANTS (
         GROUP_ID bigint not null,
         USER_ID varchar(255) not null,
         PARTICIPANTS_INDEX integer not null,
         primary key (GROUP_ID, PARTICIPANTS_INDEX)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ADHOC_USER (
         ID bigint not null auto_increment,
@@ -30,7 +30,7 @@
         USERNAME varchar(255) unique,
         DISPLAY_NAME varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ADMIN (
         ID bigint not null auto_increment,
@@ -38,7 +38,7 @@
         ASSIGN_DATE datetime not null,
         ASSIGNOR_USER_ID varchar(255) not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ANSWER (
         ID bigint not null auto_increment,
@@ -53,7 +53,7 @@
         ASSOCIATED_TYPE varchar(255),
         COMMENT_ANSWER text,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ASSIGN_GROUP (
         ID bigint not null auto_increment,
@@ -68,9 +68,9 @@
         STUDENTS_VIEW_RESULTS bit not null,
         EVALUATION_FK bigint not null,
         NODE_ID varchar(255),
-        SELECTION_SETTINGS text,
+        SELECTION_SETTINGS varchar(2000),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ASSIGN_HIERARCHY (
         ID bigint not null auto_increment,
@@ -83,7 +83,7 @@
         STUDENTS_VIEW_RESULTS bit not null,
         EVALUATION_FK bigint not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ASSIGN_USER (
         ID bigint not null auto_increment,
@@ -102,7 +102,7 @@
         EVALUATION_FK bigint not null,
         primary key (ID),
         unique (USER_ID, GROUP_ID, ASSIGN_TYPE, EVALUATION_FK)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_CONFIG (
         ID bigint not null auto_increment,
@@ -110,7 +110,7 @@
         NAME varchar(255) not null unique,
         VALUE varchar(255) not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_EMAIL_PROCESSING_QUEUE (
         ID bigint not null auto_increment,
@@ -123,7 +123,7 @@
         EVAL_DUE_DATE datetime,
         PROCESSING_STATUS tinyint,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_EMAIL_TEMPLATE (
         ID bigint not null auto_increment,
@@ -135,7 +135,7 @@
         defaultType varchar(255),
         EID varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_EVALUATION (
         ID bigint not null auto_increment,
@@ -173,26 +173,26 @@
         EVAL_CATEGORY varchar(255),
         AUTO_USE_TAG varchar(255),
         AUTO_USE_INSERTION varchar(255),
-        SELECTION_SETTINGS text,
+        SELECTION_SETTINGS varchar(2000),
         EMAIL_OPEN_NOTIFICATION bit,
         REMINDER_STATUS varchar(255),
         LOCAL_SELECTOR varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_GROUPNODES (
         ID bigint not null auto_increment,
         LAST_MODIFIED datetime not null,
         NODE_ID varchar(255) not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_GROUPNODES_GROUPS (
         ID bigint not null,
         GROUPS varchar(255) not null,
         GROUPS_INDEX integer not null,
         primary key (ID, GROUPS_INDEX)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ITEM (
         ID bigint not null auto_increment,
@@ -218,7 +218,7 @@
         AUTO_USE_TAG varchar(255),
         IG_ITEM_ID bigint,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_ITEMGROUP (
         ID bigint not null auto_increment,
@@ -230,7 +230,7 @@
         EXPERT bit,
         GROUP_PARENT_FK bigint,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_LOCK (
         ID bigint not null auto_increment,
@@ -238,7 +238,7 @@
         NAME varchar(255) not null unique,
         HOLDER varchar(255) not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_RESPONSE (
         ID bigint not null auto_increment,
@@ -252,7 +252,7 @@
         EVALUATION_FK bigint not null,
         primary key (ID),
         unique (OWNER, GROUP_ID, EVALUATION_FK)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_SCALE (
         ID bigint not null auto_increment,
@@ -269,14 +269,14 @@
         COPY_OF bigint,
         HIDDEN bit,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_SCALE_OPTIONS (
         ID bigint not null,
         SCALE_OPTION varchar(255) not null,
         SCALE_OPTION_INDEX integer not null,
         primary key (ID, SCALE_OPTION_INDEX)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_TAGS (
         ID bigint not null auto_increment,
@@ -285,7 +285,7 @@
         ENTITY_TYPE varchar(255) not null,
         ENTITY_ID varchar(255) not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_TAGS_META (
         ID bigint not null auto_increment,
@@ -295,7 +295,7 @@
         TITLE varchar(255),
         DESCRIPTION text,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_TEMPLATE (
         ID bigint not null auto_increment,
@@ -313,7 +313,7 @@
         HIDDEN bit,
         AUTO_USE_TAG varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_TEMPLATEITEM (
         ID bigint not null auto_increment,
@@ -339,7 +339,7 @@
         AUTO_USE_TAG varchar(255),
         AUTO_USE_INSERT_TAG varchar(255),
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     create table EVAL_TRANSLATION (
         ID bigint not null auto_increment,
@@ -350,7 +350,7 @@
         FIELD_NAME varchar(255) not null,
         TRANSLATION text not null,
         primary key (ID)
-    );
+    ) ENGINE=InnoDB;
 
     alter table EVAL_ADHOC_EVALUATEES 
         add index FK91C74B304BC805E4 (GROUP_ID), 
