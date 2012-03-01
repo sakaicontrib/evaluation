@@ -1,8 +1,8 @@
 -- MySQL conversion script - 1.3 to 1.4 
 alter table EVAL_EVALUATION add (LOCAL_SELECTOR varchar(255));
 
-update eval_email_template set template_type='ConsolidatedAvailable' where template_type='SingleEmailAvailable';
-update eval_email_template set template_type='ConsolidatedReminder' where template_type='SingleEmailReminder';
+update EVAL_EMAIL_TEMPLATE set template_type='ConsolidatedAvailable' where template_type='SingleEmailAvailable';
+update EVAL_EMAIL_TEMPLATE set template_type='ConsolidatedReminder' where template_type='SingleEmailReminder';
 
 create table EVAL_EMAIL_PROCESSING_QUEUE 
 (
@@ -31,7 +31,7 @@ create index ASSIGN_USER_RES_IDX on EVAL_ASSIGN_USER (REMINDER_EMAIL_SENT);
 	
 insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE',true);
 
-alter table eval_evaluation add (AVAILABLE_EMAIL_SENT bit);
+alter table EVAL_EVALUATION add (AVAILABLE_EMAIL_SENT bit);
 
 alter table EVAL_EVALUATION add (INSTRUCTOR_VIEW_ALL_RESULTS bit);
 alter table EVAL_EVALUATION add (ALL_ROLES_PARTICIPATE bit);
@@ -41,4 +41,5 @@ alter table EVAL_ASSIGN_GROUP add (INSTRUCTORS_VIEW_ALL_RESULTS bit);
 
 alter table EVAL_ASSIGN_USER add (COMPLETED_DATE datetime);
 create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
+
 
