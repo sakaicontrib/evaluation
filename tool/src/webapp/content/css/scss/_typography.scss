@@ -1,0 +1,49 @@
+//====================================
+// TYPOGRAPHY
+//====================================
+// These styles define type treatment.
+
+.portletBody {
+
+  /////////////////////////
+  // Dashboard
+  /////////////////////////
+  .summaryBox {
+    h4 {
+      font-size: 1.5em;
+      margin: 0.3em 0;
+      padding: 0.1em 0 0 0;
+    }
+  }
+
+  /////////////////////////
+  // Evaluation
+  /////////////////////////
+  .title {
+    font-size: 100%;
+    font-weight: bold;
+    color: #000;
+    .required {
+      color: red;
+    }
+  }
+
+  .matrix {
+    legend {
+      font-weight: normal;
+      font-size: 90%;
+      color: #000;
+    }
+  }
+
+  .item-group {
+    .item {
+      .title {
+        .label {
+          font-weight: normal;
+        }
+      }
+    }
+  }
+  
+} //end namespace
