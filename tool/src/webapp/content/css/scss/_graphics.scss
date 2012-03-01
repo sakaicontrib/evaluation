@@ -1,0 +1,46 @@
+//====================================
+// GRAPHICS
+//====================================
+// These styles define visual presentation.
+// All image references should be included here.
+
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+.evaluation {
+  .content {
+    .response-list {
+      label {
+        font-family: verdana, sans-serif;
+        font-size: 11px;
+        color: gray;
+        text-shadow: none;
+        background: white;
+        border: 1px solid white;
+        &:hover, &:focus {
+          color: #444444;
+          background: #ee4444;
+          @include background-image(linear-gradient(#ffffff, #ffa500));
+          border-color: #ffa500;
+        }
+      }
+      .selected {
+        color: white;
+        text-shadow: none;
+        background: #264c83;
+        @include background-image(linear-gradient(#3163ab, #1b355b));
+        border: 1px solid #0f1e34;
+        &:hover, &:focus {
+          color: white;
+          text-shadow: none;
+          background: #264c83;
+          @include background-image(linear-gradient(#3163ab, #1b355b));
+          border: 1px solid #0f1e34;
+        }
+      }
+    }
+
+  } //end content
+  
+} //end evaluation
