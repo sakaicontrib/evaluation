@@ -41,7 +41,9 @@ import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
+import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -189,7 +191,8 @@ public class AdminBoxRenderer {
                                 PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
                         UIInternalLink.make(evalrow, "evalAdminResponseLink", 
                                 UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
-                                new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId() ) );
+//                                new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId() ) );
+                        		new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId() ));
                     } else {
                         UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", title, new EvalViewParameters(
                                 EvaluationSettingsProducer.VIEW_ID, eval.getId()));
