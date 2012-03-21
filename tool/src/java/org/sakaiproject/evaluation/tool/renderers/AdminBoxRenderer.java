@@ -24,6 +24,8 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -144,6 +146,13 @@ public class AdminBoxRenderer {
         }
 
         if (!newEvals.isEmpty()) {
+            // sort evaluations by due date
+            Collections.sort(evals, new Comparator<EvalEvaluation>() {
+                public int compare(EvalEvaluation eval1, EvalEvaluation eval2) {
+                    return (eval1.getDueDate().compareTo(eval2.getDueDate()));
+                }                
+            });
+            
             UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBoxContents:");
             // Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583
             // (need to send them to the eval control page eventually) -AZ
