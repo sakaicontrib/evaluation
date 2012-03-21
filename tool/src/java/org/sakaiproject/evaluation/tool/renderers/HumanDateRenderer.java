@@ -64,6 +64,9 @@ public class HumanDateRenderer {
      * @param renderDate Date to be rendered in a human readable format
      */
     public void renderDate(UIContainer parent, String fieldName, Date renderDate) {
+        // if date is less than WARNING_DAYS in the future, add emphasis
+        final int WARNING_DAYS = 2;
+        
         // default render values
         String message = "humandate.date";
         String[] parameters = { df.format(renderDate) };
@@ -93,7 +96,7 @@ public class HumanDateRenderer {
         
         UIMessage output = UIMessage.make(parent, fieldName, message, parameters);
         output.decorate(new UITooltipDecorator( UIOutput.make(df.format(renderDate)) ));
-        if ("humandate.today".equals(message)) {
+        if (diffInDays >= 0 && diffInDays <= WARNING_DAYS) {
             output.decorate(new UIStyleDecorator( "urgentStyle" ));
         }
     }
