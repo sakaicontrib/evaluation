@@ -96,21 +96,18 @@
         .response-scale-end {
           position: absolute;
           top: 0;
-          right: 0;
+          right: 10px;
         }
-        .response-scale-start, .response-scale-na {
+        .response-scale-start {
           position: absolute;
           top: 0;
         }
         .response-scale-start {
-          left: 48px;
-        }
-        .response-scale-na {
-          left: 15px;
+          left: 70px;
         }
         .response-scale-middle {
           position: relative;
-          left: 24px;
+          left: 32px;
         }
       }
     } // end fieldset
@@ -127,7 +124,7 @@
       margin: 2em 0 1em 0;
       .title {
         float: left;
-        padding-top: 8px;
+        padding-top: 20px;
       }
       .content {
         margin: 0;
@@ -146,12 +143,22 @@
             margin: 0;
             padding: 0 !important;
           }
+          li.na {
+            margin-right: 5px;
+            padding-right: 5px !important;
+            border-right: 1px solid #CCCCCC;
+          }
         }
         label {
           margin: 0;
-          @include button(); 
+          @include button();
+          text-align: center;
+          font-weight: normal;
+          font-size: 100%;
+          text-transform: none;
           span {
-            @include visuallyhidden();
+            display: block;
+            margin-bottom: 5px;
           }
         }
       }
@@ -169,7 +176,7 @@
     margin-bottom: 15px;
     > .title {
       position: absolute;
-      top: -2px;
+      top: 1.5em;
       left: 0;
       margin: 0;
       .label {
@@ -177,10 +184,26 @@
         margin-left: 40px;
       }
     }
+    .response-group-labels {
+      display: block;
+      margin-top: 0.5em;
+    }
+    .response-scale-label {
+      display: inline-block;
+      padding: 0 16px;
+      width: 12px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .response-scale-na {
+      margin-right: 11px;
+      width: 24px;
+      padding: 0 10px;
+    }
     > .content {
       display: inline-block;
       width: 100%;
-      margin-top: 1.5em;
+      margin-top: 3em;
       > fieldset {
         display: inline-block;
         width: 100%;
@@ -190,12 +213,17 @@
           right: 0px;
         }
       }
+      .item {
+        margin-bottom: 0;
+      }
     }
     .item {
       display: block;
       margin: 0;
+      padding: 0.5em 0;
       .title {
         margin: 0;
+        padding-top: 8px;
         .label {
           padding-left: 5px;
         }
@@ -205,6 +233,13 @@
       }
       legend {
         display: none;
+      }
+      .content {
+        .response-list {
+          span {
+            @include visuallyhidden();
+          }
+        }
       }
     }
   }
