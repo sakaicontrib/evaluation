@@ -139,6 +139,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             log.info("Could not find evaluation ("+evaluationId+") for jobAction ("+jobType+"), " +
             "purging out all jobs related to this evaluation...");
             removeScheduledInvocations(evaluationId);
+            return;
         }
 
         // fix up EvalEvaluation state (also persists it)
@@ -327,7 +328,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         }
         
         Boolean syncGroupAssignments = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE);
-        if(syncGroupAssignments == null) {
+        if (syncGroupAssignments == null) {
         	// use default value, false
         	syncGroupAssignments = new Boolean(false);
         }
@@ -338,6 +339,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
             // remove all remaining events for this eval
             removeScheduledInvocations(eval.getId());
+            // do not sync assignments if new state is deleted
+            syncGroupAssignments = false;
 
         } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState())) {
             // make sure scheduleActive job invocation date matches EvalEvaluation start date
@@ -387,9 +390,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             }
             // do not sync assignments if new state is closed
             syncGroupAssignments = false;
+
+        } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(eval.getState())) {
+            // do not sync assignments if new state is viewable
+            syncGroupAssignments = false;
         }
         
-        if(syncGroupAssignments) {
+        if (syncGroupAssignments) {
         	this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
         }
     }
