@@ -288,7 +288,7 @@ public class ScaledRenderer implements ItemRenderer {
                     // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
                     // an empty label is appended; ignore that one too 
                     int labelIndex = scaleLabels.length - j - (usesNA ? 2 : 1);
-                    UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[labelIndex]);
+                    UIVerbatim.make(radioBranchSecond, "radioValueLabel", (limit - labelIndex) + "");
             }
 
             // display the N/A radio button if needed

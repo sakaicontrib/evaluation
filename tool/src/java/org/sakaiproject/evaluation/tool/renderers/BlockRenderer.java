@@ -124,6 +124,7 @@ public class BlockRenderer implements ItemRenderer {
             
             if (usesNA) {
             	matrixGroup.decorate( new UIStyleDecorator("use-na") );
+            	UIMessage.make(matrixGroup,"response-scale-label-na", "viewitem.na.desc");
             }
             
             // display header labels
@@ -137,6 +138,11 @@ public class BlockRenderer implements ItemRenderer {
            	UIOutput.make(matrixGroup,"label-na", "NA");
         	UIVerbatim.make(matrixGroup, "matrixGroupTitle", templateItem.getItem().getItemText());
         	
+        	// display number labels
+        	for (int i = 0; i < optionCount; i++) {
+        	    UIOutput.make(matrixGroup, "response-scale-label:", (i + 1) + "");
+        	}
+            
         	// iterate through each question in the block
             for (int j = 0; j < childList.size(); j++) {
                 
