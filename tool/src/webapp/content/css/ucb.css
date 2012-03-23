@@ -42,11 +42,6 @@
 .evaluation .content .item .title {
   color: black;
 }
-.urgentStyle {
-	color: red;
-	font-weight: bold;
-}
-
 .evaluation .content .item .title .delineator .dot {
   display: none;
 }

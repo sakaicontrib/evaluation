@@ -1623,21 +1623,18 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .matrix fieldset legend .response-scale-end {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 10px;
 }
-.evaluation .matrix fieldset legend .response-scale-start, .evaluation .matrix fieldset legend .response-scale-na {
+.evaluation .matrix fieldset legend .response-scale-start {
   position: absolute;
   top: 0;
 }
 .evaluation .matrix fieldset legend .response-scale-start {
-  left: 48px;
-}
-.evaluation .matrix fieldset legend .response-scale-na {
-  left: 15px;
+  left: 70px;
 }
 .evaluation .matrix fieldset legend .response-scale-middle {
   position: relative;
-  left: 24px;
+  left: 32px;
 }
 .evaluation .scale .matrix {
   position: relative;
@@ -1655,7 +1652,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .scale .matrix .title {
   float: left;
-  padding-top: 8px;
+  padding-top: 20px;
 }
 .evaluation .scale .matrix .content {
   margin: 0;
@@ -1681,6 +1678,11 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   margin: 0;
   padding: 0 !important;
 }
+.evaluation .scale .matrix .content .response-list li.na {
+  margin-right: 5px;
+  padding-right: 5px !important;
+  border-right: 1px solid #CCCCCC;
+}
 .evaluation .scale .matrix .content label {
   margin: 0;
   display: inline-block;
@@ -1697,16 +1699,14 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   -ms-border-radius: 4px / 4px;
   -khtml-border-radius: 4px / 4px;
   border-radius: 4px / 4px;
+  text-align: center;
+  font-weight: normal;
+  font-size: 100%;
+  text-transform: none;
 }
 .evaluation .scale .matrix .content label span {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
+  display: block;
+  margin-bottom: 5px;
 }
 .evaluation .item-group {
   position: relative;
@@ -1724,7 +1724,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item-group > .title {
   position: absolute;
-  top: -2px;
+  top: 1.5em;
   left: 0;
   margin: 0;
 }
@@ -1732,10 +1732,26 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   display: inline-block;
   margin-left: 40px;
 }
+.evaluation .item-group .response-group-labels {
+  display: block;
+  margin-top: 0.5em;
+}
+.evaluation .item-group .response-scale-label {
+  display: inline-block;
+  padding: 0 16px;
+  width: 12px;
+  font-size: 12px;
+  text-align: center;
+}
+.evaluation .item-group .response-scale-na {
+  margin-right: 11px;
+  width: 24px;
+  padding: 0 10px;
+}
 .evaluation .item-group > .content {
   display: inline-block;
   width: 100%;
-  margin-top: 1.5em;
+  margin-top: 3em;
 }
 .evaluation .item-group > .content > fieldset {
   display: inline-block;
@@ -1746,12 +1762,17 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   top: 0px;
   right: 0px;
 }
+.evaluation .item-group > .content .item {
+  margin-bottom: 0;
+}
 .evaluation .item-group .item {
   display: block;
   margin: 0;
+  padding: 0.5em 0;
 }
 .evaluation .item-group .item .title {
   margin: 0;
+  padding-top: 8px;
 }
 .evaluation .item-group .item .title .label {
   padding-left: 5px;
@@ -1761,6 +1782,16 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item-group .item legend {
   display: none;
+}
+.evaluation .item-group .item .content .response-list span {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
 .evaluation .matrix .response-scale-na, .evaluation .matrix .na {
   visibility: hidden !important;
@@ -1798,13 +1829,18 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   font-weight: normal;
 }
 
+.urgentStyle {
+  color: red;
+  font-weight: bold;
+}
+
 .evaluation .content .response-list label {
   font-family: verdana, sans-serif;
   font-size: 11px;
   color: gray;
   text-shadow: none;
-  background: white;
-  border: 1px solid white;
+  background: #ffffff;
+  border: 1px solid #ffffff;
 }
 .evaluation .content .response-list label:hover, .evaluation .content .response-list label:focus {
   color: #444444;
@@ -1818,7 +1854,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   border-color: #ffa500;
 }
 .evaluation .content .response-list .selected {
-  color: white;
+  color: #ffffff;
   text-shadow: none;
   background: #264c83;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
@@ -1829,8 +1865,11 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   background-image: linear-gradient(#3163ab, #1b355b);
   border: 1px solid #0f1e34;
 }
+.evaluation .content .response-list .selected span {
+  color: #ffffff;
+}
 .evaluation .content .response-list .selected:hover, .evaluation .content .response-list .selected:focus {
-  color: white;
+  color: #ffffff;
   text-shadow: none;
   background: #264c83;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
@@ -1840,4 +1879,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   background-image: -ms-linear-gradient(#3163ab, #1b355b);
   background-image: linear-gradient(#3163ab, #1b355b);
   border: 1px solid #0f1e34;
+}
+.evaluation .content .response-list .selected:hover span, .evaluation .content .response-list .selected:focus span {
+  color: #ffffff;
 }
