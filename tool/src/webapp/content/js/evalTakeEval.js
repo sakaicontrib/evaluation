@@ -7,12 +7,6 @@ $(document).ready(function() {
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
-    $('[id=form-branch::saveEvaluationWithoutSubmit]').click(function() {
-        if (!confirm('Saving the evaluation without Submitting will save your work, but your responses will not be included in the final results.\n' +
-    			'You will need to return to the evaluation and Submit for your results to be included.')) {
-             return false;
-        };
-    });
     $('[id=form-branch::submitEvaluation]').bind('click', function() {
         var valid;
         if (instrSel.find('input[type=checkbox]').length !== 0) {
