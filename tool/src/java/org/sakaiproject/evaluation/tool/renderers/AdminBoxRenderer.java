@@ -190,7 +190,7 @@ public class AdminBoxRenderer {
 	                UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
 	                humanDateRenderer.renderDate(evalrow, "evalAdminDueDate", eval.getDueDate());
 
-					String title = EvalUtils.makeMaxLengthString(eval.getTitle() + " " + group.title, 50);
+					String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle(), 50);
                     String[] groupIds = {group.evalGroupId};
                     int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), groupIds);

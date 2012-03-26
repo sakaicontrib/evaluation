@@ -119,7 +119,7 @@ public class EvaluateBoxRenderer {
                     }
 
                     String groupId = group.evalGroupId;
-                    String title = EvalUtils.makeMaxLengthString(eval.getTitle() + " " + group.title, 50);
+                    String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
                     String status = "unknown.caps";
 
                     // find the object in the list matching the evalGroupId and evalId,
