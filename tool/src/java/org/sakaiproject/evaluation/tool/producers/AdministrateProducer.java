@@ -236,22 +236,28 @@ public class AdministrateProducer extends EvalCommonProducer {
         UIMessage.make(form, "students-modify-responses-note", "administrate.students.modify.responses.note");
 
         //Select whether students can save without submit or not
-        String[] booleanConfigurableLabels = 
-        {
-                "administrate.true.label",
-                "administrate.false.label"
-        };
-        String[] booleanConfigurableValues = 
-        {
-                EvalToolConstants.ADMIN_BOOLEAN_YES,
-                EvalToolConstants.ADMIN_BOOLEAN_NO
-        };      
-        makeSelect(form, "students-save-without-submit",
-                booleanConfigurableValues,
-                booleanConfigurableLabels,
-                ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, true);
-        UIMessage.make(form, "students-save-without-submit-note","administrate.students.save.without.submit.note");
+//        String[] booleanConfigurableLabels = 
+//        {
+//                "administrate.true.label",
+//                "administrate.false.label"
+//        };
+//        String[] booleanConfigurableValues = 
+//        {
+//                EvalToolConstants.ADMIN_BOOLEAN_YES,
+//                EvalToolConstants.ADMIN_BOOLEAN_NO
+//        };      
+//        makeSelect(form, "students-save-without-submit",
+//                booleanConfigurableValues,
+//                booleanConfigurableLabels,
+//                ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, true);
+//        UIMessage.make(form, "students-save-without-submit-note","administrate.students.save.without.submit.note");
 
+        makeBoolean(form,"students-save-without-submit", ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+        UIMessage.make(form, "students-save-without-submit-note", "administrate.students.save.without.submit.note");
+        
+        makeBoolean(form,"students-cancel-allowed", ADMIN_WBL, EvalSettings.STUDENT_CANCEL_ALLOWED);
+        UIMessage.make(form, "students-cancel-allowed-note", "administrate.students.cancel.allowed.note");
+        
         //Select for whether students can view results
         makeSelect(form, "students-view-results",
                 administrateConfigurableValues, 

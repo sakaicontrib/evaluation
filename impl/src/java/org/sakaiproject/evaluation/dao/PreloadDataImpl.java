@@ -443,6 +443,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
         evalConfigMap.put(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
         evalConfigMap.put(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, false);
+        evalConfigMap.put(EvalSettings.STUDENT_CANCEL_ALLOWED, false);
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
         // Default Admin settings
