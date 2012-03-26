@@ -83,6 +83,11 @@ public interface EvalSettings {
      */
     public static final String STUDENT_SAVE_WITHOUT_SUBMIT = "STUDENT_SAVE_WITHOUT_SUBMIT:java.lang.Boolean";
     /**
+     * CONSTANT: Student is presented with a Cancel button when taking an assessment.  If a Cancel button is pressed,
+     * no assessment data is saved, and the user is returned to the dashboard.
+     */
+    public static final String STUDENT_CANCEL_ALLOWED = "STUDNET_CANCEL_ALLOWED:java.lang.Boolean";
+    /**
      * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
@@ -494,6 +499,8 @@ public interface EvalSettings {
         EVAL_USE_VIEW_DATE,
         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
+        STUDENT_SAVE_WITHOUT_SUBMIT,
+        STUDENT_CANCEL_ALLOWED,
         ITEM_USE_RESULTS_SHARING,
         ITEM_USE_COURSE_CATEGORY_ONLY,
         LOG_EMAIL_RECIPIENTS,
@@ -521,7 +528,6 @@ public interface EvalSettings {
         INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS,
         STUDENT_ALLOWED_LEAVE_UNANSWERED,
         STUDENT_MODIFY_RESPONSES,
-        STUDENT_SAVE_WITHOUT_SUBMIT,
         STUDENT_ALLOWED_VIEW_RESULTS,
         ALLOW_ALL_SITE_ROLES_TO_RESPOND
     };
