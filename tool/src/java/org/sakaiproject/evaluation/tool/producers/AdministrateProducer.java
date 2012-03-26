@@ -220,6 +220,7 @@ public class AdministrateProducer extends EvalCommonProducer {
 
         // Student Settings
         UIMessage.make(form, "student-settings-header", "administrate.student.settings.header");
+        UIMessage.make(form, "student-settings-header-inner", "administrate.student.settings.header.inner");
 
         //Select for whether students can leave questions unanswered or not
         makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
