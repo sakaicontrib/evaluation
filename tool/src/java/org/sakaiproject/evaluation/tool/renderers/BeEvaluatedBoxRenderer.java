@@ -145,7 +145,7 @@ public class BeEvaluatedBoxRenderer {
                         UIOutput.make(evalrow, "evalResponsesStartDate", df.format(eval.getStartDate()));
                         humanDateRenderer.renderDate(evalrow, "evalResponsesDueDate", eval.getDueDate());
 
-                        String title = EvalUtils.makeMaxLengthString(eval.getTitle() + " " + group.title, 50);
+                        String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
     					UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", 
     							title,
     							new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));//view params
