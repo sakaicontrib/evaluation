@@ -571,6 +571,10 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     UICommand.make(form, "saveEvaluationWithoutSubmit", UIMessage.make("takeeval.save.button"), "#{takeEvalBean.saveEvaluationWithoutSubmit}");
                 }
                 UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
+                Boolean studentCancelAllowed = (Boolean) evalSettings.get(EvalSettings.STUDENT_CANCEL_ALLOWED);
+                if (studentCancelAllowed) {
+                    UIOutput.make(form, "cancelEvaluation");
+                }
             } else {
                 // user cannot access eval so give them a sad message
                 EvalUser current = commonLogic.getEvalUserById(currentUserId);

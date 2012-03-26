@@ -101,28 +101,36 @@
     </fieldset>
 
     <fieldset class="visibleFS"><legend><span rsf:id="student-settings-header">Student Settings:</span></legend>
+        <p class=   "longtext indnt1" rsf:id="student-settings-header-inner">Students may...</p>
         <p class=   "longtext indnt1">
-            <label for="students-unanswered-selection" class="block" rsf:id="students-unanswered-note">Students may leave questions unanswered</label>
-            <select type="checkbox" rsf:id="students-unanswered" id="students-unanswered-id">
-            </select>
+            <label for="students-unanswered-selection" class="block">
+	            <span rsf:id="students-unanswered-note">Students may leave questions unanswered</span>
+	            <select rsf:id="students-unanswered" id="students-unanswered-id"></select>
+            </label>
         </p>
         <p class=   "longtext indnt1">
-            <label for="students-modify-responses-selection" class="block" rsf:id="students-modify-responses-note">Students may modify their responses up to the due date</label>
-            <select type="checkbox" rsf:id="students-modify-responses" id="students-modify-responses-id">
-            </select>
+            <label for="students-modify-responses-selection" class="block">
+	            <span rsf:id="students-modify-responses-note">Students may modify their responses up to the due date</span>
+	            <select rsf:id="students-modify-responses" id="students-modify-responses-id"></select>
+            </label>
         </p>
         <p class=   "longtext indnt1">
-            <label for="students-view-results-selection" class="block" rsf:id="students-view-results-note">Students allowed to view results</label>
-            <select type="checkbox" rsf:id="students-view-results" id="students-view-results-id">
-            </select>
+            <label for="students-view-results-selection" class="block">
+	            <span rsf:id="students-view-results-note">Students allowed to view results</span>
+	            <select rsf:id="students-view-results" id="students-view-results-id"></select>
+            </label>
         </p>
         <p class=   "longtext indnt1">
-            <label for="students-save-without-submit" class="block" rsf:id="students-save-without-submit-note">Students may save their survey without submitting</label>
-            <input type="checkbox" rsf:id="students-save-without-submit" id="students-save-without-submit-id" />
+            <label for="students-save-without-submit" class="block">
+	            <input type="checkbox" rsf:id="students-save-without-submit" id="students-save-without-submit-id" />
+	            <span rsf:id="students-save-without-submit-note">Students may save their survey without submitting</span>
+            </label>
         </p>
         <p class=   "longtext indnt1">
-            <label for="students-save-without-submit" class="block" rsf:id="students-save-without-submit-note">Students may cancel while filling out their survey</label>
-            <input type="checkbox" rsf:id="students-cancel-allowed" id="students-cancel-allowed" />
+            <label for="students-cancel-allowed" class="block">
+                <input type="checkbox" rsf:id="students-cancel-allowed" id="students-cancel-allowed" />
+                <span rsf:id="students-cancel-allowed-note">Students may cancel while filling out their survey</span>
+            </label>
         </p>
     </fieldset>
 
