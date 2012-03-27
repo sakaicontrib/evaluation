@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -81,7 +82,7 @@ public class EvalEvaluation implements java.io.Serializable {
      * {@link #instructorsDate} to be nulled out out when the evaluation is saved if set to false
      */
     private boolean instructorViewResults;
-    
+
     private Boolean instructorViewAllResults;
 
     /**
@@ -182,7 +183,7 @@ public class EvalEvaluation implements java.io.Serializable {
      * if true then responses may be changed during active eval period
      */
     private Boolean modifyResponsesAllowed;
-    
+
     /**
      * if true then all roles will be included in the list of evaluators
      */
@@ -191,19 +192,19 @@ public class EvalEvaluation implements java.io.Serializable {
     private Boolean unregisteredAllowed;
 
     private Boolean availableEmailSent = new Boolean(false);
-    
+
     private Boolean locked;
 
     private String authControl;
 
     private String evalCategory;
-    
+
     /** 
      * A flag to toggle sending mass email on evaluation active state
      */
     private Boolean sendAvailableNotifications;
 
-	/**
+    /**
      * If this is not null then we will load in all templates/templateItems/items with the related
      * linking autoUseTag when the evaluation is created
      */
@@ -251,13 +252,21 @@ public class EvalEvaluation implements java.io.Serializable {
      * This is ignored if it is null<br/>
      */
     public Boolean useViewDate;
-   
-   /**
-	* Optional field never used by EVALSYS code. May be used to mark records for bulk actions. 
-	* For example, an import operation might set a value that will be persisted and can be used 
-	* later to select records for export, deletion, etc.  Maximum length is 80 characters.
-	*/
-   public String localSelector;
+
+    /**
+     * Optional field never used by EVALSYS code. May be used to mark records for bulk actions. 
+     * For example, an import operation might set a value that will be persisted and can be used 
+     * later to select records for export, deletion, etc.  Maximum length is 80 characters.
+     */
+    public String localSelector;
+
+    /**
+     * This is an optional listing of assigned eval groups for this evaluation,
+     * if this is non-null and has been set then the groups contained are relevant to service method used
+     * to retrieve the evaluations, typically this would include the groups assigned to this eval which
+     * are accessible to the current user
+     */
+    protected List<EvalAssignGroup> evalAssignGroups;
 
     /**
      * This is an optional listing of eval groups for this evaluation,
@@ -265,7 +274,7 @@ public class EvalEvaluation implements java.io.Serializable {
      * to retrieve the evaluations, typically this would include the groups assigned to this eval which
      * are accessible to the current user
      */
-    protected List<EvalAssignGroup> evalAssignGroups;
+    protected List<EvalGroup> evalGroups;
 
     // Constructors
 
@@ -289,7 +298,7 @@ public class EvalEvaluation implements java.io.Serializable {
             Integer reminderDays, EvalTemplate template) {
         this(type, owner, title, null, startDate, dueDate, stopDate, viewDate, false, null, true, null, state, resultsSharing, null, reminderDays, null, null, null, null, template, null, null, null, null, Boolean.FALSE, null, null, null);
     }
-    
+
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
             Date studentsDate, boolean instructorViewResults, Date instructorsDate, String state,
@@ -299,13 +308,13 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
             String authControl, String evalCategory, String selectionSettings) {
-    	
-    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, Boolean.TRUE, instructorsDate, state,
+
+        this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, Boolean.TRUE, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
                 authControl, evalCategory, selectionSettings, Boolean.TRUE);
     }
-    
+
     /**
      * full constructor without email flag
      */
@@ -318,13 +327,13 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked, 
             String authControl, String evalCategory, String selectionSettings) {
-    	
-    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
+
+        this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked, authControl,
                 evalCategory, selectionSettings, Boolean.TRUE);
     }
-    
+
     /**
      * full constructor without all rolls can participate
      */
@@ -337,13 +346,13 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean locked, String authControl,
             String evalCategory, String selectionSettings, Boolean emailOpenNotification){
-    	
-    	this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
+
+        this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
                 evalCategory, selectionSettings, Boolean.TRUE);
     }
-    
+
     /**
      * full constructor
      */
@@ -356,7 +365,7 @@ public class EvalEvaluation implements java.io.Serializable {
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean allRolesParticipate,  Boolean locked, String authControl,
             String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
-    	
+
         this.lastModified = new Date();
         this.type = type;
         this.owner = owner;
@@ -389,13 +398,13 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
-    	this.sendAvailableNotifications = emailOpenNotification;
+        this.sendAvailableNotifications = emailOpenNotification;
     }
 
     @Override
     public String toString() {
         return "eval: [" + this.type + "] " + this.title + " (" + this.id + ") state=" + this.state
-        + " ,start=" + this.startDate + ", due=" + this.dueDate;
+                + " ,start=" + this.startDate + ", due=" + this.dueDate;
     };
 
 
@@ -548,17 +557,17 @@ public class EvalEvaluation implements java.io.Serializable {
         this.authControl = authControl;
     }
 
-   public Boolean getAvailableEmailSent() {
-	      return availableEmailSent;
-   }
-   
+    public Boolean getAvailableEmailSent() {
+        return availableEmailSent;
+    }
+
     public EvalEmailTemplate getAvailableEmailTemplate() {
         return availableEmailTemplate;
     }
 
-   public void setAvailableEmailSent(Boolean availableEmailSent) {
-	      this.availableEmailSent = availableEmailSent;
-   }
+    public void setAvailableEmailSent(Boolean availableEmailSent) {
+        this.availableEmailSent = availableEmailSent;
+    }
 
     public void setAvailableEmailTemplate(EvalEmailTemplate availableEmailTemplate) {
         this.availableEmailTemplate = availableEmailTemplate;
@@ -651,14 +660,14 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setModifyResponsesAllowed(Boolean modifyResponsesAllowed) {
         this.modifyResponsesAllowed = modifyResponsesAllowed;
     }
-    
+
     public Boolean getAllRolesParticipate() {
-		return allRolesParticipate;
-	}
-    
+        return allRolesParticipate;
+    }
+
     public void setAllRolesParticipate(Boolean allRolesParticipate) {
-		this.allRolesParticipate = allRolesParticipate;
- 	}  
+        this.allRolesParticipate = allRolesParticipate;
+    }  
 
     public String getOwner() {
         return owner;
@@ -836,7 +845,7 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setInstructorViewResults(boolean instructorViewResults) {
         this.instructorViewResults = instructorViewResults;
     }
-    
+
     public Boolean getInstructorViewAllResults() {
         return instructorViewAllResults;
     }
@@ -844,7 +853,7 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setInstructorViewAllResults(Boolean instructorViewAllResults) {
         this.instructorViewAllResults = instructorViewAllResults;
     }
-    
+
     public String getSelectionSettings() {
         return selectionSettings;
     }
@@ -865,11 +874,23 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setEvalAssignGroups(List<EvalAssignGroup> evalAssignGroups) {
         this.evalAssignGroups = evalAssignGroups;
     }
-    
+
+    /**
+     * NON_PERSISTENT list of assign groups for this eval, may be limited by user
+     * @return the evalAssignGroups, will be NULL if the groups were not populated, will be empty if populated but none are set
+     */
+    public List<EvalGroup> getEvalGroups() {
+        return evalGroups;
+    }
+
+    public void setEvalGroups(List<EvalGroup> evalGroups) {
+        this.evalGroups = evalGroups;
+    }
+
     public Boolean getSendAvailableNotifications() {
         return sendAvailableNotifications;
     }
-    
+
     public void setSendAvailableNotifications(Boolean sendAvailableNotifications) {
         this.sendAvailableNotifications = sendAvailableNotifications;
     }
@@ -888,13 +909,13 @@ public class EvalEvaluation implements java.io.Serializable {
     public String getLocalSelector() {
         return localSelector;
     }
-	
+
     /**
      * @param localSelector the localSelector to set
      */
     public void setLocalSelector(String localSelector) {
         this.localSelector = localSelector;
-	}
-	
+    }
+
 }
 

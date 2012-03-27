@@ -732,12 +732,66 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
         String[] evalGroupIds = new String[evalGroups.size()];
         int i = 0;
-        for(EvalGroup evalGroup : evalGroups) {
+        for (EvalGroup evalGroup : evalGroups) {
         	evalGroupIds[i++] = evalGroup.evalGroupId;
         }
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
+        // populate the assign groups and eval groups in the evals
+        populateEvaluationsGroups(evals, evalGroups);
         return evals;
 	}
+
+	/**
+	 * Special method to populate the assign groups and eval groups non-persistent fields in the evaluation objects
+	 * 
+	 * @param evaluations the list of evaluations to populate the groups in (does nothing if this is empty)
+	 * @param limitEvalGroups if null, populate all assigned groups,
+	 *                        if empty, populate no assigned groups,
+	 *                        otherwise, populate only the groups which are assigned and also in this list
+	 */
+    protected void populateEvaluationsGroups(List<EvalEvaluation> evaluations, List<EvalGroup> limitEvalGroups) {
+        if (!evaluations.isEmpty()) {
+            Long[] evaluationIds = new Long[evaluations.size()];
+            int j = 0;
+            for (EvalEvaluation eval : evaluations) {
+                evaluationIds[j++] = eval.getId();
+            }
+            Map<Long, List<EvalAssignGroup>> agsMap = evaluationService.getAssignGroupsForEvals(evaluationIds, true, null);
+            // now populate the evaluations with the AGs and EGs (or set them to empty lists)
+            for (EvalEvaluation eval : evaluations) {
+                List<EvalAssignGroup> assignGroups = agsMap.get(eval.getId());
+                if (assignGroups != null && !assignGroups.isEmpty()) {
+                    if (limitEvalGroups == null) {
+                        // include all
+                        eval.setEvalAssignGroups(assignGroups);
+                        // does not populate the eval groups
+                    } else if (limitEvalGroups.isEmpty()) {
+                        // include none
+                        eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
+                        eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                    } else {
+                        // include the groups passed in only
+                        List<EvalAssignGroup> evaluationAssignGroups = new ArrayList<EvalAssignGroup>();
+                        List<EvalGroup> evaluationGroups = new ArrayList<EvalGroup>();
+                        for (EvalGroup eg : limitEvalGroups) {
+                            for (EvalAssignGroup eag : assignGroups) {
+                                if (eag.getEvalGroupId().equals(eg.evalGroupId)) {
+                                    evaluationAssignGroups.add(eag);
+                                    evaluationGroups.add(eg);
+                                    break;
+                                }
+                            }
+                        }
+                        eval.setEvalAssignGroups(evaluationAssignGroups);
+                        eval.setEvalGroups(evaluationGroups);
+                    }
+                } else {
+                    eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
+                    eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                }
+            }
+        }
+    }
 
 
     /**
