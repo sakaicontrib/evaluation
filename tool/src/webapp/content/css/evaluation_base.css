@@ -1545,8 +1545,14 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   text-align: center;
 }
 
-.evaluation .item {
-  padding: 1em 0;
+.evaluation .itemListEval {
+  margin-top: 0;
+}
+.evaluation .itemListEval .evalItemTop {
+  margin: 3.5em 0 !important;
+}
+.evaluation .itemListEval .evalItemTop:first-child {
+  margin-top: 0 !important;
 }
 .evaluation .item .title {
   position: relative;
@@ -1636,10 +1642,12 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   position: relative;
   left: 32px;
 }
+.evaluation .scale {
+  padding-top: 16px;
+}
 .evaluation .scale .matrix {
   position: relative;
   zoom: 1;
-  margin: 2em 0 1em 0;
 }
 .evaluation .scale .matrix:before, .evaluation .scale .matrix:after {
   content: "\0020";
@@ -1711,7 +1719,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item-group {
   position: relative;
   zoom: 1;
-  margin-bottom: 15px;
 }
 .evaluation .item-group:before, .evaluation .item-group:after {
   content: "\0020";
@@ -1723,14 +1730,13 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   clear: both;
 }
 .evaluation .item-group > .title {
-  position: absolute;
-  top: 1.5em;
-  left: 0;
+  float: left;
+  padding: 12px 0;
   margin: 0;
 }
 .evaluation .item-group > .title .label {
   display: inline-block;
-  margin-left: 40px;
+  margin-left: 42px;
 }
 .evaluation .item-group .response-group-labels {
   display: block;
@@ -1751,7 +1757,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item-group > .content {
   display: inline-block;
   width: 100%;
-  margin-top: 3em;
 }
 .evaluation .item-group > .content > fieldset {
   display: inline-block;

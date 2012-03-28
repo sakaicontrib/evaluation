@@ -11,11 +11,22 @@
 /////////////////////////
 .evaluation {
 
+  .itemListEval {
+    margin-top: 0;
+    
+    .evalItemTop {
+      margin: 3.5em 0 !important;
+    }
+    .evalItemTop:first-child {
+      margin-top: 0 !important;
+    }
+  }
+
+
 /////////////////////////
 // Item
 /////////////////////////
   .item {
-    padding: 1em 0;
     .title {
       position: relative;
       margin: 0;
@@ -117,11 +128,12 @@
 // Scale Item
 /////////////////////////
   .scale {
+    padding-top: 16px;
+    
     .matrix {
       position: relative;
       @include clearfix();
       
-      margin: 2em 0 1em 0;
       .title {
         float: left;
         padding-top: 20px;
@@ -173,15 +185,14 @@
   .item-group {
     position: relative;
     @include clearfix();
-    margin-bottom: 15px;
+
     > .title {
-      position: absolute;
-      top: 1.5em;
-      left: 0;
+      float: left;
+      padding: 12px 0;
       margin: 0;
       .label {
         display: inline-block;
-        margin-left: 40px;
+        margin-left: 42px;
       }
     }
     .response-group-labels {
@@ -203,7 +214,6 @@
     > .content {
       display: inline-block;
       width: 100%;
-      margin-top: 3em;
       > fieldset {
         display: inline-block;
         width: 100%;
