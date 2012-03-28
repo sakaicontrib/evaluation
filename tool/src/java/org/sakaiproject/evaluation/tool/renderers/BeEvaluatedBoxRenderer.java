@@ -23,6 +23,7 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -118,9 +119,6 @@ public class BeEvaluatedBoxRenderer {
     			evalIds[i++] = eval.getId();
     		}
 
-    		// get the eval groups
-    		Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
-
     		// show a list of evals with four columns: 
     		for(EvalEvaluation eval : evalsForInstructor) {
     			//is this eval partial, in-queue, active or grace period?
@@ -139,7 +137,10 @@ public class BeEvaluatedBoxRenderer {
     				String evalState = evaluationService.updateEvaluationState(eval.getId());
                     evalState = commonLogic.calculateViewability(evalState);
        				//show one link per group assigned to in-queue, active or grace period eval
-    				List<EvalGroup> groups = evalGroups.get(eval.getId());
+                    List<EvalGroup> groups = eval.getEvalGroups();
+                    if (groups == null) {
+                        groups = new ArrayList<EvalGroup>();
+                    }
     				for(EvalGroup group : groups) {
     					UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable,"evalResponsesList:");
                         UIOutput.make(evalrow, "evalResponsesStartDate", df.format(eval.getStartDate()));
