@@ -198,10 +198,11 @@
     .response-group-labels {
       display: block;
       margin-top: 0.5em;
+      text-align: right !important;
     }
     .response-scale-label {
       display: inline-block;
-      padding: 0 16px;
+      padding: 0 17px;
       width: 12px;
       font-size: 12px;
       text-align: center;

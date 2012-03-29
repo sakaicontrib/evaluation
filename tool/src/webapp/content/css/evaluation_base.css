@@ -1741,10 +1741,11 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item-group .response-group-labels {
   display: block;
   margin-top: 0.5em;
+  text-align: right !important;
 }
 .evaluation .item-group .response-scale-label {
   display: inline-block;
-  padding: 0 16px;
+  padding: 0 17px;
   width: 12px;
   font-size: 12px;
   text-align: center;
