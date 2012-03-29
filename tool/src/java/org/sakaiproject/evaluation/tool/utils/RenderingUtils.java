@@ -25,9 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 
@@ -53,10 +55,10 @@ public class RenderingUtils {
         int responseCount = responseArray.length - 1; // remove the NA count from the end
         int totalAnswers = 0;
         int totalValue = 0;
-        int totalWeight = 0;
+        //int totalWeight = 0;
         for (int i = 0; i < responseCount; i++) {
             int weight = i+1;
-            totalWeight += weight;
+            //totalWeight += weight;
             totalAnswers += responseArray[i];
             totalValue += (weight * responseArray[i]);
         }
@@ -107,7 +109,7 @@ public class RenderingUtils {
      * The third entry will only be included if there are 5 or more
      * entries.  
      * <p>If the list contains a 3rd element, the 3rd element will be the middle
-     * label.  We always know that the 1st element is the beinning and the 
+     * label.  We always know that the 1st element is the beginning and the 
      * second element is the end.
      * <p>2 entries in returns 2 entries (beginning and end)
      * <br>3 entries in returns 2 entries (beginning and end)
@@ -116,18 +118,61 @@ public class RenderingUtils {
      * <p>For scales with 5 or more entries, the middle entry of the scale will
      * be returned.  For lists with an even number of elements, the element before
      * the middle will be returned (i.e. a 6 element scale will return 1st, 3rd, and 6th)
-     * @param scaleOptions
-     * @return
+     * 
+     * @param scaleOptions the array of scale options for a matrix templateItem
+     * @return List (see method comment)
      */
     public static List<String> getMatrixLabels(String[] scaleOptions) {
     	List<String> list = new ArrayList<String>();
-    	list.add(scaleOptions[0]);
-    	list.add(scaleOptions[scaleOptions.length - 1]);
-    	if (scaleOptions.length > 4) {
-    		int middleIndex = (scaleOptions.length - 1) / 2;
-    		list.add(scaleOptions[middleIndex]);
-    	}
+        if (scaleOptions != null && scaleOptions.length > 0) {
+        	list.add(scaleOptions[0]);
+        	list.add(scaleOptions[scaleOptions.length - 1]);
+        	if (scaleOptions.length > 4) {
+        		int middleIndex = (scaleOptions.length - 1) / 2;
+        		list.add(scaleOptions[middleIndex]);
+        	}
+        }
     	return list;
+    }
+
+    /**
+     * Calculate the proper set of scale labels to use for a template item
+     * in a report based on the item type (note, this will only return useful data for scale items)
+     * 
+     * @param templateItem any template item (should be fully populated)
+     * @param scaleOptions the array of scale options for this templateItem
+     * @return the array of scale labels (or null if this is not a scaled item)
+     */
+    public static String[] makeReportingScaleLabels(EvalTemplateItem templateItem, String[] scaleOptions) {
+        if (templateItem == null) {
+            throw new IllegalArgumentException("templateItem must be set");
+        }
+        String scaleLabels[] = null;
+        String itemTypeConstant = TemplateItemUtils.getTemplateItemType(templateItem);
+        if (EvalConstants.ITEM_TYPE_SCALED.equals(itemTypeConstant)) {
+            if (scaleOptions == null || scaleOptions.length == 0) {
+                scaleOptions = templateItem.getItem().getScale().getOptions();
+            }
+            scaleLabels = scaleOptions.clone(); // default to just using the options array (should this copy?)
+            if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
+                    || templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
+            ) {
+                /* special labels for the matrix items
+                 * Show numbers in front (e.g. "blah" becomes "1 - blah")
+                 * and only show text if the label was display in take evals (e.g. "1 - blah, 2, 3, 4 - blah, ...)
+                 */
+                List<String> matrixLabels = RenderingUtils.getMatrixLabels(scaleOptions);
+                for (int i = 0; i < scaleLabels.length; i++) {
+                    String label = scaleLabels[i];
+                    if (matrixLabels.contains(label)) {
+                        scaleLabels[i] = (i+1) + " - " + scaleLabels[i];
+                    } else {
+                        scaleLabels[i] = String.valueOf(i+1);
+                    }
+                }
+            }
+        }
+        return scaleLabels;
     }
 
     /**
