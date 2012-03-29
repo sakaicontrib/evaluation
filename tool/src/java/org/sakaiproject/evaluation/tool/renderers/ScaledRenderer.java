@@ -221,8 +221,9 @@ public class ScaledRenderer implements ItemRenderer {
                 UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc");//.decorate( new UILabelTargetDecorator(choice));
             }
 
-            // new item display logic
-        } else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(scaleDisplaySetting)) {
+        } else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(scaleDisplaySetting)
+                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting)) {
+            // MATRIX item handling
         	// build the question row container and apply decorations
             UIBranchContainer matrix = UIBranchContainer.make(container, "matrixDisplay:");
             if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
@@ -230,9 +231,14 @@ public class ScaledRenderer implements ItemRenderer {
             } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                 matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
             }
+
+            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting);
+            if (colored) {
+                matrix.decorate( new UIStyleDecorator("colored") ); // must match the existing CSS class
+            }
             
             if (usesNA) {
-            	matrix.decorate( new UIStyleDecorator("use-na") );
+            	matrix.decorate( new UIStyleDecorator("use-na") ); // must match the existing CSS class
             }
             
             // display header labels
@@ -249,15 +255,6 @@ public class ScaledRenderer implements ItemRenderer {
             UIOutput.make(matrix, "itemNum", displayNumber+"" ); //$NON-NLS-2$
             UIVerbatim.make(matrix, "itemText", templateItem.getItem().getItemText());
             
-            // setup simple variables to make code more clear
-            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
-
-            UIBranchContainer coloredBranch = null;
-            if (colored) {
-                coloredBranch = UIBranchContainer.make(matrix, "coloredChoicesBranch:");
-                UILink.make(coloredBranch, "idealImage", ScaledUtils.getIdealImageURL(scale));
-            }
-
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
