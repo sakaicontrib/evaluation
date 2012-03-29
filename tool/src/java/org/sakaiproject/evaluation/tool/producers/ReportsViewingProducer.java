@@ -463,7 +463,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
     /**
      * Should we render this item based off the passed in parameters?
-     * (ie. Should we only render certain template items)
+     * (i.e. Should we only render certain template items)
      */
     private boolean renderBasedOnOptions(EvalTemplateItem templateItem) {
         boolean togo = false;
