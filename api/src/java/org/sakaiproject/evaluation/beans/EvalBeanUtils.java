@@ -312,8 +312,9 @@ public class EvalBeanUtils {
      * handles setting date fields based on the useDueDate, etc. fields in the evaluation as well <br/>
      * 
      * @param eval an {@link EvalEvaluation} object (can be persisted or new)
+     * @param ignoreMinTimeDiff if true, the minimum time difference is ignored, if false, it is enforced
      */
-    public void fixupEvaluationDates(EvalEvaluation eval) {
+    public void fixupEvaluationDates(EvalEvaluation eval, boolean ignoreMinTimeDiff) {
         if (eval == null) {
             throw new IllegalArgumentException("eval must be set to fix dates");
         }
@@ -331,8 +332,6 @@ public class EvalBeanUtils {
             useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
         }
         boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME));
-        // Getting the system setting that tells what should be the minimum time difference between start date and due date.
-        int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 
         Date now = new Date();
         if (eval.getStartDate() == null) {
@@ -390,6 +389,11 @@ public class EvalBeanUtils {
             }
         }
 
+        // Getting the system setting that tells what should be the minimum time difference between start date and due date.
+        int minHoursDifference = 0;
+        if (!ignoreMinTimeDiff) {
+            minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+        }
         // Ensure minimum time difference between start and due/stop dates in eval - check this after the dates are set
         if (eval.getDueDate() != null) {
             EvalUtils.updateDueStopDates(eval, minHoursDifference);
@@ -498,19 +502,15 @@ public class EvalBeanUtils {
      * invalid for use in a URL).
      * 
      * @param evalCategory the eval category entered by the user
-     * @return boolean indicating its validity
      */
     public void validateEvalCategory(String evalCategory) {
-    	
     	try {
-    		
-    		if ((evalCategory != null) && (evalCategory.length() != 0))
+    		if ((evalCategory != null) && (evalCategory.length() != 0)) {
     			commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evalCategory);
-    		
+    		}
     	} catch (IllegalArgumentException ex) {
     		throw new InvalidEvalCategoryException(ex);
     	}
-    	
     }
     
 }

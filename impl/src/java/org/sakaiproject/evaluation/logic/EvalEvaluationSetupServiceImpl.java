@@ -265,6 +265,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         EvalBeanUtils.validateEvalDates(evaluation);
 
         boolean isNew = false;
+        boolean isClosed = false;
         if (evaluation.getId() == null) {
             isNew = true;
             // assure that all the defaults are set correctly for new evals
@@ -275,10 +276,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 //            if (evalCheck == null) {
 //                isNew = true;
 //            }
+            if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                // check if we are or have closed the evaluation (or some state after that)
+                isClosed = true;
+            }
         }
 
         // assure valid date handling but only after the dates are checked during saving
-        evalBeanUtils.fixupEvaluationDates(evaluation);
+        evalBeanUtils.fixupEvaluationDates(evaluation, isClosed);
 
         // now perform checks depending on whether this is new or existing
         Calendar calendar = GregorianCalendar.getInstance();
