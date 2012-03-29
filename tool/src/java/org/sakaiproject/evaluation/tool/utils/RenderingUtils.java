@@ -141,23 +141,32 @@ public class RenderingUtils {
      * 
      * @param templateItem any template item (should be fully populated)
      * @param scaleOptions the array of scale options for this templateItem
-     * @return the array of scale labels (or null if this is not a scaled item)
+     * @return the array of scale labels (or null if this is not scaled/MC/MA/block child)
      */
     public static String[] makeReportingScaleLabels(EvalTemplateItem templateItem, String[] scaleOptions) {
         if (templateItem == null) {
             throw new IllegalArgumentException("templateItem must be set");
         }
         String scaleLabels[] = null;
-        String itemTypeConstant = TemplateItemUtils.getTemplateItemType(templateItem);
-        if (EvalConstants.ITEM_TYPE_SCALED.equals(itemTypeConstant)) {
+        String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
+        if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType)
+                || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)
+        ) {
+            // default to scale options for MC and MA
+            scaleLabels = scaleOptions;
+        } else if (EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
+                || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType) // since BLOCK_CHILD is always a scaled item
+        ) {
+            // only do something here if this item type can handle a scale
             if (scaleOptions == null || scaleOptions.length == 0) {
+                // if scale options are missing then try to get them from the item
                 scaleOptions = templateItem.getItem().getScale().getOptions();
             }
-            scaleLabels = scaleOptions.clone(); // default to just using the options array (should this copy?)
+            scaleLabels = scaleOptions.clone(); // default to just using the options array (use a copy)
             if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
                     || templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
             ) {
-                /* special labels for the matrix items
+                /* MATRIX - special labels for the matrix items
                  * Show numbers in front (e.g. "blah" becomes "1 - blah")
                  * and only show text if the label was display in take evals (e.g. "1 - blah, 2, 3, 4 - blah, ...)
                  */
