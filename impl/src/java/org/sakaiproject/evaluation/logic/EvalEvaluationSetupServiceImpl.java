@@ -433,7 +433,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         
         // save the eval
         dao.save(evaluation);
-        log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
+        log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), state="+evaluation.getState()+", title: " + evaluation.getTitle());
 
         // initialize the scheduling for the eval jobs (only if state is not partial)
         if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
