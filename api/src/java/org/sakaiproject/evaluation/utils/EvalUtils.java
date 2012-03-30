@@ -300,7 +300,7 @@ public class EvalUtils {
 
     /**
      * Set the time portion to the end of the day instead (23:59), this is to avoid confusion for users
-     * when setting the evaluationSetupService to end on a certain date and having them end in the first minute of the day instead of
+     * when setting the evaluation to end on a certain date and having them end in the first minute of the day instead of
      * at the end of the day
      * Note: This may lead to a nasty bug if anyone ever attempts to explicitly set the time for the stop and due dates
      * 
@@ -313,7 +313,9 @@ public class EvalUtils {
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
-        log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+        if (!cal.getTime().equals(d)) {
+            log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+        }
         return cal.getTime();
     }
 

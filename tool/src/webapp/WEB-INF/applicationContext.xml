@@ -36,7 +36,8 @@
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, emailSettingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
-              emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, assignGroupSelectionSettings, evalAdminBean, hierarchyBean" />
+              emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, 
+              assignGroupSelectionSettings, evalAdminBean, hierarchyBean" />
     </bean>
 
     <!-- allows us to identify entities used in OTP on the EL path,

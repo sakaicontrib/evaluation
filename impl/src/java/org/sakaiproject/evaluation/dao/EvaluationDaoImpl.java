@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -112,6 +113,30 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         } else {
             // establish a transaction and then force the rollback
             getSession().beginTransaction().rollback();
+        }
+    }
+
+    /**
+     * This really does not work for most cases so be very careful with it
+     * @param object
+     */
+    protected void forceEvict(Serializable object) {
+        boolean active = false;
+        try {
+            Session session = getSession();
+            if (session.isOpen() && session.isConnected()) {
+                if (session.contains(object)) {
+                    active = true;
+                    session.evict(object);
+                }
+            } else {
+                log.warn("Session is not open OR not connected, cannot evict objects");
+            }
+            if (!active) {
+                log.info("Unable to evict object ("+object.getClass().getName()+") from session, it is not persistent: "+object);
+            }
+        } catch (Exception e) {
+            log.warn("Failure while attempting to evict object ("+object.getClass().getName()+") from session", e);
         }
     }
 
@@ -1577,8 +1602,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                     lockTemplate(template, Boolean.TRUE);
                 }
 
+                // This is a horrible hack to try to work around hibernate stupidity
                 evaluation.setLocked(Boolean.TRUE);
-                getHibernateTemplate().update(evaluation);
+                getSession().merge(evaluation);
+                getSession().evict(evaluation);
                 return true;
             }
         } else {
@@ -1588,8 +1615,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 return false;
             } else {
                 // unlock evaluation
+                // This is a horrible hack to try to work around hibernate stupidity
                 evaluation.setLocked(Boolean.FALSE);
-                getHibernateTemplate().update(evaluation);
+                getSession().merge(evaluation);
+                getSession().evict(evaluation);
 
                 // unlock associated templates if there are any
                 if (evaluation.getTemplate() != null) {

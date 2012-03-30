@@ -252,6 +252,13 @@ public class EvalEvaluation implements java.io.Serializable {
      * This is ignored if it is null<br/>
      */
     public Boolean useViewDate;
+    /**
+     * Non-persistent field:<br/>
+     * If this is set to false then the evaluation only uses the DATE portion of Date objects,
+     * if true then the DATE and TIME portions are used<br/>
+     * <b>NOTE:</b> This is ignored if it is null<br/>
+     */
+    public Boolean useDateTimes;
 
     /**
      * Optional field never used by EVALSYS code. May be used to mark records for bulk actions. 
@@ -280,6 +287,58 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /** default constructor */
     public EvalEvaluation() {
+    }
+
+    /** COPY constructor - this MUST be updated if fields are added to this object **/
+    public EvalEvaluation(EvalEvaluation eval) {
+        // construct evaluation from another one
+        this.id = eval.id;
+        this.eid = eval.eid;
+        this.lastModified = copy(eval.lastModified);
+        this.type = eval.type;
+        this.owner = eval.owner;
+        this.title = eval.title;
+        this.instructions = eval.instructions;
+        this.startDate = copy(eval.startDate);
+        this.dueDate = copy(eval.dueDate);
+        this.stopDate = copy(eval.stopDate);
+        this.viewDate = copy(eval.viewDate);
+        this.studentViewResults = eval.studentViewResults;
+        this.instructorViewResults = eval.instructorViewResults;
+        this.instructorViewAllResults = eval.instructorViewAllResults;
+        this.selectionSettings = eval.selectionSettings;
+        this.studentsDate = copy(eval.studentsDate);
+        this.instructorsDate = copy(eval.instructorsDate);
+        this.state = eval.state;
+        this.instructorOpt = eval.instructorOpt;
+        this.reminderDays = eval.reminderDays;
+        this.reminderFromEmail = eval.reminderFromEmail;
+        this.reminderStatus = eval.reminderStatus;
+        this.termId = eval.termId;
+        this.availableEmailTemplate = eval.availableEmailTemplate;
+        this.reminderEmailTemplate = eval.reminderEmailTemplate;
+        this.template = eval.template;
+        this.responses = eval.responses;
+        this.resultsSharing = eval.resultsSharing;
+        this.blankResponsesAllowed = eval.blankResponsesAllowed;
+        this.modifyResponsesAllowed = eval.modifyResponsesAllowed;
+        this.allRolesParticipate = eval.allRolesParticipate;
+        this.unregisteredAllowed = eval.unregisteredAllowed;
+        this.availableEmailSent = eval.availableEmailSent;
+        this.locked = eval.locked;
+        this.authControl = eval.authControl;
+        this.evalCategory = eval.evalCategory;
+        this.sendAvailableNotifications = eval.sendAvailableNotifications;
+        this.autoUseTag = eval.autoUseTag;
+        this.autoUseInsertion = eval.autoUseInsertion;
+        // NON_PERSISTENT
+        this.customStartDate = eval.customStartDate;
+        this.useDueDate = eval.useDueDate;
+        this.useStopDate = eval.useStopDate;
+        this.useViewDate = eval.useViewDate;
+        this.localSelector = eval.localSelector;
+        this.evalAssignGroups = eval.evalAssignGroups;
+        this.evalGroups = eval.evalGroups;
     }
 
     /**
@@ -399,6 +458,21 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
         this.sendAvailableNotifications = emailOpenNotification;
+    }
+
+    /**
+     * @return a copy of this object
+     */
+    public EvalEvaluation copy() {
+        return new EvalEvaluation(this);
+    }
+
+    private Date copy(Date d) {
+        Date copy = null;
+        if (d != null) {
+            copy = new Date(d.getTime());
+        }
+        return copy;
     }
 
     @Override
@@ -581,14 +655,6 @@ public class EvalEvaluation implements java.io.Serializable {
         this.blankResponsesAllowed = blankResponsesAllowed;
     }
 
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public String getEvalCategory() {
         return evalCategory;
     }
@@ -726,14 +792,6 @@ public class EvalEvaluation implements java.io.Serializable {
         this.responses = responses;
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
     public String getState() {
         return state;
     }
@@ -742,12 +800,52 @@ public class EvalEvaluation implements java.io.Serializable {
         this.state = state;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void forceDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        if (dueDate != null && !EvalUtils.safeBool(this.useDateTimes, true)) {
+            // force the date to the end of the day when times use is disabled
+            dueDate = EvalUtils.getEndOfDayDate(dueDate);
+        }
+        this.dueDate = dueDate;
+    }
+
     public Date getStopDate() {
         return stopDate;
     }
 
-    public void setStopDate(Date stopDate) {
+    public void forceStopDate(Date stopDate) {
         this.stopDate = stopDate;
+    }
+
+    public void setStopDate(Date stopDate) {
+        if (stopDate != null && !EvalUtils.safeBool(this.useDateTimes, true)) {
+            // force the date to the end of the day when times use is disabled
+            stopDate = EvalUtils.getEndOfDayDate(stopDate);
+        }
+        this.stopDate = stopDate;
+    }
+
+    public Date getViewDate() {
+        return viewDate;
+    }
+
+    public void setViewDate(Date viewDate) {
+        this.viewDate = viewDate;
     }
 
     public Date getStudentsDate() {
@@ -788,14 +886,6 @@ public class EvalEvaluation implements java.io.Serializable {
 
     public void setUnregisteredAllowed(Boolean unregisteredAllowed) {
         this.unregisteredAllowed = unregisteredAllowed;
-    }
-
-    public Date getViewDate() {
-        return viewDate;
-    }
-
-    public void setViewDate(Date viewDate) {
-        this.viewDate = viewDate;
     }
 
     public String getType() {
