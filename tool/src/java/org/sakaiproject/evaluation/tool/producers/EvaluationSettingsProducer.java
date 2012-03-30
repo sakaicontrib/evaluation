@@ -58,9 +58,6 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
-import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
@@ -320,9 +317,8 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         String resultsSharingId = resultsSharingRadios.getFullID();
         for (int i = 0; i < EvalToolConstants.EVAL_RESULTS_SHARING_VALUES.length; ++i) {
             UIBranchContainer radiobranch = UIBranchContainer.make(form, "resultsSharingChoice:", i + "");
-            UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", resultsSharingId, i);
-            UISelectLabel.make(radiobranch, "radioLabel", resultsSharingId, i)
-            .decorate( new UILabelTargetDecorator(choice) );
+            UISelectChoice.make(radiobranch, "radioValue", resultsSharingId, i);
+            UISelectLabel.make(radiobranch, "radioLabel", resultsSharingId, i);
         }
 
         //EVALSYS-1117 
@@ -619,8 +615,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             String binding, Boolean systemSetting, UIForm form, boolean disabled) {
         if (systemSetting == null) {
             UIBoundBoolean checkbox = UIBoundBoolean.make(parent, rsfId, binding);
-            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label")
-            .decorate( new UILabelTargetDecorator(checkbox) );
+            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label");
             if (disabled) {
                 RSFUtils.disableComponent(checkbox); // disable the control
             }

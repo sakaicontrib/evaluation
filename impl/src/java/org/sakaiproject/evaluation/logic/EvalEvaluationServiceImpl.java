@@ -1093,6 +1093,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     private void fixupEvaluation(EvalEvaluation evaluation) {
         if (evaluation != null) {
             // add in any needed checks or change storage that is needed here
+            evaluation.useDateTimes = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
         }
     }
 

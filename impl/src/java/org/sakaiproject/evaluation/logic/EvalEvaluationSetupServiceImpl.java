@@ -613,7 +613,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             cal.setTime( new Date() );
             cal.add(Calendar.SECOND, -1);
             Date now = cal.getTime();
-            evaluation.setDueDate(now);
+            evaluation.forceDueDate(now);
 
             // fix stop and view dates if needed
             evaluation.setStopDate(null);

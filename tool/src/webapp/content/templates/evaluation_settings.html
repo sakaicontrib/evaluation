@@ -206,7 +206,7 @@
 				</div>
 				<div rsf:id="showAllRolesCanParticipate:" class="checkbox">
 					<input rsf:id="allRolesParticipate" type="checkbox" name="allRolesParticipate" id="allRolesParticipate" />
-					<label rsf:id="allRolesParticipate_label" for="evaluatorsParticipate">All Roles Can Participate:</label>
+					<label rsf:id="allRolesParticipate_label" for="allRolesParticipate">All Roles Can Participate:</label>
 					<p rsf:id="msg=evalsettings.all.roles.participate.note"  class="instruction textPanelFooter indnt2">This setting allows all roles to take the survey</p>
 				</div>
 			</fieldset>
@@ -228,7 +228,7 @@
 					This setting allows you to give the instructor control over whether to use the evaluation (or simply require them to).
 				</p>
 				<p class="shorttext">
-					<label  rsf:id="instructor-opt-header" for="instructorOpt-selection">Instructor opt in setting:</label>
+					<label rsf:id="instructor-opt-header" for="instructorOpt-selection">Instructor opt in setting:</label>
 					<select name="instructor_opt" rsf:id="instructorOpt"  id="instructorOpt">
 						<option>Opt In</option>
 						<option>Opt Out</option>
@@ -250,8 +250,8 @@
                 <h4 rsf:id="msg=evalsettings.selection.header.instructor">Instructor questions:</h4>
                 <span rsf:id="selectionRadioInstructors" />
                 <div rsf:id="selectInstructorsChoice:">
-                  <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
-                  <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
+                  <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio1" value="radio" checked="checked" />
+                  <label rsf:id="radioLabel" for="radio1" >Respondents evaluate all instructors included in the evaluation</label>
                 </div>
                 <div rsf:id="selectInstructorsChoice:">
                    <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
@@ -311,7 +311,7 @@
                     <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
 				</p>
 				<p class="checkbox indnt1"> 	 
-                    <input type="checkbox" rsf:id="enable-mass-email" /> 	 
+                    <input type="checkbox" rsf:id="enable-mass-email" id="enable-mass-email" /> 	 
                     <label rsf:id="enable-mass-email-label" for="enable-mass-email">Send notification email the morning of the day the evaluation goes live.</label> 	 
                 </p>
                 <div id="evaluation_reminder_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
