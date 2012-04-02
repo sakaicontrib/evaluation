@@ -254,6 +254,7 @@
       }
     }
   }
+  
 
 /////////////////////////
 // N/A Option
@@ -289,3 +290,21 @@
   }
 
 } //end namespace
+
+/////////////////////////
+// Firefox-only hack for EVALSYS-1235...
+/////////////////////////
+
+@-moz-document url-prefix() {
+  .evaluation .item-group .response-group-labels {
+    padding-right: 10px;
+  }
+  .evaluation .item-group .response-group-labels span {
+    padding-left: 33px;
+    width: 0;
+  }
+  .evaluation .item-group .response-group-labels .response-scale-na {
+    padding-left: 0 !important;
+    margin-right: 26px;
+  }
+}

@@ -1813,6 +1813,22 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   margin: 0 0 15px 55px;
 }
 
+@-moz-document url-prefix() {
+  .evaluation .item-group .response-group-labels {
+    padding-right: 10px;
+  }
+
+  .evaluation .item-group .response-group-labels span {
+    padding-left: 33px;
+    width: 0;
+  }
+
+  .evaluation .item-group .response-group-labels .response-scale-na {
+    padding-left: 0 !important;
+    margin-right: 26px;
+  }
+}
+
 .portletBody .summaryBox h4 {
   font-size: 1.5em;
   margin: 0.3em 0;
