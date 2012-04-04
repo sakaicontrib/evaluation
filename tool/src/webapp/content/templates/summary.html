@@ -32,9 +32,43 @@
          <p rsf:id="msg=summary.page.instruction" class="instruction">Quick links to evaluation items</p>
          <p rsf:id="instructor-instructions" class="instruction"></p>
          
-                    <!-- this is a duplicate of below.  Only one of these two boxes should be shown -->        
-                    <div rsf:id="evalAdminBoxTop:"  class="summaryBox" />
-                    
+	      			<div rsf:id="evaluationsBox:" class="summaryBox">
+	      				<h4 rsf:id="msg=summary.evaluations.title" style="margin-left:.5em">Current evaluations I need to take</h4>
+	
+	                    <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
+	
+	      				<div rsf:id="evaluationsList:" class="innerPanel">
+	      				<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
+							<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
+							    <thead>
+    								<tr>
+	   								    <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space:normal;">Evaluation</th>
+		  							    <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
+			 						    <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+									    <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+								    </tr>
+								</thead>
+								<tbody>
+								    <tr rsf:id="evaluationsCourseList:">
+									   <td style="width:20em">
+										  <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
+	                                      <span rsf:id="evaluationCourseLink_disabled" />
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationCourseStatus">Completed</span>
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationStartDate">09/20/2005</span>
+									   </td>
+									   <td>
+										  <span rsf:id="evaluationDueDate">09/27/2005</span>
+									   </td>	
+								    </tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
                     <div rsf:id="evalResponsesBox:"  class="summaryBox">
                         <h4 rsf:id="msg=summary.responses.title" style="margin-left:.5em">Evaluations in which I may be evaluated</h4>
                         <div class="innerPanel">
@@ -72,45 +106,7 @@
                         </div>  
                     </div>
                     
-                    <!-- this is a duplicate of above.  Only one of these two boxes should be shown -->
-                    <div rsf:id="evalAdminBoxBottom:"  class="summaryBox" />
-                    
-	      			<div rsf:id="evaluationsBox:" class="summaryBox">
-	      				<h4 rsf:id="msg=summary.evaluations.title" style="margin-left:.5em">Current evaluations I need to take</h4>
-	
-	                    <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
-	
-	      				<div rsf:id="evaluationsList:" class="innerPanel">
-	      				<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
-							<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
-							    <thead>
-    								<tr>
-	   								    <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space:normal;">Evaluation</th>
-		  							    <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
-			 						    <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-									    <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-								    </tr>
-								</thead>
-								<tbody>
-								    <tr rsf:id="evaluationsCourseList:">
-									   <td style="width:20em">
-										  <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
-	                                      <span rsf:id="evaluationCourseLink_disabled" />
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationCourseStatus">Completed</span>
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationStartDate">09/20/2005</span>
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationDueDate">09/27/2005</span>
-									   </td>	
-								    </tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
+                    <div rsf:id="evalAdminBox:"  class="summaryBox" />
 	      			
 	      			<div rsf:id="siteListingBox:" class="summaryBox">
 	      				<h4 rsf:id="sitelisting-title" style="margin-left:.5em">Site/Group Listing</h4>

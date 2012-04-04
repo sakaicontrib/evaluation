@@ -142,15 +142,9 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
         }
 
         // show evaluations that user is administering
-        String boxId = ":";
-        if (userAdmin) {
-        	boxId = "evalAdminBoxTop:";
-        } else {
-        	boxId = "evalAdminBoxBottom:";
-        }
 	    Boolean showAdministratingBox = (Boolean) settings.get(EvalSettings.ENABLE_ADMINISTRATING_BOX);
 	    if(showAdministratingBox != null && showAdministratingBox == true) {
-		    adminBoxRenderer.renderItem(tofill, boxId);
+		    adminBoxRenderer.renderItem(tofill, "evalAdminBox");
 	    } //showAdministratingBox true
 
         /*
