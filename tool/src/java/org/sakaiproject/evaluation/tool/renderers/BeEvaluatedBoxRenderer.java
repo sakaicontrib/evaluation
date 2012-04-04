@@ -154,11 +154,18 @@ public class BeEvaluatedBoxRenderer {
     					
     					int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
     					int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[]{group.evalGroupId});
-    	                String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+                        int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+                        String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
     	                if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                            UIInternalLink.make(evalrow, "evalResponsesDisplayLink", 
-                                    UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
-                                    new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] {group.evalGroupId}));
+                            if (responsesNeeded == 0) {
+                                UIInternalLink.make(evalrow, "evalResponsesDisplayLink", 
+                                        UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
+                                        new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] {group.evalGroupId}));                                
+                            } else {
+                                UIOutput responseOutput = UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
+                                responseOutput.decorate(
+                                        new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded })));                                
+                            }
     	                } else {
     	                	UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
     	                }

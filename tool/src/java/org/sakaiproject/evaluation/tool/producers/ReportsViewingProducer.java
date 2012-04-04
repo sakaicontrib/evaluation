@@ -14,17 +14,21 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -112,6 +116,16 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+    
+    private EvalDeliveryService deliveryService;
+    public void setDeliveryService(EvalDeliveryService deliveryService) {
+        this.deliveryService = deliveryService;
+    }
+    
+    private EvalBeanUtils evalBeanUtils;
+    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+        this.evalBeanUtils = evalBeanUtils;
+    }
 
     int totalCommentsCount = 0;
     int totalTextResponsesCount = 0;
@@ -179,6 +193,15 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
             EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
+            // prevent viewing the report if the report requires a minimum number of submissions that hasn't been met yet
+            int responsesCount = deliveryService.countResponses(evaluation.getId(), reportViewParams.groupIds[0], true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), new String[]{reportViewParams.groupIds[0]});                       
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+            
+            if (responsesNeeded > 0) {
+                throw new SecurityException("At least " + responsesNeeded + " more responses must be submitted to view this report");
+            }
+            
             // do a permission check
             if (! reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
                 throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
