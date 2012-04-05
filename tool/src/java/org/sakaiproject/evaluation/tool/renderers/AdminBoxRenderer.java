@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
@@ -40,10 +42,8 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
@@ -64,7 +64,8 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  */
 //public class AdminBoxRenderer implements ItemRenderer {
 public class AdminBoxRenderer {
-	
+    private static Log log = LogFactory.getLog(AdminBoxRenderer.class);
+
     private DateFormat df;
     
     private Locale locale;
@@ -122,7 +123,8 @@ public class AdminBoxRenderer {
         if (instViewResults == null) {
             instViewResults = true;
         } // if configurable then we will assume some are probably shared
-        
+        if (log.isDebugEnabled()) log.debug("currentUserId="+currentUserId+", userAdmin="+userAdmin+", beginEvaluation="+beginEvaluation+", instViewResults="+instViewResults);
+
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
 
         // If the person is an admin, then just point new evals to existing

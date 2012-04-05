@@ -409,7 +409,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     public int countEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission);
 
         int count = externalLogic.countEvalGroupsForUser(userId, permission);
 
@@ -428,12 +428,13 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             }
         }
 
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission + ", count: " + count);
         return count;
     }
 
     @SuppressWarnings("rawtypes")
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission);
 
         List<EvalGroup> l = new ArrayList<EvalGroup>();
 
