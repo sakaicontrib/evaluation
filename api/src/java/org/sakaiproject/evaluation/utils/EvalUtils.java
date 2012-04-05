@@ -685,6 +685,42 @@ public class EvalUtils {
     }
 
     /**
+     * Converts a collection of evals into a set of ids,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param evaluations a collection of evals
+     * @return the list of eval ids
+     */
+    public static List<Long> getEvalIdsFromEvaluations(Collection<EvalEvaluation> evaluations) {
+        List<Long> l = new ArrayList<Long>();
+        if (evaluations != null) {
+            for (EvalEvaluation eval : evaluations) {
+                if (eval.getId() != null) {
+                    l.add(eval.getId());
+                }
+            }
+        }
+        return l;
+    }
+
+    /**
+     * Converts a collection of evalGroups into a set of ids,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param groups a collection of evalGroupss
+     * @return the list of evalGroup Ids
+     */
+    public static List<String> getGroupIdsFromGroups(Collection<EvalGroup> groups) {
+        List<String> l = new ArrayList<String>();
+        if (groups != null) {
+            for (EvalGroup evalGroup : groups) {
+                l.add(evalGroup.evalGroupId);
+            }
+        }
+        return l;
+    }
+
+    /**
      * Creates eval groups from groupIds
      * 
      * @param evalGroupIds a collection of evalGroupId (unique ids for eval groups)
