@@ -133,15 +133,18 @@ public class AdminBoxRenderer {
         List<EvalEvaluation> newEvals = evals;
         if (instViewResults && !userAdmin) {
             newEvals = new ArrayList<EvalEvaluation>();
+            if (log.isDebugEnabled()) log.debug("instViewResults special case: "+evals.size()+" evals, "+EvalUtils.getEvalIdsFromEvaluations(evals));
             for (EvalEvaluation evaluation : evals) {
                 // Add the owned evals
                 if (currentUserId.equals(evaluation.getOwner())) {
+                    if (log.isDebugEnabled()) log.debug("instViewResults special case: OWNER, id="+evaluation.getId());
                     newEvals.add(evaluation);
                 } else {
-                    // From the not-owned evals show those that are available
-                    // for viewing results
+                    // From the not-owned evals show those that are available for viewing results
                     String forcedViewableState = commonLogic.calculateViewability(evaluation.getState());
-					if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    boolean viewable = EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
+                    if (log.isDebugEnabled()) log.debug("instViewResults special case: viewable="+viewable+", id="+evaluation.getId());
+					if (viewable) {
                         newEvals.add(evaluation);
                     }
                 }
@@ -180,6 +183,7 @@ public class AdminBoxRenderer {
 
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
                 evalState = commonLogic.calculateViewability(evalState);
+                if (log.isDebugEnabled()) log.debug("eval="+eval.getId()+", state="+evalState+", title="+eval.getTitle());
 
                 // 1) if a evaluation is queued, title link go to EditSettings
                 // page with populated data 
@@ -188,16 +192,19 @@ public class AdminBoxRenderer {
                 // 3) if a evaluation is closed, title link go to previewEval 
                 // page with populated data
 				List<EvalGroup> groups = evalGroups.get(eval.getId());
+                if (log.isDebugEnabled()) log.debug("eval ("+eval.getId()+") groups ("+groups.size()+"): "+EvalUtils.getGroupIdsFromGroups(groups));
 				for(EvalGroup group : groups) {
 	                UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 	                UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
 	                humanDateRenderer.renderDate(evalrow, "evalAdminDueDate", eval.getDueDate());
 
 					String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle(), 50);
+                    if (log.isDebugEnabled()) log.debug("group="+group.evalGroupId+", title="+title);
                     String[] groupIds = {group.evalGroupId};
-                    int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
+                    int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), groupIds);
                     String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+                    if (log.isDebugEnabled()) log.debug("group responses="+responsesCount+", enrollments="+enrollmentsCount+", str="+responseString);
                     if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
                         UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
                                 PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
