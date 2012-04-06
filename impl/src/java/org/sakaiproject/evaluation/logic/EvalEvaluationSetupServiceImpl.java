@@ -1073,22 +1073,26 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (assignUserToRemove.isEmpty() && assignUserToSave.isEmpty()) {
             message += ": no changes to the user assignments ("+assignedUsers.size()+")";
         } else {
+            if (removeAllowed 
+                    && ! assignUserToRemove.isEmpty()) {
+                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
+                if (log.isDebugEnabled()) log.debug("Deleting user eval assignment Ids: "+assignUserToRemove);
+                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
+                message += ": removed the following assignments: " + assignUserToRemove;
+                changedUserAssignments.addAll( assignUserToRemove );
+            }
             if (! assignUserToSave.isEmpty()) {
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
                     setAssignUserDefaults(evalAssignUser, evaluation, currentUserId);
                 }
+                // this is meant to force the assigned users set to be re-calculated
+                assignUserToSave = new HashSet<EvalAssignUser>(assignUserToSave);
+                if (log.isDebugEnabled()) log.debug("Saving user eval assignments: "+assignUserToSave);
                 dao.saveSet(assignUserToSave);
                 message += ": created the following assignments: " + assignUserToSave;
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
                     changedUserAssignments.add( evalAssignUser.getId() );
                 }
-            }
-            if (removeAllowed 
-                    && ! assignUserToRemove.isEmpty()) {
-                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
-                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
-                message += ": removed the following assignments: " + assignUserToRemove;
-                changedUserAssignments.addAll( assignUserToRemove );
             }
         }
 
