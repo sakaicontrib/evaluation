@@ -134,6 +134,17 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
 		
 		AdministrateProducer.makeBoolean(oneemail, "consolidated-send-available", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 
+        // EVALSYS-1236
+        // overrides logic to send an evaluation available e-mail.  Logic contained in EvalJobLogicImpl.jobAction() 
+        // would not send an available email for consolidated e-mails.  This setting says send one anyway
+        AdministrateProducer.makeBoolean(oneemail, "force-send-available-notification-immediately", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION);
+		
+        // EVALSYS-1236
+        // overrides logic to send a created e-mail to instructors even if the instructor cannot modify the evaluation.
+        // Logic says that the instructor must be able to add a question or InstructorOpt must not be required
+        // This setting says it will send a created e-mail regardless
+        AdministrateProducer.makeBoolean(oneemail, "force-send-created-email", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL);
+        
         AdministrateProducer.makeSelect(emailForm, "reminders-frequency-selection",
                 EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
                 EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS,

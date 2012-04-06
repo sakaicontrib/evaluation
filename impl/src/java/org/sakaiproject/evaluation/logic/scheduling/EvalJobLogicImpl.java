@@ -148,6 +148,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 		Boolean useConsolidatedNotifications = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
 
+        // EVALSYS-1236
+        // send out the evaluation available e-mail, even if useConsolidatedNotification is true
+        boolean forceSendAvailableNotification = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION);
         // dispatch to send email and/or schedule jobs based on jobType but if 
 		// consolidated emails are enabled, no scheduled emails are not enabled
 		if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
@@ -157,7 +160,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
             // Consider flag wrt sending a mass email notifying users of opening. Send mail if flag is not set.
             boolean sendMail = ( eval.getSendAvailableNotifications() == null ? true : eval.getSendAvailableNotifications() ) 
-            				&& ! useConsolidatedNotifications;
+            				&& (! useConsolidatedNotifications || forceSendAvailableNotification);
             if (sendMail){
                 sendAvailableEmail(evaluationId);
             }
@@ -268,11 +271,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             throw new IllegalStateException("Cannot process new evaluation that is in partial state, state must be after partial");
         }
 
+        // EVALSYS-1236
+        // send the instructors a created e-mail, even if they are not allowed to edit it, because instAddItemNum is 0
+        // and instructorOpt is "Required" (which it is hard-coded at this point to be "Required")
+        boolean forceSendCreatedNotification = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL);
         // send created email if instructor can add questions or opt-in or opt-out
         Integer instAddItemsNum = (Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
         if (instAddItemsNum == null) instAddItemsNum = 0;
         if ( instAddItemsNum > 0 || 
-                !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
+                !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) ||
+                forceSendCreatedNotification) {
             // http://bugs.sakaiproject.org/jira/browse/EVALSYS-507
             int timeToWaitSecs = 300;
             Integer ttws = (Integer) settings.get(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);

@@ -420,6 +420,21 @@ public interface EvalSettings {
 	 */
 	public static final String CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE = "CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE:java.lang.Boolean";
 
+	/**
+	 * EVALSYS-1236
+	 * If this is true, send a created e-mail, even if the instructor cannot 
+	 * modify the evaluation.  Only applies if the email settings are set to 
+	 * Consolidated emails
+	 */
+	public static final String CONSOLIDATED_FORCE_SEND_CREATED_EMAIL = "CONSOLIDATED_FORCE_SEND_CREATED_EMAIL:java.lang.Boolean";
+	
+	/**
+	 * EVALSYS-1236
+	 * If this is true, send an evaluation available e-mail.  Only applies if 
+	 * the email settings are set to Consolidated emails.
+	 */
+	public static final String CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION = "CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION:java.lang.Boolean";
+	
     /**
      * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.
      */
@@ -462,6 +477,8 @@ public interface EvalSettings {
         ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
         ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION,
         CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE,
+        CONSOLIDATED_FORCE_SEND_CREATED_EMAIL,
+        CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION,
         DISABLE_ITEM_BANK,
         DISABLE_QUESTION_BLOCKS,
         DISPLAY_HIERARCHY_HEADERS,
