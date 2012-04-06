@@ -197,15 +197,12 @@ public class BeEvaluatedBoxRenderer {
         // use a date which is related to the current users locale
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
-            // If we are in the queue we are yet to start,
-            // so say when we will
+            // If we are in the queue we are yet to start, so say when we will
             UIMessage.make(evalrow, evalDateLabel, "summary.label.starts");
             UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
 
-            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
         } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
-            // Active evaluations can either be open forever or close at
-            // some point:
+            // Active evaluations can either be open forever or close at some point:
             if (eval.getDueDate() != null) {
                 UIMessage.make(evalrow, evalDateLabel, "summary.label.due");
                 UIOutput.make(evalrow, evalDateItem, df.format(eval.getDueDate()));
@@ -214,25 +211,29 @@ public class BeEvaluatedBoxRenderer {
                 UIMessage.make(evalrow, evalDateLabel, "summary.label.nevercloses");
             }
 
-            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
         } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
             // Evaluations can have a grace period, if so that must close at some point;
             // Grace periods never remain open forever
             UIMessage.make(evalrow, evalDateLabel, "summary.label.gracetill");
             UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeStopDate()));
 
-            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
         } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
-            // if an evaluation is closed then it is not yet viewable and ViewDate must have been set
+            // if an evaluation is closed then ViewDate must have been set
             UIMessage.make(evalrow, evalDateLabel, "summary.label.resultsviewableon");
             UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeViewDate()));
 
-            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
         } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
             // if an evaluation is viewable we have to check the instructor view date
             UIMessage.make(evalrow, evalDateLabel, "summary.label.resultsviewablesince");
             UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeViewDate()));
 
+        } else {
+            UIMessage.make(evalrow, evalDateLabel, "summary.label.fallback");
+            UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
+        }
+        // SPECIAL handling for viewing results
+        if (instViewResultsEval) {
+            // results can be viewed
             if (responsesNeeded == 0) {
                 UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), new ReportParameters(
                         ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
@@ -241,8 +242,8 @@ public class BeEvaluatedBoxRenderer {
                         new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded })));
             }
         } else {
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.fallback");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
+            // fallback when results cannot be viewed
+            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
         }
     }
 }
