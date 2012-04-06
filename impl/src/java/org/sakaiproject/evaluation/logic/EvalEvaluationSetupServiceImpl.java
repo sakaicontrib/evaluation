@@ -734,6 +734,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("userId must be set");
         }
 
+        // TODO Shouldn't this actually get the list of groups based on the set of assigned eval groups?
         List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
         String[] evalGroupIds = new String[evalGroups.size()];
         int i = 0;
@@ -741,6 +742,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         	evalGroupIds[i++] = evalGroup.evalGroupId;
         }
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
+        // fix up the states to ensure they are good
+        for (EvalEvaluation evaluation : evals) {
+            evaluationService.returnAndFixEvalState(evaluation, true);
+        }
         // populate the assign groups and eval groups in the evals
         populateEvaluationsGroups(evals, evalGroups);
         return evals;

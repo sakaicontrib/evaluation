@@ -617,6 +617,30 @@ public class EvalUtils {
 
 
     /**
+     * Shuffle the evals which are closed (or later) to the end of the list and otherwise maintain the current order of evaluations
+     * @param evaluations collection of evals
+     * @return list of evals in original order except closed evals at the end
+     */
+    public static List<EvalEvaluation> sortClosedEvalsToEnd(Collection<EvalEvaluation> evaluations) {
+        List<EvalEvaluation> l;
+        if (evaluations == null || evaluations.isEmpty()) {
+            l = new ArrayList<EvalEvaluation>(0);
+        } else {
+            l = new ArrayList<EvalEvaluation>(evaluations.size());
+            ArrayList<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>(evaluations.size());
+            for (EvalEvaluation eval : evaluations) {
+                if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                    l.add(eval);
+                } else {
+                    closedEvals.add(eval);
+                }
+            }
+            l.addAll(closedEvals);
+        }
+        return l;
+    }
+
+    /**
      * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
      * merges the groups in common and then returns an array of the common groups,
      * comparison is on the evalGroupId

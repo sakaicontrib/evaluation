@@ -100,6 +100,51 @@ public class EvalBeanUtils {
     }
 
     /**
+     * Check if an instructor can view the results of a given evaluation
+     * (NOTE: this only checks is an evaluatee/instructor can view the results based on this evals settings,
+     * user permissions and response rates still need to be checked),
+     * probably should be using a method like this one: ReportingPermissions.canViewEvaluationResponses()
+     * 
+     * @param eval the evaluation
+     * @return true if responses can be viewed, false otherwise
+     */
+    public boolean checkInstructorViewResultsForEval(EvalEvaluation eval) {
+        // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
+        boolean instViewResultsEval = false;
+        if (eval != null) {
+            if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval)) {
+                // skip this one
+            } else if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
+                // this eval is active or later and nothing before active is viewable
+                boolean evalViewable = false;
+                // check if this eval is forced to a viewable state
+                String forcedViewableState = commonLogic.calculateViewability(eval.getState());
+                if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    // forced viewable
+                    evalViewable = true;
+                } else {
+                    // not forced so check if it is actually viewable
+                    if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                        // check for viewable state evals
+                        evalViewable = true;
+                    }
+                }
+                if (evalViewable) {
+                    // finally check if the instructor can actually view it
+                    Boolean instViewResultsSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+                    // probably should be using a method like this one: ReportingPermissions.canViewEvaluationResponses()
+                    if (instViewResultsSetting == null) {
+                        instViewResultsEval = eval.getInstructorViewResults();
+                    } else {
+                        instViewResultsEval = instViewResultsSetting.booleanValue();
+                    }
+                }
+            }
+        }
+        return instViewResultsEval;
+    }
+
+    /**
      * Sets all the system defaults for this evaluation object
      * and ensures all required fields are correctly set,
      * use this whenever you create a new evaluation <br/>

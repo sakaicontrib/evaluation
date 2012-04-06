@@ -38,7 +38,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
@@ -71,11 +70,6 @@ public class AdminBoxRenderer {
     private Locale locale;
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-
-    private EvalSettings settings;
-    public void setSettings(EvalSettings settings) {
-        this.settings = settings;
     }
 
     private EvalCommonLogic commonLogic;
