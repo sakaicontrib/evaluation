@@ -61,92 +61,82 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 /**
  * AdminBoxRender renders the list of Evaluations that the user administers. 
  * @author mgillian
+ * @author azeckoski
  */
-//public class AdminBoxRenderer implements ItemRenderer {
 public class AdminBoxRenderer {
     private static Log log = LogFactory.getLog(AdminBoxRenderer.class);
 
     private DateFormat df;
-    
+
     private Locale locale;
     public void setLocale(Locale locale) {
-       this.locale = locale;
-    }    
-    
+        this.locale = locale;
+    }
+
     private EvalSettings settings;
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
     }
-    
+
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
-    
+
     private EvalEvaluationSetupService evaluationSetupService;
     public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
         this.evaluationSetupService = evaluationSetupService;
     }
-    
+
     private EvalDeliveryService deliveryService;
     public void setDeliveryService(EvalDeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
-    
+
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
     }
-    
+
     private HumanDateRenderer humanDateRenderer;
     public void setHumanDateRenderer(HumanDateRenderer humanDateRenderer) {
         this.humanDateRenderer = humanDateRenderer;
     }
-    
+
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);        
     }
-    
-	public static final String COMPONENT_ID = "evalAdminBox:";
-	
-	public UIJointContainer renderItem(UIContainer parent, String ID) {
+
+    public static final String COMPONENT_ID = "evalAdminBox:";
+
+    public UIJointContainer renderItem(UIContainer parent, String ID) {
         UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
-		renderBox(container);
-		return container;
-	}
-	
-	private void renderBox(UIContainer tofill) {
+        renderBox(container);
+        return container;
+    }
+
+    private void renderBox(UIContainer tofill) {
         String currentUserId = commonLogic.getCurrentUserId();		
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-        Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-        if (instViewResults == null) {
-            instViewResults = true;
-        } // if configurable then we will assume some are probably shared
-        if (log.isDebugEnabled()) log.debug("currentUserId="+currentUserId+", userAdmin="+userAdmin+", beginEvaluation="+beginEvaluation+", instViewResults="+instViewResults);
+        if (log.isDebugEnabled()) log.debug("currentUserId="+currentUserId+", userAdmin="+userAdmin+", beginEvaluation="+beginEvaluation);
 
-        List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
+        List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, false, false);
 
-        // If the person is an admin, then just point new evals to existing
-        // object. If the person is not an admin then only show owned evals +
-        // not-owned evals that are available for viewing results.
+        /* If the person is an admin, then just point new evals to existing
+         * object. If the person is not an admin then only show owned evals
+         * 
+         * NOTE: no longer showing evals they do not own (removed the INSTRUCTOR_ALLOWED_VIEW_RESULTS handling)
+         */
         List<EvalEvaluation> newEvals = evals;
-        if (instViewResults && !userAdmin) {
+        if (!userAdmin) {
             newEvals = new ArrayList<EvalEvaluation>();
-            if (log.isDebugEnabled()) log.debug("instViewResults special case: "+evals.size()+" evals, "+EvalUtils.getEvalIdsFromEvaluations(evals));
+            if (log.isDebugEnabled()) log.debug("non-admin special case: "+evals.size()+" evals, "+EvalUtils.getEvalIdsFromEvaluations(evals));
             for (EvalEvaluation evaluation : evals) {
-                // Add the owned evals
+                // Add the owned evals ONLY
                 if (currentUserId.equals(evaluation.getOwner())) {
-                    if (log.isDebugEnabled()) log.debug("instViewResults special case: OWNER, id="+evaluation.getId());
+                    if (log.isDebugEnabled()) log.debug("non-admin special case: OWNER, id="+evaluation.getId());
                     newEvals.add(evaluation);
-                } else {
-                    // From the not-owned evals show those that are available for viewing results
-                    String forcedViewableState = commonLogic.calculateViewability(evaluation.getState());
-                    boolean viewable = EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
-                    if (log.isDebugEnabled()) log.debug("instViewResults special case: viewable="+viewable+", id="+evaluation.getId());
-					if (viewable) {
-                        newEvals.add(evaluation);
-                    }
                 }
             }
         }
@@ -158,7 +148,7 @@ public class AdminBoxRenderer {
                     return (eval1.getDueDate().compareTo(eval2.getDueDate()));
                 }                
             });
-            
+
             UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBoxContents:");
             // Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583
             // (need to send them to the eval control page eventually) -AZ
@@ -170,14 +160,15 @@ public class AdminBoxRenderer {
             }
             UIForm evalAdminForm = UIForm.make(evalAdminBC, "evalAdminForm");
 
-    		// get the eval groups
-    		Long[] evalIds = new Long[newEvals.size()];
-    		int i = 0;
-    		for(EvalEvaluation eval : newEvals) {
-    			evalIds[i++] = eval.getId();
-    		}
-    		Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
-    		
+            // get the eval groups
+            Long[] evalIds = new Long[newEvals.size()];
+            int i = 0;
+            for(EvalEvaluation eval : newEvals) {
+                evalIds[i++] = eval.getId();
+            }
+            // WARNING: this retrieves ALL groups for the evaluation so it is ONLY safe for eval admins
+            Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
+
             for (Iterator<EvalEvaluation> iter = newEvals.iterator(); iter.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) iter.next();
 
@@ -185,20 +176,17 @@ public class AdminBoxRenderer {
                 evalState = commonLogic.calculateViewability(evalState);
                 if (log.isDebugEnabled()) log.debug("eval="+eval.getId()+", state="+evalState+", title="+eval.getTitle());
 
-                // 1) if a evaluation is queued, title link go to EditSettings
-                // page with populated data 
-                // 2) if a evaluation is active, title link go to EditSettings 
-                // page with populated data but start date should be disabled 
-                // 3) if a evaluation is closed, title link go to previewEval 
-                // page with populated data
-				List<EvalGroup> groups = evalGroups.get(eval.getId());
+                // 1) if a evaluation is queued, title link go to EditSettings page with populated data 
+                // 2) if a evaluation is active, title link go to EditSettings page with populated data but start date should be disabled 
+                // 3) if a evaluation is closed, title link go to previewEval page with populated data
+                List<EvalGroup> groups = evalGroups.get(eval.getId());
                 if (log.isDebugEnabled()) log.debug("eval ("+eval.getId()+") groups ("+groups.size()+"): "+EvalUtils.getGroupIdsFromGroups(groups));
-				for(EvalGroup group : groups) {
-	                UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
-	                UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
-	                humanDateRenderer.renderDate(evalrow, "evalAdminDueDate", eval.getDueDate());
+                for(EvalGroup group : groups) {
+                    UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
+                    UIOutput.make(evalrow, "evalAdminStartDate", df.format(eval.getStartDate()));
+                    humanDateRenderer.renderDate(evalrow, "evalAdminDueDate", eval.getDueDate());
 
-					String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle(), 50);
+                    String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle(), 50);
                     if (log.isDebugEnabled()) log.debug("group="+group.evalGroupId+", title="+title);
                     String[] groupIds = {group.evalGroupId};
                     int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
@@ -216,8 +204,8 @@ public class AdminBoxRenderer {
                                 EvaluationSettingsProducer.VIEW_ID, eval.getId()));
                         UIOutput.make(evalrow, "evalAdminResponse", responseString);
                     }
-				}
+                }
             }
         }
-	}
+    }
 }
