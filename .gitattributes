@@ -442,24 +442,25 @@ tool/src/webapp/content/images/tipsy-north.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-south.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-west.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/uncollapsed.png -text
-tool/src/webapp/content/js/ISO8601-date.js -text
-tool/src/webapp/content/js/SakaiRSFWidgets.js -text
-tool/src/webapp/content/js/SakaiTableRenderer.js -text
-tool/src/webapp/content/js/admin.provider.sync.js -text
-tool/src/webapp/content/js/double-list-select.js -text
-tool/src/webapp/content/js/dynamic-list-input.js -text
-tool/src/webapp/content/js/eval.assign.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.assign.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.facebox.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.loader.events.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.loader.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.myitems.loader.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/evalAjax.js -text
-tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/js/ISO8601-date.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/README svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/SakaiRSFWidgets.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/SakaiTableRenderer.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/admin.provider.sync.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/double-list-select.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/dynamic-list-input.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.assign.facebox.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.assign.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.facebox.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.loader.events.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.loader.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.myitems.loader.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.order.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.sort.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.template.utils.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/evalAjax.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/evalTakeEval.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/facebox/b.png -text
 tool/src/webapp/content/js/facebox/bl.png -text
@@ -481,32 +482,32 @@ tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/jquery.tipsy.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/rsf-parser.js -text
-tool/src/webapp/content/js/rsf-renderer.js -text
-tool/src/webapp/content/js/rsf.js -text
-tool/src/webapp/content/js/rsfbasic.js -text
-tool/src/webapp/content/js/rsfsakaiportal.js -text
-tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/js/ui.core.js -text
-tool/src/webapp/content/js/ui.dialog.js -text
-tool/src/webapp/content/js/ui.draggable.js -text
-tool/src/webapp/content/js/ui.droppable.js -text
-tool/src/webapp/content/js/utils.js -text
-tool/src/webapp/content/js/yahoo-calendar-setup.js -text
+tool/src/webapp/content/js/rsf-parser.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/rsf-renderer.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/rsf.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/rsfbasic.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/rsfsakaiportal.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/toggleCommentBox.js svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/ui.core.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/ui.dialog.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/ui.draggable.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/ui.droppable.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/utils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/yahoo-calendar-setup.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/administrate_email.html -text
-tool/src/webapp/content/templates/administrate_provider_sync.html -text
+tool/src/webapp/content/templates/administrate_email.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/administrate_provider_sync.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/administrate_search.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/administrate_search.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_existing_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/choose_expert_objective.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/control_email_templates.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/templates/control_eval_admin.html -text
+tool/src/webapp/content/templates/control_email_templates.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/control_eval_admin.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_evaluations.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/control_expert_items.html -text
+tool/src/webapp/content/templates/control_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_import.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/control_items.html -text svn_keywords=Date+Revision+Author+URL+Id
@@ -514,31 +515,31 @@ tool/src/webapp/content/templates/control_scales.html -text svn_keywords=Date+Re
 tool/src/webapp/content/templates/control_templates.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign_confirm.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/evaluation_assign_select.html -text
-tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/evaluation_assign_select.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_create.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/evaluation_notifications.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/webapp/content/templates/evaluation_responders.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/evaluation_notifications.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/evaluation_responders.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_settings.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/import_error.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/messages.html -text
-tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/messages.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_block.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_email.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/modify_expert_item.html -text
+tool/src/webapp/content/templates/modify_expert_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node_groups.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/modify_hierarchy_node_perms.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/modify_hierarchy_node_perms.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_scale.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_template.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_template_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_email.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_eval.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/preview_expert_items.html -text
+tool/src/webapp/content/templates/preview_expert_items.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/preview_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_evaluation.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/remove_expert_item.html -text
+tool/src/webapp/content/templates/remove_expert_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_scale.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/remove_template.html -text svn_keywords=Date+Revision+Author+URL+Id

@@ -1,10 +1,5 @@
-var sakai = sakai ||
-{};
-var utils = utils ||
-{};
-var evalsys = evalsys ||
-{};
 
+var evalsys = evalsys || {};
 evalsys.instrumentBlockItem = function(){
     $('label.blockItemLabel,label.blockItemLabelNA').click(function(){
 		var choiceGroup = $(this).parents('.choiceGroup');
