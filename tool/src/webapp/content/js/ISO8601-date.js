@@ -1,3 +1,9 @@
+/**
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+
 /** Standard ISO 8601 format dates for Javascript - taken from 
  * http://delete.me.uk/2005/03/iso8601.html
  * Originally written by Paul Sowden

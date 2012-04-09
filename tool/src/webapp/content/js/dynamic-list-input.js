@@ -1,3 +1,9 @@
+/**
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+
 var DynamicListInput = function() {
   
   function $it(elementID) {
