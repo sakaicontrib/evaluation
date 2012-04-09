@@ -1,3 +1,9 @@
+/**
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+
 // Double list selection JS, following 
 // http://www.mredkj.com/tutorials/tutorial_mixed2b.html
 
