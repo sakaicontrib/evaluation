@@ -449,6 +449,7 @@ tool/src/webapp/content/js/SakaiTableRenderer.js -text svn_keywords=Date+Revisio
 tool/src/webapp/content/js/admin.provider.sync.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/double-list-select.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/dynamic-list-input.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/js/eval.administrate.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/eval.assign.facebox.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/eval.assign.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/eval.template.data.js svn_keywords=Date+Revision+Author+URL+Id

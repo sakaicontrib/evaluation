@@ -288,6 +288,23 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "hierarchy-display-node-headers", ADMIN_WBL, EvalSettings.DISPLAY_HIERARCHY_HEADERS);
         UIMessage.make(form, "hierarchy-display-node-headers-note", "administrate.hierarchy-display-node-headers-note");
 
+        
+        // DASHBOARD settings
+
+        makeBoolean(form, "dash-enable-evaluatee-box", ADMIN_WBL, EvalSettings.ENABLE_EVALUATEE_BOX);
+
+        //Number of days old can an eval be and still be recently closed
+        Integer evaluateeRecentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
+        UIInput.make(form, "dash-evaluatee-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS), evaluateeRecentlyClosedDays.toString());
+
+        makeBoolean(form, "dash-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
+
+        //Number of days old can an eval be and still be recently closed
+        Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+        UIInput.make(form, "dash-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
+
+        makeBoolean(form, "dash-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+
 
         // GENERAL settings
 
@@ -336,9 +353,6 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "general-use-view-date", ADMIN_WBL, EvalSettings.EVAL_USE_VIEW_DATE); 
         makeBoolean(form, "general-same-view-date",  ADMIN_WBL, EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
-        makeBoolean(form, "general-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
-        makeBoolean(form, "general-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
-        makeBoolean(form, "general-enable-evaluatee-box", ADMIN_WBL, EvalSettings.ENABLE_EVALUATEE_BOX);
         makeBoolean(form, "general-show-my-toplinks", ADMIN_WBL, EvalSettings.ENABLE_MY_TOPLINKS);
         makeBoolean(form, "general-use-eval-category", ADMIN_WBL, EvalSettings.ENABLE_EVAL_CATEGORIES);
         makeBoolean(form, "general-use-eval-term-id", ADMIN_WBL, EvalSettings.ENABLE_EVAL_TERM_IDS);
@@ -362,11 +376,6 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "general-enable-group-specific-preview", ADMIN_WBL, EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
 
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
-
-        //Number of days old can an eval be and still be recently closed
-        Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
-        UIInput.make(form, "general-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
-        UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note");
 
         //Minimum time difference (in hours) between the start date and due date
         makeSelect(form, "general-mim-time-diff-between-dates",

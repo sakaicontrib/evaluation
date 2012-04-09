@@ -25,7 +25,6 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -111,7 +110,7 @@ public class BeEvaluatedBoxRenderer {
         boolean evalsToShow = false;
         // need to determine if there are any evals in which the user can be evaluated
         // this will not return any deleted or partial evals but it will return closed ones so you need to check which ones to show depending on the use cases
-        List<EvalEvaluation> evalsForInstructor = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId);
+        List<EvalEvaluation> evalsForInstructor = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId, true);
         if (evalsForInstructor == null || evalsForInstructor.isEmpty()) {
             // no evals found so show nothing
         } else {
