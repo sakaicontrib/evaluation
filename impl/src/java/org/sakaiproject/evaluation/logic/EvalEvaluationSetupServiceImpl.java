@@ -727,9 +727,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     }
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String, java.lang.Boolean)
 	 */
-	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId) {
+	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId, Boolean includeRecentlyClosed) {
         if (userId == null) {
             throw new IllegalArgumentException("userId must be set");
         }
@@ -742,9 +742,33 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         	evalGroupIds[i++] = evalGroup.evalGroupId;
         }
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
-        // fix up the states to ensure they are good
-        for (EvalEvaluation evaluation : evals) {
+        // date calculations for recently closed
+        Date today = new Date();
+        Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
+        int recentlyClosedHours = recentlyClosedDays.intValue() * 24;
+
+        for (Iterator<EvalEvaluation> iterator = evals.iterator(); iterator.hasNext();) {
+            EvalEvaluation evaluation = iterator.next();
+            // fix up the states to ensure they are good
             evaluationService.returnAndFixEvalState(evaluation, true);
+            // handle filtering
+            if (includeRecentlyClosed != null) {
+                // not null so filter (NOTE: if null then just include them all)
+                if (includeRecentlyClosed) {
+                    // filter out evals older than recently closed
+                    int hoursDiff = EvalUtils.getHoursDifference(evaluation.getDueDate(), today);
+                    if (hoursDiff > recentlyClosedHours) {
+                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is not recently closed: "+evaluation.getId()+", due="+evaluation.getDueDate());
+                        iterator.remove();
+                    }
+                } else {
+                    // filter out all closed evals
+                    if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is closed: "+evaluation.getId());
+                        iterator.remove();
+                    }
+                }
+            }
         }
         // populate the assign groups and eval groups in the evals
         populateEvaluationsGroups(evals, evalGroups);

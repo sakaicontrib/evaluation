@@ -9,6 +9,10 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/eval.administrate.js"></script>
+
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -101,7 +105,7 @@
     </fieldset>
 
     <fieldset class="visibleFS"><legend><span rsf:id="student-settings-header">Student Settings:</span></legend>
-        <p class=   "longtext indnt1" rsf:id="student-settings-header-inner">Students may...</p>
+        <p class=   "checkbox" rsf:id="student-settings-header-inner">Students may...</p>
         <p class=   "longtext indnt1">
             <label for="students-unanswered-selection" class="block">
 	            <span rsf:id="students-unanswered-note">Students may leave questions unanswered</span>
@@ -120,13 +124,13 @@
 	            <select rsf:id="students-view-results" id="students-view-results-id"></select>
             </label>
         </p>
-        <p class=   "longtext indnt1">
+        <p class=   "checkbox indnt1">
             <label for="students-save-without-submit" class="block">
 	            <input type="checkbox" rsf:id="students-save-without-submit" id="students-save-without-submit-id" />
 	            <span rsf:id="students-save-without-submit-note">Students may save their survey without submitting</span>
             </label>
         </p>
-        <p class=   "longtext indnt1">
+        <p class=   "checkbox indnt1">
             <label for="students-cancel-allowed" class="block">
                 <input type="checkbox" rsf:id="students-cancel-allowed" id="students-cancel-allowed" />
                 <span rsf:id="students-cancel-allowed-note">Students may cancel while filling out their survey</span>
@@ -157,16 +161,29 @@
         </p>
     </fieldset>
 
-   <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.hierarchy.settings.header">Hierarchy Settings:</span></legend>
-      <p class=   "checkbox indnt1">
-         <input type="checkbox" rsf:id="general-display-hierarchy-options" id="general-display-hierarchy-options-id" />
-         <label rsf:id="general-display-hierarchy-options-note" for="general-display-hierarchy-options">Display Hierarchy Options</label>
-      </p>
-      <p class=   "checkbox indnt1">
-         <input type="checkbox" rsf:id="hierarchy-display-node-headers" id="hierarchy-display-node-headers-id" />
-         <label rsf:id="hierarchy-display-node-headers-note" for="hierarchy-display-node-headers-id">Display node headers in the take eval/preview eval screens</label>
-      </p>
-   </fieldset>
+	<fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.dash.settings.header">Dashboard Settings:</span></legend>
+        <p class="checkbox" rsf:id="msg=administrate.dash.summary.note">Summary lists to display:</p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="dash-enable-evaluatee-box" id="dash-enable-evaluatee-box-id" class="dash-enable-evaluatee-box-marker" />
+            <label rsf:id="msg=administrate.dash.enable.evaluatee.box" for="dash-enable-evaluatee-box-id">Show the instructor summary box</label>
+        </p>
+		<p class=   "longtext indnt2">
+            <label rsf:id="msg=administrate.dash.evaluatee.closed.still.recent.note" for="dash-evaluatee-closed-still-recent-id">Number of days old can an eval be and still be recently closed</label>
+            <input rsf:id="dash-evaluatee-closed-still-recent" id="dash-evaluatee-closed-still-recent-id" size="3" type="text" class="dash-evaluatee-closed-still-recent-marker" />
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="dash-enable-administrating-box" id="dash-enable-administrating-box-id" class="dash-enable-administrating-box-marker" />
+            <label rsf:id="msg=administrate.dash.enable.administrating.box" for="dash-enable-administrating-box-id">Show 'Evaluations I am creating or administrating'</label>
+        </p>
+		<p class=   "longtext indnt2">
+            <label rsf:id="msg=administrate.dash.admin.closed.still.recent.note" for="dash-eval-closed-still-recent-id">Number of days old can an eval be and still be recently closed</label>
+            <input rsf:id="dash-eval-closed-still-recent" id="dash-eval-closed-still-recent-id" size="3" type="text" class="dash-eval-closed-still-recent-marker" />
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="dash-enable-sites-summary" id="dash-enable-sites-summary-id" />
+            <label rsf:id="msg=administrate.dash.enable.sites.summary" for="dash-enable-sites-summary-id">Show the sites summary box</label>
+        </p>
+	</fieldset>
 
     <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.general.settings.header" style="padding:3px">General Settings:</span></legend>
         <p class=   "longtext indnt1">
@@ -217,18 +234,6 @@
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-enable-eval-reopen" />
             <label rsf:id="msg=administrate.general.enable.eval.reopen.note" for="general-enable-eval-reopen">Allow evaluations to be reopened after they close</label>
-        </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="general-enable-administrating-box" />
-            <label rsf:id="msg=administrate.general.enable.administrating.box" for="general-enable-administrating-box">Show the 'Evaluations I am creating or administrating' box on the main screen.</label>
-        </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="general-enable-sites-summary" />
-            <label rsf:id="msg=administrate.general.enable.sites.summary" for="general-enable-sites-summary">Show the sites summary box on the main screen</label>
-        </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="general-enable-evaluatee-box" />
-            <label rsf:id="msg=administrate.general.enable.evaluatee.box" for="general-enable-evaluatee-box">Show the instructor summary box on the main screen</label>
         </p>
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-show-my-toplinks" />
@@ -286,10 +291,6 @@
             <label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
         </p>
 -->
-		<p class=   "longtext indnt1">
-            <label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
-            <input rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id" size="5" type="text"/>
-        </p>
         <p class=   "longtext indnt1">
             <label class="block" rsf:id="general-mim-time-diff-between-dates-note" for="general-mim-time-diff-between-dates-selection">Minimum time difference (in hours) between start date and due date of an evaluation</label>
             <select rsf:id="general-mim-time-diff-between-dates" id="general-mim-time-diff-between-dates-id"></select>
@@ -347,5 +348,6 @@
 <div rsf:id="app_version_revision" style="font-style: italic; font-size: 0.8em">Version: 1.0</div>
 
 </div>
+
 </body>
 </html>

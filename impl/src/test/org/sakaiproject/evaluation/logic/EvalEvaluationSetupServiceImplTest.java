@@ -531,12 +531,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     }
     
     /**
-     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl.getEvaluationsForEvaluatee(java.lang.String)}.
+     * Test method for getEvaluationsForEvaluatee
      */
     public void testGetEvaluationsForEvaluatee() {
     	List<EvalEvaluation> evals = null;
     	
-    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID);
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, null);
     	assertNotNull(evals);
     	assertEquals(7, evals.size());
     	
@@ -545,12 +545,20 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
             assertNotNull(assignUsers);
     	}
-    	
-    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.STUDENT_USER_ID);
+
+        evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, true);
+        assertNotNull(evals);
+        assertEquals(6, evals.size());
+
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, false);
+        assertNotNull(evals);
+        assertEquals(4, evals.size());
+
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.STUDENT_USER_ID, null);
     	assertNotNull(evals);
     	assertEquals(0,evals.size());
 
-    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.USER_ID);
+    	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.USER_ID, null);
     	assertNotNull(evals);
     	assertEquals(0,evals.size());
     }

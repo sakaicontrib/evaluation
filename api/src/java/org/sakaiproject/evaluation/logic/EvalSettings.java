@@ -128,7 +128,7 @@ public interface EvalSettings {
      */
     public static final String ENABLE_ADMINISTRATING_BOX = "ENABLE_ADMINISTRATING_BOX:java.lang.Boolean";
     /**
-     * CONSTANT: Is the box showing the Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
+     * CONSTANT: Is the box showing the Evals/Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
      */
     public static final String ENABLE_EVALUATEE_BOX = "ENABLE_EVALUATEE_BOX:java.lang.Boolean";
     /**
@@ -177,6 +177,12 @@ public interface EvalSettings {
      * It must be less than or equal to this many days old to count as recent
      */
     public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
+    /**
+     * CONSTANT: How many days old can an eval be and still be recently closed (for the be evaluated box) - {@link Integer}, default 10<br/>
+     * It must be less than or equal to this many days old to count as recent
+     */
+    public static final String EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS = "EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS:java.lang.Integer";
+
     /**
      * CONSTANT: Allow users to set the stop date when creating evaluations - {@link Boolean}, default False<br/>
      * <b>Note:</b> Stop date should default to null when it cannot be set

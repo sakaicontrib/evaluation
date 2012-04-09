@@ -469,6 +469,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.USE_EXPERT_ITEMS, true);
         evalConfigMap.put(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
         evalConfigMap.put(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
+        evalConfigMap.put(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS, 10);
 
         evalConfigMap.put(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
         evalConfigMap.put(EvalSettings.ENABLE_EVAL_CATEGORIES, false);

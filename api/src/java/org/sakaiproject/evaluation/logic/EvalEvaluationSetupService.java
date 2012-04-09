@@ -142,10 +142,14 @@ public interface EvalEvaluationSetupService {
 	 * Get all evaluations in which this user can be evaluated.
 	 * 
 	 * @param userId the acting user, normally the current user, internal user id (not username)
+	 * @param includeRecentlyClosed filter returned evals by the closed date,
+	 *          if true, recently closed evals are returned,
+	 *          if false, no closed evals are returned,
+	 *          if null, all evals are returned
 	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate) 
      * @throws IllegalArgumentException if the userId is null
 	 */
-	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId);
+	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId, Boolean includeRecentlyClosed);
 
     /**
      * Close an evaluation before the closing date,
