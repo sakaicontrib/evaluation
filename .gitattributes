@@ -396,7 +396,7 @@ tool/src/webapp/content/css/scss/ucb/_graphics-ucb.scss -text
 tool/src/webapp/content/css/scss/ucb/_layout-ucb.scss -text
 tool/src/webapp/content/css/scss/ucb/_typography-ucb.scss -text
 tool/src/webapp/content/css/scss/ucb/ucb.scss -text
-tool/src/webapp/content/css/ucb.css -text
+tool/src/webapp/content/css/ucb/ucb.css -text
 tool/src/webapp/content/images/accept.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/add.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id

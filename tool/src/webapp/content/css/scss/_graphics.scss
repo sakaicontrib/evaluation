@@ -26,7 +26,7 @@
         background: #ffffff;
         border: 1px solid #ffffff;
         &:hover, &:focus {
-          color: #444444;
+          color: #000000;
           background: #ee4444;
           @include background-image(linear-gradient(#ffffff, #ffa500));
           border-color: #ffa500;
