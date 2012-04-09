@@ -1,0 +1,57 @@
+.portletBody .summaryBox .listHier th, .portletBody .summaryBox .listHier td {
+  border: none !important;
+  padding: 0 1em;
+}
+.portletBody .summaryBox .listHier td {
+  padding: 0.5em 1em;
+}
+.portletBody .summaryBox .listHier tr:nth-child(odd) {
+  background-color: #f7f7f7;
+}
+
+.evaluation .content fieldset > legend {
+  padding: 0;
+  margin: 0;
+}
+.evaluation .content fieldset, .evaluation .content .fake-fieldset, .evaluation .content .fieldset, .evaluation .content .legend, .evaluation .content .itemListNew, .evaluation .content .itemListEval {
+  border: none;
+}
+.evaluation .content .itemListNew li, .evaluation .content .itemListEval li {
+  border-color: white;
+}
+.evaluation .content .itemListNew .itemsListOddLine, .evaluation .content .itemListEval .itemsListOddLine {
+  background: none;
+}
+.evaluation .content .item {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #edf0f4;
+}
+.evaluation .content .item .title {
+  color: black;
+}
+.evaluation .content .item .title .delineator .dot {
+  display: none;
+}
+.evaluation .content .item .title .delineator .paren {
+  display: inline-block;
+}
+.evaluation .content .item .title .required {
+  color: #bb1111;
+}
+.evaluation .item-group {
+  border-bottom: 2px solid #e6e6e6;
+}
+.evaluation .item-group .title {
+  color: black;
+}
+.evaluation .item-group .item {
+  border-top: 2px solid #e6e6e6;
+  border-bottom: none;
+}
+.evaluation .matrix legend {
+  color: black;
+}
+
+.preview-item .highlightPanel {
+  border: none;
+}

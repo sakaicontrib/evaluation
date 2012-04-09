@@ -89,7 +89,7 @@
   .matrix {
     min-width: 800px;
     .title {
-      min-width: 49%;
+      min-width: 40%;
     }
     fieldset {
       margin: 0;
@@ -138,6 +138,10 @@
         float: left;
         padding-top: 20px;
       }
+      label span, label input, legend .response-scale-label {
+        font-family: sans-serif !important;
+        font-size: 12px !important;
+      }
       .content {
         margin: 0;
         padding: 0;
@@ -162,12 +166,17 @@
           }
         }
         label {
+          display: inline-block;
           margin: 0;
-          @include button();
+          padding: 5px 15px;
+          font-family: sans-serif !important;
+          font-size: 12px !important;
+          //font-size: 100%;
+          line-height: 100%;
           text-align: center;
-          font-weight: normal;
-          font-size: 100%;
-          text-transform: none;
+          text-decoration: none !important;
+          cursor: pointer !important;
+          @include border-radius(4px, 4px);
           span {
             display: block;
             margin-bottom: 5px;
@@ -199,18 +208,21 @@
       display: block;
       margin-top: 0.5em;
       text-align: right !important;
+      white-space: nowrap;
     }
     .response-scale-label {
       display: inline-block;
-      padding: 0 17px;
+      padding: 0 19px;
       width: 12px;
-      font-size: 12px;
+      font-family: sans-serif !important;
+      font-size: 12px !important;
+      line-height: 100%;
       text-align: center;
     }
     .response-scale-na {
       margin-right: 11px;
       width: 24px;
-      padding: 0 10px;
+      padding: 0 13px;
     }
     > .content {
       display: inline-block;
@@ -300,7 +312,7 @@
     padding-right: 10px;
   }
   .evaluation .item-group .response-group-labels span {
-    padding-left: 33px;
+    padding-left: 34px;
     width: 0;
   }
   .evaluation .item-group .response-group-labels .response-scale-na {
