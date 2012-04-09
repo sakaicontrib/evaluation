@@ -179,46 +179,50 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
          UIBranchContainer hierarchyBranch = UIBranchContainer.make(tofill, "showHierarchy:");
          List<EvalAssignHierarchy> assignHierarchies = evaluationService.getAssignHierarchyByEval(evaluationId);
          if (assignHierarchies.size() > 0) {
+            List<String> populatedNodes = new ArrayList<String>();
             UIBranchContainer nodesBranch = UIBranchContainer.make(tofill, "showSelectedNodes:");
             for (EvalAssignHierarchy assignHierarchy : assignHierarchies) {
-               EvalHierarchyNode node = hierLogic.getNodeById(assignHierarchy.getNodeId());
+               if (!populatedNodes.contains(assignHierarchy.getNodeId())) {
+                  EvalHierarchyNode node = hierLogic.getNodeById(assignHierarchy.getNodeId());
 
-               UIBranchContainer nodeRow = UIBranchContainer.make(nodesBranch, "nodes:node");
-               UIOutput.make(nodeRow, "nodeTitle", node.title);
-               UIOutput.make(nodeRow, "nodeAbbr", node.description);
+                  UIBranchContainer nodeRow = UIBranchContainer.make(nodesBranch, "nodes:node");
+                  UIOutput.make(nodeRow, "nodeTitle", node.title);
+                  UIOutput.make(nodeRow, "nodeAbbr", node.description);
 
-               // now get the list of groups related to this node
-               List<EvalAssignGroup> nodeAssignGroups = new ArrayList<EvalAssignGroup>();
-               for (EvalAssignGroup assignGroup : assignGroups) {
-                  if (assignGroup.getNodeId() != null
+                  // now get the list of groups related to this node
+                  List<EvalAssignGroup> nodeAssignGroups = new ArrayList<EvalAssignGroup>();
+                  for (EvalAssignGroup assignGroup : assignGroups) {
+                     if (assignGroup.getNodeId() != null
                         && assignHierarchy.getNodeId().equals(assignGroup.getNodeId()) ) {
-                     nodeAssignGroups.add(assignGroup);
+                        nodeAssignGroups.add(assignGroup);
+                     }
                   }
-               }
 
-               // now render the list of groups related to this node
-               UIBranchContainer nodeRowGroups = UIBranchContainer.make(nodesBranch, "nodes:groups");
-               if (nodeAssignGroups.size() == 0) {
-                  UIMessage.make(nodeRowGroups, "noGroupsForNode", "evaluationassignments.no.groups");
-               } else {
-                  UIBranchContainer groupsTable = UIBranchContainer.make(nodeRowGroups, "nodeGroupTable:");
-            	   //UIBranchContainer groupsTable = UIBranchContainer.make(tofill, "nodeGroupTable:");
-                  for (EvalAssignGroup assignGroup : nodeAssignGroups) {
-                     String evalGroupId = assignGroup.getEvalGroupId();
-                     EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
-                     UIBranchContainer groupRow = UIBranchContainer.make(groupsTable, "hierGroups:", evalGroupId);
-                     UIOutput.make(groupRow, "hierGroupTitle", group.title);
-                     UIOutput.make(groupRow, "hierGroupType", group.type);
-                     // direct link to the group eval
-                     UILink.make(groupRow, "directHierGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
+                  // now render the list of groups related to this node
+                  UIBranchContainer nodeRowGroups = UIBranchContainer.make(nodesBranch, "nodes:groups");
+                  if (nodeAssignGroups.size() == 0) {
+                     UIMessage.make(nodeRowGroups, "noGroupsForNode", "evaluationassignments.no.groups");
+                  } else {
+                     UIBranchContainer groupsTable = UIBranchContainer.make(nodeRowGroups, "nodeGroupTable:");
+            	      //UIBranchContainer groupsTable = UIBranchContainer.make(tofill, "nodeGroupTable:");
+                     for (EvalAssignGroup assignGroup : nodeAssignGroups) {
+                        String evalGroupId = assignGroup.getEvalGroupId();
+                        EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
+                        UIBranchContainer groupRow = UIBranchContainer.make(groupsTable, "hierGroups:", evalGroupId);
+                        UIOutput.make(groupRow, "hierGroupTitle", group.title);
+                        UIOutput.make(groupRow, "hierGroupType", group.type);
+                        // direct link to the group eval
+                        UILink.make(groupRow, "directHierGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                            commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                      
-                     // calculate the enrollments count
-                     int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
-                     UIOutput.make(groupRow, "hierGrpEnrollment", enrollmentCount + "");
+                        // calculate the enrollments count
+                        int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
+                        UIOutput.make(groupRow, "hierGrpEnrollment", enrollmentCount + "");
+                     }
                   }
+                  
+                  populatedNodes.add(assignHierarchy.getNodeId());
                }
-               
             }
          } else {
             UIMessage.make(hierarchyBranch, "noNodesSelected", "evaluationassignments.no.nodes");
