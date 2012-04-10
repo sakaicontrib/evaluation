@@ -25,7 +25,6 @@ package org.sakaiproject.evaluation.tool.renderers;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +45,7 @@ import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
+import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -136,12 +136,9 @@ public class AdminBoxRenderer {
         }
 
         if (!newEvals.isEmpty()) {
-            // sort evaluations by due date
-            Collections.sort(evals, new Comparator<EvalEvaluation>() {
-                public int compare(EvalEvaluation eval1, EvalEvaluation eval2) {
-                    return (eval1.getDueDate().compareTo(eval2.getDueDate()));
-                }                
-            });
+            // sort evaluations by due date (newest first)
+            Collections.sort(evals, new ComparatorsUtils.EvaluationDueDateComparator());
+            evals = EvalUtils.sortClosedEvalsToEnd(evals);
 
             UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBoxContents:");
             // Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583
