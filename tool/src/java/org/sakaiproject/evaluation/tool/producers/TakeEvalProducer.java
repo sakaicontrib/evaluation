@@ -79,7 +79,6 @@ import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UICSSDecorator;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -214,7 +213,8 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         }
 
         if (! evalTakeViewParams.external) {
-            UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
+            UIBranchContainer navTool = UIBranchContainer.make(tofill, "navIntraTool:");
+            UIInternalLink.make(navTool, "summary-link", UIMessage.make("summary.page.title"), 
                     new SimpleViewParameters(SummaryProducer.VIEW_ID));
         }
 
@@ -479,10 +479,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                                     assValues.add(user.userId);
                                     assLabels.add(user.displayName);
                                     UIBranchContainer row = UIBranchContainer.make(showSwitchGroup, uiTag + "-multiple-row:");
-                                    UISelectChoice choice = UISelectChoice.make(row, uiTag + "-multiple-box", assSelectID, assLabels.size()-1);
-                                    UISelectLabel lb = UISelectLabel.make(row, uiTag + "-multiple-label", assSelectID, assLabels.size()-1);
-                                    UILabelTargetDecorator.targetLabel(lb, choice);
-                                    }
+                                    UISelectChoice.make(row, uiTag + "-multiple-box", assSelectID, assLabels.size()-1);
+                                    UISelectLabel.make(row, uiTag + "-multiple-label", assSelectID, assLabels.size()-1);
+                                }
                                 assSelect.optionlist = UIOutputMany.make(assValues.toArray(new String[] {}));
                                 assSelect.optionnames = UIOutputMany.make(assLabels.toArray(new String[] {}));
                             } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
@@ -564,7 +563,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 }
 
                 if (response != null && !response.complete) {
-                    UIOutput.make(tofill, "saveEvaluationWithoutSubmitWarning", null);
+                    UIMessage.make(tofill, "saveEvaluationWithoutSubmitWarning", "takeeval.saved.warning");
                 }
                 Boolean saveEvaluationWithoutSubmit = (Boolean) evalSettings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
                 if (saveEvaluationWithoutSubmit && (response == null || !response.complete)) {
@@ -573,7 +572,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
                 Boolean studentCancelAllowed = (Boolean) evalSettings.get(EvalSettings.STUDENT_CANCEL_ALLOWED);
                 if (studentCancelAllowed) {
-                    UIOutput.make(form, "cancelEvaluation");
+                    UIMessage.make(form, "cancelEvaluation", "general.cancel.button");
+                    // populate the URL we will activate (do NOT use summary-link here)
+                    UIInternalLink.make(tofill, "dashboard-link", new SimpleViewParameters(SummaryProducer.VIEW_ID));
                 }
             } else {
                 // user cannot access eval so give them a sad message
@@ -584,8 +585,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
             }
             
             // initialize javascript at end of page load
-            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem",
-                    new Object[] {});
+            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem", new Object[] {});
         }
     }
     
