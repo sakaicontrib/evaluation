@@ -22,12 +22,16 @@
  **********************************************************************************/
 
 // For the takeEval and preview views
+
+// run on page load
 $(document).ready(function() {
     $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
+
     var instrSel = $('div[@rel=evalinstructorSelector]');
     var assSel = $('div[@rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
+
     $('[id=form-branch::submitEvaluation]').bind('click', function() {
         var valid;
         if (instrSel.find('input[type=checkbox]').length !== 0) {
@@ -104,9 +108,21 @@ $(document).ready(function() {
         return false;
     }
 
+    // handle the cancel button navigation (if it exists)
+    $("input.eval_cancel_button_marker").bind("click", function(event) {
+        event.preventDefault();
+        var cancelURL = $("a#dashboard-link").attr("href");
+        if (typeof cancelURL !== "undefined" && cancelURL) {
+            window.location.href = cancelURL;
+        } else {
+            // fall back on back button
+            window.history.back();
+        }
+    });
 
 });
 
+// hook into the jquery object
 (function($) {
     $.fn.evalSelector = function(opts) {
         var options = $.extend({}, $.fn.evalSelector.settings, opts);
