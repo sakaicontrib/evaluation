@@ -122,9 +122,9 @@ public class AdminBoxRenderer {
          * 
          * NOTE: no longer showing evals they do not own (removed the INSTRUCTOR_ALLOWED_VIEW_RESULTS handling)
          */
-        List<EvalEvaluation> newEvals = evals;
+        
         if (!userAdmin) {
-            newEvals = new ArrayList<EvalEvaluation>();
+            List<EvalEvaluation> newEvals = new ArrayList<EvalEvaluation>();
             if (log.isDebugEnabled()) log.debug("non-admin special case: "+evals.size()+" evals, "+EvalUtils.getEvalIdsFromEvaluations(evals));
             for (EvalEvaluation evaluation : evals) {
                 // Add the owned evals ONLY
@@ -133,9 +133,10 @@ public class AdminBoxRenderer {
                     newEvals.add(evaluation);
                 }
             }
+            evals = newEvals;
         }
 
-        if (!newEvals.isEmpty()) {
+        if (!evals.isEmpty()) {
             // sort evaluations by due date (newest first)
             Collections.sort(evals, new ComparatorsUtils.EvaluationDueDateComparator());
             evals = EvalUtils.sortClosedEvalsToEnd(evals);
@@ -152,15 +153,15 @@ public class AdminBoxRenderer {
             UIForm evalAdminForm = UIForm.make(evalAdminBC, "evalAdminForm");
 
             // get the eval groups
-            Long[] evalIds = new Long[newEvals.size()];
+            Long[] evalIds = new Long[evals.size()];
             int i = 0;
-            for(EvalEvaluation eval : newEvals) {
+            for(EvalEvaluation eval : evals) {
                 evalIds[i++] = eval.getId();
             }
             // WARNING: this retrieves ALL groups for the evaluation so it is ONLY safe for eval admins
             Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 
-            for (Iterator<EvalEvaluation> iter = newEvals.iterator(); iter.hasNext();) {
+            for (Iterator<EvalEvaluation> iter = evals.iterator(); iter.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) iter.next();
 
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
