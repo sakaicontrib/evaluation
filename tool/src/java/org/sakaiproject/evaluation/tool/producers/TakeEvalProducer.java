@@ -245,6 +245,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 
         List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
         if (canAccess) {
+            if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") can take evalution ("+evaluationId+")");
             // eval is accessible so check user can take it
             if (evalGroupId != null) {
                 // there was an eval group passed in so make sure things are ok
@@ -332,17 +333,20 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 					response = evaluationService.getResponseForUserAndGroup(
 							evaluationId, currentUserId, evalGroupId);
 					if (response == null) {
+                        if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") has no previous response for eval ("+evaluationId+")");
 						// create the initial response if there is not one
                         // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
                         //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
                     } else {
 						responseId = response.getId();
+	                    if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") has previous response ("+responseId+") in eval ("+evaluationId+")");
 					}
 				}
 
                 if (responseId != null) {
                     // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
                     answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
+                    if (log.isDebugEnabled()) log.debug("User ("+currentUserId+"), eval ("+evaluationId+"), previous answers map: "+answerMap);
                 }
 
                 // show the switch group selection and form if there are other valid groups for this user
@@ -368,6 +372,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
                 UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
                 UIOutput.make(groupTitle, "group-title", evalGroup.title );
+                if (log.isDebugEnabled()) log.debug("Begin render of eval: "+eval.getTitle()+" ("+evaluationId+"), group: "+groupTitle+" ("+evalGroupId+")");
 
                 // show instructions if not null
                 if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
@@ -403,14 +408,15 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
                 Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
                 List<String> associatedTypes = tidl.getAssociateTypes();
+                if (log.isDebugEnabled()) log.debug("TIDL: eval="+evaluationId+", group="+evalGroupId+", items="+tidl.getTemplateItemsCount()+" instructorIds: "+instructorIds+", "+" associatedTypes: "+associatedTypes);
                 
                 // SELECTION Code - EVALSYS-618
-                Boolean selectionsEnabled = (Boolean) evalSettings
-                        .get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+                Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
+                if (log.isDebugEnabled()) log.debug("Selections: enabled="+selectionsEnabled+", inst="+instructorSelectionOption+", asst="+assistantSelectionOption);
                 Map<String, String[]> savedSelections = new HashMap<String, String[]>();
-                if(response!=null){
+                if (response != null) {
 					savedSelections = response.getSelections();
 				}
                 if (selectionsEnabled) {
@@ -421,27 +427,21 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     instructorSelectionOption = EvalUtils.getSelectionSetting(
                             EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
                     selectorType.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructorSelectionOption);
-                    Boolean assistantsEnabled = (Boolean) evalSettings
-                            .get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                    Boolean assistantsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                     if (assistantsEnabled) {
                         assistantSelectionOption = EvalUtils.getSelectionSetting(
                                 EvalAssignGroup.SELECTION_TYPE_ASSISTANT, assignGroup, null);
                         selectorType.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, assistantSelectionOption);
                     }
                     if (response != null) {
-						// emit currently selected people into hidden element
-						// for JS use
+						// emit currently selected people into hidden element for JS use
 						Set<String> savedIds = new HashSet<String>();
-						for (Iterator<String> selector = savedSelections
-								.keySet().iterator(); selector.hasNext();) {
+						for (Iterator<String> selector = savedSelections.keySet().iterator(); selector.hasNext();) {
 							String selectKey = (String) selector.next();
-							String[] usersFound = savedSelections
-									.get(selectKey);
+							String[] usersFound = savedSelections.get(selectKey);
 							savedIds.add(usersFound[0]);
 						}
-						UIOutput savedSel = UIOutput
-								.make(formBranch, "selectedPeopleInResponse",
-										savedIds.toString());
+						UIOutput savedSel = UIOutput.make(formBranch, "selectedPeopleInResponse", savedIds.toString());
 						savedSel.decorators = new DecoratorList(
 								new UIIDStrategyDecorator(
 										"selectedPeopleInResponse"));
@@ -505,14 +505,14 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                                 throw new IllegalStateException("Invalid selection option ("
                                         + selectValue + "): do not know how to handle this.");
                             }
-                        } else  if (selectUserIds.size() == 1  && associatedTypes.contains(selectKey) ) {
+                        } else if (selectUserIds.size() == 1  && associatedTypes.contains(selectKey) ) {
                        	    // handle case where there are selections set but ONLY 1 user in the role.
                         	if (! selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                         		for (String userId : selectUserIds) {
 	                            	form.parameters.add(new UIELBinding(selectionOTP, userId));
 	                        	}
                             }
-                        }else{
+                        } else {
                         	// handle case where there are selections set but no users in the roles.
                         	if (! selectValue.equals(EvalAssignGroup.SELECTION_OPTION_ALL)) {
                         		form.parameters.add(new UIELBinding(selectionOTP, "none"));
@@ -523,7 +523,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 
                 // loop through the TIGs and handle each associated category
                 Boolean useCourseCategoryOnly = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+                if (log.isDebugEnabled()) log.debug("TIGs: useCourseCategoryOnly="+useCourseCategoryOnly);
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+                    if (log.isDebugEnabled()) log.debug("TIGs: tig.associateType="+tig.associateType);
                 	UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
                     // only do headers if we are allowed to use categories
                     if (! useCourseCategoryOnly) {
@@ -538,6 +540,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     }
 
                     // loop through the hierarchy node groups
+                    if (log.isDebugEnabled()) log.debug("TIGs: tig.hierarchyNodeGroups="+tig.hierarchyNodeGroups.size());
                     for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                         // render a node title
                         if (hng.node != null) {
@@ -550,6 +553,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         }
 
                         List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
+                        if (log.isDebugEnabled()) log.debug("DTIs: count="+dtis.size());
                         for (int i = 0; i < dtis.size(); i++) {
                             DataTemplateItem dti = dtis.get(i);
                             UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
@@ -630,6 +634,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 	 * @param missingKeys the invalid keys, needed for calculating rendering props
      */
     private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti, EvalEvaluation eval, Set<String> missingKeys) {
+        if (log.isDebugEnabled()) log.debug("renderItemPrep: eval="+eval.getId()+", dti="+dti);
         int displayIncrement = 0; // stores the increment in the display number
         String[] currentAnswerOTP = null; // holds array of bindings for items
         EvalTemplateItem templateItem = dti.templateItem;
@@ -662,6 +667,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         // setup the render properties to send along
         Map<String, Object> renderProps = RenderingUtils.makeRenderProps(dti, eval, missingKeys, null);
         // render the item
+        if (log.isDebugEnabled()) log.debug("render item: num="+displayNumber+" (count="+renderedItemCount+"), render="+renderProps+", templateItem="+templateItem);
         itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, renderProps);
 
         /* increment the item counters, if we displayed 1 item, increment by 1,
