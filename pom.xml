@@ -191,16 +191,16 @@
         <developer>
             <id>aaronz@vt.edu</id>
             <name>Aaron Zeckoski</name>
-            <email>aaron@caret.cam.ac.uk</email>
-            <url>http://confluence.sakaiproject.org/confluence/display/~aaronz</url>
-            <organization>CARET</organization>
-            <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+            <email>azeckoski@unicon.net</email>
+            <url>http://tinyurl.com/azprofile</url>
+            <organization>UNICON</organization>
+            <organizationUrl>http://unicon.net/</organizationUrl>
             <roles>
                 <role>Project Manager</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>
-            <timezone>0</timezone>
+            <timezone>-5</timezone>
         </developer>
     </developers>
 
