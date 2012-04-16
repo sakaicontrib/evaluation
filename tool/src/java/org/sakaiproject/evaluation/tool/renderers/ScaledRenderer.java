@@ -210,14 +210,14 @@ public class ScaledRenderer implements ItemRenderer {
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
             for (int j = 0; j < limit; ++j) {
                 UIBranchContainer radiobranchNested = UIBranchContainer.make(displayContainer, "scaleOption:", j+"");
-                UISelectChoice choice = UISelectChoice.make(radiobranchNested, "radioValue", selectID, j);
+                UISelectChoice.make(radiobranchNested, "radioValue", selectID, j);
                 UISelectLabel.make(radiobranchNested, "radioLabel", selectID, j);//.decorate( new UILabelTargetDecorator(choice));
             }
 
             if (usesNA) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
                 radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
-                UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
+                UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
                 UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc");//.decorate( new UILabelTargetDecorator(choice));
             }
 
@@ -278,9 +278,14 @@ public class ScaledRenderer implements ItemRenderer {
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
             UISelectChoice[] choices = new UISelectChoice[limit];
             
-            
             for (int j = 0; j < limit; ++j) {
                     UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", j+"");
+                    // decorate the li so it is easier to control the styles
+                    if (j == 0) {
+                        radioBranchSecond.decorate( new UIStyleDecorator("matrixRadioFirst") );
+                    } else {
+                        radioBranchSecond.decorate( new UIStyleDecorator("matrixRadioItems-"+scaleLength) );
+                    }
                     choices[j] = UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
                     // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
                     // an empty label is appended; ignore that one too 
