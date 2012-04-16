@@ -1716,6 +1716,20 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   display: block;
   margin-bottom: 5px;
 }
+/* special styles to fix up matrix spacing - override if you have long scale labels */
+.scale .matrix .matrixRadioItems-2 {
+    min-width: 180px;
+}
+.scale .matrix .matrixRadioItems-3 {
+    min-width: 120px;
+}
+.scale .matrix .matrixRadioItems-4 {
+    min-width: 80px;
+}
+.scale .matrix .matrixRadioItems-5 {
+    min-width: 60px;
+}
+
 .evaluation .item-group {
   position: relative;
   zoom: 1;
