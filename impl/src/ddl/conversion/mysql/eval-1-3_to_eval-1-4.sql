@@ -42,4 +42,4 @@ alter table EVAL_ASSIGN_GROUP add (INSTRUCTORS_VIEW_ALL_RESULTS bit);
 alter table EVAL_ASSIGN_USER add (COMPLETED_DATE datetime);
 create index eval_asgnuser_completedDate on EVAL_ASSIGN_USER (COMPLETED_DATE);
 
-
+insert into EVAL_CONFIG (LAST_MODIFIED, NAME, VALUE) VALUES (CURRENT_TIMESTAMP(),'ENABLE_SAKAI_ADMIN_ACCESS','true');
