@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.entitybroker.IdEntityReference;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -40,7 +40,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 /**
  * Handles the redirection of incoming evaluation and assign group entity URLs to the proper views with the proper view params added
  * 
- * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Aaron Zeckoski (azeckoski @ unicon.net)
  */
 public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
@@ -93,22 +93,24 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
     }
 
     private ViewParameters inferDefaultViewParametersImpl(String reference) {
-        IdEntityReference ep = new IdEntityReference(reference);
+        EntityReference ref = new EntityReference(reference);
         EvalEvaluation evaluation = null;
         Long evaluationId = null;
         String evalGroupId = null;
 
-        if (EvaluationEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
+        if (EvaluationEntityProvider.ENTITY_PREFIX.equals(ref.getPrefix())) {
             // we only know the evaluation
-            evaluationId = new Long(ep.id);
+            evaluationId = new Long(ref.getId());
             evaluation = evaluationService.getEvaluationById(evaluationId);
-        } else if (AssignGroupEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
+        } else if (AssignGroupEntityProvider.ENTITY_PREFIX.equals(ref.getPrefix())) {
             // we know the evaluation and the group
-            Long AssignGroupId = new Long(ep.id);
+            Long AssignGroupId = new Long(ref.getId());
             EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(AssignGroupId);
             evalGroupId = assignGroup.getEvalGroupId();
             evaluationId = assignGroup.getEvaluation().getId();
             evaluation = evaluationService.getEvaluationById(evaluationId);
+        } else {
+            throw new IllegalArgumentException("Invalid reference (don't know how to handle): "+ref);
         }
 
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
