@@ -345,7 +345,7 @@ public class EvalEmailConstants {
 	   "Note that all student responses are kept confidential." +
 	   "<#elseif ShowAllowEditResponsesText == \"true\">\n" +
 	   "You may edit your evaluation responses up until the close date for this evaluation.\n" +
-      "</#if>\n";
+       "</#if>\n";
    
 		/**
 		 * Email text describing where a user should look for the evaluation tool.
