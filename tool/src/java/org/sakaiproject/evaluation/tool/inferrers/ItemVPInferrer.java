@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.inferrers;
 
-import org.sakaiproject.entitybroker.IdEntityReference;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.PreviewItemProducer;
@@ -27,7 +27,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 /**
  * Handles the viewing/previewing of items and template items
  * 
- * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ * @author Aaron Zeckoski (azeckoski @ unicon.net)
  */
 public class ItemVPInferrer implements EntityViewParamsInferrer {
 
@@ -42,13 +42,13 @@ public class ItemVPInferrer implements EntityViewParamsInferrer {
     * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
     */
    public ViewParameters inferDefaultViewParameters(String reference) {
-      IdEntityReference ep = new IdEntityReference(reference);
+      EntityReference ep = new EntityReference(reference);
       Long itemId = null;
       Long templateItemId = null;
-      if (ItemEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
-         itemId = new Long(ep.id); 
+      if (ItemEntityProvider.ENTITY_PREFIX.equals(ep.getPrefix())) {
+         itemId = new Long(ep.getId()); 
       } else {
-         templateItemId = new Long(ep.id);
+         templateItemId = new Long(ep.getId());
       }
       // MAYBE add in restriction for access to item preview later? -AZ
 //    EvalItem item = authoringService.getTemplateById(itemId); 
