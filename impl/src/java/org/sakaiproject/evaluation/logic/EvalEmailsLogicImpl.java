@@ -194,6 +194,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             EvalAssignGroup assignGroup = assignGroups.get(i);
             
             if(! commonLogic.isEvalGroupPublished(assignGroup.getEvalGroupId())) {
+                log.info("Skipping available email for evaluationId ("+evaluationId+") and group ("+assignGroup.getEvalGroupId()+") because the group is not published");
                 continue;
             }
             
@@ -226,7 +227,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
 
             // skip ahead if there is no one to send to
-            if (userIdsSet.size() == 0) continue;
+            if (userIdsSet.size() == 0) {
+                log.info("Skipping available email for evaluationId ("+evaluationId+") and group ("+assignGroup.getEvalGroupId()+") because there is no one (instructors or participants) to send the email to");
+                continue;
+            }
 
             // turn the set into an array
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
@@ -675,7 +679,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("EvalDueDate", dueDate);
         String viewDate = null;
         if (eval.getViewDate() != null) {
-            viewDate = df.format(eval.getDueDate());
+            viewDate = df.format(eval.getViewDate());
         } else {
             viewDate = dueDate;
         }
