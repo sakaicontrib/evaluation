@@ -337,10 +337,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalReminderNotifications(java.lang.Long, java.lang.String)
      */
     public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
-        log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
-        
-        boolean updateReminderStatus = (Boolean) settings.get(EvalSettings.ENABLE_REMINDER_STATUS);
-        
+        if (log.isDebugEnabled()) log.debug("sendEvalReminderNotifications(evaluationId: " + evaluationId + ", includeConstant: " + includeConstant+")");
+
         EvalUtils.validateEmailIncludeConstant(includeConstant);
 
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
@@ -353,18 +351,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, false, null);
 
         // handle recovery of interrupted email sending
+        boolean updateReminderStatus = (Boolean) settings.get(EvalSettings.ENABLE_REMINDER_STATUS);
         EvalReminderStatus reminderStatus = eval.getCurrentReminderStatus();
-        boolean reminderGroupFound = false;
-        if (reminderStatus != null) {
+        if (updateReminderStatus && reminderStatus != null) {
             log.info("Reminder recovery processing for eval ("+evaluationId+") will attempt to continue from: "+reminderStatus);
         }
 
         // only one possible map key so we can assume evaluationId
         List<EvalGroup> groups = evalGroupIds.get(evaluationId);
-        log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+        if (log.isDebugEnabled()) log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
         List<String> sentEmails = new ArrayList<String>();
-        int emailsSentCt=0;
+        int emailsSentCounter=0;
         // loop through groups and send emails to correct users in each
         for (int i = 0; i < groups.size(); i++) {
             EvalGroup group = (EvalGroup) groups.get(i);
@@ -378,15 +376,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             	// skip courses until we reach the one that we stopped on before when email was interrupted
             	if (reminderStatus != null) {
             		if (reminderStatus.currentEvalGroupId.equals(evalGroupId)) {
-            			reminderGroupFound = true;
-            			log.info("Reminder processing for eval ("+evaluationId+"), found last processed group ("+evalGroupId+") at position "+(i+1)+" of "+groups.size());
-            		}
-            		if (reminderGroupFound) {
             			reminderStatus = null;
+            			log.info("Reminder recovery processing for eval ("+evaluationId+"), found last processed group ("+evalGroupId+") at position "+(i+1)+" of "+groups.size());
             		}
             		// skip this group
             		if (log.isDebugEnabled()) {
-            			log.debug("Reminder status ("+reminderStatus+") for eval ("+evaluationId+"), skipping group "+evalGroupId);
+            			log.debug("Reminder recovery processing for eval ("+evaluationId+"), reminder status ("+reminderStatus+"), skipping group "+evalGroupId);
             		}
             		continue;
             	}
@@ -408,9 +403,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // turn the set into an array
                 String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
                 if (log.isDebugEnabled()) {
-                    log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") to send "
-                            + EvalConstants.EMAIL_TEMPLATE_REMINDER + " notification to for available evaluation ("
-                            + evaluationId + ") and group (" + group.evalGroupId + ")");
+                    log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") of type "
+                            + includeConstant+" to send " + EvalConstants.EMAIL_TEMPLATE_REMINDER 
+                            + " notification to for available evaluation ("+ evaluationId + ") and group (" + group.evalGroupId + ")");
                 }
 
                 EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, includeConstant);
@@ -418,7 +413,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
                 log.info("Sent evaluation reminder message for eval ("+evaluationId+") and group ("+group.evalGroupId+") to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
-                emailsSentCt++;
+                emailsSentCounter++;
                 // store sent emails to return
                 for (int j = 0; j < emailAddresses.length; j++) {
                     sentEmails.add(emailAddresses[j]);            
@@ -426,11 +421,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
             // update the reminder status
             if (updateReminderStatus) {
+                if (log.isDebugEnabled()) log.debug("Reminder recovery processing for eval ("+evaluationId+"), update to group ("+evalGroupId+"), at "+(i+1)+" / "+groups.size());
             	evaluationService.updateEvaluationReminderStatus(evaluationId, new EvalReminderStatus(groups.size(), i+1, evalGroupId));
             }
         }
         // set reminder status back to idle
         if (updateReminderStatus) {
+            if (log.isDebugEnabled()) log.debug("Reminder recovery processing for eval ("+evaluationId+"), cleared status");
         	evaluationService.updateEvaluationReminderStatus(evaluationId, null);
         }
         commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
@@ -441,12 +438,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         	Map<String, String> replacementValues = new HashMap<String, String>();
             replacementValues.put("HelpdeskEmail", from);
         	replacementValues.put("EvalTitle", eval.getTitle());
-        	Integer iEmailsSentCt = Integer.valueOf(emailsSentCt);
-        	replacementValues.put("NumEmailsSent", iEmailsSentCt.toString());
+        	replacementValues.put("NumEmailsSent", emailsSentCounter+"");
         	replacementValues.put("JobType", EvalConstants.JOB_TYPE_REMINDER.substring(9));
+            if (log.isDebugEnabled()) log.debug("Sending reminders complete email for eval ("+evaluationId+"), sent "+emailsSentCounter+" emails");
         	sendEmailJobCompleted(eval.getId(), replacementValues);	
         }
 
+        if (log.isDebugEnabled()) log.debug("Reminder processing complete for eval ("+evaluationId+"), sent emails to: "+sentEmails);
         return (String[]) sentEmails.toArray(new String[] {});
     }
 
@@ -1122,9 +1120,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * @return an array of email addresses that this message was sent to
      */
     public String[] sendUsersEmails(String from, String[] toUserIds, String subject, String message) {
-        String[] emails;
         String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
-        emails = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, deliveryOption);
+        if (log.isDebugEnabled()) log.debug("sendUsersEmails(from:"+from+", to:"+ArrayUtils.arrayToString(toUserIds)+", subj:"+subject);
+        String[] emails = commonLogic.sendEmailsToUsers(from, toUserIds, subject, message, true, deliveryOption);
         return emails;
     }
     /**

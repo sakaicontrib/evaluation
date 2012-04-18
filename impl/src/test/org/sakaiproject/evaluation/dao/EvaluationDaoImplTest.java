@@ -1105,25 +1105,37 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         Set<String> userIds = null;
 
         // check getting responders from complete evaluation
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null);
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, true);
+        assertNotNull(userIds);
+        assertEquals(2, userIds.size());
+        assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+        assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+        // check getting incomplete responders from complete evaluation
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, false);
+        assertNotNull(userIds);
+        assertEquals(0, userIds.size());
+
+        // check getting all responders from complete evaluation
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, null);
         assertNotNull(userIds);
         assertEquals(2, userIds.size());
         assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
         assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
 
         // test getting from subset of the groups
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
         assertNotNull(userIds);
         assertEquals(1, userIds.size());
         assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
 
         // test getting none
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationActiveUntaken.getId(), null);
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationActiveUntaken.getId(), null, true);
         assertNotNull(userIds);
         assertEquals(0, userIds.size());
 
         // test using invalid group ids retrieves no results
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {"xxxxxx", "fakeyandnotreal"});
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {"xxxxxx", "fakeyandnotreal"}, true);
         assertNotNull(userIds);
         assertEquals(0, userIds.size());
 

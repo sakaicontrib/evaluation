@@ -708,8 +708,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     /**
      * Send email that an evaluation has been created</br>
      * 
-     * @param evalId
-     *           the EvalEvaluation id
+     * @param evalId the EvalEvaluation id
      */
     protected void sendCreatedEmail(Long evalId) {
         boolean includeOwner = true;
@@ -721,22 +720,28 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     /**
      * Send a reminder that an evaluation is available to those who have not responded
      * 
-     * @param evalId
-     *           the EvalEvaluation id
+     * @param evalId the EvalEvaluation id
      */
     protected void sendReminderEmail(Long evaluationId) {
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                 && eval.getReminderDaysInt() != 0) {
-            String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
-            String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, includeConstant);
-            if (log.isDebugEnabled())
-                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
-            String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId,  EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
+            String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_NONTAKERS);
             if (log.isDebugEnabled()) {
-                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));                
+                log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            }
+            boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+            if (saveWithoutSubmit) {
+                String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
+                if (log.isDebugEnabled()) {
+                    log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));
+                }
+            } else {
+                log.debug("sendReminderEmail(" + evaluationId + "), No in progress reminders sent (saveWithoutSubmit is disabled)");
+            }
+        } else {
+            log.debug("sendReminderEmail(" + evaluationId + "), no reminder sent (state="+eval.getState()+", reminderDays="+eval.getReminderDaysInt()+")");
         }
-    }
     }
 
     /**
