@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
-import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -1089,9 +1088,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     			String message = TextTemplateLogicUtils.processTextTemplate(emailTemplate.getMessage(), replacementValues);
     			String deliveryOption = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
     			String[] emails = commonLogic.sendEmailsToAddresses(replacementValues.get("HelpdeskEmail"), to, subject, message, true, deliveryOption);
-    			log.debug("TO: " + to[0]);
-    			log.debug("SUBJECT: " + subject);
-    			log.debug("MESSAGE: " + message);
+    			if (log.isDebugEnabled()) {
+                    log.debug("SENT TO: " + ArrayUtils.arrayToString(emails));
+                    log.debug("TO: " + ArrayUtils.arrayToString(to));
+                    log.debug("SUBJECT: " + subject);
+                    log.debug("MESSAGE: " + message);
+    			}
     		} else  {
     			log.error("No HelpdeskEmail value set, job completed email NOT sent");
     		}
@@ -1215,32 +1217,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalSubmissionConfirmationEmail(java.lang.Long)
      */
- 	public String sendEvalSubmissionConfirmationEmail(String userId, Long evaluationId) {
- 		String to = null;
-		Boolean sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
-		
-		if(sendConfirmation.booleanValue()) {
-			EvalEmailTemplate template = null;
-			Map<String, String> replacementValues = new HashMap<String, String>();
-			
-			EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-			String evalTitle = eval.getTitle();
-			String from = getFromEmailOrFail(eval);
-			//get the template
-			template = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, evaluationId);
-			if(template != null) {
-				//make email and do the variable substitutions
-				EvalEmailMessage em = makeEmailMessage(template.getMessage(), template.getSubject(), eval, null);
+	public String sendEvalSubmissionConfirmationEmail(String userId, Long evaluationId) {
+	    String to = null;
+	    Boolean sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
 
-                // send the actual email for this user
-                String[] emailAddresses = sendUsersEmails(from, new String[]{userId}, em.subject, em.message);
-                if(emailAddresses.length > 0){
+	    if (sendConfirmation.booleanValue()) {
+	        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+	        String from = getFromEmailOrFail(eval);
+	        //get the template
+	        EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, evaluationId);
+	        if (emailTemplate != null) {
+	            //make email and do the variable substitutions
+	            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, null);
+	            // send the actual email for this user
+	            String[] emailAddresses = sendUsersEmails(from, new String[]{userId}, em.subject, em.message);
+	            if (emailAddresses.length > 0){
 	                log.info("Sent Submission Confirmation email to " + userId + ". (attempted to send to "+emailAddresses.length+")");	                
 	                commonLogic.registerEntityEvent(EVENT_EMAIL_SUBMISSION, EvalEvaluation.class, eval.getId().toString());
-                }
-			}
-		}
- 		return to;
- 	}
+	            }
+	        }
+	    }
+	    return to;
+	}
 
 }
