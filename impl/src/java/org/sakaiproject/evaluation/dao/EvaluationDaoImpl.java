@@ -271,17 +271,17 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             // now set up the filter
             if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
                 // get all users who have NOT responded
-                userFilter = getResponseUserIds(evaluationId, groupIds);
+                userFilter = getResponseUserIds(evaluationId, groupIds, true);
                 includeFilterUsers = false;
             } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
                 // get all users who have responded
-                userFilter = getResponseUserIds(evaluationId, groupIds);
+                userFilter = getResponseUserIds(evaluationId, groupIds, true);
+                includeFilterUsers = true;
+            } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
+                userFilter = getResponseUserIds(evaluationId, groupIds, false);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
                 // do nothing
-            } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
-                userFilter = getResponseIncompleteUserIds(evaluationId, groupIds);
-                includeFilterUsers = true;
             } else {
                 throw new IllegalArgumentException("Unknown includeConstant: " + includeConstant);
             }
@@ -1197,59 +1197,38 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
 
     /**
-     * Get all the users who have completely responded to an evaluation 
+     * Get all the users who have responded to an evaluation (completely or partly)
      * and optionally within group(s) assigned to that evaluation
      * 
      * @param evaluationId a unique id for an {@link EvalEvaluation}
      * @param evalGroupIds the unique eval group ids associated with this evaluation, 
      * can be null or empty to get all responses for this evaluation
+     * @param completed if true then only completed (submitted) responses, if false, then only incomplete (saved) responses
      * @return a set of internal userIds
      */
-    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds) {
+    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         Map<String, Object> params = new HashMap<String, Object>();
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
             groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
             params.put("evalGroupIds", evalGroupIds);
         }
+        String completeHQL = "";
+        if (completed != null) {
+            completeHQL = " and response.endTime is "+(completed ? "not" : "")+" null ";
+        }
         params.put("evaluationId", evaluationId);
         String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
-            + " and response.endTime is not null " + groupsHQL + " order by response.id";
+            + completeHQL + groupsHQL + " order by response.id";
         List<?> results = executeHqlQuery(hql, params, 0, 0);
         // put the results into a set and convert them to strings
         Set<String> responseUsers = new HashSet<String>();
         for (Object object : results) {
             responseUsers.add((String) object);
         }
+        if (log.isDebugEnabled()) log.debug("ResponseUserIds(eval:"+evaluationId+", groups:"
+                +ArrayUtils.arrayToString(evalGroupIds)+", completed="+completed+"): users="+responseUsers);
         return responseUsers;
-    }
-
-    /**
-     * Get all the users who have saved but not completed a response to an evaluation
-     * and optionally within group(s) assigned to that evaluation
-     * 
-     * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param evalGroupIds the unique eval group ids associated with this evaluation,
-     * can be null or empty to get all responses for this evaluation
-     * @return a set of internal userIds
-     */
-    private Set<String> getResponseIncompleteUserIds(Long evaluationId, String[] evalGroupIds) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        String groupsHQL = "";
-        if (evalGroupIds != null && evalGroupIds.length > 0) {
-            groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
-            params.put("evalGroupIds", evalGroupIds);
-        }
-        params.put("evaluationId", evaluationId);
-        String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
-            + " and response.endTime is null " + groupsHQL + " order by response.id";
-        List<?> results = executeHqlQuery(hql, params, 0, 0);
-        // put the results into a set and convert them to strings
-        Set<String> responseUsers = new HashSet<String>();
-        for (Object object : results) {
-            responseUsers.add((String) object);
-        }
-        return responseUsers;        
     }
 
     /** getResponsesSavedInProgress returns a List of EvalResponses that have been saved

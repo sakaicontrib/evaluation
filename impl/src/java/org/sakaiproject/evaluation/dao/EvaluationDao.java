@@ -289,8 +289,7 @@ public interface EvaluationDao extends GeneralGenericDao {
      * if null then return all responses
      * @return a list of response ids (Long) for {@link EvalResponse} objects
      */
-    public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds,
-            Boolean completed);
+    public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds, Boolean completed);
 
     /**
      * Removes an array of responses and all their associated answers at
@@ -328,9 +327,12 @@ public interface EvaluationDao extends GeneralGenericDao {
      * @param evaluationId a unique id for an {@link EvalEvaluation}
      * @param evalGroupIds the unique eval group ids associated with this evaluation, 
      * can be null or empty to get all responses for this evaluation
+     * @param completed if true only return the completed responses, 
+     * if false only return the incomplete responses,
+     * if null then return all responses
      * @return a set of internal userIds
      */
-    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds);
+    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
 
     /**
      * Get all the evalGroupIds for an evaluation which are viewable by
