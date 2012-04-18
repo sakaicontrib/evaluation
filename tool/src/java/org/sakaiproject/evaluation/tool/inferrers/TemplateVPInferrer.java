@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.inferrers;
 
-import org.sakaiproject.entitybroker.IdEntityReference;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -29,7 +29,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 /**
  * Handles the redirection of incoming template entity URLs to the proper views with the proper view params added
  * 
- * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Aaron Zeckoski (azeckoski @ unicon.net)
  */
 public class TemplateVPInferrer implements EntityViewParamsInferrer {
 
@@ -56,8 +56,8 @@ public class TemplateVPInferrer implements EntityViewParamsInferrer {
 	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
 	 */
 	public ViewParameters inferDefaultViewParameters(String reference) {
-		IdEntityReference ep = new IdEntityReference(reference);
-		Long templateId = new Long(ep.id);
+		EntityReference ep = new EntityReference(reference);
+		Long templateId = new Long(ep.getId());
 		EvalTemplate template = authoringService.getTemplateById(templateId); 
 		if (EvalConstants.SHARING_PUBLIC.equals(template.getSharing()) ||
 				Boolean.TRUE.equals(template.getExpert())) {
