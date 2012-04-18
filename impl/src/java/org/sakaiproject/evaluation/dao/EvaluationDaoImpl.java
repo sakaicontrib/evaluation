@@ -295,20 +295,30 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         List<EvalAssignUser> assignments = new ArrayList<EvalAssignUser>( results );
 
         // This code is potentially expensive but there is not really a better way to handle it -AZ
-        if (userFilter != null && ! userFilter.isEmpty()) {
-            // filter the results based on the userFilter
-            for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
-                EvalAssignUser evalAssignUser = iterator.next();
-                String uid = evalAssignUser.getUserId();
+        if (userFilter != null) {
+            if (userFilter.isEmpty()) {
+                // employ shortcuts when the filter set is empty
                 if (includeFilterUsers) {
-                    // only include users in the filter
-                    if (! userFilter.contains(uid)) {
-                        iterator.remove();
-                    }
+                    // no one to include so just wipe the set
+                    assignments.clear();
                 } else {
-                    // exclude all users in the filter
-                    if (userFilter.contains(uid)) {
-                        iterator.remove();
+                    // no one to exclude to just return the complete set
+                }
+            } else {
+                // filter the results based on the userFilter
+                for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
+                    EvalAssignUser evalAssignUser = iterator.next();
+                    String uid = evalAssignUser.getUserId();
+                    if (includeFilterUsers) {
+                        // only include users in the filter
+                        if (! userFilter.contains(uid)) {
+                            iterator.remove();
+                        }
+                    } else {
+                        // exclude all users in the filter
+                        if (userFilter.contains(uid)) {
+                            iterator.remove();
+                        }
                     }
                 }
             }

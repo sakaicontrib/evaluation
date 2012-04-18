@@ -141,7 +141,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         evaluationDao.findAll(EvalEmailTemplate.class);
     }
 
-    public void testGetPaticipants() {
+    public void testGetParticipants() {
         List<EvalAssignUser> l = null;
         long start = 0l;
 
@@ -163,10 +163,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertNotNull(l);
         assertEquals(2, l.size());
 
-        start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, new String[] {EvalTestDataLoad.SITE2_REF}, 
                 null, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         assertNotNull(l);
         assertEquals(0, l.size());
 
@@ -187,12 +185,32 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(11, l.size());
 
         // get all active evals a user is assigned to
-        start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, EvalConstants.EVALUATION_STATE_ACTIVE);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         assertNotNull(l);
         assertEquals(2, l.size());
+
+        // test the way that the reminders email gets participants
+        //evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, null, includeConstant, null);
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
     }
 
     public void testGetEvalsUserCanTake() {
