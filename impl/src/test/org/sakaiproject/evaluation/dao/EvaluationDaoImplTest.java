@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -209,6 +210,21 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
                 null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        // add in a saved response
+        EvalResponse r1 = new EvalResponse(EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, new Date(), null, null);
+        r1.setAnswers( new HashSet<EvalAnswer>() );
+        evaluationDao.save(r1);
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
         assertNotNull(l);
         assertEquals(0, l.size());
     }
@@ -1727,10 +1743,10 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
             assertNotNull(eauId);
             eau.setCompletedDate(new Date());
             evaluationDao.update(eau);
+            EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
+            assertNotNull(eau0);
+            assertNotNull(eau0.getCompletedDate());
         }
-        EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
-        assertNotNull(eau0);
-        assertNotNull(eau0.getCompletedDate());
         int count9 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
         assertEquals(0,count9);
         List<Map<String,Object>> mapping9 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);
