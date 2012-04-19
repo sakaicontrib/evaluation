@@ -271,7 +271,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             // now set up the filter
             if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
                 // get all users who have NOT responded
-                userFilter = getResponseUserIds(evaluationId, groupIds, true);
+                userFilter = getResponseUserIds(evaluationId, groupIds, null); // exclude
                 includeFilterUsers = false;
             } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
                 // get all users who have responded
