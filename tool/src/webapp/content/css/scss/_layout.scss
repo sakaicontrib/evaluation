@@ -183,6 +183,21 @@
           }
         }
       }
+
+      // Set minimunm widths for smaller set response scales (otherwise the labels overlap).
+      .matrixRadioItems-2 { 
+        min-width: 180px; 
+      } 
+      .matrixRadioItems-3 { 
+        min-width: 120px; 
+      } 
+      .matrixRadioItems-4 { 
+        min-width: 80px; 
+      } 
+      .matrixRadioItems-5 { 
+        min-width: 60px; 
+      }
+
     } // end matrix
 
   } // end scale
