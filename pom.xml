@@ -296,4 +296,55 @@
         <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
     </scm>
 
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Used to replace the headers of files with proper licenses -  
+                http://code.google.com/p/maven-license-plugin  
+                - Run mvn license:format to fix up licenses on all files in the project 
+                -->
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <strictCheck>true</strictCheck>
+                    <header>${basedir}/LICENSE_HEADER</header>
+                    <aggregate>true</aggregate>
+                    <failIfMissing>true</failIfMissing>
+                    <properties>
+                        <name>${project.name}</name>
+                        <year>${project.inceptionYear}</year>
+                        <holder>Sakai Foundation</holder>
+                    </properties>
+                    <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>m2-target/**</exclude>
+                        <exclude>bin/**</exclude>
+                        <exclude>src/ddl/**</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/js/facebox/**</exclude>
+                        <exclude>**/js/fluid/**</exclude>
+                        <exclude>**/js/jquery/**</exclude>
+                        <exclude>**/js/ui.*</exclude>
+                        <exclude>**/js/yahoo*</exclude>
+                        <exclude>**/css/jquery*</exclude>
+                        <exclude>LICENSE*</exclude>
+                        <exclude>**/README</exclude>
+                    </excludes>
+                    <mapping>
+                        <tag>DYNASCRIPT_STYLE</tag>
+                    </mapping>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
