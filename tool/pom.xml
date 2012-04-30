@@ -16,7 +16,6 @@
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
     </organization>
-    <inceptionYear>2005</inceptionYear>
 
     <packaging>war</packaging>
 
@@ -475,6 +474,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
             </plugin>
         </plugins>
         <resources>

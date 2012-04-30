@@ -16,7 +16,6 @@
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
     </organization>
-    <inceptionYear>2006</inceptionYear>
     <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
     <packaging>jar</packaging>
 
@@ -381,9 +380,12 @@
             </testResource>
             <!--includes:  include: **/*Test.java -->
         </testResources>
-
-<!-- 
         <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+            </plugin>
+<!-- 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
@@ -403,8 +405,8 @@
                     </execution>
                 </executions>
             </plugin>
+-->
         </plugins>
- -->
     </build>
 
 </project>

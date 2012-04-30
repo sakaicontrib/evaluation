@@ -33,7 +33,7 @@
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
     <version>1.4-SNAPSHOT</version><!--eval.version-->
-    <inceptionYear>2006</inceptionYear>
+    <inceptionYear>2005</inceptionYear>
     
     <parent>
         <groupId>org.sakaiproject</groupId>

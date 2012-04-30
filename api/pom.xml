@@ -16,7 +16,6 @@
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
     </organization>
-    <inceptionYear>2006</inceptionYear>
 
     <!-- you must deploy your API to shared or it will be 
         inaccessible from your tool -->
@@ -176,5 +175,11 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
