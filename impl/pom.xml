@@ -18,6 +18,9 @@
     </organization>
     <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
     <packaging>jar</packaging>
+    <properties>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
+    </properties>
 
     <profiles>
         <profile>

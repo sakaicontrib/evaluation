@@ -18,6 +18,9 @@
     </organization>
 
     <packaging>war</packaging>
+    <properties>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
+    </properties>
 
     <profiles>
         <profile>

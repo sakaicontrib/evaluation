@@ -22,6 +22,7 @@
     <packaging>jar</packaging>
     <properties>
         <deploy.target>shared</deploy.target>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
     </properties>
 
 	<profiles>
