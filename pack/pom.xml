@@ -13,6 +13,7 @@
     <packaging>sakai-component</packaging>
     <properties>
         <deploy.target>components</deploy.target>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
     </properties>
 
     <parent>
