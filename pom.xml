@@ -102,7 +102,6 @@
             <id>sakai2.7</id>
             <activation>
                 <property><name>sakai2.7</name></property>
-                <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>api</module>
@@ -127,6 +126,7 @@
             <id>sakai2.9</id>
             <activation>
                 <property><name>sakai2.9</name></property>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>api</module>
