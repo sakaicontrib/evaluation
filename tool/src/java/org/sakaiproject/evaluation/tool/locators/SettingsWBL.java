@@ -80,7 +80,7 @@ public class SettingsWBL implements WriteableBeanLocator {
             else if ( ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_NO) ) 
                 toset = Boolean.FALSE;
             else {
-                throw new IllegalStateException("Invalid value for this ternary boolean: " + toset);
+                throw new IllegalStateException("Invalid value for " + beanname + " and this ternary boolean: " + toset);
             }
         } else {
             /*
