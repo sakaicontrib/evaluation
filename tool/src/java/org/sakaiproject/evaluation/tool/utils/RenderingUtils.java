@@ -52,10 +52,10 @@ public class RenderingUtils {
         int responseCount = responseArray.length - 1; // remove the NA count from the end
         int totalAnswers = 0;
         int totalValue = 0;
-        int totalWeight = 0;
+        //int totalWeight = 0;
         for (int i = 0; i < responseCount; i++) {
             int weight = i+1;
-            totalWeight += weight;
+            //totalWeight += weight;
             totalAnswers += responseArray[i];
             totalValue += (weight * responseArray[i]);
         }

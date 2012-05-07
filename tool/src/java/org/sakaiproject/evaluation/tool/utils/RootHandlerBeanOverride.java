@@ -14,33 +14,52 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
+import java.text.ParseException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook;
+import org.sakaiproject.evaluation.tool.settings.ExportConfigurationHook;
 
 import uk.org.ponder.rsf.processor.support.RootHandlerBeanBase;
 
 /**
  * This class exists because RootHandlerBeanBase has a bug in that if a request is handled by a DataView or HandlerHook,
- * setupResponseWriter is called and blasts content-type back to text/html. See <a href="http://www.caret.cam.ac.uk/jira/browse/RSF-123">RSF-123</a>
+ * setupResponseWriter is called and blasts content-type back to text/html. See <a
+ * href="http://www.caret.cam.ac.uk/jira/browse/RSF-123">RSF-123</a>
  * 
  * @author andrew
  * @see OverridedServletRootHandlerBean
  */
 public class RootHandlerBeanOverride {
-
-    private RootHandlerBeanBase rootHandlerBeanBase;
-    private ReportHandlerHook reportHandlerHook;
-
-    public void setRootHandlerBeanBase(RootHandlerBeanBase rootHandlerBeanBase) {
-        this.rootHandlerBeanBase = rootHandlerBeanBase;
+  public void handle() throws ParseException {
+    String path = request.getRequestURL().toString();
+    if (path.indexOf(ExportConfigurationHook.VIEW_ID) > -1) {
+      exportConfigHook.handle();
+    } else {
+      if (!reportHandlerHook.handle()) {
+        rootHandlerBeanBase.handle();
+      }
     }
+  }
 
-    public void setReportHandlerHook(ReportHandlerHook reportHandlerHook) {
-        this.reportHandlerHook = reportHandlerHook;
-    }
+  private ExportConfigurationHook exportConfigHook;
+  public void setExportConfigHook(ExportConfigurationHook hook) {
+    this.exportConfigHook = hook;
+  }
 
-    public void handle() {
-        if (!reportHandlerHook.handle()) {
-            rootHandlerBeanBase.handle();
-        }
-    }
+  private HttpServletRequest request;
+  public void setHttpServletRequest(HttpServletRequest request) {
+    this.request = request;
+  }
+
+  private ReportHandlerHook reportHandlerHook;
+  public void setReportHandlerHook(ReportHandlerHook reportHandlerHook) {
+    this.reportHandlerHook = reportHandlerHook;
+  }
+
+  private RootHandlerBeanBase rootHandlerBeanBase;
+  public void setRootHandlerBeanBase(RootHandlerBeanBase rootHandlerBeanBase) {
+    this.rootHandlerBeanBase = rootHandlerBeanBase;
+  }
 }

@@ -1,0 +1,85 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title rsf:id="msg=importconfig.page.title">Import Configuration</title>
+    <!-- standard on all pages -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script> 
+    <!-- end standard on all pages -->
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
+  </head>
+  <body>
+    <div class="portletBody">
+      <div rsf:id="navIntraTool:" class="navIntraTool"/>
+      <div class='uploadDiv' style="margin: 20px;">
+        <form rsf:id="upload-form" method="post" enctype="multipart/form-data">
+          <span rsf:id="msg=importconfig.upload.instructions">Select Eval configuration file to upload</span><br/>
+          <input name="configFile" size="90" class="input" type="file"/><br/>
+          <button rsf:id="upload-button">Upload</button>
+        </form>
+      </div>
+      <h3 rsf:id="msg=importconfig.settings.header">System Configuration</h3>
+      <table width="60%">
+        <thead>
+          <tr>
+            <th rsf:id="msg=importconfig.config.property" align="center" width="50%">Property Name</th>
+            <th rsf:id="msg=importconfig.config.current.property" align="center" >Current Setting</th>
+            <th rsf:id="msg=importconfig.config.import.property" align="center" >Import Setting</th>            
+          </tr>          
+        </thead>
+        <tbody id="propertyValues">
+          <tr rsf:id="settings:" class="propertyRow">
+            <td rsf:id="propertyName" class="tdPropertyName">property name</td>
+            <td rsf:id="currentValue" class="tdCurrentValue" align="center">current value</td>
+            <td class="tdNewPropertyValue" align="center"><span rsf:id="incomingValue" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='uploadDiv' style="margin: 20px;">
+      <form rsf:id="overwrite-form" onsubmit="confirmOverwrite();">
+        <button rsf:id="overwrite-button" id="overwrite-button">Overwrite Settings</button>
+        <span id="confirmMsg" rsf:id="msg=importconfig.confirm.overwrite" style="display: none"/>
+      </form>
+    </div>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // Stripe the table rows
+        $('tr:odd').addClass('oddrow');
+        
+        // If we uploaded a file (thus the button exists), paint the differences in the table red to make it easy to see the differences
+        if ($('#overwrite-button').length > 0) {
+          $('td.tdCurrentValue').each(function(){
+            if (($(this).text() != $(this).next().text())){
+              $(this).next().css("background", "red");
+            }
+          });
+        }
+      });
+      
+      function confirmOverwrite() {
+        return confirm($("#confirmMsg").text());
+      }
+    </script>
+  </body>  
+</html>

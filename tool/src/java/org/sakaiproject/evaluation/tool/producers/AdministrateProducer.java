@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.settings.ExportConfigurationHook;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -102,6 +103,14 @@ public class AdministrateProducer extends EvalCommonProducer {
                 UIMessage.make("administrate.top.control.evaladmin"),
                 new SimpleViewParameters(ControlEvalAdminProducer.VIEW_ID));
 
+        UIInternalLink.make(tofill, "control-export-settings-toplink", 
+            UIMessage.make("administrate.top.control.export.settings"),
+            new SimpleViewParameters(ExportConfigurationHook.VIEW_ID));
+        
+        UIInternalLink.make(tofill, "control-import-settings-toplink", 
+            UIMessage.make("administrate.top.control.import.settings"),
+            new SimpleViewParameters(ImportConfigProducer.VIEW_ID));
+        
         UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
                 UIMessage.make("admintesteg.page.title"),
                 new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));    
