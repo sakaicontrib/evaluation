@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.producers.AdministrateProducer;
+import org.sakaiproject.evaluation.tool.producers.AssignPermissionsProducer;
 import org.sakaiproject.evaluation.tool.producers.ControlEmailTemplatesProducer;
 import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
 import org.sakaiproject.evaluation.tool.producers.ControlItemsProducer;
@@ -99,6 +100,10 @@ public class NavBarRenderer {
         	if (adminAllowedToSee || canBeginEvaluation) {
         		renderLink(joint, ControlEmailTemplatesProducer.VIEW_ID, "controlemailtemplates.page.title"); 
         	}
+
+         if (adminAllowedToSee) {
+            renderLink(joint, AssignPermissionsProducer.VIEW_ID, "assignPermissions.link.display");
+         }
         }
         
         //handle breadcrumb rendering here. TODO: Review
