@@ -920,4 +920,10 @@
       <property name="importConfigProducer" ref="importConfigProducer"/>
       <property name="overwriteSettingHandler" ref="overwriteSettingsHandler" />
     </bean>
+    
+    <!-- Permission Helper -->
+    <bean class="org.sakaiproject.evaluation.tool.producers.AssignPermissionsProducer">
+        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+        <property name="site" ref="sakai-Site" />
+    </bean>
 </beans>
