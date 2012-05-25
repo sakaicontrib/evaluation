@@ -23,6 +23,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -39,6 +41,8 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class RenderingUtils {
+
+    private static Log log = LogFactory.getLog(RenderingUtils.class);
 
     /**
      * Calculates the weighted average and number of counted answers from the responseArray
@@ -158,14 +162,20 @@ public class RenderingUtils {
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType) // since BLOCK_CHILD is always a scaled item
         ) {
             // only do something here if this item type can handle a scale
+            if (log.isDebugEnabled()) log.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
             if (scaleOptions == null || scaleOptions.length == 0) {
                 // if scale options are missing then try to get them from the item
+                // NOTE: this could throw a NPE - not much we can do about that if it happens
                 scaleOptions = templateItem.getItem().getScale().getOptions();
             }
             scaleLabels = scaleOptions.clone(); // default to just using the options array (use a copy)
-            if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
+            if (templateItem.getScaleDisplaySetting() == null) {
+                // this should not happen really but it seems like it is so we are going to trap and log it
+                log.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
+            } else if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
                     || templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
             ) {
+                if (log.isDebugEnabled()) log.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
                 /* MATRIX - special labels for the matrix items
                  * Show numbers in front (e.g. "blah" becomes "1 - blah")
                  * and only show text if the label was display in take evals (e.g. "1 - blah, 2, 3, 4 - blah, ...)
