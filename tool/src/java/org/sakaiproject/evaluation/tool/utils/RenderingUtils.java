@@ -169,11 +169,15 @@ public class RenderingUtils {
                 scaleOptions = templateItem.getItem().getScale().getOptions();
             }
             scaleLabels = scaleOptions.clone(); // default to just using the options array (use a copy)
-            if (templateItem.getScaleDisplaySetting() == null) {
-                // this should not happen really but it seems like it is so we are going to trap and log it
+            String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
+            if (scaleDisplaySetting == null && templateItem.getItem() != null) {
+                scaleDisplaySetting = templateItem.getItem().getScaleDisplaySetting();
+            }
+            if (scaleDisplaySetting == null) {
+                // this should not happen but just in case it does, we want to trap and warn about it
                 log.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
-            } else if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
-                    || templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
+            } else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
+                    || scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
             ) {
                 if (log.isDebugEnabled()) log.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
                 /* MATRIX - special labels for the matrix items
