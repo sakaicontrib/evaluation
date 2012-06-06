@@ -696,7 +696,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         replacementValues.put("HelpdeskEmail", getFromEmailOrFail(eval));
 
         // setup the opt-in, opt-out, and add questions variables
-        int addItems = ((Integer) settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).intValue();
+        int addItems = ((Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER)).intValue();
         if (! eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0)) {
             if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
                 // if eval is opt-in notify instructors that they may opt in
