@@ -91,7 +91,9 @@ public class EvalTestDataLoad {
     public final static String SITE2_CONTEXT = "siteC2";
     public final static String SITE2_REF = "/sites/ref-222222";
     public final static String SITE2_TITLE = "Site2 title";
-    public final static String SITE3_REF = "/sites/ref-333333";
+    public final static String SITE3_CONTEXT = "siteC3";
+    public final static String SITE3_REF = "/sites/ref-222222";
+    public final static String SITE3_TITLE = "Site3 title";
     public final static String SITE4_REF = "/sites/ref-444444";
     public final static String SITE5_REF = "/sites/ref-555555";
     public final static String SITE6_REF = "/sites/ref-666666";
@@ -365,22 +367,22 @@ public class EvalTestDataLoad {
      * Evaluation which is in its grace period 
      */
     public EvalEvaluation evaluationGracePeriod;
-    
+
     /**
      * Evaluation which is active for testing view_ignore_date 
      */
     public EvalEvaluation evaluationActive_viewIgnoreDates;
-     
+
     /**
      * Evaluation which is due for testing view_ignore_date
      */
     public EvalEvaluation evaluationDue_viewIgnoreDates;
-     
+
     /**
      * Evaluation which is closed for testing evaluationClosed_viewIgnoreDates
      */
     public EvalEvaluation evaluationClosed_viewIgnoreDates;   
-    
+
     /**
      * Evaluation which has allRolesCanParticipate set to true
      * Site 3 group has 1 maintain and 1 access user
@@ -513,7 +515,7 @@ public class EvalTestDataLoad {
      * Group Assignment: MAIN_USER_ID_2, SITE6_REF, {@link #evaluation_allRoleAssignments_notAllRolesParticipate}
      */
     public EvalAssignGroup assign17;
-    
+
     /**
      * Group Assignment: MAIN_USER2, EVALSYS_1007_SITE_REF_01. {@link #evaluationActive_viewIgnoreDates}
      */
@@ -526,7 +528,7 @@ public class EvalTestDataLoad {
      * Group Assignment: MAIN_USER2, EVALSYS_1007_SITE_REF_01. {@link #evaluationClosed_viewIgnoreDates}
      */
     public EvalAssignGroup evalsys_1007_assign01;
-    
+
     /**
      * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
      */
@@ -860,7 +862,7 @@ public class EvalTestDataLoad {
                 EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "expert desc", 
                 null, LOCKED, false);
         templateUser_4 = new EvalTemplate(MAINT_USER_ID_3, EvalConstants.TEMPLATE_TYPE_STANDARD, 
-               "Template user 4", "description", 
+                "Template user 4", "description", 
                 EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "expert desc", 
                 null, LOCKED, false);
 
@@ -1216,7 +1218,7 @@ public class EvalTestDataLoad {
                 EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
-                
+
         /*
          * Evaluation which has allRolesCanParticipate set to true
          * Site 3 group has 1 maintain and 1 access user
@@ -1297,8 +1299,8 @@ public class EvalTestDataLoad {
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-                   
-        
+
+
         // evaluation Complete (ended yesterday, viewable tomorrow), recent close, still 
         evaluationGracePeriod = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
                 EvalTestDataLoad.ADMIN_USER_ID, "Eval grace period two", null, 
@@ -1314,25 +1316,25 @@ public class EvalTestDataLoad {
                 EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        
+
         evaluationDue_viewIgnoreDates = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EVALSYS_1007_MAINT_USER_ID_01, "evaluationDue_viewIgnoreDates", null, 
                 threeDaysAgo, yesterday, tomorrow, tomorrow, true, tomorrow, true, tomorrow, 
                 EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        
+
         evaluationClosed_viewIgnoreDates = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EVALSYS_1007_MAINT_USER_ID_01, "evaluationClosed_viewIgnoreDates", null, 
                 fourDaysAgo, threeDaysAgo, yesterday, tomorrow, true, tomorrow, true, tomorrow, 
                 EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        
+
         evaluationPartial_noAuthNoGroups = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID_3, "evaluationInque_noAuthNoGroups", null, 
                 tomorrow, fourDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
                 templateUser_4, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
-        
+
         // email templates
         emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");
         evaluationNew.setAvailableEmailTemplate(emailTemplate1);
@@ -1369,7 +1371,7 @@ public class EvalTestDataLoad {
         dao.save(evaluationProvided);
         dao.save(evaluationDeleted);
         dao.save(evaluationGracePeriod);
-        
+
         //evaluation used to test allRolesCanParticipate property
         dao.save(evaluation_simpleAssignments_allRolesParticipate);
         dao.save(evaluation_simpleAssignments_notAllRolesParticipate);
@@ -1405,26 +1407,26 @@ public class EvalTestDataLoad {
         assign10 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
                 evaluationClosedUntaken, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign11 = new EvalAssignGroup(MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE,
-        		evaluationGracePeriod, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluationGracePeriod, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign12 = new EvalAssignGroup(MAINT_USER_ID_3, SITE4_REF, EvalConstants.GROUP_TYPE_SITE,
-        		evaluation_simpleAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluation_simpleAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign13 = new EvalAssignGroup(MAINT_USER_ID_3, SITE4_REF, EvalConstants.GROUP_TYPE_SITE,
-           		evaluation_simpleAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluation_simpleAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign14 = new EvalAssignGroup(MAINT_USER_ID_3, SITE5_REF, EvalConstants.GROUP_TYPE_SITE,
-           		evaluation_noAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluation_noAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign15 = new EvalAssignGroup(MAINT_USER_ID_3, SITE5_REF, EvalConstants.GROUP_TYPE_SITE,
-        		evaluation_noAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluation_noAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign16 = new EvalAssignGroup(MAINT_USER_ID_3, SITE6_REF, EvalConstants.GROUP_TYPE_SITE,
-           		evaluation_allRoleAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+                evaluation_allRoleAssignments_allRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
         assign17 = new EvalAssignGroup(MAINT_USER_ID_3, SITE6_REF, EvalConstants.GROUP_TYPE_SITE,
-        		evaluation_allRoleAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
-        
+                evaluation_allRoleAssignments_notAllRolesParticipate, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+
         evalsys_1007_assign03 = new EvalAssignGroup( EVALSYS_1007_MAINT_USER_ID_01, EVALSYS_1007_SITE_REF_01, EvalConstants.GROUP_TYPE_SITE, 
                 evaluationActive_viewIgnoreDates, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
         evalsys_1007_assign02 = new EvalAssignGroup( EVALSYS_1007_MAINT_USER_ID_01, EVALSYS_1007_SITE_REF_01, EvalConstants.GROUP_TYPE_SITE, 
-    		   evaluationDue_viewIgnoreDates, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+                evaluationDue_viewIgnoreDates, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
         evalsys_1007_assign01 = new EvalAssignGroup( EVALSYS_1007_MAINT_USER_ID_01, EVALSYS_1007_SITE_REF_01, EvalConstants.GROUP_TYPE_SITE, 
-    		   evaluationClosed_viewIgnoreDates, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);  
+                evaluationClosed_viewIgnoreDates, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);  
         // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
         assignGroupProvided = new EvalAssignGroup( ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
                 evaluationNewAdmin, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);

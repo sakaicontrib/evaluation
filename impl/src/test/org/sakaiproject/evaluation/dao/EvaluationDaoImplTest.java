@@ -213,10 +213,46 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertNotNull(l);
         assertEquals(0, l.size());
 
+
+        // test fetching various sets of participants (using the untaken eval)
+        // first it has to have 3 users assigned to it so we assign 2 more (EvalTestDataLoad.USER_ID is already assigned)
+        evaluationDao.save( new EvalAssignUser(EvalTestDataLoad.USER_ID_4, etdl.evaluationActiveUntaken, EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.MAINT_USER_ID) );
+        evaluationDao.save( new EvalAssignUser(EvalTestDataLoad.USER_ID_5, etdl.evaluationActiveUntaken, EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.MAINT_USER_ID) );
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
         // add in a saved response
         EvalResponse r1 = new EvalResponse(EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, new Date(), null, null);
         r1.setAnswers( new HashSet<EvalAnswer>() );
         evaluationDao.save(r1);
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(2, l.size());
 
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
                 null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
@@ -224,9 +260,35 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(1, l.size());
 
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
-                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
         assertNotNull(l);
         assertEquals(0, l.size());
+
+        // add in a completed response
+        EvalResponse r2 = new EvalResponse(EvalTestDataLoad.USER_ID_4, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, etdl.yesterday, new Date(), null);
+        r2.setAnswers( new HashSet<EvalAnswer>() );
+        evaluationDao.save(r2);
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
     }
 
     public void testGetEvalsUserCanTake() {
