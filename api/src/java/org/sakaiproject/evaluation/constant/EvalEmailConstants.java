@@ -343,7 +343,7 @@ public class EvalEmailConstants {
 	   "It was submitted on ${TimeStamp}.  Thank you for helping the University maintain and improve the quality of its teaching.\n\n" +
 	   "Please save this message for your records.\n\n" +
 	   "Note that all student responses are kept confidential." +
-	   "<#elseif ShowAllowEditResponsesText == \"true\">\n" +
+	   "<#if ShowAllowEditResponsesText == \"true\">\n" +
 	   "You may edit your evaluation responses up until the close date for this evaluation.\n" +
       "</#if>\n";
    
