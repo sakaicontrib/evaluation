@@ -152,16 +152,26 @@ public class EvalAssignUser implements java.io.Serializable {
     public EvalAssignUser() {
     }
 
+    public EvalAssignUser(String userId, String evalGroupId) {
+        this(userId, evalGroupId, null, null, null);
+    }
+
     /**
      * Minimal constructor, sets the type automatically to eval taker (student), 
      * all records are created with a default status of active,
      * makes the current user the owner
      * 
      * @param userId the user which is being assigned, should be the internal id (not the username)
+     * @param eval the evaluation this assignment is linked to
      * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
+     * @param owner (OPTIONAL) will be assigned to the current user if not set
      */
-    public EvalAssignUser(String userId, String evalGroupId) {
-        this(userId, evalGroupId, null, null, null);
+    public EvalAssignUser(String userId, EvalEvaluation eval, String evalGroupId, String owner) {
+        this(userId, evalGroupId, owner, null, null, eval, null);
+    }
+
+    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
+        this(userId, evalGroupId, owner, type, status, null, null);
     }
 
     /**
@@ -172,8 +182,10 @@ public class EvalAssignUser implements java.io.Serializable {
      * @param owner (OPTIONAL) will be assigned to the current user if not set
      * @param type (OPTIONAL) use a constant like {@link #TYPE_EVALUATEE} or {@value #TYPE_EVALUATOR}
      * @param status (OPTIONAL) use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
+     * @param eval the evaluation this assignment is linked to
+     * @param assignGroupId (OPTIONAL) the assigned group id
      */
-    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
+    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status, EvalEvaluation eval, Long assignGroupId) {
         super();
         this.lastModified = new Date();
         if (userId == null || "".equals(userId) ) {
@@ -194,6 +206,8 @@ public class EvalAssignUser implements java.io.Serializable {
             type = TYPE_EVALUATOR;
         }
         this.type = type;
+        this.evaluation = eval;
+        this.assignGroupId = assignGroupId;
     }
 
     public Long getId() {

@@ -270,14 +270,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             assignTypeHQL = " and eau.type = :assignType";
             // now set up the filter
             if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-                // get all users who have NOT responded
+                // get all users who have responded either way
                 userFilter = getResponseUserIds(evaluationId, groupIds, null); // exclude
-                includeFilterUsers = false;
+                includeFilterUsers = false; // INVERT the search
             } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
                 // get all users who have responded
                 userFilter = getResponseUserIds(evaluationId, groupIds, true);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
+                // get all users who have saved
                 userFilter = getResponseUserIds(evaluationId, groupIds, false);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
@@ -1211,9 +1212,11 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * and optionally within group(s) assigned to that evaluation
      * 
      * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param evalGroupIds the unique eval group ids associated with this evaluation, 
+     * @param evalGroupIds [OPTIONAL] the unique eval group ids associated with this evaluation, 
      * can be null or empty to get all responses for this evaluation
-     * @param completed if true then only completed (submitted) responses, if false, then only incomplete (saved) responses
+     * @param completed [OPTIONAL] if true then only completed (submitted) responses, 
+     *      if false, then only incomplete (saved) responses,
+     *      if null, then retrieve all responses (incomplete and complete)
      * @return a set of internal userIds
      */
     public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
