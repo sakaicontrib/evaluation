@@ -1,5 +1,4 @@
 * text=auto !eol
-/ svnc_bugtraq_003anumber=false svnc_bugtraq_003amessage
 /.classpath -text svn_keywords=Date+Revision+Author+URL+Id
 /.project -text svn_keywords=Date+Revision+Author+URL+Id
 /.springBeans -text
