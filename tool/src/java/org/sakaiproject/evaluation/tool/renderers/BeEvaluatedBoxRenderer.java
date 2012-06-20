@@ -46,7 +46,6 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -61,6 +60,7 @@ import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 public class BeEvaluatedBoxRenderer {
 
     private DateFormat df;
+    private boolean allowListOfTakers = false;
 
     private Locale locale;
     public void setLocale(Locale locale) {
@@ -104,10 +104,10 @@ public class BeEvaluatedBoxRenderer {
 
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        allowListOfTakers = (Boolean) settings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
     }
 
     public void renderBox(UIContainer tofill, String currentUserId) {
-        boolean evalsToShow = false;
         // need to determine if there are any evals in which the user can be evaluated
         // this will not return any deleted or partial evals but it will return closed ones so you need to check which ones to show depending on the use cases
         List<EvalEvaluation> evalsForInstructor = this.evaluationSetupService.getEvaluationsForEvaluatee(currentUserId, true);
@@ -116,67 +116,88 @@ public class BeEvaluatedBoxRenderer {
         } else {
             // evals found; show the widget
             UIBranchContainer evalResponsesBC = UIBranchContainer.make(tofill, "evalResponsesBox:");
-            UIForm evalResponsesForm = UIForm.make(evalResponsesBC, "evalResponsesForm");
-
-            UIBranchContainer evalResponseTable = null;
 
             // re-sort the evals so closed ones are at the end
             evalsForInstructor = EvalUtils.sortClosedEvalsToEnd(evalsForInstructor);
-
-            // show a list of evals with four columns:
+            // split into "in progress" and "closed"
+            List<EvalEvaluation> evalsInProgress = new ArrayList<EvalEvaluation>();
+            List<EvalEvaluation> evalsClosed = new ArrayList<EvalEvaluation>();
             for (EvalEvaluation eval : evalsForInstructor) {
-                evalsToShow = true;
-                if (evalResponseTable == null) {
-                    evalResponseTable = UIBranchContainer.make(evalResponsesForm, "evalResponseTable:");
-                    // show four column headings
-
+                if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                    evalsClosed.add(eval);
+                } else {
+                    evalsInProgress.add(eval);
                 }
-                // set display values for this eval
-                String evalState = commonLogic.calculateViewability(eval.getState());
-                // show one link per group assigned to in-queue, active or grace period eval
-                List<EvalGroup> groups = eval.getEvalGroups();
-                if (groups == null) {
-                    groups = new ArrayList<EvalGroup>();
-                }
-                for (EvalGroup group : groups) {
-                    UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable, "evalResponsesList:");
-                    UIOutput.make(evalrow, "evalResponsesStartDate", df.format(eval.getStartDate()));
-                    humanDateRenderer.renderDate(evalrow, "evalResponsesDueDate", eval.getDueDate());
-
-                    String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
-                    UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", title, 
-                            new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));
-
-                    int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
-                    int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] { group.evalGroupId });
-                    int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-                    String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-
-                    // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
-                    boolean instViewResultsEval = evalBeanUtils.checkInstructorViewResultsForEval(eval);
-
-                    makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus", 
-                            instViewResultsEval, responsesCount, enrollmentsCount, responsesNeeded);
-
-                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                        if (responsesNeeded == 0) {
-                            UIInternalLink.make(evalrow, "evalResponsesDisplayLink", UIMessage.make("controlevaluations.eval.responses.inline",
-                                    new Object[] { responseString }), new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(),
-                                    new String[] { group.evalGroupId }));
-                        } else {
-                            UIOutput responseOutput = UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
-                            responseOutput.decorate(new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses",
-                                    new Object[] { responsesNeeded })));
-                        }
-                    } else {
-                        UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
-                    }
-                }// link per group
-            }// for evals iterator
-            if (!evalsToShow) {
-                UIMessage.make(evalResponsesForm, "summary-be-evaluated-none", "summary.be.evaluated.none");
             }
+
+            // show a list of evals with 5 columns
+            if (evalsInProgress.isEmpty()) {
+                UIMessage.make(evalResponsesBC, "summary-be-evaluated-progress-none", "summary.be.evaluated.none");
+            } else {
+                UIBranchContainer evaluatedInProgressBC = UIBranchContainer.make(evalResponsesBC, "evaluatedInProgress:");
+                makeEvalsListTable(evalsInProgress, evaluatedInProgressBC);
+            }
+
+            // show a list of evals with 5 columns
+            if (evalsClosed.isEmpty()) {
+                UIMessage.make(evalResponsesBC, "summary-be-evaluated-closed-none", "summary.be.evaluated.none");
+            } else {
+                UIBranchContainer evaluatedClosedBC = UIBranchContainer.make(evalResponsesBC, "evaluatedClosed:");
+                makeEvalsListTable(evalsClosed, evaluatedClosedBC);
+            }
+
         }// there are evals for instructor
+    }
+
+    private void makeEvalsListTable(List<EvalEvaluation> evals, UIBranchContainer container) {
+        // add in the table heading
+        UIBranchContainer evalResponseTable = UIBranchContainer.make(container, "evalResponseTable:");
+        for (EvalEvaluation eval : evals) {
+            // set display values for this eval
+            String evalState = commonLogic.calculateViewability(eval.getState());
+            // show one link per group assigned to in-queue, active or grace period eval
+            List<EvalGroup> groups = eval.getEvalGroups();
+            if (groups == null) {
+                groups = new ArrayList<EvalGroup>();
+            }
+            for (EvalGroup group : groups) {
+                UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable, "evalResponsesList:");
+                UIOutput.make(evalrow, "evalResponsesStartDate", df.format(eval.getStartDate()));
+                humanDateRenderer.renderDate(evalrow, "evalResponsesDueDate", eval.getDueDate());
+
+                String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
+                UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", title, 
+                        new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));
+
+                int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
+                int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] { group.evalGroupId });
+                int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+                String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+                UIOutput.make(evalrow, "evalResponsesStatsDisplay", responseString);
+
+                // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
+                boolean instViewResultsEval = evalBeanUtils.checkInstructorViewResultsForEval(eval);
+
+                makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus", 
+                        instViewResultsEval, responsesCount, enrollmentsCount, responsesNeeded);
+
+                if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true) && responsesNeeded == 0) {
+                    UIInternalLink.make(evalrow, "evalResponsesDisplayLink", UIMessage.make("controlevaluations.eval.responses.inline",
+                            new Object[] { responseString }), new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(),
+                                    new String[] { group.evalGroupId }));
+                    if (allowListOfTakers) {
+                        // TODO
+                    }
+                } else {
+                    UIOutput responseOutput = UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
+                    responseOutput.decorate(new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses",
+                            new Object[] { responsesNeeded })));
+                    if (allowListOfTakers) {
+                        // TODO
+                    }
+                }
+            }// link per group
+        }
     }
 
     /**
