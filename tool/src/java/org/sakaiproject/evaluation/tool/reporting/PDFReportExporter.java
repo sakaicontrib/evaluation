@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,7 +111,7 @@ public class PDFReportExporter implements ReportExporter {
             }
         }
 
-//        EvalUser user = commonLogic.getEvalUserById(commonLogic.getCurrentUserId());
+        //EvalUser user = commonLogic.getEvalUserById(commonLogic.getCurrentUserId());
 
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
@@ -128,10 +130,18 @@ public class PDFReportExporter implements ReportExporter {
                                 new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount,
                                         enrollmentsCount) }), bannerImageBytes, messageLocator
                                         .getMessage("reporting.pdf.defaultsystemname"));
-
-        // set title and instructions
-        evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), commonLogic
-                .makePlainTextFromHTML(evaluation.getInstructions()));
+        
+        /**
+         * set title and instructions
+         * 
+         * Note this doesn't go far enough
+         * commonLogic.makePlainTextFromHTML removes html tags
+         * but it also leaves the text
+         */
+        evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), 
+                htmlContentParser(
+                        commonLogic.makePlainTextFromHTML(
+                                evaluation.getInstructions())));
 
         // Reset question numbering
         displayNumber = 0;
@@ -202,6 +212,20 @@ public class PDFReportExporter implements ReportExporter {
         }
 
         evalPDFReportBuilder.close();
+    }
+    
+    /**
+     * Remove tags & inclusive content
+     * 
+     * @param String to parse
+     */
+    private String htmlContentParser(String html) {
+    	Pattern style = Pattern.compile("<style((.|\n|\r)*)?>((.|\n|\r)*)?</style>");
+    	Matcher mstyle = style.matcher(html);
+    	while (mstyle.find()) { 
+    		html = mstyle.replaceAll("");
+    	}
+		return html;
     }
 
     /**
