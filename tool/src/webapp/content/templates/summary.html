@@ -2,159 +2,211 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="msg=summary.page.title">Summary</title>
-    <!-- standard on all pages -->
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
-    <!-- end standard on all pages -->
-    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
+<title rsf:id="msg=summary.page.title">Summary</title>
+<!-- standard on all pages -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+<script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+<!-- end standard on all pages -->
+<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+<link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 
 <body rsf:id="scr=sakai-body">
-	<div class="portletBody dashboard">
-	<div rsf:id="navIntraTool:" class="navIntraTool"/>
+  <div class="portletBody dashboard">
+    <div rsf:id="navIntraTool:" class="navIntraTool" />
 
-		<ul class="breadCrumb"  rsf:id="toolsBox:"   style="clear:both;height:1.5em">
-			<li class="lastCrumb" style="float:right"><a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="addItem">New Evaluation</a></li>
-			<li class="lastCrumb" style="float:right"><a href="template_title_desc.html" rsf:id="createTemplateLink" class="addItem">New Template</a></li>
-		</ul>
+    <ul class="breadCrumb" rsf:id="toolsBox:" style="clear: both; height: 1.5em">
+      <li class="lastCrumb" style="float: right">
+        <a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="addItem">New Evaluation</a>
+      </li>
+      <li class="lastCrumb" style="float: right">
+        <a href="template_title_desc.html" rsf:id="createTemplateLink" class="addItem">New Template</a>
+      </li>
+    </ul>
 
-		<div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
-               <li>Message for user here</li>
-            </ul>
-         </div>
+    <div rsf:id="message-for:*" class="alertMessage">
+      <ul style="margin: 0px;">
+        <li>Message for user here</li>
+      </ul>
+    </div>
 
-         <h3 rsf:id="msg=summary.page.title">Evaluations dashboard</h3>
-         <p rsf:id="msg=summary.page.instruction" class="instruction">Quick links to evaluation items</p>
-         <p rsf:id="instructor-instructions" class="instruction"></p>
-         
-	      			<div rsf:id="evaluationsBox:" class="summaryBox">
-	      				<h4 rsf:id="msg=summary.evaluations.title" style="margin-left:.5em">Current evaluations I need to take</h4>
-	
-	                    <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
-	
-	      				<div rsf:id="evaluationsList:" class="innerPanel">
-	      				<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
-							<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
-							    <thead>
-    								<tr>
-	   								    <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space:normal;">Evaluation</th>
-		  							    <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
-			 						    <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-									    <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-								    </tr>
-								</thead>
-								<tbody>
-								    <tr rsf:id="evaluationsCourseList:">
-									   <td style="width:20em">
-										  <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
-	                                      <span rsf:id="evaluationCourseLink_disabled" />
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationCourseStatus">Completed</span>
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationStartDate">09/20/2005</span>
-									   </td>
-									   <td>
-										  <span rsf:id="evaluationDueDate">09/27/2005</span>
-									   </td>	
-								    </tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
+    <h3 rsf:id="msg=summary.page.title">Evaluations dashboard</h3>
+    <p rsf:id="msg=summary.page.instruction" class="instruction">Quick links to evaluation items</p>
+    <p rsf:id="instructor-instructions" class="instruction"></p>
 
-                    <div rsf:id="evalResponsesBox:"  class="summaryBox">
-                        <h4 rsf:id="msg=summary.responses.title" style="margin-left:.5em">Evaluations in which I may be evaluated</h4>
-                        <div class="innerPanel">
-                            <form rsf:id="evalResponsesForm" action="evaluation_settings.html">
-                                <p rsf:id="summary-be-evaluated-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
-                                <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
-                                    <thead>
-                                        <tr>
-                                            <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
-                                            <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-                                            <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-                                            <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr rsf:id="evalResponsesList:">
-                                            <td align="left">
-                                                <a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
-                                                <a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">Title (preview)</a>
-                                            </td>
-                                            <td align="left" nowrap="nowrap">
-                                                <span rsf:id="evalResponsesStartDate">09/20/2005</span>
-                                            </td>
-                                            <td nowrap="nowrap">
-                                                <span rsf:id="evalResponsesDueDate">09/20/2005</span>
-                                            </td>
-                                            <td nowrap="nowrap">
-                                                <a rsf:id="evalResponsesDisplayLink" href="evaluation_respnoders.html">2 of 39</a>
-                                                <span rsf:id="evalResponsesDisplay">2 of 39</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>  
-                    </div>
-                    
-                    <div rsf:id="evalAdminBox:"  class="summaryBox" />
-	      			
-	      			<div rsf:id="siteListingBox:" class="summaryBox">
-	      				<h4 rsf:id="sitelisting-title" style="margin-left:.5em">Site/Group Listing</h4>
-	      				<div class="innerPanel">
-	      					<h5 rsf:id="sitelisting-evaluated-text">Sites you can be evaluated in:</h5>
-	      					<ol class="summaryEvaluateList">
-	      						<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
-	      					</ol>
-	      					<p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
-	      					<h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
-	      					<ol class="summaryEvaluateList">
-	      						<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
-	      					</ol>
-	      					<p rsf:id="evaluateListNone" class="instruction indnt2">No items to list</p>
-	      				</div>
-	      			</div>
-					<div rsf:id="notificationsBox:"  class="summaryBox">
-						<h4 rsf:id="notifications-title" style="margin-left:.5em">Notifications</h4>
-						<div class="innerPanel">
-							<p rsf:id="notifications-higher-level" class="instruction">An evaluation has been assigned from a higher level:</p>
-							<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things
-								 - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
-									a user would need to know what the link does without clicking on it...
-								 -->
-							<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier lines nolines">
-								<tr>
-									<th  rsf:id="notification-title-title">
-										Title
-									</th>
-									<th rsf:id="notification-from-title">
-										From
-									</th>
-									<th rsf:id="notification-date-title">
-										Date
-									</th>
-									<th rsf:id="notification-addeditems-title">
-										Added items
-									</th>
-								</tr>
-								<tr>
-									<td><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
-									<td>From: College of Science</td>
-									<td>Add/Modify before: 09/15/2005</td>
-									<td>0</td>
-								</tr>
-							</table>
-						</div>	
-					</div>
-	</div>
+    <div rsf:id="evaluationsBox:" class="summaryBox">
+      <h4 rsf:id="msg=summary.evaluations.title" style="margin-left: .5em">Current evaluations I need to take</h4>
+
+      <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
+
+      <div rsf:id="evaluationsList:" class="innerPanel">
+        <table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
+          <thead>
+            <tr>
+              <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
+              <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
+              <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+              <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr rsf:id="evaluationsCourseList:">
+              <td style="width: 20em">
+                <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
+                <span rsf:id="evaluationCourseLink_disabled" />
+              </td>
+              <td>
+                <span rsf:id="evaluationCourseStatus">Completed</span>
+              </td>
+              <td>
+                <span rsf:id="evaluationStartDate">09/20/2005</span>
+              </td>
+              <td>
+                <span rsf:id="evaluationDueDate">09/27/2005</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div rsf:id="evalResponsesBox:" class="summaryBox">
+      <h4 rsf:id="msg=summary.responses.title" style="margin-left: .5em">Evaluations in which I may be evaluated</h4>
+      <div class="innerPanel">
+        <h5 rsf:id="msg=summary.responses.inprogress">
+          In Progress <span rsf:id="summary-be-evaluated-progress-none"></span>
+        </h5>
+        <div rsf:id="evaluatedInProgress:" class="evaluated_in_progress">
+          <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+            <thead>
+              <tr>
+                <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                <th class="column" rsf:id="msg=summary.evaluations.starts.title">Open</th>
+                <th class="column" rsf:id="msg=summary.evaluations.ends.title">Close</th>
+                <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
+                <th class="column" rsf:id="msg=summary.responses.results">Results</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr rsf:id="evalResponsesList:">
+                <td align="left">
+                  <a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+                  <a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">(preview)</a>
+                </td>
+                <td align="left" nowrap="nowrap">
+                  <span rsf:id="evalResponsesStartDate">09/20/2005</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResponsesDueDate">09/20/2005</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResponsesStatsDisplay">2 of 39</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResultsDisplay"></span>
+                  <a rsf:id="evalResultsDisplayLink" href="evaluation_responders.html">results</a>
+                  <span rsf:id="evalResponsesDisplay" class="left-separator"></span>
+                  <a rsf:id="evalResponsesDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p rsf:id="summary-be-evaluated-progress-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
+
+        <h5 rsf:id="msg=summary.responses.closed">
+          Closed <span rsf:id="summary-be-evaluated-closed-none"></span>
+        </h5>
+        <div rsf:id="evaluatedClosed:" class="evaluated_closed">
+          <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+            <thead>
+              <tr>
+                <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+                <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+                <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
+                <th class="column" rsf:id="msg=summary.responses.results">Results</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr rsf:id="evalResponsesList:">
+                <td align="left">
+                  <a rsf:id="evalResponsesTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+                  <a rsf:id="evalResponsesTitleLink_preview" href="preview_eval.html">(preview)</a>
+                </td>
+                <td align="left" nowrap="nowrap">
+                  <span rsf:id="evalResponsesStartDate">09/20/2005</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResponsesDueDate">09/20/2005</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResponsesDisplay">2 of 39</span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalResultsDisplay"></span>
+                  <a rsf:id="evalResultsDisplayLink" href="evaluation_responders.html">results</a>
+                  <span rsf:id="evalResponsesDisplay" class="left-separator"></span>
+                  <a rsf:id="evalResponsesDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p rsf:id="summary-be-evaluated-closed-none" class="instruction indnt2">You currently have no closed evaluations</p>
+
+      </div>
+    </div>
+
+    <div rsf:id="evalAdminBox:" class="summaryBox" />
+
+    <div rsf:id="siteListingBox:" class="summaryBox">
+      <h4 rsf:id="sitelisting-title" style="margin-left: .5em">Site/Group Listing</h4>
+      <div class="innerPanel">
+        <h5 rsf:id="sitelisting-evaluated-text">Sites you can be evaluated in:</h5>
+        <ol class="summaryEvaluateList">
+          <li rsf:id="evaluatedList:">
+            <span rsf:id="evaluatedListTitle">Site/Group Title</span>
+          </li>
+        </ol>
+        <p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
+        <h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
+        <ol class="summaryEvaluateList">
+          <li rsf:id="evaluateList:">
+            <span rsf:id="evaluateListTitle">Site/Group Title</span>
+          </li>
+        </ol>
+        <p rsf:id="evaluateListNone" class="instruction indnt2">No items to list</p>
+      </div>
+    </div>
+    <div rsf:id="notificationsBox:" class="summaryBox">
+      <h4 rsf:id="notifications-title" style="margin-left: .5em">Notifications</h4>
+      <div class="innerPanel">
+        <p rsf:id="notifications-higher-level" class="instruction">An evaluation has been assigned from a higher level:</p>
+        <!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things
+             - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
+                a user would need to know what the link does without clicking on it...
+        -->
+        <table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier lines nolines">
+          <tr>
+            <th rsf:id="notification-title-title">Title</th>
+            <th rsf:id="notification-from-title">From</th>
+            <th rsf:id="notification-date-title">Date</th>
+            <th rsf:id="notification-addeditems-title">Added items</th>
+          </tr>
+          <tr>
+            <td>
+              <a href="evaluation_settings.html">Evaluation: Eval Title 1</a>
+            </td>
+            <td>From: College of Science</td>
+            <td>Add/Modify before: 09/15/2005</td>
+            <td>0</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

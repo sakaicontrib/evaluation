@@ -77,25 +77,25 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
 
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
-		this.navBarRenderer = navBarRenderer;
-	}
+        this.navBarRenderer = navBarRenderer;
+    }
 
     private AdminBoxRenderer adminBoxRenderer;
     public void setAdminBoxRenderer(AdminBoxRenderer adminBoxRenderer) {
-    	this.adminBoxRenderer = adminBoxRenderer;
-    }
-    
-    private BeEvaluatedBoxRenderer beEvaluatedBoxRenderer;
-    public void setBeEvaluatedBoxRenderer(BeEvaluatedBoxRenderer beEvaluatedBoxRenderer) {
-    	this.beEvaluatedBoxRenderer = beEvaluatedBoxRenderer;
-    }
-    
-    private EvaluateBoxRenderer evaluateBoxRenderer;
-    public void setEvaluateBoxRenderer(EvaluateBoxRenderer evaluateBoxRenderer) {
-    	this.evaluateBoxRenderer = evaluateBoxRenderer;
+        this.adminBoxRenderer = adminBoxRenderer;
     }
 
-	/*
+    private BeEvaluatedBoxRenderer beEvaluatedBoxRenderer;
+    public void setBeEvaluatedBoxRenderer(BeEvaluatedBoxRenderer beEvaluatedBoxRenderer) {
+        this.beEvaluatedBoxRenderer = beEvaluatedBoxRenderer;
+    }
+
+    private EvaluateBoxRenderer evaluateBoxRenderer;
+    public void setEvaluateBoxRenderer(EvaluateBoxRenderer evaluateBoxRenderer) {
+        this.evaluateBoxRenderer = evaluateBoxRenderer;
+    }
+
+    /*
      * (non-Javadoc)
      * 
      * @see
@@ -112,10 +112,10 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
-        
+
         if (beginEvaluation) {
-        	// show instructor instructions
-        	UIMessage.make(tofill, "instructor-instructions", "summary.instructor.instruction");
+            // show instructor instructions
+            UIMessage.make(tofill, "instructor-instructions", "summary.instructor.instruction");
         }
 
         /*
@@ -133,19 +133,19 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
         // for the evaluations taking box
         // http://jira.sakaiproject.org/jira/browse/EVALSYS-618
         // Changed this to reduce the load on the services and make this load faster
-    	evaluateBoxRenderer.renderBox(tofill, currentUserId);
+        evaluateBoxRenderer.renderBox(tofill, currentUserId);
 
         // show evaluations that the user is being evaluated in
         boolean showEvaluateeBox = ((Boolean) settings.get(EvalSettings.ENABLE_EVALUATEE_BOX)).booleanValue();
         if(showEvaluateeBox) {
-        	beEvaluatedBoxRenderer.renderBox(tofill, currentUserId);
+            beEvaluatedBoxRenderer.renderBox(tofill, currentUserId);
         }
 
         // show evaluations that user is administering
-	    Boolean showAdministratingBox = (Boolean) settings.get(EvalSettings.ENABLE_ADMINISTRATING_BOX);
-	    if(showAdministratingBox != null && showAdministratingBox == true) {
-		    adminBoxRenderer.renderItem(tofill, "evalAdminBox");
-	    } //showAdministratingBox true
+        Boolean showAdministratingBox = (Boolean) settings.get(EvalSettings.ENABLE_ADMINISTRATING_BOX);
+        if(showAdministratingBox != null && showAdministratingBox == true) {
+            adminBoxRenderer.renderItem(tofill, "evalAdminBox");
+        } //showAdministratingBox true
 
         /*
          * Site/Group listing box
