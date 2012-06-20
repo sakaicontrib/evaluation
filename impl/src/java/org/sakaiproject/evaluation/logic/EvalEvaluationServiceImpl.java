@@ -534,7 +534,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                             }
                         } else {
                             // check the user permissions
-                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                            String[] evalGroupIds = null;
+                            if (evalGroupId != null) {
+                                // added check for user in specific group - EVALSYS-858
+                                evalGroupIds = new String[]{evalGroupId};
+                            }
+                            List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, evalGroupIds, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
                             if (userAssigns.isEmpty()) {
                                 log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
                                 allowed = false;
