@@ -37,6 +37,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
@@ -169,6 +170,7 @@ public class BeEvaluatedBoxRenderer {
                 UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", title, 
                         new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), group.evalGroupId));
 
+                // NOTE: much of this code is replicated/derived from ControlEvaluationsProducer.java
                 int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
                 int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] { group.evalGroupId });
                 int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
@@ -181,21 +183,39 @@ public class BeEvaluatedBoxRenderer {
                 makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus", 
                         instViewResultsEval, responsesCount, enrollmentsCount, responsesNeeded);
 
-                if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true) && responsesNeeded == 0) {
-                    UIInternalLink.make(evalrow, "evalResponsesDisplayLink", UIMessage.make("controlevaluations.eval.responses.inline",
-                            new Object[] { responseString }), new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(),
-                                    new String[] { group.evalGroupId }));
-                    if (allowListOfTakers) {
-                        // TODO
+                if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(eval, false)) ) {
+                    if ( responsesNeeded == 0 ) {
+                        // have enough responses and this is viewable
+                        UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), 
+                                new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId }));
+                        if (allowListOfTakers) {
+                            // also show the list of respondents if that option is enabled
+                            UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
+                                    new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId ) );
+                        }
+                    } else {
+                        // cannot view yet, more responses needed
+                        UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "controlevaluations.eval.report.awaiting.responses", 
+                                new Object[] { responsesNeeded });
+                        // indicate the viewable date as well
+                        resultOutput.decorate(new UITooltipDecorator(
+                                UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { df.format(eval.getSafeViewDate()) }) ));
                     }
                 } else {
-                    UIOutput responseOutput = UIOutput.make(evalrow, "evalResponsesDisplay", responseString);
-                    responseOutput.decorate(new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses",
-                            new Object[] { responsesNeeded })));
-                    if (allowListOfTakers) {
-                        // TODO
+                    // just display the date at which results will be viewable
+                    String viewableDate = df.format(eval.getSafeViewDate());
+                    UIOutput resultOutput = UIOutput.make(evalrow, "evalReportDisplay", viewableDate );
+                    if ( responsesNeeded == 0 ) {
+                        // just show date if we have enough responses
+                        resultOutput.decorate(new UITooltipDecorator(
+                                UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+                    } else {
+                        // show if responses are still needed
+                        resultOutput.decorate(new UITooltipDecorator( 
+                                UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
                     }
                 }
+
             }// link per group
         }
     }
