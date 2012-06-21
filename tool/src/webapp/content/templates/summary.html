@@ -73,11 +73,12 @@
     </div>
 
     <div rsf:id="evalResponsesBox:" class="summaryBox">
-      <h4 rsf:id="msg=summary.responses.title" style="margin-left: .5em">Evaluations in which I may be evaluated</h4>
+      <h4 rsf:id="msg=summary.evaluated.title" style="margin-left: .5em">Evaluations in which I may be evaluated</h4>
       <div class="innerPanel">
-        <h5 rsf:id="msg=summary.responses.inprogress">
-          In Progress <span rsf:id="summary-be-evaluated-progress-none"></span>
-        </h5>
+        <div>
+            <span rsf:id="msg=summary.evaluated.inprogress" class="sub-heading">In Progress</span>
+            <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instruction"></span>
+        </div>
         <div rsf:id="evaluatedInProgress:" class="evaluated_in_progress">
           <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
             <thead>
@@ -105,20 +106,20 @@
                   <span rsf:id="evalResponsesStatsDisplay">2 of 39</span>
                 </td>
                 <td nowrap="nowrap">
-                  <span rsf:id="evalResultsDisplay"></span>
-                  <a rsf:id="evalResultsDisplayLink" href="evaluation_responders.html">results</a>
-                  <span rsf:id="evalResponsesDisplay" class="left-separator"></span>
-                  <a rsf:id="evalResponsesDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                  <span rsf:id="evalReportDisplay"></span>
+                  <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+                  <span rsf:id="evalRespondentsDisplay" class="left-separator"></span>
+                  <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p rsf:id="summary-be-evaluated-progress-none" class="instruction indnt2">You currently have no active or pending evaluations</p>
 
-        <h5 rsf:id="msg=summary.responses.closed">
-          Closed <span rsf:id="summary-be-evaluated-closed-none"></span>
-        </h5>
+        <div>
+            <span rsf:id="msg=summary.evaluated.closed" class="sub-heading">Closed</span>
+            <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instruction"></span>
+        </div>
         <div rsf:id="evaluatedClosed:" class="evaluated_closed">
           <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
             <thead>
@@ -155,7 +156,6 @@
             </tbody>
           </table>
         </div>
-        <p rsf:id="summary-be-evaluated-closed-none" class="instruction indnt2">You currently have no closed evaluations</p>
 
       </div>
     </div>
