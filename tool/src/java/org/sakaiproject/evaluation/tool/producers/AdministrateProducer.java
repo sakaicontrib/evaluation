@@ -295,12 +295,14 @@ public class AdministrateProducer extends EvalCommonProducer {
 
         //Number of days old can an eval be and still be recently closed
         Integer evaluateeRecentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
+        if (evaluateeRecentlyClosedDays == null) { evaluateeRecentlyClosedDays = 10; }
         UIInput.make(form, "dash-evaluatee-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS), evaluateeRecentlyClosedDays.toString());
 
         makeBoolean(form, "dash-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
 
         //Number of days old can an eval be and still be recently closed
         Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+        if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
         UIInput.make(form, "dash-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
 
         makeBoolean(form, "dash-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
