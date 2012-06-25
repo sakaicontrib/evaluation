@@ -10,12 +10,14 @@
 // Evaluation
 /////////////////////////
 .evaluation {
-
   .itemListEval {
     margin-top: 0;
     
     .evalItemTop {
-      margin: 3.5em 0 !important;
+      margin: 16px 0 !important;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      padding-right: 16px;
     }
     .evalItemTop:first-child {
       margin-top: 0 !important;
@@ -26,24 +28,25 @@
 /////////////////////////
 // Item
 /////////////////////////
-  .item {
+  .item {    
     .title {
       position: relative;
-      margin: 0;
+      margin-top: 0;
+      margin-bottom: 16px;
       padding: 0;
       span {
         display: inline-block;
       }
       .number {
         position: absolute;
-        width: 2em;
+        width: 26px;
         text-align: right;
       }
       .delineator, .required {
         position: absolute;
       }
       .delineator {
-        left: 2em;
+        left: 26px;
         .paren {
           display: none;
         }
@@ -65,19 +68,45 @@
     .content {
       margin-left: 40px;
     }
+    
+    // stepped display title
+    .numberWrapper {
+      text-align: right;
+      @include inline-block;
+      width: 30px;
+      padding-right: 6px;
+      font-weight: bold;
+      vertical-align: top;
+    }
+    .steppedLabel {
+      font-weight: bold;
+    }
   } // end item
 
 
 /////////////////////////
 // Text Item
 /////////////////////////
-  .item {
+  .item.text {
     .content {
+      position: relative;
+      
       textarea {
         width: 90%;
         min-width: 600px;
         min-height: 5em;
-        margin: 15px;
+        padding: 0;
+        margin: 0;
+      }
+      .na {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 4px;
+        border: 1px solid red;
+        -webkit-border-radius: .5em;
+        -moz-border-radius: .5em;
+        border-radius: .5em;
       }
     }
   } // end text item
@@ -128,15 +157,12 @@
 // Scale Item
 /////////////////////////
   .scale {
-    padding-top: 16px;
-    
     .matrix {
       position: relative;
       @include clearfix();
       
       .title {
         float: left;
-        padding-top: 20px;
       }
       label span, label input, legend .response-scale-label {
         font-family: sans-serif !important;
@@ -150,11 +176,9 @@
         @include horizontal-list();
         fieldset {
           position: relative;
-          legend {
-            top: -1.5em;
-          }
         }
         .response-list {
+          padding-top: 16px;
           li {
             margin: 0;
             padding: 0 !important;
@@ -198,7 +222,21 @@
         min-width: 60px; 
       }
 
-    } // end matrix
+    }
+    
+    .compact {
+      .title {
+        float: left;
+        width: auto !important;
+        margin-top: 6px;
+      }
+      .content {
+        overflow: hidden;
+      }
+      .content table {
+        float: right;
+      }
+    }
 
   } // end scale
 
@@ -212,13 +250,45 @@
 
     > .title {
       float: left;
-      padding: 12px 0;
       margin: 0;
-      .label {
+      margin-bottom: 16px;
+      margin-left: 42px;      
+    }
+
+    > .content {
+      display: inline-block;
+      width: 100%;
+      
+      > fieldset {
         display: inline-block;
-        margin-left: 42px;
+        width: 100%;
+        
+        legend {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+        }
+      }
+      .item {
+        margin-bottom: 0;
       }
     }
+    
+    .item {
+      display: block;
+      margin: 0;
+      
+      .title .label {
+        padding-left: 2px;
+      }
+      legend {
+        display: none;
+      }
+      .content .response-list span {
+        @include visuallyhidden();
+      }
+    }
+    
     .response-group-labels {
       display: block;
       margin-top: 0.5em;
@@ -239,47 +309,21 @@
       width: 24px;
       padding: 0 13px;
     }
-    > .content {
-      display: inline-block;
-      width: 100%;
-      > fieldset {
-        display: inline-block;
-        width: 100%;
-        legend {
-          position: absolute;
-          top: 0px;
-          right: 0px;
-        }
-      }
-      .item {
-        margin-bottom: 0;
-      }
+    
+    .item .matrix {
+      padding-top: 8px;
     }
-    .item {
-      display: block;
-      margin: 0;
-      padding: 0.5em 0;
-      .title {
-        margin: 0;
-        padding-top: 8px;
-        .label {
-          padding-left: 5px;
-        }
-      }
-      .matrix {
-        margin: 0;
-      }
-      legend {
-        display: none;
-      }
-      .content {
-        .response-list {
-          span {
-            @include visuallyhidden();
-          }
-        }
-      }
+    .item .matrix .title {
+      padding: 4px 0;
+      margin-bottom: 0;
     }
+    .item .matrix .response-list {
+      padding-top: 0 !important;
+    }
+  }
+  .steppedItemGroup img,
+  .steppedItemGroup table td {
+    vertical-align: middle;
   }
   
 
@@ -304,8 +348,7 @@
 /////////////////////////
   .itemListEval {
     > li {
-      margin: 0;
-      padding: 0 !important;
+
     }
   }
 
