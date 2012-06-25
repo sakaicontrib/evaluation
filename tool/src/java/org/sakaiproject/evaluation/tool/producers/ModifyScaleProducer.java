@@ -1,16 +1,17 @@
-/******************************************************************************
- * ModifyScaleProducer.java - created by kahuja@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
- * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
- * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Kapil Ahuja (kahuja@vt.edu)
- *****************************************************************************/
-
+/**
+ * Copyright 2005 Sakai Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
@@ -18,8 +19,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
@@ -36,7 +35,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -133,9 +131,8 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         String selectID = radios.getFullID();
         for (int i = 0; i < EvalToolConstants.scaleIdealValues.length; ++i) {
             UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
-            UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
-            UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
-            UILabelTargetDecorator.targetLabel(label, choice);
+            UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
+            UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
         }
 
         if (userAdmin) {

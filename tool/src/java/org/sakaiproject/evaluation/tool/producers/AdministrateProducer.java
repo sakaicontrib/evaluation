@@ -1,17 +1,17 @@
 /**
- * AdministrateProducer.java - evaluation - Sep 18, 2006 11:35:56 AM - azeckoski
- * $URL$
- * $Id$
- **************************************************************************
- * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
- * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
- * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ * Copyright 2005 Sakai Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.settings.ExportConfigurationHook;
 import org.sakaiproject.evaluation.tool.viewparams.AdminSearchViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -102,6 +103,14 @@ public class AdministrateProducer extends EvalCommonProducer {
                 UIMessage.make("administrate.top.control.evaladmin"),
                 new SimpleViewParameters(ControlEvalAdminProducer.VIEW_ID));
 
+        UIInternalLink.make(tofill, "control-export-settings-toplink", 
+            UIMessage.make("administrate.top.control.export.settings"),
+            new SimpleViewParameters(ExportConfigurationHook.VIEW_ID));
+        
+        UIInternalLink.make(tofill, "control-import-settings-toplink", 
+            UIMessage.make("administrate.top.control.import.settings"),
+            new SimpleViewParameters(ImportConfigProducer.VIEW_ID));
+        
         UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
                 UIMessage.make("admintesteg.page.title"),
                 new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));    
