@@ -16,9 +16,11 @@
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
     </organization>
-    <inceptionYear>2005</inceptionYear>
 
     <packaging>war</packaging>
+    <properties>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
+    </properties>
 
     <profiles>
         <profile>
@@ -140,6 +142,56 @@
             <id>sakai2.7</id>
 			<activation> 
 				<property><name>sakai2.7</name></property>
+			</activation>
+		    <properties>
+		        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
+		        <rsfutil.version>0.7.4</rsfutil.version>
+		    </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+                <dependency>
+					<groupId>org.sakaiproject.kernel</groupId>
+					<artifactId>sakai-component-manager</artifactId>
+                </dependency>
+                <dependency>
+                	<groupId>org.sakaiproject.scheduler</groupId>
+					<artifactId>scheduler-api</artifactId>
+				</dependency>
+		        <!-- RSF dependencies -->
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>sakairsf</artifactId>
+		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>SakaiRSFComponents-evolvers</artifactId>
+		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+		            <type>jar</type>
+		        </dependency>
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>SakaiRSFComponents-templates</artifactId>
+		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+		            <type>war</type>
+		        </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai2.8</id>
+			<activation> 
+				<property><name>sakai2.8</name></property>
                 <activeByDefault>true</activeByDefault>
 			</activation>
 		    <properties>
@@ -181,52 +233,10 @@
 		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
 		            <type>war</type>
 		        </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>sakai2.8</id>
-			<activation> 
-				<property><name>sakai2.8</name></property>
-			</activation>
-		    <properties>
-		        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
-		        <rsfutil.version>0.7.4</rsfutil.version>
-		    </properties>
-            <dependencies>
                 <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-api</artifactId>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
                 </dependency>
-                <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-util</artifactId>
-                </dependency>
-                <dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-component-manager</artifactId>
-                </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject.scheduler</groupId>
-					<artifactId>scheduler-api</artifactId>
-				</dependency>
-		        <!-- RSF dependencies -->
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>sakairsf</artifactId>
-		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>SakaiRSFComponents-evolvers</artifactId>
-		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-		            <type>jar</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>SakaiRSFComponents-templates</artifactId>
-		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
-		            <type>war</type>
-		        </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -283,7 +293,7 @@
             	<dependency>
             		<groupId>org.springframework</groupId>
             		<artifactId>spring-webmvc</artifactId>
-                    <scope>compile</scope>
+        			<scope>compile</scope>
             	</dependency>
             </dependencies>
         </profile>
@@ -345,6 +355,14 @@
         </dependency>
 
         <!--Apache commons dependencies -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
 
         <!-- For Reporting -->
         <dependency>
@@ -476,6 +494,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
             </plugin>
         </plugins>
         <resources>

@@ -1,13 +1,12 @@
 * text=auto !eol
-/ svnc_bugtraq_003anumber=false svnc_bugtraq_003amessage
 /.classpath -text svn_keywords=Date+Revision+Author+URL+Id
 /.project -text svn_keywords=Date+Revision+Author+URL+Id
 /.springBeans -text
 /.svnignore -text svn_keywords=Date+Revision+Author+URL+Id
 /Evaluation.jws -text
+/LICENSE_HEADER -text
 /README.txt -text
 api/pom.xml svn_keywords=Date+Revision+Author+URL+Id
-api/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalEmailConstants.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -105,7 +104,7 @@ api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text svn
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemDataList.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
-impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/ddl/LICENSE_HEADER -text
 impl/src/ddl/conversion/mysql/eval-1-2_to_eval-1-3.sql -text
 impl/src/ddl/conversion/mysql/eval-1-3_to_eval-1-4.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/ddl/conversion/oracle/eval-1-2_to_eval-1-3.sql -text
@@ -189,7 +188,6 @@ impl/src/test/org/sakaiproject/evaluation/utils/TemplateItemDataListTest.java sv
 impl/src/test/org/sakaiproject/evaluation/utils/TemplateItemUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/utils/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+URL+Id
 pack/pom.xml svn_keywords=Date+Revision+Author+URL+Id
-pack/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/components.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/entity-providers.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/external-logic.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -201,10 +199,7 @@ pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Au
 /project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 /removeEvalTablesMySQL.sql -text
 /removeEvalTablesOracle.sql svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/maven.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/pom.xml svn_keywords=Date+Revision+Author+URL+Id
-tool/project.properties -text svn_keywords=Date+Revision+Author+URL+Id
-tool/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/AdministrateSearchBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/CommonProducerBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalAdminBean.java -text

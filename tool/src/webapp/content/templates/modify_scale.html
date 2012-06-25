@@ -1,3 +1,19 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
@@ -9,7 +25,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
-    <script type="text/javascript" language="JavaScript" src="../js/scaleUtils.js"></script>
+    <script src="../js/jquery/jquery.js" type="text/javascript" language="JavaScript"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -45,7 +61,7 @@
 		<!-- start div for evolver widget - contents below are dummy -->
 			<span id="myOldSpan">
 				<span rsf:id="scaleOptions:" id="1">
-					<input rsf:id="scale-option-label" type="text"/>
+					<input rsf:id="scale-option-label" type="text" maxlength="250" />
 					&nbsp;
 					<input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
 					<br/>
@@ -54,7 +70,7 @@
 	
 			<span id="myOldSpan">
 				<span rsf:id="scaleOptions:" id="2">
-					<input rsf:id="scale-option-label" type="text"/>
+					<input rsf:id="scale-option-label" type="text" maxlength="250" />
 					&nbsp;
 					<input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" class="removeItem"/>
 					<br/>
@@ -65,7 +81,7 @@
 			<input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
 			<span id="myNewSpan"> </span>
 	
-			<input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();" class="addItem" />  
+			<input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();" class="addItem" />
 		<!-- End div for evolver widget - contents above are dummy -->
 		</div>
 	</div>
@@ -102,5 +118,17 @@
 </form>
 
 </div>
+
+<script type="text/javascript">
+(function() {
+    var $textboxes = $("div.labelindnt input:text");
+    $textboxes.attr("maxlength", "250"); // force the existing ones first
+    $textboxes.bind("click", function(event){
+        // each time the text box is clicked on
+        $(this).attr("maxlength", "250"); // force the input text boxes to 250 chars or less
+    });
+})();
+</script>
+
 </body>
 </html>

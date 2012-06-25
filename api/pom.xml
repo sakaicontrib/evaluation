@@ -16,13 +16,13 @@
         <name>Sakai Project</name>
         <url>http://www.sakaiproject.org/</url>
     </organization>
-    <inceptionYear>2006</inceptionYear>
 
     <!-- you must deploy your API to shared or it will be 
         inaccessible from your tool -->
     <packaging>jar</packaging>
     <properties>
         <deploy.target>shared</deploy.target>
+        <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
     </properties>
 
 	<profiles>
@@ -176,5 +176,11 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
