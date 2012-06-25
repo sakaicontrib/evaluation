@@ -363,11 +363,6 @@ ol.summaryEvaluateList {
 /*PART 4 end*/
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
 .itemListNew {
-  width: 95%;
-  border-color: #eee;
-  border-style: solid;
-  border-width: 2px;
-  padding: .5em;
   list-style: none;
 }
 
@@ -384,8 +379,6 @@ ol.summaryEvaluateList {
 }
 
 .itemListNew li {
-  padding: .3em;
-  margin: .3em;
   border: 1px solid #eee;
 }
 
@@ -396,8 +389,6 @@ ol.summaryEvaluateList {
 
 .itemListEval li {
   list-style: none;
-  padding: .5em !important;
-  margin: .2em;
 }
 
 .itemScalePanelNACell {
@@ -409,14 +400,14 @@ ol.summaryEvaluateList {
   list-style: disc;
   list-style-position: inside;
   border: none;
-  padding: 0.2em;
+  margin-bottom: 3px;
+  margin-right: 3px;
 }
 
 .itemListEval li ol li {
   list-style: decimal;
   list-style-position: inside;
   border: none;
-  padding: 0.2em;
 }
 
 .itemListNew .itemListEval h4 {
@@ -533,7 +524,7 @@ ol.summaryEvaluateList {
 }
 
 td.fullDisplayHorizontalColoredWrapper {
-  padding-top: 1em;
+  padding: 0 40px;
 }
 
 .fullDisplayHorizontalColored {
@@ -545,7 +536,7 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullDisplayHorizontalScale td {
-  padding: 5px;
+  padding: 7px !important;
   vertical-align: middle;
   text-align: center;
   white-space: nowrap;
@@ -587,8 +578,11 @@ td.fullDisplayHorizontalColoredWrapper {
   clear: both;
   /* height:100%; EVALSYS-952*/
   overflow: hidden;
-  margin: 1em 0;
   padding: 0;
+}
+
+div.fullVertical {
+  margin-left: 40px;
 }
 
 .fullVertical li, .fullDisplayHorizontal li {
@@ -598,13 +592,11 @@ td.fullDisplayHorizontalColoredWrapper {
   list-style-image: none !important;
   list-style-position: outside !important;
   list-style-type: none !important;
-  margin: 0.3em;
-  padding: 0 !important;
-  width: 15em;
   background: #fff;
   -moz-border-radius: .5em;
   -webkit-border-radius: .5em;
   overflow: hidden;
+  width: 15em;
 }
 
 .fullVertical li label, .fullDisplayHorizontal li label {
@@ -622,7 +614,6 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullVertical li {
-  margin: 0.3em;
   float: none;
   width: 50%;
   height: auto;
@@ -637,11 +628,17 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullVertical li.na {
-  margin: 1em 0 0 0.3em !important;
   float: none;
   width: 50% !important;
   text-align: left;
   height: auto;
+}
+
+.fullVertical li.na label, .fullDisplayHorizontal li.na {
+  border: 1px solid red !important;
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  border-radius: .5em;
 }
 
 /*2nd toolbar item links*/
@@ -1436,9 +1433,11 @@ a.less {
 
 /* fake-fieldset to fix EVALSYS-551 */
 .fake-fieldset .fieldset {
-  border: solid 2px #eee;
   margin-top: 20px;
   position: relative;
+  padding: 8px;
+  padding-top: 16px;
+  border: 1px solid #ccc;
 }
 
 .fake-fieldset .legend {
@@ -1449,8 +1448,8 @@ a.less {
   font-weight: bold;
   color: orange;
   font-size: 110%;
-  margin-left: 1em;
-  padding: 0.3em 0.7em;
+  margin-left: 32px;
+  padding: 6px 10px;
 }
 
 .elementAlertBack {
@@ -1549,14 +1548,18 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   margin-top: 0;
 }
 .evaluation .itemListEval .evalItemTop {
-  margin: 3.5em 0 !important;
+  margin: 16px 0 !important;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-right: 16px;
 }
 .evaluation .itemListEval .evalItemTop:first-child {
   margin-top: 0 !important;
 }
 .evaluation .item .title {
   position: relative;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 16px;
   padding: 0;
 }
 .evaluation .item .title span {
@@ -1564,14 +1567,14 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item .title .number {
   position: absolute;
-  width: 2em;
+  width: 26px;
   text-align: right;
 }
 .evaluation .item .title .delineator, .evaluation .item .title .required {
   position: absolute;
 }
 .evaluation .item .title .delineator {
-  left: 2em;
+  left: 26px;
 }
 .evaluation .item .title .delineator .paren {
   display: none;
@@ -1592,11 +1595,43 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item .content {
   margin-left: 40px;
 }
-.evaluation .item .content textarea {
+.evaluation .item .numberWrapper {
+  text-align: right;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  width: 30px;
+  padding-right: 6px;
+  font-weight: bold;
+  vertical-align: top;
+}
+.evaluation .item .numberWrapper {
+  *display: inline;
+}
+.evaluation .item .steppedLabel {
+  font-weight: bold;
+}
+.evaluation .item.text .content {
+  position: relative;
+}
+.evaluation .item.text .content textarea {
   width: 90%;
   min-width: 600px;
   min-height: 5em;
-  margin: 15px;
+  padding: 0;
+  margin: 0;
+}
+.evaluation .item.text .content .na {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 4px;
+  border: 1px solid red;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
 }
 .evaluation .matrix {
   min-width: 800px;
@@ -1642,9 +1677,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   position: relative;
   left: 32px;
 }
-.evaluation .scale {
-  padding-top: 16px;
-}
 .evaluation .scale .matrix {
   position: relative;
   zoom: 1;
@@ -1660,7 +1692,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .scale .matrix .title {
   float: left;
-  padding-top: 20px;
 }
 .evaluation .scale .matrix label span, .evaluation .scale .matrix label input, .evaluation .scale .matrix legend .response-scale-label {
   font-family: sans-serif !important;
@@ -1683,8 +1714,8 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .scale .matrix .content fieldset {
   position: relative;
 }
-.evaluation .scale .matrix .content fieldset legend {
-  top: -1.5em;
+.evaluation .scale .matrix .content .response-list {
+  padding-top: 16px;
 }
 .evaluation .scale .matrix .content .response-list li {
   margin: 0;
@@ -1707,29 +1738,37 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   cursor: pointer !important;
   -webkit-border-radius: 4px 4px;
   -moz-border-radius: 4px / 4px;
-  -o-border-radius: 4px / 4px;
   -ms-border-radius: 4px / 4px;
-  -khtml-border-radius: 4px / 4px;
+  -o-border-radius: 4px / 4px;
   border-radius: 4px / 4px;
 }
 .evaluation .scale .matrix .content label span {
   display: block;
   margin-bottom: 5px;
 }
-/* special styles to fix up matrix spacing - override if you have long scale labels */
-.scale .matrix .matrixRadioItems-2 {
-    min-width: 180px;
+.evaluation .scale .matrix .matrixRadioItems-2 {
+  min-width: 180px;
 }
-.scale .matrix .matrixRadioItems-3 {
-    min-width: 120px;
+.evaluation .scale .matrix .matrixRadioItems-3 {
+  min-width: 120px;
 }
-.scale .matrix .matrixRadioItems-4 {
-    min-width: 80px;
+.evaluation .scale .matrix .matrixRadioItems-4 {
+  min-width: 80px;
 }
-.scale .matrix .matrixRadioItems-5 {
-    min-width: 60px;
+.evaluation .scale .matrix .matrixRadioItems-5 {
+  min-width: 60px;
 }
-
+.evaluation .scale .compact .title {
+  float: left;
+  width: auto !important;
+  margin-top: 6px;
+}
+.evaluation .scale .compact .content {
+  overflow: hidden;
+}
+.evaluation .scale .compact .content table {
+  float: right;
+}
 .evaluation .item-group {
   position: relative;
   zoom: 1;
@@ -1745,12 +1784,45 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item-group > .title {
   float: left;
-  padding: 12px 0;
+  margin: 0;
+  margin-bottom: 16px;
+  margin-left: 42px;
+}
+.evaluation .item-group > .content {
+  display: inline-block;
+  width: 100%;
+}
+.evaluation .item-group > .content > fieldset {
+  display: inline-block;
+  width: 100%;
+}
+.evaluation .item-group > .content > fieldset legend {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.evaluation .item-group > .content .item {
+  margin-bottom: 0;
+}
+.evaluation .item-group .item {
+  display: block;
   margin: 0;
 }
-.evaluation .item-group > .title .label {
-  display: inline-block;
-  margin-left: 42px;
+.evaluation .item-group .item .title .label {
+  padding-left: 2px;
+}
+.evaluation .item-group .item legend {
+  display: none;
+}
+.evaluation .item-group .item .content .response-list span {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
 .evaluation .item-group .response-group-labels {
   display: block;
@@ -1772,59 +1844,25 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   width: 24px;
   padding: 0 13px;
 }
-.evaluation .item-group > .content {
-  display: inline-block;
-  width: 100%;
-}
-.evaluation .item-group > .content > fieldset {
-  display: inline-block;
-  width: 100%;
-}
-.evaluation .item-group > .content > fieldset legend {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
-.evaluation .item-group > .content .item {
-  margin-bottom: 0;
-}
-.evaluation .item-group .item {
-  display: block;
-  margin: 0;
-  padding: 0.5em 0;
-}
-.evaluation .item-group .item .title {
-  margin: 0;
+.evaluation .item-group .item .matrix {
   padding-top: 8px;
 }
-.evaluation .item-group .item .title .label {
-  padding-left: 5px;
+.evaluation .item-group .item .matrix .title {
+  padding: 4px 0;
+  margin-bottom: 0;
 }
-.evaluation .item-group .item .matrix {
-  margin: 0;
+.evaluation .item-group .item .matrix .response-list {
+  padding-top: 0 !important;
 }
-.evaluation .item-group .item legend {
-  display: none;
-}
-.evaluation .item-group .item .content .response-list span {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
+.evaluation .steppedItemGroup img,
+.evaluation .steppedItemGroup table td {
+  vertical-align: middle;
 }
 .evaluation .matrix .response-scale-na, .evaluation .matrix .na {
   visibility: hidden !important;
 }
 .evaluation .use-na .matrix .response-scale-na, .evaluation .use-na .matrix .na {
   visibility: visible !important;
-}
-.evaluation .itemListEval > li {
-  margin: 0;
-  padding: 0 !important;
 }
 .evaluation .JSevalComment {
   margin: 0 0 15px 55px;
@@ -1861,6 +1899,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .portletBody .matrix legend {
   font-weight: normal;
+  font-size: 1em;
   color: #000;
 }
 .portletBody .item-group .item .title .label {
