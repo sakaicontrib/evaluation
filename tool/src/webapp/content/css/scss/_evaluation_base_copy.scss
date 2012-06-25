@@ -363,11 +363,6 @@ ol.summaryEvaluateList {
 /*PART 4 end*/
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
 .itemListNew {
-  width: 95%;
-  border-color: #eee;
-  border-style: solid;
-  border-width: 2px;
-  padding: .5em;
   list-style: none;
 }
 
@@ -384,8 +379,6 @@ ol.summaryEvaluateList {
 }
 
 .itemListNew li {
-  padding: .3em;
-  margin: .3em;
   border: 1px solid #eee;
 }
 
@@ -396,8 +389,6 @@ ol.summaryEvaluateList {
 
 .itemListEval li {
   list-style: none;
-  padding: .5em !important;
-  margin: .2em;
 }
 
 .itemScalePanelNACell {
@@ -409,14 +400,14 @@ ol.summaryEvaluateList {
   list-style: disc;
   list-style-position: inside;
   border: none;
-  padding: 0.2em;
+  margin-bottom: 3px;
+  margin-right: 3px;
 }
 
 .itemListEval li ol li {
   list-style: decimal;
   list-style-position: inside;
   border: none;
-  padding: 0.2em;
 }
 
 .itemListNew .itemListEval h4 {
@@ -533,7 +524,7 @@ ol.summaryEvaluateList {
 }
 
 td.fullDisplayHorizontalColoredWrapper {
-  padding-top: 1em;
+  padding: 0 40px;
 }
 
 .fullDisplayHorizontalColored {
@@ -545,7 +536,7 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullDisplayHorizontalScale td {
-  padding: 5px;
+  padding: 7px !important;
   vertical-align: middle;
   text-align: center;
   white-space: nowrap;
@@ -587,10 +578,11 @@ td.fullDisplayHorizontalColoredWrapper {
   clear: both;
   /* height:100%; EVALSYS-952*/
   overflow: hidden;
-  margin: 1em 0;
   padding: 0;
 }
-
+div.fullVertical {
+  margin-left: 40px;
+}
 .fullVertical li, .fullDisplayHorizontal li {
   border: 1px solid #ccc !important;
   float: left;
@@ -598,13 +590,11 @@ td.fullDisplayHorizontalColoredWrapper {
   list-style-image: none !important;
   list-style-position: outside !important;
   list-style-type: none !important;
-  margin: 0.3em;
-  padding: 0 !important;
-  width: 15em;
   background: #fff;
   -moz-border-radius: .5em;
   -webkit-border-radius: .5em;
   overflow: hidden;
+  width: 15em;
 }
 
 .fullVertical li label, .fullDisplayHorizontal li label {
@@ -622,7 +612,6 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullVertical li {
-  margin: 0.3em;
   float: none;
   width: 50%;
   height: auto;
@@ -637,11 +626,17 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullVertical li.na {
-  margin: 1em 0 0 0.3em !important;
   float: none;
   width: 50% !important;
   text-align: left;
   height: auto;
+}
+
+.fullVertical li.na label, .fullDisplayHorizontal li.na {
+  border: 1px solid red !important;
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  border-radius: .5em;
 }
 
 /*2nd toolbar item links*/
@@ -1436,9 +1431,11 @@ a.less {
 
 /* fake-fieldset to fix EVALSYS-551 */
 .fake-fieldset .fieldset {
-  border: solid 2px #eee;
   margin-top: 20px;
   position: relative;
+  padding: 8px;
+  padding-top: 16px;
+  border: 1px solid #ccc;
 }
 
 .fake-fieldset .legend {
@@ -1449,8 +1446,8 @@ a.less {
   font-weight: bold;
   color: orange;
   font-size: 110%;
-  margin-left: 1em;
-  padding: 0.3em 0.7em;
+  margin-left: 32px;
+  padding: 6px 10px;
 }
 
 .elementAlertBack {
