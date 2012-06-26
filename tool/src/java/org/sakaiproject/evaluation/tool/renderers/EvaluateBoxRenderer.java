@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -45,42 +46,42 @@ public class EvaluateBoxRenderer {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     private EvalDeliveryService deliveryService;
     public void setDeliveryService(EvalDeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
-    
+
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
     }
-    
+
     private EvalEvaluationSetupService evaluationSetupService;
     public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
         this.evaluationSetupService = evaluationSetupService;
     }
-    
+
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
-    
+
     private HumanDateRenderer humanDateRenderer;
     public void setHumanDateRenderer(HumanDateRenderer humanDateRenderer) {
         this.humanDateRenderer = humanDateRenderer;
     }
-    
+
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);        
     }
-    
-	public void renderBox(UIContainer tofill, String currentUserId) {
+
+    public void renderBox(UIContainer tofill, String currentUserId) {
         List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
         String currentGroup = commonLogic.getCurrentEvalGroup();
         UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
         if (evalsToTake.size() > 0) {
-        	
+
             // build an array of evaluation ids
             Long[] evalIds = new Long[evalsToTake.size()];
             for (int i = 0; i < evalsToTake.size(); i++) {
@@ -94,15 +95,15 @@ public class EvaluateBoxRenderer {
             // some old code.
             UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", "hello");
             UIOutput.make(evalrow, "evaluationTitleTitle", "Evaluation");
-            
+
             for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
                 EvalEvaluation eval = (EvalEvaluation) itEvals.next();
-                
+
                 // make sure state is up to date http://jira.sakaiproject.org/browse/EVALSYS-1013
                 String evalState = evaluationService.returnAndFixEvalState(eval, true); 
                 // skip evaluations that are in a non-active state
                 if(! EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)){
-                	continue;
+                    continue;
                 }
 
                 for (EvalAssignGroup eag : eval.getEvalAssignGroups()) {
@@ -112,7 +113,7 @@ public class EvaluateBoxRenderer {
                     }
 
                     String groupId = group.evalGroupId;
-                    String title = EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
+                    String title = humanDateRenderer.renderEvalTitle(eval, group);// EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
                     String status = "unknown.caps";
 
                     // find the object in the list matching the evalGroupId and evalId,
@@ -168,10 +169,10 @@ public class EvaluateBoxRenderer {
                     humanDateRenderer.renderDate(evalcourserow, "evaluationDueDate", eval.getDueDate());
                 }
             }
-            
+
         } else {
             UIMessage.make(tofill, "evaluationsNone", "summary.evaluations.none");
         }
-	}
+    }
 
 }

@@ -43,13 +43,12 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
 	</bean>
 
-    <bean id="humanDateRenderer" class="org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer"
-        init-method="init" >
-        <property name="locale" ref="requestLocale" />
-        <property name="settings" 
-        	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    </bean>        
-    
+    <bean id="humanDateRenderer" class="org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer" init-method="init">
+      <property name="locale" ref="requestLocale" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
     <bean id="adminBoxRenderer" class="org.sakaiproject.evaluation.tool.renderers.AdminBoxRenderer"
         init-method="init" >
         <property name="locale" ref="requestLocale" />
@@ -94,7 +93,6 @@
         <property name="humanDateRenderer" ref="humanDateRenderer" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        
     </bean>
 
     <!-- request scope backing beans here -->

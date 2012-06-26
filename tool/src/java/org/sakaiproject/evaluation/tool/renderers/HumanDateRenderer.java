@@ -20,7 +20,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -43,6 +47,11 @@ public class HumanDateRenderer {
         this.settings = settings;
     }
 
+    public MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+        this.messageLocator = messageLocator;
+    }
+
     public void init() {
         useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
         tf = DateFormat.getTimeInstance(DateFormat.SHORT, locale); // e.g. 3:30pm
@@ -51,6 +60,33 @@ public class HumanDateRenderer {
         } else {
             df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         }
+    }
+
+    public int maxTitle = 50;
+    /**
+     * Special method for consistent rendering of eval titles 
+     * (which are constructed using a combination of the eval and group info)
+     * @param eval the evaluation
+     * @param group the related group
+     * @return the string title
+     */
+    public String renderEvalTitle(EvalEvaluation eval, EvalGroup group) {
+        String evalTitle = "";
+        String evalState = "";
+        String evalTerm = "";
+        if (eval != null) {
+            evalTitle = eval.getTitle();
+            evalTerm = eval.getTermId();
+            evalState = EvalUtils.getEvaluationState(eval, true);
+        }
+        String groupTitle = "";
+        String groupType = "";
+        if (group != null) {
+            groupTitle = group.title;
+            groupType = group.type;
+        }
+        String title = messageLocator.getMessage("eval.display.title", new Object[] {evalTitle, groupTitle, evalState, evalTerm, groupType}) + " ";
+        return EvalUtils.makeMaxLengthString(title, maxTitle);
     }
 
     /**
