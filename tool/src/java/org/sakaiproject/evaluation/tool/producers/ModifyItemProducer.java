@@ -104,7 +104,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
     }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -112,7 +112,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-		
+
         // create the form to allow submission of this item
         UIForm form = UIForm.make(tofill, "item-form");
 
@@ -131,7 +131,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         String itemOwnerName = null; // this is the name of the owner of the item
 
         EvalScale currentScale = null; // this is the current scale (if there is one)
-        
+
         /* these keep track of whether items are locked, we are not tracking TIs because 
          * the user should not be able to get here if the template is locked, if they did then 
          * they cheated so they can get an exception, we don't track scales since if the item
@@ -146,12 +146,12 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         Boolean compulsory = null; //whether or no this question must be answered
         Long scaleId = null; // this holds the current scale id if there is one
         Long itemGroupId = null; // this holds the current eval item group id if there is one - EVALSYS-1026
-        
-        
+
+
         Boolean isGrouped = (groupItemId != null && groupItemId == -1l ); //We are working with an existing child item
         Boolean isGroupable = ( ! isGrouped && groupItemId != null);
-        
-       // now we validate the incoming view params
+
+        // now we validate the incoming view params
         if (templateId == null && templateItemId != null) {
             throw new IllegalArgumentException("templateId cannot be null when modifying template items, must pass in a valid template id");
         }
@@ -175,14 +175,14 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                 form.parameters.add(
                         new UIELBinding(templateItemOTP + "template", ELReference.make(templateOTP + templateId)) );
             }
-            
+
             //>>>
             if ( isGroupable ){         	
-            	// New child item
-            	List<EvalTemplateItem> groupedItemList = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId, false);
-            	EvalTemplateItem itemClone = groupedItemList.get(1);
-            	EvalItem item = itemClone.getItem();
-            	form.parameters.add(
+                // New child item
+                List<EvalTemplateItem> groupedItemList = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId, false);
+                EvalTemplateItem itemClone = groupedItemList.get(1);
+                EvalItem item = itemClone.getItem();
+                form.parameters.add(
                         new UIELBinding(itemOTP + "sharing", item.getSharing()) );
                 form.parameters.add(
                         new UIELBinding(itemOTP + "scale.id", item.getScale().getId()) );
@@ -198,12 +198,12 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         new UIELBinding(itemOTP + "usesNA", item.getUsesNA()) );
                 form.parameters.add(
                         new UIELBinding(itemOTP + "classification", item.getClassification()) );
-                
+
                 // add group item id
                 form.parameters.add(
-                		new UIELBinding("templateBBean.groupItemId", groupItemId) );
+                        new UIELBinding("templateBBean.groupItemId", groupItemId) );
             }else{
-            	// add binding for the item classification
+                // add binding for the item classification
                 form.parameters.add(
                         new UIELBinding(itemOTP + "classification", itemClassification) );
             }
@@ -255,7 +255,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             itemOTP = templateItemOTP + "item.";
             commonDisplayOTP = templateItemOTP;
         }else  if (isGrouped){
-        	// Editing an existing child item
+            // Editing an existing child item
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
             if (templateItem == null) {
                 throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
@@ -284,8 +284,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                     new UIELBinding(itemOTP + "classification", templateItem.getItem().getClassification()) );
             form.parameters.add(
                     new UIELBinding(itemOTP + "displayRows", templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null ) );
-            
-            
+
+
         }
 
         // now we begin with the rendering logic
@@ -382,86 +382,86 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
 
         List<EvalItemGroup> itemGroups = authoringService.getAllItemGroups(currentUserId, true);
         UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
-        
+
         if (userAdmin && templateId == null && ! isGroupable) {
             // only show the expert items if the user is an admin AND we are modifying the item only
             //UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
-        	Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
+            Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
             if (useExpertItems) {                      
-            	UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
-            	UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
-            	UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + "expert", null);
+                UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
+                UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
+                UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + "expert", null);
 
-            /*
-             *  EVALSYS-1026
-             *  Creating combo box for expert item groups and matching the item to the 
-             *  item group category or objective
-             */
-            //Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
-            //if (useExpertItems) {                      
-            	ArrayList<String> listExpertCat = new ArrayList<String>();
-            	ArrayList<String> listExpertValues = new ArrayList<String>();
-            	listExpertCat.add("None");
-            	listExpertValues.add("0");
-            	for (int i = 0; i < itemGroups.size(); i++) {
-            		EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
-            		// loop through all expert items
-            		boolean foundItemGroup = false;
-            		if (!foundItemGroup) {
-            			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
-            			for (int j = 0; j < expertItems.size(); j++) {
-            				EvalItem expertItem = (EvalItem) expertItems.get(j);
-            				if (expertItem.getId()== itemId) {
-            					itemGroupId = eig.getId();
-            					foundItemGroup = true;
-            				}	
-            			}
-            		}
-            	
-            		if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) {
-            			listExpertCat.add(eig.getTitle());
-            			listExpertValues.add(eig.getId().toString());
-            		} else {
-            			listExpertCat.add("..." + eig.getTitle());
-            			listExpertValues.add(eig.getId().toString());
-            		}
-            	}
-            	String[] expertValues = listExpertValues.toArray(new String[]{});
-            	UISelect expertList = UISelect.make(
-            		showItemExpert, "item-expert-list", 
-            		expertValues, 
-            		listExpertCat.toArray(new String[]{}), 
-            		itemOTP+"itemGroupId",
-            		itemGroupId != null ? itemGroupId.toString() : expertValues[0]);
-            	expertList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed            
-           
-            	UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
-            	UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
-            	UIMessage.make(showItemExpert, "expert-itemgroup-header", "modifyitem.item.expert.itemgroup.header");
-            	UIInput.make(showItemExpert, "expert-desc", itemOTP + "expertDescription");
+                /*
+                 *  EVALSYS-1026
+                 *  Creating combo box for expert item groups and matching the item to the 
+                 *  item group category or objective
+                 */
+                //Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
+                //if (useExpertItems) {                      
+                ArrayList<String> listExpertCat = new ArrayList<String>();
+                ArrayList<String> listExpertValues = new ArrayList<String>();
+                listExpertCat.add("None");
+                listExpertValues.add("0");
+                for (int i = 0; i < itemGroups.size(); i++) {
+                    EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
+                    // loop through all expert items
+                    boolean foundItemGroup = false;
+                    if (!foundItemGroup) {
+                        List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
+                        for (int j = 0; j < expertItems.size(); j++) {
+                            EvalItem expertItem = (EvalItem) expertItems.get(j);
+                            if (expertItem.getId()== itemId) {
+                                itemGroupId = eig.getId();
+                                foundItemGroup = true;
+                            }	
+                        }
+                    }
+
+                    if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) {
+                        listExpertCat.add(eig.getTitle());
+                        listExpertValues.add(eig.getId().toString());
+                    } else {
+                        listExpertCat.add("..." + eig.getTitle());
+                        listExpertValues.add(eig.getId().toString());
+                    }
+                }
+                String[] expertValues = listExpertValues.toArray(new String[]{});
+                UISelect expertList = UISelect.make(
+                        showItemExpert, "item-expert-list", 
+                        expertValues, 
+                        listExpertCat.toArray(new String[]{}), 
+                        itemOTP+"itemGroupId",
+                        itemGroupId != null ? itemGroupId.toString() : expertValues[0]);
+                expertList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed            
+
+                UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
+                UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
+                UIMessage.make(showItemExpert, "expert-itemgroup-header", "modifyitem.item.expert.itemgroup.header");
+                UIInput.make(showItemExpert, "expert-desc", itemOTP + "expertDescription");
             }
         } else {
-        	// if an expert item, must carry eval item group along with it.
-        	itemGroupId = new Long(0);
-        	if (templateItemId != null) {
-        		EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
-               	for (int i = 0; i < itemGroups.size(); i++) {
-               		EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
-               		// loop through all expert items
-               		boolean foundItemGroup = false;
-               		if (!foundItemGroup) {
-               			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
-               			for (int j = 0; j < expertItems.size(); j++) {
-               				EvalItem expertItem = (EvalItem) expertItems.get(j);
-               				if (expertItem.getId()== templateItem.getItem().getId()) {
-               					itemGroupId = eig.getId();
-               					foundItemGroup = true;
-               				}	
-               			}
-               		}
-               	} 
-        	}
-        	UIInput.make(showItemExpert, "expertitem-eigId", itemOTP+"itemGroupId", itemGroupId.toString());
+            // if an expert item, must carry eval item group along with it.
+            itemGroupId = new Long(0);
+            if (templateItemId != null) {
+                EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
+                for (int i = 0; i < itemGroups.size(); i++) {
+                    EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
+                    // loop through all expert items
+                    boolean foundItemGroup = false;
+                    if (!foundItemGroup) {
+                        List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
+                        for (int j = 0; j < expertItems.size(); j++) {
+                            EvalItem expertItem = (EvalItem) expertItems.get(j);
+                            if (expertItem.getId()== templateItem.getItem().getId()) {
+                                itemGroupId = eig.getId();
+                                foundItemGroup = true;
+                            }	
+                        }
+                    }
+                } 
+            }
+            UIInput.make(showItemExpert, "expertitem-eigId", itemOTP+"itemGroupId", itemGroupId.toString());
         }
 
         // Check to see if should show ITEM display hints
@@ -490,7 +490,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             }
             UIMessage.make(itemDisplayHintsBranch, "item-display-hint-header", headerKey);
             if(! isGroupable && ! isGrouped ){
-            	UIMessage.make(itemDisplayHintsBranch, "item-display-hint-instruction", instructionKey);
+                UIMessage.make(itemDisplayHintsBranch, "item-display-hint-instruction", instructionKey);
             }
 
             if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)  && ! isGroupable && ! isGrouped ) {
@@ -580,7 +580,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             if (showHierarchyOptions  && ! isGroupable && ! isGrouped ) {
                 hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
             }
-        
+
             /*
              * UMD Specific
              * If the system setting (admin setting) for "EvalSettings.ITEM_USE_RESULTS_SHARING" is set as true then all
@@ -608,13 +608,13 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         new UIELBinding(templateItemOTP + "resultsSharing",
                                 EvalConstants.SHARING_PUBLIC));
             }
-            
+
             // hierarchy node selector control
- //           Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
- //           if (showHierarchyOptions) {
- //               hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
- //           }
- 
+            //           Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+            //           if (showHierarchyOptions) {
+            //               hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
+            //           }
+
         }
 
 
@@ -634,9 +634,9 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                 saveBinding = "#{templateBBean.saveTemplateItemAction}";
             }
         }
-        
+
         if(isGroupable){
-        	// saving template item straight into a group
+            // saving template item straight into a group
             saveBinding = "#{templateBBean.saveTemplateItemToGroupAction}";
         }
         if (saveBinding != null) {
@@ -670,19 +670,19 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             // go to the Items view if we are not working with a template currently
             result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);
         }else{        
-	        if(actionReturn != null){
-	        	try{
-	        		Long itemId = Long.parseLong(actionReturn.toString());
-	        		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
-	        	}catch(NumberFormatException e){
-	        		if ("success".equals(actionReturn.toString())){
-		        		result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
-	        		}else{
-		        		//This is an unexpected return string, possibly an error. So return an error view:
-		        		result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
-	        		}
-	        	}
-	        }
+            if(actionReturn != null){
+                try{
+                    Long itemId = Long.parseLong(actionReturn.toString());
+                    result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
+                }catch(NumberFormatException e){
+                    if ("success".equals(actionReturn.toString())){
+                        result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
+                    }else{
+                        //This is an unexpected return string, possibly an error. So return an error view:
+                        result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
+                    }
+                }
+            }
         }
     }
 
