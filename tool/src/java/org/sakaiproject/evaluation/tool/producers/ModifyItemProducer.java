@@ -53,7 +53,6 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -70,7 +69,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-@SuppressWarnings("deprecation")
 public class ModifyItemProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
     public static final String VIEW_ID = "modify_item";
@@ -519,9 +517,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                 Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
                 if (naAllowed && ! isGroupable && ! isGrouped ) {
                     UIBranchContainer showNA = UIBranchContainer.make(itemDisplayHintsBranch, "showNA:");
-                    UIBoundBoolean bb = UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
-                    UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header")
-                    .decorate( new UILabelTargetDecorator(bb) );
+                    UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
+                    UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header");
                 }
 
                 if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification) && ! isGroupable && ! isGrouped ) {
@@ -529,9 +526,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                     Boolean commentAllowed = (Boolean) settings.get(EvalSettings.ENABLE_ITEM_COMMENTS);
                     if (commentAllowed) {
                         UIBranchContainer showComment = UIBranchContainer.make(itemDisplayHintsBranch, "showItemComment:");
-                        UIBoundBoolean bb = UIBoundBoolean.make(showComment, "item-comment", commonDisplayOTP + "usesComment", usesComment);
-                        UIMessage.make(showComment,"item-comment-header", "modifyitem.item.comment.header")
-                        .decorate( new UILabelTargetDecorator(bb) );
+                        UIBoundBoolean.make(showComment, "item-comment", commonDisplayOTP + "usesComment", usesComment);
+                        UIMessage.make(showComment,"item-comment-header", "modifyitem.item.comment.header");
                     }
                 }
 
@@ -540,9 +536,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                     Boolean selectOptionsCompulsory = true;
                     if (selectOptionsCompulsory) {
                         UIBranchContainer showComp = UIBranchContainer.make(itemDisplayHintsBranch, "showItemCompulsory:");
-                        UIBoundBoolean bb = UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + "compulsory", compulsory);
-                        UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header")
-                        .decorate( new UILabelTargetDecorator(bb) );
+                        UIBoundBoolean.make(showComp, "item-compulsory", commonDisplayOTP + "compulsory", compulsory);
+                        UIMessage.make(showComp,"item-compulsory-header", "modifyitem.item.compulsory.header");
                     }
                 }
             }
@@ -565,9 +560,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         commonDisplayOTP + "category").setMessageKeys();
                 for (int i = 0; i < categoryValues.length; i++) {
                     UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
-                    UISelectChoice choice = UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
-                    UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i)
-                    .decorate( new UILabelTargetDecorator(choice) );
+                    UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
+                    UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i);
                 }
             }
         }
