@@ -30,6 +30,8 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
+import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -41,7 +43,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu) 
  */
-public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter {
+public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter, ContentTypeReporter {
 
     public static final String VIEW_ID = "preview_item";
     public String getViewID() {
@@ -103,6 +105,13 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
      */
     public ViewParameters getViewParameters() {
         return new ItemViewParameters();
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.content.ContentTypeReporter#getContentType()
+     */
+    public String getContentType() {
+        return ContentTypeInfoRegistry.HTML_FRAGMENT;
     }
 
 }
