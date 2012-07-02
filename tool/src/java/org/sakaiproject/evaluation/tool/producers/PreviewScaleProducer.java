@@ -17,15 +17,17 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInitBlock;
@@ -37,15 +39,13 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * Handle previewing a single item<br/>
- * Rewritten to use the item renderers by AZ
+ * Handle previewing scales (with various display options)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Kapil Ahuja (kahuja@vt.edu) 
  */
-public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter, ContentTypeReporter {
+public class PreviewScaleProducer extends EvalCommonProducer implements ViewParamsReporter, ContentTypeReporter {
 
-    public static final String VIEW_ID = "preview_item";
+    public static final String VIEW_ID = "preview_scale";
     public String getViewID() {
         return VIEW_ID;
     }
@@ -67,20 +67,26 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
         // get templateItem to preview from VPs
-        ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
+        EvalScaleParameters scaleViewParams = (EvalScaleParameters) viewparams;
         EvalTemplateItem templateItem = null;
-        if (previewItemViewParams.templateItemId != null) {
-            templateItem = authoringService.getTemplateItemById(previewItemViewParams.templateItemId);
-
-        } else if (previewItemViewParams.itemId != null) {
-            EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
-            templateItem = TemplateItemUtils.makeTemplateItem(item);
-            if (templateItem.getId() == null){
-                templateItem.setId(item.getId());
+        if (scaleViewParams.scaleId != null || scaleViewParams.scale != null) {
+            EvalScale scale;
+            if (scaleViewParams.scaleId != null) {
+                scale = authoringService.getScaleById(scaleViewParams.scaleId);
+            } else {
+                scale = scaleViewParams.scale;
             }
+            // make a fake item and template item
+            EvalItem item = new EvalItem("admin", "Sample question text", EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, false);
+            item.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED);
+            if (scaleViewParams.scaleDisplaySetting != null) {
+                item.setScaleDisplaySetting(scaleViewParams.scaleDisplaySetting);
+            }
+            item.setScale(scale);
+            templateItem = TemplateItemUtils.makeTemplateItem(item);
 
         } else {
-            throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
+            throw new IllegalArgumentException("Must have scale or scaleId to do preview");
         }
 
         // use the renderer evolver to show the item
@@ -106,7 +112,7 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
      * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
      */
     public ViewParameters getViewParameters() {
-        return new ItemViewParameters();
+        return new EvalScaleParameters();
     }
 
     /* (non-Javadoc)

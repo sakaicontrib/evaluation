@@ -692,6 +692,14 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
     </bean>
 
+    <bean class="org.sakaiproject.evaluation.tool.producers.PreviewScaleProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="itemRenderer"
+            ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+    </bean>
+
 
     <!-- EVALUATIONS -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">

@@ -132,6 +132,10 @@ public class ControlScalesProducer extends EvalCommonProducer {
                 UIMessage.make(scaleBranch, "remove-dummy", "general.command.delete");
             }
 
+            UIInternalLink.make(scaleBranch, "preview-link", 
+                    UIMessage.make("general.command.preview"), 
+                    new EvalScaleParameters(PreviewScaleProducer.VIEW_ID, scale.getId(), EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED));
+
             // Display the scale options vertically
             // ASCII value of 'a' = 97 so initial value is 96.
             // This is kinda weird, not sure it is really needed -AZ
