@@ -24,6 +24,13 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+
+    <script src="/library/editor/FCKeditor/fckeditor.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/jquery/jquery-1.2.6.js" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/facebox/facebox.js" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/utils.js" type="text/javascript" language="JavaScript"></script>
+
+    <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -60,6 +67,7 @@
                           <a rsf:id="modify-link" href="scale_add_modify.html">Modify</a> |
                           <span rsf:id="remove-dummy"></span>
                           <a rsf:id="remove-link" href="remove_scale.html">Remove</a> |
+                          <a rsf:id="preview-link" href="preview_item.html" class="preview_scale">Preview</a> |
                           <input rsf:id="scale-copy-link" type="submit" class="makeLink" value="Copy" />
   						</div>
   					</div>	
@@ -73,5 +81,8 @@
   			</ol>
         </form>
 	</div>
+
+<script type="text/javascript">evalsys.instrumentControlScales();</script>
+
 </body>
 </html>

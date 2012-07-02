@@ -183,6 +183,15 @@ evalsys.instrumentMCMAItem = function(){
     
 };
 
+evalsys.instrumentControlScales = function(){
+    alert("instrumentControlScales - here we go");
+    $(".preview_scale").click(function(event) {
+        event.preventDefault();
+        var previewUrl = $(this).attr("href");
+        alert("preview scale: "+previewUrl);
+    });
+};
+
 evalsys.instrumentScaleItem = function(){
     $('.scaleItemLabel').click(function(){
         $(this).parents('.itemScalePanel').find('label').removeClass('scaleItemLabelSelected');

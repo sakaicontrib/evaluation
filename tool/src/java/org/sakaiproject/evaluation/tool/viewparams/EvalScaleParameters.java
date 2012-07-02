@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool.viewparams;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.model.EvalScale;
+
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
@@ -21,16 +24,45 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * that are passed from one page to another.
  * 
  * @author kahuja@vt.edu
+ * @author azeckoski
  */
 public class EvalScaleParameters extends SimpleViewParameters {	
-	public Long scaleId; 
-	
-	public EvalScaleParameters() {
-	}
-	
+    public Long scaleId; 
+    public EvalScale scale;
+    public String scaleDisplaySetting;
+
+    public EvalScaleParameters() {
+    }
+
     public EvalScaleParameters(String viewID, Long scaleId) {
         this.viewID = viewID;
         this.scaleId = scaleId;
     }
-   
+
+    /**
+     * SPECIAL case for handling scale previews
+     * @param viewID the view id
+     * @param scaleId the scale id (must exist)
+     * @param scaleDisplaySetting the constant from {@link EvalConstants} ITEM_SCALE_DISPLAY_*
+     */
+    public EvalScaleParameters(String viewID, Long scaleId, String scaleDisplaySetting) {
+        this.viewID = viewID;
+        this.scaleId = scaleId;
+        this.scale = null;
+        this.scaleDisplaySetting = scaleDisplaySetting;
+    }
+
+    /**
+     * SPECIAL case for handling scale previews
+     * @param viewID the view id
+     * @param scale the scale data (in case we are modifying a scale which does not exist)
+     * @param scaleDisplaySetting the constant from {@link EvalConstants} ITEM_SCALE_DISPLAY_*
+     */
+    public EvalScaleParameters(String viewID, EvalScale scale, String scaleDisplaySetting) {
+        this.viewID = viewID;
+        this.scale = scale;
+        this.scaleId = null;
+        this.scaleDisplaySetting = scaleDisplaySetting;
+    }
+
 }
