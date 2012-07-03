@@ -321,9 +321,6 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
                 // only show back button when navigating inside the tool
                 UIOutput.make(tofill, "show-back-button");
             }
-
-            // initialize javascript at end of page load
-            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem", new Object[] {});
         }
 
     }

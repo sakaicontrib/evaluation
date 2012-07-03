@@ -259,26 +259,8 @@ var evalTemplateLoaderEvents = (function($) {
             $('a[rel*=facebox]').facebox();
         },
         preview_item: function(){
-            if ($('.blockItemGroup').length > 0){
-                evalsys.instrumentBlockItem();
-            }
-            if ($('.matrix').length > 0) {
-                EvalSystem.instrumentMatrixItem();
-            }
-            if ($('.steppedItemGroup').length > 0){
-                evalsys.instrumentSteppedItem();
-            }
-            if ($('.mult-choice-ans').length > 0){
-                evalsys.instrumentMCMAItem();
-            }
-            if ($('.itemListEval').length > 0) {
-                evalsys.instrumentScaleItem();
-            }
-            if ($('.fullDisplayHorizontal').length > 0) {
-                evalsys.instrumentDisplayHorizontal();
-            }
+            evalsys.instrumentItems();
             $.facebox.setHeader(evalTemplateUtils.pages.preview_item_page);
-            $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
         },
         bindDeleteIcons : bindDeleteIcons,
         unBindDeleteIcons : unBindDeleteIcons,

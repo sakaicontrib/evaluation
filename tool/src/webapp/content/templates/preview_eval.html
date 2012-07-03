@@ -42,27 +42,6 @@
 <!-- supposedly firefox will not cache any pages with unload handlers -->
 <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
 	<div id="toolTip"></div>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			if ($('.blockItemGroup').length > 0){
-				evalsys.instrumentBlockItem();
-			}
-			if ($('.steppedItemGroup').length > 0){
-				evalsys.instrumentSteppedItem();
-			}
-
-			if ($('.mult-choice-ans').length > 0){
-				evalsys.instrumentMCMAItem();
-			}
-			if ($('.itemListEval').length > 0) {
-				evalsys.instrumentScaleItem();
-			}
-			if ($('.fullDisplayHorizontal').length > 0) {
-				evalsys.instrumentDisplayHorizontal();
-			}
-			$("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
-		});
-	</script>
 	<div class="portletBody evaluation preview">
 		<ul class="breadCrumb">
 			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
@@ -117,9 +96,7 @@
 		</div>
 		
 	</div>
-	<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
-		EvalSystem.instrumentMatrixItem();		
-	</script>
+    <script type="text/javascript">evalsys.instrumentItems(".evaluation");</script>
 </body>
 <!-- need this at the bottom to convince IE to not cache -->
 <head>
