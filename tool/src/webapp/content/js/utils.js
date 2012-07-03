@@ -386,8 +386,22 @@ evalsys.initModifyScales = function() {
         $(this).attr("maxlength", "250"); // force the input text boxes to 250 chars or less
     });
 
+    var $previewScaleLink = jQuery('a.preview_scale');
+    var originalUrl = $previewScaleLink.attr("href"); // store the url so we can append to it later
+
+    // NOTE: the order here matters (the order of the click events firing must be the one below first and THEN the facebox one)
+    $previewScaleLink.click(function(event) {
+        // scale_ideal_container and scale_points_container
+        //event.preventDefault();
+        var $form = jQuery("form.scale_modify_form");
+        formData = $form.find(".scale_points_container INPUT,.scale_ideal_container INPUT").serialize();
+        var previewUrl = originalUrl+"?"+encodeURI(formData);
+        alert("preview scale: "+previewUrl);
+        $previewScaleLink.attr("href", previewUrl);
+    });
+
     evalsys.initFacebox(false);
-    jQuery('a.preview_scale').facebox();
+    $previewScaleLink.facebox();
 }
 
 

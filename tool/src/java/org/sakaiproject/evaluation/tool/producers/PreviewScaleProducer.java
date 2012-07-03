@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -22,6 +23,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
@@ -29,6 +31,8 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
@@ -58,30 +62,45 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
         this.itemRenderer = itemRenderer;
     }
 
+    public MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+        this.messageLocator = messageLocator;
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
+        // make the map of display type keys and name
+        LinkedHashMap<String, String> scaleDisplayMap = new LinkedHashMap<String, String>();
+        for (int i = 0; i < EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES.length; i++) {
+            scaleDisplayMap.put(EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES[i], EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS[i]);
+        }
+
         // get templateItem to preview from VPs
         EvalScaleParameters scaleViewParams = (EvalScaleParameters) viewparams;
         EvalTemplateItem templateItem = null;
-        if (scaleViewParams.scaleId != null || scaleViewParams.scale != null) {
+        if (scaleViewParams.id != null || scaleViewParams.points != null) {
             EvalScale scale;
-            if (scaleViewParams.scaleId != null) {
-                scale = authoringService.getScaleById(scaleViewParams.scaleId);
+            if (scaleViewParams.id != null) {
+                scale = authoringService.getScaleById(scaleViewParams.id);
             } else {
-                scale = scaleViewParams.scale;
+                scale = new EvalScale("admin", "Sample scale", EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, false);
+                scale.setId(12345l); // need a fake id
+                scale.setIdeal(scaleViewParams.findIdeal());
+                scale.setOptions(scaleViewParams.findPoints());
             }
             // make a fake item and template item
             EvalItem item = new EvalItem("admin", "Sample question text", EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, false);
             item.setId(123456l); // need a fake id
-            item.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED);
-            if (scaleViewParams.scaleDisplaySetting != null) {
-                item.setScaleDisplaySetting(scaleViewParams.scaleDisplaySetting);
-            }
             item.setScale(scale);
+            item.setScaleDisplaySetting(scaleViewParams.findDisplaySetting());
+            // append the scale display setting
+            if (scaleDisplayMap.containsKey(item.getScaleDisplaySetting())) {
+                String code = scaleDisplayMap.get(item.getScaleDisplaySetting());
+                item.setItemText( item.getItemText()+" ("+messageLocator.getMessage(code)+")");
+            }
             templateItem = TemplateItemUtils.makeTemplateItem(item);
             templateItem.setId(1234567l); // need a fake id
 

@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -76,6 +75,7 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
@@ -91,7 +91,7 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
         EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
-        Long scaleId = evalScaleParams.scaleId;
+        Long scaleId = evalScaleParams.id;
 
         String scaleOTP = "scaleBeanLocator.";
         if (scaleId == null) {
@@ -144,16 +144,14 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
                     scaleOTP + "sharing").setMessageKeys();
         }
 
-        EvalScaleParameters previewParams = new EvalScaleParameters(PreviewScaleProducer.VIEW_ID, scaleId, EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED);
-        if (scaleId == null) {
-            // TODO need to find a way to extract the data from the page to render the scale
-        }
-
         // command buttons
         UICommand.make(form, "scale-add-modify-save-button", 
                 UIMessage.make("modifyscale.save.scale.button"), "templateBBean.saveScaleAction");
         UIInternalLink.make(form, "scale-add-modify-preview", 
-                UIMessage.make("modifyscale.save.preview.button"), previewParams);
+                UIMessage.make("modifyscale.save.preview.button"), 
+                // NOTE: special case which generates the URL without any params, we will fill in the params later via JS
+                new EvalScaleParameters(PreviewScaleProducer.VIEW_ID)
+        );
         UIMessage.make(form, "scale-add-modify-cancel", "general.cancel.button");
 
     }

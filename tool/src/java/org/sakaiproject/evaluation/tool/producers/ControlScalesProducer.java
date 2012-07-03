@@ -76,7 +76,7 @@ public class ControlScalesProducer extends EvalCommonProducer {
 
         UIInternalLink.make(tofill, "add-new-scale-link", 
                 UIMessage.make("controlscales.add.new.scale.link"), 
-                new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, null));
+                new EvalScaleParameters(ModifyScaleProducer.VIEW_ID));
 
         UIMessage.make(tofill, "scales-control-heading", "controlscales.page.heading");
         UIMessage.make(tofill, "scales-control-instruction", "controlscales.page.instruction");

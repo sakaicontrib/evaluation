@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.viewparams;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.EvalScale;
 
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
@@ -27,16 +26,31 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * @author azeckoski
  */
 public class EvalScaleParameters extends SimpleViewParameters {	
-    public Long scaleId; 
-    public EvalScale scale;
-    public String scaleDisplaySetting;
+    public Long id;
+    public String[] points;
+    public String ideal; // EvalConstants.SCALE_IDEAL_NONE;
+    public String displaySetting; // EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED;
 
-    public EvalScaleParameters() {
+    public String findDisplaySetting() {
+        return displaySetting == null ? EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED : displaySetting;
+    }
+    public String findIdeal() {
+        return ideal == null ? EvalConstants.SCALE_IDEAL_NONE : ideal;
+    }
+    public String[] findPoints() {
+        return points == null ? new String[] {} : points;
+    }
+
+    public EvalScaleParameters() { }
+
+    public EvalScaleParameters(String viewID) {
+        this.viewID = viewID;
+        this.id = null;
     }
 
     public EvalScaleParameters(String viewID, Long scaleId) {
         this.viewID = viewID;
-        this.scaleId = scaleId;
+        this.id = scaleId;
     }
 
     /**
@@ -47,22 +61,18 @@ public class EvalScaleParameters extends SimpleViewParameters {
      */
     public EvalScaleParameters(String viewID, Long scaleId, String scaleDisplaySetting) {
         this.viewID = viewID;
-        this.scaleId = scaleId;
-        this.scale = null;
-        this.scaleDisplaySetting = scaleDisplaySetting;
+        this.id = scaleId;
+        this.points = null;
+        this.ideal = null;
+        if (scaleDisplaySetting != null) {
+            this.displaySetting = scaleDisplaySetting;
+        }
     }
 
-    /**
-     * SPECIAL case for handling scale previews
-     * @param viewID the view id
-     * @param scale the scale data (in case we are modifying a scale which does not exist)
-     * @param scaleDisplaySetting the constant from {@link EvalConstants} ITEM_SCALE_DISPLAY_*
-     */
-    public EvalScaleParameters(String viewID, EvalScale scale, String scaleDisplaySetting) {
+    public EvalScaleParameters(String viewID, String[] scalePoints) {
         this.viewID = viewID;
-        this.scale = scale;
-        this.scaleId = null;
-        this.scaleDisplaySetting = scaleDisplaySetting;
+        this.id = null;
+        this.points = scalePoints;
     }
 
 }
