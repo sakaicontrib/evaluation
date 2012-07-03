@@ -587,9 +587,6 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         new String[] {current.displayName, current.email, current.username});
                 log.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
             }
-            
-            // initialize javascript at end of page load
-            UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem", new Object[] {});
         }
     }
     
