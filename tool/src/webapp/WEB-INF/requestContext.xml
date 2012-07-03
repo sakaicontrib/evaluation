@@ -681,7 +681,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
-		<property name="navBarRenderer" ref="navBarRenderer" />	
+        <property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
@@ -698,6 +698,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+        <property name="messageLocator" ref="messageLocator" />
     </bean>
 
 

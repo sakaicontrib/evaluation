@@ -52,7 +52,7 @@
 
 <br/>
 
-<form  rsf:id="basic-form" method="post">
+<form rsf:id="basic-form" class="scale_modify_form" method="post">
 	<p class="shorttext">
 		<label rsf:id="msg=modifyscale.scale.title.note" for="scale-title">Title</label>
 		<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30" id="scale-title-id"/>
@@ -60,7 +60,7 @@
 		<a rsf:id="scale-remove-link" href="remove_scale.html">Remove Scale</a>
 	</p>
 	<h4 rsf:id="msg=modifyscale.adddropscale.note.start">Scale</h4>
-	<div class="labelindnt">
+	<div class="labelindnt scale_points_container">
 		<div rsf:id="modify-scale-points:">
 		<!-- start div for evolver widget - contents below are dummy -->
 			<span id="myOldSpan">
@@ -98,7 +98,7 @@
 
 	<div class="checkbox indnt1">
 		<span rsf:id="scaleIdealRadio"/>
-		<div rsf:id="scaleIdealOptions:">
+		<div rsf:id="scaleIdealOptions:" class="scale_ideal_container">
 			<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
 			<label rsf:id="scale-ideal-label" for="scale-ideal-value">Ideal label</label>
 		</div>
@@ -116,6 +116,7 @@
 
 	<p class="act">
 		<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale" class="active" accesskey="s"  />
+        <!-- preview_scale?ideal=ideal-scale-thing&points=alpha&points=beta&points=charlie -->
         <a rsf:id="scale-add-modify-preview" href="#" class="button preview_scale" accesskey="p">Preview</a>
 		<a rsf:id="scale-add-modify-cancel"  href="#" accesskey="x" onclick="javascript:history.go(-1);">Cancel</a>
 	</p>	
