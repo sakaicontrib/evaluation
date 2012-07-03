@@ -26,12 +26,10 @@ import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInitBlock;
-import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -78,12 +76,14 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
             }
             // make a fake item and template item
             EvalItem item = new EvalItem("admin", "Sample question text", EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, false);
+            item.setId(123456l); // need a fake id
             item.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED);
             if (scaleViewParams.scaleDisplaySetting != null) {
                 item.setScaleDisplaySetting(scaleViewParams.scaleDisplaySetting);
             }
             item.setScale(scale);
             templateItem = TemplateItemUtils.makeTemplateItem(item);
+            templateItem.setId(1234567l); // need a fake id
 
         } else {
             throw new IllegalArgumentException("Must have scale or scaleId to do preview");
@@ -99,13 +99,6 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
         DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
         itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
                 RenderingUtils.makeRenderProps(dti, null, null, null) );
-
-        // render the close button
-        UIMessage.make(tofill, "close-button", "general.close.window.button");
-        
-        // initialize javascript at end of page load
-        UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.instrumentMatrixItem",
-                new Object[] {});
     }
 
     /* (non-Javadoc)
