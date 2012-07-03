@@ -28,7 +28,10 @@
 /////////////////////////
 // Item
 /////////////////////////
-  .item {    
+  .item {
+    &.multiple-choice .content {
+      margin-left: 40px;
+    }
     .title {
       position: relative;
       margin-top: 0;
@@ -64,9 +67,6 @@
     }
     .compulsory .title .required {
         display: inline-block;
-    }
-    .content {
-      margin-left: 40px;
     }
     
     // stepped display title
