@@ -391,12 +391,22 @@ evalsys.initModifyScales = function() {
 
     // NOTE: the order here matters (the order of the click events firing must be the one below first and THEN the facebox one)
     $previewScaleLink.click(function(event) {
-        // scale_ideal_container and scale_points_container
-        //event.preventDefault();
+        // Get the form elements from scale_ideal_container and scale_points_container
         var $form = jQuery("form.scale_modify_form");
-        formData = $form.find(".scale_points_container INPUT,.scale_ideal_container INPUT").serialize();
-        var previewUrl = originalUrl+"?"+encodeURI(formData);
-        alert("preview scale: "+previewUrl);
+        var formData = $form.find(".scale_points_container INPUT,.scale_ideal_container INPUT").serializeArray();
+        // now we extract the data from the array and make it into a query string to append on the URL
+        var scaleData = "";
+        for (var i = 0; i < formData.length; i++) {
+            var element = formData[i];
+            if (element["name"] == "modify-scale-points:1:list-control") {
+                if (i > 0) { scaleData += "&"; }
+                scaleData += "points=" + element["value"];
+            } else if (element["name"] == "scaleIdealRadio-selection") {
+                if (i > 0) { scaleData += "&"; }
+                scaleData += "ideal=" + element["value"];
+            }
+        }
+        var previewUrl = originalUrl+"?"+encodeURI(scaleData);
         $previewScaleLink.attr("href", previewUrl);
     });
 
