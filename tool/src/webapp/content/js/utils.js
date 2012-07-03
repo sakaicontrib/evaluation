@@ -18,10 +18,10 @@ var evalsys = evalsys || {};
 
 evalsys.instrumentBlockItem = function(){
     $('label.blockItemLabel,label.blockItemLabelNA').click(function(){
-		var choiceGroup = $(this).parents('.choiceGroup');
+        var choiceGroup = $(this).parents('.choiceGroup');
         $(choiceGroup).find('label').removeClass('blockItemLabelSelected').removeClass('blockItemLabelSelectedNA');
         $(choiceGroup).find('.itemDoneCheck').addClass('itemDoneCheckShow');
-        
+
         if ($(this).hasClass('blockItemLabel')) {
             $(this).addClass('blockItemLabelSelected');
         }
@@ -29,7 +29,7 @@ evalsys.instrumentBlockItem = function(){
             $(this).addClass('blockItemLabelSelectedNA');
         }
     });
-    
+
     $('.blockItemLabel,.blockItemLabelNA').each(function(){
         if ($(this).children('input:checked').length == 1) {
             $(this).parents('.choiceGroup').find('.itemDoneCheck').addClass('itemDoneCheckShow');
@@ -39,10 +39,10 @@ evalsys.instrumentBlockItem = function(){
             else {
                 $(this).addClass('blockItemLabelSelectedNA');
             }
-            
+
         }
     });
-    
+
     $('.blockItemGroup').each(function(x){
         var headerCol = [];
         /*
@@ -62,7 +62,7 @@ evalsys.instrumentBlockItem = function(){
          */
         headerCol = headerCol.reverse();
         // console.log(headerCol)
-        
+
         /*
          for each block, plug in the corresponding choice string value in
          a screen-reader-only label and in the title attribute of the input
@@ -78,10 +78,10 @@ evalsys.instrumentBlockItem = function(){
 
 evalsys.instrumentSteppedItem = function(){
     $('label.blockItemLabel,label.blockItemLabelNA').click(function(){
-		var answerCell = $(this).parents('.answerCell');
+        var answerCell = $(this).parents('.answerCell');
         $(answerCell).find('label').removeClass('blockItemLabelSelected').removeClass('blockItemLabelSelectedNA');
         $(answerCell).find('.itemDoneCheck').addClass('itemDoneCheckShow');
-        
+
         if ($(this).hasClass('blockItemLabel')) {
             $(this).addClass('blockItemLabelSelected');
         }
@@ -98,11 +98,11 @@ evalsys.instrumentSteppedItem = function(){
             else {
                 $(this).addClass('blockItemLabelSelectedNA');
             }
-            
+
         }
     });
-    
-    
+
+
 };
 
 evalsys.instrumentMCMAItem = function(){
@@ -125,15 +125,15 @@ evalsys.instrumentMCMAItem = function(){
          hide the NA element if no input children
          */
         if ($(this).find('input').length === 0) {
-  			$(this).hide();
+            $(this).hide();
         }
     });
-    
-    
+
+
     $('.mult-choice-ans input').click(function(e){
         var className;
-		var parentLi = $(this).parents('li:eq(0)');
-		var parentUl = $(this).parents('ul:eq(0)');
+        var parentLi = $(this).parents('li:eq(0)');
+        var parentUl = $(this).parents('ul:eq(0)');
         if ($(parentLi).hasClass('check')) {
             className = 'checked';
         }
@@ -173,11 +173,11 @@ evalsys.instrumentMCMAItem = function(){
             }
             else {
             }
-            
+
         }
         e.stopPropagation();
     });
-    
+
 };
 
 evalsys.instrumentScaleItem = function(){
@@ -191,14 +191,14 @@ evalsys.instrumentScaleItem = function(){
         $(this).parents('li').find('.itemDoneCheck').addClass('itemDoneCheckShow');
         $(this).addClass('scaleItemLabelSelected');
     });
-    
+
     $('.scaleItemLabel').each(function(){
         if ($(this).children('input:checked').length == 1) {
             $(this).parents('li').find('.itemDoneCheck').addClass('itemDoneCheckShow');
             $(this).addClass('scaleItemLabelSelected');
         }
     });
-    
+
 };
 
 evalsys.instrumentDisplayHorizontal = function(){
@@ -209,7 +209,7 @@ evalsys.instrumentDisplayHorizontal = function(){
         $(this).parents('table').find('span').removeClass('labelSelected');
         $(this).parent('span').addClass('labelSelected');
     });
-    
+
 };
 
 evalsys.instrumentMatrixItem = function() {
@@ -301,7 +301,7 @@ evalsys.instrumentMatrixItem = function() {
         setScaleTitleWidth();
         setGroupedItemsWidths();
     });
-    
+
     setScaleTitleWidth();
     setGroupedItemsWidths();
 
@@ -320,7 +320,7 @@ evalsys.instrumentMatrixItem = function() {
 
     // mark initially selected inputs with "selected" class so that labels display correctly
     $('.response-list input:checked').parent("label").addClass('selected');
-    
+
     // when inputs are clicked, add "selected" class so that labels display correctly
     var responseItems = $(".response-list input");  
     responseItems.click(function(event){
@@ -366,8 +366,10 @@ evalsys.instrumentItems = function($container) {
     }
 };
 
-evalsys.instrumentControlScales = function(){
-    evalsys.initFacebox();
+
+//PAGE inits
+evalsys.initControlScales = function() {
+    evalsys.initFacebox(true);
     jQuery('a.preview_scale').facebox();
     /* $(".preview_scale").click(function(event) {
         //event.preventDefault();
@@ -376,7 +378,21 @@ evalsys.instrumentControlScales = function(){
     }); */
 };
 
-evalsys.initFacebox = function(){
+evalsys.initModifyScales = function() {
+    var $textboxes = $("div.labelindnt input:text");
+    $textboxes.attr("maxlength", "250"); // force the existing ones first
+    $textboxes.bind("click", function(event){
+        // each time the text box is clicked on
+        $(this).attr("maxlength", "250"); // force the input text boxes to 250 chars or less
+    });
+
+    evalsys.initFacebox(false);
+    jQuery('a.preview_scale').facebox();
+}
+
+
+//SPECIAL inits
+evalsys.initFacebox = function(verticalCenterOnClick) {
     if (!evalsys.faceboxinitialized) {
         // only run the facebox init one time
         if (typeof jQuery.facebox !== "undefined") {
@@ -386,14 +402,16 @@ evalsys.initFacebox = function(){
             //jQuery.facebox.settings.overlay = true;
             //jQuery.facebox.settings.faceboxHtml = "some html";
             // DOCS: https://github.com/defunkt/facebox
-            jQuery(document).bind('beforeReveal.facebox', function() {
-                // set the vertical position
-                var posY = jQuery.facebox.mousePosY;
-                //var $clickedOn = jQuery.facebox.clicked;
-                $('#facebox').css({
-                    top: posY
+            if (verticalCenterOnClick) {
+                jQuery(document).bind('beforeReveal.facebox', function() {
+                    // set the vertical position
+                    var posY = jQuery.facebox.mousePosY;
+                    //var $clickedOn = jQuery.facebox.clicked;
+                    $('#facebox').css({
+                        top: posY
+                    });
                 });
-            });
+            }
             jQuery(document).bind('reveal.facebox', function() {
                 // set the width
                 var faceboxWidth = $('#facebox table.faceboxtable').width();
