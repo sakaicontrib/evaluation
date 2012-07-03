@@ -1570,6 +1570,9 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .itemListEval .evalItemTop:first-child {
   margin-top: 0 !important;
 }
+.evaluation .item.multiple-choice .content {
+  margin-left: 40px;
+}
 .evaluation .item .title {
   position: relative;
   margin-top: 0;
@@ -1605,9 +1608,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item .compulsory .title .required {
   display: inline-block;
-}
-.evaluation .item .content {
-  margin-left: 40px;
 }
 .evaluation .item .numberWrapper {
   text-align: right;
