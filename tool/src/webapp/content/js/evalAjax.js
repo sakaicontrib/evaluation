@@ -178,8 +178,7 @@ $(document).bind('activateControls.templateItems', function() {
         return false;
     });
 
-    var saveButton = document.getElementById("saveReorderButton");
-    saveButton.onclick = function() {
+    $("#saveReorderButton").click(function(){
         disableOrderButtons();
         buildSortableIds();
 
@@ -193,7 +192,7 @@ $(document).bind('activateControls.templateItems', function() {
 
         evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
         return false;
-    };
+    });
 
     $('a[rel=childEdit]').childEdit();
 
@@ -215,8 +214,9 @@ $(document).bind('activateControls.templateItems', function() {
 });
 
 function truncateTextDo(string, number) {
-    var trunc = string.substring(0, (number === null) ? 150 : number);
-    trunc = trunc.replace(/\w+$/, '');
+    var trunc = jQuery.trim(string);
+    trunc = trunc.substring(0, (number === null) ? 150 : number);
+    trunc = jQuery.trim(trunc);
     return trunc;
 }
 
