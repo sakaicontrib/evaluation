@@ -23,14 +23,14 @@ var evalTemplateData = (function() {
         evalTemplateUtils.debug.group("Starting Fn submitFCKform", [form, textarea, target, btn]);
         evalTemplateUtils.debug.time("submitFCKform");
         var img = new Image(),
-                templateItemId = $(form).find('input[@name*=templateItemId]').attr('value'),
+                //templateItemId = $(form).find('input[@name*=templateItemId]').attr('value'),
                 formAsArray = $(form).formToArray(),
                 fckEditor = null,
                 fckEditorValue = null,
                 isFCKEditor = textarea !== false,
                 isBlockChild = $.facebox.settings.elementToUpdate === 'block';
         img.src = $.facebox.settings.loadingImage;
-        evalTemplateUtils.debug.info("Saving item %i", templateItemId);
+        //evalTemplateUtils.debug.info("Saving item %i", templateItemId);
         if (isFCKEditor) {
             try {
                 if (typeof FCKeditorAPI !== "undefined" && textarea !== null) {

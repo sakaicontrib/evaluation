@@ -412,7 +412,16 @@ evalsys.initModifyScales = function() {
 
     evalsys.initFacebox(false);
     $previewScaleLink.facebox();
-}
+};
+
+evalsys.initPreviewScales = function() {
+    // NOTE: this essentially loads in a lightbox so be careful
+    if (typeof jQuery.accordian !== "undefined") {
+        alert("programming error: jquery ui accordian is not loaded!");
+    }
+    jQuery("#items_container").accordion();
+    evalsys.instrumentItems("div.preview-item");
+};
 
 
 //SPECIAL inits

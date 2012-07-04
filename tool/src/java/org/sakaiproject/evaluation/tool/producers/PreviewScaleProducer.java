@@ -15,8 +15,10 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -32,8 +34,9 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.messageutil.TargettedMessageList;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -96,28 +99,45 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
             item.setId(123456l); // need a fake id
             item.setScale(scale);
             item.setScaleDisplaySetting(scaleViewParams.findDisplaySetting());
-            // append the scale display setting
-            if (scaleDisplayMap.containsKey(item.getScaleDisplaySetting())) {
-                String code = scaleDisplayMap.get(item.getScaleDisplaySetting());
-                item.setItemText( item.getItemText()+" ("+messageLocator.getMessage(code)+")");
-            }
             templateItem = TemplateItemUtils.makeTemplateItem(item);
             templateItem.setId(1234567l); // need a fake id
 
         } else {
-            throw new IllegalArgumentException("Must have scale or scaleId to do preview");
+            throw new IllegalArgumentException("Must have scale points or scaleId to do preview");
         }
 
-        // use the renderer evolver to show the item
-        List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
-        templateItems.add(templateItem);
-        if (templateItem.childTemplateItems != null) {
-            templateItems.addAll(templateItem.childTemplateItems);
+        if (scaleViewParams.displaySetting != null) {
+            // trash all the mapped display settings except one if we sent in a sample one
+            for (Iterator<Entry<String, String>> iterator = scaleDisplayMap.entrySet().iterator(); iterator.hasNext();) {
+                Entry<String, String> entry = iterator.next();
+                if (!entry.getKey().equals(scaleViewParams.displaySetting)) {
+                    iterator.remove();
+                }
+            }
+            if (scaleDisplayMap.isEmpty()) {
+                // this should not really happen
+                scaleDisplayMap.put(EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES[0], EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS[0]);
+            }
         }
-        TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
-        DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
-        itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
-                RenderingUtils.makeRenderProps(dti, null, null, null) );
+
+        for (Entry<String, String> entry : scaleDisplayMap.entrySet()) {
+            String displaySetting = entry.getKey();
+            String displaySettingName = messageLocator.getMessage(entry.getValue());
+            templateItem.setScaleDisplaySetting(displaySetting);
+            // append the scale display setting to the item text
+            templateItem.getItem().setItemText( "Sample question text ("+displaySettingName+")");
+            // make a fake TIDL and DTI for rendering consistency
+            List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
+            templateItems.add(templateItem);
+            TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
+            DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
+
+            UIOutput.make(tofill, "previewed:title", displaySettingName);
+            // use the renderer evolver to show the item
+            itemRenderer.renderItem(tofill, "previewed:item", null, templateItem, templateItem.getDisplayOrder(), true, 
+                    RenderingUtils.makeRenderProps(dti, null, null, null) );
+
+        }
     }
 
     /* (non-Javadoc)
