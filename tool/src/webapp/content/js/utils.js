@@ -359,8 +359,8 @@ evalsys.instrumentItems = function($container) {
     }
     var $evalComments = $container.find("div.JSevalComment");
     if ($evalComments.length > 0) {
-        if (typeof jQuery.evalComment === "undefined") {
-            jQuery.getScript("toggleCommentBox.js");
+        if (typeof jQuery().evalComment === "undefined") {
+            alert("programming error: toggleCommentBox.js is not loaded!");
         }
         $evalComments.evalComment(); //Bind comment boxes toggle link action
     }
