@@ -259,7 +259,7 @@ var evalTemplateLoaderEvents = (function($) {
             $('a[rel*=facebox]').facebox();
         },
         preview_item: function(){
-            evalsys.instrumentItems();
+            evalsys.instrumentItems("#item_container");
             $.facebox.setHeader(evalTemplateUtils.pages.preview_item_page);
         },
         bindDeleteIcons : bindDeleteIcons,
