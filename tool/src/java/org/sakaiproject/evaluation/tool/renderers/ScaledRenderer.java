@@ -105,12 +105,12 @@ public class ScaledRenderer implements ItemRenderer {
             UIOutput.make(compactEndContainer, "compactDisplayEnd", compactDisplayEnd);
 
             if (colored) {
-                compactStartContainer.decorators =
-                    new DecoratorList( new UIStyleDecorator("compactDisplayStart") );// must match the existing CSS class
-                //new DecoratorList(new UIColourDecorator(null, ScaledUtils.getStartColor(scale)));
-                compactEndContainer.decorators =
-                    new DecoratorList( new UIStyleDecorator("compactDisplayEnd") );// must match the existing CSS class
-                //new DecoratorList(new UIColourDecorator(null, ScaledUtils.getEndColor(scale)));
+                compactStartContainer.decorators = new DecoratorList( 
+                        new UIStyleDecorator(ScaledUtils.getStartClass(scale)) // must match an existing CSS class
+                    );
+                compactEndContainer.decorators = new DecoratorList( 
+                        new UIStyleDecorator(ScaledUtils.getEndClass(scale)) // must match an existing CSS class
+                    );
             }
 
             // For the radio buttons

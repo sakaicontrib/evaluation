@@ -14,7 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,19 +43,21 @@ public class ScaledUtils {
 		EvalConstants.SCALE_IDEAL_HIGH, 
 		EvalConstants.SCALE_IDEAL_OUTSIDE};
 
-	public static String[] startColours = {
-		EvalToolConstants.BLUE_COLOR, 
-		EvalToolConstants.GREEN_COLOR,
-		EvalToolConstants.RED_COLOR,
-		EvalToolConstants.RED_COLOR,
-		EvalToolConstants.GREEN_COLOR};
+	public static String[] scaleStartClass = {
+        "compactDisplayNeutral",
+        "compactDisplayPositive",
+        "compactDisplayNegative",
+        "compactDisplayNegative",
+        "compactDisplayPositive",
+	};
 
-	public static String[] endColours = {
-		EvalToolConstants.BLUE_COLOR, 
-		EvalToolConstants.RED_COLOR,
-		EvalToolConstants.RED_COLOR,
-		EvalToolConstants.GREEN_COLOR,
-		EvalToolConstants.GREEN_COLOR};
+	public static String[] scaleEndClass = {
+        "compactDisplayNeutral",
+        "compactDisplayNegative",
+        "compactDisplayNegative",
+        "compactDisplayPositive",
+        "compactDisplayPositive",
+	};
 
 	public static int idealIndex(EvalScale scale) {
       int index = -1;
@@ -78,12 +79,12 @@ public class ScaledUtils {
 		return EvalToolConstants.COLORED_IMAGE_URLS[idealIndex(scale)];
 	}
 
-	public static Color getStartColor(EvalScale scale) {
-		return Color.decode(startColours[idealIndex(scale)]);
+	public static String getStartClass(EvalScale scale) {
+		return scaleStartClass[idealIndex(scale)];
 	}
 
-	public static Color getEndColor(EvalScale scale) {
-		return Color.decode(endColours[idealIndex(scale)]);
+	public static String getEndClass(EvalScale scale) {
+		return scaleEndClass[idealIndex(scale)];
 	}
 
 	/**
