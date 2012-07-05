@@ -134,7 +134,8 @@ public class ControlScalesProducer extends EvalCommonProducer {
 
             UIInternalLink.make(scaleBranch, "preview-link", 
                     UIMessage.make("general.command.preview"), 
-                    new EvalScaleParameters(PreviewScaleProducer.VIEW_ID, scale.getId(), EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED));
+                    new EvalScaleParameters(PreviewScaleProducer.VIEW_ID, scale.getId())
+            );
 
             // Display the scale options vertically
             // ASCII value of 'a' = 97 so initial value is 96.

@@ -419,7 +419,10 @@ evalsys.initPreviewScales = function() {
     if (typeof jQuery.accordian !== "undefined") {
         alert("programming error: jquery ui accordian is not loaded!");
     }
-    jQuery("#items_container").accordion();
+    jQuery("#items_container").accordion({
+        autoHeight: false,
+        clearStyle: true,
+    });
     evalsys.instrumentItems("div.preview-item");
 };
 
