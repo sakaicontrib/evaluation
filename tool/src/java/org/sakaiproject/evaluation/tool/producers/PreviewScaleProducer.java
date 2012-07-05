@@ -132,7 +132,10 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
             TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
             DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
 
-            UIOutput.make(tofill, "previewed:title", displaySettingName);
+            // render the header for each item
+            UIBranchContainer header = UIBranchContainer.make(tofill, "previewed:header");
+            UIOutput.make(header, "previewed-title", displaySettingName);
+
             // use the renderer evolver to show the item
             itemRenderer.renderItem(tofill, "previewed:item", null, templateItem, templateItem.getDisplayOrder(), true, 
                     RenderingUtils.makeRenderProps(dti, null, null, null) );
