@@ -81,6 +81,26 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
             throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
         }
 
+        // override values if they are set (this is for live previews)
+        if (previewItemViewParams.scaleDisplay != null) {
+            templateItem.setScaleDisplaySetting(previewItemViewParams.scaleDisplay);
+        }
+        if (previewItemViewParams.na != null) {
+            templateItem.setUsesNA(previewItemViewParams.na);
+        }
+        if (previewItemViewParams.compulsory != null) {
+            templateItem.setCompulsory(previewItemViewParams.compulsory);
+        }
+        if (previewItemViewParams.showComment != null) {
+            templateItem.setUsesComment(previewItemViewParams.showComment);
+        }
+        if (previewItemViewParams.text != null) {
+            templateItem.getItem().setItemText(previewItemViewParams.text);
+        }
+        if (previewItemViewParams.textLines != null) {
+            templateItem.setDisplayRows(previewItemViewParams.textLines);
+        }
+
         // use the renderer evolver to show the item
         List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
         templateItems.add(templateItem);
@@ -89,6 +109,7 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
         }
         TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
         DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
+
         itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
                 RenderingUtils.makeRenderProps(dti, null, null, null) );
 

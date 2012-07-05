@@ -426,6 +426,11 @@ evalsys.initPreviewScales = function() {
     evalsys.instrumentItems("div.preview-item");
 };
 
+evalsys.initPreviewItem = function(selector) {
+    // NOTE: this essentially loads in a lightbox so be careful
+    evalsys.instrumentItems(selector);
+};
+
 
 //SPECIAL inits
 evalsys.initFacebox = function(verticalCenterOnClick) {

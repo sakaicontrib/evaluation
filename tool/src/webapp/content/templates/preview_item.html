@@ -16,30 +16,32 @@
 
 -->
 <div xmlns:rsf="http://ponder.org.uk/rsf" class="evaluation preview-item">
-  <div rsf:id="previewed-item:">
-    <!-- DIV tag for item renderer - everything in here is replaced -->
-    <table>
-      <tr>
-        <td width="3%" valign="top" style="font-weight: bold;">
-          <span>0</span>.&nbsp;
-        </td>
-        <td width="87%" valign="top">
-          <span></span>
-        </td>
-        <td width="10%" nowrap="nowrap" valign="top" align="right">
-          <div>
-            <input type="checkbox" rsf:id="itemNA" />
-            <label>N/A</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td colspan="2">
-          <textarea cols="80"></textarea>
-        </td>
-      </tr>
-    </table>
+  <div id="item_container">
+    <div rsf:id="previewed-item:">
+      <!-- DIV tag for item renderer - everything in here is replaced -->
+      <table>
+        <tr>
+          <td width="3%" valign="top" style="font-weight: bold;">
+            <span>0</span>.&nbsp;
+          </td>
+          <td width="87%" valign="top">
+            <span></span>
+          </td>
+          <td width="10%" nowrap="nowrap" valign="top" align="right">
+            <div>
+              <input type="checkbox" rsf:id="itemNA" />
+              <label>N/A</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td colspan="2">
+            <textarea cols="80"></textarea>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
-  <script type="text/javascript">evalsys.instrumentItems();</script>
+  <script type="text/javascript">evalsys.initPreviewItem("#item_container");</script>
 </div>
