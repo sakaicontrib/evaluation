@@ -216,8 +216,8 @@ var evalTemplateLoaderEvents = (function($) {
                 description = "",
                  o = {
                     beforeSubmit: function() {
-                        title = $('#basic-form input[@name=title]').val();
-                        description = $('#basic-form textarea[@name=description]').val();
+                        title = $('#basic-form input[name=title]').val();
+                        description = $('#basic-form textarea[name=description]').val();
                         if (!title) {
                             alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
                                     evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header').toLowerCase())); //TODO: Make unobtrusive

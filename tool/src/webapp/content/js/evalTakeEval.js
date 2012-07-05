@@ -41,8 +41,8 @@
 $(document).ready(function() {
     $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
 
-    var instrSel = $('div[@rel=evalinstructorSelector]');
-    var assSel = $('div[@rel=evalassistantSelector]');
+    var instrSel = $('div[rel=evalinstructorSelector]');
+    var assSel = $('div[rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
 
@@ -186,7 +186,7 @@ $(document).ready(function() {
 
             selectedBoxesArray:function(that) {
                 var checked = [];
-                that.find('input[@type=checkbox]').each(function() {
+                that.find('input[type=checkbox]').each(function() {
                     if (this.checked){
                         checked.push(this);
                     }
@@ -262,18 +262,18 @@ $(document).ready(function() {
         //Handle reSelecting previous selections
         $.each(['instructor','assistant'], function(i, type) {
 
-            $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
+            $('div[rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
                 var _id = $(this).val();
                 $('div[name=' + _id + '].' + type + 'Branch').show();
                 frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             });
 
             var index = 0;
-            $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
+            $('div[rel=eval' + type + 'Selector]').find('select').each(function() {
                 index = this.selectedIndex;
             });
             if (index !== 0) {
-                var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
+                var _id = $('div[rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
                 frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             }

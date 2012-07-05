@@ -17,7 +17,7 @@
 
 
 $(document).ready(function () {
-    $('a[@rel=facebox]').faceboxGrid();
+    $('a[rel=facebox]').faceboxGrid();
 			$('form.inlineForm :submit').bind("click", function(){
                 evalTemplateFacebox.addItem( $('form').attr("action") + "?" + $("form").formSerialize() );
                 return false;
