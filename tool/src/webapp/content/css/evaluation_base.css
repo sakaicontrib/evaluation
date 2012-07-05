@@ -455,11 +455,20 @@ ol.summaryEvaluateList {
 }
 
 .itemScalePanel .compactDisplayStart {
-  background: #FF8BA0;
 }
 
 .itemScalePanel .compactDisplayEnd {
+}
+
+.itemScalePanel .compactDisplayPositive {
+  background: #FF8BA0;
+}
+
+.itemScalePanel .compactDisplayNegative {
   background: #8BE8A2;
+}
+
+.itemScalePanel .compactDisplayNeutral {
 }
 
 .itemScalePanel td.idealScale {
