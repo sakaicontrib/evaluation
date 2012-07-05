@@ -482,12 +482,10 @@ tool/src/webapp/content/js/facebox/tl.png -text
 tool/src/webapp/content/js/facebox/tr.png -text
 tool/src/webapp/content/js/fluid/Fluid.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/jquery/form.js -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/js/jquery/jquery-1.2.6.js -text
 tool/src/webapp/content/js/jquery/jquery-1.4.4.min.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-1.8.7.custom.min.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-all-effects-1.6rc4.packed.js -text
 tool/src/webapp/content/js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js -text
-tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/jquery.tipsy.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/rsf-parser.js -text svn_keywords=Date+Revision+Author+URL+Id
