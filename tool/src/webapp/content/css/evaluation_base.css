@@ -454,21 +454,12 @@ ol.summaryEvaluateList {
   padding: .3em .5em;
 }
 
-.itemScalePanel .compactDisplayStart {
-}
-
-.itemScalePanel .compactDisplayEnd {
-}
-
 .itemScalePanel .compactDisplayPositive {
-  background: #8BE8A2;
-}
-
-.itemScalePanel .compactDisplayNegative {
   background: #FF8BA0;
 }
 
-.itemScalePanel .compactDisplayNeutral {
+.itemScalePanel .compactDisplayNegative {
+  background: #8BE8A2;
 }
 
 .itemScalePanel td.idealScale {
@@ -1922,7 +1913,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .portletBody .matrix legend {
   font-weight: normal;
-  font-size: 1em;
+  font-size: 0.85em;
   color: #000;
 }
 .portletBody .item-group .item .title .label {
