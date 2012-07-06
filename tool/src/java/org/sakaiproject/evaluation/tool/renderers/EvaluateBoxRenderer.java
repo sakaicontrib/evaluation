@@ -31,9 +31,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;

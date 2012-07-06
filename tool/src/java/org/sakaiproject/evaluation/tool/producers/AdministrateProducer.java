@@ -188,6 +188,9 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "instructors-email-students", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
         UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
 
+        makeBoolean(form, "instructors-view-responders", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS); 
+        UIMessage.make(form, "instructors-view-responders-note", "administrate.instructors.view.responders.note");
+
         makeBoolean(form,"admin-enable-provider-sync", ADMIN_WBL, EvalSettings.ENABLE_PROVIDER_SYNC);
         UIMessage.make(form, "admin-enable-provider-sync-note", "administrate.admin.enable.provider.sync");
 

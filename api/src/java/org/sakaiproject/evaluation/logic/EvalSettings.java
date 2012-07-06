@@ -49,7 +49,10 @@ public interface EvalSettings {
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
     public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
-    
+    /**
+     * CONSTANT: Is the instructor allowed to view the results of all evaluations - {@link Boolean}, default True
+     * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
+     */
     public static final String INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS:java.lang.Boolean";
     
     /**
@@ -65,6 +68,10 @@ public interface EvalSettings {
      * CONSTANT: How many items is the instructor allowed to add to an evaluation from above in the hierarchy - {@link Integer}, default 5
      */
     public static final String INSTRUCTOR_ADD_ITEMS_NUMBER = "INSTRUCTOR_ADD_ITEMS_NUMBER:java.lang.Integer";
+    /**
+     * CONSTANT: Control whether instructor users have access to the list of responders for an evaluation - {@link Boolean}, default False
+     */
+    public static final String INSTRUCTOR_ALLOWED_VIEW_RESPONDERS = "INSTRUCTOR_ALLOWED_VIEW_RESPONDERS:java.lang.Boolean";
 
     /**
      * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
@@ -521,6 +528,7 @@ public interface EvalSettings {
         EVAL_USE_STOP_DATE,
         EVAL_USE_VIEW_DATE,
         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
+        INSTRUCTOR_ALLOWED_VIEW_RESPONDERS,
         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
         STUDENT_SAVE_WITHOUT_SUBMIT,
         STUDENT_CANCEL_ALLOWED,

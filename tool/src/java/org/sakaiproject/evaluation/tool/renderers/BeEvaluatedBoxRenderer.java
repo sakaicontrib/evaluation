@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,7 +54,8 @@ import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 public class BeEvaluatedBoxRenderer {
 
     private DateFormat df;
-    private boolean allowListOfTakers = false;
+    private boolean allowEmailStudents = false;
+    private boolean allowViewResponders = false;
 
     private Locale locale;
     public void setLocale(Locale locale) {
@@ -97,7 +99,8 @@ public class BeEvaluatedBoxRenderer {
 
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        allowListOfTakers = (Boolean) settings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
+        allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
+        allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
     }
 
     public void renderBox(UIContainer tofill, String currentUserId) {
@@ -175,37 +178,66 @@ public class BeEvaluatedBoxRenderer {
                 makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus", 
                         instViewResultsEval, responsesCount, enrollmentsCount, responsesNeeded);
 
-                if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(eval, false)) ) {
-                    if ( responsesNeeded == 0 ) {
-                        // have enough responses and this is viewable
-                        UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), 
-                                new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId }));
-                        if (allowListOfTakers) {
-                            // also show the list of respondents if that option is enabled
-                            UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
-                                    new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId ) );
+                /* the rules here are a little complex but.... the design is as follows:
+                 * if instructor can email students OR view responders then we show 2 links
+                 *      the reports link is disabled according to the rules for viewing reports and tooltip show the date or responses required
+                 *      the responses link is always enabled as there are no limits on when it can be used
+                 * ELSE only show the reports info BUT instead of only showing the link, 
+                 *      show either the date at which the report is viewable or responses required directly
+                 *      and only show the report link when it works
+                 */
+                if (instViewResultsEval) {
+                    // reports are viewable so just display the reports link
+                    UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), 
+                            new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId }));
+                } else {
+                    // not viewable yet so now we need to explain why to the user
+                    // we only show detailed results if the responders link is not visible
+                    boolean showResultsDetails = !(allowEmailStudents || allowViewResponders);
+                    Date instViewDate = evalBeanUtils.getInstructorViewDateForEval(eval);
+                    if (instViewDate == null) {
+                        instViewDate = eval.getSafeViewDate(); // ensure no NPE
+                    }
+                    String viewableDate = df.format(instViewDate);
+                    if ( responsesNeeded > 0 ) {
+                        if (showResultsDetails) {
+                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "controlevaluations.eval.report.awaiting.responses", 
+                                    new Object[] { responsesNeeded });
+                            // indicate the viewable date as well
+                            resultOutput.decorate(new UITooltipDecorator(
+                                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+                        } else {
+                            // only show the disabled link
+                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
+                            // indicate the responses needed
+                            resultOutput.decorate(new UITooltipDecorator(
+                                    UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
                         }
                     } else {
-                        // cannot view yet, more responses needed
-                        UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "controlevaluations.eval.report.awaiting.responses", 
-                                new Object[] { responsesNeeded });
-                        // indicate the viewable date as well
-                        resultOutput.decorate(new UITooltipDecorator(
-                                UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { df.format(eval.getSafeViewDate()) }) ));
+                        if (showResultsDetails) {
+                            UIOutput resultOutput = UIOutput.make(evalrow, "evalReportDisplay", viewableDate );
+                            if ( responsesNeeded == 0 ) {
+                                // just show date if we have enough responses
+                                resultOutput.decorate(new UITooltipDecorator(
+                                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+                            } else {
+                                // show if responses are still needed
+                                resultOutput.decorate(new UITooltipDecorator( 
+                                        UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
+                            }
+                        } else {
+                            // only show the disabled link
+                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
+                            // show the date as a tooltip
+                            resultOutput.decorate(new UITooltipDecorator(
+                                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+                        }
                     }
-                } else {
-                    // just display the date at which results will be viewable
-                    String viewableDate = df.format(eval.getSafeViewDate());
-                    UIOutput resultOutput = UIOutput.make(evalrow, "evalReportDisplay", viewableDate );
-                    if ( responsesNeeded == 0 ) {
-                        // just show date if we have enough responses
-                        resultOutput.decorate(new UITooltipDecorator(
-                                UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-                    } else {
-                        // show if responses are still needed
-                        resultOutput.decorate(new UITooltipDecorator( 
-                                UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-                    }
+                }
+                if (allowEmailStudents || allowViewResponders) {
+                    // also show the respondents link if that option is enabled
+                    UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
+                            new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId ) );
                 }
 
             }// link per group
