@@ -290,10 +290,13 @@
         @include visuallyhidden();
       }
     }
-    
+    .response-scale-container {
+      height: 1em;
+      display: block;
+    }
     .response-group-labels {
       display: block;
-      margin-top: 0.5em;
+      margin-top: 0.75em;
       text-align: right !important;
       white-space: nowrap;
     }
@@ -312,9 +315,7 @@
     .response-scale-na {
       margin-right: 11px;
       width: 24px;
-      padding: 0 13px;
-      // IE9...
-      padding-right: 18px\9;
+      padding: 0 17px 0 13px;
     }
     
     .item .matrix {
