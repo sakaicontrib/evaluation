@@ -1570,7 +1570,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .itemListEval .evalItemTop:first-child {
   margin-top: 0 !important;
 }
-.evaluation .item.multiple-choice .content {
+.evaluation .item.multiple-choice .content, .evaluation .item.multiple-answer .content {
   margin-left: 40px;
 }
 .evaluation .item .title {
@@ -1636,6 +1636,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   min-height: 5em;
   padding: 0;
   margin: 0;
+  margin-left: 40px;
 }
 .evaluation .item.text .content .na {
   position: absolute;
