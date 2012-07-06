@@ -328,9 +328,14 @@
       padding-top: 0 !important;
     }
   }
-  .steppedItemGroup img,
-  .steppedItemGroup table td {
-    vertical-align: middle;
+  .steppedItemGroup {
+    .choiceGroup {
+      padding-right: 0.2em;
+    }
+    img,
+    table td {
+      vertical-align: middle;
+    }
   }
   
 
