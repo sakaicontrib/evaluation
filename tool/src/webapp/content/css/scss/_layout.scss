@@ -303,11 +303,16 @@
       font-size: 12px !important;
       line-height: 100%;
       text-align: center;
+      // IE9...
+      padding: 0 18px\9;
+      width: 15px\9;
     }
     .response-scale-na {
       margin-right: 11px;
       width: 24px;
       padding: 0 13px;
+      // IE9...
+      padding-right: 18px\9;
     }
     
     .item .matrix {

@@ -1852,11 +1852,14 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   font-size: 12px !important;
   line-height: 100%;
   text-align: center;
+  padding: 0 18px\9;
+  width: 15px\9;
 }
 .evaluation .item-group .response-scale-na {
   margin-right: 11px;
   width: 24px;
   padding: 0 13px;
+  padding-right: 18px\9;
 }
 .evaluation .item-group .item .matrix {
   padding-top: 8px;
