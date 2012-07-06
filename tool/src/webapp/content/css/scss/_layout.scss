@@ -29,7 +29,8 @@
 // Item
 /////////////////////////
   .item {
-    &.multiple-choice .content {
+    &.multiple-choice .content,
+    &.multiple-answer .content {
       margin-left: 40px;
     }
     .title {
@@ -97,6 +98,7 @@
         min-height: 5em;
         padding: 0;
         margin: 0;
+        margin-left: 40px;
       }
       .na {
         position: absolute;
