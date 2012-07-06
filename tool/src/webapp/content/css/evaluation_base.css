@@ -1872,6 +1872,9 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item-group .item .matrix .response-list {
   padding-top: 0 !important;
 }
+.evaluation .steppedItemGroup .choiceGroup {
+  padding-right: 0.2em;
+}
 .evaluation .steppedItemGroup img,
 .evaluation .steppedItemGroup table td {
   vertical-align: middle;
