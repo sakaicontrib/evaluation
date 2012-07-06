@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -64,6 +65,11 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         this.commonLogic = commonLogic;
     }
 
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+        this.settings = settings;
+    }
+
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
@@ -81,13 +87,15 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
     
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
-		this.navBarRenderer = navBarRenderer;
-	}
+        this.navBarRenderer = navBarRenderer;
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         // local variables used in the render logic
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -104,6 +112,9 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         String evalGroupId = evalViewParameters.evalGroupId;
         boolean evalAnonymous = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+
+        boolean allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
+        boolean allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
 
         // get the lists of participants and responses
         String[] evalGroupIds = null;
@@ -163,9 +174,12 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                 dateFormat.format(eval.getSafeDueDate())} );
         UIMessage.make(tofill, "responseStats", "evalresponders.stats", 
                 new Object[] {responses.size(), statsAssigned} );
-        UIInternalLink.make(tofill, "responseEmailLink", 
-                UIMessage.make("evalresponders.notifications.link", new Object[] {eval.getTitle()}),
-                new EvalViewParameters(EvaluationNotificationsProducer.VIEW_ID, evaluationId) );
+
+        if (allowEmailStudents || userAdmin) {
+            UIInternalLink.make(tofill, "responseEmailLink", 
+                    UIMessage.make("evalresponders.notifications.link", new Object[] {eval.getTitle()}),
+                    new EvalViewParameters(EvaluationNotificationsProducer.VIEW_ID, evaluationId) );
+        }
 
         UIInternalLink.make(tofill, "evalRespondersLink", UIMessage.make("evalresponders.page.title"),
                 new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluationId, evalGroupId) );
@@ -184,26 +198,31 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                         new Object[] {group.title});
                 UIMessage.make(groupBranch, "responseGroupStats", "evalresponders.stats", 
                         new Object[] {userResponses.size(), users.size()});
-                UIInternalLink.make(groupBranch, "responseGroupEmailLink", 
-                        UIMessage.make("evalresponders.notifications.link", new Object[] {group.title}),
-                        new EvalViewParameters(EvaluationNotificationsProducer.VIEW_ID, evaluationId, groupId) );
-            }
-            // sort the list of users
-            Collections.sort(users, new EvalUser.SortNameComparator());
-            UIBranchContainer showResponsesBranch = UIBranchContainer.make(groupBranch, "showGroupResponses:");
-            for (EvalUser evalUser : users) {
-                UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
-                UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName);
-                String messagekey = "evalresponders.status.untaken"; // untaken (no response)
-                EvalResponse response = userResponses.get(evalUser.userId);
-                if (response != null) {
-                    if (response.complete) {
-                        messagekey = "evalresponders.status.complete";
-                    } else {
-                        messagekey = "evalresponders.status.incomplete";
-                    }
+                if (allowEmailStudents || userAdmin) {
+                    UIInternalLink.make(groupBranch, "responseGroupEmailLink", 
+                            UIMessage.make("evalresponders.notifications.link", new Object[] {group.title}),
+                            new EvalViewParameters(EvaluationNotificationsProducer.VIEW_ID, evaluationId, groupId) );
                 }
-                UIMessage.make(userResponseBranch, "responseStatus", messagekey);
+            }
+            // display the list of respondents
+            if (allowViewResponders) {
+                // sort the list of users
+                Collections.sort(users, new EvalUser.SortNameComparator());
+                UIBranchContainer showResponsesBranch = UIBranchContainer.make(groupBranch, "showGroupResponses:");
+                for (EvalUser evalUser : users) {
+                    UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
+                    UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName);
+                    String messagekey = "evalresponders.status.untaken"; // untaken (no response)
+                    EvalResponse response = userResponses.get(evalUser.userId);
+                    if (response != null) {
+                        if (response.complete) {
+                            messagekey = "evalresponders.status.complete";
+                        } else {
+                            messagekey = "evalresponders.status.incomplete";
+                        }
+                    }
+                    UIMessage.make(userResponseBranch, "responseStatus", messagekey);
+                }
             }
         }
     }

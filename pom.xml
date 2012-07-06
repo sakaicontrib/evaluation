@@ -328,7 +328,8 @@
                             <exclude>**/js/jquery/**</exclude>
                             <exclude>**/js/ui.*</exclude>
                             <exclude>**/js/yahoo*</exclude>
-                            <exclude>**/css/jquery*</exclude>
+                            <exclude>**/css/jquery/**</exclude>
+                            <exclude>**/css/scss/**</exclude>
                             <exclude>LICENSE*</exclude>
                             <exclude>**/README</exclude>
                         </excludes>
