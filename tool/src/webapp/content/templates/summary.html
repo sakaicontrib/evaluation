@@ -88,10 +88,10 @@
       </div>
     </div>
 
-    <div rsf:id="evalResponsesBox:" class="summaryBox">
+    <div rsf:id="evalResponsesBox:" class="summaryBox beEvaluated">
       <h4 rsf:id="msg=summary.evaluated.title" style="margin-left: .5em">Evaluations in which I may be evaluated</h4>
       <div class="innerPanel">
-        <div>
+        <div rsf:id="summary-be-evaluated-progress-header:" class="inProgressEvals">
             <span rsf:id="msg=summary.evaluated.inprogress" class="sub-heading">In Progress</span>
             <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instruction"></span>
         </div>
@@ -131,7 +131,7 @@
           </table>
         </div>
 
-        <div>
+        <div rsf:id="summary-be-evaluated-closed-header:" class="closedEvals">
             <span rsf:id="msg=summary.evaluated.closed" class="sub-heading">Closed</span>
             <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instruction"></span>
         </div>
