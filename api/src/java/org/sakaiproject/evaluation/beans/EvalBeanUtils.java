@@ -109,23 +109,26 @@ public class EvalBeanUtils {
      * @param eval the evaluation
      * @return true if results can be viewed, false otherwise
      */
-    public boolean checkInstructorViewResultsForEval(EvalEvaluation eval) {
+    public boolean checkInstructorViewResultsForEval(EvalEvaluation eval, String evalState) {
         // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
         boolean instViewResultsEval = false;
         if (eval != null) {
-            if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval)) {
+            if (evalState == null || "".equals(evalState)) {
+                evalState = commonLogic.calculateViewability(eval.getState());
+            }
+            if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
                 // skip this one
-            } else if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
+            } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
                 // this eval is active or later and nothing before active is viewable
                 boolean evalViewable = false;
                 // check if this eval is forced to a viewable state
-                String forcedViewableState = commonLogic.calculateViewability(eval.getState());
+                String forcedViewableState = commonLogic.calculateViewability(evalState);
                 if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
                     // forced viewable
                     evalViewable = true;
                 } else {
                     // not forced so check if it is actually viewable
-                    if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
                         // check for viewable state evals
                         evalViewable = true;
                     }
@@ -147,7 +150,7 @@ public class EvalBeanUtils {
 
     /**
      * Find the date at which an instructor can view the report/results of an evaluation,
-     * similar logic to {@link #checkInstructorViewResultsForEval(EvalEvaluation)}
+     * similar logic to {@link #checkInstructorViewResultsForEval(EvalEvaluation, String)}
      * 
      * @param eval an evaluation
      * @return the date OR null if instructors cannot view the report

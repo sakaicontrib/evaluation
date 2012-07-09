@@ -30,12 +30,9 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -43,7 +40,6 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 
 /**
  * BeEvaluatedBoxRender renders the list of evaluations where the user may be evaluated.
@@ -151,6 +147,10 @@ public class BeEvaluatedBoxRenderer {
         for (EvalEvaluation eval : evals) {
             // set display values for this eval
             String evalState = commonLogic.calculateViewability(eval.getState());
+            boolean instViewResultsEval = evalBeanUtils.checkInstructorViewResultsForEval(eval, evalState);
+            Date instViewDate = evalBeanUtils.getInstructorViewDateForEval(eval);
+            boolean showResultsDetails = !(allowEmailStudents || allowViewResponders);
+
             // show one link per group assigned to in-queue, active or grace period eval
             List<EvalGroup> groups = eval.getEvalGroups();
             if (groups == null) {
@@ -172,142 +172,12 @@ public class BeEvaluatedBoxRenderer {
                 String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
                 UIOutput.make(evalrow, "evalResponsesStatsDisplay", responseString);
 
-                // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
-                boolean instViewResultsEval = evalBeanUtils.checkInstructorViewResultsForEval(eval);
-
-                makeDateComponent(evalrow, eval, evalState, "evalResponsesDateLabel", "evalResponsesDate", "evalResponsesStatus", 
-                        instViewResultsEval, responsesCount, enrollmentsCount, responsesNeeded);
-
-                /* the rules here are a little complex but.... the design is as follows:
-                 * if instructor can email students OR view responders then we show 2 links
-                 *      the reports link is disabled according to the rules for viewing reports and tooltip show the date or responses required
-                 *      the responses link is always enabled as there are no limits on when it can be used
-                 * ELSE only show the reports info BUT instead of only showing the link, 
-                 *      show either the date at which the report is viewable or responses required directly
-                 *      and only show the report link when it works
-                 */
-                if (instViewResultsEval) {
-                    // reports are viewable so just display the reports link
-                    UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), 
-                            new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId }));
-                } else {
-                    // not viewable yet so now we need to explain why to the user
-                    // we only show detailed results if the responders link is not visible
-                    boolean showResultsDetails = !(allowEmailStudents || allowViewResponders);
-                    Date instViewDate = evalBeanUtils.getInstructorViewDateForEval(eval);
-                    if (instViewDate == null) {
-                        instViewDate = eval.getSafeViewDate(); // ensure no NPE
-                    }
-                    String viewableDate = df.format(instViewDate);
-                    if ( responsesNeeded > 0 ) {
-                        if (showResultsDetails) {
-                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "controlevaluations.eval.report.awaiting.responses", 
-                                    new Object[] { responsesNeeded });
-                            // indicate the viewable date as well
-                            resultOutput.decorate(new UITooltipDecorator(
-                                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-                        } else {
-                            // only show the disabled link
-                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
-                            // indicate the responses needed
-                            resultOutput.decorate(new UITooltipDecorator(
-                                    UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-                        }
-                    } else {
-                        if (showResultsDetails) {
-                            UIOutput resultOutput = UIOutput.make(evalrow, "evalReportDisplay", viewableDate );
-                            if ( responsesNeeded == 0 ) {
-                                // just show date if we have enough responses
-                                resultOutput.decorate(new UITooltipDecorator(
-                                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-                            } else {
-                                // show if responses are still needed
-                                resultOutput.decorate(new UITooltipDecorator( 
-                                        UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-                            }
-                        } else {
-                            // only show the disabled link
-                            UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
-                            // show the date as a tooltip
-                            resultOutput.decorate(new UITooltipDecorator(
-                                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-                        }
-                    }
-                }
-                if (allowEmailStudents || allowViewResponders) {
-                    // also show the respondents link if that option is enabled
-                    UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
-                            new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId ) );
-                }
+                // now render the results links depending on what the instructor is allowed to see
+                RenderingUtils.renderResultsColumn(evalrow, eval, group, instViewDate, df, 
+                        responsesNeeded, showResultsDetails, instViewResultsEval);
 
             }// link per group
         }
     }
 
-    /**
-     * @param evalrow
-     * @param eval
-     * @param evalState
-     * @param evalDateLabel
-     * @param evalDateItem
-     * @param evalStatusItem
-     * @param instViewResultsEval if true, instructor can view results for this eval, else instructor cannot view them
-     * @param responsesCount
-     * @param enrollmentsCount
-     * @param responsesNeeded
-     */
-    protected void makeDateComponent(UIContainer evalrow, EvalEvaluation eval, String evalState, String evalDateLabel, String evalDateItem,
-            String evalStatusItem, boolean instViewResultsEval, int responsesCount, int enrollmentsCount, int responsesNeeded) {
-        // use a date which is related to the current users locale
-        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
-            // If we are in the queue we are yet to start, so say when we will
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.starts");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
-
-        } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
-            // Active evaluations can either be open forever or close at some point:
-            if (eval.getDueDate() != null) {
-                UIMessage.make(evalrow, evalDateLabel, "summary.label.due");
-                UIOutput.make(evalrow, evalDateItem, df.format(eval.getDueDate()));
-                // Should probably add something here if there's a grace period
-            } else {
-                UIMessage.make(evalrow, evalDateLabel, "summary.label.nevercloses");
-            }
-
-        } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
-            // Evaluations can have a grace period, if so that must close at some point;
-            // Grace periods never remain open forever
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.gracetill");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeStopDate()));
-
-        } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
-            // if an evaluation is closed then ViewDate must have been set
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.resultsviewableon");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeViewDate()));
-
-        } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
-            // if an evaluation is viewable we have to check the instructor view date
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.resultsviewablesince");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getSafeViewDate()));
-
-        } else {
-            UIMessage.make(evalrow, evalDateLabel, "summary.label.fallback");
-            UIOutput.make(evalrow, evalDateItem, df.format(eval.getStartDate()));
-        }
-        // SPECIAL handling for viewing results
-        if (instViewResultsEval) {
-            // results can be viewed
-            if (responsesNeeded == 0) {
-                UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), new ReportParameters(
-                        ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
-            } else {
-                UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState).decorate(
-                        new UITooltipDecorator(UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded })));
-            }
-        } else {
-            // fallback when results cannot be viewed
-            UIMessage.make(evalrow, evalStatusItem, "summary.status." + evalState);
-        }
-    }
 }
