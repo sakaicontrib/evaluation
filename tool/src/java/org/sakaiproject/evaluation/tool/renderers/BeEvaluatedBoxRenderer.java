@@ -40,6 +40,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * BeEvaluatedBoxRender renders the list of evaluations where the user may be evaluated.
@@ -123,17 +124,23 @@ public class BeEvaluatedBoxRenderer {
             }
 
             // show a list of evals with 5 columns
+            UIBranchContainer inProgressBC = UIBranchContainer.make(evalResponsesBC, "summary-be-evaluated-progress-header:");
             if (evalsInProgress.isEmpty()) {
-                UIMessage.make(evalResponsesBC, "summary-be-evaluated-progress-none", "summary.be.evaluated.none");
+                UIMessage.make(inProgressBC, "summary-be-evaluated-progress-none", "summary.be.evaluated.none");
+                inProgressBC.decorate( new UIStyleDecorator("triangle-closed") ); // must match the existing CSS class
             } else {
+                inProgressBC.decorate( new UIStyleDecorator("triangle-open") ); // must match the existing CSS class
                 UIBranchContainer evaluatedInProgressBC = UIBranchContainer.make(evalResponsesBC, "evaluatedInProgress:");
                 makeEvalsListTable(evalsInProgress, evaluatedInProgressBC);
             }
 
             // show a list of evals with 5 columns
+            UIBranchContainer closedBC = UIBranchContainer.make(evalResponsesBC, "summary-be-evaluated-closed-header:");
             if (evalsClosed.isEmpty()) {
-                UIMessage.make(evalResponsesBC, "summary-be-evaluated-closed-none", "summary.be.evaluated.none");
+                UIMessage.make(closedBC, "summary-be-evaluated-closed-none", "summary.be.evaluated.none");
+                closedBC.decorate( new UIStyleDecorator("triangle-closed") ); // must match the existing CSS class
             } else {
+                closedBC.decorate( new UIStyleDecorator("triangle-open") ); // must match the existing CSS class
                 UIBranchContainer evaluatedClosedBC = UIBranchContainer.make(evalResponsesBC, "evaluatedClosed:");
                 makeEvalsListTable(evalsClosed, evaluatedClosedBC);
             }
