@@ -12,9 +12,87 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-var sakai = sakai || {};
-var utils = utils || {};
 var evalsys = evalsys || {};
+
+if (!jQuery) {
+    throw "JQuery undefined";
+}
+
+/**
+ * This will center any jquery object it is executed on,
+ * if the container cannot be found then this will produce a failure alert
+ *
+ * @param options [OPTIONAL] specify the options to use when centering
+ *      containerSelector - specify the selector for the container to center within, DEFAULT: window
+ *      elementSelector - specify the selector for element we are measuring the height and width of, DEFAULT: this
+ *      horizontal - center this horizontally, DEFAULT: true
+ *      vertical - center this vertically, DEFAULT: true
+ *      debug - enable debugging alerts, DEFAULT: false
+ */
+jQuery.fn.center = function (options) {
+    var horizontal = true;
+    var vertical = true;
+    var debug = false;
+
+    // SET OPTIONS
+    if (typeof options === "undefined") { options = {}; }
+    if ("debug" in options) {
+        debug = (options.debug === true);
+    }
+    if ("horizontal" in options) {
+        horizontal = (options.horizontal === false) ? false : true;
+    }
+    if ("vertical" in options) {
+        vertical = (options.vertical === false) ? false : true;
+    }
+    var $container;
+    if ("containerSelector" in options && typeof options.containerSelector === "string") {
+        $container = jQuery(options.containerSelector);
+    } else {
+        $container = jQuery(window);
+    }
+    var $element;
+    if ("elementSelector" in options && typeof options.elementSelector === "string") {
+        $element = this.find(options.elementSelector);
+        if ($element.length === 0) {
+            // expand the search
+            $element = this.find(options.elementSelector);
+        }
+        if ($element.length === 0) {
+            // fall back to just using this
+            if (debug) {
+                alert('ERROR: invalid elementSelector ('+options.elementSelector+') for center (fail safe to using: this)');
+            }
+            $element = this;
+        } else {
+            $element = $element.first(); // only use the first one
+        }
+    } else {
+        $element = this;
+    }
+
+    // PROCESS centering
+    var topPos = 0;
+    var leftPos = 0;
+    if ($container.length && (horizontal || vertical)) {
+        this.css("position","absolute"); // must switch the position to absolute first
+        topPos = ( ( $container.height() - $element.height() ) / 2 ) + $container.scrollTop();
+        leftPos = ( ( $container.width() - $element.width() ) / 2 ) + $container.scrollLeft();
+        if (debug) {
+            alert("thing: "+$element.width()+"x"+$element.height()+" window: "+$container.width()+"x"+$container.height()+" scroll: "+$container.scrollLeft()+"x"+$container.scrollTop()+" -> "+leftPos+"x"+topPos);
+        }
+        if (vertical) {
+            this.css("top", topPos + "px");
+        }
+        if (horizontal) {
+            this.css("left", leftPos + "px");
+        }
+    } else {
+        alert('ERROR: invalid containerSelector ('+options.containerSelector+') for center');
+    }
+    return this;
+};
+
 
 evalsys.instrumentBlockItem = function(){
     $('label.blockItemLabel,label.blockItemLabelNA').click(function(){
@@ -369,7 +447,7 @@ evalsys.instrumentItems = function($container) {
 
 //PAGE inits
 evalsys.initControlScales = function() {
-    evalsys.initFacebox(true);
+    evalsys.initFacebox({verticalCenterOnClick: true, minWidth: 740});
     jQuery('a.preview_scale').facebox();
     /* $(".preview_scale").click(function(event) {
         //event.preventDefault();
@@ -410,7 +488,7 @@ evalsys.initModifyScales = function() {
         $previewScaleLink.attr("href", previewUrl);
     });
 
-    evalsys.initFacebox(false);
+    evalsys.initFacebox({verticalCenterOnClick: false, minWidth: 740});
     $previewScaleLink.facebox();
 };
 
@@ -422,6 +500,9 @@ evalsys.initPreviewScales = function() {
     jQuery("#items_container").accordion({
         autoHeight: false,
         clearStyle: true,
+        change: function(event, ui) {
+            $('#facebox').center({elementSelector: "table.faceboxtable", vertical: false});
+        },
     });
     evalsys.instrumentItems("div.preview-item");
 };
@@ -433,7 +514,10 @@ evalsys.initPreviewItem = function(selector) {
 
 
 //SPECIAL inits
-evalsys.initFacebox = function(verticalCenterOnClick) {
+/**
+ * @param options an object with options for this facebox
+ */
+evalsys.initFacebox = function(options) {
     if (!evalsys.faceboxinitialized) {
         // only run the facebox init one time
         if (typeof jQuery.facebox !== "undefined") {
@@ -443,22 +527,39 @@ evalsys.initFacebox = function(verticalCenterOnClick) {
             //jQuery.facebox.settings.overlay = true;
             //jQuery.facebox.settings.faceboxHtml = "some html";
             // DOCS: https://github.com/defunkt/facebox
-            if (verticalCenterOnClick) {
+            if (options && options.verticalCenterOnClick) {
                 jQuery(document).bind('beforeReveal.facebox', function() {
                     // set the vertical position
                     var posY = jQuery.facebox.mousePosY;
                     //var $clickedOn = jQuery.facebox.clicked;
-                    $('#facebox').css({
-                        top: posY
+                    var $facebox = $('#facebox');
+                    $facebox.css({
+                        'top': posY+'px'
                     });
+                    // set the min-width
+                    if (options && options.minWidth > 0) {
+                        $facebox.css({
+                            'min-width': (options.minWidth+26) +'px'
+                        });
+                        $facebox.find('.body').css({
+                            'min-width': (options.minWidth) +'px'
+                        });
+                    }
                 });
             }
             jQuery(document).bind('reveal.facebox', function() {
                 // set the width
-                var faceboxWidth = $('#facebox table.faceboxtable').width();
+                var $facebox = $('#facebox');
+                var faceboxWidth = $facebox.find('table.faceboxtable').width();
+                if (options && options.minWidth > 0) {
+                    faceboxWidth = faceboxWidth < options.minWidth ? options.minWidth : faceboxWidth;
+                }
                 //alert("before widths: .body="+$('#facebox .body').width()+", .content="+$('#facebox .content').width()+", .popup="+$('#facebox .popup').width()+", .table="+$('#facebox table.faceboxtable').width()+" ");
-                $('#facebox').css({
-                    width: faceboxWidth+20
+                $facebox.css({
+                    'width': (faceboxWidth+26) +'px'
+                });
+                $facebox.find('.body').css({
+                    'width': (faceboxWidth) +'px'
                 });
             });
             evalsys.faceboxinitialized = true;
