@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -117,10 +119,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
     */
    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      String actionBean = "setupEvalBean.";
-      boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
-      boolean reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
-
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -128,6 +126,11 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
       UIMessage.make(tofill, "page-title", "controlevaluations.page.title");
 
       // local variables used in the render logic
+      String actionBean = "setupEvalBean.";
+      boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
+      boolean reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
+      boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+
       String currentUserId = commonLogic.getCurrentUserId();
 
       /*
@@ -140,7 +143,9 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
       List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
-      List<Long> takableEvaluationIds = new ArrayList<Long>(); // collect evaluation Ids for evaluations that are pending and active ONLY
+
+      // UM specific code for checking unpublished groups - collect evaluation Ids for evaluations that are pending and active ONLY
+      List<Long> takableEvaluationIds = new ArrayList<Long>();
 
       List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(commonLogic.getCurrentUserId(), false, false, true);
       for (int j = 0; j < evals.size(); j++) {
@@ -149,23 +154,28 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
          EvalEvaluation eval = (EvalEvaluation) evals.get(j);
          String evalStatus = evaluationService.updateEvaluationState(eval.getId());
 
-         if ( EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus) ) {
-            inqueueEvals.add(eval);
-            takableEvaluationIds.add(eval.getId());
-         } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus) ||
-               EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus) ) {
-            closedEvals.add(eval);
+         if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalStatus) ) {
+             partialEvals.add(eval);
+         } else if ( EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus) ) {
+             inqueueEvals.add(eval);
+             takableEvaluationIds.add(eval.getId());
          } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus) ||
-               EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus) ) {
-            activeEvals.add(eval);
-            takableEvaluationIds.add(eval.getId());
-         } else if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalStatus) ) {
-            partialEvals.add(eval);
+                 EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus) ) {
+             activeEvals.add(eval);
+             takableEvaluationIds.add(eval.getId());
+         } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus) ||
+                 EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus) ) {
+             closedEvals.add(eval);
          }
       }
-      
-      // get evalGroups for pending and active evals only. Later we will check if any of them are unpublished
-      Map<Long, List<EvalAssignGroup>> takableAssignGroups = evaluationService.getAssignGroupsForEvals(takableEvaluationIds.toArray(new Long[0]), true, null);
+
+      // UM specific code for checking unpublished groups
+      int countUnpublishedGroups = 0;
+      Map<Long, List<EvalAssignGroup>> takableAssignGroups = new HashMap<Long, List<EvalAssignGroup>>();
+      if ((Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK)) {
+          // get evalGroups for pending and active evals only. Later we will check if any of them are unpublished
+          takableAssignGroups = evaluationService.getAssignGroupsForEvals(takableEvaluationIds.toArray(new Long[takableEvaluationIds.size()]), true, null);
+      }
 
       // create start new eval link
       UIInternalLink.make(tofill, "begin-evaluation-link", UIMessage.make("starteval.page.title"), 
@@ -186,17 +196,16 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "partial-eval-row:", evaluation.getId().toString());
 
             UIOutput.make(evaluationRow, "partial-eval-title", evaluation.getTitle() );
-            UIOutput.make(evaluationRow, "partial-eval-created", df.format(evaluation.getLastModified()));
 
-            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("controlevaluations.partial.continue"),
+            UIInternalLink.make(evaluationRow, "partial-eval-edit-link", UIMessage.make("controlevaluations.partial.continue"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
-
-            UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
+            UIInternalLink.make(evaluationRow, "partial-eval-delete-link", UIMessage.make("general.command.delete"), 
                   new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+
+            humanDateRenderer.renderDate(evaluationRow, "partial-eval-created", evaluation.getLastModified());
          }
       }
-      
-      int countUnpublishedGroups = 0;
+
 
       // create inqueue evaluations header
       if (inqueueEvals.size() > 0) {
@@ -209,31 +218,47 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
 
             UIInternalLink evalTitleLink = UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
-            UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
+            evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
+
+            if ((Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK)) {
+                // NOTE: UM specific code
+                // check if this eval has any site/group that is unpublished
+                List<EvalAssignGroup> assignGroups = takableAssignGroups.get(evaluation.getId());
+                int countUnpublished = 0;
+                for (EvalAssignGroup group : assignGroups){
+                    if (! commonLogic.isEvalGroupPublished(group.getEvalGroupId())){
+                        countUnpublished ++;
+                    }
+                }
+                if (countUnpublished > 0){
+                    evalTitleLink.decorate( new UIStyleDecorator("elementAlertFront") );
+                    evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.instructions.site.unpublished")) );
+                    countUnpublishedGroups ++;
+                }
+            }
+
+            UILink directLink = UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   commonLogic.getEntityURL(evaluation));
+            directLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.direct.tooltip")) );
             if (evaluation.getEvalCategory() != null) {
                UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
                      commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
                catLink.decorators = new DecoratorList( 
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
-            
-            // check if this eval has any site/group that is unpublished
-            List<EvalAssignGroup> assignGroups = takableAssignGroups.get(evaluation.getId());
-            int countUnpublished = 0;
-            for (EvalAssignGroup group : assignGroups){
-            	if (! commonLogic.isEvalGroupPublished(group.getEvalGroupId())){
-            		countUnpublished ++;
-            	}
-            }
-            
-            if (countUnpublished > 0){
-            	evalTitleLink.decorate( new UIStyleDecorator("elementAlertFront") );
-            	evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.instructions.site.unpublished")) );
-            	countUnpublishedGroups ++;
+
+            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+
+            // do the locked check first since it is more efficient
+            if ( ! evaluation.getLocked().booleanValue() &&
+                  evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+               // evaluation removable
+               UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
+                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
-            UIInternalLink.make(evaluationRow, "notifications-link", 
+            UIInternalLink.make(evaluationRow, "inqueue-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"), 
                     new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
 
             // vary the display depending on the number of groups assigned
@@ -247,21 +272,13 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
-            UIOutput.make(evaluationRow, "inqueue-eval-startdate", df.format(evaluation.getStartDate()));
+            humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-startdate", evaluation.getStartDate());
+
             // TODO add support for evals that do not close - summary.label.nevercloses
-            humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-duedate", evaluation.getDueDate());
+            humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-duedate", evaluation.getSafeDueDate());
 
-            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
-
-            // do the locked check first since it is more efficient
-            if ( ! evaluation.getLocked().booleanValue() &&
-                  evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
-               // evaluation removable
-               UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
-                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
-            }
-
+            UIInternalLink.make(evaluationRow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
+                    new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
          }
       } else {
          UIMessage.make(tofill, "no-inqueue-evals", "controlevaluations.inqueue.none");
@@ -269,81 +286,29 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
 
 
       // create active evaluations header and link
-      Boolean viewResultsIgnoreDate = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
-      
       if (activeEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "active-eval-listing:");
-
-         if(viewResultsIgnoreDate) {
-          	 UIOutput.make(evalListing, "controlevaluations-eval-report-header", 
-          			 UIMessage.make("controlevaluations.eval.report.header").getValue());
-         }
          for (int i = 0; i < activeEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) activeEvals.get(i);
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "active-eval-row:", evaluation.getId().toString());
 
-            UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
+            UIInternalLink evalTitleLink = UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
-            UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
+            evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
+
+            UILink directLink = UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   commonLogic.getEntityURL(evaluation));
+            directLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.direct.tooltip")) );
             if (evaluation.getEvalCategory() != null) {
                UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
                      commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
                catLink.decorators = new DecoratorList( 
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
-            
 
-            UIInternalLink.make(evaluationRow, "notifications-link", 
+            UIInternalLink.make(evaluationRow, "active-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
                     new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
-
-            // vary the display depending on the number of groups assigned
-            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
-            if (groupsCount == 1) {
-               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
-                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
-            } else {
-               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
-                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
-            }
-
-            // calculate the response rate
-            int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
-            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
-            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-            String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-
-            if (responsesNeeded == 0) {
-                UIInternalLink.make(evaluationRow, "responders-link", 
-                        UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
-                        new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
-            } else {
-                UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", 
-                        new Object[] { responseString } );
-            }
-
-            if(viewResultsIgnoreDate) {
-           	
-            	UIOutput.make(evaluationRow, "active-eval-view-report-node");	
-            	
-            	if (responsesNeeded == 0) {                    
-                    
-                    UIInternalLink.make(evaluationRow, "activeEvalViewReportLink", UIMessage.make("controlevaluations.active.report.title"), new ReportParameters(
-                    		ReportChooseGroupsProducer.VIEW_ID, evaluation.getId()));
-                } else {
-                    
-                    UIMessage.make(evaluationRow, "active-eval-view-report-item", 
-                    		UIMessage.make(
-                    				"controlevaluations.eval.report.awaiting.responses", 
-                    				new Object[] { responsesNeeded }).getValue());
-                }
-            }
-            
-            UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
-            // TODO add support for evals that do not close - summary.label.nevercloses
-            humanDateRenderer.renderDate(evaluationRow, "active-eval-duedate", evaluation.getDueDate());
 
             UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
@@ -360,14 +325,44 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
                UICommand.make(form, "evalCloseCommand", UIMessage.make("controlevaluations.active.close.now"), 
                      actionBean + "closeEvalAction");
             }
+
+            // vary the display depending on the number of groups assigned
+            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
+            if (groupsCount == 1) {
+               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
+            } else {
+               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
+            }
+
+            humanDateRenderer.renderDate(evaluationRow, "active-eval-startdate", evaluation.getStartDate());
+            // TODO add support for evals that do not close - summary.label.nevercloses
+            humanDateRenderer.renderDate(evaluationRow, "active-eval-duedate", evaluation.getSafeDueDate());
+
+            // calculate the response rate
+            int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+            String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+
+            UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", new Object[] { responseString } );
+
+            // owner can view the results but only early IF the setting is enabled
+            boolean viewResultsEval = viewResultsIgnoreDates ? true : false;
+            // now render the results links depending on what the user is allowed to see
+            RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
+                    responsesNeeded, false, viewResultsEval);
          }
       } else {
          UIMessage.make(tofill, "no-active-evals", "controlevaluations.active.none");
       }
-      
-      if (countUnpublishedGroups > 0){
-      	UIMessage.make(tofill, "eval-instructions-group-notpublished", "controlevaluations.instructions.site.unpublished");
+
+      if (countUnpublishedGroups > 0) {
+          UIMessage.make(tofill, "eval-instructions-group-notpublished", "controlevaluations.instructions.site.unpublished");
       }
+
 
       // create closed evaluations header and link
       if (closedEvals.size() > 0) {
@@ -378,16 +373,31 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "closed-eval-row:", evaluation.getId().toString());
 
-            UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
+            UIInternalLink evalTitleLink = UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
+            evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
             if (evaluation.getEvalCategory() != null) {
                UIOutput category = UIOutput.make(evaluationRow, "eval-category", shortenText(evaluation.getEvalCategory(), 20) );
-               category.decorators = new DecoratorList( 
-                     new UITooltipDecorator( evaluation.getEvalCategory() ) );
+               category.decorators = new DecoratorList( new UITooltipDecorator( evaluation.getEvalCategory() ) );
             }
 
-            UIInternalLink.make(evaluationRow, "notifications-link", 
+            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+
+            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+               // evaluation removable
+               UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
+                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+            }
+
+            UIInternalLink.make(evaluationRow, "closed-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
                     new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+
+            if (reopeningAllowed) {
+               // add in link to settings page with reopen option
+               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
+                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId(), true) );
+            }
 
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
@@ -400,52 +410,24 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
+            humanDateRenderer.renderDate(evaluationRow, "closed-eval-startdate", evaluation.getStartDate());
+
+            humanDateRenderer.renderDate(evaluationRow, "closed-eval-duedate", evaluation.getSafeDueDate());
+
             // calculate the response rate
             int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
             int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), null);
             int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+            String evalState = EvalUtils.getEvaluationState(evaluation, false);
 
-            if (responsesNeeded == 0) {
-                UIInternalLink.make(evaluationRow, "responders-link", responseString, 
-                        new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
-            } else {
-                UIOutput.make(evaluationRow, "closed-eval-response-rate", responseString );
-            }
+            UIMessage.make(evaluationRow, "closed-eval-response-rate", "controlevaluations.eval.responses.inline", new Object[] { responseString } );
 
-            humanDateRenderer.renderDate(evaluationRow, "closed-eval-duedate", evaluation.getDueDate());
-
-            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation, false)) ) {
-               if ( responsesNeeded == 0 ) {
-                  UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
-                        UIMessage.make("controlevaluations.eval.report.link"),
-                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));  
-               } else {
-                  // cannot view yet, more responses needed
-                  UIMessage.make(evaluationRow, "closed-eval-message", 
-                        "controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded });
-               }
-            } else {
-               UIMessage.make(evaluationRow, "closed-eval-message", 
-                     "controlevaluations.eval.report.viewable.on",
-                     new String[] { df.format(evaluation.getSafeViewDate()) });
-            }
-
-            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
-
-            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
-               // evaluation removable
-               UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
-                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
-            }
-            
-            if (reopeningAllowed) {
-               // add in link to settings page with reopen option
-               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
-                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId(), true) );
-            }
-
+            // owner can view the results but only early IF the setting is enabled
+            boolean viewResultsEval = viewResultsIgnoreDates ? true : EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
+            // now render the results links depending on what the user is allowed to see
+            RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
+                    responsesNeeded, false, viewResultsEval);
          }
       } else {
          UIMessage.make(tofill, "no-closed-evals", "controlevaluations.closed.none");
