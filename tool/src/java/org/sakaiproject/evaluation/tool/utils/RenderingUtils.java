@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
+import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -46,6 +47,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 
 /**
@@ -279,8 +281,13 @@ public class RenderingUtils {
         String viewableDate = df.format(viewDate);
         if (evalResultsViewable && responsesNeeded <= 0) {
             // reports are viewable so just display the reports link
-            UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), 
-                    new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId }));
+            ViewParameters viewparams;
+            if (group != null) {
+                viewparams = new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId });
+            } else {
+                viewparams = new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId());
+            }
+            UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), viewparams);
         } else if ( responsesNeeded > 0 ) {
             // not viewable yet because there are not enough responses
             if (showResultsDetails) {
@@ -321,8 +328,13 @@ public class RenderingUtils {
         }
         if (!showResultsDetails) {
             // also show the respondents link if we are not showing the details
-            UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
-                    new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId ) );
+            ViewParameters viewparams;
+            if (group != null) {
+                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId );
+            } else {
+                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId());
+            }
+            UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), viewparams);
         }
     }
 
