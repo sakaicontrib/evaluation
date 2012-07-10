@@ -405,6 +405,7 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "general-disable-question-blocks", ADMIN_WBL, EvalSettings.DISABLE_QUESTION_BLOCKS);
         makeBoolean(form, "general-enable-ta-category", ADMIN_WBL, EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         makeBoolean(form, "general-enable-selections", ADMIN_WBL, EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        makeBoolean(form, "general-enable-site-publish-check", ADMIN_WBL, EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK);
         //makeBoolean(form, "general-filter-evalgroups", EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);  //TODO: refactor this code EVALSYS-942
         UIInput.make(form, "general-local-css-path", PathUtil.composePath(ADMIN_WBL, EvalSettings.LOCAL_CSS_PATH), 
                 EvalUtils.safeStringSetting(evalSettings, EvalSettings.LOCAL_CSS_PATH));

@@ -235,6 +235,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return user;
     }
 
+    @SuppressWarnings("null")
     public List<EvalUser> getEvalUsersByIds(String[] userIds) {
         List<EvalUser> users = new ArrayList<EvalUser>();
         boolean foundAll = false;
@@ -603,8 +604,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups, forcing this to true for now so it does not break things -AZ
     public boolean isEvalGroupPublished(String evalGroupId) {
-        return true;
-        //return externalLogic.isEvalGroupPublished(evalGroupId);
+        if ((Boolean) evalSettings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK)) {
+            // FIXME this is NOT implemented correctly and will return false for all non-sakai Site type groups
+            return externalLogic.isEvalGroupPublished(evalGroupId);
+        }
+        return true; // default to true (all groups published)
     }
 
 
