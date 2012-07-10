@@ -446,6 +446,10 @@ evalsys.instrumentItems = function($container) {
 
 
 //PAGE inits
+evalsys.initSummary = function() {
+    // TODO
+};
+
 evalsys.initControlScales = function() {
     evalsys.initFacebox({verticalCenterOnClick: true, minWidth: 740});
     jQuery('a.preview_scale').facebox();
