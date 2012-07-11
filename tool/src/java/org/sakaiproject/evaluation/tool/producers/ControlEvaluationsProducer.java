@@ -35,7 +35,6 @@ import org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -130,6 +129,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
       boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
       boolean reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
       boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+      int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
 
       String currentUserId = commonLogic.getCurrentUserId();
 
@@ -277,8 +277,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
             // TODO add support for evals that do not close - summary.label.nevercloses
             humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-duedate", evaluation.getSafeDueDate());
 
-            UIInternalLink.make(evaluationRow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), 
-                    new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluation.getId() ) );
          }
       } else {
          UIMessage.make(tofill, "no-inqueue-evals", "controlevaluations.inqueue.none");
@@ -347,13 +345,14 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
             int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
-            UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", new Object[] { responseString } );
+            RenderingUtils.renderReponseRateColumn(evaluationRow, evaluation.getId(), responsesNeeded, 
+                    responseString, true, true);
 
             // owner can view the results but only early IF the setting is enabled
             boolean viewResultsEval = viewResultsIgnoreDates ? true : false;
             // now render the results links depending on what the user is allowed to see
             RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
-                    responsesNeeded, false, viewResultsEval);
+                    responsesNeeded, responsesRequired, viewResultsEval);
          }
       } else {
          UIMessage.make(tofill, "no-active-evals", "controlevaluations.active.none");
@@ -421,13 +420,14 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
             String evalState = EvalUtils.getEvaluationState(evaluation, false);
 
-            UIMessage.make(evaluationRow, "closed-eval-response-rate", "controlevaluations.eval.responses.inline", new Object[] { responseString } );
+            RenderingUtils.renderReponseRateColumn(evaluationRow, evaluation.getId(), responsesNeeded, 
+                    responseString, true, true);
 
             // owner can view the results but only early IF the setting is enabled
             boolean viewResultsEval = viewResultsIgnoreDates ? true : EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
             // now render the results links depending on what the user is allowed to see
             RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
-                    responsesNeeded, false, viewResultsEval);
+                    responsesNeeded, responsesRequired, viewResultsEval);
          }
       } else {
          UIMessage.make(tofill, "no-closed-evals", "controlevaluations.closed.none");

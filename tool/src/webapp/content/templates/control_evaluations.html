@@ -113,9 +113,6 @@
                         <th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">
                             Due Date
                         </th>
-                        <th rsf:id="msg=controlevaluations.eval.report.header" width="15%" class="screenOnly">
-                            Report
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -139,9 +136,6 @@
                         </td>
                         <td rsf:id="inqueue-eval-duedate" nowrap="nowrap" headers="dueinqueue">
                             20/03/2007
-                        </td>
-                        <td class="screenOnly" nowrap="nowrap">
-                          <a rsf:id="evalRespondentsDisplayLink" href="evaluation_responders.html">respondents</a>
                         </td>
                     </tr>
                 </tbody>
@@ -207,8 +201,9 @@
                         <td rsf:id="active-eval-duedate" headers="dueact" nowrap="nowrap">
                             20/03/2007
                         </td>
-                        <td nowrap="nowrap" headers="resprateact" >
-                            <span rsf:id="active-eval-response-rate">10/100</span>
+                        <td nowrap="nowrap" headers="resprateact">
+                          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+                          <span rsf:id="responseRateDisplay"></span>
                         </td>
                         <td class="screenOnly" nowrap="nowrap" headers="reportact">
                           <span rsf:id="evalReportDisplay"></span>
@@ -277,8 +272,9 @@
                         <td rsf:id="closed-eval-duedate" headers="dueclosed" nowrap="nowrap">
                             20/03/2007
                         </td>
-                        <td headers="resprateclosed" nowrap="nowrap">
-                            <span rsf:id="closed-eval-response-rate">40/50 - 80%</span>
+                        <td nowrap="nowrap" headers="resprateclosed">
+                          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+                          <span rsf:id="responseRateDisplay"></span>
                         </td>
                         <td class="screenOnly" nowrap="nowrap" headers="reportclosed">
                           <span rsf:id="evalReportDisplay"></span>
