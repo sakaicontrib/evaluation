@@ -447,7 +447,20 @@ evalsys.instrumentItems = function($container) {
 
 //PAGE inits
 evalsys.initSummary = function() {
-    // TODO
+    if (typeof jQuery.tablesorter !== "undefined") {
+        alert("programming error: jquery tablesorter is not loaded!");
+    }
+    // http://tablesorter.com/docs/
+    /*
+    jQuery("#beEvaluatedInProgressTable").tablesorter({
+        headers: { 0:{sorter:'text'}, 1:{sorter:'date'}, 2:{sorter:'date'}, 3:{sorter: false}, 4:{sorter: false} },
+        sortList: [[2,1]]
+    });
+    jQuery("#beEvaluatedClosedTable").tablesorter({
+        headers: { 0:{sorter:'text'}, 1:{sorter:'date'}, 2:{sorter:'date'}, 3:{sorter: false}, 4:{sorter: false} },
+        sortList: [[2,0]]
+    });
+    */
 };
 
 evalsys.initControlScales = function() {

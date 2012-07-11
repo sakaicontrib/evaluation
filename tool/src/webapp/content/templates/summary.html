@@ -28,6 +28,7 @@
 
 <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
 <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
+<script src="../js/jquery/jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="../js/utils.js" type="text/javascript"></script>
 
 <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
@@ -102,7 +103,7 @@
             <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instruction"></span>
         </div>
         <div rsf:id="evaluatedInProgress:" class="evaluated_in_progress">
-          <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+          <table rsf:id="evalResponseTable:" id="beEvaluatedInProgressTable" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
             <thead>
               <tr>
                 <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
@@ -143,7 +144,7 @@
             <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instruction"></span>
         </div>
         <div rsf:id="evaluatedClosed:" class="evaluated_closed">
-          <table rsf:id="evalResponseTable:" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+          <table rsf:id="evalResponseTable:" id="beEvaluatedClosedTable" cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
             <thead>
               <tr>
                 <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
