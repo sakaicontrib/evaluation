@@ -156,7 +156,6 @@ public class BeEvaluatedBoxRenderer {
             String evalState = commonLogic.calculateViewability(eval.getState());
             boolean instViewResultsEval = evalBeanUtils.checkInstructorViewResultsForEval(eval, evalState);
             Date instViewDate = evalBeanUtils.getInstructorViewDateForEval(eval);
-            boolean showResultsDetails = !(allowEmailStudents || allowViewResponders);
 
             // show one link per group assigned to in-queue, active or grace period eval
             List<EvalGroup> groups = eval.getEvalGroups();
@@ -176,12 +175,16 @@ public class BeEvaluatedBoxRenderer {
                 int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
                 int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] { group.evalGroupId });
                 int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+                int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
                 String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-                UIOutput.make(evalrow, "evalResponsesStatsDisplay", responseString);
+
+                // render the response rates depending on permissions
+                RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded, 
+                        responseString, allowViewResponders, allowEmailStudents);
 
                 // now render the results links depending on what the instructor is allowed to see
                 RenderingUtils.renderResultsColumn(evalrow, eval, group, instViewDate, df, 
-                        responsesNeeded, showResultsDetails, instViewResultsEval);
+                        responsesNeeded, responsesRequired, instViewResultsEval);
 
             }// link per group
         }

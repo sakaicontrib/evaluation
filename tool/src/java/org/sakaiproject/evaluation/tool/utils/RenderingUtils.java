@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.producers.EvaluationNotificationsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
@@ -39,10 +40,11 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -236,7 +238,7 @@ public class RenderingUtils {
     /**
      * Renders the reports/results column content (since the logic is complex)
      * 
-     * @param evalrow the branch container (must contain the following elements):
+     * @param container the branch container (must contain the following elements):
      *      evalReportDisplay (output)
      *      evalReportDisplayLink (link)
      *      evalRespondentsDisplayLink (link)
@@ -244,15 +246,13 @@ public class RenderingUtils {
      * @param group the eval group
      * @param viewDate the date at which results can be viewed
      * @param df the formatter for the dates
-     * @param responsesNeeded responses needed before results can be viewed (0 indicates they can be viewed now)
-     * @param showResultsDetails if true then display the results details info instead of the link,
-     *      normally this is used when the user is not allowed to view the report yet (not enough responses for example),
-     *      if this is rendering for instructors then this should ONLY be true when 
-     *      EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS or EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS are true
+     * @param responsesNeeded responses needed before results can be viewed (0 indicates they can be viewed now),
+     *      normally should be the output from EvalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount)
+     * @param responsesRequired the int value of EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS
      * @param evalResultsViewable true if the reports can be viewed based on eval state, prefs, and dates, 
      *      usually the result of EvalBeanUtils.checkInstructorViewResultsForEval(),
      *      NOTE: this doesn't guarantee the link is visible as there might not be enough respondents 
-     *      or the view date may not be reached yet
+     *      or the view date may not be reached yet (should handle EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS)
      * 
      * Sample rendering html (from summary.html):
       <tr rsf:id="evalResponsesList:">
@@ -265,21 +265,58 @@ public class RenderingUtils {
       </tr>
      *
      */
-    public static void renderResultsColumn(UIBranchContainer evalrow, EvalEvaluation eval, EvalGroup group, 
-            Date viewDate, DateFormat df, int responsesNeeded, boolean showResultsDetails, boolean evalResultsViewable) {
-        /* the rules here are a little complex but.... the design is as follows:
-         * if instructor can email students OR view responders then we show 2 links
-         *      the reports link is disabled according to the rules for viewing reports and tooltip show the date or responses required
-         *      the responses link is always enabled as there are no limits on when it can be used
-         * ELSE only show the reports info BUT instead of only showing the link, 
-         *      show either the date at which the report is viewable or responses required directly
-         *      and only show the report link when it works
-         */
+    public static void renderResultsColumn(UIBranchContainer container, EvalEvaluation eval, EvalGroup group, 
+            Date viewDate, DateFormat df, int responsesNeeded, int responsesRequired, boolean evalResultsViewable) {
+        if (container == null) { throw new IllegalArgumentException("container must be set"); }
+        if (eval == null) { throw new IllegalArgumentException("eval must be set"); }
+        String evalState = EvalUtils.getEvaluationState(eval, true);
         if (viewDate == null) {
             viewDate = eval.getSafeViewDate(); // ensure no NPE
         }
+        if (df == null) {
+            df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        }
         String viewableDate = df.format(viewDate);
-        if (evalResultsViewable && responsesNeeded <= 0) {
+        /* Reports column logic: 
+         * - if eval OPEN (in progress) 
+         * -- if view date not reached and if responses count not reached: show "{viewDate}: if at least {num} responses" 
+         * -- if responses count not reached: show "After {num} more responses" 
+         * -- if view date not reached but responses count reached: show "{viewDate}" 
+         * -- if INSTRUCTOR_ALLOWED_VIEW_RESULTS and responses count reached: show link to report view 
+         * - if eval CLOSED 
+         * -- if responses count not reached: show "After {num} more responses" 
+         * -- if view date not reached but responses count reached: show "{viewDate}" 
+         * -- if view date and responses count reached: show link to report view
+         */
+        boolean evalOpen = EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_CLOSED, false); // eval is open (still in progress)
+        if (evalOpen && !evalResultsViewable && responsesNeeded > 0) {
+            // show view date + responses message (only if the eval is still OPEN)
+            // controlevaluations.eval.report.viewablew.awaiting.responses
+            UIMessage resultOutput = UIMessage.make(container, "evalReportDisplay", "controlevaluations.eval.report.viewable.least.responses", 
+                    new Object[] { viewableDate, responsesRequired });
+            // indicate the viewable date as well
+            resultOutput.decorate(new UITooltipDecorator(
+                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+        } else if ( responsesNeeded > 0 ) {
+            // not viewable yet because there are not enough responses
+            UIMessage resultOutput = UIMessage.make(container, "evalReportDisplay", "controlevaluations.eval.report.after.responses", 
+                    new Object[] { responsesNeeded });
+            // indicate the viewable date as well
+            resultOutput.decorate(new UITooltipDecorator(
+                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+        } else if (!evalResultsViewable) {
+            // not viewable yet because of the view date
+            UIOutput resultOutput = UIOutput.make(container, "evalReportDisplay", viewableDate );
+            if ( responsesNeeded == 0 ) {
+                // just show date if we have enough responses
+                resultOutput.decorate(new UITooltipDecorator(
+                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
+            } else {
+                // show if responses are still needed
+                resultOutput.decorate(new UITooltipDecorator( 
+                        UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
+            }
+        } else { // if (evalResultsViewable)
             // reports are viewable so just display the reports link
             ViewParameters viewparams;
             if (group != null) {
@@ -287,54 +324,67 @@ public class RenderingUtils {
             } else {
                 viewparams = new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId());
             }
-            UIInternalLink.make(evalrow, "evalReportDisplayLink", UIMessage.make("summary.responses.report.link"), viewparams);
-        } else if ( responsesNeeded > 0 ) {
-            // not viewable yet because there are not enough responses
-            if (showResultsDetails) {
-                // we only show detailed results if the responders link is not visible
-                UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "controlevaluations.eval.report.awaiting.responses", 
-                        new Object[] { responsesNeeded });
-                // indicate the viewable date as well
-                resultOutput.decorate(new UITooltipDecorator(
-                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-            } else {
-                // only show the disabled link
-                UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
-                // indicate the responses needed
-                resultOutput.decorate(new UITooltipDecorator(
-                        UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-            }
-        } else {
-            // not viewable yet because of the view date
-            if (showResultsDetails) {
-                // we only show detailed results if the responders link is not visible
-                UIOutput resultOutput = UIOutput.make(evalrow, "evalReportDisplay", viewableDate );
-                if ( responsesNeeded == 0 ) {
-                    // just show date if we have enough responses
-                    resultOutput.decorate(new UITooltipDecorator(
-                            UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-                } else {
-                    // show if responses are still needed
-                    resultOutput.decorate(new UITooltipDecorator( 
-                            UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-                }
-            } else {
-                // only show the disabled link
-                UIMessage resultOutput = UIMessage.make(evalrow, "evalReportDisplay", "summary.responses.report.link");
-                // show the date as a tooltip
-                resultOutput.decorate(new UITooltipDecorator(
-                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-            }
+            UIInternalLink.make(container, "evalReportDisplayLink", UIMessage.make("controlevaluations.eval.report.link"), viewparams);
         }
-        if (!showResultsDetails) {
-            // also show the respondents link if we are not showing the details
+    }
+
+    /**
+     * Renders the response rate column (since the logic is complex)
+     * 
+     * @param container the branch container (must contain the following elements):
+     *      responseRateDisplay (output)
+     *      responseRateLink (link)
+     * @param evaluationId the id of the evaluation
+     * @param responsesNeeded responses needed before results can be viewed (0 indicates they can be viewed now),
+     *      normally should be the output from EvalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount)
+     * @param responseString the string representing the response rate output
+     * @param allowedViewResponders if true, this user can view the responders listing,
+     *      normally only if EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS is true or is admin user
+     * @param allowedEmailStudents if true, this user can send emails to evaluators,
+     *      normally only if EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS is true or is admin/owner of eval
+     * 
+     * Sample html (from summary.html):
+      <tr rsf:id="evalResponsesList:">
+        ...
+        <td nowrap="nowrap">
+          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+          <span rsf:id="responseRateDisplay"></span>
+        </td>
+      </tr>
+     * 
+     */
+    public static void renderReponseRateColumn(UIBranchContainer container, Long evaluationId, 
+            int responsesNeeded, String responseString, boolean allowedViewResponders, boolean allowedEmailStudents) {
+        if (container == null) { throw new IllegalArgumentException("container must be set"); }
+        if (evaluationId == null) { throw new IllegalArgumentException("evaluationId must be set"); }
+        if (responseString == null || "".equals(responseString)) { throw new IllegalArgumentException("responseString must be set"); }
+        /* Responses column:
+         * - if min responses reached and INSTRUCTOR_ALLOWED_VIEW_RESPONDERS: link to the responders view 
+         * - else if INSTRUCTOR_ALLOWED_EMAIL_STUDENTS: link to notifications (send emails) view 
+         * - else no options enabled and not admin ONLY show the text of the responses info (and tooltip if min responses not reached)
+         */
+        boolean showRespondersLink = (responsesNeeded == 0 && allowedViewResponders);
+        UIComponent responseRateCompoenent;
+        if (allowedEmailStudents || showRespondersLink) {
             ViewParameters viewparams;
-            if (group != null) {
-                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId(), group.evalGroupId );
+            if (showRespondersLink) {
+                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluationId );
+            } else if (allowedEmailStudents) {
+                viewparams = new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluationId );
             } else {
-                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, eval.getId());
+                throw new RuntimeException("Bad logic in renderReponseRateColumn: should not be possible to reach this");
             }
-            UIInternalLink.make(evalrow, "evalRespondentsDisplayLink", UIMessage.make("summary.responses.respondents.link"), viewparams);
+            responseRateCompoenent = UIInternalLink.make(container, "responseRateLink", 
+                    UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
+                    viewparams );
+        } else {
+            responseRateCompoenent = UIMessage.make(container, "responseRateDisplay", "controlevaluations.eval.responses.inline", 
+                    new Object[] { responseString } );
+        }
+        if (responsesNeeded > 0) {
+            // show if responses are still needed
+            responseRateCompoenent.decorate(new UITooltipDecorator( 
+                    UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
         }
     }
 
