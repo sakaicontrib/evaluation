@@ -164,8 +164,8 @@ public class BeEvaluatedBoxRenderer {
             }
             for (EvalGroup group : groups) {
                 UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable, "evalResponsesList:");
-                UIOutput.make(evalrow, "evalResponsesStartDate", df.format(eval.getStartDate()));
-                humanDateRenderer.renderDate(evalrow, "evalResponsesDueDate", eval.getDueDate());
+                humanDateRenderer.renderDate(evalrow, "evalResponsesStartDate", eval.getStartDate());
+                humanDateRenderer.renderDate(evalrow, "evalResponsesDueDate", eval.getSafeDueDate());
 
                 String title = humanDateRenderer.renderEvalTitle(eval, group);
                 UIInternalLink.make(evalrow, "evalResponsesTitleLink_preview", title, 
