@@ -1017,6 +1017,7 @@ form {
 .makeLink:hover {
   color: #33f;
   cursor: pointer;
+  text-decoration: none;
 }
 
 /*cases of buttons masquerading as links in other locales*/
@@ -1930,8 +1931,13 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   }
 }
 
-.portletBody .left-separator:before {
-  content: " | ";
+.portletBody .itemAction .left-separator {
+  border-left: 1px solid #aaa;
+  padding-left: 5px !important;
+  margin-left: 2px;
+}
+.portletBody table.listHier .itemAction a:hover {
+  border-bottom: none !important;
 }
 .portletBody .summaryBox h4 {
   font-size: 1.5em;
