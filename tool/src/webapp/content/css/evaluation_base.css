@@ -298,10 +298,33 @@ div.scaleDesc {
 .summaryBox {
   border: 1px solid #aaa;
   margin: 0 0 1em 0;
+  padding: 1em;
 }
 
 .summaryBox .innerPanel {
-  padding: .5em;
+  padding: 0 1em;
+}
+
+.summaryBox .innerPanel table {
+  margin-bottom: 1em;
+}
+
+.summaryBox .innerPanel .sub-heading {
+  font-size: 1.3em;
+  color: #444;
+  font-weight: bold;
+}
+
+.summaryBox .innerPanel .sub-heading.triangle-closed {
+  padding-left: 12px;
+  margin-left: -12px;
+  background: url(../images/triangle-open.png) no-repeat left 4px;
+}
+
+.summaryBox .innerPanel .sub-heading.triangle-open {
+  padding-left: 12px;
+  margin-left: -12px;
+  background: url(../images/triangle-closed.png) no-repeat left 4px;
 }
 
 .summaryTable h4 {
@@ -1633,7 +1656,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 .evaluation .item.text .content textarea {
   width: 90%;
   min-width: 600px;
-  min-height: 5em;
   padding: 0;
   margin: 0;
   margin-left: 40px;
@@ -1908,9 +1930,12 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   }
 }
 
+.portletBody .left-separator:before {
+  content: " | ";
+}
 .portletBody .summaryBox h4 {
   font-size: 1.5em;
-  margin: 0.3em 0;
+  margin: 0.3em 0 0.7em 0;
   padding: 0.1em 0 0 0;
 }
 .portletBody .title {
