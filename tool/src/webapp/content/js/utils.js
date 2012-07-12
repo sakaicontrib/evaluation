@@ -447,20 +447,26 @@ evalsys.instrumentItems = function($container) {
 
 //PAGE inits
 evalsys.initSummary = function() {
-    /*
-    if (typeof jQuery.tablesorter !== "undefined") {
+    if (typeof jQuery().tablesorter === "undefined") {
         alert("programming error: jquery tablesorter is not loaded!");
     }
     // http://tablesorter.com/docs/
-    jQuery("#beEvaluatedInProgressTable").tablesorter({
-        headers: { 0:{sorter:'text'}, 1:{sorter:'date'}, 2:{sorter:'date'}, 3:{sorter: false}, 4:{sorter: false} },
-        sortList: [[2,1]]
+    jQuery.tablesorter.addParser({ 
+        id: 'humanDate', // set a unique id
+        is: function(s) { return false; },
+        format: function(str,table,cell) { // return a normalized version which is easily sorted
+            return $(cell).attr("data-time");
+        }, 
+        type: 'numeric' 
     });
-    jQuery("#beEvaluatedClosedTable").tablesorter({
-        headers: { 0:{sorter:'text'}, 1:{sorter:'date'}, 2:{sorter:'date'}, 3:{sorter: false}, 4:{sorter: false} },
+    jQuery("TABLE.beEvaluatedInProgressTable").tablesorter({
+        headers: { 0:{sorter:'text'}, 1:{sorter:'humanDate'}, 2:{sorter:'humanDate'}, 3:{sorter: false}, 4:{sorter: false} },
         sortList: [[2,0]]
     });
-    */
+    jQuery("TABLE.beEvaluatedClosedTable").tablesorter({
+        headers: { 0:{sorter:'text'}, 1:{sorter:'humanDate'}, 2:{sorter:'humanDate'}, 3:{sorter: false}, 4:{sorter: false} },
+        sortList: [[2,1]]
+    });
 };
 
 evalsys.initControlScales = function() {

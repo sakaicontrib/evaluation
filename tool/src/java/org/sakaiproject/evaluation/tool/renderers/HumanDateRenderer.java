@@ -28,6 +28,7 @@ import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 
@@ -99,11 +100,11 @@ public class HumanDateRenderer {
      * (for example, "Dec 20, 2001")
      * <p>Date format is determined by the locale, and the human text
      * is controlled by properties file and supports internationalization.
-     * @param parent RSF container holding the field
+     * @param container RSF container holding the field
      * @param fieldName Field to be rendered
      * @param renderDate Date to be rendered in a human readable format
      */
-    public void renderDate(UIContainer parent, String fieldName, Date renderDate) {
+    public void renderDate(UIContainer container, String fieldName, Date renderDate) {
         // if date is less than WARNING_DAYS in the future, add emphasis
         final int WARNING_DAYS = 2;
 
@@ -141,11 +142,14 @@ public class HumanDateRenderer {
             //message = messagePrefix+"date";
         }
 
-        UIMessage output = UIMessage.make(parent, fieldName, message, parameters);
+        UIMessage output = UIMessage.make(container, fieldName, message, parameters);
         output.decorate(new UITooltipDecorator( UIOutput.make(df.format(renderDate)) ));
         if (diffInDays >= 0 && diffInDays <= WARNING_DAYS) {
             output.decorate(new UIStyleDecorator( "urgentStyle" ));
         }
+        String unixtime = String.valueOf(renderDate.getTime());
+        output.decorate(new UIFreeAttributeDecorator("data-time", unixtime ));
+        //container.decorate(new UIFreeAttributeDecorator("data-timesort", unixtime ));
     }
 
     /**
