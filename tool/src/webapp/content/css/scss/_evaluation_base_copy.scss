@@ -707,18 +707,6 @@ div.fullVertical {
   border-collapse: collapse;
 }
 
-.steppedRowContainer tr:hover {
-  background: #eee;
-}
-
-.steppedRowContainer tr:hover td {
-  border-bottom: 1px solid #000;
-}
-
-.steppedRowContainer tr:hover td.exclude {
-  border: none;
-}
-
 /*
 remove input width in template and use these instead
 */
@@ -735,22 +723,9 @@ body:first-of-type td.exclude input {
 /*
 remove input width in template and use these instead
 */
-.steppedRowContainer td {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #cccccc;
-}
 
 .steppedRowContainer td td {
   border: none;
-}
-
-.itemsListOddLine .steppedRowContainer tr:hover {
-  background: #fff;
-}
-
-.itemsListOddLine .steppedRowContainer td {
-  border-top: 1px solid #fff;
-  border-bottom: 1px solid white;
 }
 
 .itemsListOddLine .steppedRowContainer td td {
