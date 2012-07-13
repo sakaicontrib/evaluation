@@ -288,7 +288,7 @@ div.scaleDesc {
 }
 
 .summaryBox .innerPanel {
-  padding: 0 1em;
+  padding: 0 10px;
 }
 
 .summaryBox .innerPanel table {
@@ -301,16 +301,27 @@ div.scaleDesc {
   font-weight: bold;
 }
 
-.summaryBox .innerPanel .sub-heading.triangle-closed {
-  padding-left: 12px;
-  margin-left: -12px;
-  background: url(../images/triangle-open.png) no-repeat left 4px;
+.summaryBox .innerPanel .triangle-open,
+.summaryBox .innerPanel .triangle-closed {
+  margin-left: -16px;
 }
 
-.summaryBox .innerPanel .sub-heading.triangle-open {
-  padding-left: 12px;
-  margin-left: -12px;
-  background: url(../images/triangle-closed.png) no-repeat left 4px;
+.summaryBox .innerPanel .triangle-closed:before {
+  content: "\25B6";
+}
+
+.summaryBox .innerPanel .triangle-open:before {
+  content: "\25BC";
+}
+
+.innerPanel table th {
+  position: relative;
+  padding: 8px 10px;
+}
+
+.innerPanel table tbody td {
+  color: #555;
+  padding-left: 10px;
 }
 
 .summaryTable h4 {
