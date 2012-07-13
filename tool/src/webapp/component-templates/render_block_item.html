@@ -110,12 +110,12 @@
 	</style>
 <![endif]-->
 
-<table border="0" cellspacing="0" cellpadding="0" width="99%"  class="blockItemGroup">
+<table border="0" cellspacing="0" cellpadding="0" width="99%"  class="item blockItemGroup">
 	<tr>
 		<td>
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 				<tr rsf:id="blockRowBranch:">
-					<td rsf:id="itemText" width="90%" rowspan="4" style="padding:5px;" valign="bottom" class="fakeHeader">
+					<td rsf:id="itemText" width="90%" rowspan="4" class="groupHeader" valign="bottom">
 					<!-- //gsilver:this should really be an h4 for the main text, a list for the sub-items  -->
 						Block parent header text here<br/>
 						this is really long block<br/>
@@ -170,9 +170,12 @@
 		<td>
 			<table border="0" cellspacing="0" cellpadding="0" width="100%" class="steppedRowContainer">
 				<tr rsf:id="childRow:">
-					<td style="padding:.2em"  class="questionCell first" >
-						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="childNum" class="label">1</span><span class="label">.</span>
-						<span rsf:id="childText" class="label">Child item text here</span>
+					<td  class="questionCell first" >
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span>
+						<div class="numberWrapper">
+						  <span rsf:id="childNum" class="number">1</span><span class="dot">.</span>
+						</div>
+						<span rsf:id="childText" class="steppedLabel">Child item text here</span>
 					</td>
 					<td  class="answerCell" nowrap="nowrap" valign="top" align="right" style="height:24px;">
 						<table border="0" cellspacing="0" cellpadding="0" width="auto" class="choiceGroup">
@@ -209,8 +212,11 @@
 				</tr>
 				<tr rsf:id="childRow:">
 					<td style="padding:.2em"  class="questionCell first" >
-						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="childNum" class="label">1</span><span class="label">.</span>
-						<span rsf:id="childText" class="label">Child item text here</span>
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span>
+						<div class="numberWrapper">
+						  <span rsf:id="childNum" class="number">1</span><span class="dot">.</span>
+						</div>
+						<span rsf:id="childText" class="steppedLabel">Child item text here</span>
 					</td>
 					<td  class="answerCell" nowrap="nowrap" valign="top" align="right" style="height:24px;">
 						<table border="0" cellspacing="0" cellpadding="0" width="auto" class="choiceGroup">

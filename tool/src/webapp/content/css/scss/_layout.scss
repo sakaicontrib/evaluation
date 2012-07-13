@@ -84,7 +84,30 @@
     }
   } // end item
 
+/////////////////////////
+// Group Stepped
+/////////////////////////
 
+.item.blockItemGroup {
+  .groupHeader {
+    padding-left: 42px;
+    padding-bottom: 24px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  .steppedLabel {
+    font-weight: normal;
+  }
+  .questionCell {
+    padding: 0.2em;
+    height: 24px;
+    padding-bottom: 14px;
+  }
+  .answerCell table {
+    margin-right: 2px;
+  }
+}
 /////////////////////////
 // Text Item
 /////////////////////////

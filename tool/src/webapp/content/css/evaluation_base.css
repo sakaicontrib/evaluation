@@ -330,31 +330,12 @@ div.scaleDesc {
 
 .innerPanel table th {
   position: relative;
-  padding: 5px 5px 5px 18px;
-}
-
-.innerPanel table th:before {
-  position: absolute;
-  bottom: 3px;
-  left: 6px;
-  content: "\25BE";
-}
-
-.innerPanel table th:after {
-  position: absolute;
-  top: 3px;
-  left: 5px;
-  content: "\25BE";
-  -moz-transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  transform: rotate(180deg);
+  padding: 8px 10px;
 }
 
 .innerPanel table tbody td {
   color: #555;
-  padding-left: 18px;
+  padding-left: 10px;
 }
 
 .summaryTable h4 {
@@ -736,18 +717,6 @@ div.fullVertical {
   border-collapse: collapse;
 }
 
-.steppedRowContainer tr:hover {
-  background: #eee;
-}
-
-.steppedRowContainer tr:hover td {
-  border-bottom: 1px solid #000;
-}
-
-.steppedRowContainer tr:hover td.exclude {
-  border: none;
-}
-
 /*
 remove input width in template and use these instead
 */
@@ -764,22 +733,8 @@ body:first-of-type td.exclude input {
 /*
 remove input width in template and use these instead
 */
-.steppedRowContainer td {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #cccccc;
-}
-
 .steppedRowContainer td td {
   border: none;
-}
-
-.itemsListOddLine .steppedRowContainer tr:hover {
-  background: #fff;
-}
-
-.itemsListOddLine .steppedRowContainer td {
-  border-top: 1px solid #fff;
-  border-bottom: 1px solid white;
 }
 
 .itemsListOddLine .steppedRowContainer td td {
@@ -1680,6 +1635,24 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item .steppedLabel {
   font-weight: bold;
+}
+.evaluation .item.blockItemGroup .groupHeader {
+  padding-left: 42px;
+  padding-bottom: 24px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+.evaluation .item.blockItemGroup .steppedLabel {
+  font-weight: normal;
+}
+.evaluation .item.blockItemGroup .questionCell {
+  padding: 0.2em;
+  height: 24px;
+  padding-bottom: 14px;
+}
+.evaluation .item.blockItemGroup .answerCell table {
+  margin-right: 2px;
 }
 .evaluation .item.text .content {
   position: relative;
