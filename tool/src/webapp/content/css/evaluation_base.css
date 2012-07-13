@@ -302,7 +302,7 @@ div.scaleDesc {
 }
 
 .summaryBox .innerPanel {
-  padding: 0 1em;
+  padding: 0 10px;
 }
 
 .summaryBox .innerPanel table {
@@ -315,16 +315,46 @@ div.scaleDesc {
   font-weight: bold;
 }
 
-.summaryBox .innerPanel .sub-heading.triangle-closed {
-  padding-left: 12px;
-  margin-left: -12px;
-  background: url(../images/triangle-open.png) no-repeat left 4px;
+.summaryBox .innerPanel .triangle-open,
+.summaryBox .innerPanel .triangle-closed {
+  margin-left: -16px;
 }
 
-.summaryBox .innerPanel .sub-heading.triangle-open {
-  padding-left: 12px;
-  margin-left: -12px;
-  background: url(../images/triangle-closed.png) no-repeat left 4px;
+.summaryBox .innerPanel .triangle-closed:before {
+  content: "\25B6";
+}
+
+.summaryBox .innerPanel .triangle-open:before {
+  content: "\25BC";
+}
+
+.innerPanel table th {
+  position: relative;
+  padding: 5px 5px 5px 18px;
+}
+
+.innerPanel table th:before {
+  position: absolute;
+  bottom: 3px;
+  left: 6px;
+  content: "\25BE";
+}
+
+.innerPanel table th:after {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  content: "\25BE";
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.innerPanel table tbody td {
+  color: #555;
+  padding-left: 18px;
 }
 
 .summaryTable h4 {
@@ -1931,7 +1961,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   }
 }
 
-.portletBody .itemAction .left-separator {
+.portletBody .left-separator {
   border-left: 1px solid #aaa;
   padding-left: 5px !important;
   margin-left: 2px;
@@ -1941,7 +1971,7 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .portletBody .summaryBox h4 {
   font-size: 1.5em;
-  margin: 0.3em 0 0.7em 0;
+  margin: 0.3em 0 0.7em 10px;
   padding: 0.1em 0 0 0;
 }
 .portletBody .title {

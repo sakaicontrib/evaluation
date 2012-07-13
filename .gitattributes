@@ -449,8 +449,6 @@ tool/src/webapp/content/images/tipsy-east.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-north.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-south.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/tipsy-west.gif -text svneol=unset#image/gif
-tool/src/webapp/content/images/triangle-closed.png -text
-tool/src/webapp/content/images/triangle-open.png -text
 tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/ISO8601-date.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/README svn_keywords=Date+Revision+Author+URL+Id
