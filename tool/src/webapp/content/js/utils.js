@@ -466,6 +466,40 @@ evalsys.instrumentItems = function($container) {
 
 //PAGE inits
 evalsys.initSummary = function() {
+    // click to show/toggle arrows
+    var $beEvaluatedBox = jQuery(".beEvaluated");
+    var $inProgressTable = $beEvaluatedBox.find(".evaluated_in_progress");
+    if ($inProgressTable.length > 0) {
+        $beEvaluatedBox.find(".inProgressEvals").click(function(){
+            var $this = jQuery(this);
+            var $table = $inProgressTable;
+            if ($table.is(":visible")) {
+                // hide it
+                $this.removeClass("triangle-open").addClass("triangle-closed");
+                $table.slideUp();
+            } else {
+                // show it
+                $this.removeClass("triangle-closed").addClass("triangle-open");
+                $table.slideDown();
+            }
+        });
+    }
+    var $closedTable = $beEvaluatedBox.find(".evaluated_closed");
+    if ($closedTable.length > 0) {
+        $beEvaluatedBox.find(".closedEvals").click(function(){
+            var $this = jQuery(this);
+            var $table = $closedTable;
+            if ($table.is(":visible")) {
+                // hide it
+                $this.removeClass("triangle-open").addClass("triangle-closed");
+                $table.slideUp();
+            } else {
+                // show it
+                $this.removeClass("triangle-closed").addClass("triangle-open");
+                $table.slideDown();
+            }
+        });
+    }
     if (typeof jQuery().tablesorter === "undefined") {
         alert("programming error: jquery tablesorter is not loaded!");
     }
