@@ -24,20 +24,30 @@ if (!jQuery) {
  *
  * @param options [OPTIONAL] specify the options to use when centering
  *      containerSelector - specify the selector for the container to center within, DEFAULT: window
+ *      containerResize - if true then the container will be shrunk to fit in the window, DEFAULT: true
  *      elementSelector - specify the selector for element we are measuring the height and width of, DEFAULT: this
+ *      elementResize - if true, the element will be shrunk to fit within the container, DEFAULT: true
  *      horizontal - center this horizontally, DEFAULT: true
  *      vertical - center this vertically, DEFAULT: true
  *      debug - enable debugging alerts, DEFAULT: false
  */
 jQuery.fn.center = function (options) {
+    var debug = false;
+    var containerResize = true;
+    var elementResize = true;
     var horizontal = true;
     var vertical = true;
-    var debug = false;
 
     // SET OPTIONS
     if (typeof options === "undefined") { options = {}; }
     if ("debug" in options) {
         debug = (options.debug === true);
+    }
+    if ("containerResize" in options) {
+        containerResize = (options.containerResize === false) ? false : true;
+    }
+    if ("elementResize" in options) {
+        elementResize = (options.elementResize === false) ? false : true;
     }
     if ("horizontal" in options) {
         horizontal = (options.horizontal === false) ? false : true;
@@ -77,6 +87,15 @@ jQuery.fn.center = function (options) {
     if ($container.length && (horizontal || vertical)) {
         this.css("position","absolute"); // must switch the position to absolute first
         topPos = ( ( $container.height() - $element.height() ) / 2 ) + $container.scrollTop();
+        // check to make sure the width is within the screen
+        var screenWidth = $("body").innerWidth(); //$(document).width()
+        if (containerResize && $container.width() > screenWidth) {
+            $container.width(screenWidth); // resize container to fit within the screen
+        }
+        // check to make sure the element is within the container
+        if (elementResize && $element.width() > $container.width()) {
+            $element.width($container.width() - 20); // resize element to fit in the container
+        }
         leftPos = ( ( $container.width() - $element.width() ) / 2 ) + $container.scrollLeft();
         if (debug) {
             alert("thing: "+$element.width()+"x"+$element.height()+" window: "+$container.width()+"x"+$container.height()+" scroll: "+$container.scrollLeft()+"x"+$container.scrollTop()+" -> "+leftPos+"x"+topPos);
@@ -520,10 +539,16 @@ evalsys.initPreviewScales = function() {
     if (typeof jQuery.accordian !== "undefined") {
         alert("programming error: jquery ui accordian is not loaded!");
     }
+    var screenWidth = $("body").innerWidth(); //$(document).width()
     jQuery("#items_container").accordion({
         autoHeight: false,
         clearStyle: true,
         change: function(event, ui) {
+            // force the CSS min and max midth
+            ui.newContent.css({
+                "min-width": "200px",
+                "max-width": (screenWidth-40)+"px"
+            });
             $('#facebox').center({elementSelector: "table.faceboxtable", vertical: false});
         },
     });
