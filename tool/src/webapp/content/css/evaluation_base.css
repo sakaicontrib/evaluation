@@ -318,6 +318,7 @@ div.scaleDesc {
 .summaryBox .innerPanel .triangle-open,
 .summaryBox .innerPanel .triangle-closed {
   margin-left: -16px;
+  cursor: pointer;
 }
 
 .summaryBox .innerPanel .triangle-closed:before {
@@ -346,7 +347,7 @@ div.scaleDesc {
 }
 
 .summaryBox table th {
-  background: #eee;
+  background-color: #eee;
   border: none;
 }
 
@@ -1558,6 +1559,24 @@ table#user-perms-table td.userPerms > span:nth-child(2n+1) {
 table#user-perms-table td.userPerms > span:nth-child(2n) {
   float: left;
 }
+
+/* tablesorter - mostly on the dashboard */
+table.tablesorter th.header {
+    cursor: pointer; 
+    background-repeat: no-repeat; 
+    background-position: center left; 
+}
+table.tablesorter th.header.headerSortUp { 
+    background-image: url(../images/tipsy-north.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+table.tablesorter th.header.headerSortDown {
+    background-image: url(../images/tipsy-south.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+
 
 .matrixHeader {
   float: right;
