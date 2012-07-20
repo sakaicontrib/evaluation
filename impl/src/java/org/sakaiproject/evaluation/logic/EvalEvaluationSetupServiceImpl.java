@@ -726,10 +726,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         return evals;
     }
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String, java.lang.Boolean)
-	 */
-	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId, Boolean includeRecentlyClosed) {
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String, java.lang.Boolean)
+     */
+    public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId, Boolean includeRecentlyClosed) {
         if (userId == null) {
             throw new IllegalArgumentException("userId must be set");
         }
@@ -739,7 +739,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         String[] evalGroupIds = new String[evalGroups.size()];
         int i = 0;
         for (EvalGroup evalGroup : evalGroups) {
-        	evalGroupIds[i++] = evalGroup.evalGroupId;
+            evalGroupIds[i++] = evalGroup.evalGroupId;
         }
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
         // date calculations for recently closed
@@ -773,7 +773,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // populate the assign groups and eval groups in the evals
         populateEvaluationsGroups(evals, evalGroups);
         return evals;
-	}
+    }
 
 	/**
 	 * Special method to populate the assign groups and eval groups non-persistent fields in the evaluation objects

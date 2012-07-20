@@ -77,7 +77,9 @@ public class HumanDateRenderer {
         String evalTerm = "";
         if (eval != null) {
             evalTitle = eval.getTitle();
-            evalTerm = eval.getTermId();
+            if (eval.getTermId() != null) {
+                evalTerm = eval.getTermId();
+            }
             evalState = EvalUtils.getEvaluationState(eval, true);
         }
         String groupTitle = "";
