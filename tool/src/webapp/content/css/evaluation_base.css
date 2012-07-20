@@ -1577,6 +1577,14 @@ table.tablesorter th.header.headerSortDown {
     padding-left: 14px !important;
 }
 
+/* admin checkbox alignment - EVALSYS-1250 */
+.administrate-form .cbxmultlftalgn label {
+    padding-left: 1.7em;
+}
+.administrate-form .cbxmultlftalgn input.cbx {
+    float:left;
+    position: absolute;
+}
 
 .matrixHeader {
   float: right;
