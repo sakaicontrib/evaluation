@@ -384,7 +384,7 @@ evalsys.instrumentMatrixItem = function() {
             groupWidth = container.innerWidth();
             scaleWidth = scale.outerWidth();
             legendWidth = scaleWidth;
-            titleWidth = groupWidth - legendWidth - 20;
+            titleWidth = groupWidth - legendWidth - 50;
             legend.attr("style", "width:" + legendWidth + "px;");
             title.attr("style", "width:" + titleWidth + "px;");
         });
