@@ -318,6 +318,7 @@ div.scaleDesc {
 .summaryBox .innerPanel .triangle-open,
 .summaryBox .innerPanel .triangle-closed {
   margin-left: -16px;
+  cursor: pointer;
 }
 
 .summaryBox .innerPanel .triangle-closed:before {
@@ -346,7 +347,7 @@ div.scaleDesc {
 }
 
 .summaryBox table th {
-  background: #eee;
+  background-color: #eee;
   border: none;
 }
 
@@ -1403,45 +1404,45 @@ a.less {
 }
 
 /* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
-	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
-	http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/
+    have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
+    http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/
 /*
 .fullDisplayHorizontal ul{
-	padding:0 0 2em  0;
-	margin:1em 0;
-	clear:both;
-	float:none;
-	height:100%;
-	overflow:hidden;
+    padding:0 0 2em  0;
+    margin:1em 0;
+    clear:both;
+    float:none;
+    height:100%;
+    overflow:hidden;
 }
 .fullDisplayHorizontal  ul li{
-	padding:0;
-	margin:2px 0 ;
-	list-style: none !important;
-	float:left;
-	height:2.6em;
-	width:30%;
+    padding:0;
+    margin:2px 0 ;
+    list-style: none !important;
+    float:left;
+    height:2.6em;
+    width:30%;
 }
 .fullDisplayHorizontal  ul li input{
-	display:block;
-	float:left;
-	margin-top:.55em
+    display:block;
+    float:left;
+    margin-top:.55em
 }
 .fullDisplayHorizontal ul li  label{
-	padding:2px;
-	background:#ffe;
-	width:70%;
-	border:1px solid #ffb;
-	display:block;
-	float:left;
+    padding:2px;
+    background:#ffe;
+    width:70%;
+    border:1px solid #ffb;
+    display:block;
+    float:left;
 }
 .fullDisplayHorizontal ul li  label:hover{
-	background:#ffe;
-	border:1px solid #ee9;
-	
+    background:#ffe;
+    border:1px solid #ee9;
+    
 }
 .fullDisplayHorizontal .na{
-	margin:1em .2em;
+    margin:1em .2em;
 }*/
 /* Group template item - add existing item into group */
 .dropItem {
@@ -1559,6 +1560,24 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   float: left;
 }
 
+/* tablesorter - mostly on the dashboard */
+table.tablesorter th.header {
+    cursor: pointer; 
+    background-repeat: no-repeat; 
+    background-position: center left; 
+}
+table.tablesorter th.header.headerSortUp { 
+    background-image: url(../images/tipsy-north.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+table.tablesorter th.header.headerSortDown {
+    background-image: url(../images/tipsy-south.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+
+
 .matrixHeader {
   float: right;
   overflow: hidden;
@@ -1635,15 +1654,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
 }
 .evaluation .item .steppedLabel {
   font-weight: bold;
-  display: -moz-inline-box;
-  -moz-box-orient: vertical;
-  display: inline-block;
-  vertical-align: middle;
-  *vertical-align: auto;
-  width: 80%;
-}
-.evaluation .item .steppedLabel {
-  *display: inline;
 }
 .evaluation .item.blockItemGroup .groupHeader {
   padding-left: 42px;
