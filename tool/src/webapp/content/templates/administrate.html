@@ -92,7 +92,7 @@
     </ul>
 </p>
             
-<form  rsf:id="basic-form" method="post">
+<form rsf:id="basic-form" class="administrate-form" method="post">
 
     <h3 rsf:id="system-settings-header">System Settings</h3>
     <p class="instruction" rsf:id="system-settings-instructions">
@@ -200,29 +200,29 @@
         </p>
     </fieldset>
 
-	<fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.dash.settings.header">Dashboard Settings:</span></legend>
+    <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.dash.settings.header">Dashboard Settings:</span></legend>
         <p class="checkbox" rsf:id="msg=administrate.dash.summary.note">Summary lists to display:</p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="dash-enable-evaluatee-box" id="dash-enable-evaluatee-box-id" class="dash-enable-evaluatee-box-marker" />
+        <p class=   "checkbox indnt1 cbxmultlftalgn">
+            <input type="checkbox" rsf:id="dash-enable-evaluatee-box" id="dash-enable-evaluatee-box-id" class="cbx dash-enable-evaluatee-box-marker" />
             <label rsf:id="msg=administrate.dash.enable.evaluatee.box" for="dash-enable-evaluatee-box-id">Show the instructor summary box</label>
         </p>
-		<p class=   "longtext indnt2">
+        <p class=   "longtext indnt1 cbxmultlftalgn">
             <label rsf:id="msg=administrate.dash.evaluatee.closed.still.recent.note" for="dash-evaluatee-closed-still-recent-id">Number of days old can an eval be and still be recently closed</label>
             <input rsf:id="dash-evaluatee-closed-still-recent" id="dash-evaluatee-closed-still-recent-id" size="3" type="text" class="dash-evaluatee-closed-still-recent-marker" />
         </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="dash-enable-administrating-box" id="dash-enable-administrating-box-id" class="dash-enable-administrating-box-marker" />
+        <p class=   "checkbox indnt1 cbxmultlftalgn">
+            <input type="checkbox" rsf:id="dash-enable-administrating-box" id="dash-enable-administrating-box-id" class="cbx dash-enable-administrating-box-marker" />
             <label rsf:id="msg=administrate.dash.enable.administrating.box" for="dash-enable-administrating-box-id">Show 'Evaluations I am creating or administrating'</label>
         </p>
-		<p class=   "longtext indnt2">
+        <p class=   "longtext indnt1 cbxmultlftalgn">
             <label rsf:id="msg=administrate.dash.admin.closed.still.recent.note" for="dash-eval-closed-still-recent-id">Number of days old can an eval be and still be recently closed</label>
             <input rsf:id="dash-eval-closed-still-recent" id="dash-eval-closed-still-recent-id" size="3" type="text" class="dash-eval-closed-still-recent-marker" />
         </p>
-        <p class=   "checkbox indnt1">
-            <input type="checkbox" rsf:id="dash-enable-sites-summary" id="dash-enable-sites-summary-id" />
+        <p class=   "checkbox indnt1 cbxmultlftalgn">
+            <input type="checkbox" rsf:id="dash-enable-sites-summary" id="dash-enable-sites-summary-id" class="cbx" />
             <label rsf:id="msg=administrate.dash.enable.sites.summary" for="dash-enable-sites-summary-id">Show the sites summary box</label>
         </p>
-	</fieldset>
+    </fieldset>
 
     <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.general.settings.header" style="padding:3px">General Settings:</span></legend>
         <p class=   "longtext indnt1">
