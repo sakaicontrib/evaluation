@@ -318,7 +318,6 @@ div.scaleDesc {
 .summaryBox .innerPanel .triangle-open,
 .summaryBox .innerPanel .triangle-closed {
   margin-left: -16px;
-  cursor: pointer;
 }
 
 .summaryBox .innerPanel .triangle-closed:before {
@@ -347,7 +346,7 @@ div.scaleDesc {
 }
 
 .summaryBox table th {
-  background-color: #eee;
+  background: #eee;
   border: none;
 }
 
@@ -1560,24 +1559,6 @@ table#user-perms-table td.userPerms > span:nth-child(2n) {
   float: left;
 }
 
-/* tablesorter - mostly on the dashboard */
-table.tablesorter th.header {
-    cursor: pointer; 
-    background-repeat: no-repeat; 
-    background-position: center left; 
-}
-table.tablesorter th.header.headerSortUp { 
-    background-image: url(../images/tipsy-north.gif); 
-    font-weight: bold;
-    padding-left: 14px !important;
-}
-table.tablesorter th.header.headerSortDown {
-    background-image: url(../images/tipsy-south.gif); 
-    font-weight: bold;
-    padding-left: 14px !important;
-}
-
-
 .matrixHeader {
   float: right;
   overflow: hidden;
@@ -1654,6 +1635,15 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .item .steppedLabel {
   font-weight: bold;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  width: 80%;
+}
+.evaluation .item .steppedLabel {
+  *display: inline;
 }
 .evaluation .item.blockItemGroup .groupHeader {
   padding-left: 42px;

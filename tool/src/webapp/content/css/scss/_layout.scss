@@ -81,6 +81,8 @@
     }
     .steppedLabel {
       font-weight: bold;
+      @include inline-block;
+      width: 80%;
     }
   } // end item
 
