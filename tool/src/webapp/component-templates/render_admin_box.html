@@ -18,49 +18,58 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Administer Box Renderer:</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Administer Box Renderer:</title>
 </head>
 <body>
 
-<!-- html template for the admin box renderer -MDG -->
-	<div rsf:id="evalAdminBox:"  class="summaryBox">
-	    <div rsf:id="evalAdminBoxContents:">
-	    <h4 style="margin-left:.5em"><a rsf:id="evaladmin-title-link" href="control_panel.html">Evaluations I am creating or administering</a><span rsf:id="evaladmin-title"></span></h4>
-		    <div class="innerPanel">
-		        <form rsf:id="evalAdminForm" action="evaluation_settings.html">
-		            <table cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
-		                <thead>
-		                    <tr>
-		                        <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
-		                        <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-		                        <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-		                        <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
-		                    </tr>
-		                </thead>
-		                <tbody>
-		                    <tr rsf:id="evalAdminList:">
-		                        <td align="left">
-		                        <a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
-		                        <a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
-		                        </td>
-		                        <td align="left" nowrap="nowrap">
-		                            <span rsf:id="evalAdminStartDate">09/20/2005</span>
-		                        </td>
-		                        <td align="left" nowrap="nowrap">
-		                            <span rsf:id="evalAdminDueDate">09/20/2005</span>
-		                        </td>
-		                        <td align="left" nowrap="nowrap">
-		                            <a rsf:id="evalAdminResponseLink" href="evaluation_responders.html">10/100</a>
-		                            <span rsf:id="evalAdminResponse">0 of 10</span>                                                
-		                        </td>
-		                    </tr>
-		                </tbody>
-		            </table>
-		        </form>
-		    </div>
-	    </div>  
-	</div>
+  <!-- html template for the admin box renderer -MDG -->
+  <div rsf:id="evalAdminBox:" class="summaryBox">
+    <div rsf:id="evalAdminBoxContents:">
+      <h4 style="margin-left: .5em">
+        <a rsf:id="evaladmin-title-link" href="control_panel.html">Evaluations I am creating or administering</a>
+        <span rsf:id="evaladmin-title"></span>
+      </h4>
+      <div class="innerPanel">
+        <form rsf:id="evalAdminForm" action="evaluation_settings.html">
+          <table cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+            <thead>
+              <tr>
+                <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+                <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+                <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
+                <th class="column" rsf:id="msg=summary.responses.results">Results</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr rsf:id="evalAdminList:">
+                <td align="left">
+                  <a rsf:id="evalAdminTitleLink_edit" href="evaluation_settings.html">Evaluation Title</a>
+                  <a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Title (preview)</a>
+                </td>
+                <td align="left" nowrap="nowrap">
+                  <span rsf:id="evalAdminStartDate">09/20/2005</span>
+                </td>
+                <td align="left" nowrap="nowrap">
+                  <span rsf:id="evalAdminDueDate">09/20/2005</span>
+                </td>
+                <td nowrap="nowrap">
+                  <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+                  <span rsf:id="responseRateDisplay"></span>
+                </td>
+                <td nowrap="nowrap">
+                  <span rsf:id="evalReportDisplay"></span>
+                  <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+                  <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

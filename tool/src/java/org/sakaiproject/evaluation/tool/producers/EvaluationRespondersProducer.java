@@ -112,9 +112,12 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         String evalGroupId = evalViewParameters.evalGroupId;
         boolean evalAnonymous = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+        boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
 
         boolean allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
         boolean allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
+        int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+        boolean currentUserViewResponses = controlEval || allowViewResponders;
 
         // get the lists of participants and responses
         String[] evalGroupIds = null;
@@ -135,6 +138,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             String userId = response.getOwner();
             groupToUserResponses.get(groupId).put(userId, response);
         }
+        boolean showStatus = ((responses.size() >= responsesRequired) || currentUserViewResponses);
 
         String statsAssigned;
         if (evalAnonymous) {
@@ -205,13 +209,13 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                 }
             }
             // display the list of respondents
-            if (allowViewResponders) {
-                // sort the list of users
-                Collections.sort(users, new EvalUser.SortNameComparator());
-                UIBranchContainer showResponsesBranch = UIBranchContainer.make(groupBranch, "showGroupResponses:");
-                for (EvalUser evalUser : users) {
-                    UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
-                    UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName);
+            // sort the list of users
+            Collections.sort(users, new EvalUser.SortNameComparator());
+            UIBranchContainer showResponsesBranch = UIBranchContainer.make(groupBranch, "showGroupResponses:");
+            for (EvalUser evalUser : users) {
+                UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
+                UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName);
+                if (showStatus) {
                     String messagekey = "evalresponders.status.untaken"; // untaken (no response)
                     EvalResponse response = userResponses.get(evalUser.userId);
                     if (response != null) {
@@ -222,6 +226,13 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                         }
                     }
                     UIMessage.make(userResponseBranch, "responseStatus", messagekey);
+                } else if (currentUserViewResponses) {
+                    // user can view but not enough responses yet
+                    UIMessage.make(userResponseBranch, "responseStatus", "controlevaluations.eval.report.after.responses", 
+                            new Object[] {responsesRequired});
+                } else {
+                    // user cannot view - period
+                    UIOutput.make(userResponseBranch, "responseStatus", "-");
                 }
             }
         }

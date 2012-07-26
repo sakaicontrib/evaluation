@@ -195,8 +195,10 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             int responsesCount = deliveryService.countResponses(evaluation.getId(), reportViewParams.groupIds[0], true);
             int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), new String[]{reportViewParams.groupIds[0]});                       
             int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-            
-            if (responsesNeeded > 0) {
+
+            // the eval owner (or anyone who can control this eval - like a super admin - can ignore the min responses check)
+            boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
+            if (!controlEval && responsesNeeded > 0) {
                 throw new SecurityException("At least " + responsesNeeded + " more responses must be submitted to view this report");
             }
             
