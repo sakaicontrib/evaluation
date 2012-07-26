@@ -107,7 +107,7 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
-        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+        //boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
