@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.azeckoski.reflectutils.ArrayUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -481,17 +482,26 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 	        }
 	        UIMessage.make(form, "enable-mass-email-label", "evalsettings.general.enable.email.onbegin");
         }
-        
+
         // render this only if *NOT* using consolidated emails
         UISelect reminderDaysSelect = null;
-        if(! consolidatedEmailsEnabled.booleanValue()) {
-        	UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
-	        // email reminder control
-	        reminderDaysSelect = UISelect.make(evaluation_reminder_area, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
-	                EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true) ) {
-	            RSFUtils.disableComponent(reminderDaysSelect);
-	        }
+        if (!consolidatedEmailsEnabled.booleanValue()) {
+            UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
+            // email reminder control
+            String[] reminderValues = EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES;
+            String[] reminderLabels = EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS;
+            if (userAdmin) {
+                // super admin can use the special testing setting
+                reminderValues = ArrayUtils.appendArray(reminderValues, "-2");
+                reminderLabels = ArrayUtils.appendArray(reminderLabels, "evalsettings.reminder.days.-2");
+            }
+            reminderDaysSelect = UISelect.make(evaluation_reminder_area, "reminderDays", 
+                    reminderValues,
+                    reminderLabels, 
+                    evaluationOTP + "reminderDays").setMessageKeys();
+            if (EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
+                RSFUtils.disableComponent(reminderDaysSelect);
+            }
         }
 
         // email reminder template link
