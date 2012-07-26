@@ -311,18 +311,22 @@ public class EvalEmailConstants {
 	 /**
 	  * EmailTemplate subject: Default subject for email job completion notification 
 	  */
-	public static final String EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT = "Email Job for Evaluation: ${EvalTitle} has completed\n";
+	public static final String EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT = "${JobType} Email Job for Evaluation: ${EvalTitle} has completed\n";
 	
 	/**
 	 * EmailTemplate message setting:
 	 * This is the default template for when the single email per student option is in effect and an evaluation response is outstanding.
 	 * Replaceable strings:<br/>
+	 * ${EvalTitle} - the related evaluation
 	 * ${JobType} - the ScheduledInvocationCommand jobType name for the eval email job.
 	 * ${NumEmailsSent} - the number of emails sent.
+	 * ${EmailsSentList} - list of email addresses (separated by newlines)
 	 */
 	public static final String EMAIL_JOB_COMPLETED_DEFAULT_TEXT = 
-		"The ${JobType} email job has completed. \n\n" +
-		"${NumEmailsSent} emails were sent.\n";
+		"The ${JobType} email job has completed for Evaluation: ${EvalTitle}. \n\n" +
+		"${NumEmailsSent} emails were sent. \n" +
+		"They were sent to the following users: \n" +
+		"${EmailsSentList}";
 	
     /**
      * EmailTemplate subject: Default subject for submission confirmation

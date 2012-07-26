@@ -683,6 +683,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     log.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
                 }
             }
+        } else if (reminderDays == -2) {
+            // NOTE: special case for testing
+            reminderTime = System.currentTimeMillis() + (1000l * 60l * 5l); // reminders every 5 minutes
+            log.warn("REMINDERS TESTING ONLY (-2): Scheduling a reminder in the near future ("+new Date(reminderTime)+") for testing: due date ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
         }
         return reminderTime;
     }
