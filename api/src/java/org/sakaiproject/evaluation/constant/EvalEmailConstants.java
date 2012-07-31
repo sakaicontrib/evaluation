@@ -321,12 +321,15 @@ public class EvalEmailConstants {
 	 * ${JobType} - the ScheduledInvocationCommand jobType name for the eval email job.
 	 * ${NumEmailsSent} - the number of emails sent.
 	 * ${EmailsSentList} - list of email addresses (separated by newlines)
+	 * ${SampleEmail} - a sample of the email that was sent for this job
 	 */
 	public static final String EMAIL_JOB_COMPLETED_DEFAULT_TEXT = 
 		"The ${JobType} email job has completed for Evaluation: ${EvalTitle}. \n\n" +
 		"${NumEmailsSent} emails were sent. \n" +
 		"They were sent to the following users: \n" +
-		"${EmailsSentList}";
+		"${EmailsSentList}\n\n" +
+		"Sample email: \n" +
+		"${SampleEmail}";
 	
     /**
      * EmailTemplate subject: Default subject for submission confirmation
