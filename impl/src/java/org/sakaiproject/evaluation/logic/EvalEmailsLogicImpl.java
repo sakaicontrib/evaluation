@@ -104,6 +104,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             log.debug("Found " + groups.size() + " groups for new evaluation: " + evaluationId);
         }
 
+        String sampleEmail = null;
         List<String> sentEmails = new ArrayList<String>();
         // loop through contexts and send emails to correct users in each evalGroupId
         for (int i = 0; i < groups.size(); i++) {
@@ -138,6 +139,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
             // replace the text of the template with real values
             EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
+            if (sampleEmail == null && em.message != null) {
+                sampleEmail = em.message;
+            }
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -149,9 +153,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             commonLogic.registerEntityEvent(EVENT_EMAIL_CREATED, eval);
         }
 
+        if (sampleEmail == null && emailTemplate != null) {
+            sampleEmail = emailTemplate.getMessage();
+        }
         String[] emailsSent = sentEmails.toArray(new String[sentEmails.size()]);
         // send email to admin that reminders are finished.
-        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_CREATED, from);
+        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_CREATED, from, sampleEmail);
 
         return emailsSent;
     }
@@ -177,6 +184,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             evaluationService.getAssignGroupsForEvals(new Long[] { evaluationId }, true, null);
         List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
 
+        String sampleEmail = null;
         List<String> sentEmails = new ArrayList<String>();
         // loop through groups and send emails to correct users group
         for (int i = 0; i < assignGroups.size(); i++) {
@@ -236,6 +244,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 currentTemplate = emailOptInTemplate;
             }
             EvalEmailMessage em = makeEmailMessage(currentTemplate.getMessage(), currentTemplate.getSubject(), eval, group);
+            if (sampleEmail == null && em.message != null) {
+                sampleEmail = em.message;
+            }
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -247,8 +258,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
         }
 
+        if (sampleEmail == null && emailTemplate != null) {
+            sampleEmail = emailTemplate.getMessage();
+        }
         String[] emailsSent = sentEmails.toArray(new String[sentEmails.size()]);
-        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_ACTIVE, from);
+        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_ACTIVE, from, sampleEmail);
 
         return emailsSent;
     }
@@ -259,10 +273,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      */
     public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId) {
 
-        List<String> sentEmails = new ArrayList<String>();
-        if(! commonLogic.isEvalGroupPublished(evalGroupId)) {
+        if (! commonLogic.isEvalGroupPublished(evalGroupId)) {
             return new String[] {};
         }
+
+        String sampleEmail = null;
+        List<String> sentEmails = new ArrayList<String>();
 
         // get group
         EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
@@ -283,6 +299,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 
             EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
+            if (sampleEmail == null && em.message != null) {
+                sampleEmail = em.message;
+            }
 
             // send the actual emails for this evalGroupId
             String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -294,8 +313,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             commonLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
         }
 
+        if (sampleEmail == null && emailTemplate != null) {
+            sampleEmail = emailTemplate.getMessage();
+        }
         String[] emailsSent = sentEmails.toArray(new String[sentEmails.size()]);
-        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_ACTIVE, from);
+        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_ACTIVE, from, sampleEmail);
 
         return emailsSent;
     }
@@ -329,6 +351,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         List<EvalGroup> groups = evalGroupIds.get(evaluationId);
         if (log.isDebugEnabled()) log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
+        String sampleEmail = null;
         List<String> sentEmails = new ArrayList<String>();
         // loop through groups and send emails to correct users in each
         for (int i = 0; i < groups.size(); i++) {
@@ -376,6 +399,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 }
 
                 EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group, includeConstant);
+                if (sampleEmail == null && em.message != null) {
+                    sampleEmail = em.message;
+                }
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -398,9 +424,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
         commonLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
 
+        if (sampleEmail == null && emailTemplate != null) {
+            sampleEmail = emailTemplate.getMessage();
+        }
         String[] emailsSent = sentEmails.toArray(new String[sentEmails.size()]);
         // send email to helpdeskEmail that reminders are finished.
-        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_REMINDER, from);
+        handleJobCompletion(eval, emailsSent, EvalConstants.JOB_TYPE_REMINDER, from, sampleEmail);
 
         if (log.isDebugEnabled()) log.debug("Reminder processing complete for eval ("+evaluationId+"), sent emails to: "+sentEmails);
         return emailsSent;
@@ -445,6 +474,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
         if (log.isDebugEnabled()) log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
 
+        String sampleEmail = null;
         List<String> sentEmails = new ArrayList<String>();
         // loop through groups and send emails to correct users in each evalGroupId
         for (int i = 0; i < assignGroups.size(); i++) {
@@ -500,6 +530,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                         + evaluationId + ") and group (" + evalGroupId + ")");
 
                 EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, group);
+                if (sampleEmail == null && em.message != null) {
+                    sampleEmail = em.message;
+                }
 
                 // send the actual emails for this evalGroupId
                 String[] emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
@@ -512,9 +545,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             }
         }
 
+        if (sampleEmail == null && emailTemplate != null) {
+            sampleEmail = emailTemplate.getMessage();
+        }
         String[] emailsSent = sentEmails.toArray(new String[sentEmails.size()]);
         // send email to admin that reminders are finished.
-        handleJobCompletion(eval, emailsSent, jobType, from);
+        handleJobCompletion(eval, emailsSent, jobType, from, sampleEmail);
 
         return emailsSent;
     }
@@ -528,8 +564,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * @param emailsSent email addresses sent to
      * @param jobType type of job
      * @param from [OPTIONAL] from address
+     * @param sampleEmail [OPTIONAL] a sample of the email that was sent
      */
-    protected void handleJobCompletion(EvalEvaluation eval, String[] emailsSent, String jobType, String from) {
+    protected void handleJobCompletion(EvalEvaluation eval, String[] emailsSent, String jobType, String from, String sampleEmail) {
         // send email to admin that reminders are finished.
         boolean sendJobCompletion = (Boolean) settings.get(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL);
         if (sendJobCompletion) {
@@ -549,6 +586,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (emailsSent == null) {
                 emailsSent = new String[0];
             }
+            if (sampleEmail == null) {
+                sampleEmail = "NO SAMPLE AVAILABLE";
+            }
             int emailsSentCt = emailsSent.length;
             StringBuilder sb = new StringBuilder();
             for (String email : emailsSent) {
@@ -566,6 +606,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             replacementValues.put("NumEmailsSent", String.valueOf(emailsSentCt));
             replacementValues.put("EmailsSentList", emailsSentList);
             replacementValues.put("JobType", jobType);
+            replacementValues.put("SampleEmail", sampleEmail);
 
             /* @param replacementValues a map of values to be included in this email:
              *        HelpdeskEmail: the email to send this to
@@ -573,6 +614,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
              *        NumEmailsSent: the number of emails sent
              *        EmailsSent: the email addresses sent to
              *        JobType: the email job that just completed
+             *        SampleEmail: a sample of the sent email
              */
             try {
                 EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_JOB_COMPLETED, eval.getId()); 
