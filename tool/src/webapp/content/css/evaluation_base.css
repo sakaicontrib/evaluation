@@ -1678,6 +1678,9 @@ table.tablesorter th.header.headerSortDown {
 .evaluation .item .steppedLabel {
   *display: inline;
 }
+.evaluation .item.blockItemGroup {
+  font-size: 13px;
+}
 .evaluation .item.blockItemGroup .groupHeader {
   padding-left: 42px;
   padding-bottom: 24px;
@@ -1695,6 +1698,10 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .item.blockItemGroup .answerCell table {
   margin-right: 2px;
+}
+.evaluation .item.blockItemGroup .blockItemLabel {
+  margin-left: 0;
+  font-weight: normal;
 }
 .evaluation .item.blockItemGroup .actualHeader {
   display: -moz-inline-box;
@@ -1954,8 +1961,14 @@ table.tablesorter th.header.headerSortDown {
 .evaluation .item-group .item .matrix .response-list {
   padding-top: 0 !important;
 }
+.evaluation .steppedItemGroup {
+  font-size: 13px;
+}
 .evaluation .steppedItemGroup .choiceGroup {
   padding-right: 0.2em;
+}
+.evaluation .steppedItemGroup .blockItemLabel {
+  margin-left: 0;
 }
 .evaluation .steppedItemGroup img,
 .evaluation .steppedItemGroup table td {

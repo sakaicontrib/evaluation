@@ -91,6 +91,8 @@
 /////////////////////////
 
 .item.blockItemGroup {
+	font-size: 13px;
+	
   .groupHeader {
     padding-left: 42px;
     padding-bottom: 24px;
@@ -109,6 +111,10 @@
   .answerCell table {
     margin-right: 2px;
   }
+	.blockItemLabel {
+		margin-left: 0;
+		font-weight: normal;
+	}
 	.actualHeader {
 		@include inline-block;
 		padding-top: 4px;
@@ -358,9 +364,14 @@
     }
   }
   .steppedItemGroup {
+		font-size: 13px;
+	
     .choiceGroup {
       padding-right: 0.2em;
     }
+		.blockItemLabel {
+			margin-left: 0;
+		}
     img,
     table td {
       vertical-align: middle;
