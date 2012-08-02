@@ -1693,6 +1693,17 @@ table.tablesorter th.header.headerSortDown {
 .evaluation .item.blockItemGroup .answerCell table {
   margin-right: 2px;
 }
+.evaluation .item.blockItemGroup .actualHeader {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  padding-top: 4px;
+}
+.evaluation .item.blockItemGroup .actualHeader {
+  *display: inline;
+}
 .evaluation .item.text .content {
   position: relative;
 }

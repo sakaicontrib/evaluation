@@ -109,6 +109,10 @@
   .answerCell table {
     margin-right: 2px;
   }
+	.actualHeader {
+		@include inline-block;
+		padding-top: 4px;
+	}
 }
 /////////////////////////
 // Text Item
