@@ -428,6 +428,13 @@ evalsys.instrumentMatrixItem = function() {
     });
 };
 
+evalsys.instrumentEssayText = function() {
+    if (typeof jQuery.elastic !== "undefined") {
+        alert("programming error: jquery elastic plugin is not loaded!");
+    }
+    jQuery(".item.text .content textarea").elastic();
+};
+
 evalsys.instrumentItems = function($container) {
     if (typeof $container === "undefined" || $container === null) {
         // default it to the entire body
@@ -453,6 +460,9 @@ evalsys.instrumentItems = function($container) {
     }
     if ($container.find('.matrix').length > 0) {
         evalsys.instrumentMatrixItem();
+    }
+    if ($container.find('.item.text').length > 0){
+        evalsys.instrumentEssayText();
     }
     var $evalComments = $container.find("div.JSevalComment");
     if ($evalComments.length > 0) {
