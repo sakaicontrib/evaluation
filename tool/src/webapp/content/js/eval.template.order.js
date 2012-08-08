@@ -40,13 +40,17 @@ var evalTemplateOrder = (function(){
 
     saveTopLevelTemplateOrdering = function(){
         var order = [];
-        $("#itemList > div").not('.ui-sortable-helper').each(function(){
-            order.push($(this).find('input[name=template-item-id]:hidden').val());
-        });
-        var params = {
-            orderedIds : order.toString()
-        };
-        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+        var $items = $("#itemList > div").not('.ui-sortable-helper');
+        if ($items.length > 0) {
+            // only run this when there are items to sort
+            $items.each(function(){
+                order.push($(this).find('input[name=template-item-id]:hidden').val());
+            });
+            var params = {
+                orderedIds : order.toString()
+            };
+            evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+        }
     },
 
     initSaveGroupOrderControls = function(anyGroupedItemObject){

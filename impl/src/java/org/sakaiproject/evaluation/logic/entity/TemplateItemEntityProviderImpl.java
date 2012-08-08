@@ -133,26 +133,29 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
         }
         return id;
     }
-    
-  //Custom action to handle /eval-templateitem/template-items-reorder
-	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_REORDER,viewKey=EntityView.VIEW_NEW)
-	public void saveTemplateItemsOrdering(EntityView view, Map<String, Object> params) {
-		Object ids = params.get(key_ordered_Ids);
-		String currentUserId = commonLogic.getCurrentUserId();
-		Map<Long, Integer> orderedMap = new HashMap<Long, Integer>();
-		
-		if ( ids != null ){
-			String orderedChildIds = ids.toString();
-			List<String> orderedChildIdList = Arrays.asList(orderedChildIds.split(","));
-	        for( String itemId : orderedChildIdList ){
-				int itemPosition = orderedChildIdList.indexOf( itemId ) + 1;
-				orderedMap.put( Long.parseLong(itemId), itemPosition);
-			}
-			authoringService.saveTemplateItemOrder(orderedMap, currentUserId);
-		}else{
-			throw new IllegalArgumentException("No ordered Ids to process.");
-		}
-	}
+
+    //Custom action to handle /eval-templateitem/template-items-reorder
+    @EntityCustomAction(action = CUSTOM_TEMPLATE_ITEMS_REORDER, viewKey = EntityView.VIEW_NEW)
+    public void saveTemplateItemsOrdering(EntityView view, Map<String, Object> params) {
+        Object ids = params.get(key_ordered_Ids);
+        if (ids != null && !"".equals(ids)) {
+            String orderedChildIds = ids.toString().trim();
+            if (!"".equals(orderedChildIds)) {
+                String currentUserId = commonLogic.getCurrentUserId();
+                Map<Long, Integer> orderedMap = new HashMap<Long, Integer>();
+                List<String> orderedChildIdList = Arrays.asList(orderedChildIds.split(","));
+                for (String itemId : orderedChildIdList) {
+                    int itemPosition = orderedChildIdList.indexOf(itemId) + 1;
+                    orderedMap.put(Long.parseLong(itemId), itemPosition);
+                }
+                authoringService.saveTemplateItemOrder(orderedMap, currentUserId);
+            } else {
+                throw new IllegalArgumentException("No ordered Ids to process (string had only whitespace).");
+            }
+        } else {
+            throw new IllegalArgumentException("No ordered Ids to process (blank or null).");
+        }
+    }
 
 	//Custom method to handle /eval-templateitem/modify-block-items
 	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_BLOCK,viewKey=EntityView.VIEW_NEW)
