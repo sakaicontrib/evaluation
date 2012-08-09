@@ -372,21 +372,20 @@ var EvalSystem = function() {
 			var selectid = EvalSystem.getRelativeID(linkid, localselectid);
 			var selection = $it(selectid);
 			var url = selection.options[selection.selectedIndex].value;
-            evalTemplateFacebox.addItem( url );
+			evalTemplateFacebox.addItem( url );
 		},
 		
 		windowsChromeStyleFixes: function() {
-      var windows = navigator.appVersion.indexOf("Win") > -1,
-          chrome  = navigator.userAgent.indexOf("Chrome") > -1;
-      
-      if ( windows && chrome ) {
-        $(".evaluation .item-group .response-scale-label").css("padding", "0 21px");
-        $(".evaluation .item-group .response-group-labels").css("margin-left", "-10px");
-      }
+			var windows = navigator.appVersion.indexOf("Win") > -1,
+				chrome  = navigator.userAgent.indexOf("Chrome") > -1;
+
+			if ( windows && chrome ) {
+				$(".evaluation .item-group .response-scale-label").css("padding", "0 20px");
+			}
 		}
 	};
 }();
 
 $(document).ready(function() {
-  EvalSystem.windowsChromeStyleFixes();
+	EvalSystem.windowsChromeStyleFixes();
 });
