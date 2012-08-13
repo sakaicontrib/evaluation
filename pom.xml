@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>evaluation</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>1.4-SNAPSHOT</version><!--eval.version -->
+    <relativePath>../evaluation/pom.xml</relativePath>
+  </parent>
+  <name>Sakai UCB EvalGroup Provider</name>
+  <groupId>org.sakaiproject.evaluation</groupId>
+  <artifactId>ucb-evalgroup</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <inceptionYear>2012</inceptionYear>
+  <packaging>war</packaging>
+
+  <dependencies>
+
+    <!-- Evaluation dependencies -->
+    <dependency>
+      <groupId>org.sakaiproject.evaluation</groupId>
+      <artifactId>sakai-evaluation-api</artifactId>
+    </dependency>
+
+    <!-- Sakai dependencies -->
+    <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-kernel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-component-manager</artifactId>
+    </dependency>
+
+    <!-- other deps -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <!-- configure the build to use the standard maven structure -->
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <!-- configure the war plugin to correctly use the standard maven structure -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+          <ouputDirectory>${project.build.directory}</ouputDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- Used to replace the headers of files with proper licenses - http://code.google.com/p/maven-license-plugin - 
+          Run mvn license:format to fix up licenses on all files in the project -->
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <configuration>
+          <strictCheck>true</strictCheck>
+          <header>${basedir}/LICENSE_HEADER</header>
+          <properties>
+            <name>${project.name}</name>
+            <year>${project.inceptionYear}</year>
+            <holder>Unicon (R)</holder>
+          </properties>
+          <excludes>
+            <exclude>target/**</exclude>
+            <exclude>m2-target/**</exclude>
+            <exclude>**/*.properties</exclude>
+            <exclude>**/*.txt</exclude>
+            <exclude>LICENSE*</exclude>
+            <exclude>**/README</exclude>
+            <exclude>bin/**</exclude>
+          </excludes>
+          <mapping>
+            <tag>DYNASCRIPT_STYLE</tag>
+          </mapping>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,2 +1,3 @@
 * text=auto !eol
 /.svnignore -text
+/LICENSE_HEADER -text
