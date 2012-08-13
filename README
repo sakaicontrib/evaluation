@@ -1,0 +1,9 @@
+UCB Eval Groups Provider
+
+Build and deploy:
+
+    mvn clean install sakai:deploy
+
+The provider should automatically be picked up by the evals tool when your Sakai instance starts up.
+
+-Aaron Zeckoski (azeckoski @ unicon.net)
