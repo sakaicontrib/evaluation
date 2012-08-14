@@ -96,7 +96,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public void setEvalGroupsProvider(EvalGroupsProvider evalGroupsProvider) {
         this.evalGroupsProvider = evalGroupsProvider;
     }
-    
+    public EvalGroupsProvider getEvalGroupsProvider() {
+        return evalGroupsProvider;
+    }
+
     public void init() {
         log.debug("init, register security perms");
 
@@ -871,8 +874,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
      */
     public void registerEvalGroupsProvider(EvalGroupsProvider provider) {
         if (provider != null) {
+            log.info("Registered EvalGroupProvider: "+provider.getClass().getName());
             this.evalGroupsProvider = provider;
         } else {
+            log.info("Unregistered EvalGroupProvider");
             this.evalGroupsProvider = null;
         }
     }
