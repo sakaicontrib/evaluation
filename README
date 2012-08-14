@@ -6,4 +6,6 @@ Build and deploy:
 
 The provider should automatically be picked up by the evals tool when your Sakai instance starts up.
 
+The tables the provider will read from are created using the sql in: sql/ucb-bspace-evalgroupprovider.sql
+
 -Aaron Zeckoski (azeckoski @ unicon.net)

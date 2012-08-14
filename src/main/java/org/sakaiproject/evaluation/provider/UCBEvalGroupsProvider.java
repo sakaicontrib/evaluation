@@ -98,10 +98,10 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider {
             ApplicationContext sakaiAC = applicationContext.getParent();
             if (sakaiAC != null && sakaiAC instanceof ConfigurableApplicationContext) {
                 // only ConfigurableApplicationContext - or higher - can register singletons
-                Object currentKEP = ComponentManager.get(UCBEvalGroupsProvider.class.getName());
+                Object currentGP = ComponentManager.get(UCBEvalGroupsProvider.class.getName());
                 // check if something is already registered
-                if (currentKEP != null) {
-                    log.info("Found existing "+UCBEvalGroupsProvider.class.getName()+" in the ComponentManager: "+currentKEP);
+                if (currentGP != null) {
+                    log.info("Found existing "+UCBEvalGroupsProvider.class.getName()+" in the ComponentManager: "+currentGP);
                     // attempt to unregister the existing bean (otherwise the register call will fail)
                     try {
                         // only DefaultListableBeanFactory - or higher - can unregister singletons
