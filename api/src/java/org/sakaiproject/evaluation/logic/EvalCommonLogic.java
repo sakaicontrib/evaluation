@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAdmin;
+import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 
 
 /**
@@ -242,5 +243,18 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
 	 * @return true if the user is an eval admin, false otherwise
 	 */
 	public boolean isUserEvalAdmin(String userId);
-    
+
+
+    // PROVIDERS
+
+    /**
+     * The provider will auto-register if it can, but this will allow it to also be registered
+     * or unregistered manually, calling this will override any previously registered eval groups provider
+     * and calling it with a null will clear the currently registered provider
+     * 
+     * @param provider the EGP to register for the system to use,
+     * if NULL then unregister the provider
+     */
+    public void registerEvalGroupsProvider(EvalGroupsProvider provider);
+
 }

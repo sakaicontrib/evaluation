@@ -100,7 +100,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public void init() {
         log.debug("init, register security perms");
 
-        // setup provider
+        // auto setup provider
         if (evalGroupsProvider == null) {
             evalGroupsProvider = (EvalGroupsProvider) externalLogic.getBean(EvalGroupsProvider.class);
             if (evalGroupsProvider != null)
@@ -865,5 +865,16 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 			Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);
 	}
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalCommonLogic#registerEvalGroupsProvider(org.sakaiproject.evaluation.providers.EvalGroupsProvider)
+     */
+    public void registerEvalGroupsProvider(EvalGroupsProvider provider) {
+        if (provider != null) {
+            this.evalGroupsProvider = provider;
+        } else {
+            this.evalGroupsProvider = null;
+        }
+    }
 
 }
