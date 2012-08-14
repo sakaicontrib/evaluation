@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.provider;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -33,6 +34,7 @@ import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 
 
@@ -41,13 +43,18 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @author Aaron Zeckoski (azeckoski @ vt.edu)
  */
-public class UCBEvalGroupsProvider implements EvalGroupsProvider {
+public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationContextAware {
 
     private static Log log = LogFactory.getLog(UCBEvalGroupsProvider.class);
 
     ApplicationContext applicationContext;
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    private UCBEvalGroupsProviderDao dao;
+    public void setDao(UCBEvalGroupsProviderDao dao) {
+        this.dao = dao;
     }
 
     private EvalCommonLogic commonLogic;
@@ -121,9 +128,14 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider {
             } else {
                 log.warn("FAILED to insert and lookup "+UCBEvalGroupsProvider.class.getName()+" in the Sakai ComponentManager, groups resolution and lookups will fail to work");
             }
+
+            // FINALLY register this groups provider with the evals code
+            // TODO
         } catch (Exception ex) {
             log.warn("EvalGroupsProvider.init(): "+ex, ex);
         }
+
+        log.info("Found "+dao.getCoursesCount()+" courses with "+dao.getMembersCount()+" members ("+dao.getInstructorsCount()+" instructors) and "+dao.getCrosslistCount()+" crosslisting records");
     }
 
     /* (non-Javadoc)

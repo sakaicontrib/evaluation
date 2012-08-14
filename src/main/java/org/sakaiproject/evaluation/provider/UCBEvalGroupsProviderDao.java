@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.provider;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -26,14 +29,44 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public class UCBEvalGroupsProviderDao {
 
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+    public static String COURSES_TABLE = "BSPACE_COURSE_INFO_VW";
+    public static String MEMBERS_TABLE = "BSPACE_CLASS_ROSTER_VW";
+    public static String INSTRUCTORS_TABLE = "BSPACE_COURSE_INSTRUCTOR_VW";
+    public static String CROSSLIST_TABLE = "BSPACE_CROSS_LISTING_VW";
+
+    private SimpleJdbcTemplate jdbcTemplate;
 
     public void setDataSource(DataSource dataSource) {
-        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 
     public SimpleJdbcTemplate getSimpleJdbcTemplate() {
-        return simpleJdbcTemplate;
+        return jdbcTemplate;
+    }
+
+    public int getCoursesCount() {
+        String sql = "SELECT COUNT(*) FROM "+COURSES_TABLE;
+        return jdbcTemplate.queryForInt(sql, new Object[] {});
+    }
+
+    public int getMembersCount() {
+        String sql = "SELECT COUNT(*) FROM "+MEMBERS_TABLE;
+        return jdbcTemplate.queryForInt(sql, new Object[] {});
+    }
+
+    public int getInstructorsCount() {
+        String sql = "SELECT COUNT(*) FROM "+INSTRUCTORS_TABLE;
+        return jdbcTemplate.queryForInt(sql, new Object[] {});
+    }
+
+    public int getCrosslistCount() {
+        String sql = "SELECT COUNT(*) FROM "+CROSSLIST_TABLE;
+        return jdbcTemplate.queryForInt(sql, new Object[] {});
+    }
+
+    public List<Map<String, Object>> getCourses() {
+        String sql = "SELECT * FROM "+COURSES_TABLE;
+        return jdbcTemplate.queryForList(sql, new Object[] {});
     }
 
 }

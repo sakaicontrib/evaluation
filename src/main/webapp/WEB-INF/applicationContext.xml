@@ -21,7 +21,7 @@
 
   <bean id="org.sakaiproject.evaluation.providers.EvalGroupsProvider" class="org.sakaiproject.evaluation.provider.UCBEvalGroupsProvider"
     init-method="init">
-    <property name="dao" ref="org.sakaiproject.evaluation.providers.UCBEvalGroupsProviderDao" />
+    <property name="dao" ref="UCBEvalGroupsProviderDao" />
     <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
     <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
@@ -48,11 +48,15 @@
 -->
 
   <!-- This wraps our DAO so that the transactions are managed -->
-  <bean id="org.sakaiproject.evaluation.providers.UCBEvalGroupsProviderDao" 
+  <bean id="UCBEvalGroupsProviderDao" 
         class="org.sakaiproject.genericdao.springutil.CurrentClassLoaderTxProxyFactoryBean">
-    <property name="transactionManager" ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+    <property name="transactionManager">
+      <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="javax.sql.DataSource"/>
+      </bean>
+      </property>
     <property name="target">
-      <bean class="org.sakaiproject.evaluation.providers.UCBEvalGroupsProviderDao">
+      <bean class="org.sakaiproject.evaluation.provider.UCBEvalGroupsProviderDao">
         <property name="dataSource" ref="javax.sql.DataSource" />
       </bean>
     </property>
