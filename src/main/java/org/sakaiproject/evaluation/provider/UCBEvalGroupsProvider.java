@@ -82,28 +82,28 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
             ApplicationContext sakaiAC = applicationContext.getParent();
             if (sakaiAC != null && sakaiAC instanceof ConfigurableApplicationContext) {
                 // only ConfigurableApplicationContext - or higher - can register singletons
-                Object currentGP = ComponentManager.get(UCBEvalGroupsProvider.class.getName());
+                Object currentGP = ComponentManager.get(EvalGroupsProvider.class.getName());
                 // check if something is already registered
                 if (currentGP != null) {
-                    log.info("Found existing "+UCBEvalGroupsProvider.class.getName()+" in the ComponentManager: "+currentGP);
+                    log.info("Found existing "+EvalGroupsProvider.class.getName()+" in the ComponentManager: "+currentGP);
                     // attempt to unregister the existing bean (otherwise the register call will fail)
                     try {
                         // only DefaultListableBeanFactory - or higher - can unregister singletons
                         DefaultListableBeanFactory dlbf = (DefaultListableBeanFactory) sakaiAC.getAutowireCapableBeanFactory();
-                        dlbf.destroySingleton(UCBEvalGroupsProvider.class.getName());
-                        log.info("Removed existing "+UCBEvalGroupsProvider.class.getName()+" from the ComponentManager");
+                        dlbf.destroySingleton(EvalGroupsProvider.class.getName());
+                        log.info("Removed existing "+EvalGroupsProvider.class.getName()+" from the ComponentManager");
                     } catch (Exception e) {
                         log.warn("FAILED attempted removal of EvalGroupsProvider bean: "+e);
                     }
                 }
                 // register this EP with the sakai AC
-                ((ConfigurableApplicationContext)sakaiAC).getBeanFactory().registerSingleton(UCBEvalGroupsProvider.class.getName(), this);
+                ((ConfigurableApplicationContext)sakaiAC).getBeanFactory().registerSingleton(EvalGroupsProvider.class.getName(), this);
             }
             // now verify if we are good to go
-            if (ComponentManager.get(UCBEvalGroupsProvider.class.getName()) != null) {
-                log.info("Found "+UCBEvalGroupsProvider.class.getName()+" in the ComponentManager");
+            if (ComponentManager.get(EvalGroupsProvider.class.getName()) != null) {
+                log.info("Found "+EvalGroupsProvider.class.getName()+" in the ComponentManager");
             } else {
-                log.warn("FAILED to insert and lookup "+UCBEvalGroupsProvider.class.getName()+" in the Sakai ComponentManager, groups resolution and lookups will fail to work");
+                log.warn("FAILED to insert and lookup "+EvalGroupsProvider.class.getName()+" in the Sakai ComponentManager, groups resolution and lookups will fail to work");
             }
 
             // FINALLY register this groups provider with the evals code
