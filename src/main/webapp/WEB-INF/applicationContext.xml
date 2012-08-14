@@ -23,13 +23,8 @@
     init-method="init" destroy-method="destroy">
     <property name="dao" ref="UCBEvalGroupsProviderDao" />
     <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-    <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-    <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-    <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
-    <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
     <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    <property name="authoringService" ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-    <property name="evalBeanUtils" ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+    <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
   </bean>
 
 <!-- if we need to use a datasource outside the regular sakai one

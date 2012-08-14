@@ -27,21 +27,12 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.component.cover.ComponentManager;
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -81,31 +72,6 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
-    }
-
-    private ExternalHierarchyLogic hierarchyLogic;
-    public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
-        this.hierarchyLogic = hierarchyLogic;
-    }
-
-    private EvalAuthoringService authoringService;
-    public void setAuthoringService(EvalAuthoringService authoringService) {
-        this.authoringService = authoringService;
-    }
-
-    private EvalEmailsLogic emails;
-    public void setEmails(EvalEmailsLogic emails) {
-        this.emails = emails;
-    }
-
-    private EvalJobLogic evalJobLogic;
-    public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
-        this.evalJobLogic = evalJobLogic;
-    }
-
-    private EvalBeanUtils evalBeanUtils;
-    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
-       this.evalBeanUtils = evalBeanUtils;
     }
 
     public void init() {
@@ -148,8 +114,8 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
 
         log.info("Found "+dao.getCoursesCount()+" courses with "+dao.getMembersCount()+" members ("+dao.getInstructorsCount()+" instructors) and "+dao.getCrosslistCount()+" crosslisting records");
 
-        // load up the data into a faster cache
-        
+        // init the loading of the data into a faster cache
+        initiateUpdateCacheTimer();
     }
 
     public void destroy() {
@@ -178,8 +144,8 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
     protected void initiateUpdateCacheTimer() {
         // timer repeats every 12 hours
         final long repeatInterval = 1000l * 60l * 60l * 12l;
-        // start up a timer after 10 secs + random(60 secs)
-        long startDelay =  (1000 * 10) + (1000 * new Random().nextInt(60));
+        // start up a timer after 10 secs + random(30 secs)
+        long startDelay =  (1000 * 10) + (1000 * new Random().nextInt(30));
 
         TimerTask runStateUpdateTask = new TimerTask() {
             @Override
@@ -205,34 +171,85 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         int membersCount = dao.getMembersCount();
         int instructorsCount = dao.getInstructorsCount();
         int crossListCount = dao.getCrosslistCount();
-        log.info("Starting the cache data reload for the UCB eval groups provider, "+coursesCount+" courses with "+membersCount+" members ("+instructorsCount+" instructors) and "+crossListCount+" crosslisting records");
+        log.info("Starting the cache data load for the UCB eval groups provider, "+coursesCount+" courses with "+membersCount+" members ("+instructorsCount+" instructors) and "+crossListCount+" crosslisting records");
 
         // groups by group id (evalGroupId -> EvalGroup)
         Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>(coursesCount);
         // users by group id (evalGroupId -> [userId])
-        Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>(membersCount);
+        Map<String, Map<String, Set<String>>> usersByGroupId = new HashMap<String, Map<String,Set<String>>>(coursesCount);
         // groups by user (userId -> {perm -> [evalGroupId]})
-        Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>(coursesCount);
+        Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>(membersCount);
 
-        // TODO load the cache data into the 3 cache maps
+        // load the cache data into the 3 cache maps
 
         List<Map<String, Object>> courses = dao.getCourses();
         for (Map<String, Object> course : courses) {
-            // TODO
+            // TERM_YR-TERM_CD-COURSE_CNTL_NUM
+            String evalGroupId = ((String)course.get("TERM_YR"))+"-"+((String)course.get("TERM_CD"))+"-"+((String)course.get("COURSE_CNTL_NUM"));
+            String title = (String) course.get("COURSE_TITLE");
+            EvalGroup evalGroup = new EvalGroup(evalGroupId, title, EvalConstants.GROUP_TYPE_PROVIDED);
+            groupsById.put(evalGroupId, evalGroup);
+            // populate the users by group with empty values
+            usersByGroupId.put(evalGroupId, new HashMap<String,Set<String>>());
+        }
+
+        List<Map<String, Object>> members = dao.getMembers();
+        for (Map<String, Object> member : members) {
+            // NOTE: user ids need to be the internal Sakai user ids
+            String userEid = ((String)member.get("STUDENT_LDAP_UID"));
+            String userId = commonLogic.getUserId(userEid); // use the Sakai mapping table
+            if (userId == null) {
+                log.warn("ReloadCacheData unable to map username: "+userEid+" to internal Sakai Id");
+            } else {
+                // add in the user map if not already exists
+                if (!groupsByUser.containsKey(userId)) {
+                    groupsByUser.put(userId, new HashMap<String, Set<String>>());
+                }
+                // add the user to the perm users map
+                // TERM_YR-TERM_CD-COURSE_CNTL_NUM
+                String evalGroupId = ((String)member.get("TERM_YR"))+"-"+((String)member.get("TERM_CD"))+"-"+((String)member.get("COURSE_CNTL_NUM"));
+                String role = ((String)member.get("ROLE_CD"));
+                String permission = null;
+                if ("S".equals(role)) { // TODO check on actual roles
+                    permission = EvalGroupsProvider.PERM_TAKE_EVALUATION;
+                } else if ("I".equals(role)) { // TODO check on actual roles
+                    permission = EvalGroupsProvider.PERM_BE_EVALUATED;
+                } else if ("T".equals(role)) { // TODO check on actual roles
+                    permission = EvalGroupsProvider.PERM_TA_ROLE;
+                } else if ("A".equals(role)) { // TODO check on actual roles
+                    permission = EvalGroupsProvider.PERM_ASSIGN_EVALUATION;
+                }
+                if (permission != null) {
+                    // add permission to user->groups map
+                    if (!groupsByUser.get(userId).containsKey(permission)) {
+                        groupsByUser.get(userId).put(permission, new HashSet<String>());
+                    }
+                    groupsByUser.get(userId).get(permission).add(evalGroupId);
+
+                    if (usersByGroupId.containsKey(evalGroupId)) {
+                        // add permission to groups->users map
+                        if (!usersByGroupId.get(evalGroupId).containsKey(permission)) {
+                            usersByGroupId.get(evalGroupId).put(permission, new HashSet<String>());
+                        }
+                        // add user to groups->users map
+                        usersByGroupId.get(evalGroupId).get(permission).add(userId);
+                    }
+                }
+            }
         }
 
         // replace existing cache maps
         this.groupsById = groupsById;
         this.usersByGroupId = usersByGroupId;
         this.groupsByUser = groupsByUser;
-        log.info("Completed the cache data reload for the UCB eval groups provider: "+groupsById.size()+" groups, "+usersByGroupId.size()+" users, "+groupsByUser.size()+" groupsByUser");
+        log.info("Completed the cache data load for the UCB eval groups provider: "+groupsById.size()+" groups, "+usersByGroupId.size()+" users, "+groupsByUser.size()+" groupsByUser");
     }
 
-    // groups by group id (evalGroupId -> EvalGroup)
+    /** groups by group id (evalGroupId -> EvalGroup) */
     Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>(0);
-    // users by group id (evalGroupId -> [userId])
-    Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>(0);
-    // groups by user (userId -> {perm -> [evalGroupId]})
+    /** users by group id (evalGroupId -> {perm -> [userId]}) */
+    Map<String, Map<String, Set<String>>> usersByGroupId = new HashMap<String, Map<String,Set<String>>>(0);
+    /** groups by user (userId -> {perm -> [evalGroupId]}) */
     Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>(0);
 
     // PROVIDER METHODS
@@ -244,9 +261,12 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         Set<String> userIds = new HashSet<String>(0);
         if (groupIds != null && permission != null) {
             for (String evalGroupId : groupIds) {
-                Set<String> users = usersByGroupId.get(evalGroupId);
-                if (users != null) {
-                    userIds.addAll(users);
+                Map<String, Set<String>> permUsers = usersByGroupId.get(evalGroupId);
+                if (permUsers != null) {
+                    Set<String> users = permUsers.get(permission);
+                    if (users != null) {
+                        userIds.addAll(users);
+                    }
                 }
             }
         }

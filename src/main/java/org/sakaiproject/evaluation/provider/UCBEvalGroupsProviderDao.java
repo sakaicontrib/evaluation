@@ -69,4 +69,9 @@ public class UCBEvalGroupsProviderDao {
         return jdbcTemplate.queryForList(sql, new Object[] {});
     }
 
+    public List<Map<String, Object>> getMembers() {
+        String sql = "SELECT * FROM "+MEMBERS_TABLE;
+        return jdbcTemplate.queryForList(sql, new Object[] {});
+    }
+
 }
