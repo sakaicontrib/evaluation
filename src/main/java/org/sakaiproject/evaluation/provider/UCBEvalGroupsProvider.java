@@ -16,21 +16,29 @@ package org.sakaiproject.evaluation.provider;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
+import org.sakaiproject.genericdao.api.search.Restriction;
+import org.sakaiproject.genericdao.api.search.Search;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -130,13 +138,57 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
             }
 
             // FINALLY register this groups provider with the evals code
-            // TODO
+            commonLogic.registerEvalGroupsProvider(this);
         } catch (Exception ex) {
             log.warn("EvalGroupsProvider.init(): "+ex, ex);
         }
 
         log.info("Found "+dao.getCoursesCount()+" courses with "+dao.getMembersCount()+" members ("+dao.getInstructorsCount()+" instructors) and "+dao.getCrosslistCount()+" crosslisting records");
+
+        // load up the data into a faster cache
+        
     }
+
+    public void destroy() {
+        if (log.isDebugEnabled()) log.debug("EvalGroupsProvider.shutdown()");
+        // unregister the provider
+        if (commonLogic != null) {
+            commonLogic.registerEvalGroupsProvider(null);
+        }
+        // kill the repeating timer
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
+
+    protected void reloadCacheData() {
+        log.info("Running the cache data reload for the UCB eval groups provider");
+        // TODO load the cache data
+    }
+
+    Timer timer = null;
+    protected void initiateUpdateCacheTimer() {
+        // timer repeats every 12 hours
+        final long repeatInterval = 1000l * 60l * 60l * 12l;
+        // start up a timer after 10 secs + random(60 secs)
+        long startDelay =  (1000 * 10) + (1000 * new Random().nextInt(60));
+
+        TimerTask runStateUpdateTask = new TimerTask() {
+            @Override
+            public void run() {
+                reloadCacheData();
+            }
+        };
+
+        // now we need to obtain a lock and then run the task if we have it
+        timer = new Timer(true);
+        log.info("Initializing the repeating timer task for evaluation groups cache update, first run in " + (startDelay/1000) + " seconds " +
+                "and subsequent runs will happen every " + (repeatInterval/1000) + " seconds after that");
+        timer.schedule(runStateUpdateTask, startDelay, repeatInterval);
+    }
+
+
+    // PROVIDER METHODS
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#getUserIdsForEvalGroups(java.lang.String[], java.lang.String)
