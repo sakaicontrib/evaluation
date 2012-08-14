@@ -154,6 +154,16 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
 
     public void destroy() {
         if (log.isDebugEnabled()) log.debug("EvalGroupsProvider.shutdown()");
+        // purge the caches
+        if (groupsById != null) {
+            groupsById.clear();
+        }
+        if (usersByGroupId != null) {
+            usersByGroupId.clear();
+        }
+        if (groupsByUser != null) {
+            groupsByUser.clear();
+        }
         // unregister the provider
         if (commonLogic != null) {
             commonLogic.registerEvalGroupsProvider(null);
@@ -185,18 +195,45 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         timer.schedule(runStateUpdateTask, startDelay, repeatInterval);
     }
 
-    protected void reloadCacheData() {
-        log.info("Running the cache data reload for the UCB eval groups provider");
+    /**
+     * Loads the data into the caches,
+     * this should actually load the data into other cache maps and then replace the current ones
+     * once it is almost complete
+     */
+    public void reloadCacheData() {
+        int coursesCount = dao.getCoursesCount();
+        int membersCount = dao.getMembersCount();
+        int instructorsCount = dao.getInstructorsCount();
+        int crossListCount = dao.getCrosslistCount();
+        log.info("Starting the cache data reload for the UCB eval groups provider, "+coursesCount+" courses with "+membersCount+" members ("+instructorsCount+" instructors) and "+crossListCount+" crosslisting records");
+
+        // groups by group id (evalGroupId -> EvalGroup)
+        Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>(coursesCount);
+        // users by group id (evalGroupId -> [userId])
+        Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>(membersCount);
+        // groups by user (userId -> {perm -> [evalGroupId]})
+        Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>(coursesCount);
+
         // TODO load the cache data into the 3 cache maps
+
+        List<Map<String, Object>> courses = dao.getCourses();
+        for (Map<String, Object> course : courses) {
+            // TODO
+        }
+
+        // replace existing cache maps
+        this.groupsById = groupsById;
+        this.usersByGroupId = usersByGroupId;
+        this.groupsByUser = groupsByUser;
+        log.info("Completed the cache data reload for the UCB eval groups provider: "+groupsById.size()+" groups, "+usersByGroupId.size()+" users, "+groupsByUser.size()+" groupsByUser");
     }
 
     // groups by group id (evalGroupId -> EvalGroup)
-    Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>();
+    Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>(0);
     // users by group id (evalGroupId -> [userId])
-    Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>();
+    Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>(0);
     // groups by user (userId -> {perm -> [evalGroupId]})
-    Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>();
-
+    Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>(0);
 
     // PROVIDER METHODS
 
