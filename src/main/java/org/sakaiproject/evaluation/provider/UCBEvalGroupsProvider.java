@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.provider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -161,11 +164,6 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         }
     }
 
-    protected void reloadCacheData() {
-        log.info("Running the cache data reload for the UCB eval groups provider");
-        // TODO load the cache data
-    }
-
     Timer timer = null;
     protected void initiateUpdateCacheTimer() {
         // timer repeats every 12 hours
@@ -187,6 +185,18 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         timer.schedule(runStateUpdateTask, startDelay, repeatInterval);
     }
 
+    protected void reloadCacheData() {
+        log.info("Running the cache data reload for the UCB eval groups provider");
+        // TODO load the cache data into the 3 cache maps
+    }
+
+    // groups by group id (evalGroupId -> EvalGroup)
+    Map<String, EvalGroup> groupsById = new HashMap<String, EvalGroup>();
+    // users by group id (evalGroupId -> [userId])
+    Map<String, Set<String>> usersByGroupId = new HashMap<String, Set<String>>();
+    // groups by user (userId -> {perm -> [evalGroupId]})
+    Map<String, Map<String, Set<String>>> groupsByUser = new HashMap<String, Map<String, Set<String>>>();
+
 
     // PROVIDER METHODS
 
@@ -194,48 +204,82 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#getUserIdsForEvalGroups(java.lang.String[], java.lang.String)
      */
     public Set<String> getUserIdsForEvalGroups(String[] groupIds, String permission) {
-        // TODO Auto-generated method stub
-        return null;
+        Set<String> userIds = new HashSet<String>(0);
+        if (groupIds != null && permission != null) {
+            for (String evalGroupId : groupIds) {
+                Set<String> users = usersByGroupId.get(evalGroupId);
+                if (users != null) {
+                    userIds.addAll(users);
+                }
+            }
+        }
+        return userIds;
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#countUserIdsForEvalGroups(java.lang.String[], java.lang.String)
      */
     public int countUserIdsForEvalGroups(String[] groupIds, String permission) {
-        // TODO Auto-generated method stub
-        return 0;
+        return getUserIdsForEvalGroups(groupIds, permission).size();
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        // TODO Auto-generated method stub
-        return null;
+        List<EvalGroup> evalGroups = new ArrayList<EvalGroup>();
+        if (userId != null && permission != null) {
+            Map<String, Set<String>> permGroupIds = groupsByUser.get(userId);
+            if (permGroupIds != null) {
+                Set<String> groupIds = permGroupIds.get(permission);
+                if (groupIds != null) {
+                    for (String groupId : groupIds) {
+                        EvalGroup group = groupsById.get(groupId);
+                        if (group != null) {
+                            evalGroups.add(group);
+                        }
+                    }
+                }
+            }
+        }
+        return evalGroups;
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#countEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public int countEvalGroupsForUser(String userId, String permission) {
-        // TODO Auto-generated method stub
-        return 0;
+        return getEvalGroupsForUser(userId, permission).size();
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#getGroupByGroupId(java.lang.String)
      */
     public EvalGroup getGroupByGroupId(String groupId) {
-        // TODO Auto-generated method stub
-        return null;
+        EvalGroup group = null;
+        if (groupId != null) {
+            group = groupsById.get(groupId);
+        }
+        return group;
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.providers.EvalGroupsProvider#isUserAllowedInGroup(java.lang.String, java.lang.String, java.lang.String)
      */
     public boolean isUserAllowedInGroup(String userId, String permission, String groupId) {
-        // TODO Auto-generated method stub
-        return false;
+        boolean allowed = false;
+        if (userId != null && permission != null && groupId != null) {
+            Map<String, Set<String>> permGroupIds = groupsByUser.get(userId);
+            if (permGroupIds != null) {
+                Set<String> groupIds = permGroupIds.get(permission);
+                if (groupIds != null) {
+                    if (groupIds.contains(groupId)) {
+                        allowed = true;
+                    }
+                }
+            }
+        }
+        return allowed;
     }
 
 }
