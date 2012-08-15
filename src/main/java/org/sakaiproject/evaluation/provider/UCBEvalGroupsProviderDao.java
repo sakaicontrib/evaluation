@@ -69,9 +69,33 @@ public class UCBEvalGroupsProviderDao {
         return jdbcTemplate.queryForList(sql, new Object[] {});
     }
 
-    public List<Map<String, Object>> getMembers() {
-        String sql = "SELECT * FROM "+MEMBERS_TABLE;
-        return jdbcTemplate.queryForList(sql, new Object[] {});
+    /**
+     * BSPACE_CLASS_ROSTER_VW table will only have students. 
+     * Do not need to filter on the ROLE_CD column.
+     * Need to filter on "ENROLL_STATUS":
+     * "E" for Enrolled
+     * "W" for Waitlisted
+     * "D" for Dropped at the beginning of the term
+     * 
+     * @return list of rows which are a map of column->value
+     */
+    public List<Map<String, Object>> getStudents() {
+        String sql = "SELECT * FROM "+MEMBERS_TABLE+" WHERE ENROLL_STATUS=?";
+        return jdbcTemplate.queryForList(sql, new Object[] {"E"});
+    }
+
+    /**
+     * The instructors/GSIs are listed in the BSPACE_COURSE_INSTRUCTOR_VW table. The thing to check there is the "INSTRUCTOR_FUNC":
+     * 1 = teaching and in charge
+     * 2 = teaching but not in charge
+     * 3 = not teaching but in charge
+     * 4 = no valid teaching title
+     * 
+     * @return list of rows which are a map of column->value
+     */
+    public List<Map<String, Object>> getInstructors() {
+        String sql = "SELECT * FROM "+INSTRUCTORS_TABLE+" WHERE (INSTRUCTOR_FUNC=? OR INSTRUCTOR_FUNC=?)";
+        return jdbcTemplate.queryForList(sql, new Object[] {1,2});
     }
 
 }

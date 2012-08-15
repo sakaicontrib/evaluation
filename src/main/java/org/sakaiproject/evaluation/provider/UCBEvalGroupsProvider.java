@@ -193,49 +193,20 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
             usersByGroupId.put(evalGroupId, new HashMap<String,Set<String>>());
         }
 
-        List<Map<String, Object>> members = dao.getMembers();
-        for (Map<String, Object> member : members) {
+        List<Map<String, Object>> instructors = dao.getInstructors();
+        String permission = EvalGroupsProvider.PERM_BE_EVALUATED;
+        for (Map<String, Object> member : instructors) {
+            // NOTE: user ids need to be the internal Sakai user ids
+            String userEid = ((String)member.get("INSTRUCTOR_LDAP_UID"));
+            addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
+        }
+
+        List<Map<String, Object>> students = dao.getStudents();
+        permission = EvalGroupsProvider.PERM_TAKE_EVALUATION;
+        for (Map<String, Object> member : students) {
             // NOTE: user ids need to be the internal Sakai user ids
             String userEid = ((String)member.get("STUDENT_LDAP_UID"));
-            String userId = commonLogic.getUserId(userEid); // use the Sakai mapping table
-            if (userId == null) {
-                log.warn("ReloadCacheData unable to map username: "+userEid+" to internal Sakai Id");
-            } else {
-                // add in the user map if not already exists
-                if (!groupsByUser.containsKey(userId)) {
-                    groupsByUser.put(userId, new HashMap<String, Set<String>>());
-                }
-                // add the user to the perm users map
-                // TERM_YR-TERM_CD-COURSE_CNTL_NUM
-                String evalGroupId = ((String)member.get("TERM_YR"))+"-"+((String)member.get("TERM_CD"))+"-"+((String)member.get("COURSE_CNTL_NUM"));
-                String role = ((String)member.get("ROLE_CD"));
-                String permission = null;
-                if ("S".equals(role)) { // TODO check on actual roles
-                    permission = EvalGroupsProvider.PERM_TAKE_EVALUATION;
-                } else if ("I".equals(role)) { // TODO check on actual roles
-                    permission = EvalGroupsProvider.PERM_BE_EVALUATED;
-                } else if ("T".equals(role)) { // TODO check on actual roles
-                    permission = EvalGroupsProvider.PERM_TA_ROLE;
-                } else if ("A".equals(role)) { // TODO check on actual roles
-                    permission = EvalGroupsProvider.PERM_ASSIGN_EVALUATION;
-                }
-                if (permission != null) {
-                    // add permission to user->groups map
-                    if (!groupsByUser.get(userId).containsKey(permission)) {
-                        groupsByUser.get(userId).put(permission, new HashSet<String>());
-                    }
-                    groupsByUser.get(userId).get(permission).add(evalGroupId);
-
-                    if (usersByGroupId.containsKey(evalGroupId)) {
-                        // add permission to groups->users map
-                        if (!usersByGroupId.get(evalGroupId).containsKey(permission)) {
-                            usersByGroupId.get(evalGroupId).put(permission, new HashSet<String>());
-                        }
-                        // add user to groups->users map
-                        usersByGroupId.get(evalGroupId).get(permission).add(userId);
-                    }
-                }
-            }
+            addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
         }
 
         // replace existing cache maps
@@ -243,6 +214,45 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         this.usersByGroupId = usersByGroupId;
         this.groupsByUser = groupsByUser;
         log.info("Completed the cache data load for the UCB eval groups provider: "+groupsById.size()+" groups, "+usersByGroupId.size()+" users, "+groupsByUser.size()+" groupsByUser");
+    }
+
+    /**
+     * Method to reduce code duplication
+     * @param userEid
+     * @param permission
+     * @param member
+     * @param usersByGroupId
+     * @param groupsByUser
+     */
+    private void addUserDataToCaches(String userEid, String permission, Map<String, Object> member, Map<String, Map<String, Set<String>>> usersByGroupId,
+            Map<String, Map<String, Set<String>>> groupsByUser) {
+        String userId = commonLogic.getUserId(userEid); // use the Sakai mapping table
+        if (userId == null) {
+            log.warn("ReloadCacheData unable to map username: "+userEid+" to internal Sakai Id");
+        } else {
+            // add in the user map if not already exists
+            if (!groupsByUser.containsKey(userId)) {
+                groupsByUser.put(userId, new HashMap<String, Set<String>>());
+            }
+            // add the user to the perm users map
+            // TERM_YR-TERM_CD-COURSE_CNTL_NUM
+            String evalGroupId = ((String)member.get("TERM_YR"))+"-"+((String)member.get("TERM_CD"))+"-"+((String)member.get("COURSE_CNTL_NUM"));
+
+            // add permission to user->groups map
+            if (!groupsByUser.get(userId).containsKey(permission)) {
+                groupsByUser.get(userId).put(permission, new HashSet<String>());
+            }
+            groupsByUser.get(userId).get(permission).add(evalGroupId);
+
+            if (usersByGroupId.containsKey(evalGroupId)) {
+                // add permission to groups->users map
+                if (!usersByGroupId.get(evalGroupId).containsKey(permission)) {
+                    usersByGroupId.get(evalGroupId).put(permission, new HashSet<String>());
+                }
+                // add user to groups->users map
+                usersByGroupId.get(evalGroupId).get(permission).add(userId);
+            }
+        }
     }
 
     /** groups by group id (evalGroupId -> EvalGroup) */
