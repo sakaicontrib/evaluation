@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.azeckoski.reflectutils.ArrayUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -58,9 +59,6 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
-import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
@@ -320,9 +318,8 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         String resultsSharingId = resultsSharingRadios.getFullID();
         for (int i = 0; i < EvalToolConstants.EVAL_RESULTS_SHARING_VALUES.length; ++i) {
             UIBranchContainer radiobranch = UIBranchContainer.make(form, "resultsSharingChoice:", i + "");
-            UISelectChoice choice = UISelectChoice.make(radiobranch, "radioValue", resultsSharingId, i);
-            UISelectLabel.make(radiobranch, "radioLabel", resultsSharingId, i)
-            .decorate( new UILabelTargetDecorator(choice) );
+            UISelectChoice.make(radiobranch, "radioValue", resultsSharingId, i);
+            UISelectLabel.make(radiobranch, "radioLabel", resultsSharingId, i);
         }
 
         //EVALSYS-1117 
@@ -485,17 +482,26 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 	        }
 	        UIMessage.make(form, "enable-mass-email-label", "evalsettings.general.enable.email.onbegin");
         }
-        
+
         // render this only if *NOT* using consolidated emails
         UISelect reminderDaysSelect = null;
-        if(! consolidatedEmailsEnabled.booleanValue()) {
-        	UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
-	        // email reminder control
-	        reminderDaysSelect = UISelect.make(evaluation_reminder_area, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
-	                EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-	        if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true) ) {
-	            RSFUtils.disableComponent(reminderDaysSelect);
-	        }
+        if (!consolidatedEmailsEnabled.booleanValue()) {
+            UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
+            // email reminder control
+            String[] reminderValues = EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES;
+            String[] reminderLabels = EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS;
+            if (userAdmin) {
+                // super admin can use the special testing setting
+                reminderValues = ArrayUtils.appendArray(reminderValues, "-2");
+                reminderLabels = ArrayUtils.appendArray(reminderLabels, "evalsettings.reminder.days.-2");
+            }
+            reminderDaysSelect = UISelect.make(evaluation_reminder_area, "reminderDays", 
+                    reminderValues,
+                    reminderLabels, 
+                    evaluationOTP + "reminderDays").setMessageKeys();
+            if (EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
+                RSFUtils.disableComponent(reminderDaysSelect);
+            }
         }
 
         // email reminder template link
@@ -619,8 +625,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             String binding, Boolean systemSetting, UIForm form, boolean disabled) {
         if (systemSetting == null) {
             UIBoundBoolean checkbox = UIBoundBoolean.make(parent, rsfId, binding);
-            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label")
-            .decorate( new UILabelTargetDecorator(checkbox) );
+            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label");
             if (disabled) {
                 RSFUtils.disableComponent(checkbox); // disable the control
             }

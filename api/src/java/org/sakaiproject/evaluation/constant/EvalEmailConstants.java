@@ -311,18 +311,25 @@ public class EvalEmailConstants {
 	 /**
 	  * EmailTemplate subject: Default subject for email job completion notification 
 	  */
-	public static final String EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT = "Email Job for Evaluation: ${EvalTitle} has completed\n";
+	public static final String EMAIL_JOB_COMPLETED_DEFAULT_SUBJECT = "${JobType} Email Job for Evaluation: ${EvalTitle} has completed\n";
 	
 	/**
 	 * EmailTemplate message setting:
 	 * This is the default template for when the single email per student option is in effect and an evaluation response is outstanding.
 	 * Replaceable strings:<br/>
+	 * ${EvalTitle} - the related evaluation
 	 * ${JobType} - the ScheduledInvocationCommand jobType name for the eval email job.
 	 * ${NumEmailsSent} - the number of emails sent.
+	 * ${EmailsSentList} - list of email addresses (separated by newlines)
+	 * ${SampleEmail} - a sample of the email that was sent for this job
 	 */
 	public static final String EMAIL_JOB_COMPLETED_DEFAULT_TEXT = 
-		"The ${JobType} email job has completed. \n\n" +
-		"${NumEmailsSent} emails were sent.\n";
+		"The ${JobType} email job has completed for Evaluation: ${EvalTitle}. \n\n" +
+		"${NumEmailsSent} emails were sent. \n" +
+		"They were sent to the following users: \n" +
+		"${EmailsSentList}\n\n" +
+		"Sample email: \n" +
+		"${SampleEmail}";
 	
     /**
      * EmailTemplate subject: Default subject for submission confirmation
@@ -345,7 +352,7 @@ public class EvalEmailConstants {
 	   "Note that all student responses are kept confidential." +
 	   "<#if ShowAllowEditResponsesText == \"true\">\n" +
 	   "You may edit your evaluation responses up until the close date for this evaluation.\n" +
-      "</#if>\n";
+       "</#if>\n";
    
 		/**
 		 * Email text describing where a user should look for the evaluation tool.

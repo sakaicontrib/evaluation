@@ -79,6 +79,7 @@ public class EvalToolConstants {
         EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED,
         EvalConstants.ITEM_SCALE_DISPLAY_FULL,
         EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED,
+        EvalConstants.ITEM_SCALE_DISPLAY_MATRIX,
         EvalConstants.ITEM_SCALE_DISPLAY_STEPPED,
         EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED,
         EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL
@@ -90,6 +91,7 @@ public class EvalToolConstants {
         "templateitem.scale.select.compactc",
         "templateitem.scale.select.full",
         "templateitem.scale.select.fullc",
+        "templateitem.scale.select.matrix",
         "templateitem.scale.select.stepped",
         "templateitem.scale.select.steppedc",
         "templateitem.scale.select.vertical"
@@ -97,12 +99,14 @@ public class EvalToolConstants {
     
     public static String[] SCALE_DISPLAY_GROUP_SETTING_VALUES = new String[] {
     	EvalConstants.ITEM_SCALE_DISPLAY_MATRIX,
-    	EvalConstants.ITEM_SCALE_DISPLAY_STEPPED
+    	EvalConstants.ITEM_SCALE_DISPLAY_STEPPED,
+        EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED
     };
     
     public static String[] SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS = new String[] {
     	"templateitem.scale.select.matrix",
-    	"templateitem.scale.select.stepped"
+    	"templateitem.scale.select.stepped",
+        "templateitem.scale.select.steppedc"
     };
 
 

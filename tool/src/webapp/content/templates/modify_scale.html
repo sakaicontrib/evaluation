@@ -25,7 +25,14 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
-    <script src="../js/jquery/jquery.js" type="text/javascript" language="JavaScript"></script>
+
+    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
+    <script src="../js/facebox/facebox.js" type="text/javascript"></script>
+    <script src="../js/utils.js" type="text/javascript"></script>
+
+    <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -48,7 +55,7 @@
 
 <br/>
 
-<form  rsf:id="basic-form" method="post">
+<form rsf:id="basic-form" class="scale_modify_form" method="post">
 	<p class="shorttext">
 		<label rsf:id="msg=modifyscale.scale.title.note" for="scale-title">Title</label>
 		<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30" id="scale-title-id"/>
@@ -56,7 +63,7 @@
 		<a rsf:id="scale-remove-link" href="remove_scale.html">Remove Scale</a>
 	</p>
 	<h4 rsf:id="msg=modifyscale.adddropscale.note.start">Scale</h4>
-	<div class="labelindnt">
+	<div class="labelindnt scale_points_container">
 		<div rsf:id="modify-scale-points:">
 		<!-- start div for evolver widget - contents below are dummy -->
 			<span id="myOldSpan">
@@ -94,7 +101,7 @@
 
 	<div class="checkbox indnt1">
 		<span rsf:id="scaleIdealRadio"/>
-		<div rsf:id="scaleIdealOptions:">
+		<div rsf:id="scaleIdealOptions:" class="scale_ideal_container">
 			<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
 			<label rsf:id="scale-ideal-label" for="scale-ideal-value">Ideal label</label>
 		</div>
@@ -111,24 +118,17 @@
 	</div>
 
 	<p class="act">
-		<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale" class="active" accesskey="s"  />  
-		<input rsf:id="scale-add-modify-cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x"/>
+		<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale" class="active" accesskey="s"  />
+        <!-- preview_scale?ideal=ideal-scale-thing&points=alpha&points=beta&points=charlie -->
+        <a rsf:id="scale-add-modify-preview" href="#" class="makeButton preview_scale" accesskey="p">Preview</a>
+		<a rsf:id="scale-add-modify-cancel"  href="#" accesskey="x" onclick="javascript:history.go(-1);return false;">Cancel</a>
 	</p>	
 
 </form>
 
 </div>
 
-<script type="text/javascript">
-(function() {
-    var $textboxes = $("div.labelindnt input:text");
-    $textboxes.attr("maxlength", "250"); // force the existing ones first
-    $textboxes.bind("click", function(event){
-        // each time the text box is clicked on
-        $(this).attr("maxlength", "250"); // force the input text boxes to 250 chars or less
-    });
-})();
-</script>
+<script type="text/javascript">evalsys.initModifyScales();</script>
 
 </body>
 </html>

@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 
 import uk.org.ponder.arrayutil.MapUtil;
@@ -38,6 +39,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
@@ -101,6 +103,111 @@ public class BlockRenderer implements ItemRenderer {
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
 
+        
+        ///////////////
+        // matrix block
+        ///////////////
+        if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX) ||
+        		templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)) {
+            
+            for (int count = 1; count <= optionCount; count++) {
+                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleLabels[optionCount - count] = scaleOptions[count-1];
+            }
+            
+            if (usesNA) {
+                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
+                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
+            }
+            
+            UIBranchContainer matrixGroup = UIBranchContainer.make(container, "matrixGroupDisplay:");
+            
+            if (usesNA) {
+            	matrixGroup.decorate( new UIStyleDecorator("use-na") );
+            	UIMessage.make(matrixGroup,"response-scale-label-na", "viewitem.na.desc");
+            }
+            
+            // display header labels
+            List<String> headerLabels = RenderingUtils.getMatrixLabels(scaleOptions);
+            UIOutput.make(matrixGroup, "label-start", headerLabels.get(0));
+            UIOutput.make(matrixGroup, "label-end", headerLabels.get(1));
+            if (headerLabels.size() == 3) {
+            	UIOutput.make(matrixGroup, "label-middle", headerLabels.get(2));
+            }            
+            
+           	UIOutput.make(matrixGroup,"label-na", "NA");
+        	UIVerbatim.make(matrixGroup, "matrixGroupTitle", templateItem.getItem().getItemText());
+        	
+        	// display number labels
+        	for (int i = 0; i < optionCount; i++) {
+        	    UIOutput.make(matrixGroup, "response-scale-label:", (i + 1) + "");
+        	}
+            
+        	// iterate through each question in the block
+            for (int j = 0; j < childList.size(); j++) {
+                
+            	// build the question row container and apply decorations
+	            UIBranchContainer matrix = UIBranchContainer.make(matrixGroup, "matrixDisplay:", j+"");
+	            if (usesNA) {
+	            	matrix.decorate( new UIStyleDecorator("use-na") );
+	            }
+	            
+                // get the child item
+                EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
+                EvalItem childItem = childTemplateItem.getItem();
+                
+	            Map<String, Object> childRenderProperties = (Map<String, Object>) renderProperties.get("child-" + childTemplateItem.getId());
+	            if (childRenderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+	                matrix.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+	            } else if ( childRenderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+	                matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+	            }	            
+	            
+	            // display question text
+	            UIOutput.make(matrix, "itemNum", Integer.valueOf(displayNumber + j).toString() ); //$NON-NLS-2$
+	            UIVerbatim.make(matrix, "itemText", childItem.getItemText());
+            
+	            UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
+	            	
+                // Bind the answers to a list of answers in evaluation bean (if enabled)
+                String childBinding = null;
+                if (! disabled && bindings != null) {
+                    childBinding = bindings[j];
+                }
+                UISelect childRadios = UISelect.make(rowBranch, "childRadio", scaleValues, scaleLabels, childBinding, initValue);
+                String selectID = childRadios.getFullID();
+	            
+	            if (disabled) {
+	                childRadios.selection.willinput = false;
+	                childRadios.selection.fossilize = false;
+	            }
+	
+	            int scaleLength = scaleValues.length;
+	            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
+	            
+	            for (int k = 0; k < limit; ++k) {
+                    UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", k+"");
+                    UISelectChoice.make(radioBranchSecond, "radioValue", selectID, k);
+                    // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
+                    // an empty label is appended; ignore that one too 
+                    int labelIndex = scaleLabels.length - k - (usesNA ? 2 : 1);
+                    UIVerbatim.make(radioBranchSecond,  "radioValueLabel", scaleLabels[labelIndex]);
+	            }
+	            
+	            // display the N/A radio button always; use CSS to hide if not needed (via the "use-na" class (above)
+	            UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
+                UISelectChoice naChoice = UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+                if (!usesNA) {
+                	naChoice.decorate( new UIDisabledDecorator());
+                }
+                UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc");
+            }
+        	
+        ////////////////
+        // stepped block
+        ////////////////
+        } else {
+        	
             UIBranchContainer blockStepped = UIBranchContainer.make(container, "blockStepped:");
 
             // setup simple variables to make code more clear
@@ -147,9 +254,6 @@ public class BlockRenderer implements ItemRenderer {
             int scaleLength = scaleValues.length;
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
             
-            if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED) ||
-                    templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED) ) {
-            
 	            for (int j = 0; j < limit; ++j) {
 	                UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowBranch:", j+"");
 
@@ -181,16 +285,6 @@ public class BlockRenderer implements ItemRenderer {
 	                // the down arrow images
 	                UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", j+"");
 	                UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
-	            }
-            } else if (templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX) ||
-            		templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)) {
-            	
-                UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowMatrixBranch:");
-                UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText());
-	            for (int j = 0; j < limit; ++j) {	
-	                // Actual label
-	                UISelectLabel.make(rowBranch, "headerLabel:", selectIDLabel, j);	
-	            }
             }
 
             // the child items rendering loop
@@ -253,6 +347,7 @@ public class BlockRenderer implements ItemRenderer {
                     }
                 }
 
+            }
         }
 
         return container;

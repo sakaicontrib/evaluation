@@ -22,11 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -62,7 +60,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class SetupEvalBean {
 
-	private static Log log = LogFactory.getLog(SetupEvalBean.class);
+	//private static Log log = LogFactory.getLog(SetupEvalBean.class);
 
 	private final String EVENT_EVAL_REOPENED = "eval.evaluation.reopened";
 
@@ -453,21 +451,23 @@ public class SetupEvalBean {
 				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE));
 				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION));
 			}
-		
-			for (String userId : userIdsForEvalGroup) {
-	
-				//ignore invalid users
-                if(EvalUser.USER_TYPE_INVALID.equals(commonLogic.getEvalUsersByIds(new String[] {userId}).get(0).type)) {
-                    continue;
-                }
-				
-				if(commonLogic.isUserAnonymous(userId)) {
-					EvalUser user = commonLogic.getEvalUsersByIds(new String[] {userId}).get(0);
-					messages.addMessage(new TargettedMessage(
-							"assigneval.invalid.user", new Object[] {user.username},
-							TargettedMessage.SEVERITY_ERROR));
-					return "fail";
-				}
+
+			if (userIdsForEvalGroup != null) {
+    			for (String userId : userIdsForEvalGroup) {
+    	
+    				//ignore invalid users
+                    if(EvalUser.USER_TYPE_INVALID.equals(commonLogic.getEvalUsersByIds(new String[] {userId}).get(0).type)) {
+                        continue;
+                    }
+    				
+    				if(commonLogic.isUserAnonymous(userId)) {
+    					EvalUser user = commonLogic.getEvalUsersByIds(new String[] {userId}).get(0);
+    					messages.addMessage(new TargettedMessage(
+    							"assigneval.invalid.user", new Object[] {user.username},
+    							TargettedMessage.SEVERITY_ERROR));
+    					return "fail";
+    				}
+    			}
 			}
 		}		
 

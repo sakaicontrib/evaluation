@@ -152,16 +152,26 @@ public class EvalAssignUser implements java.io.Serializable {
     public EvalAssignUser() {
     }
 
+    public EvalAssignUser(String userId, String evalGroupId) {
+        this(userId, evalGroupId, null, null, null);
+    }
+
     /**
      * Minimal constructor, sets the type automatically to eval taker (student), 
      * all records are created with a default status of active,
      * makes the current user the owner
      * 
      * @param userId the user which is being assigned, should be the internal id (not the username)
+     * @param eval the evaluation this assignment is linked to
      * @param evalGroupId (OPTIONAL) the eval group this assignment is related to
+     * @param owner (OPTIONAL) will be assigned to the current user if not set
      */
-    public EvalAssignUser(String userId, String evalGroupId) {
-        this(userId, evalGroupId, null, null, null);
+    public EvalAssignUser(String userId, EvalEvaluation eval, String evalGroupId, String owner) {
+        this(userId, evalGroupId, owner, null, null, eval, null);
+    }
+
+    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
+        this(userId, evalGroupId, owner, type, status, null, null);
     }
 
     /**
@@ -172,8 +182,10 @@ public class EvalAssignUser implements java.io.Serializable {
      * @param owner (OPTIONAL) will be assigned to the current user if not set
      * @param type (OPTIONAL) use a constant like {@link #TYPE_EVALUATEE} or {@value #TYPE_EVALUATOR}
      * @param status (OPTIONAL) use a constant {@link #STATUS_LINKED} or {@link #STATUS_REMOVED}
+     * @param eval the evaluation this assignment is linked to
+     * @param assignGroupId (OPTIONAL) the assigned group id
      */
-    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status) {
+    public EvalAssignUser(String userId, String evalGroupId, String owner, String type, String status, EvalEvaluation eval, Long assignGroupId) {
         super();
         this.lastModified = new Date();
         if (userId == null || "".equals(userId) ) {
@@ -194,6 +206,8 @@ public class EvalAssignUser implements java.io.Serializable {
             type = TYPE_EVALUATOR;
         }
         this.type = type;
+        this.evaluation = eval;
+        this.assignGroupId = assignGroupId;
     }
 
     public Long getId() {
@@ -383,13 +397,9 @@ public class EvalAssignUser implements java.io.Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        if (id == null) {
-            result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-            result = prime * result + ((evalGroupId == null) ? 0 : evalGroupId.hashCode());
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-        } else {
-            result = prime * result + id.hashCode();
-        }
+        result = prime * result + ((evalGroupId == null) ? 0 : evalGroupId.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -402,17 +412,21 @@ public class EvalAssignUser implements java.io.Serializable {
         if (getClass() != obj.getClass())
             return false;
         EvalAssignUser other = (EvalAssignUser) obj;
-        if (id == null) {
-            if ( userId.equals(other.userId)
-                    && type.equals(other.type) 
-                    && (evalGroupId == null ? other.evalGroupId == null : evalGroupId.equals(other.evalGroupId)) ) {
+        if (evalGroupId == null) {
+            if (other.evalGroupId != null)
                 return false;
-            }
-        } else {
-            if (!id.equals(other.id)) {
+        } else if (!evalGroupId.equals(other.evalGroupId))
+            return false;
+        if (type == null) {
+            if (other.type != null)
                 return false;
-            }
-        }
+        } else if (!type.equals(other.type))
+            return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        } else if (!userId.equals(other.userId))
+            return false;
         return true;
     }
 

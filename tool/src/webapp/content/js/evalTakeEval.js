@@ -13,20 +13,39 @@
  * permissions and limitations under the License.
  */
 /**
- * For the takeEval and preview views
- */
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+ *
+ * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Sakai Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * - Aaron Zeckoski (azeckoski)
+ **********************************************************************************/
+
+// For the takeEval and preview views
+
+// run on page load
 $(document).ready(function() {
     $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
-    var instrSel = $('div[@rel=evalinstructorSelector]');
-    var assSel = $('div[@rel=evalassistantSelector]');
+
+    var instrSel = $('div[rel=evalinstructorSelector]');
+    var assSel = $('div[rel=evalassistantSelector]');
     instrSel.evalSelector({type:0});
     assSel.evalSelector({type:1});
-    $('[id=form-branch::saveEvaluationWithoutSubmit]').click(function() {
-        if (!confirm('Saving the evaluation without Submitting will save your work, but your responses will not be included in the final results.\n' +
-    			'You will need to return to the evaluation and Submit for your results to be included.')) {
-             return false;
-        };
-    });
+
     $('[id=form-branch::submitEvaluation]').bind('click', function() {
         var valid;
         if (instrSel.find('input[type=checkbox]').length !== 0) {
@@ -103,9 +122,21 @@ $(document).ready(function() {
         return false;
     }
 
+    // handle the cancel button navigation (if it exists)
+    $("input.eval_cancel_button_marker").bind("click", function(event) {
+        event.preventDefault();
+        var cancelURL = $("a#dashboard-link").attr("href");
+        if (typeof cancelURL !== "undefined" && cancelURL) {
+            window.location.href = cancelURL;
+        } else {
+            // fall back on back button
+            window.history.back();
+        }
+    });
 
 });
 
+// hook into the jquery object
 (function($) {
     $.fn.evalSelector = function(opts) {
         var options = $.extend({}, $.fn.evalSelector.settings, opts);
@@ -155,7 +186,7 @@ $(document).ready(function() {
 
             selectedBoxesArray:function(that) {
                 var checked = [];
-                that.find('input[@type=checkbox]').each(function() {
+                that.find('input[type=checkbox]').each(function() {
                     if (this.checked){
                         checked.push(this);
                     }
@@ -231,18 +262,18 @@ $(document).ready(function() {
         //Handle reSelecting previous selections
         $.each(['instructor','assistant'], function(i, type) {
 
-            $('div[@rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
+            $('div[rel=eval' + type + 'Selector] input[type=checkbox]:checked').each(function() {
                 var _id = $(this).val();
                 $('div[name=' + _id + '].' + type + 'Branch').show();
                 frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             });
 
             var index = 0;
-            $('div[@rel=eval' + type + 'Selector]').find('select').each(function() {
+            $('div[rel=eval' + type + 'Selector]').find('select').each(function() {
                 index = this.selectedIndex;
             });
             if (index !== 0) {
-                var _id = $('div[@rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
+                var _id = $('div[rel=eval' + type + 'Selector]').find('select').find('option').eq(index);
                 $('div[name=' + $(_id).val() + '].' + type + 'Branch').show();
                 frameGrow($('div[name=' + _id + '].' + type + 'Branch').height(), 'grow');
             }

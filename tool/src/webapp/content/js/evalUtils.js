@@ -13,9 +13,32 @@
  * permissions and limitations under the License.
  */
 /**
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+ *
+ * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Sakai Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * - Aaron Zeckoski (azeckoski)
+ **********************************************************************************/
+
+/**
  * The EvalSystem set of functions (keeps the namespace clean and tidy) -AZ
  * DEPENDS on jQuery 1.2 to operate
- * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Aaron Zeckoski (azeckoski)
  * @author Antranig Basman - dropbox methods at end
  */
 var EvalSystem = function() {
@@ -349,7 +372,20 @@ var EvalSystem = function() {
 			var selectid = EvalSystem.getRelativeID(linkid, localselectid);
 			var selection = $it(selectid);
 			var url = selection.options[selection.selectedIndex].value;
-            evalTemplateFacebox.addItem( url );
+			evalTemplateFacebox.addItem( url );
+		},
+		
+		windowsChromeStyleFixes: function() {
+			var windows = navigator.appVersion.indexOf("Win") > -1,
+				chrome  = navigator.userAgent.indexOf("Chrome") > -1;
+
+			if ( windows && chrome ) {
+				$(".evaluation .item-group .response-scale-label").css("padding", "0 20px");
+			}
 		}
 	};
 }();
+
+$(document).ready(function() {
+	EvalSystem.windowsChromeStyleFixes();
+});

@@ -24,11 +24,12 @@ import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
+import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -40,7 +41,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu) 
  */
-public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter {
+public class PreviewItemProducer extends EvalCommonProducer implements ViewParamsReporter, ContentTypeReporter {
 
     public static final String VIEW_ID = "preview_item";
     public String getViewID() {
@@ -68,14 +69,36 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
         EvalTemplateItem templateItem = null;
         if (previewItemViewParams.templateItemId != null) {
             templateItem = authoringService.getTemplateItemById(previewItemViewParams.templateItemId);
+
         } else if (previewItemViewParams.itemId != null) {
             EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
             templateItem = TemplateItemUtils.makeTemplateItem(item);
             if (templateItem.getId() == null){
-            	templateItem.setId(item.getId());
+                templateItem.setId(item.getId());
             }
+
         } else {
             throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
+        }
+
+        // override values if they are set (this is for live previews)
+        if (previewItemViewParams.scaleDisplay != null) {
+            templateItem.setScaleDisplaySetting(previewItemViewParams.scaleDisplay);
+        }
+        if (previewItemViewParams.na != null) {
+            templateItem.setUsesNA(previewItemViewParams.na);
+        }
+        if (previewItemViewParams.compulsory != null) {
+            templateItem.setCompulsory(previewItemViewParams.compulsory);
+        }
+        if (previewItemViewParams.showComment != null) {
+            templateItem.setUsesComment(previewItemViewParams.showComment);
+        }
+        if (previewItemViewParams.text != null) {
+            templateItem.getItem().setItemText(previewItemViewParams.text);
+        }
+        if (previewItemViewParams.textLines != null) {
+            templateItem.setDisplayRows(previewItemViewParams.textLines);
         }
 
         // use the renderer evolver to show the item
@@ -86,11 +109,12 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
         }
         TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
         DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());
+
         itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true, 
                 RenderingUtils.makeRenderProps(dti, null, null, null) );
 
         // render the close button
-        UIMessage.make(tofill, "close-button", "general.close.window.button");
+        //UIMessage.make(tofill, "close-button", "general.close.window.button");
     }
 
     /* (non-Javadoc)
@@ -98,6 +122,13 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
      */
     public ViewParameters getViewParameters() {
         return new ItemViewParameters();
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.content.ContentTypeReporter#getContentType()
+     */
+    public String getContentType() {
+        return ContentTypeInfoRegistry.HTML_FRAGMENT;
     }
 
 }

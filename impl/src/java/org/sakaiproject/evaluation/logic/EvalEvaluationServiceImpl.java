@@ -506,6 +506,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_KEY.equals(eval.getAuthControl()) ) {
                     // if this uses a key then only the key matters
                     // TODO add key check
+                	log.info("Evaluation key (" + eval.getAuthControl() + ") is not a valid evaluation authcontrol key");
                     allowed = false;
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl()) ) {
                     if (commonLogic.isUserAdmin(userId) ) {
@@ -529,6 +530,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                                     // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
                                     allowed = true;
                                 } else {
+                                	log.info("User (" + userId + ") is not in a valid group for evaluation (" + evaluationId + ")");
                                     allowed = false;
                                 }
                             }
@@ -550,7 +552,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                                     // cannot modify responses
                                     // check if the user already took this evaluation for this group
                                     EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
-                                    if (response != null) {
+                                    if (response != null && response.complete && response.isSubmitted()) {
                                         // user already has a response saved for this evaluation and evalGroupId
                                         log.info("User (" + userId + ") cannot take evaluation (" + evaluationId 
                                                 + ") again in this group (" + evalGroupId 
@@ -1096,6 +1098,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     private void fixupEvaluation(EvalEvaluation evaluation) {
         if (evaluation != null) {
             // add in any needed checks or change storage that is needed here
+            evaluation.useDateTimes = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
         }
     }
 

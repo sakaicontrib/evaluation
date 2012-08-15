@@ -114,6 +114,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
     private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
     private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
+    private static final String SAKAI_SITE_TYPE_FULL = SiteService.APPLICATION_ID;
 
     private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
     private static final String ANON_USER_PREFIX = "Anon_User_";
@@ -968,9 +969,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @return a CONTEXT_TYPE constant from {@link EvalConstants}
      */
     protected String getContextType(String sakaiType) {
-        if (sakaiType.equals(SAKAI_SITE_TYPE)) {
+        if (SAKAI_SITE_TYPE.equals(sakaiType) || SAKAI_SITE_TYPE_FULL.equals(sakaiType)) {
             return EvalConstants.GROUP_TYPE_SITE;
-        } else if (sakaiType.equals(SAKAI_GROUP_TYPE)) {
+        } else if (SAKAI_GROUP_TYPE.equals(sakaiType)) {
             return EvalConstants.GROUP_TYPE_GROUP;
         }
         return EvalConstants.GROUP_TYPE_UNKNOWN;

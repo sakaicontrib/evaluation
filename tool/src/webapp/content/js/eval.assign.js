@@ -13,8 +13,29 @@
  * permissions and limitations under the License.
  */
 /**
- * For the evalAssign view
- */
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+ *
+ * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Sakai Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * - Aaron Zeckoski (azeckoski)
+ **********************************************************************************/
+
+// For the evalAssign view
 $(document).ready(function() {
     //trigger FB overrides 	
     evalAssignFacebox.init();
@@ -22,7 +43,7 @@ $(document).ready(function() {
     $('a[rel=assignTaSelector]').assignSelector({type:1});
     $(':submit').bind('click', function() {
         //Validate group Selections
-        var countChecked = $('form[id=eval-assign-form] input[@type=checkbox]:checked').get().length;
+        var countChecked = $('form[id=eval-assign-form] input[type=checkbox]:checked').get().length;
         if (countChecked == null || countChecked == 0) {
             $('#error').fadeIn(0);
             return false;
@@ -117,14 +138,14 @@ $(document).ready(function() {
                 });
                 var deselected = field.val().replace("j#{selectedEvaluationUsersLocator." + regText + "}[", "").replace(/"/g,"").replace(/ /g,"").replace("]", "").split(",");
                 if (deselected.length > 0) {
-                    variables.get.documentFB.find('input[@type=checkbox]:checked').each(function() {
+                    variables.get.documentFB.find('input[type=checkbox]:checked').each(function() {
                         for (var i = 0; i < deselected.length; i++) {
                             if ( deselected[i] == $(this).attr('id')) {
                                 this.checked = false;
                             }
                         }
                     });
-                    handleCheckboxes(variables.get.documentFB.find('.selectTable tbody input[@type=checkbox]').not(':checked'), 1);
+                    handleCheckboxes(variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked'), 1);
                 }
 
                 //check proper radiobox depending on selcetion option already saved in the DOM
@@ -138,7 +159,7 @@ $(document).ready(function() {
                 var selectionSaved = field.val().replace("j#{assignGroupSelectionSettings." + regText + "}", "");
                 log("selectionSaved value: " + selectionSaved);
                 if (selectionSaved.toString().length > 0) {
-                    variables.get.documentFB.find('input[@type=radio]').each(function() {
+                    variables.get.documentFB.find('input[type=radio]').each(function() {
                         if ( selectionSaved === $(this).val()) {
                             this.checked = true;
                         }
@@ -151,7 +172,7 @@ $(document).ready(function() {
                  */
 
                 //set initial state of select all box
-                if(variables.get.documentFB.find('.selectTable tbody input[@type=checkbox]').not(':checked').length === 0){
+                if(variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked').length === 0){
                    $('#selectorControl').each(function(){
                       this.checked = true;
                     });
@@ -160,19 +181,19 @@ $(document).ready(function() {
                 //Activate Mass (De)Selector controls
                 $("#selectorControl").bind('click', function(){
                     if (this.checked) {
-                        $('.selectTable tbody input[@type=checkbox]').not(':checked').each(function(){
+                        $('.selectTable tbody input[type=checkbox]').not(':checked').each(function(){
                             this.checked = true;
                         });
                     }else{
-                        $('.selectTable tbody input[@type=checkbox]:checked').each(function(){
+                        $('.selectTable tbody input[type=checkbox]:checked').each(function(){
                           this.checked = false;
                         });
                     }
                 });
                 //bind individual checkbox to toggle main selector
-                $(".selectTable tbody input[@type=checkbox]").bind('click', function(){
+                $(".selectTable tbody input[type=checkbox]").bind('click', function(){
                     if (this.checked) {
-                        if($('.selectTable tbody input[@type=checkbox]').not(':checked').length === 0){
+                        if($('.selectTable tbody input[type=checkbox]').not(':checked').length === 0){
                            $('#selectorControl').each(function(){
                               this.checked = true;
                             });
@@ -217,7 +238,7 @@ $(document).ready(function() {
 
     function initControls(that) {
         that.hide();
-        variables.groupCheckBox = that.parents('tr').find('input[@type=checkbox]');
+        variables.groupCheckBox = that.parents('tr').find('input[type=checkbox]');
         that.bind('click', function() {
                     var _url = that.attr('href');
                     variables.that = that;
@@ -235,7 +256,7 @@ $(document).ready(function() {
 
             }
         });
-        that.parents('tr.selectedGroup').find('input[@type=checkbox]').each(function(){
+        that.parents('tr.selectedGroup').find('input[type=checkbox]').each(function(){
             //$(this).trigger("click");
             this.checked = true;
             that.fadeIn('fast');
@@ -302,9 +323,9 @@ $(document).ready(function() {
 
     function handleFormSubmit(_that) {
         log("Running pre-SET checks");
-        var that = $(_that), temp = variables.get.documentFB.find('.selectTable tbody input[@type=checkbox]').not(':checked'),
-        tempChecked = variables.get.documentFB.find('.selectTable tbody input[@type=checkbox]:checked'),
-        selectionChosen = variables.get.documentFB.find('input[@type=radio]:checked');
+        var that = $(_that), temp = variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked'),
+        tempChecked = variables.get.documentFB.find('.selectTable tbody input[type=checkbox]:checked'),
+        selectionChosen = variables.get.documentFB.find('input[type=radio]:checked');
         variables.selectedPeople = tempChecked.length > 0 ? tempChecked.length : 0;
         if(temp.length>0){
             if (handleCheckboxes(temp, 0)) {

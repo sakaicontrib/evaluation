@@ -100,6 +100,108 @@ public class EvalBeanUtils {
     }
 
     /**
+     * Check if an instructor can view the results of a given evaluation
+     * (NOTE: this only checks is an evaluatee/instructor can view the results based on this evals settings,
+     * user permissions and response rates still need to be checked),
+     * probably should be using a method like this one: ReportingPermissions.canViewEvaluationResponses(),
+     * similar logic to {@link #getInstructorViewDateForEval(EvalEvaluation)}
+     * 
+     * @param eval the evaluation
+     * @return true if results can be viewed, false otherwise
+     */
+    public boolean checkInstructorViewResultsForEval(EvalEvaluation eval, String evalState) {
+        // now handle the results viewing flags (i.e. filter out evals the instructor should not see)
+        boolean instViewResultsEval = false;
+        if (eval != null) {
+            if (evalState == null || "".equals(evalState)) {
+                evalState = commonLogic.calculateViewability(eval.getState());
+            }
+            if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
+                // skip this one
+            } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
+                // this eval is active or later and nothing before active is viewable
+                boolean evalViewable = false;
+                // check if this eval is forced to a viewable state
+                String forcedViewableState = commonLogic.calculateViewability(evalState);
+                if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    // forced viewable
+                    evalViewable = true;
+                } else {
+                    // not forced so check if it is actually viewable
+                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                        // check for viewable state evals
+                        evalViewable = true;
+                    }
+                }
+                if (evalViewable) {
+                    // finally check if the instructor can actually view it
+                    Boolean instViewResultsSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+                    // probably should be using a method like this one: ReportingPermissions.canViewEvaluationResponses()
+                    if (instViewResultsSetting == null) {
+                        instViewResultsEval = eval.getInstructorViewResults();
+                    } else {
+                        instViewResultsEval = instViewResultsSetting.booleanValue();
+                    }
+                }
+            }
+        }
+        return instViewResultsEval;
+    }
+
+    /**
+     * Find the date at which an instructor can view the report/results of an evaluation,
+     * similar logic to {@link #checkInstructorViewResultsForEval(EvalEvaluation, String)}
+     * 
+     * @param eval an evaluation
+     * @return the date OR null if instructors cannot view the report
+     */
+    public Date getInstructorViewDateForEval(EvalEvaluation eval) {
+        Date instViewDate = null;
+        if (eval != null) {
+            if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval)) {
+                // skip this one
+            } else if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
+                // this eval is active or later and nothing before active is viewable
+                boolean evalViewable = false;
+                // check if this eval is forced to a viewable state
+                String forcedViewableState = commonLogic.calculateViewability(eval.getState());
+                if (EvalUtils.checkStateAfter(forcedViewableState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                    // forced viewable
+                    evalViewable = true;
+                    instViewDate = eval.getStartDate();
+                } else {
+                    // not forced so check if it is actually viewable
+                    if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+                        // check for viewable state evals
+                        evalViewable = true;
+                        instViewDate = eval.getSafeViewDate();
+                    }
+                }
+                if (evalViewable) {
+                    // finally check if the instructor can actually view it
+                    Boolean instViewResultsSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+                    if (instViewResultsSetting == null) {
+                        evalViewable = eval.getInstructorViewResults();
+                    } else {
+                        evalViewable = instViewResultsSetting.booleanValue();
+                    }
+                }
+                if (evalViewable) {
+                    // see if there is a local override for the instructor view date
+                    if (eval.getInstructorsDate() != null) {
+                        instViewDate = eval.getInstructorsDate();
+                    }
+                } else {
+                    // not viewable after all
+                    instViewDate = null;
+                }
+            }
+
+        }
+        return instViewDate;
+    }
+
+    /**
      * Sets all the system defaults for this evaluation object
      * and ensures all required fields are correctly set,
      * use this whenever you create a new evaluation <br/>
@@ -312,8 +414,9 @@ public class EvalBeanUtils {
      * handles setting date fields based on the useDueDate, etc. fields in the evaluation as well <br/>
      * 
      * @param eval an {@link EvalEvaluation} object (can be persisted or new)
+     * @param ignoreMinTimeDiff if true, the minimum time difference is ignored, if false, it is enforced
      */
-    public void fixupEvaluationDates(EvalEvaluation eval) {
+    public void fixupEvaluationDates(EvalEvaluation eval, boolean ignoreMinTimeDiff) {
         if (eval == null) {
             throw new IllegalArgumentException("eval must be set to fix dates");
         }
@@ -331,8 +434,6 @@ public class EvalBeanUtils {
             useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
         }
         boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME));
-        // Getting the system setting that tells what should be the minimum time difference between start date and due date.
-        int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 
         Date now = new Date();
         if (eval.getStartDate() == null) {
@@ -390,6 +491,11 @@ public class EvalBeanUtils {
             }
         }
 
+        // Getting the system setting that tells what should be the minimum time difference between start date and due date.
+        int minHoursDifference = 0;
+        if (!ignoreMinTimeDiff) {
+            minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+        }
         // Ensure minimum time difference between start and due/stop dates in eval - check this after the dates are set
         if (eval.getDueDate() != null) {
             EvalUtils.updateDueStopDates(eval, minHoursDifference);
@@ -498,19 +604,15 @@ public class EvalBeanUtils {
      * invalid for use in a URL).
      * 
      * @param evalCategory the eval category entered by the user
-     * @return boolean indicating its validity
      */
     public void validateEvalCategory(String evalCategory) {
-    	
     	try {
-    		
-    		if ((evalCategory != null) && (evalCategory.length() != 0))
+    		if ((evalCategory != null) && (evalCategory.length() != 0)) {
     			commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evalCategory);
-    		
+    		}
     	} catch (IllegalArgumentException ex) {
     		throw new InvalidEvalCategoryException(ex);
     	}
-    	
     }
     
 }

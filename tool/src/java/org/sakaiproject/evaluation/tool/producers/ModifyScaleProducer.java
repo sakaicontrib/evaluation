@@ -75,6 +75,7 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
@@ -90,7 +91,7 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
         EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
-        Long scaleId = evalScaleParams.scaleId;
+        Long scaleId = evalScaleParams.id;
 
         String scaleOTP = "scaleBeanLocator.";
         if (scaleId == null) {
@@ -144,9 +145,14 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         }
 
         // command buttons
-        UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
         UICommand.make(form, "scale-add-modify-save-button", 
                 UIMessage.make("modifyscale.save.scale.button"), "templateBBean.saveScaleAction");
+        UIInternalLink.make(form, "scale-add-modify-preview", 
+                UIMessage.make("modifyscale.save.preview.button"), 
+                // NOTE: special case which generates the URL without any params, we will fill in the params later via JS
+                new EvalScaleParameters(PreviewScaleProducer.VIEW_ID)
+        );
+        UIMessage.make(form, "scale-add-modify-cancel", "general.cancel.button");
 
     }
 

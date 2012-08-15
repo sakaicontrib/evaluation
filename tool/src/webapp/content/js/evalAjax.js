@@ -13,8 +13,29 @@
  * permissions and limitations under the License.
  */
 /**
- * @author lovemorenalube
- **/
+ * Sakai Evaluation System project
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+ *
+ * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Sakai Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * - Aaron Zeckoski (azeckoski)
+ **********************************************************************************/
+
+// @author lovemorenalube
 
 $(document).bind('activateControls.templateItems', function() {
     var log = evalTemplateUtils.debug,
@@ -157,22 +178,24 @@ $(document).bind('activateControls.templateItems', function() {
         return false;
     });
 
-    var saveButton = document.getElementById("saveReorderButton");
-    saveButton.onclick = function() {
+    $("#saveReorderButton").click(function(){
         disableOrderButtons();
         buildSortableIds();
 
         var order = [];
-        $("#itemList > div").not('.ui-sortable-helper').each(function(){
-            order.push($(this).find('input[name=template-item-id]:hidden').val());
-        });
-        var params = {
-            orderedIds : order.toString()
-        };
-
-        evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+        var $items = $("#itemList > div").not('.ui-sortable-helper');
+        if ($items.length > 0) {
+            // only run this when there are items to sort
+            $items.each(function(){
+                order.push($(this).find('input[name=template-item-id]:hidden').val());
+            });
+            var params = {
+                orderedIds : order.toString()
+            };
+            evalTemplateData.item.saveOrder(evalTemplateUtils.pages.eb_save_order, params);
+        }
         return false;
-    };
+    });
 
     $('a[rel=childEdit]').childEdit();
 
@@ -194,8 +217,9 @@ $(document).bind('activateControls.templateItems', function() {
 });
 
 function truncateTextDo(string, number) {
-    var trunc = string.substring(0, (number === null) ? 150 : number);
-    trunc = trunc.replace(/\w+$/, '');
+    var trunc = jQuery.trim(string);
+    trunc = trunc.substring(0, (number === null) ? 150 : number);
+    trunc = jQuery.trim(trunc);
     return trunc;
 }
 

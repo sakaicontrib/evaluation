@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,7 +142,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         evaluationDao.findAll(EvalEmailTemplate.class);
     }
 
-    public void testGetPaticipants() {
+    public void testGetParticipants() {
         List<EvalAssignUser> l = null;
         long start = 0l;
 
@@ -163,10 +164,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertNotNull(l);
         assertEquals(2, l.size());
 
-        start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, new String[] {EvalTestDataLoad.SITE2_REF}, 
                 null, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         assertNotNull(l);
         assertEquals(0, l.size());
 
@@ -187,12 +186,109 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(11, l.size());
 
         // get all active evals a user is assigned to
-        start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, EvalConstants.EVALUATION_STATE_ACTIVE);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         assertNotNull(l);
         assertEquals(2, l.size());
+
+        // test the way that the reminders email gets participants
+        //evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, null, includeConstant, null);
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+
+        // test fetching various sets of participants (using the untaken eval)
+        // first it has to have 3 users assigned to it so we assign 2 more (EvalTestDataLoad.USER_ID is already assigned)
+        evaluationDao.save( new EvalAssignUser(EvalTestDataLoad.USER_ID_4, etdl.evaluationActiveUntaken, EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.MAINT_USER_ID) );
+        evaluationDao.save( new EvalAssignUser(EvalTestDataLoad.USER_ID_5, etdl.evaluationActiveUntaken, EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.MAINT_USER_ID) );
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        // add in a saved response
+        EvalResponse r1 = new EvalResponse(EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, new Date(), null, null);
+        r1.setAnswers( new HashSet<EvalAnswer>() );
+        evaluationDao.save(r1);
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(2, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
+        assertNotNull(l);
+        assertEquals(0, l.size());
+
+        // add in a completed response
+        EvalResponse r2 = new EvalResponse(EvalTestDataLoad.USER_ID_4, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, etdl.yesterday, new Date(), null);
+        r2.setAnswers( new HashSet<EvalAnswer>() );
+        evaluationDao.save(r2);
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_ALL, null);
+        assertNotNull(l);
+        assertEquals(3, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_NONTAKERS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_IN_PROGRESS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
+        l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
+                null, null, EvalConstants.EVAL_INCLUDE_RESPONDENTS, null);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+
     }
 
     public void testGetEvalsUserCanTake() {
@@ -1105,25 +1201,37 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         Set<String> userIds = null;
 
         // check getting responders from complete evaluation
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null);
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, true);
+        assertNotNull(userIds);
+        assertEquals(2, userIds.size());
+        assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+        assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+        // check getting incomplete responders from complete evaluation
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, false);
+        assertNotNull(userIds);
+        assertEquals(0, userIds.size());
+
+        // check getting all responders from complete evaluation
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, null);
         assertNotNull(userIds);
         assertEquals(2, userIds.size());
         assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
         assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
 
         // test getting from subset of the groups
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
         assertNotNull(userIds);
         assertEquals(1, userIds.size());
         assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
 
         // test getting none
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationActiveUntaken.getId(), null);
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationActiveUntaken.getId(), null, true);
         assertNotNull(userIds);
         assertEquals(0, userIds.size());
 
         // test using invalid group ids retrieves no results
-        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {"xxxxxx", "fakeyandnotreal"});
+        userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {"xxxxxx", "fakeyandnotreal"}, true);
         assertNotNull(userIds);
         assertEquals(0, userIds.size());
 
@@ -1697,10 +1805,10 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
             assertNotNull(eauId);
             eau.setCompletedDate(new Date());
             evaluationDao.update(eau);
+            EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
+            assertNotNull(eau0);
+            assertNotNull(eau0.getCompletedDate());
         }
-        EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
-        assertNotNull(eau0);
-        assertNotNull(eau0.getCompletedDate());
         int count9 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
         assertEquals(0,count9);
         List<Map<String,Object>> mapping9 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);

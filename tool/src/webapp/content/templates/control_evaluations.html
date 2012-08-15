@@ -14,7 +14,7 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title rsf:id="page-title">My Evaluations</title>
@@ -48,10 +48,12 @@
                 </li>
             </ul>
         </div>
+
         <p class="elementAlertFront instruction" rsf:id="eval-instructions-group-notpublished">
-			This evaluation is assigned to at least one currently unpublished site. Publish these sites for students to be notified via email and given access to complete this evaluation.
-		</p>
-		<div rsf:id="partial-eval-listing:">
+            This evaluation is assigned to at least one currently unpublished site. Publish these sites for students to be notified via email and given access to complete this evaluation.
+        </p>
+
+        <div rsf:id="partial-eval-listing:">
             <h3 rsf:id="msg=controlevaluations.partial.header">Partial Evaluations</h3>
             <p class="instruction">
                 <span rsf:id="msg=controlevaluations.partial.description">Your Evaluations which you started creating but did not complete</span>
@@ -60,13 +62,14 @@
             <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
                 <thead>
                     <tr>
-                        <th rsf:id="msg=controlevaluations.eval.title.header" width="50%">
+                        <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
                             Evaluation Title
                         </th>
-                        <th rsf:id="msg=controlevaluations.partial.created.date.header" width="20%">
-                            Created On
+                        <th rsf:id="msg=controlevaluations.eval.settings.header" width="30%" class="screenOnly">
+                            Settings
                         </th>
-                        <th>
+                        <th rsf:id="msg=controlevaluations.partial.created.date.header" width="10%">
+                            Created On
                         </th>
                     </tr>
                 </thead>
@@ -75,17 +78,18 @@
                         <td headers="titleinqueue">
                             <span rsf:id="partial-eval-title">Evaluation title</span>
                         </td>
+                        <td class="itemAction screenOnly">
+                            <a rsf:id="partial-eval-edit-link" href="evaluation_settings.html">Continue</a>
+                            <a rsf:id="partial-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
+                        </td>
                         <td rsf:id="partial-eval-created" nowrap="nowrap">
                             20/03/2007
-                        </td>
-                        <td class="itemAction">
-                            <a rsf:id="inqueue-eval-edit-link" href="evaluation_settings.html">Continue</a>
-                            <span rsf:id="inqueue-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
         <h3 rsf:id="msg=controlevaluations.inqueue.header">In-Queue Evaluations</h3>
         <p rsf:id="msg=controlevaluations.inqueue.description" class="instruction">
             Your Evaluations in queue that have not started yet
@@ -94,14 +98,11 @@
             <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
                 <thead>
                     <tr>
-                        <th rsf:id="msg=controlevaluations.eval.title.header" width="35%">
+                        <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
                             Evaluation Title
                         </th>
-                        <th rsf:id="msg=controlevaluations.eval.settings.header" width="25%" class="screenOnly">
+                        <th rsf:id="msg=controlevaluations.eval.settings.header" width="30%" class="screenOnly">
                             Settings
-                        </th>
-                        <th rsf:id="msg=controlevaluations.eval.reminders.header" width="5%">
-                      		Reminders
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">
                             Assigned
@@ -123,10 +124,8 @@
                         </td>
                         <td headers="settingsinqueue" class="itemAction screenOnly">
                             <a rsf:id="inqueue-eval-edit-link" href="evaluation_settings.html">Edit</a>
-                            <span rsf:id="inqueue-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
-                        </td>
-                        <td align="center">
-                            <a rsf:id="notifications-link" href="evaluation_notifications.html" class="emailItem">&shy;</a>
+                            <a rsf:id="inqueue-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
+                            <a rsf:id="inqueue-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
                         </td>
                         <td headers="assignedinqueue">
                             <a rsf:id="inqueue-eval-assigned-link" href="evaluation_assign_confirm.html">Course 1010</a>
@@ -145,6 +144,7 @@
         <p rsf:id="no-inqueue-evals" class="instruction highlightPanel">
             No evaluations in-queue
         </p>
+
         <h3 rsf:id="msg=controlevaluations.active.header" style="font-weight:bold;">Active Evaluations</h3>
         <p rsf:id="msg=controlevaluations.active.description" class="instruction">
             Your Evaluations currently active for users to take
@@ -153,22 +153,13 @@
             <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
                 <thead>
                     <tr>
-                        <th rsf:id="msg=controlevaluations.eval.title.header">
+                        <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
                             Evaluation Title
-                        </th>
-                        <th rsf:id="msg=controlevaluations.eval.responses.header" width="10%">
-                            Responses
-                        </th>
-                        <th rsf:id="controlevaluations-eval-report-header" width="10%">
-                            Report
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.settings.header" width="25%" class="screenOnly">
                             Settings
                         </th>
-                        <th rsf:id="msg=controlevaluations.eval.reminders.header" width="5%">
-                      		Reminders
-                        </th>
-                        <th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">
+                        <th rsf:id="msg=controlevaluations.eval.assigned.header" width="10%">
                             Assigned
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.startdate.header" width="10%">
@@ -176,6 +167,12 @@
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">
                             Due Date
+                        </th>
+                        <th rsf:id="msg=controlevaluations.eval.responserate.header" width="10%">
+                            Response Rate
+                        </th>
+                        <th rsf:id="msg=controlevaluations.eval.report.header" width="15%" class="screenOnly">
+                            Report
                         </th>
                     </tr>
                 </thead>
@@ -186,33 +183,32 @@
                             <span rsf:id="eval-direct-link" class="itemAction">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation" target="_blank">link</a>)</span>
                             <span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category" target="_blank">category</a>]</span>
                         </td>
-                        <td nowrap="nowrap">
-                            <a rsf:id="responders-link" href="evaluation_responders.html">10/100</a>
-                            <span rsf:id="active-eval-response-rate"></span>
-                        </td>
-                        <td rsf:id="active-eval-view-report-node" nowrap="nowrap">
-  							<a href="view_report.html" rsf:id="activeEvalViewReportLink">View Report</a>
-  							<span rsf:id="active-eval-view-report-item"></span>       							
-  						</td>
                         <td headers="settingsact" class="itemAction screenOnly" nowrap="nowrap">
                             <a rsf:id="active-eval-edit-link" href="evaluation_settings.html">Edit</a>
-                            <span rsf:id="active-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
-                            <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm">
-                                | <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" />
+                            <a rsf:id="active-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
+                            <a rsf:id="active-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
+                            <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm left-separator">
+                                <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" />
                             </form>
-                        </td>
-                        <td align="center">
-                            <a rsf:id="notifications-link" href="evaluation_notifications.html" class="emailItem">&shy;</a>
                         </td>
                         <td headers="assignedact">
                             <a rsf:id="active-eval-assigned-link" href="evaluation_assign_confirm.html">12</a>
                             <span rsf:id="active-eval-assigned"></span>
                         </td>
-                        <td headers="startact" nowrap="nowrap">
-                            <span rsf:id="active-eval-startdate">15/03/2007</span>
+                        <td rsf:id="active-eval-startdate" headers="startact" nowrap="nowrap">
+                            15/03/2007
                         </td>
-                        <td headers="dueact" nowrap="nowrap">
-                            <span rsf:id="active-eval-duedate"> 20/03/2007</span>
+                        <td rsf:id="active-eval-duedate" headers="dueact" nowrap="nowrap">
+                            20/03/2007
+                        </td>
+                        <td nowrap="nowrap" headers="resprateact">
+                          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+                          <span rsf:id="responseRateDisplay"></span>
+                        </td>
+                        <td class="screenOnly" nowrap="nowrap" headers="reportact">
+                          <span rsf:id="evalReportDisplay"></span>
+                          <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+                          <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
                         </td>
                     </tr>
                 </tbody>
@@ -221,6 +217,7 @@
         <p rsf:id="no-active-evals" class="instruction highlightPanel">
             No active evaluations
         </p>
+
         <h3 rsf:id="msg=controlevaluations.closed.header">Closed Evaluations</h3>
         <p rsf:id="msg=controlevaluations.closed.description" class="instruction">
             Your Evaluations which have been completed
@@ -229,23 +226,26 @@
             <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
                 <thead>
                     <tr>
-                        <th rsf:id="msg=controlevaluations.eval.title.header" width="35%">
+                        <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
                             Evaluation Title
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.settings.header" width="25%" class="screenOnly">
-                            Report
+                            Settings
                         </th>
-                        <th rsf:id="msg=controlevaluations.eval.reminders.header" width="5%">
-                      		Reminders
-                        </th>
-                        <th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">
+                        <th rsf:id="msg=controlevaluations.eval.assigned.header" width="10%">
                             Assigned
+                        </th>
+                        <th rsf:id="msg=controlevaluations.eval.startdate.header" width="10%">
+                            Start Date
+                        </th>
+                        <th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">
+                            Due Date
                         </th>
                         <th rsf:id="msg=controlevaluations.eval.responserate.header" width="10%">
                             Response Rate
                         </th>
-                        <th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">
-                            Due Date
+                        <th rsf:id="msg=controlevaluations.eval.report.header" width="15%" class="screenOnly">
+                            Report
                         </th>
                     </tr>
                 </thead>
@@ -257,25 +257,29 @@
                             <span rsf:id="eval-category">[<span rsf:id="payload-component">category</span>]</span>
                         </td>
                         <td headers="settingsclosed" class="itemAction screenOnly">
-                            <a rsf:id="closed-eval-report-link" href="view_report.html">Report</a>
-                            <span rsf:id="closed-eval-message"></span>
-                            <span rsf:id="closed-eval-edit-link">| <a rsf:id="payload-component" href="evaluation_settings.html">Edit</a></span>
-                            <span rsf:id="closed-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
-                            <span rsf:id="closed-eval-reopen-link">| <a rsf:id="payload-component" href="evaluation_settings.html">Reopen</a></span>
-                        </td>
-                        <td align="center">
-                            <a rsf:id="notifications-link" href="evaluation_notifications.html" class="emailItem">&shy;</a>
+                            <a rsf:id="closed-eval-edit-link" href="evaluation_settings.html">Edit</a>
+                            <a rsf:id="closed-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
+                            <a rsf:id="closed-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
+                            <a rsf:id="closed-eval-reopen-link" href="evaluation_settings.html" class="left-separator">Reopen</a>
                         </td>
                         <td headers="assignedclosed">
                             <a rsf:id="closed-eval-assigned-link" href="evaluation_assign_confirm.html">Course 1010</a>
                             <span rsf:id="closed-eval-assigned"></span>
                         </td>
-                        <td headers="resprateclosed" nowrap="nowrap">
-                            <a rsf:id="responders-link" href="evaluation_responders.html">40/50 - 80%</a>
-                            <span rsf:id="closed-eval-response-rate"></span>
+                        <td rsf:id="closed-eval-startdate" headers="startact" nowrap="nowrap">
+                            15/03/2007
                         </td>
                         <td rsf:id="closed-eval-duedate" headers="dueclosed" nowrap="nowrap">
                             20/03/2007
+                        </td>
+                        <td nowrap="nowrap" headers="resprateclosed">
+                          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
+                          <span rsf:id="responseRateDisplay"></span>
+                        </td>
+                        <td class="screenOnly" nowrap="nowrap" headers="reportclosed">
+                          <span rsf:id="evalReportDisplay"></span>
+                          <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+                          <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
                         </td>
                     </tr>
                 </tbody>

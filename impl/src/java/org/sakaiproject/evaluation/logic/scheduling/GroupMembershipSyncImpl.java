@@ -82,10 +82,7 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 	
 				for(String state : stateList) {
 					List<EvalEvaluation> evals = evaluationService.getEvaluationsByState(state);
-					int count = 0;
-					if(evals != null) {
-						count = evals.size();
-					}
+					int count = evals.size();
 					if(logger.isInfoEnabled()) {
 						StringBuilder buf1 = new StringBuilder();
 						buf1.append("GroupMembershipSync.execute() syncing ");

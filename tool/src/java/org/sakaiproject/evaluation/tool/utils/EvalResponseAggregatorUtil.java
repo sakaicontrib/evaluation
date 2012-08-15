@@ -190,7 +190,7 @@ public class EvalResponseAggregatorUtil {
         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
                 || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
-            String labels[] = templateItem.getItem().getScale().getOptions();
+            String labels[] = RenderingUtils.makeReportingScaleLabels(templateItem, templateItem.getItem().getScale().getOptions());
             int value = answer.getNumeric().intValue();
             if (value >= 0 && value < labels.length) {
                 togo = labels[value];

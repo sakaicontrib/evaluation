@@ -88,7 +88,7 @@ public class TakeEvalBean {
             messages.addMessage(new TargettedMessage(messageKey, e));
             return "failure";
         }
-        messages.addMessage(new TargettedMessage("evaluations.take.message", new Object[] {
+        messages.addMessage(new TargettedMessage("evaluations.save.no.submit.message", new Object[] {
                 eval.getTitle(), commonLogic.getDisplayTitle(evalGroupId) },
                 TargettedMessage.SEVERITY_INFO));
         return "success";

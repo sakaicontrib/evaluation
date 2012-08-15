@@ -1,0 +1,432 @@
+//====================================
+// LAYOUT
+//====================================
+// These styles set a clean baseline layout.
+// Only layout related styles should be included here:
+// height, width, margin, padding, position, etc.
+
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+.evaluation {
+  .itemListEval {
+    margin-top: 0;
+    
+    .evalItemTop {
+      margin: 16px 0 !important;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      padding-right: 16px;
+    }
+    .evalItemTop:first-child {
+      margin-top: 0 !important;
+    }
+  }
+
+
+/////////////////////////
+// Item
+/////////////////////////
+  .item {
+    &.multiple-choice .content,
+    &.multiple-answer .content {
+      margin-left: 40px;
+    }
+    .title {
+      position: relative;
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding: 0;
+      span {
+        display: inline-block;
+      }
+      .number {
+        position: absolute;
+        width: 26px;
+        text-align: right;
+      }
+      .delineator, .required {
+        position: absolute;
+      }
+      .delineator {
+        left: 26px;
+        .paren {
+          display: none;
+        }
+        .dot {
+          display: inline-block;
+        }
+      }
+      .required {
+        left: 2.5em;
+        display: none;
+      }
+      .label {
+        margin-left: 40px;
+      }
+    }
+    .compulsory .title .required {
+        display: inline-block;
+    }
+    
+    // stepped display title
+    .numberWrapper {
+      text-align: right;
+      @include inline-block;
+      width: 30px;
+      padding-right: 6px;
+      font-weight: bold;
+      vertical-align: top;
+    }
+    .steppedLabel {
+      font-weight: bold;
+      @include inline-block;
+      width: 80%;
+    }
+  } // end item
+
+/////////////////////////
+// Group Stepped
+/////////////////////////
+
+.item.blockItemGroup {
+	font-size: 13px;
+	
+  .groupHeader {
+    padding-left: 42px;
+    padding-bottom: 24px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  .steppedLabel {
+    font-weight: normal;
+  }
+  .questionCell {
+    padding: 0.2em;
+    height: 24px;
+    padding-bottom: 14px;
+  }
+  .answerCell table {
+    margin-right: 2px;
+  }
+	.blockItemLabel {
+		margin-left: 0;
+		font-weight: normal;
+	}
+	.actualHeader {
+		@include inline-block;
+		padding-top: 4px;
+	}
+}
+/////////////////////////
+// Text Item
+/////////////////////////
+  .item.text {
+    .content {
+      position: relative;
+      
+      textarea {
+        width: 90%;
+        min-width: 600px;
+        padding: 0;
+        margin: 0;
+        margin-left: 40px;
+      }
+      .na {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 4px;
+        border: 1px solid red;
+        -webkit-border-radius: .5em;
+        -moz-border-radius: .5em;
+        border-radius: .5em;
+      }
+    }
+  } // end text item
+
+
+/////////////////////////
+// Matrix Display
+/////////////////////////
+  .matrix {
+    min-width: 800px;
+    .title {
+      min-width: 40%;
+    }
+    fieldset {
+      margin: 0;
+      padding: 0;
+      border: none;
+      legend {
+        padding: 0;
+        position: absolute;
+        right: 0;
+        width: 100%;
+        text-align: center;
+        .response-type, .response-scale-delineator {
+          @include visuallyhidden();
+        }
+        .response-scale-end {
+          position: absolute;
+          top: 0;
+          right: 10px;
+        }
+        .response-scale-start {
+          position: absolute;
+          top: 0;
+        }
+        .response-scale-start {
+          left: 70px;
+        }
+        .response-scale-middle {
+          position: relative;
+          left: 32px;
+        }
+      }
+    } // end fieldset
+  } // end matrix
+
+/////////////////////////
+// Scale Item
+/////////////////////////
+  .scale {
+    .matrix {
+      position: relative;
+      @include clearfix();
+      
+      .title {
+        float: left;
+      }
+      label span, label input, legend .response-scale-label {
+        font-family: sans-serif !important;
+        font-size: 12px !important;
+      }
+      .content {
+        margin: 0;
+        padding: 0;
+        text-align: right;
+        float: right;
+        @include horizontal-list();
+        fieldset {
+          position: relative;
+        }
+        .response-list {
+          padding-top: 16px;
+          li {
+            margin: 0;
+            padding: 0 !important;
+          }
+          li.na {
+            margin-right: 5px;
+            padding-right: 5px !important;
+            border-right: 1px solid #CCCCCC;
+          }
+        }
+        label {
+          display: inline-block;
+          margin: 0;
+          padding: 5px 15px;
+          font-family: sans-serif !important;
+          font-size: 12px !important;
+          //font-size: 100%;
+          line-height: 100%;
+          text-align: center;
+          text-decoration: none !important;
+          cursor: pointer !important;
+          @include border-radius(4px, 4px);
+          span {
+            display: block;
+            margin-bottom: 5px;
+          }
+        }
+      }
+
+      // Set minimunm widths for smaller set response scales (otherwise the labels overlap).
+      .matrixRadioItems-2 { 
+        min-width: 180px; 
+      } 
+      .matrixRadioItems-3 { 
+        min-width: 120px; 
+      } 
+      .matrixRadioItems-4 { 
+        min-width: 80px; 
+      } 
+      .matrixRadioItems-5 { 
+        min-width: 60px; 
+      }
+
+    }
+    
+    .compact {
+      .title {
+        float: left;
+        width: auto !important;
+        margin-top: 6px;
+      }
+      .content {
+        overflow: hidden;
+      }
+      .content table {
+        float: right;
+      }
+    }
+
+  } // end scale
+
+
+/////////////////////////
+// Grouped Items
+/////////////////////////
+  .item-group {
+    position: relative;
+    @include clearfix();
+
+    > .title {
+      float: left;
+      margin: 0;
+      margin-bottom: 16px;
+      margin-left: 42px;      
+    }
+
+    > .content {
+      display: inline-block;
+      width: 100%;
+      
+      > fieldset {
+        display: inline-block;
+        width: 100%;
+        
+        legend {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+        }
+      }
+      .item {
+        margin-bottom: 0;
+      }
+    }
+    
+    .item {
+      display: block;
+      margin: 0;
+      
+      .title .label {
+        padding-left: 2px;
+      }
+      legend {
+        display: none;
+      }
+      .content .response-list span {
+        @include visuallyhidden();
+      }
+    }
+    .response-scale-container {
+      height: 1em;
+      display: block;
+    }
+    .response-group-labels {
+      display: block;
+      margin-top: 0.75em;
+      text-align: right !important;
+      white-space: nowrap;
+    }
+    .response-scale-label {
+      display: inline-block;
+      padding: 0 19px;
+      width: 13px;
+      font-family: sans-serif !important;
+      font-size: 12px !important;
+      line-height: 100%;
+      text-align: center;
+      // IE9...
+      padding: 0 18px\9;
+      width: 15px\9;
+    }
+    .response-scale-na {
+      margin-right: 11px;
+      width: 24px;
+      padding: 0 17px 0 13px;
+    }
+    
+    .item .matrix {
+      padding-top: 8px;
+    }
+    .item .matrix .title {
+      padding: 4px 0;
+      margin-bottom: 0;
+    }
+    .item .matrix .response-list {
+      padding-top: 0 !important;
+    }
+  }
+  .steppedItemGroup {
+		font-size: 13px;
+	
+    .choiceGroup {
+      padding-right: 0.2em;
+    }
+		.blockItemLabel {
+			margin-left: 0;
+		}
+    img,
+    table td {
+      vertical-align: middle;
+    }
+  }
+  
+
+/////////////////////////
+// N/A Option
+/////////////////////////
+  .matrix {
+    .response-scale-na, .na {
+      visibility: hidden !important;
+    }
+  }
+  .use-na {
+    .matrix {
+      .response-scale-na, .na {
+        visibility: visible !important;
+      }
+    }
+  }
+
+/////////////////////////
+// Evaluation List
+/////////////////////////
+  .itemListEval {
+    > li {
+
+    }
+  }
+
+/////////////////////////
+// Comment
+/////////////////////////
+  .JSevalComment {
+    margin: 0 0 15px 55px;
+  }
+
+} //end namespace
+
+/////////////////////////
+// Firefox-only hack for EVALSYS-1235...
+/////////////////////////
+
+@-moz-document url-prefix() {
+  .evaluation .item-group .response-group-labels {
+    padding-right: 10px;
+  }
+  .evaluation .item-group .response-group-labels span {
+    padding-left: 34px;
+    width: 0;
+  }
+  .evaluation .item-group .response-group-labels .response-scale-na {
+    padding-left: 0 !important;
+    margin-right: 26px;
+  }
+}

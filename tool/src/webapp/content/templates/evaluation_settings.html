@@ -26,7 +26,7 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
 
-    <script src="../js/jquery/jquery-1.2.6.js" type="text/javascript" language="JavaScript"></script>
+    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript" language="JavaScript"></script>
     <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
 
 	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -85,13 +85,13 @@
                               <label rsf:id="radioLabel" for="radioValue">Template Title 1</label>
                           </td>
                           <td headers="ownerCol">&nbsp;<span rsf:id="radioOwner">OwnerUsername</span></td>                        
-                          <td headers="actionCol" class="itemAction">&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link" target="_blank">View preview</a></td>
+                          <td headers="actionCol" class="itemAction">&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link">View preview</a></td>
                       </tr>
                   </table>
               </div>
               <div rsf:id="showTemplate:" class="shorttext">
                 <span rsf:id="eval_template_title">Template: template title</span>
-                &nbsp; (<a rsf:id="eval_template_preview_link" href="preview_eval.html" target="_blank">View preview</a>)
+                &nbsp; (<a rsf:id="eval_template_preview_link" href="preview_eval.html">View preview</a>)
                 <span rsf:id="eval_template_modify_link">&nbsp; [<a rsf:id="payload-component" href="modify_template.html">Modify</a>]</span>
               </div>
             </fieldset>
@@ -222,7 +222,7 @@
 				</div>
 				<div rsf:id="showAllRolesCanParticipate:" class="checkbox">
 					<input rsf:id="allRolesParticipate" type="checkbox" name="allRolesParticipate" id="allRolesParticipate" />
-					<label rsf:id="allRolesParticipate_label" for="evaluatorsParticipate">All Roles Can Participate:</label>
+					<label rsf:id="allRolesParticipate_label" for="allRolesParticipate">All Roles Can Participate:</label>
 					<p rsf:id="msg=evalsettings.all.roles.participate.note"  class="instruction textPanelFooter indnt2">This setting allows all roles to take the survey</p>
 				</div>
 			</fieldset>
@@ -244,7 +244,7 @@
 					This setting allows you to give the instructor control over whether to use the evaluation (or simply require them to).
 				</p>
 				<p class="shorttext">
-					<label  rsf:id="instructor-opt-header" for="instructorOpt-selection">Instructor opt in setting:</label>
+					<label rsf:id="instructor-opt-header" for="instructorOpt-selection">Instructor opt in setting:</label>
 					<select name="instructor_opt" rsf:id="instructorOpt"  id="instructorOpt">
 						<option>Opt In</option>
 						<option>Opt Out</option>
@@ -266,8 +266,8 @@
                 <h4 rsf:id="msg=evalsettings.selection.header.instructor">Instructor questions:</h4>
                 <span rsf:id="selectionRadioInstructors" />
                 <div rsf:id="selectInstructorsChoice:">
-                  <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
-                  <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
+                  <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio1" value="radio" checked="checked" />
+                  <label rsf:id="radioLabel" for="radio1" >Respondents evaluate all instructors included in the evaluation</label>
                 </div>
                 <div rsf:id="selectInstructorsChoice:">
                    <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
@@ -327,7 +327,7 @@
                     <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
 				</p>
 				<p class="checkbox indnt1"> 	 
-                    <input type="checkbox" rsf:id="enable-mass-email" /> 	 
+                    <input type="checkbox" rsf:id="enable-mass-email" id="enable-mass-email" /> 	 
                     <label rsf:id="enable-mass-email-label" for="enable-mass-email">Send notification email the morning of the day the evaluation goes live.</label> 	 
                 </p>
                 <div id="evaluation_reminder_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
@@ -359,7 +359,7 @@
 			<p class="act">
 				<input name="continue_assigning" rsf:id="continueAssigning" type="submit" value="Continue to Assign to Courses" accesskey="s" class="active"/>
 				<input rsf:id="cancel-button" name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />
-			</p>	
+			</p>
 		</form>
 
 	</div>	

@@ -482,7 +482,7 @@ public interface EvalEvaluationService {
     public List<EvalResponse> getResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
 
     /**
-     * Count the number of responses for evaluationSetupService,
+     * Count the number of responses for evaluations,
      * can count responses for an entire evaluation regardless of eval group
      * or just responses for a specific group and/or user<br/>
      * This is a good method for checking to see if a user has responded<br/>
@@ -613,7 +613,8 @@ public interface EvalEvaluationService {
      */
     public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId);
 
-    // COUNT METHODS FROM UM
+
+    // COUNT METHODS FROM UM below here
 
 	/**
      * UM method
@@ -671,14 +672,14 @@ public interface EvalEvaluationService {
 	 * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
 	 * @param reminderEmailSent The date to use if querying by reminderEmailSent.
 	 * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
-	 * @return
+	 * @return count
 	 */
 	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
 	
 	/**
 	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
-	 * @return
+	 * @return count
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping();
 	

@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -112,6 +113,30 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         } else {
             // establish a transaction and then force the rollback
             getSession().beginTransaction().rollback();
+        }
+    }
+
+    /**
+     * This really does not work for most cases so be very careful with it
+     * @param object
+     */
+    protected void forceEvict(Serializable object) {
+        boolean active = false;
+        try {
+            Session session = getSession();
+            if (session.isOpen() && session.isConnected()) {
+                if (session.contains(object)) {
+                    active = true;
+                    session.evict(object);
+                }
+            } else {
+                log.warn("Session is not open OR not connected, cannot evict objects");
+            }
+            if (!active) {
+                log.info("Unable to evict object ("+object.getClass().getName()+") from session, it is not persistent: "+object);
+            }
+        } catch (Exception e) {
+            log.warn("Failure while attempting to evict object ("+object.getClass().getName()+") from session", e);
         }
     }
 
@@ -245,18 +270,19 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             assignTypeHQL = " and eau.type = :assignType";
             // now set up the filter
             if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-                // get all users who have NOT responded
-                userFilter = getResponseUserIds(evaluationId, groupIds);
-                includeFilterUsers = false;
+                // get all users who have responded either way
+                userFilter = getResponseUserIds(evaluationId, groupIds, null); // exclude
+                includeFilterUsers = false; // INVERT the search
             } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
                 // get all users who have responded
-                userFilter = getResponseUserIds(evaluationId, groupIds);
+                userFilter = getResponseUserIds(evaluationId, groupIds, true);
+                includeFilterUsers = true;
+            } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
+                // get all users who have saved
+                userFilter = getResponseUserIds(evaluationId, groupIds, false);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
                 // do nothing
-            } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
-                userFilter = getResponseIncompleteUserIds(evaluationId, groupIds);
-                includeFilterUsers = true;
             } else {
                 throw new IllegalArgumentException("Unknown includeConstant: " + includeConstant);
             }
@@ -270,20 +296,30 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         List<EvalAssignUser> assignments = new ArrayList<EvalAssignUser>( results );
 
         // This code is potentially expensive but there is not really a better way to handle it -AZ
-        if (userFilter != null && ! userFilter.isEmpty()) {
-            // filter the results based on the userFilter
-            for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
-                EvalAssignUser evalAssignUser = iterator.next();
-                String uid = evalAssignUser.getUserId();
+        if (userFilter != null) {
+            if (userFilter.isEmpty()) {
+                // employ shortcuts when the filter set is empty
                 if (includeFilterUsers) {
-                    // only include users in the filter
-                    if (! userFilter.contains(uid)) {
-                        iterator.remove();
-                    }
+                    // no one to include so just wipe the set
+                    assignments.clear();
                 } else {
-                    // exclude all users in the filter
-                    if (userFilter.contains(uid)) {
-                        iterator.remove();
+                    // no one to exclude to just return the complete set
+                }
+            } else {
+                // filter the results based on the userFilter
+                for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
+                    EvalAssignUser evalAssignUser = iterator.next();
+                    String uid = evalAssignUser.getUserId();
+                    if (includeFilterUsers) {
+                        // only include users in the filter
+                        if (! userFilter.contains(uid)) {
+                            iterator.remove();
+                        }
+                    } else {
+                        // exclude all users in the filter
+                        if (userFilter.contains(uid)) {
+                            iterator.remove();
+                        }
                     }
                 }
             }
@@ -1172,59 +1208,40 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
 
     /**
-     * Get all the users who have completely responded to an evaluation 
+     * Get all the users who have responded to an evaluation (completely or partly)
      * and optionally within group(s) assigned to that evaluation
      * 
      * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param evalGroupIds the unique eval group ids associated with this evaluation, 
+     * @param evalGroupIds [OPTIONAL] the unique eval group ids associated with this evaluation, 
      * can be null or empty to get all responses for this evaluation
+     * @param completed [OPTIONAL] if true then only completed (submitted) responses, 
+     *      if false, then only incomplete (saved) responses,
+     *      if null, then retrieve all responses (incomplete and complete)
      * @return a set of internal userIds
      */
-    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds) {
+    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         Map<String, Object> params = new HashMap<String, Object>();
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
             groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
             params.put("evalGroupIds", evalGroupIds);
         }
+        String completeHQL = "";
+        if (completed != null) {
+            completeHQL = " and response.endTime is "+(completed ? "not" : "")+" null ";
+        }
         params.put("evaluationId", evaluationId);
         String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
-            + " and response.endTime is not null " + groupsHQL + " order by response.id";
+            + completeHQL + groupsHQL + " order by response.id";
         List<?> results = executeHqlQuery(hql, params, 0, 0);
         // put the results into a set and convert them to strings
         Set<String> responseUsers = new HashSet<String>();
         for (Object object : results) {
             responseUsers.add((String) object);
         }
+        if (log.isDebugEnabled()) log.debug("ResponseUserIds(eval:"+evaluationId+", groups:"
+                +ArrayUtils.arrayToString(evalGroupIds)+", completed="+completed+"): users="+responseUsers);
         return responseUsers;
-    }
-
-    /**
-     * Get all the users who have saved but not completed a response to an evaluation
-     * and optionally within group(s) assigned to that evaluation
-     * 
-     * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param evalGroupIds the unique eval group ids associated with this evaluation,
-     * can be null or empty to get all responses for this evaluation
-     * @return a set of internal userIds
-     */
-    private Set<String> getResponseIncompleteUserIds(Long evaluationId, String[] evalGroupIds) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        String groupsHQL = "";
-        if (evalGroupIds != null && evalGroupIds.length > 0) {
-            groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
-            params.put("evalGroupIds", evalGroupIds);
-        }
-        params.put("evaluationId", evaluationId);
-        String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
-            + " and response.endTime is null " + groupsHQL + " order by response.id";
-        List<?> results = executeHqlQuery(hql, params, 0, 0);
-        // put the results into a set and convert them to strings
-        Set<String> responseUsers = new HashSet<String>();
-        for (Object object : results) {
-            responseUsers.add((String) object);
-        }
-        return responseUsers;        
     }
 
     /** getResponsesSavedInProgress returns a List of EvalResponses that have been saved
@@ -1577,8 +1594,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                     lockTemplate(template, Boolean.TRUE);
                 }
 
+                // This is a horrible hack to try to work around hibernate stupidity
                 evaluation.setLocked(Boolean.TRUE);
-                getHibernateTemplate().update(evaluation);
+                getSession().merge(evaluation);
+                getSession().evict(evaluation);
                 return true;
             }
         } else {
@@ -1588,8 +1607,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 return false;
             } else {
                 // unlock evaluation
+                // This is a horrible hack to try to work around hibernate stupidity
                 evaluation.setLocked(Boolean.FALSE);
-                getHibernateTemplate().update(evaluation);
+                getSession().merge(evaluation);
+                getSession().evict(evaluation);
 
                 // unlock associated templates if there are any
                 if (evaluation.getTemplate() != null) {

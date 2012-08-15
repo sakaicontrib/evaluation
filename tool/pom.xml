@@ -142,7 +142,6 @@
             <id>sakai2.7</id>
 			<activation> 
 				<property><name>sakai2.7</name></property>
-                <activeByDefault>true</activeByDefault>
 			</activation>
 		    <properties>
 		        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
@@ -193,6 +192,7 @@
             <id>sakai2.8</id>
 			<activation> 
 				<property><name>sakai2.8</name></property>
+                <activeByDefault>true</activeByDefault>
 			</activation>
 		    <properties>
 		        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
@@ -293,7 +293,7 @@
             	<dependency>
             		<groupId>org.springframework</groupId>
             		<artifactId>spring-webmvc</artifactId>
-			<scope>compile</scope>
+        			<scope>compile</scope>
             	</dependency>
             </dependencies>
         </profile>

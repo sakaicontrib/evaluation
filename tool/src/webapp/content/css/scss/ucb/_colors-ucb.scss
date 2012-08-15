@@ -1,0 +1,91 @@
+//====================================
+// COLORS
+//====================================
+// A color palatte in the form of variables.
+// Changing these colors effectively changes the whole color scheme.
+// Along with some basics (white, black, and grayscales), these variables are referenced in all the rest of the css where color is specified.
+// RGB values are used because RGB is easier to use in mathematical calculations (than hex).
+// If you need to convert Hexidecimal values to RGB, do a search on "convert hex to rgb" - there are several good web tools.
+
+// The basics.
+$white			: #FFF;
+$black			: #000;
+$text			: #444;
+
+// Grayscale (medium value).
+$gray         	: #999;
+$graydark     	: darken($gray, 10%);
+$graydarker		: darken($gray, 20%);
+$graydarkest	: darken($gray, 30%);
+$graylight		: lighten($gray, 10%);
+$graylighter	: lighten($gray, 20%);
+$graylightest	: lighten($gray, 30%);
+
+// Grayscale (dark value).
+$dgray        	: #444;
+$dgraydark		: darken($dgray, 5%);
+$dgraydarker	: darken($dgray, 10%);
+$dgraydarkest	: darken($dgray, 15%);
+$dgraylight		: lighten($dgray, 5%);
+$dgraylighter	: lighten($dgray, 10%);
+$dgraylightest 	: lighten($dgray, 15%);
+
+// Primary color, c1
+$c1           	: #264C83; //dark blue
+$c1dark       	: darken($c1, 10%);
+$c1darker     	: darken($c1, 20%);
+$c1darkest		: darken($c1, 30%);
+$c1light      	: lighten($c1, 10%);
+$c1lighter		: lighten($c1, 20%);
+$c1lightest		: lighten($c1, 30%);
+
+// Secondary color, c2
+$c2           	: #ACBACF; //light blue
+$c2dark       	: darken($c2, 10%);
+$c2darker     	: darken($c2, 20%);
+$c2darkest		: darken($c2, 30%);
+$c2light      	: lighten($c2, 10%);
+$c2lighter		: lighten($c2, 20%);
+$c2lightest		: lighten($c2, 30%);
+
+// Tertiary color, c3
+$c3           	: #F9E7AF; // golden yellow
+$c3dark       	: darken($c3, 10%);
+$c3darker     	: darken($c3, 20%);
+$c3darkest		: darken($c3, 30%);
+$c3light      	: lighten($c3, 10%);
+$c3lighter		: lighten($c3, 20%);
+$c3lightest		: lighten($c3, 30%);
+
+// Highlight color, c4
+$c4           	: #B11; // red
+$c4dark       	: darken($c4, 10%);
+$c4darker     	: darken($c4, 20%);
+$c4darkest		: darken($c4, 30%);
+$c4light      	: lighten($c4, 10%);
+$c4lighter		: lighten($c4, 20%);
+$c4lightest		: lighten($c4, 30%);
+
+// Highlight color, c5
+$c5           	: #FFA500; // orange
+$c5dark       	: darken($c4, 10%);
+$c5darker     	: darken($c4, 20%);
+$c5darkest		: darken($c4, 30%);
+$c5light      	: lighten($c4, 10%);
+$c5lighter		: lighten($c4, 20%);
+$c5lightest		: lighten($c4, 30%);
+
+// Utility colors
+$csuccess     : #339966;
+$cupdate      : #3366FF;
+$cretire      : #A52A2A;
+$cactivate    : #FFD700;
+$cerror       : #800000;
+
+// Temp
+$scale1			: lighten($csuccess, 25%);
+$scale2			: lighten($csuccess, 37%);
+$scale3			: lighten($csuccess, 50%);
+$scale5			: lighten($cerror, 70%);
+$scale6			: lighten($cerror, 60%);
+$scale7			: lighten($cerror, 50%);

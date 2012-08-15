@@ -30,7 +30,26 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 public class ComparatorsUtils {
 
     /**
-     * static class to sort {@link EvalEvaluation} by due date, then by title, then by id
+     * static class to sort {@link EvalEvaluation} by due date (most recent first), then by id
+     */
+    public static class EvaluationDueDateComparator implements Comparator<EvalEvaluation>, Serializable {
+        static private final long serialVersionUID = 31L;
+        public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
+            int comparison = 0;
+            if (eval0.getDueDate() != null && eval1.getDueDate() != null) {
+                comparison = eval0.getDueDate().compareTo(eval1.getDueDate());
+            } else {
+                comparison = eval0.getStartDate().compareTo(eval1.getStartDate());
+            }
+            if (comparison == 0) {
+                comparison = eval0.getId().compareTo(eval1.getId());
+            }         
+            return comparison;
+        }
+    }
+
+    /**
+     * static class to sort {@link EvalEvaluation} by due date (most recent first), then by title, then by id
      */
     public static class EvaluationDateTitleIdComparator implements Comparator<EvalEvaluation>, Serializable {
         static private final long serialVersionUID = 31L;

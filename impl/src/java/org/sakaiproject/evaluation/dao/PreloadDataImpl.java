@@ -443,6 +443,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
         evalConfigMap.put(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
         evalConfigMap.put(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, false);
+        evalConfigMap.put(EvalSettings.STUDENT_CANCEL_ALLOWED, false);
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
         // Default Admin settings
@@ -468,6 +469,7 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.USE_EXPERT_ITEMS, true);
         evalConfigMap.put(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
         evalConfigMap.put(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
+        evalConfigMap.put(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS, 10);
 
         evalConfigMap.put(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
         evalConfigMap.put(EvalSettings.ENABLE_EVAL_CATEGORIES, false);

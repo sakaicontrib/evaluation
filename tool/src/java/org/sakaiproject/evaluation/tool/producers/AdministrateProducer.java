@@ -188,6 +188,9 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "instructors-email-students", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
         UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
 
+        makeBoolean(form, "instructors-view-responders", ADMIN_WBL, EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS); 
+        UIMessage.make(form, "instructors-view-responders-note", "administrate.instructors.view.responders.note");
+
         makeBoolean(form,"admin-enable-provider-sync", ADMIN_WBL, EvalSettings.ENABLE_PROVIDER_SYNC);
         UIMessage.make(form, "admin-enable-provider-sync-note", "administrate.admin.enable.provider.sync");
 
@@ -229,6 +232,7 @@ public class AdministrateProducer extends EvalCommonProducer {
 
         // Student Settings
         UIMessage.make(form, "student-settings-header", "administrate.student.settings.header");
+        UIMessage.make(form, "student-settings-header-inner", "administrate.student.settings.header.inner");
 
         //Select for whether students can leave questions unanswered or not
         makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
@@ -245,22 +249,28 @@ public class AdministrateProducer extends EvalCommonProducer {
         UIMessage.make(form, "students-modify-responses-note", "administrate.students.modify.responses.note");
 
         //Select whether students can save without submit or not
-        String[] booleanConfigurableLabels = 
-        {
-                "administrate.true.label",
-                "administrate.false.label"
-        };
-        String[] booleanConfigurableValues = 
-        {
-                EvalToolConstants.ADMIN_BOOLEAN_YES,
-                EvalToolConstants.ADMIN_BOOLEAN_NO
-        };      
-        makeSelect(form, "students-save-without-submit",
-                booleanConfigurableValues,
-                booleanConfigurableLabels,
-                ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, true);
-        UIMessage.make(form, "students-save-without-submit-note","administrate.students.save.without.submit.note");
+//        String[] booleanConfigurableLabels = 
+//        {
+//                "administrate.true.label",
+//                "administrate.false.label"
+//        };
+//        String[] booleanConfigurableValues = 
+//        {
+//                EvalToolConstants.ADMIN_BOOLEAN_YES,
+//                EvalToolConstants.ADMIN_BOOLEAN_NO
+//        };      
+//        makeSelect(form, "students-save-without-submit",
+//                booleanConfigurableValues,
+//                booleanConfigurableLabels,
+//                ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT, true);
+//        UIMessage.make(form, "students-save-without-submit-note","administrate.students.save.without.submit.note");
 
+        makeBoolean(form,"students-save-without-submit", ADMIN_WBL, EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+        UIMessage.make(form, "students-save-without-submit-note", "administrate.students.save.without.submit.note");
+        
+        makeBoolean(form,"students-cancel-allowed", ADMIN_WBL, EvalSettings.STUDENT_CANCEL_ALLOWED);
+        UIMessage.make(form, "students-cancel-allowed-note", "administrate.students.cancel.allowed.note");
+        
         //Select for whether students can view results
         makeSelect(form, "students-view-results",
                 administrateConfigurableValues, 
@@ -289,6 +299,25 @@ public class AdministrateProducer extends EvalCommonProducer {
 
         makeBoolean(form, "hierarchy-display-node-headers", ADMIN_WBL, EvalSettings.DISPLAY_HIERARCHY_HEADERS);
         UIMessage.make(form, "hierarchy-display-node-headers-note", "administrate.hierarchy-display-node-headers-note");
+
+        
+        // DASHBOARD settings
+
+        makeBoolean(form, "dash-enable-evaluatee-box", ADMIN_WBL, EvalSettings.ENABLE_EVALUATEE_BOX);
+
+        //Number of days old can an eval be and still be recently closed
+        Integer evaluateeRecentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
+        if (evaluateeRecentlyClosedDays == null) { evaluateeRecentlyClosedDays = 10; }
+        UIInput.make(form, "dash-evaluatee-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS), evaluateeRecentlyClosedDays.toString());
+
+        makeBoolean(form, "dash-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
+
+        //Number of days old can an eval be and still be recently closed
+        Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+        if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
+        UIInput.make(form, "dash-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
+
+        makeBoolean(form, "dash-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
 
 
         // GENERAL settings
@@ -338,9 +367,6 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "general-use-view-date", ADMIN_WBL, EvalSettings.EVAL_USE_VIEW_DATE); 
         makeBoolean(form, "general-same-view-date",  ADMIN_WBL, EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
-        makeBoolean(form, "general-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
-        makeBoolean(form, "general-enable-sites-summary", ADMIN_WBL, EvalSettings.ENABLE_SUMMARY_SITES_BOX);
-        makeBoolean(form, "general-enable-evaluatee-box", ADMIN_WBL, EvalSettings.ENABLE_EVALUATEE_BOX);
         makeBoolean(form, "general-show-my-toplinks", ADMIN_WBL, EvalSettings.ENABLE_MY_TOPLINKS);
         makeBoolean(form, "general-use-eval-category", ADMIN_WBL, EvalSettings.ENABLE_EVAL_CATEGORIES);
         makeBoolean(form, "general-use-eval-term-id", ADMIN_WBL, EvalSettings.ENABLE_EVAL_TERM_IDS);
@@ -365,11 +391,6 @@ public class AdministrateProducer extends EvalCommonProducer {
 
         //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
-        //Number of days old can an eval be and still be recently closed
-        Integer recentlyClosedDays = (Integer) evalSettings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
-        UIInput.make(form, "general-eval-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_RECENTLY_CLOSED_DAYS), recentlyClosedDays.toString());
-        UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note");
-
         //Minimum time difference (in hours) between the start date and due date
         makeSelect(form, "general-mim-time-diff-between-dates",
                 EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
@@ -384,6 +405,7 @@ public class AdministrateProducer extends EvalCommonProducer {
         makeBoolean(form, "general-disable-question-blocks", ADMIN_WBL, EvalSettings.DISABLE_QUESTION_BLOCKS);
         makeBoolean(form, "general-enable-ta-category", ADMIN_WBL, EvalSettings.ENABLE_ASSISTANT_CATEGORY);
         makeBoolean(form, "general-enable-selections", ADMIN_WBL, EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
+        makeBoolean(form, "general-enable-site-publish-check", ADMIN_WBL, EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK);
         //makeBoolean(form, "general-filter-evalgroups", EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);  //TODO: refactor this code EVALSYS-942
         UIInput.make(form, "general-local-css-path", PathUtil.composePath(ADMIN_WBL, EvalSettings.LOCAL_CSS_PATH), 
                 EvalUtils.safeStringSetting(evalSettings, EvalSettings.LOCAL_CSS_PATH));
