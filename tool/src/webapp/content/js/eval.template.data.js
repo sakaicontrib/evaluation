@@ -23,14 +23,14 @@ var evalTemplateData = (function() {
         evalTemplateUtils.debug.group("Starting Fn submitFCKform", [form, textarea, target, btn]);
         evalTemplateUtils.debug.time("submitFCKform");
         var img = new Image(),
-                templateItemId = $(form).find('input[@name*=templateItemId]').attr('value'),
+                //templateItemId = $(form).find('input[name*=templateItemId]').attr('value'),
                 formAsArray = $(form).formToArray(),
                 fckEditor = null,
                 fckEditorValue = null,
                 isFCKEditor = textarea !== false,
                 isBlockChild = $.facebox.settings.elementToUpdate === 'block';
         img.src = $.facebox.settings.loadingImage;
-        evalTemplateUtils.debug.info("Saving item %i", templateItemId);
+        //evalTemplateUtils.debug.info("Saving item %i", templateItemId);
         if (isFCKEditor) {
             try {
                 if (typeof FCKeditorAPI !== "undefined" && textarea !== null) {
@@ -202,7 +202,7 @@ var evalTemplateData = (function() {
 					if ($('form').length > 0) {
 						var newRow = $('form tr:eq(1)').clone();
 						newRow.find('td:eq(0) span:eq(0)').html($("title", this).text());
-						var q = 'td:eq(0) span:eq(1) a[@href$='+newRow.attr("rowId")+']';
+						var q = 'td:eq(0) span:eq(1) a[href$='+newRow.attr("rowId")+']';
 						alert(newRow.find(q).attr('href').substring(newRow.find(q).attr('href').lastIndexOf('/') + 1));
 						newRow.find(q).attr('href',newRow.find(q).attr('href').replace(newRow.attr("rowId"),id));
 						newRow.attr("rowId", id);

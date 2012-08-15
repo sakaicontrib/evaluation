@@ -1,0 +1,59 @@
+//====================================
+// GRAPHICS
+//====================================
+// These styles define visual presentation.
+// All image references should be included here.
+
+/////////////////////////
+// Dashboard
+/////////////////////////
+.urgentStyle {
+  color: red;
+  font-weight: bold;
+}
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+.evaluation {
+  .content {
+    .response-list {
+      label {
+        font-family: verdana, sans-serif;
+        font-size: 11px;
+        color: #000000;
+        text-shadow: none;
+        background: #ffffff;
+        border: 1px solid #ffffff;
+        &:hover, &:focus {
+          color: #000000;
+          background: #ee4444;
+          @include background-image(linear-gradient(#ffffff, #ffa500));
+          border-color: #ffa500;
+        }
+      }
+      .selected {
+        color: #ffffff;
+        text-shadow: none;
+        background: #264c83;
+        @include background-image(linear-gradient(#3163ab, #1b355b));
+        border: 1px solid #0f1e34;
+        span {
+          color: #ffffff;
+        }
+        &:hover, &:focus {
+          color: #ffffff;
+          text-shadow: none;
+          background: #264c83;
+          @include background-image(linear-gradient(#3163ab, #1b355b));
+          border: 1px solid #0f1e34;
+          span {
+            color: #ffffff;
+          }
+        }
+      }
+    }
+
+  } //end content
+  
+} //end evaluation

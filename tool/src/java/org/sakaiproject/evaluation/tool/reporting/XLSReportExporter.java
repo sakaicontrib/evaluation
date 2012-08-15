@@ -269,14 +269,13 @@ public class XLSReportExporter implements ReportExporter {
                 Cell responseCell = row.createCell(dtiCounter);
                 // In Eval, users can leave questions blank, in which case this will be null
                 if (answer != null) {
-                    setPlainStringCell(responseCell, responseAggregator.formatForSpreadSheet(answer
-                            .getTemplateItem(), answer));
+                    setPlainStringCell(responseCell, responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
                 }
                 if (dti.usesComments()) {
                     // put comment in the extra column
                     dtiCounter++;
-                    setPlainStringCell(row.createCell(dtiCounter), (answer == null || EvalUtils
-                            .isBlank(answer.getComment())) ? "" : answer.getComment());
+                    setPlainStringCell(row.createCell(dtiCounter), 
+                            (answer == null || EvalUtils.isBlank(answer.getComment())) ? "" : answer.getComment());
                 }
                 dtiCounter++;
             }

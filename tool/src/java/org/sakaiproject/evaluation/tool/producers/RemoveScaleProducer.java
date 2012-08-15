@@ -82,7 +82,7 @@ public class RemoveScaleProducer extends EvalCommonProducer implements ViewParam
 
       // passed in values
       EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
-      Long scaleId = evalScaleParams.scaleId;
+      Long scaleId = evalScaleParams.id;
 
       EvalScale scale = authoringService.getScaleById(scaleId);
 
@@ -124,6 +124,7 @@ public class RemoveScaleProducer extends EvalCommonProducer implements ViewParam
    }
 
    public ViewParameters getViewParameters() {
-      return new EvalScaleParameters(VIEW_ID, null);
+      return new EvalScaleParameters(VIEW_ID);
    }
+
 }

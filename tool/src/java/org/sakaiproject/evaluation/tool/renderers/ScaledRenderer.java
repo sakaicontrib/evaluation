@@ -14,12 +14,14 @@
  */
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 
@@ -34,6 +36,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
@@ -102,12 +105,12 @@ public class ScaledRenderer implements ItemRenderer {
             UIOutput.make(compactEndContainer, "compactDisplayEnd", compactDisplayEnd);
 
             if (colored) {
-                compactStartContainer.decorators =
-                    new DecoratorList( new UIStyleDecorator("compactDisplayStart") );// must match the existing CSS class
-                //new DecoratorList(new UIColourDecorator(null, ScaledUtils.getStartColor(scale)));
-                compactEndContainer.decorators =
-                    new DecoratorList( new UIStyleDecorator("compactDisplayEnd") );// must match the existing CSS class
-                //new DecoratorList(new UIColourDecorator(null, ScaledUtils.getEndColor(scale)));
+                compactStartContainer.decorators = new DecoratorList( 
+                        new UIStyleDecorator(ScaledUtils.getStartClass(scale)) // must match an existing CSS class
+                    );
+                compactEndContainer.decorators = new DecoratorList( 
+                        new UIStyleDecorator(ScaledUtils.getEndClass(scale)) // must match an existing CSS class
+                    );
             }
 
             // For the radio buttons
@@ -207,18 +210,97 @@ public class ScaledRenderer implements ItemRenderer {
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
             for (int j = 0; j < limit; ++j) {
                 UIBranchContainer radiobranchNested = UIBranchContainer.make(displayContainer, "scaleOption:", j+"");
-                UISelectChoice choice = UISelectChoice.make(radiobranchNested, "radioValue", selectID, j);
+                UISelectChoice.make(radiobranchNested, "radioValue", selectID, j);
                 UISelectLabel.make(radiobranchNested, "radioLabel", selectID, j);//.decorate( new UILabelTargetDecorator(choice));
             }
 
             if (usesNA) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
                 radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
-                UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
+                UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
                 UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc");//.decorate( new UILabelTargetDecorator(choice));
             }
 
+        } else if (EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(scaleDisplaySetting)
+                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting)) {
+            // MATRIX item handling
+        	// build the question row container and apply decorations
+            UIBranchContainer matrix = UIBranchContainer.make(container, "matrixDisplay:");
+            if (renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID)) {
+                matrix.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
+                matrix.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+            }
 
+            boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(scaleDisplaySetting);
+            if (colored) {
+                matrix.decorate( new UIStyleDecorator("colored") ); // must match the existing CSS class
+            }
+            
+            if (usesNA) {
+            	matrix.decorate( new UIStyleDecorator("use-na") ); // must match the existing CSS class
+            }
+            
+            // display header labels
+            List<String> headerLabels = RenderingUtils.getMatrixLabels(scaleOptions);
+            UIOutput.make(container, "label-start", headerLabels.get(0));
+            UIOutput.make(container, "label-end", headerLabels.get(1));
+            if (headerLabels.size() == 3) {
+            	UIOutput.make(container, "label-middle", headerLabels.get(2));
+            }
+            
+            UIOutput.make(container,"label-na", "NA");
+            
+            // display question text
+            UIOutput.make(matrix, "itemNum", displayNumber+"" ); //$NON-NLS-2$
+            UIVerbatim.make(matrix, "itemText", templateItem.getItem().getItemText());
+            
+            for (int count = 1; count <= optionCount; count++) {
+                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleLabels[optionCount - count] = scaleOptions[count-1];
+            }
+
+            if (usesNA) {
+                scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
+                scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
+            }
+            
+            UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
+            UISelect radios = UISelect.make(rowBranch, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+            String selectID = radios.getFullID();
+
+            if (disabled) {
+                radios.selection.willinput = false;
+                radios.selection.fossilize = false;
+            }
+
+            int scaleLength = scaleValues.length;
+            int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
+            UISelectChoice[] choices = new UISelectChoice[limit];
+            
+            for (int j = 0; j < limit; ++j) {
+                    UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", j+"");
+                    // decorate the li so it is easier to control the styles
+                    if (j == 0) {
+                        radioBranchSecond.decorate( new UIStyleDecorator("matrixRadioFirst") );
+                    } else {
+                        radioBranchSecond.decorate( new UIStyleDecorator("matrixRadioItems-"+scaleLength) );
+                    }
+                    choices[j] = UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
+                    // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
+                    // an empty label is appended; ignore that one too 
+                    int labelIndex = scaleLabels.length - j - (usesNA ? 2 : 1);
+                    UIVerbatim.make(radioBranchSecond, "radioValueLabel", (limit - labelIndex) + "");
+            }
+
+            // display the N/A radio button if needed
+        	UIBranchContainer labelContainer = UIBranchContainer.make(rowBranch,  "na-input-label:");
+            UISelectChoice choice = UISelectChoice.make(labelContainer, "na-input", selectID, scaleLength - 1);
+            UIMessage.make(rowBranch, "radioValueLabelNa", "viewitem.na.desc"); //.decorate( new UILabelTargetDecorator(choice));                
+            if (!usesNA) {
+            	choice.decorate( new UIDisabledDecorator());
+            }
+            
         } else if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) ) {
 

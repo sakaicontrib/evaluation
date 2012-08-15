@@ -76,7 +76,7 @@ public class ControlScalesProducer extends EvalCommonProducer {
 
         UIInternalLink.make(tofill, "add-new-scale-link", 
                 UIMessage.make("controlscales.add.new.scale.link"), 
-                new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, null));
+                new EvalScaleParameters(ModifyScaleProducer.VIEW_ID));
 
         UIMessage.make(tofill, "scales-control-heading", "controlscales.page.heading");
         UIMessage.make(tofill, "scales-control-instruction", "controlscales.page.instruction");
@@ -131,6 +131,11 @@ public class ControlScalesProducer extends EvalCommonProducer {
             } else {
                 UIMessage.make(scaleBranch, "remove-dummy", "general.command.delete");
             }
+
+            UIInternalLink.make(scaleBranch, "preview-link", 
+                    UIMessage.make("general.command.preview"), 
+                    new EvalScaleParameters(PreviewScaleProducer.VIEW_ID, scale.getId())
+            );
 
             // Display the scale options vertically
             // ASCII value of 'a' = 97 so initial value is 96.

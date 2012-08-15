@@ -49,7 +49,10 @@ public interface EvalSettings {
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
      */
     public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
-    
+    /**
+     * CONSTANT: Is the instructor allowed to view the results of all evaluations - {@link Boolean}, default True
+     * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
+     */
     public static final String INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS:java.lang.Boolean";
     
     /**
@@ -65,6 +68,10 @@ public interface EvalSettings {
      * CONSTANT: How many items is the instructor allowed to add to an evaluation from above in the hierarchy - {@link Integer}, default 5
      */
     public static final String INSTRUCTOR_ADD_ITEMS_NUMBER = "INSTRUCTOR_ADD_ITEMS_NUMBER:java.lang.Integer";
+    /**
+     * CONSTANT: Control whether instructor users have access to the list of responders for an evaluation - {@link Boolean}, default False
+     */
+    public static final String INSTRUCTOR_ALLOWED_VIEW_RESPONDERS = "INSTRUCTOR_ALLOWED_VIEW_RESPONDERS:java.lang.Boolean";
 
     /**
      * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
@@ -82,6 +89,11 @@ public interface EvalSettings {
      * having to reenter their information
      */
     public static final String STUDENT_SAVE_WITHOUT_SUBMIT = "STUDENT_SAVE_WITHOUT_SUBMIT:java.lang.Boolean";
+    /**
+     * CONSTANT: Student is presented with a Cancel button when taking an assessment.  If a Cancel button is pressed,
+     * no assessment data is saved, and the user is returned to the dashboard.
+     */
+    public static final String STUDENT_CANCEL_ALLOWED = "STUDENT_CANCEL_ALLOWED:java.lang.Boolean";
     /**
      * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
      * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
@@ -123,7 +135,7 @@ public interface EvalSettings {
      */
     public static final String ENABLE_ADMINISTRATING_BOX = "ENABLE_ADMINISTRATING_BOX:java.lang.Boolean";
     /**
-     * CONSTANT: Is the box showing the Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
+     * CONSTANT: Is the box showing the Evals/Courses in Which I May Be Evaluated visible? - {@link Boolean}, default False
      */
     public static final String ENABLE_EVALUATEE_BOX = "ENABLE_EVALUATEE_BOX:java.lang.Boolean";
     /**
@@ -172,6 +184,12 @@ public interface EvalSettings {
      * It must be less than or equal to this many days old to count as recent
      */
     public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
+    /**
+     * CONSTANT: How many days old can an eval be and still be recently closed (for the be evaluated box) - {@link Integer}, default 10<br/>
+     * It must be less than or equal to this many days old to count as recent
+     */
+    public static final String EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS = "EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS:java.lang.Integer";
+
     /**
      * CONSTANT: Allow users to set the stop date when creating evaluations - {@link Boolean}, default False<br/>
      * <b>Note:</b> Stop date should default to null when it cannot be set
@@ -374,6 +392,11 @@ public interface EvalSettings {
     public static final String ENABLE_INSTRUCTOR_ASSISTANT_SELECTION = "ENABLE_INSTRUCTOR_ASSISTANT_SELECTION:java.lang.Boolean";
 
     /**
+     * Enable the check to filter out sites (groups) which are not published when selecting groups to assign. - {@link Boolean}, default False
+     */
+    public static final String ENABLE_SITE_GROUP_PUBLISH_CHECK = "ENABLE_SITE_GROUP_PUBLISH_CHECK:java.lang.Boolean";
+
+    /**
      * If this is enabled/true then we only show evalgroups/sites like the current one in the Assign Eval to groups view
      */
     public static final String ENABLE_FILTER_ASSIGNABLE_GROUPS = "ENABLE_FILTER_ASSIGNABLE_GROUPS:java.lang.Boolean";
@@ -415,6 +438,21 @@ public interface EvalSettings {
 	 */
 	public static final String CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE = "CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE:java.lang.Boolean";
 
+	/**
+	 * EVALSYS-1236
+	 * If this is true, send a created e-mail, even if the instructor cannot 
+	 * modify the evaluation.  Only applies if the email settings are set to 
+	 * Consolidated emails
+	 */
+	public static final String CONSOLIDATED_FORCE_SEND_CREATED_EMAIL = "CONSOLIDATED_FORCE_SEND_CREATED_EMAIL:java.lang.Boolean";
+	
+	/**
+	 * EVALSYS-1236
+	 * If this is true, send an evaluation available e-mail.  Only applies if 
+	 * the email settings are set to Consolidated emails.
+	 */
+	public static final String CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION = "CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION:java.lang.Boolean";
+	
     /**
      * If true, memberships in EvalAssignGroup will be synchronized with the group provider when a new EvalAssignGroup is saved.  Default is true.
      */
@@ -457,58 +495,64 @@ public interface EvalSettings {
         ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
         ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION,
         CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE,
+        CONSOLIDATED_FORCE_SEND_CREATED_EMAIL,
+        CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION,
         DISABLE_ITEM_BANK,
         DISABLE_QUESTION_BLOCKS,
         DISPLAY_HIERARCHY_HEADERS,
         DISPLAY_HIERARCHY_OPTIONS,
+        ENABLE_ADMINISTRATING_BOX,
         ENABLE_ADHOC_GROUPS,
         ENABLE_ADHOC_USERS,
+        ENABLE_ASSISTANT_CATEGORY,
         ENABLE_CSV_REPORT_EXPORT,
         ENABLE_EVAL_CATEGORIES,
         ENABLE_EVAL_TERM_IDS,
         ENABLE_EVAL_EARLY_CLOSE,
         ENABLE_EVAL_REOPEN,
         ENABLE_EVAL_RESPONSE_REMOVAL,
+        ENABLE_EVALUATEE_BOX,
         ENABLE_FILTER_ASSIGNABLE_GROUPS,
+        ENABLE_GROUP_SPECIFIC_PREVIEW,
         ENABLE_IMPORTING,
-        ENABLE_PROVIDER_SYNC,
         ENABLE_INSTRUCTOR_ASSISTANT_SELECTION,
         ENABLE_ITEM_COMMENTS,
+        ENABLE_JOB_COMPLETION_EMAIL,
         ENABLE_LIST_OF_TAKERS_EXPORT,
+        ENABLE_SAKAI_ADMIN_ACCESS,
+        ENABLE_MY_TOPLINKS,
         ENABLE_NOT_AVAILABLE,
         ENABLE_PDF_REPORT_BANNER,
         ENABLE_PDF_REPORT_EXPORT,
+        ENABLE_PROVIDER_SYNC,
+        ENABLE_REMINDER_STATUS,
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
+        ENABLE_SITE_GROUP_PUBLISH_CHECK,
         ENABLE_SUBMISSION_CONFIRMATION_EMAIL,
         ENABLE_SUMMARY_SITES_BOX,
-        ENABLE_ASSISTANT_CATEGORY,
-        ENABLE_ADMINISTRATING_BOX,
-        ENABLE_EVALUATEE_BOX,
-        ENABLE_MY_TOPLINKS,
-        ENABLE_XLS_REPORT_EXPORT,
         ENABLE_TEMPLATE_COPYING,
-        ENABLE_GROUP_SPECIFIC_PREVIEW,
+        ENABLE_XLS_REPORT_EXPORT,
         EVAL_USE_DATE_TIME,
         EVAL_USE_SAME_VIEW_DATES,
         EVAL_USE_STOP_DATE,
         EVAL_USE_VIEW_DATE,
         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
+        INSTRUCTOR_ALLOWED_VIEW_RESPONDERS,
         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
         ITEM_USE_RESULTS_SHARING,
         ITEM_USE_COURSE_CATEGORY_ONLY,
         LOG_EMAIL_RECIPIENTS,
         REQUIRE_COMMENTS_BLOCK,
-        USE_ADMIN_AS_FROM_EMAIL,
-        USE_EXPERT_ITEMS,
-        USE_EXPERT_TEMPLATES,
-        VIEW_SURVEY_RESULTS_IGNORE_DATES,
-        ENABLE_JOB_COMPLETION_EMAIL,
-        ENABLE_REMINDER_STATUS,
+        STUDENT_SAVE_WITHOUT_SUBMIT,
+        STUDENT_CANCEL_ALLOWED,
         SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE,
         SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE,
         SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE,
         SYNC_UNASSIGNED_GROUPS_ON_STARTUP,
-        ENABLE_SAKAI_ADMIN_ACCESS
+        USE_ADMIN_AS_FROM_EMAIL,
+        USE_EXPERT_ITEMS,
+        USE_EXPERT_TEMPLATES,
+        VIEW_SURVEY_RESULTS_IGNORE_DATES
     };
 
     /**
@@ -517,13 +561,12 @@ public interface EvalSettings {
      * all booleans should be indicated in either this or {@link #BOOLEAN_SETTINGS}
      */
     public static String[] TERNARY_BOOLEAN_SETTINGS = {
+        ALLOW_ALL_SITE_ROLES_TO_RESPOND,
         INSTRUCTOR_ALLOWED_VIEW_RESULTS,
         INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS,
         STUDENT_ALLOWED_LEAVE_UNANSWERED,
         STUDENT_MODIFY_RESPONSES,
-        STUDENT_SAVE_WITHOUT_SUBMIT,
-        STUDENT_ALLOWED_VIEW_RESULTS,
-        ALLOW_ALL_SITE_ROLES_TO_RESPOND
+        STUDENT_ALLOWED_VIEW_RESULTS
     };
 
     /**

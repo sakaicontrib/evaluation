@@ -90,10 +90,8 @@ public class CSVReportExporter implements ReportExporter {
                 continue;
             }
             
-            questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti
-                    .getTemplateItemType()));
-            questionTextRow.add(commonLogic.makePlainTextFromHTML(dti.templateItem.getItem()
-                    .getItemText()));
+            questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti.getTemplateItemType()));
+            questionTextRow.add(commonLogic.makePlainTextFromHTML(dti.templateItem.getItem().getItemText()));
             if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
                 EvalUser user = commonLogic.getEvalUserById( dti.associateId );
                 String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
@@ -144,12 +142,10 @@ public class CSVReportExporter implements ReportExporter {
                 
                 EvalAnswer answer = dti.getAnswer(responseId);
                 if (answer != null) {
-                    nextResponseRow.add(responseAggregator.formatForSpreadSheet(answer
-                            .getTemplateItem(), answer));
+                    nextResponseRow.add(responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
                     if (dti.usesComments()) {
                         // put comment in the next column
-                        nextResponseRow.add(EvalUtils.isBlank(answer.getComment()) ? "" : answer
-                                .getComment());
+                        nextResponseRow.add(EvalUtils.isBlank(answer.getComment()) ? "" : answer.getComment());
                     }
                 } else {
                     nextResponseRow.add("");

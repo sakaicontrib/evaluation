@@ -96,11 +96,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public void setEvalGroupsProvider(EvalGroupsProvider evalGroupsProvider) {
         this.evalGroupsProvider = evalGroupsProvider;
     }
-    
+    public EvalGroupsProvider getEvalGroupsProvider() {
+        return evalGroupsProvider;
+    }
+
     public void init() {
         log.debug("init, register security perms");
 
-        // setup provider
+        // auto setup provider
         if (evalGroupsProvider == null) {
             evalGroupsProvider = (EvalGroupsProvider) externalLogic.getBean(EvalGroupsProvider.class);
             if (evalGroupsProvider != null)
@@ -235,6 +238,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return user;
     }
 
+    @SuppressWarnings("null")
     public List<EvalUser> getEvalUsersByIds(String[] userIds) {
         List<EvalUser> users = new ArrayList<EvalUser>();
         boolean foundAll = false;
@@ -409,7 +413,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     public int countEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission);
 
         int count = externalLogic.countEvalGroupsForUser(userId, permission);
 
@@ -428,12 +432,13 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             }
         }
 
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission + ", count: " + count);
         return count;
     }
 
     @SuppressWarnings("rawtypes")
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) log.debug("userId: " + userId + ", permission: " + permission);
 
         List<EvalGroup> l = new ArrayList<EvalGroup>();
 
@@ -525,6 +530,21 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return userIds;
     }
 
+	public String calculateViewability(String state) {
+		Boolean viewResultsIgnoreDate = (Boolean) evalSettings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+		
+		if(viewResultsIgnoreDate != null && viewResultsIgnoreDate) {
+			if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ||
+				EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ||
+				EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
+				
+				return EvalConstants.EVALUATION_STATE_VIEWABLE;
+			} 
+		}
+		
+		return state;
+	}
+    
     public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
 
         /* NOTE: false checks end up being really costly and should probably be cached
@@ -587,8 +607,11 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups, forcing this to true for now so it does not break things -AZ
     public boolean isEvalGroupPublished(String evalGroupId) {
-        return true;
-        //return externalLogic.isEvalGroupPublished(evalGroupId);
+        if ((Boolean) evalSettings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK)) {
+            // FIXME this is NOT implemented correctly and will return false for all non-sakai Site type groups
+            return externalLogic.isEvalGroupPublished(evalGroupId);
+        }
+        return true; // default to true (all groups published)
     }
 
 
@@ -845,5 +868,18 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 			Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);
 	}
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalCommonLogic#registerEvalGroupsProvider(org.sakaiproject.evaluation.providers.EvalGroupsProvider)
+     */
+    public void registerEvalGroupsProvider(EvalGroupsProvider provider) {
+        if (provider != null) {
+            log.info("Registered EvalGroupProvider: "+provider.getClass().getName());
+            this.evalGroupsProvider = provider;
+        } else {
+            log.info("Unregistered EvalGroupProvider");
+            this.evalGroupsProvider = null;
+        }
+    }
 
 }

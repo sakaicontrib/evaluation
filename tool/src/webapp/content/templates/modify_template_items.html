@@ -18,7 +18,6 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
     <title rsf:id="modify-template-title">Edit Template</title>
     <!-- standard on all pages -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -27,9 +26,10 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
 
+    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
+    <script src="../js/jquery/jquery.elastic.js" type="text/javascript"></script>
     <script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-ui-all-effects-1.6rc4.packed.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/fluid/Fluid.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/facebox/facebox.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
@@ -48,6 +48,7 @@
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.order.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
 
+    <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -71,7 +72,7 @@
     <span rsf:id="site-id" id="site-id" style="display:none">Site Id</span>
     <div class="navPanel  highlightPanel">
       <h3 class="viewNav"> <span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span> <span rsf:id="title" class="highlight" id="">Title</span> </h3>
-      <div class="listNav itemAction"> <a href="modify_template.html" rsf:id="modify_title_desc_link" rel="faceboxGrid">Edit Template Title/Description</a> | <a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank" >View a preview</a> | <span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a></span> | <a href="evaluation_start.html" rsf:id="begin_eval_link" id="begin_eval_link">Begin an evaluation using this template</a> <span rsf:id="begin-eval-dummylink" id="begin-eval-dummylink" style="color:gray;"></span></div>
+      <div class="listNav itemAction"> <a href="modify_template.html" rsf:id="modify_title_desc_link" rel="faceboxGrid">Edit Template Title/Description</a> | <a rsf:id="preview_eval_link" href="preview_eval.html">View a preview</a> | <span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a></span> | <a href="evaluation_start.html" rsf:id="begin_eval_link" id="begin_eval_link">Begin an evaluation using this template</a> <span rsf:id="begin-eval-dummylink" id="begin-eval-dummylink" style="color:gray;"></span></div>
     </div>
     <div rsf:id="description-switch:" class="textPanel"> <span rsf:id="description" id="">Template description goes here, this would be notes for other admins or yourself, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui laoreet libero, nec pulvinar sem mi ac felis.</span> </div>
     <div class="navPanel">

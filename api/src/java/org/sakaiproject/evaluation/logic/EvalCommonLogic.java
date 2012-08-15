@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAdmin;
+import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 
 
 /**
@@ -211,6 +212,16 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
 	public EvalAdmin getEvalAdmin(String userId);
 	
 	/**
+	 * calculateViewability() takes a state and determines if the state
+	 * should be viewable, based on system settings
+	 * <p>EvalSettings.VIEW_SURVEY_RESULTS_IGNORE, if set, will promote some
+	 * states to EvalConstants.EVALUATION_STATE_VIEWABLE
+	 * @param state one of the states listed in EvalConstants, such as EVALUATION_STATE_ACTIVE
+	 * @return the original state or EVALUATION_STATE_VIEWABLE if the view can be promoted
+	 */
+	public String calculateViewability(String state);
+	
+	/**
 	 * Assigns a user as an eval admin.
 	 * 
 	 * @param userId internal user id (not username)
@@ -232,5 +243,18 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
 	 * @return true if the user is an eval admin, false otherwise
 	 */
 	public boolean isUserEvalAdmin(String userId);
-    
+
+
+    // PROVIDERS
+
+    /**
+     * The provider will auto-register if it can, but this will allow it to also be registered
+     * or unregistered manually, calling this will override any previously registered eval groups provider
+     * and calling it with a null will clear the currently registered provider
+     * 
+     * @param provider the EGP to register for the system to use,
+     * if NULL then unregister the provider
+     */
+    public void registerEvalGroupsProvider(EvalGroupsProvider provider);
+
 }

@@ -29,6 +29,40 @@ public class ItemViewParameters extends TemplateViewParameters {
    public String itemClassification;
    public Long groupItemId;
 
+   // special params for live item previews
+   /**
+    * Live Preview
+    * The scale display setting for live previews
+    * EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED;
+    */
+   public String scaleDisplay;
+   /**
+    * Live Preview
+    * Current text for live preview (might need to truncate this)
+    */
+   public String text;
+   /**
+    * Live Preview
+    * Whether or not to show the N/A
+    */
+   public Boolean na;
+   /**
+    * Live Preview
+    * whether to show the user comments box
+    */
+   public Boolean showComment;
+   /**
+    * Live Preview
+    * Is this item required
+    */
+   public Boolean compulsory;
+   /**
+    * Live Preview
+    * How many lines of text to show for essay
+    */
+   public Integer textLines;
+
+
    public ItemViewParameters() { }
 
    public ItemViewParameters(String viewID, Long itemId, Long templateItemId) {

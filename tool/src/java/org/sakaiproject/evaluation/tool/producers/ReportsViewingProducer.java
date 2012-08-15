@@ -19,9 +19,11 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
@@ -40,10 +42,10 @@ import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.Validator;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -112,6 +114,16 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+    
+    private EvalDeliveryService deliveryService;
+    public void setDeliveryService(EvalDeliveryService deliveryService) {
+        this.deliveryService = deliveryService;
+    }
+    
+    private EvalBeanUtils evalBeanUtils;
+    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+        this.evalBeanUtils = evalBeanUtils;
+    }
 
     int totalCommentsCount = 0;
     int totalTextResponsesCount = 0;
@@ -179,6 +191,17 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
             EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
+            // prevent viewing the report if the report requires a minimum number of submissions that hasn't been met yet
+            int responsesCount = deliveryService.countResponses(evaluation.getId(), reportViewParams.groupIds[0], true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), new String[]{reportViewParams.groupIds[0]});                       
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+
+            // the eval owner (or anyone who can control this eval - like a super admin - can ignore the min responses check)
+            boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
+            if (!controlEval && responsesNeeded > 0) {
+                throw new SecurityException("At least " + responsesNeeded + " more responses must be submitted to view this report");
+            }
+            
             // do a permission check
             if (! reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
                 throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
@@ -315,13 +338,13 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                 // if we are in essay view mode then do not show the scale or the answers counts
                 EvalScale scale = templateItem.getItem().getScale();
                 String[] scaleOptions = scale.getOptions();
-                String scaleLabels[] = new String[scaleOptions.length];
+                String scaleLabels[] = RenderingUtils.makeReportingScaleLabels(templateItem, scaleOptions);
 
                 int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
 
                 for (int x = 0; x < scaleLabels.length; x++) {
                     UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
-                    UIOutput.make(choicesBranch, "choiceText", scaleOptions[x]);
+                    UIOutput.make(choicesBranch, "choiceText", scaleLabels[x]);
                     UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                             new String[] { choicesCounts[x]+"", makePercentage(choicesCounts[x], responsesCount) });
                 }
@@ -463,7 +486,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
     /**
      * Should we render this item based off the passed in parameters?
-     * (ie. Should we only render certain template items)
+     * (i.e. Should we only render certain template items)
      */
     private boolean renderBasedOnOptions(EvalTemplateItem templateItem) {
         boolean togo = false;

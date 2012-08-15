@@ -139,6 +139,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             log.info("Could not find evaluation ("+evaluationId+") for jobAction ("+jobType+"), " +
             "purging out all jobs related to this evaluation...");
             removeScheduledInvocations(evaluationId);
+            return;
         }
 
         // fix up EvalEvaluation state (also persists it)
@@ -147,6 +148,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 		Boolean useConsolidatedNotifications = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
 
+        // EVALSYS-1236
+        // send out the evaluation available e-mail, even if useConsolidatedNotification is true
+        boolean forceSendAvailableNotification = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION);
         // dispatch to send email and/or schedule jobs based on jobType but if 
 		// consolidated emails are enabled, no scheduled emails are not enabled
 		if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
@@ -156,7 +160,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
             // Consider flag wrt sending a mass email notifying users of opening. Send mail if flag is not set.
             boolean sendMail = ( eval.getSendAvailableNotifications() == null ? true : eval.getSendAvailableNotifications() ) 
-            				&& ! useConsolidatedNotifications;
+            				&& (! useConsolidatedNotifications || forceSendAvailableNotification);
             if (sendMail){
                 sendAvailableEmail(evaluationId);
             }
@@ -267,11 +271,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             throw new IllegalStateException("Cannot process new evaluation that is in partial state, state must be after partial");
         }
 
+        // EVALSYS-1236
+        // send the instructors a created e-mail, even if they are not allowed to edit it, because instAddItemNum is 0
+        // and instructorOpt is "Required" (which it is hard-coded at this point to be "Required")
+        boolean forceSendCreatedNotification = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL);
         // send created email if instructor can add questions or opt-in or opt-out
         Integer instAddItemsNum = (Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
         if (instAddItemsNum == null) instAddItemsNum = 0;
         if ( instAddItemsNum > 0 || 
-                !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
+                !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) ||
+                forceSendCreatedNotification) {
             // http://bugs.sakaiproject.org/jira/browse/EVALSYS-507
             int timeToWaitSecs = 300;
             Integer ttws = (Integer) settings.get(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS);
@@ -327,7 +336,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         }
         
         Boolean syncGroupAssignments = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE);
-        if(syncGroupAssignments == null) {
+        if (syncGroupAssignments == null) {
         	// use default value, false
         	syncGroupAssignments = new Boolean(false);
         }
@@ -338,6 +347,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
             // remove all remaining events for this eval
             removeScheduledInvocations(eval.getId());
+            // do not sync assignments if new state is deleted
+            syncGroupAssignments = false;
 
         } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState())) {
             // make sure scheduleActive job invocation date matches EvalEvaluation start date
@@ -387,9 +398,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             }
             // do not sync assignments if new state is closed
             syncGroupAssignments = false;
+
+        } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(eval.getState())) {
+            // do not sync assignments if new state is viewable
+            syncGroupAssignments = false;
         }
         
-        if(syncGroupAssignments) {
+        if (syncGroupAssignments) {
         	this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
         }
     }
@@ -668,6 +683,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     log.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
                 }
             }
+        } else if (reminderDays == -2) {
+            // NOTE: special case for testing
+            reminderTime = System.currentTimeMillis() + (1000l * 60l * 5l); // reminders every 5 minutes
+            log.warn("REMINDERS TESTING ONLY (-2): Scheduling a reminder in the near future ("+new Date(reminderTime)+") for testing: due date ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
         }
         return reminderTime;
     }
@@ -693,8 +712,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     /**
      * Send email that an evaluation has been created</br>
      * 
-     * @param evalId
-     *           the EvalEvaluation id
+     * @param evalId the EvalEvaluation id
      */
     protected void sendCreatedEmail(Long evalId) {
         boolean includeOwner = true;
@@ -706,22 +724,28 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     /**
      * Send a reminder that an evaluation is available to those who have not responded
      * 
-     * @param evalId
-     *           the EvalEvaluation id
+     * @param evalId the EvalEvaluation id
      */
     protected void sendReminderEmail(Long evaluationId) {
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                 && eval.getReminderDaysInt() != 0) {
-            String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
-            String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, includeConstant);
-            if (log.isDebugEnabled())
-                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
-            String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId,  EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
+            String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_NONTAKERS);
             if (log.isDebugEnabled()) {
-                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));                
+                log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            }
+            boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+            if (saveWithoutSubmit) {
+                String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
+                if (log.isDebugEnabled()) {
+                    log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));
+                }
+            } else {
+                log.debug("sendReminderEmail(" + evaluationId + "), No in progress reminders sent (saveWithoutSubmit is disabled)");
+            }
+        } else {
+            log.debug("sendReminderEmail(" + evaluationId + "), no reminder sent (state="+eval.getState()+", reminderDays="+eval.getReminderDaysInt()+")");
         }
-    }
     }
 
     /**

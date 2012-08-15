@@ -300,7 +300,7 @@ public class EvalUtils {
 
     /**
      * Set the time portion to the end of the day instead (23:59), this is to avoid confusion for users
-     * when setting the evaluationSetupService to end on a certain date and having them end in the first minute of the day instead of
+     * when setting the evaluation to end on a certain date and having them end in the first minute of the day instead of
      * at the end of the day
      * Note: This may lead to a nasty bug if anyone ever attempts to explicitly set the time for the stop and due dates
      * 
@@ -313,7 +313,9 @@ public class EvalUtils {
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
-        log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+        if (!cal.getTime().equals(d)) {
+            log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+        }
         return cal.getTime();
     }
 
@@ -615,6 +617,30 @@ public class EvalUtils {
 
 
     /**
+     * Shuffle the evals which are closed (or later) to the end of the list and otherwise maintain the current order of evaluations
+     * @param evaluations collection of evals
+     * @return list of evals in original order except closed evals at the end
+     */
+    public static List<EvalEvaluation> sortClosedEvalsToEnd(Collection<EvalEvaluation> evaluations) {
+        List<EvalEvaluation> l;
+        if (evaluations == null || evaluations.isEmpty()) {
+            l = new ArrayList<EvalEvaluation>(0);
+        } else {
+            l = new ArrayList<EvalEvaluation>(evaluations.size());
+            ArrayList<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>(evaluations.size());
+            for (EvalEvaluation eval : evaluations) {
+                if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                    l.add(eval);
+                } else {
+                    closedEvals.add(eval);
+                }
+            }
+            l.addAll(closedEvals);
+        }
+        return l;
+    }
+
+    /**
      * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
      * merges the groups in common and then returns an array of the common groups,
      * comparison is on the evalGroupId
@@ -680,6 +706,42 @@ public class EvalUtils {
             }
         }
         return s;
+    }
+
+    /**
+     * Converts a collection of evals into a set of ids,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param evaluations a collection of evals
+     * @return the list of eval ids
+     */
+    public static List<Long> getEvalIdsFromEvaluations(Collection<EvalEvaluation> evaluations) {
+        List<Long> l = new ArrayList<Long>();
+        if (evaluations != null) {
+            for (EvalEvaluation eval : evaluations) {
+                if (eval.getId() != null) {
+                    l.add(eval.getId());
+                }
+            }
+        }
+        return l;
+    }
+
+    /**
+     * Converts a collection of evalGroups into a set of ids,
+     * simple convenience method to avoid writing the same code over and over
+     * 
+     * @param groups a collection of evalGroupss
+     * @return the list of evalGroup Ids
+     */
+    public static List<String> getGroupIdsFromGroups(Collection<EvalGroup> groups) {
+        List<String> l = new ArrayList<String>();
+        if (groups != null) {
+            for (EvalGroup evalGroup : groups) {
+                l.add(evalGroup.evalGroupId);
+            }
+        }
+        return l;
     }
 
     /**

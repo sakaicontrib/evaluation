@@ -1,0 +1,108 @@
+//====================================
+// GRAPHICS
+//====================================
+// These styles define brand application and visual presentation specific to UCB.
+// All image references should be included here.
+
+.portletBody {
+
+  /////////////////////////
+  // Dashboard
+  /////////////////////////
+  .summaryBox {
+    .listHier { 
+      th, td {
+        border: none !important;
+        padding: 0 1em;
+      }
+      td {
+        padding: 0.5em 1em;
+      }
+      tr:nth-child(odd) {
+        background-color: #f7f7f7;
+      }
+    }
+  }
+} //end portletBody
+
+/////////////////////////
+// Evaluation
+/////////////////////////
+
+.evaluation {
+  .content {
+
+    fieldset {
+      > legend {
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    // remove borders and alternating row colors.
+    fieldset, .fake-fieldset, .fieldset, .legend, .itemListNew, .itemListEval {
+      border: none;
+    }
+    .itemListNew, .itemListEval {
+      li {
+        border-color: $white;
+      }
+      .itemsListOddLine {
+        background: none;
+      }
+    }
+
+    // add styles to items (individual questions).
+    .item {
+      margin-bottom: 15px;
+      border-bottom: 1px solid $c2lighter;
+      .title {
+        color: $black;
+        .delineator {
+          .dot {
+            display: none;
+          }
+          .paren {
+            display: inline-block;
+          }
+        }
+        .required {
+          color: $c4;
+        }
+      }
+    } // end item
+
+  } //end content
+
+  // add styles to grouped items.
+  .item-group {
+    border-bottom: 2px solid $graylightest;
+    .title {
+      color: $black; 
+    }
+    .item {
+      border-top: 2px solid $graylightest;
+      border-bottom: none;
+      .title {
+        
+      }
+    }
+  } //end item-group
+
+  .matrix {
+      legend {
+        color: $black;
+      }
+  }
+
+} //end evaluation
+
+
+/////////////////////////
+// Preview
+/////////////////////////
+.preview-item {
+  .highlightPanel {
+    border: none;
+  }
+} 

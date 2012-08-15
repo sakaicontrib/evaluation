@@ -2150,8 +2150,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     }
 
 
-
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#saveTemplateItemOrder(java.util.Map, java.lang.String)
+	 */
 	public void saveTemplateItemOrder(Map<Long, Integer> orderingMap, String currentUserId) {
+	    /* TODO - warning! this method does not even check to see if these template items are in the same template
+	     * This is very dangerous and was written poorly by the original author, this should be rewritten
+	     */
 		Iterator<Map.Entry<Long, Integer>> selector = orderingMap.entrySet().iterator();
         while ( selector.hasNext() ) {
         	Map.Entry<Long, Integer> pairs = selector.next();
@@ -2165,4 +2170,5 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 			
         }
 	}
+
 }

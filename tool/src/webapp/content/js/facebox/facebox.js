@@ -85,7 +85,7 @@
       faceboxHtml  : '\
     <div id="facebox" style="display:none;"> \
       <div class="popup"> \
-        <table> \
+        <table class="faceboxtable"> \
           <tbody> \
             <tr> \
               <td class="tl"/><td class="b"/><td class="tr"/> \
@@ -155,9 +155,16 @@
 
   $.fn.facebox = function(settings) {
     init(settings)
+    // AZ - note also added faceboxtable to the table
+    $.facebox.clicked = null // EVALSYS - added by AZ
+    $.facebox.mousePosX = 0 // EVALSYS - added by AZ
+    $.facebox.mousePosY = 0 // EVALSYS - added by AZ
 
-    function clickHandler() {
+    function clickHandler(e) {
       $.facebox.loading(true)
+      $.facebox.clicked = $(this) // EVALSYS - added by AZ
+      $.facebox.mousePosX = e.pageX // EVALSYS - added by AZ
+      $.facebox.mousePosY = e.pageY // EVALSYS - added by AZ
 
       // support for rel="facebox.inline_popup" syntax, to add a class
       // also supports deprecated "facebox[.inline_popup]" syntax

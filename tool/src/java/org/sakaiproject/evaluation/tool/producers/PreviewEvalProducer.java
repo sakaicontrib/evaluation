@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -130,7 +131,7 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
         Long templateId = previewEvalViewParams.templateId;
         String evalGroupId = previewEvalViewParams.evalGroupId;
         EvalEvaluation eval = null;
-        
+
         if (! previewEvalViewParams.external) {
             UIInternalLink.make(tofill, "summary-link", 
                     UIMessage.make("summary.page.title"), 
@@ -161,9 +162,9 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
         EvalAssignGroup group = null;
         String groupDisplayTitle = null;
         Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
-        if(useGroupSpecificPreview.booleanValue() && evaluationId != null) {
+        if (useGroupSpecificPreview.booleanValue() && evaluationId != null) {
         	int groupCount = this.evaluationService.countEvaluationGroups(evaluationId, true);
-        	if(groupCount == 0) {
+        	if (groupCount == 0) {
         		useGroupSpecificPreview = new Boolean(false);
         	} else if(groupCount == 1) {
         		Map<Long, List<EvalAssignGroup>> groupMap = this.evaluationService.getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
@@ -213,7 +214,7 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
         }
 
         TemplateItemDataList tidl = null;
-        if(group == null) {
+        if (group == null) {
             // get all items for this template
             List<EvalTemplateItem> allItems = 
             	authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
@@ -248,7 +249,7 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
                     evaluationService, authoringService, hierarchyLogic, null);
         }
 
-        if(tidl == null) {
+        if (tidl == null) {
             // this is an empty template so just display some ugly message
             UIMessage.make(tofill, "noItemsToShow", "no.list.items");   
         } else {
@@ -310,10 +311,15 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
                     }
                 }
             }
-            
+
             //explain groups if using any groups in this template
             if ( countAssistants > 0 || countInstructors > 0 ){
             	UIOutput.make(tofill, "show-eval-instructions-groups");
+            }
+
+            if (! previewEvalViewParams.external) {
+                // only show back button when navigating inside the tool
+                UIOutput.make(tofill, "show-back-button");
             }
         }
 

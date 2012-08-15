@@ -122,6 +122,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         } else {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
+            boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
             log.debug("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
 
             // eval has not started
@@ -148,6 +149,12 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                         vp.external = true;
                         return vp;
                     }
+                }
+                // otherwise just show the preview as long as the user is an admin
+                if (userAdmin) {
+                    EvalViewParameters vp = new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
+                    vp.external = true;
+                    return vp;
                 }
                 // else just require auth
                 throw new SecurityException("User must be authenticated to access this page");

@@ -12,6 +12,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 // Eval Template Modify JS for onload functions
 // @author lovemore.nalube@uct.ac.za
 
@@ -215,8 +216,8 @@ var evalTemplateLoaderEvents = (function($) {
                 description = "",
                  o = {
                     beforeSubmit: function() {
-                        title = $('#basic-form input[@name=title]').val();
-                        description = $('#basic-form textarea[@name=description]').val();
+                        title = $('#basic-form input[name=title]').val();
+                        description = $('#basic-form textarea[name=description]').val();
                         if (!title) {
                             alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
                                     evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header').toLowerCase())); //TODO: Make unobtrusive
@@ -258,23 +259,8 @@ var evalTemplateLoaderEvents = (function($) {
             $('a[rel*=facebox]').facebox();
         },
         preview_item: function(){
-            if ($('.blockItemGroup').length > 0){
-                evalsys.instrumentBlockItem();
-            }
-            if ($('.steppedItemGroup').length > 0){
-                evalsys.instrumentSteppedItem();
-            }
-            if ($('.mult-choice-ans').length > 0){
-                evalsys.instrumentMCMAItem();
-            }
-            if ($('.itemListEval').length > 0) {
-                evalsys.instrumentScaleItem();
-            }
-            if ($('.fullDisplayHorizontal').length > 0) {
-                evalsys.instrumentDisplayHorizontal();
-            }
+            evalsys.instrumentItems("#item_container");
             $.facebox.setHeader(evalTemplateUtils.pages.preview_item_page);
-            $("div.JSevalComment").evalComment();   //Bind comment boxes toggle link action
         },
         bindDeleteIcons : bindDeleteIcons,
         unBindDeleteIcons : unBindDeleteIcons,

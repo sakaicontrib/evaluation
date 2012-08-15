@@ -17,13 +17,6 @@
 
 var evalTemplateFacebox = (function() {
 
-    //backup the facebox functions
-    var origionalFBfunctions = {
-        loading: $.facebox.loading,
-        close: $.facebox.close,
-        reveal: $.facebox.reveal
-    };
-
     var initFunction = function() {
         //Override FB settings or Extend methods/actions
 
@@ -64,40 +57,32 @@ var evalTemplateFacebox = (function() {
                                          '</div>' +
                                          '</div>';
 
-        $.facebox.loading = function() {
+        $(document).bind('loading.facebox', function() {
             //store original frame height
             var frameHeight = document.body.clientHeight;
             if (frameHeight) {
                 evalTemplateUtils.frameSize = frameHeight;
             }
-            origionalFBfunctions.loading();
             $('#saveReorderButton').click();
             $('#facebox').css({
                 top:    evalTemplateUtils.frameScrollHeight,
                 left:    $(window).width() / 2 - ($('#facebox table').width() / 2)
             }).show();
             $('#facebox_overlay').unbind('click');
-        };
+        });
 
-        $.facebox.reveal = function(data, klass) {
+        $(document).bind('reveal.facebox', function() {
             $('#facebox .content').empty();
             $("#facebox .results").empty();
             var fbCssLeft = $('#facebox').css('left');
-            origionalFBfunctions.reveal(data, klass);
             //restore left css value
             $('#facebox').css('left', fbCssLeft);
             evalTemplateUtils.frameGrow(450);
             //bind event handler for FB form buttons
-            //bind the close button
-            $('#facebox .close').unbind('click');
-            $('#facebox .close').bind('click', function() {
-                $.facebox.close();
-            });
-        };
+        });
 
-        $.facebox.close = function() {
+        $(document).bind('afterClose.facebox', function() {
             evalTemplateUtils.frameShrink(0);
-            origionalFBfunctions.close();
             evalTemplateUtils.debug.info("closing facebox");
             evalTemplateFacebox.fbResetClasses();
             $('#facebox table').attr('width', 700);
@@ -106,7 +91,7 @@ var evalTemplateFacebox = (function() {
             $.facebox.settings.elementToUpdate = null;
             evalTemplateData.setCurrentRow(undefined);
             return false;
-        };
+        });
 
         $.facebox.setHeader = function(page_type) {
             var pageTitle = "";
@@ -207,7 +192,7 @@ var evalTemplateFacebox = (function() {
                      revealFunction = evalTemplateLoaderEvents.preview_expert_item;
                 } else if (pageType === evalTemplateUtils.pages.remove_expert_item_page){
                      revealFunction = evalTemplateLoaderEvents.remove_expert_item;
-		}
+                }
                 $(document).bind('reveal.facebox', function() {
                     if (typeof revealFunction !== "undefined") {
                         revealFunction();
@@ -234,12 +219,13 @@ var evalTemplateFacebox = (function() {
 
 /*This is a fix for the Interface Highlight compatibility bug [added by lovemore.nalube@uct.ac.za]
  * see http://groups.google.com/group/jquery-en/browse_thread/thread/d094a3f299055a99
- */
+ *
 ( function($) {
     $.dequeue = function(a, b) {
         return $(a).dequeue(b);
     };
 })($);
+*/
 
 /**
  links with the rel=faceboxGrid have pre-click events attached to them

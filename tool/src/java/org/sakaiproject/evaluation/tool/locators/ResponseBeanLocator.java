@@ -87,6 +87,10 @@ public class ResponseBeanLocator implements BeanLocator {
                 // we have a passed in start date so set the response start date
                 response.setStartTime(startDate);
             }
+            
+            // store this state; once the date is set, the save function will need to 
+            // know if this evaluation has been submitted before.
+            response.isSubmitted(response.complete);            	
             // saving so set the endTime to now
             if (isEvalComplete) {
                 response.setEndTime(new Date());

@@ -265,6 +265,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         EvalBeanUtils.validateEvalDates(evaluation);
 
         boolean isNew = false;
+        boolean isClosed = false;
         if (evaluation.getId() == null) {
             isNew = true;
             // assure that all the defaults are set correctly for new evals
@@ -275,10 +276,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 //            if (evalCheck == null) {
 //                isNew = true;
 //            }
+            if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                // check if we are or have closed the evaluation (or some state after that)
+                isClosed = true;
+            }
         }
 
         // assure valid date handling but only after the dates are checked during saving
-        evalBeanUtils.fixupEvaluationDates(evaluation);
+        evalBeanUtils.fixupEvaluationDates(evaluation, isClosed);
 
         // now perform checks depending on whether this is new or existing
         Calendar calendar = GregorianCalendar.getInstance();
@@ -433,7 +438,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         
         // save the eval
         dao.save(evaluation);
-        log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
+        log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), state="+evaluation.getState()+", title: " + evaluation.getTitle());
 
         // initialize the scheduling for the eval jobs (only if state is not partial)
         if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
@@ -608,7 +613,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             cal.setTime( new Date() );
             cal.add(Calendar.SECOND, -1);
             Date now = cal.getTime();
-            evaluation.setDueDate(now);
+            evaluation.forceDueDate(now);
 
             // fix stop and view dates if needed
             evaluation.setStopDate(null);
@@ -721,23 +726,106 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         return evals;
     }
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String)
-	 */
-	public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId) {
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsForEvaluatee(java.lang.String, java.lang.Boolean)
+     */
+    public List<EvalEvaluation> getEvaluationsForEvaluatee(String userId, Boolean includeRecentlyClosed) {
         if (userId == null) {
             throw new IllegalArgumentException("userId must be set");
         }
 
+        // TODO Shouldn't this actually get the list of groups based on the set of assigned eval groups?
         List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
         String[] evalGroupIds = new String[evalGroups.size()];
         int i = 0;
-        for(EvalGroup evalGroup : evalGroups) {
-        	evalGroupIds[i++] = evalGroup.evalGroupId;
+        for (EvalGroup evalGroup : evalGroups) {
+            evalGroupIds[i++] = evalGroup.evalGroupId;
         }
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups(evalGroupIds, null, null, null, 0, 0);
+        // date calculations for recently closed
+        Date today = new Date();
+        Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
+        int recentlyClosedHours = recentlyClosedDays.intValue() * 24;
+
+        for (Iterator<EvalEvaluation> iterator = evals.iterator(); iterator.hasNext();) {
+            EvalEvaluation evaluation = iterator.next();
+            // fix up the states to ensure they are good
+            evaluationService.returnAndFixEvalState(evaluation, true);
+            // handle filtering
+            if (includeRecentlyClosed != null) {
+                // not null so filter (NOTE: if null then just include them all)
+                if (includeRecentlyClosed) {
+                    // filter out evals older than recently closed
+                    int hoursDiff = EvalUtils.getHoursDifference(evaluation.getDueDate(), today);
+                    if (hoursDiff > recentlyClosedHours) {
+                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is not recently closed: "+evaluation.getId()+", due="+evaluation.getDueDate());
+                        iterator.remove();
+                    }
+                } else {
+                    // filter out all closed evals
+                    if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is closed: "+evaluation.getId());
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        // populate the assign groups and eval groups in the evals
+        populateEvaluationsGroups(evals, evalGroups);
         return evals;
-	}
+    }
+
+	/**
+	 * Special method to populate the assign groups and eval groups non-persistent fields in the evaluation objects
+	 * 
+	 * @param evaluations the list of evaluations to populate the groups in (does nothing if this is empty)
+	 * @param limitEvalGroups if null, populate all assigned groups,
+	 *                        if empty, populate no assigned groups,
+	 *                        otherwise, populate only the groups which are assigned and also in this list
+	 */
+    protected void populateEvaluationsGroups(List<EvalEvaluation> evaluations, List<EvalGroup> limitEvalGroups) {
+        if (!evaluations.isEmpty()) {
+            Long[] evaluationIds = new Long[evaluations.size()];
+            int j = 0;
+            for (EvalEvaluation eval : evaluations) {
+                evaluationIds[j++] = eval.getId();
+            }
+            Map<Long, List<EvalAssignGroup>> agsMap = evaluationService.getAssignGroupsForEvals(evaluationIds, true, null);
+            // now populate the evaluations with the AGs and EGs (or set them to empty lists)
+            for (EvalEvaluation eval : evaluations) {
+                List<EvalAssignGroup> assignGroups = agsMap.get(eval.getId());
+                if (assignGroups != null && !assignGroups.isEmpty()) {
+                    if (limitEvalGroups == null) {
+                        // include all
+                        eval.setEvalAssignGroups(assignGroups);
+                        // does not populate the eval groups
+                    } else if (limitEvalGroups.isEmpty()) {
+                        // include none
+                        eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
+                        eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                    } else {
+                        // include the groups passed in only
+                        List<EvalAssignGroup> evaluationAssignGroups = new ArrayList<EvalAssignGroup>();
+                        List<EvalGroup> evaluationGroups = new ArrayList<EvalGroup>();
+                        for (EvalGroup eg : limitEvalGroups) {
+                            for (EvalAssignGroup eag : assignGroups) {
+                                if (eag.getEvalGroupId().equals(eg.evalGroupId)) {
+                                    evaluationAssignGroups.add(eag);
+                                    evaluationGroups.add(eg);
+                                    break;
+                                }
+                            }
+                        }
+                        eval.setEvalAssignGroups(evaluationAssignGroups);
+                        eval.setEvalGroups(evaluationGroups);
+                    }
+                } else {
+                    eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
+                    eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                }
+            }
+        }
+    }
 
 
     /**
@@ -1014,22 +1102,26 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (assignUserToRemove.isEmpty() && assignUserToSave.isEmpty()) {
             message += ": no changes to the user assignments ("+assignedUsers.size()+")";
         } else {
+            if (removeAllowed 
+                    && ! assignUserToRemove.isEmpty()) {
+                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
+                if (log.isDebugEnabled()) log.debug("Deleting user eval assignment Ids: "+assignUserToRemove);
+                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
+                message += ": removed the following assignments: " + assignUserToRemove;
+                changedUserAssignments.addAll( assignUserToRemove );
+            }
             if (! assignUserToSave.isEmpty()) {
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
                     setAssignUserDefaults(evalAssignUser, evaluation, currentUserId);
                 }
+                // this is meant to force the assigned users set to be re-calculated
+                assignUserToSave = new HashSet<EvalAssignUser>(assignUserToSave);
+                if (log.isDebugEnabled()) log.debug("Saving user eval assignments: "+assignUserToSave);
                 dao.saveSet(assignUserToSave);
                 message += ": created the following assignments: " + assignUserToSave;
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
                     changedUserAssignments.add( evalAssignUser.getId() );
                 }
-            }
-            if (removeAllowed 
-                    && ! assignUserToRemove.isEmpty()) {
-                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
-                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
-                message += ": removed the following assignments: " + assignUserToRemove;
-                changedUserAssignments.addAll( assignUserToRemove );
             }
         }
 

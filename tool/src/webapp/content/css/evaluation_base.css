@@ -19,957 +19,1392 @@
 /*PART 1 - reorderer*/
 /*Styles for the drag and drop as in template item reorderer*/
 /*outer container of a sortable list*/
-DIV#itemTable{
-	border: 1px solid #DFDFDF;
-	margin: .5em 0;
-	padding: 0 .5em;
-	background-color: #EEEEEE;
+DIV#itemTable {
+  border: 1px solid #DFDFDF;
+  margin: .5em 0;
+  padding: 0 .5em;
+  background-color: #EEEEEE;
 }
+
 /*outer container of a block sortable list*/
-DIV#itemTableBlock{
-	border: 1px solid #DFDFDF;
-	margin: .5em 0;
-	padding: 0 .5em;
-	background-color: #EEEEEE;
+DIV#itemTableBlock {
+  border: 1px solid #DFDFDF;
+  margin: .5em 0;
+  padding: 0 .5em;
+  background-color: #EEEEEE;
 }
+
 /*inner container of a sortable list*/
-DIV.itemList{
-	list-style-type: none;
-	marker-offset: 0;
-	margin: 0;
-	padding: 0
+DIV.itemList {
+  list-style-type: none;
+  marker-offset: 0;
+  margin: 0;
+  padding: 0;
 }
+
 /*a sortable item*/
-DIV.itemRow{
-	width: 100%;
-	padding: 0;
-	margin: .3em 0;
-	cursor: move;
-	background: #fff;
-	border: 1px solid #FFDD77;
+DIV.itemRow {
+  width: 100%;
+  padding: 0;
+  margin: .3em 0;
+  cursor: move;
+  background: #fff;
+  border: 1px solid #FFDD77;
 }
+
 /*a sortable block item*/
-DIV.itemRowBlock{
-	width: 100%;
-	padding: 0;
-	margin: .3em 0;
-	cursor: move;
-	background: #fff;
-	border: 1px solid #FFDD77;
+DIV.itemRowBlock {
+  width: 100%;
+  padding: 0;
+  margin: .3em 0;
+  cursor: move;
+  background: #fff;
+  border: 1px solid #FFDD77;
 }
+
 /*all rows of an item*/
-.itemRow div{ padding: .2em; vertical-align: middle }
+.itemRow div {
+  padding: .2em;
+  vertical-align: middle;
+}
+
 /*all rows of a block item*/
-.itemRowBlock div{ padding: .2em; vertical-align: middle }
-.itemRowBlock .text {padding-right:80px;}
+.itemRowBlock div {
+  padding: .2em;
+  vertical-align: middle;
+}
+
+.itemRowBlock .text {
+  padding-right: 80px;
+}
+
 /*first line in a sortable item,item type and links*/
-div.itemLine{
-	clear: left;
-	border-bottom: 1px solid #aaa;
-	background: #eee
+div.itemLine {
+  clear: left;
+  border-bottom: 1px solid #aaa;
+  background: #eeeeee;
 }
+
 /*itemCheckbox,itemType,itemRight are the 3 children of itemLine*/
-.itemCheckbox{
-	cursor: default;
-	float: left;
-	padding: 0 1em 0 0;
-    margin-top: -0.04em;
+.itemCheckbox {
+  cursor: default;
+  float: left;
+  padding: 0 1em 0 0;
+  margin-top: -0.04em;
 }
-.itemCheckbox input{ margin: 0 }
-span.itemType{ float: left; padding: 0 }
-span.itemRight{
-	font-size: 0.9em;
-	float: right;
-	white-space: nowrap;
-	padding-right: 0.4em;
-	padding-bottom: 0;
-	padding-left: 0.4em;
-	/*margin-top: -1.7em;*/
+
+.itemCheckbox input {
+  margin: 0;
 }
+
+span.itemType {
+  float: left;
+  padding: 0;
+}
+
+span.itemRight {
+  font-size: 0.9em;
+  float: right;
+  white-space: nowrap;
+  padding-right: 0.4em;
+  padding-bottom: 0;
+  padding-left: 0.4em;
+  /*margin-top: -1.7em;*/
+}
+
 /*selectReorder,itemText,scaleDesc are the 3 children of the 2nd row*/
-select.selectReorder{ font-weight: bold; float: left }
-h4.itemText{
-	display: inline;
-	float: left;
-	padding: 0 0 0 0.3em;
-	overflow: hidden;
-	margin: 0.2em;
-	font-weight: normal;
-	position: static;
+select.selectReorder {
+  font-weight: bold;
+  float: left;
 }
+
+h4.itemText {
+  display: inline;
+  float: left;
+  padding: 0 0 0 0.3em;
+  overflow: hidden;
+  margin: 0.2em;
+  font-weight: normal;
+  position: static;
+}
+
 /*lines created with the rteditor are rendered as <p> - so flatten out a tad for alignment. */
-.itemText p{ margin-top: 0 }
-div.scaleDesc{
-	float: right;
-	text-align: right;
-	white-space: nowrap
+.itemText p {
+  margin-top: 0;
 }
+
+div.scaleDesc {
+  float: right;
+  text-align: right;
+  white-space: nowrap;
+}
+
 /*third line in a sortable item - an ol with sub items listed*/
-.itemLine3{
-	clear: both;
-	margin: .5em .5em .5em 9.5em;
-	list-style-position: outside;
-	padding: 0;
-	line-height: 150%;
-	font-size: 0.95em;
-	cursor:default
+.itemLine3 {
+  clear: both;
+  margin: .5em .5em .5em 9.5em;
+  list-style-position: outside;
+  padding: 0;
+  line-height: 150%;
+  font-size: 0.95em;
+  cursor: default;
 }
+
 /*next 3 classes added/substracted script to Revert Order/Save Order and Group button bar after order has changed*/
-.orderChanged{ background-color: #ffc; border: 1px solid #fd7 }
-.itemOperations{
-	border: 1px solid #ffa;
-	background: #ffe;
-	padding: .3em
+.orderChanged {
+  background-color: #ffc;
+  border: 1px solid #fd7;
 }
-.itemOperationsEnabled{
-	border: 1px solid #fd7;
-	background: #ffc;
-	padding: .3em
+
+.itemOperations {
+  border: 1px solid #ffa;
+  background: #ffe;
+  padding: 0.3em;
 }
+
+.itemOperationsEnabled {
+  border: 1px solid #fd7;
+  background: #ffc;
+  padding: 0.3em;
+}
+
 /*some items in edit template list will not have checkboxes - such as text items,headers - so reserve that space since this is not a table*/
-.checkPlaceholder{
-	float: left;
-	cursor: default;
-	margin: 0;
-	visibility: hidden;
-	padding: 0 2.1em 0 0;
+.checkPlaceholder {
+  float: left;
+  cursor: default;
+  margin: 0;
+  visibility: hidden;
+  padding: 0 2.1em 0 0;
 }
+
 /*next "selectable" collection added/susbstracted via script to give hints while grouping template items*/
-.selectable{
-	float: left;
-	cursor: default;
-    margin-top: -0.04em;
-	padding: 0 1em 0 0;
-	background: url(../images/asterisk_orange.gif) 1.3em 50% no-repeat
+.selectable {
+  float: left;
+  cursor: default;
+  margin-top: -0.04em;
+  padding: 0 1em 0 0;
+  background: url(../images/asterisk_orange.gif) 1.3em 50% no-repeat;
 }
-.selectable input{ margin: 0 }
-.notselectable{
-	float: left;
-	cursor: default;
-    margin-top: -0.04em;
-	padding: 0 1em 0 0;
+
+.selectable input {
+  margin: 0;
 }
-.notselectable input{ margin: 0 }
-.notselectable *{
-	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50),progid:DXImageTransform.Microsoft.BasicImage(grayscale=1) !important;
-	-moz-opacity: .50 !important
+
+.notselectable {
+  float: left;
+  cursor: default;
+  margin-top: -0.04em;
+  padding: 0 1em 0 0;
 }
+
+.notselectable input {
+  margin: 0;
+}
+
+.notselectable * {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50), progid:DXImageTransform.Microsoft.BasicImage(grayscale=1) !important;
+  -moz-opacity: 0.5 !important;
+}
+
 /*PART 1 end*/
 /*PART 2 - navigation, breadcrumbs*/
-.breadCrumb{
-	font-size: .9em;
-	padding: .5em 0;
-	background: #ffe;
-	margin: 1em 0
+.breadCrumb {
+  font-size: .9em;
+  padding: .5em 0;
+  background: #ffe;
+  margin: 1em 0;
 }
-.navIntraTool 	 .breadCrumb{ margin: 0; float: left; }
-.breadCrumb li{
-	display: inline;
-	background: #ffe url(../images/breadSep.gif) center right no-repeat;
-	padding: 0 1.2em 0  .5em;
-	margin: 0
+
+.navIntraTool .breadCrumb {
+  margin: 0;
+  float: left;
 }
-.breadCrumb li:first-child{ padding-left: 3px }
-.breadCrumb li.lastCrumb{ display: inline; background-image: none }
+
+.breadCrumb li {
+  display: inline;
+  background: #ffffee url(../images/breadSep.gif) center right no-repeat;
+  padding: 0 1.2em 0  .5em;
+  margin: 0;
+}
+
+.breadCrumb li:first-child {
+  padding-left: 3px;
+}
+
+.breadCrumb li.lastCrumb {
+  display: inline;
+  background-image: none;
+}
+
 /*sub-breadcrumb for wizards deep inside of a workflow*/
-.messageStepGraphic{ height: 100%; overflow: hidden; margin: 1em 0 }
-.messageStepGraphic div{ width: 100px; float: left }
-.messageStepGraphic a{ text-decoration: none !important; font-size: 1em }
-.messageStepGraphic a:hover{ text-decoration: none !important }
-.messageStepGraphic div span{
-	margin-top: 2em;
-	font-size: 90%;
-	text-align: center;
-	color: #aaa;
-	display: block
+.messageStepGraphic {
+  height: 100%;
+  overflow: hidden;
+  margin: 1em 0;
 }
-.first-cur-step span,.med-cur-step span,.last-cur-step span{ color: #666 !important }
-.messageStepGraphic .first-noncur-step{
-	background: #fff url(../images/first-noncur-step.gif) top left no-repeat
+
+.messageStepGraphic div {
+  width: 100px;
+  float: left;
 }
-.messageStepGraphic .first-cur-step{
-	background: #fff url(../images/first-cur-step.gif) top left no-repeat
+
+.messageStepGraphic a {
+  text-decoration: none !important;
+  font-size: 1em;
 }
-.messageStepGraphic .med-noncur-step{
-	background: #fff url(../images/med-noncur-step.gif) top left no-repeat
+
+.messageStepGraphic a:hover {
+  text-decoration: none !important;
 }
-.messageStepGraphic .med-cur-step{
-	background: #fff url(../images/med-cur-step.gif) top left no-repeat
+
+.messageStepGraphic div span {
+  margin-top: 2em;
+  font-size: 90%;
+  text-align: center;
+  color: #aaa;
+  display: block;
 }
-.messageStepGraphic .last-noncur-step{
-	background: #fff url(../images/last-noncur-step.gif) top left no-repeat
+
+.first-cur-step span, .med-cur-step span, .last-cur-step span {
+  color: #666 !important;
 }
-.messageStepGraphic .last-cur-step{
-	background: #fff url(../images/last-cur-step.gif) top left no-repeat
+
+.messageStepGraphic .first-noncur-step {
+  background: white url(../images/first-noncur-step.gif) top left no-repeat;
 }
+
+.messageStepGraphic .first-cur-step {
+  background: white url(../images/first-cur-step.gif) top left no-repeat;
+}
+
+.messageStepGraphic .med-noncur-step {
+  background: white url(../images/med-noncur-step.gif) top left no-repeat;
+}
+
+.messageStepGraphic .med-cur-step {
+  background: white url(../images/med-cur-step.gif) top left no-repeat;
+}
+
+.messageStepGraphic .last-noncur-step {
+  background: white url(../images/last-noncur-step.gif) top left no-repeat;
+}
+
+.messageStepGraphic .last-cur-step {
+  background: white url(../images/last-cur-step.gif) top left no-repeat;
+}
+
 /*PART 2 end*/
 /*PART 3 - summary page  layout definitions*/
-.summaryBox{ border: 1px solid #aaa; margin: 0 0 1em 0 }
-.summaryBox .innerPanel{ padding: .5em }
-.summaryTable h4{
-	background: #ddd !important;
-	margin-top: 0;
-	padding: .5em;
-	border-bottom: 1px solid #aaa
+.summaryBox {
+  border: 1px solid #aaa;
+  margin: 0 0 1em 0;
+  padding: 1em;
 }
-.summaryBox table th{ background: #eee; border: none }
-ol.summaryEvaluateList{ margin: 0px; padding-left: 2em }
+
+.summaryBox .innerPanel {
+  padding: 0 10px;
+}
+
+.summaryBox .innerPanel table {
+  margin-bottom: 1em;
+}
+
+.summaryBox .innerPanel .sub-heading {
+  font-size: 1.3em;
+  color: #444;
+  font-weight: bold;
+}
+
+.summaryBox .innerPanel .triangle-open,
+.summaryBox .innerPanel .triangle-closed {
+  margin-left: -16px;
+  cursor: pointer;
+}
+
+.summaryBox .innerPanel .triangle-closed:before {
+  content: "\25B6";
+}
+
+.summaryBox .innerPanel .triangle-open:before {
+  content: "\25BC";
+}
+
+.innerPanel table th {
+  position: relative;
+  padding: 8px 10px;
+}
+
+.innerPanel table tbody td {
+  color: #555;
+  padding-left: 10px;
+}
+
+.summaryTable h4 {
+  background: #ddd !important;
+  margin-top: 0;
+  padding: .5em;
+  border-bottom: 1px solid #aaaaaa;
+}
+
+.summaryBox table th {
+  background-color: #eee;
+  border: none;
+}
+
+ol.summaryEvaluateList {
+  margin: 0px;
+  padding-left: 2em;
+}
+
 /*PART 3 end*/
 /*PART 4 - list of lists in item scales*/
-.scaleOuterList{
-	width: 60%;
-	padding: 0;
-	margin: 1em 0;
-	list-style: decimal
+.scaleOuterList {
+  width: 60%;
+  padding: 0;
+  margin: 1em 0;
+  list-style: decimal;
 }
-.scaleInnerList{
-	list-style: none;
-	background: #fff;
-	padding: 0 2em;
-	margin: 0 0 1em 0
+
+.scaleInnerList {
+  list-style: none;
+  background: #fff;
+  padding: 0 2em;
+  margin: 0 0 1em 0;
 }
-.scaleInnerList li{ padding-left: 1em; list-style-position: inside }
-.scaleTitleLine{
-	height: 1.5em;
-	overflow: hidden;
-	background: #eee;
-	padding: .3em
+
+.scaleInnerList li {
+  padding-left: 1em;
+  list-style-position: inside;
 }
-.scaleTitleLineNum{ font-weight: bold; color: #333; float: left }
-.scaleTitle{
-	font-weight: bold;
-	color: #333;
-	width: 60%;
-	float: left;
-	padding-left: 1em
+
+.scaleTitleLine {
+  height: 1.5em;
+  overflow: hidden;
+  background: #eee;
+  padding: 0.3em;
 }
-.scaleTitleLine .itemAction{ text-align: right; padding: 0 }
-.idealScalePoint{ clear: both; padding: 0; text-align: right }
+
+.scaleTitleLineNum {
+  font-weight: bold;
+  color: #333;
+  float: left;
+}
+
+.scaleTitle {
+  font-weight: bold;
+  color: #333;
+  width: 60%;
+  float: left;
+  padding-left: 1em;
+}
+
+.scaleTitleLine .itemAction {
+  text-align: right;
+  padding: 0;
+}
+
+.idealScalePoint {
+  clear: both;
+  padding: 0;
+  text-align: right;
+}
+
 /*PART 4 end*/
 /*PART 5 - listing of evaluation items, in evaluations, eval previews, template previews, from outermost to innermost*/
-.itemListNew{
-	width: 95%;
-	border-color: #eee;
-	border-style: solid;
-	border-width: 2px;
-	padding: .5em;
-	list-style: none
+.itemListNew {
+  list-style: none;
 }
-.itemListNew legend{
-	padding: .3em .7em;
-	color: orange;
-	font-size: 110%;
-	margin-left: 1em
+
+.itemListNew legend {
+  padding: .3em .7em;
+  color: orange;
+  font-size: 110%;
+  margin-left: 1em;
 }
-.itemListNew ol{ padding: 0; margin: 13px 0 0 }
-.itemListNew li{ padding: .3em; margin: .3em; border: 1px solid #eee }
-.itemListNew li:hover .itemScalePanel{ border: 1px solid #aaa; background: #fff }
-.itemListEval li{ list-style: none; padding: .5em !important; margin: .2em}
-.itemScalePanelNACell{background:#fff !important}
+
+.itemListNew ol {
+  padding: 0;
+  margin: 13px 0 0;
+}
+
+.itemListNew li {
+  border: 1px solid #eee;
+}
+
+.itemListNew li:hover .itemScalePanel {
+  border: 1px solid #aaa;
+  background: #fff;
+}
+
+.itemListEval li {
+  list-style: none;
+}
+
+.itemScalePanelNACell {
+  background: #fff !important;
+}
 
 /*since these list items can contain list items,minimize inheritance*/
-.itemListEval li ul li,.itemListEval li ol li{
-	list-style: disc;
-	list-style-position: inside;
-	border: none;
-	padding: .2em
-}
-.itemListEval li ol li{
-	list-style: decimal;
-	list-style-position: inside;
-	border: none;
-	padding: .2em
-}
-.itemListNew .itemListEval h4{ display: inline; color: #333 }
-.itemListNew .itemListEval li:hover h4{ color: #000 }
-.itemListEval label{ color: #333 }
-.itemListEval label:hover{ color: #000 }
-.itemScalePanel{ height: 31px; border: 1px solid #E1E1E1 }
-.itemScalePanel:hover{ border: 1px solid #aaa }
-.itemScalePanel td{ padding: .3em .5em }
-.itemScalePanel .compactDisplayStart{ background: #FF8BA0 }
-.itemScalePanel .compactDisplayEnd{ background: #8BE8A2 }
-.itemScalePanel td.idealScale{ padding: 0 !important; vertical-align: top;}
-.itemScalePanel td.idealScale div{ margin: 0 }
-.itemScalePanel td.idealScale label{
-
-		-moz-border-radius:.5em;
-	-webkit-border-radius:.5em;	
-	 text-align:center;
-	 display:inline-block;
-	 width:28px;
- 	 border:none
- }
-
-.itemScalePanel td.idealScale label input{margin:3px 0px !important;}
-.itemScalePanel td.idealScale .scaleChoiceColored label:hover{
-	background: #fff;
-}
-.itemScalePanel td.idealScale .scaleChoiceNotColored label:hover{
-	background: #eee;
+.itemListEval li ul li, .itemListEval li ol li {
+  list-style: disc;
+  list-style-position: inside;
+  border: none;
+  margin-bottom: 3px;
+  margin-right: 3px;
 }
 
-.scaleChoiceColored{width:100%;display:block;position:absolute;z-index:6;background-color:transparent;padding-top:1px}
-.scaleChoiceNotColored{padding-top:2px;}
-.scaleChoiceNotColored .scaleItemLabelSelected{background:#ccc;}
-.scaleChoiceColored .scaleItemLabelSelected{background:#fff;}
-.itemScalePanelNACell{background:transparent !important}
-.idealScaleBack{
-	width: 100%;
-	display: block;
-	position: absolute;
-	z-index: 5
+.itemListEval li ol li {
+  list-style: decimal;
+  list-style-position: inside;
+  border: none;
 }
-.idealScaleBack img{ width: 100%; height: 29px; overflow: hidden }
-.fullVertical ol li{
-	margin: 0;
-	padding: .3em;
-	border: none;
-	list-style: none  !important
+
+.itemListNew .itemListEval h4 {
+  display: inline;
+  color: #333;
 }
+
+.itemListNew .itemListEval li:hover h4 {
+  color: #000;
+}
+
+.itemListEval label {
+  color: #333;
+}
+
+.itemListEval label:hover {
+  color: #000;
+}
+
+.itemScalePanel {
+  height: 31px;
+  border: 1px solid #E1E1E1;
+}
+
+.itemScalePanel:hover {
+  border: 1px solid #aaa;
+}
+
+.itemScalePanel td {
+  padding: .3em .5em;
+}
+
+.itemScalePanel .compactDisplayPositive {
+  background: #8BE8A2;
+}
+
+.itemScalePanel .compactDisplayNegative {
+  background: #FF8BA0;
+}
+
+.itemScalePanel td.idealScale {
+  padding: 0 !important;
+  vertical-align: top;
+}
+
+.itemScalePanel td.idealScale div {
+  margin: 0;
+}
+
+.itemScalePanel td.idealScale label {
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  text-align: center;
+  display: inline-block;
+  width: 28px;
+  border: none;
+}
+
+.itemScalePanel td.idealScale label input {
+  margin: 3px 0px !important;
+}
+
+.itemScalePanel td.idealScale .scaleChoiceColored label:hover {
+  background: #fff;
+}
+
+.itemScalePanel td.idealScale .scaleChoiceNotColored label:hover {
+  background: #eee;
+}
+
+.scaleChoiceColored {
+  width: 100%;
+  display: block;
+  position: absolute;
+  z-index: 6;
+  background-color: transparent;
+  padding-top: 1px;
+}
+
+.scaleChoiceNotColored {
+  padding-top: 2px;
+}
+
+.scaleChoiceNotColored .scaleItemLabelSelected {
+  background: #ccc;
+}
+
+.scaleChoiceColored .scaleItemLabelSelected {
+  background: #fff;
+}
+
+.itemScalePanelNACell {
+  background: transparent !important;
+}
+
+.idealScaleBack {
+  width: 100%;
+  display: block;
+  position: absolute;
+  z-index: 5;
+}
+
+.idealScaleBack img {
+  width: 100%;
+  height: 29px;
+  overflow: hidden;
+}
+
+.fullVertical ol li {
+  margin: 0;
+  padding: .3em;
+  border: none;
+  list-style: none !important;
+}
+
 td.fullDisplayHorizontalColoredWrapper {
-	padding-top:1em;
+  padding: 0 40px;
 }
-.fullDisplayHorizontalColored{
-	margin-top:0 !important;
+
+.fullDisplayHorizontalColored {
+  margin-top: 0 !important;
 }
-.fullDisplayHorizontalScale{
-	height:28px;
+
+.fullDisplayHorizontalScale {
+  height: 28px;
 }
+
 .fullDisplayHorizontalScale td {
-	padding: 5px;
-	 vertical-align:middle;
-	 text-align:center;
-	 white-space:nowrap;
-}
-.fullDisplayHorizontal label{
-	font-weight:bold;
-	}
-.fullDisplayHorizontalScale span{
-	font-weight:bold;
-	padding-left:2em !important;
-	padding-right:2em !important;
-	-moz-border-radius:.5em;
-	-webkit-border-radius:.5em;	
+  padding: 8px !important;
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.fullDisplayHorizontalScale span:hover{
-	background-color:#eee
+.fullDisplayHorizontal label {
+  font-weight: bold;
 }
-.fullDisplayHorizontalScale .labelSelected{
-	background-color:#eee
+
+.fullDisplayHorizontalScale span {
+  font-weight: bold;
+  padding-left: 2em !important;
+  padding-right: 2em !important;
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
 }
+
+.fullDisplayHorizontalScale span:hover {
+  background-color: #eeeeee;
+}
+
+.fullDisplayHorizontalScale .labelSelected {
+  background-color: #eeeeee;
+}
+
 .itemsListOddLine .fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected,
-.itemsListOddLine .fullDisplayHorizontalScale span:hover, .fullDisplayHorizontalColored span:hover{
-	background-color:#fff;
+.itemsListOddLine .fullDisplayHorizontalScale span:hover, .fullDisplayHorizontalColored span:hover {
+  background-color: #fff;
 }
 
-.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected{
-	background-image:url(../images/tick.png);
-	background-position: .5em;
-	background-repeat: no-repeat; 
-	
-	padding:.5em;
-	}
-
-.fullDisplayHorizontal td input{
+.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected {
+  background-image: url(../images/tick.png);
+  background-position: .5em;
+  background-repeat: no-repeat;
+  padding: .5em;
 }
+
 .fullVertical, .fullDisplayHorizontal {
-	clear:both;
-	/* height:100%; EVALSYS-952*/
-	overflow:hidden;
-	margin:1em 0;
-	padding:0
+  clear: both;
+  /* height:100%; EVALSYS-952*/
+  overflow: hidden;
+  padding: 0;
 }
-.fullVertical li, .fullDisplayHorizontal li{
-	border:1px solid #ccc !important;
-	float:left;
-	height:4em;
-	list-style-image:none !important;
-	list-style-position:outside !important;
-	list-style-type:none !important;
-	margin:0.3em;
-	padding:0 !important;
-	width:15em;
-	background: #fff;
-	-moz-border-radius:.5em;
-	-webkit-border-radius:.5em;
-	overflow:hidden;	
+
+div.fullVertical {
+  margin-left: 40px;
 }
-.fullVertical li label, .fullDisplayHorizontal li label{
-	display:block;
-	margin:0;
-	font-weight:normal;
-	text-indent:-2em;
-	padding:0.5em 0.5em 0.5em 2.5em!important;
-	height:100%;
-	}
+
+.fullVertical li, .fullDisplayHorizontal li {
+  border: 1px solid #ccc !important;
+  float: left;
+  height: 4em;
+  list-style-image: none !important;
+  list-style-position: outside !important;
+  list-style-type: none !important;
+  background: #fff;
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  overflow: hidden;
+  width: 15em;
+}
+
+.fullVertical li label, .fullDisplayHorizontal li label {
+  display: block;
+  margin: 0;
+  font-weight: normal;
+  text-indent: -2em;
+  padding: 0.5em 0.5em 0.5em 2.5em!important;
+  height: 100%;
+}
+
 .fullVertical li:hover, .fullDisplayHorizontal li:hover {
-	background:#FDFFCC;
-	cursor:pointer;
-	}
+  background: #FDFFCC;
+  cursor: pointer;
+}
 
-.fullVertical li{
-	margin:0.3em;
-	float:none;
-	width:50%;
-	height:auto;
+.fullVertical li {
+  float: none;
+  width: 50%;
+  height: auto;
 }
-.fullVertical li.checked, .fullDisplayHorizontal li.checked{
-	background:#FDFFCC
+
+.fullVertical li.checked, .fullDisplayHorizontal li.checked {
+  background: #fdffcc;
 }
-.fullVertical li.checkedNA, .fullDisplayHorizontal li.checkedNA{
-	background:#ddd
+
+.fullVertical li.checkedNA, .fullDisplayHorizontal li.checkedNA {
+  background: #dddddd;
 }
-.fullVertical li.na, .fullDisplayHorizontal li.na {
-	}
-.fullVertical li.na{
-	margin:1em 0 0 0.3em !important;
-	float:none;
-	width:50% !important;
-	text-align:left;
-	height:auto;
+
+.fullVertical li.na {
+  float: none;
+  width: 50% !important;
+  text-align: left;
+  height: auto;
 }
+
+.fullVertical li.na label, .fullDisplayHorizontal li.na {
+  border: 1px solid red !important;
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  border-radius: .5em;
+}
+
 /*2nd toolbar item links*/
+.addItem {
+  padding-left: 2em;
+  background: transparent url(../images/add.png) center left no-repeat;
+}
 
-.addItem{
-	padding-left: 2em;
-	background: transparent url(../images/add.png) center left no-repeat
+.goToList {
+  padding-left: 2em;
+  background: transparent url(../images/application_view_list.png) center left no-repeat;
 }
-.goToList{
-	padding-left: 2em;
-	background: transparent url(../images/application_view_list.png) center left no-repeat
+
+.exportAction {
+  padding-left: 2em;
+  background: transparent url(../images/table_go.png) center left no-repeat;
 }
-.exportAction{
-	padding-left: 2em;
-	background: transparent url(../images/table_go.png) center left no-repeat
+
+.emailItem {
+  margin-left: 2em;
+  display: block;
+  height: 15px;
+  background: transparent url(../images/email-send.png) center left no-repeat;
 }
-.emailItem{
-    margin-left: 2em;
-    display: block;
-    height: 15px;
-    background: transparent url(../images/email-send.png) center left no-repeat
-}
+
 /*see block items*/
-.steppedRowContainer{ border-collapse: collapse }
-.steppedRowContainer tr:hover{ background: #eee }
-.steppedRowContainer tr:hover td{ border-bottom: 1px solid #000; }
-.steppedRowContainer tr:hover td.exclude{ border: none }
-
+.steppedRowContainer {
+  border-collapse: collapse;
+}
 
 /*
 remove input width in template and use these instead
 */
-.scaleCell span {}
-.scaleCell span img {}
-.steppedRowContainer td.exclude span span{}
-td.exclude input {padding:0px;margin:4px 10px 4px 4px;}
-body:first-of-type  td.exclude input {padding:0px;margin:4px 12px 4px 4px;}
-span.topLabel {}
+td.exclude input {
+  padding: 0px;
+  margin: 4px 10px 4px 4px;
+}
+
+body:first-of-type td.exclude input {
+  padding: 0px;
+  margin: 4px 12px 4px 4px;
+}
 
 /*
 remove input width in template and use these instead
 */
-
-.steppedRowContainer td{
-	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc
-}
-.steppedRowContainer td td{ border: none }
-.itemsListOddLine .steppedRowContainer tr:hover{ background: #fff }
-.itemsListOddLine .steppedRowContainer td{
-	border-top: 1px solid #fff;
-	border-bottom: 1px solid #fff
-}
-.itemsListOddLine .steppedRowContainer td td{ border: none }
-
-#toolTip{padding:3px;border:1px solid #ccc;position:absolute;z-index:10;background:#ffe;display:none}
-.questionCell{
-	width:60%
+.steppedRowContainer td td {
+  border: none;
 }
 
-.answerCell{
+.itemsListOddLine .steppedRowContainer td td {
+  border: none;
 }
-.NACell{
-	width:28px !important;padding-right:.5em;
+
+#toolTip {
+  padding: 3px;
+  border: 1px solid #ccc;
+  position: absolute;
+  z-index: 10;
+  background: #ffe;
+  display: none;
 }
-.blockChoiceColored{
-	width:100%;display:block;position:absolute;z-index:6;background-color:transparent;
+
+.questionCell {
+  width: 60%;
 }
+
+.NACell {
+  width: 75px !important;
+  padding-right: .5em;
+}
+
+.blockChoiceColored {
+  width: 100%;
+  display: block;
+  position: absolute;
+  z-index: 6;
+  background-color: transparent;
+}
+
 .blockChoiceColored label.blockItemLabelSelected {
-	background:#fff;
+  background: #fff;
 }
-.blockChoiceNotColored{
 
-}
 .blockChoiceNotColored label.blockItemLabelSelected {
-	background:#ccc;
+  background: #ccc;
 }
 
-.blockItemLabelSelectedNA{
-	background:#ccc;
-}
-.blockChoiceColored label.blockItemLabel:hover{
-	background:#fff;
+.blockItemLabelSelectedNA {
+  background: #ccc;
 }
 
-.blockChoiceNotColored label.blockItemLabel:hover{
-	background:#aaa;
-}
-.itemsListOddLine .blockChoiceNotColored label.blockItemLabel:hover{
-		background:#eee;
+.blockChoiceColored label.blockItemLabel:hover {
+  background: #fff;
 }
 
-label.blockItemLabel, label.blockItemLabelNA{
-	-moz-border-radius:.5em; 
-	-webkit-border-radius:.5em;	
-	 text-align:center;
-	 display:inline-block;
-	 width:28px;
+.blockChoiceNotColored label.blockItemLabel:hover {
+  background: #aaa;
 }
-label.blockItemLabel input, label.blockItemLabelNA input{margin:3px 0px !important;}	 
-label.blockItemLabel:hover{
-	background:#fff;
+
+.itemsListOddLine .blockChoiceNotColored label.blockItemLabel:hover {
+  background: #eee;
 }
-.itemDoneCheck{
+
+label.blockItemLabel, label.blockItemLabelNA {
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  text-align: center;
+  display: inline-block;
+  width: 28px;
 }
-.itemDoneCheckShow{
-	background:  url(../images/tick.png) center left  no-repeat;
+
+label.blockItemLabel input, label.blockItemLabelNA input {
+  margin: 3px 0px !important;
 }
-.blockItemHeaderHilite{
-	color:#09C
+
+label.blockItemLabel:hover {
+  background: #fff;
+}
+
+.itemDoneCheckShow {
+  background: url(../images/tick.png) center left no-repeat;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+}
+
+.blockItemHeaderHilite {
+  color: #0099cc;
 }
 
 /*PART 5 end*/
 /*PART 6 - report view styling*/
-.itemListReport ol{ list-style: none; margin: 0; padding: 0 }
-.itemListReport .showcomments,.itemListReport .showtextresponses{ margin: 1em; color: #666; margin-left: 3.5% }
-.itemListReport .showcomments  ol,.itemListReport .showtextresponses ol{
-	list-style: lower-alpha;
-	list-style-position: outside;
-	line-height: 150%
+.itemListReport ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.itemListReport .showcomments  ol li,.itemListReport .showtextresponses ol li{ padding: .4em }
-.itemListReport .showcomments li.itemsListOddLine,.itemListReport .showtextresponses li.itemsListOddLine{ background: #fff }
+
+.itemListReport .showcomments, .itemListReport .showtextresponses {
+  margin: 1em;
+  color: #666;
+  margin-left: 3.5%;
+}
+
+.itemListReport .showcomments ol, .itemListReport .showtextresponses ol {
+  list-style: lower-alpha;
+  list-style-position: outside;
+  line-height: 150%;
+}
+
+.itemListReport .showcomments ol li, .itemListReport .showtextresponses ol li {
+  padding: .4em;
+}
+
+.itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine {
+  background: #fff;
+}
+
 /*PART 6 end*/
 /*PART 7 - messages*/
-.alertMessage ul{ padding: 0; margin: 0; list-style: none }
-.alertMessage ul li{ padding: 0; margin: 0; list-style: none }
+.alertMessage ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.alertMessage ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
 
 /*
 .label {outline:1px solid lime !important;width:40%;}
 */
-.validFail{ /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/}
-.validFail .label{ color: #b11; font-weight: bold }
-.validFail label{ color: #000 !important }
-.validFailGlyph{	display:none; /* do not show if not child of .validFail */}
-.validFail .validFailGlyph{
-	display: inline;
-	color: #b11;
-	font-weight: bold;
-	font-size: 100%;
-	padding: 0
+.validFail {
+  /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/
 }
 
-.compulsory{ /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/}
-.compulsory .label{ /* color: #b11; font-weight: bold */ }
-.compulsory label{ /* color: #000 !important */ }
-.compulsoryGlyph{	display:none; /* do not show if not child of .validFail */}
-.compulsory .compulsoryGlyph{
-	display: inline;
-	color: #b11;
-	font-weight: bold;
-	font-size: 100%;
-	padding: 0
+.validFail .label {
+  color: #b11;
+  font-weight: bold;
 }
 
-.messageAlert{
-	background: #FFEEEE url(../images/exclamation.gif) 5px 7px no-repeat;
-	border: 1px solid #FF5555;
-	color: #FF5555;
-	margin: .5em 0
+.validFail label {
+  color: #000 !important;
 }
-.messageInformation{
-	background: #ffe url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
-	border: 1px solid #EEBB44;
-	color: #d93;
-	margin: .5em 0
+
+.validFailGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
 }
-.messageComfirm{
-	background: #EEFFBB url(../images/accept.gif) 5px 7px no-repeat;
-	border: 1px solid #CCEE66;
-	color: #779900;
-	margin: .5em 0
+
+.validFail .validFailGlyph {
+  display: inline;
+  color: #b11;
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
 }
-.messageAlert ul,.messageInformation ul,.messageComfirm ul{ list-style: none; padding: 3px; margin: 0 }
-.messageAlert ul li,.messageInformation ul li,.messageComfirm ul li{ padding: 2px 0 2px 2em; margin: 0 }
-.lighthighlight{ color: #000; padding-left: .5em }
+
+.compulsory {
+  /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/
+}
+
+.compulsory .label {
+  /* color: #b11; font-weight: bold */
+}
+
+.compulsory label {
+  /* color: #000 !important */
+}
+
+.compulsoryGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
+}
+
+.compulsory .compulsoryGlyph {
+  display: inline;
+  color: #b11;
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
+}
+
+.messageAlert {
+  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
+  border: 1px solid #FF5555;
+  color: #FF5555;
+  margin: 0.5em 0;
+}
+
+.messageInformation {
+  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
+  border: 1px solid #EEBB44;
+  color: #d93;
+  margin: 0.5em 0;
+}
+
+.messageComfirm {
+  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
+  border: 1px solid #CCEE66;
+  color: #779900;
+  margin: 0.5em 0;
+}
+
+.messageAlert ul, .messageInformation ul, .messageComfirm ul {
+  list-style: none;
+  padding: 3px;
+  margin: 0;
+}
+
+.messageAlert ul li, .messageInformation ul li, .messageComfirm ul li {
+  padding: 2px 0 2px 2em;
+  margin: 0;
+}
+
+.lighthighlight {
+  color: #000;
+  padding-left: .5em;
+}
+
 /*PART 7 end*/
 /*PART 8 - utils and variants from sakai rendering*/
-.navIntraTool a.inactive{ text-decoration: none; font-weight: bold}
-form{ margin: 0; display: inline }
-.oddrow{ background-color: #E1E1E1 }
+.navIntraTool a.inactive {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+form {
+  margin: 0;
+  display: inline;
+}
+
+.oddrow {
+  background-color: #E1E1E1;
+}
+
 /*Special style to force divs to be able to work right when floating in all browsers*/
-.cleaner{
-	clear: both;
-	height: 1px;
-	font-size: 1px;
-	border: none;
-	margin: 0;
-	padding: 0;
-	background: transparent
+.cleaner {
+  clear: both;
+  height: 1px;
+  font-size: 1px;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
-.toggler{
-	/*the clickable target of a disclosure pair*/
-		cursor:pointer;
-		color:#35b;
-		font-weight: bold;
+
+.toggler {
+  /*the clickable target of a disclosure pair*/
+  cursor: pointer;
+  color: #35b;
+  font-weight: bold;
 }
-.toggler:hover{
-	color:#33f
+
+.toggler:hover {
+  color: #3333ff;
 }
+
 /*a button masquerading as a link*/
-.makeLink{
-	color: #27d;
-	padding: 0;
-	margin: 0;
-	background-color: transparent;
-	border: none;
-	text-decoration: underline;
-	cursor: pointer; /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
-	overflow: visible
+.makeLink {
+  color: #27d;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
+  overflow: visible;
 }
-.makeLink:hover{ color: #33f; cursor: pointer }
+
+.makeLink:hover {
+  color: #33f;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 /*cases of buttons masquerading as links in other locales*/
-.itemAction input.makeLink{
-	font-family: verdana,arial;
-	font-size: 100%;
-	color: #27d;
-	padding: .2em .3em 1px 0;
-	white-space: nowrap
+.itemAction input.makeLink {
+  font-family: verdana,arial;
+  font-size: 100%;
+  color: #27d;
+  padding: .2em .3em 1px 0;
+  white-space: nowrap;
 }
-.navIntraTool input.makeLink{
-	font-family: verdana,arial;
-	font-size: 100%;
-	color: #35b;
-	padding: 0;
-	white-space: nowrap
+
+.navIntraTool input.makeLink {
+  font-family: verdana,arial;
+  font-size: 100%;
+  color: #35b;
+  padding: 0;
+  white-space: nowrap;
 }
-.navIntraTool input.makeLink:hover{ color: #33f }
+
+.navIntraTool input.makeLink:hover {
+  color: #33f;
+}
+
 /*generic odd line background*/
-.itemsListOddLine{ background-color: #eee }
+.itemsListOddLine {
+  background-color: #eee;
+}
+
 /*sakai fieldsets are invisible,complex forms in this tool have the following class to organize themselves visually*/
-.visibleFS{ border: 1px solid #ccc; padding: 1em .5em }
-.visibleFS legend{ padding: .2em; color: orange; margin-left: 1em }
-label.block{ padding: 0 0 .3em 0 }
-/*squeeze the default rteditor into a smaller space*/	
-.evalEditorSmall{ width: 50em }
+.visibleFS {
+  border: 1px solid #ccc;
+  padding: 1em .5em;
+}
+
+.visibleFS legend {
+  padding: .2em;
+  color: orange;
+  margin-left: 1em;
+}
+
+label.block {
+  padding: 0 0 .3em 0;
+}
+
+/*squeeze the default rteditor into a smaller space*/
+.evalEditorSmall {
+  width: 50em;
+}
+
 /*delete button*/
-.hideComment{ padding-left: 2em; background: transparent url(../images/cross.png) center left no-repeat}
-.editComment { padding-left: 2em; background: transparent url(../images/pencil.png) center left no-repeat}
+.hideComment {
+  padding-left: 2em;
+  background: transparent url(../images/cross.png) center left no-repeat;
+}
 
+.editComment {
+  padding-left: 2em;
+  background: transparent url(../images/pencil.png) center left no-repeat;
+}
 
-
-.actionArrow{
-background:#FFEEEE url(/library/image/sakai/collapse.gif) no-repeat scroll left 3px;
-font-weight:bold;
-padding:2px 5px 6px 13px;
+.actionArrow {
+  background: #ffeeee url(/library/image/sakai/collapse.gif) no-repeat scroll left 3px;
+  font-weight: bold;
+  padding: 2px 5px 6px 13px;
 }
 
 .removeLink {
-	background:transparent url(/library/image/silk/delete.png) no-repeat scroll left center;
-	padding-left:1.6em;
-	text-indent: 110%;
-	overflow: hidden;
-	height: 25px;
-	width: 25px;
-}
-.editLink {
-background:transparent url(/library/image/silk/pencil.png) no-repeat scroll left center;
-padding-left:1.6em;
-}
-.preview {
-/*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
-padding-left:0.5em;
-}
-a.more {
-background-image: url(../images/collapsed.gif);
-background-position:100% center;
-background-repeat:no-repeat;
-padding-left:10px;
-padding-right:15px
-}
-a.less {
-background-image: url(../images/expanded.gif);
-background-position:100% center;
-background-repeat:no-repeat;
-padding-right:15px;
-padding-left:10px;
-}
-.removeArrow {
-	background-image: url(/library/image/sakai/expand-collapse.gif);
-	height: 7px;
-	width: 10px;
-	background-repeat: no-repeat;
-	margin-left: 97%
-}
-.removeDiv {
-	margin-top: -10px;
-	margin-left: 100%
+  background: transparent url(/library/image/silk/delete.png) no-repeat scroll left center;
+  padding-left: 1.6em;
+  text-indent: 110%;
+  overflow: hidden;
+  height: 25px;
+  width: 25px;
 }
 
-.removeFooter{
-	background-color: #EEEEEE;
-	border-top-width: 2px;
-	border-top-style: solid;
-	border-top-color: #FFFFFF;
+.editLink {
+  background: transparent url(/library/image/silk/pencil.png) no-repeat scroll left center;
+  padding-left: 1.6em;
 }
-.removeBody{
-	background-color: #EEEEEE;
-	margin-bottom: -5px;
-	margin-top: -5px;
+
+.preview {
+  /*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
+  padding-left: 0.5em;
 }
+
+a.more {
+  background-image: url(../images/collapsed.gif);
+  background-position: 100% center;
+  background-repeat: no-repeat;
+  padding-left: 10px;
+  padding-right: 15px;
+}
+
+a.less {
+  background-image: url(../images/expanded.gif);
+  background-position: 100% center;
+  background-repeat: no-repeat;
+  padding-right: 15px;
+  padding-left: 10px;
+}
+
+.removeArrow {
+  background-image: url(/library/image/sakai/expand-collapse.gif);
+  height: 7px;
+  width: 10px;
+  background-repeat: no-repeat;
+  margin-left: 97%;
+}
+
+.removeDiv {
+  margin-top: -10px;
+  margin-left: 100%;
+}
+
+.removeFooter {
+  background-color: #EEEEEE;
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-top-color: #FFFFFF;
+}
+
+.removeBody {
+  background-color: #EEEEEE;
+  margin-bottom: -5px;
+  margin-top: -5px;
+}
+
 .childControls {
-	color: #CCCCCC;
-	font-size: 10px;
+  color: #CCCCCC;
+  font-size: 10px;
 }
+
 .childItem:hover {
-	background-color: #EEEEEE;
+  background-color: #EEEEEE;
 }
+
 .childItemDrag {
-	cursor: move;
-	}
+  cursor: move;
+}
+
 /*************************************/
 /* Inline Edit */
 /* hover effect over editable element */
 .inlineEdit-invitation {
-border : 1px solid #999;
- background : lightyellow;
- cursor : pointer;
- /*margin : -1px;*/
+  border: 1px solid #999;
+  background: lightyellow;
+  cursor: pointer;
+  /*margin : -1px;*/
 }
+
 .inlineEdit-tooltip {
- position : absolute;
- background : #CCC;
- border : 1px solid #999;
- font : normal 75% sans-serif;
- padding : 3px 5px;
-}
-.inlineEdit-field {
+  position: absolute;
+  background: #CCC;
+  border: 1px solid #999;
+  font: normal 75% sans-serif;
+  padding: 3px 5px;
 }
 
 /*Adapted from the SideBar Nav, this is for inlinePopups
 */
-
-.popupMenu li.selectedTool span{
+.popupMenu li.selectedTool span {
   font-weight: bold;
   background-color: #E0E2E4;
   display: block;
-  padding-bottom : 2px;
-  padding-right : 10px !important;
-  padding-left : 10px;
-  padding-top : 2px;
-  margin-bottom : 0px;
-  margin-left : 0px;
-  margin-right : 0px;
-  margin-top : 0px;
-  background-position : center left !important;
-  background-repeat : no-repeat !important;
+  padding-bottom: 2px;
+  padding-right: 10px !important;
+  padding-left: 10px;
+  padding-top: 2px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  background-position: center left !important;
+  background-repeat: no-repeat !important;
   /*filter:alpha(opacity=50);
   opacity: 0.50;
   moz-opacity: 0.50;*/
 }
 
-.popupMenu li span{
-/*comment this line for a return to sanity
-display:none*/
+.popupMenu li span {
+  /*comment this line for a return to sanity
+  display:none*/
 }
 
-
-
-.popupMenu li a:link,#toolMenu li a{
-display: block;
-text-decoration: none;
-color: #333;
-padding-bottom : 2px;
-padding-left : 10px !important;
-padding-right : 10px;
-padding-top : 2px;
-margin-bottom : 0px;
-margin-left : 0px;
-margin-right : 0px;
-margin-top : 0px;
-background-position : center left !important;
-background-repeat : no-repeat !important;
-
-}
-.popupMenu li a:hover{
-	text-decoration: none;
-	color: #333;
-	background: #D2EAF0;
+.popupMenu li a:link, #toolMenu li a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding-bottom: 2px;
+  padding-left: 10px !important;
+  padding-right: 10px;
+  padding-top: 2px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  background-position: center left !important;
+  background-repeat: no-repeat !important;
 }
 
-.popupMenu li a.selected{
-	text-decoration: none;
-	color: #333;
-	cursor: text;
+.popupMenu li a:hover {
+  text-decoration: none;
+  color: #333;
+  background: #D2EAF0;
 }
 
-.popupMenu li a.selected:hover{
-	text-decoration: none;
-	color: #333;
-	cursor: text;
-}
-.popupMenu{
-	width: 10.2em;
-	padding: 0;
-	margin: 0;
-	color: #333;
-	background: #F3F4F5;
+.popupMenu li a.selected {
+  text-decoration: none;
+  color: #333;
+  cursor: text;
 }
 
-.popupMenu ul{
-	width:auto;
-	list-style: none;
-	margin: 0;
-	padding-right: 0;
-	padding-left: 0;
+.popupMenu li a.selected:hover {
+  text-decoration: none;
+  color: #333;
+  cursor: text;
 }
 
-.popupMenu li{
-
-	margin: 0;
-	width: auto;
-	padding: 0;
-	border-bottom: 1px solid #fff;
-	text-align: left;
+.popupMenu {
+  width: 10.2em;
+  padding: 0;
+  margin: 0;
+  color: #333;
+  background: #F3F4F5;
 }
+
+.popupMenu ul {
+  width: auto;
+  list-style: none;
+  margin: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.popupMenu li {
+  margin: 0;
+  width: auto;
+  padding: 0;
+  border-bottom: 1px solid #fff;
+  text-align: left;
+}
+
 /* Overlay */
 #overlay {
-
-     visibility: hidden;
-
-     position: absolute;
-
-     left: 0px;
-
-     top: 0px;
-
-     width:100%;
-
-     height:100%;
-
-     text-align:center;
-
-     z-index: 1000;
-
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  z-index: 1000;
 }
+
 #overlay div {
-
-     width:300px;
-
-     margin: 100px auto;
-
-     background-color: #fff;
-
-     border:1px solid #000;
-
-     padding:15px;
-
-     text-align:center;
-
+  width: 300px;
+  margin: 100px auto;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 15px;
+  text-align: center;
 }
+
 /* Comment box warn */
 .commentWarn {
-    color:#DD9933
+  color: #dd9933;
 }
+
 .previewEvalNote {
-    padding:5px; margin:10px; border: 1px solid rgb(255, 204, 0); background: rgb(255, 255, 204); width:97%
-}
-.validFail{
- /* top parent of failed group 
-   can have a border, for example, or just style children below
-  */
-}
-.validFail .label{
-	color:#b11;
-	font-weight:bold;
-}
-.validFail label{
-	color:#000 !important;
-	
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid #ffcc00;
+  background: #ffffcc;
+  width: 97%;
 }
 
-
-.validFailGlyph{
-	display:none; /* do not show if not child of .validFail */
-}
-.validFail .validFailGlyph{
-	display:inline;
-	color:#b11;
-	font-weight:bold;
-	font-size:100%;
-	padding:0;
-}
-.infoItem{
-	padding-left: 2em;
-	background: transparent url(/library/image/sakai/information.png) center left no-repeat
+.validFail {
+  /* top parent of failed group 
+    can have a border, for example, or just style children below
+   */
 }
 
-
-.itemListReport ol{
-	list-style: none;
-	margin:0;
-	padding:0	
-}
-.itemListReport .showcomments, .itemListReport .showtextresponses{
-	margin: 1em;
-	color:#666;
-	margin-left:3.5%
-}
-.itemListReport .showcomments  ol, .itemListReport .showtextresponses ol{
-	list-style: lower-alpha; list-style-position: outside;line-height:150%
-}
-.itemListReport .showcomments  ol li, .itemListReport .showtextresponses ol li{
-	padding:.4em
-}
-.itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine{
-	background:#fff
+.validFail .label {
+  color: #b11;
+  font-weight: bold;
 }
 
-.messageAlert{
-		background: #FFEEEE url(../images/exclamation.gif) 5px 7px no-repeat;
-		border:1px solid #FF5555;
-		color:#FF5555;
-		margin:.5em 0;
+.validFail label {
+  color: #000 !important;
 }
-.messageInformation{
-		background: #ffe url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
-		border:1px solid #EEBB44;
-		color:#d93;
-		margin:.5em 0;
+
+.validFailGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
 }
-.messageComfirm{
-		background: #EEFFBB url(../images/accept.gif) 5px 7px no-repeat;
-		border:1px solid #CCEE66;
-		color:#779900;		
-		margin:.5em 0;
+
+.validFail .validFailGlyph {
+  display: inline;
+  color: #b11;
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
 }
+
+.infoItem {
+  padding-left: 2em;
+  background: transparent url(/library/image/sakai/information.png) center left no-repeat;
+}
+
+.itemListReport ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.itemListReport .showcomments, .itemListReport .showtextresponses {
+  margin: 1em;
+  color: #666;
+  margin-left: 3.5%;
+}
+
+.itemListReport .showcomments ol, .itemListReport .showtextresponses ol {
+  list-style: lower-alpha;
+  list-style-position: outside;
+  line-height: 150%;
+}
+
+.itemListReport .showcomments ol li, .itemListReport .showtextresponses ol li {
+  padding: 0.4em;
+}
+
+.itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine {
+  background: white;
+}
+
+.messageAlert {
+  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
+  border: 1px solid #FF5555;
+  color: #FF5555;
+  margin: .5em 0;
+}
+
+.messageInformation {
+  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
+  border: 1px solid #EEBB44;
+  color: #d93;
+  margin: .5em 0;
+}
+
+.messageComfirm {
+  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
+  border: 1px solid #CCEE66;
+  color: #779900;
+  margin: .5em 0;
+}
+
 .messageAlert ul, .messageInformation ul, .messageComfirm ul {
-	list-style: none;
-	padding:3px;
-	margin:0;
-}
-.messageAlert ul li, .messageInformation ul li, .messageComfirm ul li {
-	padding:2px 0 2px 2em;
-	margin:0		
+  list-style: none;
+  padding: 3px;
+  margin: 0;
 }
 
-.listPager {color:#ccc;padding:0 3px;font-weight: bold;font-size:1.2em}
-.listPager a {text-decoration:none !important;padding: 0 1em;border:1px solid #ccc;background:#eee url(../images/pager-back.png) repeat-x !important}
-.listPager span {padding: 0 1em;border:1px solid #ccc;background:#fff}
-.listPager a:hover {text-decoration:none !important;padding: 0 1em;border:1px solid #bbb;background:#eee url(../images/pager-back-hover.png) repeat-x !important}
-.listPager span.listPagerCount{border:0;font-size:.8em}
+.messageAlert ul li, .messageInformation ul li, .messageComfirm ul li {
+  padding: 2px 0 2px 2em;
+  margin: 0;
+}
+
+.listPager {
+  color: #ccc;
+  padding: 0 3px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.listPager a {
+  text-decoration: none !important;
+  padding: 0 1em;
+  border: 1px solid #ccc;
+  background: #eeeeee url(../images/pager-back.png) repeat-x !important;
+}
+
+.listPager span {
+  padding: 0 1em;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.listPager a:hover {
+  text-decoration: none !important;
+  padding: 0 1em;
+  border: 1px solid #bbb;
+  background: #eeeeee url(../images/pager-back-hover.png) repeat-x !important;
+}
+
+.listPager span.listPagerCount {
+  border: 0;
+  font-size: .8em;
+}
 
 /* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
 	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
@@ -1012,24 +1447,25 @@ background-repeat : no-repeat !important;
 .fullDisplayHorizontal .na{
 	margin:1em .2em;
 }*/
-
 /* Group template item - add existing item into group */
-.dropItem{
-    padding-bottom:1px;
-	background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat
+.dropItem {
+  padding-bottom: 1px;
+  background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat;
 }
 
-.JSshow{
-    padding-right: 5px;
-    text-decoration: none;
+.JSshow {
+  padding-right: 5px;
+  text-decoration: none;
 }
 
 /* fake-fieldset to fix EVALSYS-551 */
 .fake-fieldset .fieldset {
-  border: solid 2px #eee;
   margin-top: 20px;
   position: relative;
-  }
+  padding: 8px;
+  padding-top: 16px;
+  border: 1px solid #ccc;
+}
 
 .fake-fieldset .legend {
   left: 0.5em;
@@ -1037,96 +1473,614 @@ background-repeat : no-repeat !important;
   background: white;
   position: absolute;
   font-weight: bold;
-  color:orange;
-  font-size:110%;
-  margin-left:1em;
-  padding:0.3em 0.7em;
-  }
-  
-.elementAlertBack{
-	background: transparent url(/library/image/silk/error.png) no-repeat scroll right 0;
-	padding-right: 20px
+  color: orange;
+  font-size: 110%;
+  margin-left: 32px;
+  padding: 6px 10px;
 }
 
-.elementAlertFront{
-	background: transparent url(/library/image/silk/error.png) no-repeat scroll left 0;
-	padding-left: 20px
+.elementAlertBack {
+  background: transparent url(/library/image/silk/error.png) no-repeat scroll right 0;
+  padding-right: 20px;
+}
+
+.elementAlertFront {
+  background: transparent url(/library/image/silk/error.png) no-repeat scroll left 0;
+  padding-left: 20px;
 }
 
 /* style selection controls fieldset */
-.selectionsItemListNew{
-	width: 95%;
-	border-color: #eee;
-	border-style: solid;
-	border-width: 2px;
-	padding: .5em;
-	list-style: none
+.selectionsItemListNew {
+  width: 95%;
+  border-color: #eee;
+  border-style: solid;
+  border-width: 2px;
+  padding: .5em;
+  list-style: none;
 }
-.selectionsItemListNew legend{
-	padding: .3em .7em;
-	color: orange;
-	font-size: 110%;
-	margin-left: 1em
+
+.selectionsItemListNew legend {
+  padding: .3em .7em;
+  color: orange;
+  font-size: 110%;
+  margin-left: 1em;
 }
 
 .evalAdminTable {
-	border: 1px solid #eee;
-	margin-top: 20px;
+  border: 1px solid #eee;
+  margin-top: 20px;
 }
 
 .evalAdminTable thead tr {
-	background: #ccc;
+  background: #ccc;
 }
 
 .evalAdminTable td {
-	padding: 0 20px;
+  padding: 0 20px;
+}
+
+.column {
+  width: 25%;
 }
 
 /* hierarchy node perms page */
-
 table#user-perms-table {
-	margin: 15px 0;
-	border: 1px solid #ccc;
+  margin: 15px 0;
+  border: 1px solid #ccc;
 }
 
 table#user-perms-table thead {
-	background: #aaa;
+  background: #aaa;
 }
 
 table#user-perms-table tr {
-	padding: 10px 0;
+  padding: 10px 0;
 }
 
 table#user-perms-table tbody tr:nth-child(2n) {
-	background: #eee;
+  background: #eee;
 }
 
 table#user-perms-table td {
-	padding: 10px;
+  padding: 10px;
 }
 
 table#user-perms-table td.userInfo {
-	text-align: center;
+  text-align: center;
 }
 
 table#user-perms-table td.actions {
-	text-align: center;
+  text-align: center;
 }
 
 table#user-perms-table td.userPerms > span:nth-child(2n+1) {
-	clear: left;
-	float: left;
-	width: 140px;
+  clear: left;
+  float: left;
+  width: 140px;
 }
 
 table#user-perms-table td.userPerms > span:nth-child(2n) {
-	float: left;
+  float: left;
+}
+
+/* tablesorter - mostly on the dashboard */
+table.tablesorter th.header {
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+
+table.tablesorter th.header.headerSortUp {
+  background-image: url(../images/tipsy-north.gif);
+  font-weight: bold;
+  padding-left: 14px !important;
+}
+
+table.tablesorter th.header.headerSortDown {
+  background-image: url(../images/tipsy-south.gif);
+  font-weight: bold;
+  padding-left: 14px !important;
+}
+
+/* admin checkbox alignment - EVALSYS-1250 */
+.administrate-form .cbxmultlftalgn label {
+  padding-left: 1.7em;
+}
+
+.administrate-form .cbxmultlftalgn input.cbx {
+  float: left;
+  position: absolute;
 }
 
 .matrixHeader {
-	float: right;
-	overflow: hidden;
-	width: 28px;
-	font-weight: bold;
-	text-align: center;
+  float: right;
+  overflow: hidden;
+  width: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.evaluation .itemListEval {
+  margin-top: 0;
+}
+.evaluation .itemListEval .evalItemTop {
+  margin: 16px 0 !important;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-right: 16px;
+}
+.evaluation .itemListEval .evalItemTop:first-child {
+  margin-top: 0 !important;
+}
+.evaluation .item.multiple-choice .content, .evaluation .item.multiple-answer .content {
+  margin-left: 40px;
+}
+.evaluation .item .title {
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding: 0;
+}
+.evaluation .item .title span {
+  display: inline-block;
+}
+.evaluation .item .title .number {
+  position: absolute;
+  width: 26px;
+  text-align: right;
+}
+.evaluation .item .title .delineator, .evaluation .item .title .required {
+  position: absolute;
+}
+.evaluation .item .title .delineator {
+  left: 26px;
+}
+.evaluation .item .title .delineator .paren {
+  display: none;
+}
+.evaluation .item .title .delineator .dot {
+  display: inline-block;
+}
+.evaluation .item .title .required {
+  left: 2.5em;
+  display: none;
+}
+.evaluation .item .title .label {
+  margin-left: 40px;
+}
+.evaluation .item .compulsory .title .required {
+  display: inline-block;
+}
+.evaluation .item .numberWrapper {
+  text-align: right;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  width: 30px;
+  padding-right: 6px;
+  font-weight: bold;
+  vertical-align: top;
+}
+.evaluation .item .numberWrapper {
+  *display: inline;
+}
+.evaluation .item .steppedLabel {
+  font-weight: bold;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  width: 80%;
+}
+.evaluation .item .steppedLabel {
+  *display: inline;
+}
+.evaluation .item.blockItemGroup {
+  font-size: 13px;
+}
+.evaluation .item.blockItemGroup .groupHeader {
+  padding-left: 42px;
+  padding-bottom: 24px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+.evaluation .item.blockItemGroup .steppedLabel {
+  font-weight: normal;
+}
+.evaluation .item.blockItemGroup .questionCell {
+  padding: 0.2em;
+  height: 24px;
+  padding-bottom: 14px;
+}
+.evaluation .item.blockItemGroup .answerCell table {
+  margin-right: 2px;
+}
+.evaluation .item.blockItemGroup .blockItemLabel {
+  margin-left: 0;
+  font-weight: normal;
+}
+.evaluation .item.blockItemGroup .actualHeader {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  padding-top: 4px;
+}
+.evaluation .item.blockItemGroup .actualHeader {
+  *display: inline;
+}
+.evaluation .item.text .content {
+  position: relative;
+}
+.evaluation .item.text .content textarea {
+  width: 90%;
+  min-width: 600px;
+  padding: 0;
+  margin: 0;
+  margin-left: 40px;
+}
+.evaluation .item.text .content .na {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 4px;
+  border: 1px solid red;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
+}
+.evaluation .matrix {
+  min-width: 800px;
+}
+.evaluation .matrix .title {
+  min-width: 40%;
+}
+.evaluation .matrix fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.evaluation .matrix fieldset legend {
+  padding: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  text-align: center;
+}
+.evaluation .matrix fieldset legend .response-type, .evaluation .matrix fieldset legend .response-scale-delineator {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+.evaluation .matrix fieldset legend .response-scale-end {
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+.evaluation .matrix fieldset legend .response-scale-start {
+  position: absolute;
+  top: 0;
+}
+.evaluation .matrix fieldset legend .response-scale-start {
+  left: 70px;
+}
+.evaluation .matrix fieldset legend .response-scale-middle {
+  position: relative;
+  left: 32px;
+}
+.evaluation .scale .matrix {
+  position: relative;
+  zoom: 1;
+}
+.evaluation .scale .matrix:before, .evaluation .scale .matrix:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.evaluation .scale .matrix:after {
+  clear: both;
+}
+.evaluation .scale .matrix .title {
+  float: left;
+}
+.evaluation .scale .matrix label span, .evaluation .scale .matrix label input, .evaluation .scale .matrix legend .response-scale-label {
+  font-family: sans-serif !important;
+  font-size: 12px !important;
+}
+.evaluation .scale .matrix .content {
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  float: right;
+}
+.evaluation .scale .matrix .content ol, .evaluation .scale .matrix .content ul, .evaluation .scale .matrix .content li {
+  margin: 0;
+  padding: 0;
+}
+.evaluation .scale .matrix .content li {
+  list-style-type: none;
+  display: inline-block;
+}
+.evaluation .scale .matrix .content fieldset {
+  position: relative;
+}
+.evaluation .scale .matrix .content .response-list {
+  padding-top: 16px;
+}
+.evaluation .scale .matrix .content .response-list li {
+  margin: 0;
+  padding: 0 !important;
+}
+.evaluation .scale .matrix .content .response-list li.na {
+  margin-right: 5px;
+  padding-right: 5px !important;
+  border-right: 1px solid #CCCCCC;
+}
+.evaluation .scale .matrix .content label {
+  display: inline-block;
+  margin: 0;
+  padding: 5px 15px;
+  font-family: sans-serif !important;
+  font-size: 12px !important;
+  line-height: 100%;
+  text-align: center;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  -ms-border-radius: 4px / 4px;
+  -o-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+}
+.evaluation .scale .matrix .content label span {
+  display: block;
+  margin-bottom: 5px;
+}
+.evaluation .scale .matrix .matrixRadioItems-2 {
+  min-width: 180px;
+}
+.evaluation .scale .matrix .matrixRadioItems-3 {
+  min-width: 120px;
+}
+.evaluation .scale .matrix .matrixRadioItems-4 {
+  min-width: 80px;
+}
+.evaluation .scale .matrix .matrixRadioItems-5 {
+  min-width: 60px;
+}
+.evaluation .scale .compact .title {
+  float: left;
+  width: auto !important;
+  margin-top: 6px;
+}
+.evaluation .scale .compact .content {
+  overflow: hidden;
+}
+.evaluation .scale .compact .content table {
+  float: right;
+}
+.evaluation .item-group {
+  position: relative;
+  zoom: 1;
+}
+.evaluation .item-group:before, .evaluation .item-group:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.evaluation .item-group:after {
+  clear: both;
+}
+.evaluation .item-group > .title {
+  float: left;
+  margin: 0;
+  margin-bottom: 16px;
+  margin-left: 42px;
+}
+.evaluation .item-group > .content {
+  display: inline-block;
+  width: 100%;
+}
+.evaluation .item-group > .content > fieldset {
+  display: inline-block;
+  width: 100%;
+}
+.evaluation .item-group > .content > fieldset legend {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.evaluation .item-group > .content .item {
+  margin-bottom: 0;
+}
+.evaluation .item-group .item {
+  display: block;
+  margin: 0;
+}
+.evaluation .item-group .item .title .label {
+  padding-left: 2px;
+}
+.evaluation .item-group .item legend {
+  display: none;
+}
+.evaluation .item-group .item .content .response-list span {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+.evaluation .item-group .response-scale-container {
+  height: 1em;
+  display: block;
+}
+.evaluation .item-group .response-group-labels {
+  display: block;
+  margin-top: 0.75em;
+  text-align: right !important;
+  white-space: nowrap;
+}
+.evaluation .item-group .response-scale-label {
+  display: inline-block;
+  padding: 0 19px;
+  width: 13px;
+  font-family: sans-serif !important;
+  font-size: 12px !important;
+  line-height: 100%;
+  text-align: center;
+  padding: 0 18px\9;
+  width: 15px\9;
+}
+.evaluation .item-group .response-scale-na {
+  margin-right: 11px;
+  width: 24px;
+  padding: 0 17px 0 13px;
+}
+.evaluation .item-group .item .matrix {
+  padding-top: 8px;
+}
+.evaluation .item-group .item .matrix .title {
+  padding: 4px 0;
+  margin-bottom: 0;
+}
+.evaluation .item-group .item .matrix .response-list {
+  padding-top: 0 !important;
+}
+.evaluation .steppedItemGroup {
+  font-size: 13px;
+}
+.evaluation .steppedItemGroup .choiceGroup {
+  padding-right: 0.2em;
+}
+.evaluation .steppedItemGroup .blockItemLabel {
+  margin-left: 0;
+}
+.evaluation .steppedItemGroup img,
+.evaluation .steppedItemGroup table td {
+  vertical-align: middle;
+}
+.evaluation .matrix .response-scale-na, .evaluation .matrix .na {
+  visibility: hidden !important;
+}
+.evaluation .use-na .matrix .response-scale-na, .evaluation .use-na .matrix .na {
+  visibility: visible !important;
+}
+.evaluation .JSevalComment {
+  margin: 0 0 15px 55px;
+}
+
+@-moz-document url-prefix() {
+  .evaluation .item-group .response-group-labels {
+    padding-right: 10px;
+  }
+
+  .evaluation .item-group .response-group-labels span {
+    padding-left: 34px;
+    width: 0;
+  }
+
+  .evaluation .item-group .response-group-labels .response-scale-na {
+    padding-left: 0 !important;
+    margin-right: 26px;
+  }
+}
+
+.portletBody .left-separator {
+  border-left: 1px solid #aaa;
+  padding-left: 5px !important;
+  margin-left: 2px;
+}
+.portletBody table.listHier .itemAction a:hover {
+  border-bottom: none !important;
+}
+.portletBody .summaryBox h4 {
+  font-size: 1.5em;
+  margin: 0.3em 0 0.7em 10px;
+  padding: 0.1em 0 0 0;
+}
+.portletBody .title {
+  font-size: 100%;
+  font-weight: bold;
+  color: #000;
+}
+.portletBody .title .required {
+  color: red;
+}
+.portletBody .matrix legend {
+  font-weight: normal;
+  font-size: 0.85em;
+  color: #000;
+}
+.portletBody .item-group .item .title .label {
+  font-weight: normal;
+}
+
+.urgentStyle {
+  color: red;
+  font-weight: bold;
+}
+
+.evaluation .content .response-list label {
+  font-family: verdana, sans-serif;
+  font-size: 11px;
+  color: #000000;
+  text-shadow: none;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+}
+.evaluation .content .response-list label:hover, .evaluation .content .response-list label:focus {
+  color: #000000;
+  background: #ee4444;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #ffa500));
+  background-image: -webkit-linear-gradient(#ffffff, #ffa500);
+  background-image: -moz-linear-gradient(#ffffff, #ffa500);
+  background-image: -o-linear-gradient(#ffffff, #ffa500);
+  background-image: -ms-linear-gradient(#ffffff, #ffa500);
+  background-image: linear-gradient(#ffffff, #ffa500);
+  border-color: #ffa500;
+}
+.evaluation .content .response-list .selected {
+  color: #ffffff;
+  text-shadow: none;
+  background: #264c83;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
+  background-image: -webkit-linear-gradient(#3163ab, #1b355b);
+  background-image: -moz-linear-gradient(#3163ab, #1b355b);
+  background-image: -o-linear-gradient(#3163ab, #1b355b);
+  background-image: -ms-linear-gradient(#3163ab, #1b355b);
+  background-image: linear-gradient(#3163ab, #1b355b);
+  border: 1px solid #0f1e34;
+}
+.evaluation .content .response-list .selected span {
+  color: #ffffff;
+}
+.evaluation .content .response-list .selected:hover, .evaluation .content .response-list .selected:focus {
+  color: #ffffff;
+  text-shadow: none;
+  background: #264c83;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3163ab), color-stop(100%, #1b355b));
+  background-image: -webkit-linear-gradient(#3163ab, #1b355b);
+  background-image: -moz-linear-gradient(#3163ab, #1b355b);
+  background-image: -o-linear-gradient(#3163ab, #1b355b);
+  background-image: -ms-linear-gradient(#3163ab, #1b355b);
+  background-image: linear-gradient(#3163ab, #1b355b);
+  border: 1px solid #0f1e34;
+}
+.evaluation .content .response-list .selected:hover span, .evaluation .content .response-list .selected:focus span {
+  color: #ffffff;
 }

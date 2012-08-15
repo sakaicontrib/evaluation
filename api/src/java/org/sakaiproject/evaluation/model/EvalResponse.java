@@ -73,6 +73,16 @@ public class EvalResponse implements java.io.Serializable {
      */
     public boolean complete = false;
 
+    /**
+     * This variable is used to keep track of whether the response has been submitted or only saved.
+     * There are two configurations at work here.
+     * EvalSettings.STUDENT_MODIFY_RESPONSES - determines if the user can submit multiple times
+     * EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT - determines if the user can save without submitting
+     * <br> Once an evaluation is submitted, it will be included in the metrics reporting.  In the
+     * scenario where the user cannot modify responses but can save without submitting, this variable
+     * will keep track of whether the evaluation has been submitted yet.
+     */
+    private transient boolean submitted = true;
     // Constructors
 
     /** default constructor */
@@ -204,6 +214,34 @@ public class EvalResponse implements java.io.Serializable {
 
     public Date getEndTime() {
         return endTime;
+    }
+    
+    /**
+     * isSubmitted() returns whether the response has been submitted or only saved.
+     * There are two configurations at work here.
+     * EvalSettings.STUDENT_MODIFY_RESPONSES - determines if the user can submit multiple times
+     * EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT - determines if the user can save without submitting
+     * <br> Once an evaluation is submitted, it will be included in the metrics reporting.  In the
+     * scenario where the user cannot modify responses but can save without submitting, this variable
+     * will keep track of whether the evaluation has been submitted yet.
+     * @returns true if this response has been submitted before or false if only saved.
+     */
+    public boolean isSubmitted() {
+    	return this.submitted;
+    }
+    
+    /**
+     * isSubmitted() returns whether the response has been submitted or only saved.
+     * There are two configurations at work here.
+     * EvalSettings.STUDENT_MODIFY_RESPONSES - determines if the user can submit multiple times
+     * EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT - determines if the user can save without submitting
+     * <br> Once an evaluation is submitted, it will be included in the metrics reporting.  In the
+     * scenario where the user cannot modify responses but can save without submitting, this variable
+     * will keep track of whether the evaluation has been submitted yet.
+     * @param submitted whether this response has been submitted before or only saved
+     */
+    public void isSubmitted(boolean submitted) {
+    	this.submitted = submitted;
     }
 
     public void setEndTime(Date endTime) {

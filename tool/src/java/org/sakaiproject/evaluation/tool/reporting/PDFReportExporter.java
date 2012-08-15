@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.tool.reporting;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -123,13 +124,17 @@ public class PDFReportExporter implements ReportExporter {
         String groupNames = responseAggregator.getCommaSeparatedGroupNames(groupIds);
 
         // TODO this is so hard to read it makes me cry, it should not be written as a giant single line like this -AZ
-        evalPDFReportBuilder.addTitlePage(evaluation.getTitle(), groupNames, messageLocator
-                .getMessage("reporting.pdf.startdatetime", df.format(evaluation.getStartDate())),
-                messageLocator.getMessage("reporting.pdf.enddatetime", df.format(evaluation
-                        .getDueDate())), messageLocator.getMessage("reporting.pdf.replyrate",
-                                new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount,
-                                        enrollmentsCount) }), bannerImageBytes, messageLocator
-                                        .getMessage("reporting.pdf.defaultsystemname"));
+        evalPDFReportBuilder.addTitlePage(
+                evaluation.getTitle(), 
+                groupNames, 
+                messageLocator.getMessage("reporting.pdf.startdatetime", df.format(evaluation.getStartDate())),
+                messageLocator.getMessage("reporting.pdf.enddatetime", df.format(evaluation.getDueDate())), 
+                messageLocator.getMessage("reporting.pdf.replyrate", new String[] { 
+                        EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) 
+                }), 
+                bannerImageBytes, 
+                messageLocator.getMessage("reporting.pdf.defaultsystemname")
+                );
         
         /**
          * set title and instructions
@@ -150,7 +155,6 @@ public class PDFReportExporter implements ReportExporter {
         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation.getId(), groupIds);
 
         // Loop through the major group types: Course Questions, Instructor Questions, etc.
-        int renderedItemCount = 0;
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
             
             if (!instructorViewAllResults   // If the eval is so configured,
@@ -184,15 +188,13 @@ public class PDFReportExporter implements ReportExporter {
                 // Render the Node title if it's enabled in the admin settings.
                 if (hng.node != null) {
                     // Showing the section title is system configurable via the administrate view
-                    Boolean showHierSectionTitle = (Boolean) evalSettings
-                            .get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+                    Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
                     if (showHierSectionTitle) {
                         evalPDFReportBuilder.addSectionHeader(hng.node.title);
                     }
                 }
 
-                List<DataTemplateItem> dtis = hng.getDataTemplateItems(true); // include block
-                                                                              // children
+                List<DataTemplateItem> dtis = hng.getDataTemplateItems(true); // include block children
                 for (int i = 0; i < dtis.size(); i++) {
                     DataTemplateItem dti = dtis.get(i);
                     
@@ -206,7 +208,6 @@ public class PDFReportExporter implements ReportExporter {
                     }
                     
                     renderDataTemplateItem(evalPDFReportBuilder, dti);
-                    renderedItemCount++;
                 }
             }
         }
@@ -273,16 +274,11 @@ public class PDFReportExporter implements ReportExporter {
             int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType,
                     itemScaleOptions.length, itemAnswers);
 
-            String[] optionLabels;
+            String[] optionLabels = RenderingUtils.makeReportingScaleLabels(templateItem, itemScaleOptions);
             if (templateItem.getUsesNA()) {
-                optionLabels = new String[itemScaleOptions.length + 1];
-                for (int m = 0; m < itemScaleOptions.length; m++) {
-                    optionLabels[m] = itemScaleOptions[m];
-                }
-                optionLabels[optionLabels.length - 1] = messageLocator
-                        .getMessage("reporting.notapplicable.longlabel");
-            } else {
-                optionLabels = itemScaleOptions;
+                // add in the N/A label to the end
+                optionLabels = Arrays.copyOf(optionLabels, optionLabels.length+1);
+                optionLabels[optionLabels.length - 1] = messageLocator.getMessage("reporting.notapplicable.longlabel");
             }
 
             // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
@@ -297,9 +293,11 @@ public class PDFReportExporter implements ReportExporter {
             // handle comments
             if (dti.usesComments()) {
                 List<String> comments = dti.getComments();
-                evalPDFReportBuilder.addCommentList(messageLocator
-                        .getMessage("viewreport.comments.header"), comments, messageLocator
-                        .getMessage("viewreport.no.comments"));
+                evalPDFReportBuilder.addCommentList(
+                        messageLocator.getMessage("viewreport.comments.header"), 
+                        comments, 
+                        messageLocator.getMessage("viewreport.no.comments")
+                        );
             }
 
         } else {

@@ -854,6 +854,14 @@ public class TemplateItemDataList {
             }
             return answer;
         }
+
+        @Override
+        public String toString() {
+            return "DTI[key=" + key + ", ti=" + templateItem.getId() 
+                    + ", aType=" + associateType + ", aId=" + associateId + ", node=" + (node != null ? node.id : null)
+                    + ", blParId=" + blockParentId + "]";
+        }
+
     }
 
     /**
