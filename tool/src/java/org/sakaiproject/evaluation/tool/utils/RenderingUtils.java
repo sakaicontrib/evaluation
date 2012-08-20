@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -41,6 +42,7 @@ import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -60,6 +62,11 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 public class RenderingUtils {
 
     private static Log log = LogFactory.getLog(RenderingUtils.class);
+
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
 
     /**
      * Calculates the weighted average and number of counted answers from the responseArray
@@ -472,6 +479,42 @@ public class RenderingUtils {
         res.addHeader(Header.CACHE_CONTROL.toString(), "must-revalidate");
         res.addHeader(Header.CACHE_CONTROL.toString(), "private");
         res.addHeader(Header.CACHE_CONTROL.toString(), "s-maxage=0");
+    }
+
+    /**
+     * Get a list of categories (a.k.a. associateTypes) that have items in this template. Categories are listed in {@link EvalConstants#ITEM_CATEGORY_ORDER}
+     * and are like {@link EvalConstants#ITEM_CATEGORY_INSTRUCTOR}. {@link EvalConstants#ITEM_CATEGORY_COURSE} is always part of the returned list
+     * @param templateId
+     * @return
+     */
+    public List<String> extractCategoriesInTemplate(long templateId){
+      List<String> categories = new ArrayList<String>();
+      //Fetch all templateItems to find out what categories we have
+      List<EvalTemplateItem> templateItems = authoringService.getTemplateItemsForTemplate(templateId, new String[]{}, new String[]{}, new String[]{});
+      // make the TI data structure
+      Map<String, List<String>> assiciates = new HashMap<String, List<String>>();
+      List<String> fakeInstructor = new ArrayList<String>();
+      fakeInstructor.add("fakeinstructor");
+      List<String> fakeAssistant = new ArrayList<String>();
+      fakeAssistant.add("fakeAssistant");
+      assiciates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, fakeInstructor);
+      assiciates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, fakeAssistant);
+
+      TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, assiciates, null);
+
+      for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+        // check which category we have
+        if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) ) {
+          categories.add(EvalConstants.ITEM_CATEGORY_COURSE);
+        } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+          categories.add(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+        } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
+          categories.add(EvalConstants.ITEM_CATEGORY_ASSISTANT);
+        }
+      }
+
+      return categories;
+
     }
 
 }

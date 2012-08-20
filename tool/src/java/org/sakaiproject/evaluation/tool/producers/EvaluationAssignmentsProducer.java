@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -80,6 +81,11 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
    private NavBarRenderer navBarRenderer;
    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
+   }
+
+   private RenderingUtils renderingUtils;
+   public void setRenderingUtils(RenderingUtils renderingUtils) {
+     this.renderingUtils = renderingUtils;
    }
 
    /* (non-Javadoc)
@@ -133,6 +139,19 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
       // show the assigned groups
       int countUnpublishedGroups = 0;
       if (assignGroups.size() > 0) {
+         //find out is this evaluation will contain any Instructor/TA questions based in it's template
+         List<String> validItemCategories = renderingUtils.extractCategoriesInTemplate(
+           evaluationService.getEvaluationById(evaluationId).getTemplate().getId());
+         boolean hasInstructorQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+         boolean hasAssistantQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_ASSISTANT);
+
+         if(hasInstructorQuestions){
+           UIMessage.make(tofill, "title-instructors", "evaluationassignments.groups.instructors.header");
+         }
+         if(hasAssistantQuestions){
+           UIMessage.make(tofill, "title-assistants", "evaluationassignments.groups.assistants.header");
+         }
+
          UIBranchContainer groupsBranch = UIBranchContainer.make(tofill, "showSelectedGroups:");
          for (EvalAssignGroup assignGroup : assignGroups) {
             if (assignGroup.getNodeId() == null) {
@@ -151,16 +170,23 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
                UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                      commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                
-               //VULA-496. Add user selection info as a result of changes in EVALSYS-660
-                 List<EvalAssignUser> selectedUsers = evaluationService.getParticipantsForEval(evalViewParams.evaluationId, null, new String[]{evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED, null, null);
-                 int enrollmentCountInstructors = selectedUsers == null ? 0 : selectedUsers.size();
-                 selectedUsers = evaluationService.getParticipantsForEval(evalViewParams.evaluationId, null, new String[]{evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, EvalAssignUser.STATUS_LINKED, null, null);
-                 int enrollmentCountAssistants = selectedUsers == null ? 0 : selectedUsers.size();
-                 
+               //Add user selection info as a result of changes in EVALSYS-660
+                 List<EvalAssignUser> selectedUsers = new ArrayList<EvalAssignUser>();
+
+                 if(hasInstructorQuestions){
+              
+                   selectedUsers = evaluationService.getParticipantsForEval(evalViewParams.evaluationId, null, new String[]{evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED, null, null);
+                   int enrollmentCountInstructors = selectedUsers == null ? 0 : selectedUsers.size();
+                   UIOutput.make(groupRow, "enrollment-instructors", enrollmentCountInstructors + "");
+                 }
+                 if(hasAssistantQuestions){
+                   selectedUsers = evaluationService.getParticipantsForEval(evalViewParams.evaluationId, null, new String[]{evalGroupId}, EvalAssignUser.TYPE_ASSISTANT, EvalAssignUser.STATUS_LINKED, null, null);
+                   int enrollmentCountAssistants = selectedUsers == null ? 0 : selectedUsers.size();
+                    UIOutput.make(groupRow, "enrollment-assistants", enrollmentCountAssistants + "");
+                 }
+
                  // calculate the enrollments count
                  int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
-                 UIOutput.make(groupRow, "enrollment-instructors", enrollmentCountInstructors + "");
-                 UIOutput.make(groupRow, "enrollment-assistants", enrollmentCountAssistants + "");
                  UIOutput.make(groupRow, "enrollment", enrollmentCount + "");
                 
             }

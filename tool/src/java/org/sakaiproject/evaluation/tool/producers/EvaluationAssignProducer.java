@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -37,11 +38,15 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -134,6 +139,17 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+    
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+        this.authoringService = authoringService;
+    }
+
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+        this.renderingUtils = renderingUtils;
+    }
+
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
@@ -154,8 +170,18 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
          */
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
         
-        //Are we using the selection options (UCT)?
+        //Are we using the selection options (UCT)? YES
         boolean useSelectionOptions = ((Boolean)settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)).booleanValue();
+
+        //find out is this evaluation will contain any Instructor/TA questions based in it's template
+        List<String> validItemCategories = new ArrayList<String>();
+        boolean hasInstructorQuestions = true;
+        boolean hasAssistantQuestions = true;
+        if(useSelectionOptions){
+            validItemCategories = renderingUtils.extractCategoriesInTemplate(evaluation.getTemplate().getId());
+            hasInstructorQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+            hasAssistantQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_ASSISTANT);
+        }
         
         String actionBean = "setupEvalBean.";
         Boolean newEval = false;
@@ -443,7 +469,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 		            if (useSelectionOptions){
 			            if( hasEvaluators ){
 			                int totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-			                if(totalUsers > 0){
+			                if(totalUsers > 0 && hasInstructorQuestions){
 			                	int currentUsers = deselectedInsructorIds.size() >= 0 ? ( totalUsers-deselectedInsructorIds.size() ) : totalUsers;
 			                	UIInternalLink link = UIInternalLink.make(checkboxRow, "select-instructors", UIMessage.make("assignselect.instructors.select", 
 			                			new Object[] {currentUsers,totalUsers}), 
@@ -452,7 +478,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 			                	link.decorate(new UITooltipDecorator(messageLocator.getMessage("assignselect.instructors.page.title")));
 			                }
 			                totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroup.evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
-			                if(totalUsers > 0){
+			                if(totalUsers > 0 && hasInstructorQuestions){
 			                	int currentUsers = deselectedAssistantIds.size() >= 0 ? ( totalUsers-deselectedAssistantIds.size() ) : totalUsers;
 			                	UIInternalLink link = UIInternalLink.make(checkboxRow, "select-tas", UIMessage.make("assignselect.tas.select", 
 			                			new Object[] {currentUsers,totalUsers}) , 
@@ -549,7 +575,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         	UIOutput.make(tofill, "JS-facebox");
         	UIOutput.make(tofill, "JS-facebox-assign");
         	UIOutput.make(tofill, "JS-assign");
-        	UIMessage.make(form, "select-column-title", "assignselect.page.column.title");
+                UIMessage.make(form, "select-column-title", "assignselect.page.column.title");
         	form.type = EarlyRequestParser.ACTION_REQUEST;
         	UICommand.make(form, "confirmAssignCourses", UIMessage.make("evaluationassignconfirm.done.button"),actionBean + "completeConfirmAction" );
         }else{

@@ -121,6 +121,7 @@
     	<property name="assignGroupSelectionSettings" ref="assignGroupSelectionSettings"/>
     	<property name="settings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="renderingUtils" ref="renderingUtils"/>
     </bean>
 
     <bean id="takeEvalBean" class="org.sakaiproject.evaluation.tool.TakeEvalBean">
@@ -765,6 +766,9 @@
 		<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="viewStateHandler" ref="viewStateHandler" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="renderingUtils" ref="renderingUtils" />
     </bean>
 	
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignSelectProducer">
@@ -808,6 +812,7 @@
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
+        <property name="renderingUtils" ref="renderingUtils" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
