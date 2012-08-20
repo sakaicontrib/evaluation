@@ -47,6 +47,7 @@ import org.sakaiproject.evaluation.tool.locators.AssignGroupSelectionSettings;
 import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
 import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.SelectedEvaluationUsersLocator;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -189,6 +190,11 @@ public class SetupEvalBean {
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
     }
+  
+        private RenderingUtils renderingUtils;
+        public void setRenderingUtils(RenderingUtils renderingUtils) {
+                 this.renderingUtils = renderingUtils;
+        }
 
 	DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
@@ -529,6 +535,11 @@ public class SetupEvalBean {
 			// Query DB only once to get all EvalAssignUsers
 			List<EvalAssignUser> evalUsers = evaluationService
 				.getParticipantsForEval(evaluationId, null, null, null, EvalEvaluationService.STATUS_ANY, null, null);
+
+                        //find out is this evaluation will contain any Instructor/TA questions based in it's template
+                        List<String> validItemCategories = renderingUtils.extractCategoriesInTemplate(eval.getTemplate().getId());
+                        boolean hasInstructorQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+                        boolean hasAssistantQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_ASSISTANT);
 			
 			for (EvalAssignGroup assignGroup : evalAssignGroups) {
 				String currentGroupId = assignGroup.getEvalGroupId();
@@ -537,8 +548,16 @@ public class SetupEvalBean {
 				String[] deselectedAssistants = selectedEvaluationUsersLocator.getDeselectedAssistants(currentGroupId);
 				String[] orderingInstructors = selectedEvaluationUsersLocator.getOrderingForInstructors(currentGroupId);
 				String[] orderingAssistants = selectedEvaluationUsersLocator.getOrderingForAssistants(currentGroupId);
-				updateEvalAssignUsers(deselectedInstructors, orderingInstructors, EvalAssignUser.TYPE_EVALUATEE, currentGroupId, evalUsers);
-				updateEvalAssignUsers(deselectedAssistants, orderingAssistants, EvalAssignUser.TYPE_ASSISTANT,currentGroupId, evalUsers);
+                                if(hasInstructorQuestions){
+                                  updateEvalAssignUsers(deselectedInstructors, orderingInstructors, EvalAssignUser.TYPE_EVALUATEE, currentGroupId, evalUsers, null);
+                                } else {
+                                  updateEvalAssignUsers(new String[]{}, new String[]{}, EvalAssignUser.TYPE_EVALUATEE, currentGroupId, evalUsers, Boolean.TRUE);
+                                }
+                                if(hasAssistantQuestions) {
+                                  updateEvalAssignUsers(deselectedAssistants, orderingAssistants, EvalAssignUser.TYPE_ASSISTANT, currentGroupId, evalUsers, null);
+                                } else {
+                                  updateEvalAssignUsers(new String[]{}, new String[]{}, EvalAssignUser.TYPE_ASSISTANT, currentGroupId, evalUsers, Boolean.TRUE);
+                                }
 				// set selection settings for assign group
 				String settingInstructor = assignGroupSelectionSettings.getInstructorSetting(currentGroupId);
 				String settingAssistant = assignGroupSelectionSettings.getAssistantSetting(currentGroupId);
@@ -605,8 +624,9 @@ public class SetupEvalBean {
 	 * @param type either {@link EvalAssignUser.TYPE_EVALUATEE} or {@link EvalAssignUser.TYPE_ASSISTANT}
 	 * @param currentGroupId 
 	 * @param evalUsers 
+         * @param addAll (Optional) If deselected array is empty and addAll is true, the evalUsers will be unlinked.
 	 */
-	private void updateEvalAssignUsers(String[] deselected, String[] ordering, String type, String currentGroupId, List<EvalAssignUser> evalUsers) {
+	private void updateEvalAssignUsers(String[] deselected, String[] ordering, String type, String currentGroupId, List<EvalAssignUser> evalUsers, Boolean addAll) {
 		if (deselected != null && deselected.length > 0){
 			List<String> deselectedList = Arrays.asList(deselected);
 			List<String> orderingList = Arrays.asList(ordering);
@@ -614,15 +634,20 @@ public class SetupEvalBean {
 				// only update users for this group with this permission type
 				String userId = user.getUserId();
 				if(currentGroupId.equals( user.getEvalGroupId().toString() ) && type.equals( user.getType()) ){
-					if (deselectedList.contains( userId )) {
+                                        if (deselectedList.isEmpty() && addAll != null && Boolean.TRUE.equals(addAll)) {
+                                                //lets unlink every evalUser passed to us
 						user.setStatus(EvalAssignUser.STATUS_REMOVED);
 					}else{
-						user.setStatus(EvalAssignUser.STATUS_LINKED);
-					}
-					// set users' selection order
-					if (orderingList.contains( userId )){
-						int listOrder = orderingList.indexOf(userId) + 1;
-						user.setListOrder( listOrder );
+                                                if (deselectedList.contains( userId )) {
+                                                    user.setStatus(EvalAssignUser.STATUS_REMOVED);
+                                                } else {
+                                                     user.setStatus(EvalAssignUser.STATUS_LINKED);
+                                                }
+                                                // set users' selection order
+                                                if (orderingList.contains( userId )){
+                                                    int listOrder = orderingList.indexOf(userId) + 1;
+                                                    user.setListOrder( listOrder );
+                                                }
 					}
 				}
 			}
