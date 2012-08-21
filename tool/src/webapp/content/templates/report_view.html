@@ -30,9 +30,10 @@
 <!-- end standard on all pages -->
 <!--[if lt IE 9]><script type="text/javascript" language="JavaScript" src="../js/jquery/excanvas.min.js"></script><![endif]-->
 <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" language="JavaScript" src="../js/jquery.jqplot.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.flot.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.flot.pie.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.flot.stack.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
-<link href="../css/jquery/jquery.jqplot.css" type="text/css" rel="stylesheet" media="all" />
 <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -100,6 +101,12 @@
 
     <p class="instruction" rsf:id="selectedGroups">Viewing Groups: Chemistry, Biology, and Biomed</p>
 
+    <div class="reportStats">
+        <div style="width: 300px;"><span style="font-weight: bold;">Completion Statistics:</span> 38</div>
+        <div id="reportStatsChart" style="width: 300px; height: 160px;"></div>
+        <div style="width: 300px; text-align: center;">Submission rate: 68%</div>
+    </div>
+
     <!-- this BEGINS the category section -->
     <div rsf:id="categorySection:">
       <h3 rsf:id="categoryHeader">Group Items:</h3>
@@ -115,43 +122,125 @@
             </div>
 
             <!-- DIV tag for Scaled display -->
-            <div rsf:id="scaledSurvey:">
-              <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%" class="listHier lines" style="margin: 0">
-                <tr class="highLightRow">
-                  <td width="3%" valign="top">
-                    <span rsf:id="itemNum">#</span>.
-                  </td>
-                  <td width="70%" valign="top">
-                    <div rsf:id="itemText">Scaled item question text here</div>
-                  </td>
-                  <td class="special">
-                    <span rsf:id="responsesCount">50 Responses</span>
-                  </td>
-                </tr>
-                <tr rsf:id="choices:">
-                  <td></td>
-                  <td>
-                    <h5>
-                      <span rsf:id="choiceText">answer choice text</span>
-                    </h5>
-                  </td>
-                  <td class="special">
-                    <span rsf:id="choiceCount">5 (10%)</span>
-                  </td>
-                </tr>
-              </table>
-              <div rsf:id="statistics" align="right" style="width: 85%;">0 answers, mean = 0</div>
-              <!-- stats -->
-              <div rsf:id="showComments:" class="showcomments">
+            <div rsf:id="scaledSurvey:" class="scaledItem">
+              <div class="scaledItemResults" >
+                <div class="scaledItemInfo">
+                  <span rsf:id="itemNum">#</span>.
+                  <span rsf:id="itemText">Scaled item question text here</span>
+                  <span rsf:id="responsesCount" style="float:right;">12 Responses</span>
+                </div>
+                <div rsf:id="scaledItemChart" id="scaledItemChart" class="scaledGraphResults" style="width:520px;height:240px;"><!-- chart will be rendered here --></div>
+              </div>
+              <div class="scaledTableResults">
+                <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%" class="listHier lines" style="margin: 0">
+                  <tr class="highLightRow">
+                    <td width="3%" valign="top">
+                      <span rsf:id="itemNum">#</span>.
+                    </td>
+                    <td width="70%" valign="top">
+                      <div rsf:id="itemText">Scaled item question text here</div>
+                    </td>
+                    <td class="special">
+                      <span rsf:id="responsesCount">50 Responses</span>
+                    </td>
+                  </tr>
+                  <tr rsf:id="choices:">
+                    <td></td>
+                    <td>
+                      <h5>
+                        <span rsf:id="choiceText">answer choice text</span>
+                      </h5>
+                    </td>
+                    <td class="special">
+                      <span rsf:id="choiceCount">5 (10%)</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div rsf:id="statistics" class="scaledItemStats" align="right" style="width: 85%;">0 answers, mean = 0</div>
+              <div rsf:id="showComments:" class="showcomments scaledItemComments">
                 <h5 rsf:id="msg=viewreport.comments.header">Comments:</h5>
                 <span rsf:id="noComments" style="font-style: italic;"></span>
                 <ol>
-                  <li rsf:id="comments:">
+                  <li rsf:id="comments:" class="scaledItemComment">
                     <!-- //gsilver: let the list take care of the numbers -->
                     <span rsf:id="itemComment">comment here</span>
                   </li>
                 </ol>
               </div>
+              <script rsf:id="initJavascript" type="text/javascript" language="JavaScript">
+                <!-- overwritten by RSF -->
+                var reportStatsData = [
+                   { label: "Completed",  data: 22, color: "green"},
+                   { label: "Incomplete",  data: 7, color: "orange"},
+                   { label: "Not Taken",  data: 9, color: "darkred"}
+                 ];
+                 var scaledItemData = [
+                   { label: "1", data: [[0,3], [1,1], [2,0], [3,7], [4,1], [5,0]], color: "green" },
+                   { label: "2", data: [[0,9], [1,11], [2,12], [3,5], [4,11], [5,12]], color: "lightgrey" }
+                 ];
+              </script>
+              <script type="text/javascript" language="JavaScript">
+                jQuery.plot(jQuery('#scaledItemChart'), scaledItemData,
+                {
+                  xaxis: {
+                    minTickSize: 1
+                  },
+                  series: {
+                    stack: true,
+                    bars: {
+                      show: true, 
+                      barWidth: 0.8, 
+                      align:'center',
+                      dataLabels: true
+                    }
+                  },
+                  legend: { show: false },
+                  grid: {
+                      hoverable: true,
+                      minBorderMargin: 5
+                  },
+                  xaxis: {
+                    tickLength: 0,
+                    ticks: [
+                      [0,'3 (24%)'],
+                      [1,'1 (8%)'],
+                      [2,'0 (0%)'],
+                      [3,'7 (58%)'],
+                      [4,'1 (8%)'],
+                      [5,'0 (0%)']
+                    ]
+                  },
+                  yaxis: {
+                    show: false,
+                    tickLength: 0
+                  }
+                });
+                jQuery.plot(jQuery("#reportStatsChart"), reportStatsData,
+                {
+                  series: {
+                    pie: { 
+                      show: true,
+                      tilt: 0.5,
+                      startAngle: 0.6,
+                      radius: 1,
+                      label: {
+                        radius: 2/3,
+                        formatter: function(label, series){
+                            return '<div style="font-weight:bold;padding:2px;font-size:10pt;text-align:center;color:white;">'+label+'<br/>'+series.data[0][1]+' ('+Math.round(series.percent)+'%)</div>';
+                        },
+                        background: { 
+                            opacity: 0.5,
+                            color: '#000'
+                        }
+                      }
+                    }
+                  },
+                  legend: {
+                    show: false
+                  }
+                });
+              </script>
             </div>
 
             <!-- DIV tag for Essay type -->
