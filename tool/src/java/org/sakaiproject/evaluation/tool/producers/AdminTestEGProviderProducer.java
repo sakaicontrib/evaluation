@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
@@ -99,12 +100,13 @@ public class AdminTestEGProviderProducer extends EvalCommonProducer implements V
         String username = testViewParameters.username;
         String evalGroupId = testViewParameters.evalGroupId;
         if (evalGroupId == null || evalGroupId.equals("")) {
-            warningMessage += "No evalGroupId set.";
+            evalGroupId = null;
+            warningMessage += "  No evalGroupId set.";
             //UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
-            String title = commonLogic.getDisplayTitle(evalGroupId);
-            if ("--------".equals(title)) {
-                warningMessage += "Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null.";
+            EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId); // String title = commonLogic.getDisplayTitle(evalGroupId);
+            if (group == null || EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
+                warningMessage += "  Invalid evalGroupId ("+evalGroupId+"): cannot find by id, setting to null.";
                 //UIOutput.make(tofill, "warning-message", warningMessage);
                 evalGroupId = null;
             }
@@ -112,12 +114,12 @@ public class AdminTestEGProviderProducer extends EvalCommonProducer implements V
         String userId = currentUserId;
         if (username == null || username.equals("")) {
             username = commonLogic.getUserUsername(userId);
-            warningMessage += "  No username set: using current user.";
+            warningMessage += "  No username set: using current user ("+username+").";
             //UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
             userId = commonLogic.getUserId(username);
             if (userId == null) {
-                warningMessage += "  Invalid username ("+username+"): cannot find id, setting to current user id.";
+                warningMessage += "  Invalid username ("+username+"): cannot find id, using the current user id ("+currentUserId+").";
                 //UIOutput.make(tofill, "warning-message", warningMessage);
                 userId = currentUserId;
             }
