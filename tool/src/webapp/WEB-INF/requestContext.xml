@@ -354,6 +354,12 @@
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
 
+    <bean id="renderingUtils" 
+        class="org.sakaiproject.evaluation.tool.utils.RenderingUtils">
+        <property name="authoringService"
+        ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+    </bean>
+
     <!-- producers below here -->
     <!-- NOTE: cannot use parent beans in RSF producers -->
 
