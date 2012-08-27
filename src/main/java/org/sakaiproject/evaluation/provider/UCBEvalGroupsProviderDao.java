@@ -19,6 +19,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 
@@ -28,6 +31,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  * @author Aaron Zeckoski (azeckoski @ vt.edu)
  */
 public class UCBEvalGroupsProviderDao {
+
+    private static Log log = LogFactory.getLog(UCBEvalGroupsProviderDao.class);
 
     public static String COURSES_TABLE = "BSPACE_COURSE_INFO_VW";
     public static String MEMBERS_TABLE = "BSPACE_CLASS_ROSTER_VW";
@@ -66,7 +71,9 @@ public class UCBEvalGroupsProviderDao {
 
     public List<Map<String, Object>> getCourses() {
         String sql = "SELECT * FROM "+COURSES_TABLE;
-        return jdbcTemplate.queryForList(sql, new Object[] {});
+        List<Map<String, Object>> courses = jdbcTemplate.queryForList(sql, new Object[] {});
+        fixRequiredColumns(courses);
+        return courses;
     }
 
     /**
@@ -81,7 +88,9 @@ public class UCBEvalGroupsProviderDao {
      */
     public List<Map<String, Object>> getStudents() {
         String sql = "SELECT * FROM "+MEMBERS_TABLE+" WHERE ENROLL_STATUS=?";
-        return jdbcTemplate.queryForList(sql, new Object[] {"E"});
+        List<Map<String, Object>> studs = jdbcTemplate.queryForList(sql, new Object[] {"E"});
+        fixRequiredColumns(studs);
+        return studs;
     }
 
     /**
@@ -95,7 +104,26 @@ public class UCBEvalGroupsProviderDao {
      */
     public List<Map<String, Object>> getInstructors() {
         String sql = "SELECT * FROM "+INSTRUCTORS_TABLE+" WHERE (INSTRUCTOR_FUNC=? OR INSTRUCTOR_FUNC=?)";
-        return jdbcTemplate.queryForList(sql, new Object[] {1,2});
+        List<Map<String, Object>> insts = jdbcTemplate.queryForList(sql, new Object[] {1,2});
+        fixRequiredColumns(insts);
+        return insts;
+    }
+
+    private void fixRequiredColumns(List<Map<String, Object>> data) {
+        for (Map<String, Object> row : data) {
+            if (row.get("TERM_YR") == null || StringUtils.isEmpty( row.get("TERM_YR").toString() )) {
+                log.warn("Invalid term year ("+row.get("TERM_YR")+"), using the default of 2012");
+                row.put("TERM_YR", 2012);
+            }
+            if (row.get("TERM_CD") == null || StringUtils.isEmpty( row.get("TERM_CD").toString() )) {
+                log.warn("Invalid TERM_CD ("+row.get("TERM_CD")+"), using the default of ?");
+                row.put("TERM_CD", "?");
+            }
+            if (row.get("COURSE_CNTL_NUM") == null || StringUtils.isEmpty( row.get("COURSE_CNTL_NUM").toString() )) {
+                log.warn("Invalid COURSE_CNTL_NUM ("+row.get("COURSE_CNTL_NUM")+"), using the default of 0");
+                row.put("COURSE_CNTL_NUM", 0);
+            }
+        }
     }
 
 }

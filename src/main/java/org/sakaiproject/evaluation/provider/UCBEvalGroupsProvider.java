@@ -185,7 +185,7 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         List<Map<String, Object>> courses = dao.getCourses();
         for (Map<String, Object> course : courses) {
             // TERM_YR-TERM_CD-COURSE_CNTL_NUM
-            String evalGroupId = ((String)course.get("TERM_YR"))+"-"+((String)course.get("TERM_CD"))+"-"+((String)course.get("COURSE_CNTL_NUM"));
+            String evalGroupId = course.get("TERM_YR").toString()+"-"+course.get("TERM_CD").toString()+"-"+course.get("COURSE_CNTL_NUM").toString();
             String title = (String) course.get("COURSE_TITLE");
             EvalGroup evalGroup = new EvalGroup(evalGroupId, title, EvalConstants.GROUP_TYPE_PROVIDED);
             groupsById.put(evalGroupId, evalGroup);
@@ -197,16 +197,24 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
         String permission = EvalGroupsProvider.PERM_BE_EVALUATED;
         for (Map<String, Object> member : instructors) {
             // NOTE: user ids need to be the internal Sakai user ids
-            String userEid = ((String)member.get("INSTRUCTOR_LDAP_UID"));
-            addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
+            if (member.get("INSTRUCTOR_LDAP_UID") != null) {
+                String userEid = member.get("INSTRUCTOR_LDAP_UID").toString();
+                addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
+            } else {
+                log.warn("ReloadCacheData: Invalid INSTRUCTOR_LDAP_UID ("+member.get("INSTRUCTOR_LDAP_UID")+") in instructors data, skipped user");
+            }
         }
 
         List<Map<String, Object>> students = dao.getStudents();
         permission = EvalGroupsProvider.PERM_TAKE_EVALUATION;
         for (Map<String, Object> member : students) {
             // NOTE: user ids need to be the internal Sakai user ids
-            String userEid = ((String)member.get("STUDENT_LDAP_UID"));
-            addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
+            if (member.get("STUDENT_LDAP_UID") != null) {
+                String userEid = member.get("STUDENT_LDAP_UID").toString();
+                addUserDataToCaches(userEid, permission, member, usersByGroupId, groupsByUser);
+            } else {
+                log.warn("ReloadCacheData: Invalid STUDENT_LDAP_UID ("+member.get("STUDENT_LDAP_UID")+") in students data, skipped user");
+            }
         }
 
         // replace existing cache maps
@@ -228,7 +236,7 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
             Map<String, Map<String, Set<String>>> groupsByUser) {
         String userId = commonLogic.getUserId(userEid); // use the Sakai mapping table
         if (userId == null) {
-            log.warn("ReloadCacheData unable to map username: "+userEid+" to internal Sakai Id");
+            log.warn("ReloadCacheData unable to map username: "+userEid+" to internal Sakai Id, skipping this user");
         } else {
             // add in the user map if not already exists
             if (!groupsByUser.containsKey(userId)) {
@@ -236,7 +244,7 @@ public class UCBEvalGroupsProvider implements EvalGroupsProvider, ApplicationCon
             }
             // add the user to the perm users map
             // TERM_YR-TERM_CD-COURSE_CNTL_NUM
-            String evalGroupId = ((String)member.get("TERM_YR"))+"-"+((String)member.get("TERM_CD"))+"-"+((String)member.get("COURSE_CNTL_NUM"));
+            String evalGroupId = member.get("TERM_YR").toString()+"-"+member.get("TERM_CD").toString()+"-"+member.get("COURSE_CNTL_NUM").toString();
 
             // add permission to user->groups map
             if (!groupsByUser.get(userId).containsKey(permission)) {
