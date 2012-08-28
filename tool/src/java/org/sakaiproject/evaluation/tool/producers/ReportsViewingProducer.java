@@ -48,6 +48,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.Validator;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInitBlock;
@@ -124,6 +125,11 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
         this.evalBeanUtils = evalBeanUtils;
     }
+    
+    private MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator messageLocator) {
+        this.messageLocator = messageLocator;
+    }
 
     int totalCommentsCount = 0;
     int totalTextResponsesCount = 0;
@@ -137,6 +143,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+        String chartJS = "";
         ReportParameters reportViewParams = (ReportParameters) viewparams;
         String currentUserId = commonLogic.getCurrentUserId();
 
@@ -195,17 +202,27 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             int responsesCount = deliveryService.countResponses(evaluation.getId(), reportViewParams.groupIds[0], true);
             int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId(), new String[]{reportViewParams.groupIds[0]});                       
             int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+            int incompleteCount = deliveryService.countResponses(evaluation.getId(), reportViewParams.groupIds[0], false);
 
             // the eval owner (or anyone who can control this eval - like a super admin - can ignore the min responses check)
             boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
             if (!controlEval && responsesNeeded > 0) {
                 throw new SecurityException("At least " + responsesNeeded + " more responses must be submitted to view this report");
             }
-            
+
             // do a permission check
             if (! reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
                 throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
             }
+
+            // add the completion stats
+            int notTakenCount = enrollmentsCount - responsesCount - incompleteCount;
+            UIOutput.make(tofill, "reportStatsTotalSubmissions", responsesCount+"");
+            UIOutput.make(tofill, "reportStatsPercentComplete", ((responsesCount/enrollmentsCount)*100)+"%");
+            UIBranchContainer stats = UIBranchContainer.make(tofill, "reportStatsData:");
+            UIOutput.make(stats, "reportStatsComplete", responsesCount+"");
+            UIOutput.make(stats, "reportStatsIncomplete", incompleteCount+"");
+            UIOutput.make(stats, "reportStatsNotTaken", notTakenCount+"");
 
             Long templateId = evaluation.getTemplate().getId();
 
@@ -277,8 +294,8 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                                 // add a style to each rendered item
                                 String styleClass = renderedItemCount % 2 != 0 ? "reportItemOddLine" : "reportItemEvenLine"; // must match the existing CSS classes
                                 nodeItemsBranch.decorate( new UIStyleDecorator(styleClass) );
-                                // render the item
-                                renderTemplateItemResults(nodeItemsBranch, dti, reportViewParams);
+                                // render the item, add javascript code to accumulation string
+                                chartJS += renderTemplateItemResults(nodeItemsBranch, dti, reportViewParams);
                                 renderedItemCount++;
                             }
                         }
@@ -294,16 +311,20 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                 String allTextResponses = "";
                 if (totalTextResponsesCount > 0) {
                     allTextResponses = "allTextResponses";
-                }            
+                }       
+                
                 // this fills in the javascript init call ()
                 UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalReportView", 
                         new Object[] {allComments, allTextResponses} );
-
+                
+                //create the pie chart javascript code
+                chartJS += createPieChartSummaryData(enrollmentsCount, responsesCount, incompleteCount);
+                
+                //fill RSF component with all chart JS code
+                UIVerbatim.make(tofill, "chartJS", chartJS);
             }
         }
-
     }
-
 
     /**
      * Handles the rendering of the response answer results for a specific templateItem
@@ -311,7 +332,8 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
      * @param tofill the parent container to render in
      * @param dti the wrapper for this templateItem
      */
-    private void renderTemplateItemResults(UIBranchContainer tofill, DataTemplateItem dti, ReportParameters reportViewParams) {
+    private String renderTemplateItemResults(UIBranchContainer tofill, DataTemplateItem dti, ReportParameters reportViewParams) {
+        String chartJS = "";
         EvalTemplateItem templateItem = dti.templateItem;
         String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
 
@@ -341,13 +363,30 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                 String scaleLabels[] = RenderingUtils.makeReportingScaleLabels(templateItem, scaleOptions);
 
                 int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
-
+                
+                //calculate the total number of choice responses
+                int selectionsTotal = 0;
+                for(int c : choicesCounts){
+                    selectionsTotal += c;
+                }
+                
+                //dataLine -> sets the data string for the response (i.e. {label: "1", data [1,0],[1,1]], color: "green"})
+                String dataLine = "label: \"" + displayNumber + "\", data: [";
+                
                 for (int x = 0; x < scaleLabels.length; x++) {
+                    //[1,0],
+                    dataLine += "[" + choicesCounts[x] + "," + x + "],";
+                    
                     UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
                     UIOutput.make(choicesBranch, "choiceText", scaleLabels[x]);
                     UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                             new String[] { choicesCounts[x]+"", makePercentage(choicesCounts[x], responsesCount) });
                 }
+                
+                //remove last comma, complete array structure
+                dataLine = dataLine.substring(0, dataLine.length() - 1) + "], ";
+                //add color variable
+                dataLine += "color: \"green\"";
 
                 if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
                     naCount = choicesCounts[choicesCounts.length-1];
@@ -356,7 +395,18 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                     UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                             new String[] { naCount+"", makePercentage(naCount, responsesCount) });
                 }
-
+                
+                UIOutput horizBarChart = UIOutput.make(scaled, "horizBarChart");
+                
+                //create JS areas for each template item
+                String horizBarChartId = horizBarChart.getFullID();
+                String horizId = horizBarChartId.replaceAll(":", "") + dti.getKey();
+                String labelVar = horizId + "Labels";
+                String dataVar = horizId + "Data";
+                chartJS += createScaledItemLabels(labelVar, scaleLabels, choicesCounts, selectionsTotal); 
+                chartJS += createScaledItemData(dataVar, dataLine);
+                chartJS += createJqueryBarPlot(horizBarChartId, dataVar, labelVar, selectionsTotal);
+                  
                 // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
                 AnswersMean answersMean = RenderingUtils.calculateMean(choicesCounts);
                 Object[] params = new Object[] {answersMean.getAnswersCount()+"", answersMean.getMeanText()};
@@ -435,6 +485,9 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         } else {
             log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
         }
+        
+        //return all chart JS for template item
+        return chartJS;
     }
 
 
@@ -586,5 +639,114 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     public ViewParameters getViewParameters() {
         return new ReportParameters();
     }
-
+    
+    /**
+     * creates each dynamic scaled item data variable
+     * @param dataVar chart data variable name
+     * @param dataLine the data string
+     * @return string representation of the code
+     */
+    private String createScaledItemData(String dataVar, String dataLine){
+        String data = "var "+dataVar + " = [" +
+                           "{"+ dataLine + "}" +
+                         "];\n";
+        
+        return data;
+    }
+    
+    /**
+     * creates each dynamic scaled item label variable
+     * @param labelVar label data variable name
+     * @param scaleLabels the scale label array
+     * @param choicesCount the number of selections for choices array
+     * @param choicesTotal total number of selections
+     * @return string representation of the code
+     */
+    private String createScaledItemLabels(String labelVar, String[] scaleLabels, int[] choicesCount, int selectionsTotal){
+        String label = "var " + labelVar + " = [";
+        
+        for(int i = 0; i < scaleLabels.length;i++){
+            label += "['" + scaleLabels[i] + "','" + choicesCount[i] +  " (" + Math.round(choicesCount[i] * 100 / selectionsTotal) + "%)'],";
+        }
+        
+        label = label.substring(0, label.length() - 1) + "];\n";
+        
+        return label;
+    }
+    
+    /**
+     * creates each dynamic chart jQuery plot code
+     * @param chartDivId the id of the div the chart will reside in
+     * @param dataVar chart data variable name
+     * @param labelVar label data variable name
+     * @param totalChoicesCount total number of selections
+     * @return string representation of the code
+     */
+    private String createJqueryBarPlot(String chartDivId, String dataVar, String labelVar, int selectionsTotal){
+        String plot = "jQuery.plot(jQuery('[id=\"" + chartDivId + "\"]'), " + dataVar + "," +
+                            "{" +
+                             "series: {" +
+                                 "stack: true," +
+                                 "bars: {" +
+                                     "show: true," +
+                                     "barWidth: 0.8," +
+                                     "align:'center'," +
+                                     "dataLabels: true," +
+                                     "horizontal: true" +
+                                   "}" +
+                                  "}," +
+                                 "legend: {" +
+                                 "show: false" +
+                               "}," +
+                            "grid: {" +
+                                 "hoverable: true," +
+                                 "minBorderMargin: 5" +
+                             "}," +
+                             "yaxis: {" +
+                                 "tickLength: 0," +
+                                    "tickFormatter:" +
+                                    "function(val,axis){" +
+                                         "return (" + labelVar + "[val] != null) ? " +
+                                            "\"<table style='width: 250px;'><tr><td style='width: 80%;' align='left' valign='middle'>\" + " + labelVar + "[val][0] + \"</td><td style='width: 20%;' align='right' valign='middle'>\" + " + labelVar + "[val][1] + \"</td></tr></table>\" : \"\";" +
+                                     "}" +
+                                 "}," +
+                                  "xaxis: {" +
+                                   "show: false," +
+                                   "max: " + selectionsTotal +
+                                 "}" +
+                            "});\n";
+        
+        return plot;
+    }
+    
+    /**
+     * creates each dynamic pie chart summary item data variable
+     * @param evaluators number of evaluators
+     * @param responses number of completed responses
+     * @param incomplete number of incomplete responses
+     * @return string representation of the code
+     */
+    private String createPieChartSummaryData(int evaluators, int responses, int incomplete){
+        int notTaken = evaluators - responses - incomplete;
+        
+        String dataVar =  "var reportStatsData = [" +
+                                   "{" + 
+                                        "label: \"" + messageLocator.getMessage("viewreport.summary.chart.label.completed") + "\", " + 
+                                        "data: " + responses + ", " + 
+                                        "color: \"green\"" +
+                                   "}, " +
+                                   "{" + 
+                                        "label: \"" + messageLocator.getMessage("viewreport.summary.chart.label.incomplete") + "\", " + 
+                                        "data: " + incomplete + ", " + 
+                                        "color: \"orange\"" +
+                                   "}, " +
+                                   "{" + 
+                                        "label: \"" + messageLocator.getMessage("viewreport.summary.chart.label.nottaken") + "\", " + 
+                                        "data: " + notTaken + ", " + 
+                                        "color: \"darkred\"" +
+                                   "}" +
+                               "];";
+       
+       return dataVar;
+    }
 }

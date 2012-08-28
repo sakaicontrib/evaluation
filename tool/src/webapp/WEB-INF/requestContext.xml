@@ -940,6 +940,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="evalBeanUtils"
             ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+        <property name="messageLocator" ref="messageLocator" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer">
