@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1176,6 +1177,11 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
 		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
+	}
+
+
+	public void updateEvalAssignUser(EvalAssignUser evalAssignUser) {
+		this.dao.update(evalAssignUser);
 	}
     
 }
