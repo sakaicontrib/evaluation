@@ -30,6 +30,10 @@
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EmailRecipient.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EmailTemplateInfo.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvaluationInfo.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/UserAssignment.hbm.xml</value>
             </list>
         </constructor-arg>
     </bean>
@@ -63,6 +67,11 @@
                 <value>org.sakaiproject.evaluation.model.EvalTemplate</value>
                 <value>org.sakaiproject.evaluation.model.EvalTemplateItem</value>
                 <value>org.sakaiproject.evaluation.model.EvalTranslation</value>
+                <value>org.sakaiproject.evaluation.logic.tqm.EmailRecipient</value>
+                <value>org.sakaiproject.evaluation.logic.tqm.EmailTemplateInfo</value>
+                <value>org.sakaiproject.evaluation.logic.tqm.EvaluationInfo</value>
+                <value>org.sakaiproject.evaluation.logic.tqm.UserAssignment</value>
+                
             </list>
         </property>
     </bean>
