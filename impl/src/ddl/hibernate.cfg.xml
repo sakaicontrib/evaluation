@@ -28,5 +28,9 @@
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml" />
         <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EmailRecipient.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EmailTemplateInfo.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvaluationInfo.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/UserAssignment.hbm.xml" />
     </session-factory>
 </hibernate-configuration>

@@ -510,4 +510,99 @@ public interface EvaluationDao extends GeneralGenericDao {
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping();
 
+	/**
+	 * First step of building the queue of consolidated email notifications to be sent, 
+	 * assuming the TQM tables exist and are empty (TQM tables can be cleared using 
+	 * {@link resetEmailTemplatesForConsolidatedEmails()}).    
+	 * In this step, the TQM_EMAIL_TEMPLATE table is populated with a row for each email 
+	 * template whose "type" attribute matches the value of the parameter.
+	 * 
+	 * @param emailTemplateType
+	 * @return the number of rows added to the table (i.e. the number of templates 
+	 * found).
+	 */
+	public int selectEmailTemplatesForConsolidatedEmails(String emailTemplateType);
+
+	/**
+	 * Second step of building the queue of consolidated email notifications to be sent, 
+	 * assuming the TQM tables exist, that they start out empty, and that the first step 
+	 * has been completed ({@link #selectEmailTemplatesForConsolidatedEmails(java.lang.String)}).    
+	 * In this step, the TQM_EVALUATION_INFO table is populated with a row for each  
+	 * EvalEvaluation that uses any of the email templates referenced by entries in 
+	 * the TQM_EMAIL_TEMPLATE table.
+	 * 
+	 * @param sendingAvailableEmails true if the process is sending announcements and false
+	 * if reminders are being sent. 
+	 * @param startTime 
+	 * @return the number of rows added to the table (i.e. the number of evaluations 
+	 * found).
+	 */
+	public int selectEvaluationsForConsolidatedEmails(boolean sendingAvailableEmails,
+			Date startTime);
+
+	/**
+	 * Third step of building the queue of consolidated email notifications to be sent, 
+	 * assuming the TQM tables exist, that they start out empty, and that the first two 
+	 * steps have been completed.    
+	 * In this step, the TQM_USER_ASSIGNMENT table is populated with a row for each  
+	 * EvalAssignUser entry that references any of the evaluations in he 
+	 * TQM_EVALUATION_INFO table.
+	 * 
+	 * @param useAvailableEmailSent TBD
+	 * @param availableEmailSent TBD
+	 * @param useReminderEmailSent TBD
+	 * @param reminderEmailSent TBD
+	 * @return the number of rows added to the table (i.e. the number of user assignments 
+	 * found).
+	 */
+	public int selectUserAssignmentsForConsolidatedEmails(
+			boolean useAvailableEmailSent, Date availableEmailSent,
+			boolean useReminderEmailSent, Date reminderEmailSent);
+
+	/**
+	 * Fourth step of building the queue of consolidated email notifications to be sent, 
+	 * assuming the TQM tables exist, that they start out empty, and that the first three 
+	 * steps have been completed.    
+	 * In this step, the TQM_EMAIL_RECIPIENT table is populated with information about
+	 * specific emails to be sent.  That is done by aggregating records from the 
+	 * TQM_USER_ASSIGNMENT table. The TQM_USER_ASSIGNMENT table can have several rows for 
+	 * each person. Those should be reduced to one row per person for each email template 
+	 * used for the evals in which that person is an evaluator. 
+	 * 
+	 * @param useAvailableEmailSent TBD
+	 * @param availableEmailSent TBD
+	 * @param useReminderEmailSent TBD
+	 * @param reminderEmailSent TBD
+	 * @return the number of rows added to the table (i.e. the number of unique  
+	 * person-template combinations found).
+	 */
+	public int selectRecipientsForConsolidatedEmails(
+			boolean useAvailableEmailSent, Date availableEmailSent,
+			boolean useReminderEmailSent, Date reminderEmailSent);
+
+	/**
+	 * Clears all data from the TQM_EMAIL_TEMPLATE table.
+	 * @return
+	 */
+	public int resetEmailTemplatesForConsolidatedEmails();
+
+	/**
+	 * Clears all data from the TQM_EVALUATION_INFO table.
+	 * @return
+	 */
+	public int resetEvaluationsForConsolidatedEmails();
+
+	/**
+	 * Clears all data from the TQM_USER_ASSIGNMENT table.
+	 * @return
+	 */
+	public int resetUserAssignmentsForConsolidatedEmails();
+
+	/**
+	 * Clears all data from the TQM_EMAIL_RECIPIENT table.
+	 * @return
+	 */
+	public int resetRecipientsForConsolidatedEmails();
+	
+
 }

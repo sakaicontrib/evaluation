@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+    
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+    
+    http://www.osedu.org/licenses/ECL-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+    
+-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.sakaiproject.evaluation.logic.tqm.EmailRecipient" table="TQM_EMAIL_RECIPIENT">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" />
+            <generator class="assigned" />
+        </id>
+        <property name="sakaiUserId" type="java.lang.String">
+            <column name="SAKAI_USER_ID" />
+        </property>
+        <property name="earliestDueDate" type="java.util.Date">
+            <column name="EARLIEST_DUE_DATE" />
+        </property>
+        <property name="evalCount" type="java.lang.Integer">
+            <column name="EVAL_COUNT" />
+        </property>
+        <property name="emailTemplateId" type="java.lang.Long">
+            <column name="EMAIL_TEMPLATE_ID" />
+        </property>
+    </class>
+</hibernate-mapping>

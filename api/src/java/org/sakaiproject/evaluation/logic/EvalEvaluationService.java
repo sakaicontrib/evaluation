@@ -687,4 +687,14 @@ public interface EvalEvaluationService {
 	 */
 	public int resetConsolidatedEmailRecipients();
 
+	public List<EvalEmailTemplate> getEmailTemplates(String emailTemplateType);
+
+	public List<EvalEvaluation> getOpenEvaluationsByReminderEmailTemplate(
+			EvalEmailTemplate emailTemplate);
+
+	public List<EvalEvaluation> getOpenEvaluationsByAvailableEmailTemplate(
+			EvalEmailTemplate emailTemplate);
+
+	public void updateEvalAssignUser(EvalAssignUser evalAssignUser);
+
 }

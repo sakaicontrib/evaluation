@@ -725,12 +725,14 @@ public class EvalConstants {
 	public static final String KEY_USER_EID = "USER_EID";
 	public static final String KEY_EMAIL_TEMPLATE_ID = "EMAIL_TEMPLATE_ID";
 	public static final String KEY_EARLIEST_DUE_DATE = "EARLIEST_DUE_DATE";
+	public static final String KEY_EVAL_COUNT = "EVAL_COUNT";
 	public static final String KEY_MORE_PAGES = "MORE_PAGES";
 
 	public static final byte AVAILABLE_EMAIL_NOT_SENT = 00;
 	public static final byte AVAILABLE_EMAIL_BEING_PROCESSED = 01;
 	public static final byte AVAILABLE_EMAIL_SENT = 02;
 	public static final byte AVAILABLE_EMAIL_ALL = 077;
+
 
 
 }

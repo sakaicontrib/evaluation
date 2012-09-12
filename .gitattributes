@@ -73,6 +73,10 @@ api/src/java/org/sakaiproject/evaluation/logic/model/EvalScheduledJob.java svn_k
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/scheduling/ConsolidatedNotificationsJob.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/scheduling/GroupMembershipSync.java -text
+api/src/java/org/sakaiproject/evaluation/logic/tqm/EmailRecipient.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/tqm/EmailTemplateInfo.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/tqm/EvaluationInfo.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/tqm/UserAssignment.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdhocUser.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalAdmin.java -text

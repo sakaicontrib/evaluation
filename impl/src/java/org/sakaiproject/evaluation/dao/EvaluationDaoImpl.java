@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -1770,17 +1772,18 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     @SuppressWarnings("rawtypes")
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
-    	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
+    	String query1 = "select EMAIL_TEMPLATE_ID, SAKAI_USER_ID, EVAL_COUNT, EARLIEST_DUE_DATE from TQM_EMAIL_RECIPIENT order by EMAIL_TEMPLATE_ID, SAKAI_USER_ID";
+    			// "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
     	
-    	if(log.isDebugEnabled()) {
-    		log.debug("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
+    	if(log.isInfoEnabled()) {
+    		log.info("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
     	}
     	
     	List<Map<String,Object>> rv = new ArrayList<Map<String,Object>>();
     	
     	Session session = getSession();
     	
-        Query query = session.createQuery(query1);
+        Query query = session.createSQLQuery(query1);
         query.setFirstResult(pageSize * page);
         query.setMaxResults(pageSize);
         
@@ -1790,15 +1793,31 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	
         List results = query.list();
 
-        if(results != null) {
+        if(results != null && log.isInfoEnabled()) {
         	log.info("found items from email-processing-queue: " + results.size());
         }
     	
 		for(int i = 0; i < results.size(); i++) {
+			log.info(" ===>  Processing row " + i);
     		Object[] row = (Object[]) results.get(i);
-    		String userId = (String) row[0];
-    		templateId = (Long) row[1];
-    		Date earliestDueDate = (Date)row[2];
+    		Object templateIdObj = row[0];
+    		if(templateIdObj == null) {
+    			log.warn("templateId is null");
+    			continue;
+    		} else if(BigInteger.class.isInstance(templateIdObj)) {
+    			templateId = ((BigInteger) templateIdObj).longValue();
+    		} else if(Long.class.isInstance(templateIdObj)) {
+    			templateId = (Long) templateIdObj;
+    		} else {
+    			templateId = Long.valueOf(templateIdObj.toString());
+    		}
+    		log.info("         templateId: " + templateId);
+    		String userId = (String) row[1];
+    		log.info("             userId: " + userId);
+    		Integer evalCount = (Integer) row[2];
+    		log.info("           evalCount: " + evalCount);
+    		Date earliestDueDate = (Date) row[3];
+    		log.info("     earliestDueDate: " + earliestDueDate);
     		if(userId == null || templateId == null) {
     			continue;
     		}
@@ -1810,13 +1829,17 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     		
     		map.put(EvalConstants.KEY_USER_ID, userId);
     		map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
+    		map.put(EvalConstants.KEY_EVAL_COUNT, evalCount);
     		map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,earliestDueDate);
     		rv.add(map);
-    		log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
+    		if(log.isInfoEnabled()) {
+    			log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
+    		}
     		if(templateId.longValue() != previousTemplateId.longValue() || userIdList.size() > MAX_UPDATE_SIZE) {
     			// mark eval_assign_user records as sent 
     	    	markRecordsAsSent(session, sendingAvailableEmails, templateId,
 						userIdList);
+    	    	userIdList.clear();
     		}
     		userIdList.add(userId);
     		//updates.add((Long) row[0]);
@@ -1845,17 +1868,17 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 			List<String> userIdList) {
 		
 		
-		StringBuilder hqlBuffer = new StringBuilder();
+		StringBuilder sqlQueryBuffer = new StringBuilder();
 		
-		hqlBuffer.append("update EvalAssignUser ");
+		sqlQueryBuffer.append("update eval_assign_user ");
 		if(sendingAvailableEmails) {
-			hqlBuffer.append("set availableEmailSent = :dateSent ");
+			sqlQueryBuffer.append("set available_email_sent = :dateSent ");
 		} else {
-			hqlBuffer.append("set reminderEmailSent = :dateSent ");
+			sqlQueryBuffer.append("set reminder_email_sent = :dateSent ");
 		}
-		hqlBuffer.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId = :userId)");
+		sqlQueryBuffer.append("where id in (select id from TQM_USER_ASSIGNMENT where EMAIL_TEMPLATE_ID = :emailTemplateId and SAKAI_USER_ID = :userId)");
 		
-		Query updateQuery = session.createQuery(hqlBuffer.toString());
+		Query updateQuery = session.createSQLQuery(sqlQueryBuffer.toString());
 		
 		updateQuery.setDate("dateSent", new Date());
 		updateQuery.setLong("emailTemplateId", templateId);
@@ -1973,5 +1996,137 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
         }
     }
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectEmailTemplatesForConsolidatedEmails(java.lang.String)
+	 */
+	public int selectEmailTemplatesForConsolidatedEmails(
+			String emailTemplateType) {
+		String queryString = "insert into TQM_EMAIL_TEMPLATE (id,template_type) select id, template_type from eval_email_template where template_type = :templateType";
+		Session session = this.getSession();
+		Query query = session.createSQLQuery(queryString);
+		query.setParameter("templateType", emailTemplateType);
+		int updated = query.executeUpdate();
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectEvaluationsForConsolidatedEmails(boolean, java.util.Date)
+	 */
+	public int selectEvaluationsForConsolidatedEmails(
+			boolean sendingAvailableEmails, Date startTime) {
+		// TODO: customize query-string based on params
+		StringBuilder queryBuffer = new StringBuilder();
+		queryBuffer.append("insert into TQM_EVALUATION_INFO (id, due_date, start_date, email_template_id) select ee.id as id,ee.due_date as due_date,ee.start_date as start_date,");
+		if(sendingAvailableEmails) {
+			queryBuffer.append("ee.AVAILABLE_EMAIL_TEMPLATE_FK as email_template_id ");
+		} else {
+			queryBuffer.append("ee.REMINDER_EMAIL_TEMPLATE_FK as email_template_id ");
+		}
+		queryBuffer.append("from eval_evaluation ee where ee.start_date < :startTime and ");
+		if(sendingAvailableEmails) {
+			queryBuffer.append("ee.AVAILABLE_EMAIL_TEMPLATE_FK ");
+		} else {
+			queryBuffer.append("ee.REMINDER_EMAIL_TEMPLATE_FK ");
+		}
+		queryBuffer.append("in (select id from TQM_EMAIL_TEMPLATE)");
+		
+		System.out.println("\n\tselectEvaluationsForConsolidatedEmails() query == \n\t" + queryBuffer.toString() + "\n");
+		Session session = this.getSession();
+		Query query01 = session.createSQLQuery(queryBuffer.toString());
+		query01.setDate("startTime", startTime);
+		int updated = query01.executeUpdate();
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectUserAssignmentsForConsolidatedEmails(boolean, java.util.Date, boolean, java.util.Date)
+	 */
+	public int selectUserAssignmentsForConsolidatedEmails(
+			boolean useAvailableEmailSent, Date availableEmailSent,
+			boolean useReminderEmailSent, Date reminderEmailSent) {
+		String queryString01 = "insert into TQM_USER_ASSIGNMENT (ID,evaluation_info_id,sakai_user_id,GROUP_ID) select eau.id as id, eau.evaluation_fk as evaluation_info_id,eau.user_id as sakai_user_id, eau.group_id as group_id from eval_assign_user eau where eau.evaluation_fk in (select id from TQM_EVALUATION_INFO) and eau.COMPLETED_DATE is null";
+		Session session = this.getSession();
+		Query query01 = session.createSQLQuery(queryString01);
+		int updated = query01.executeUpdate();
+		if(updated > 0) {
+		    String queryString03 = "update TQM_USER_ASSIGNMENT tua set (tua.due_date, tua.email_template_id) = (select ee.due_date, ee.email_template_id from TQM_EVALUATION_INFO ee where tua.evaluation_info_id = ee.id)";
+			Query query03 = session.createSQLQuery(queryString03);
+			updated = query03.executeUpdate();
+		}		
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#selectRecipientsForConsolidatedEmails(boolean, java.util.Date, boolean, java.util.Date)
+	 */
+	public int selectRecipientsForConsolidatedEmails(
+			boolean useAvailableEmailSent, Date availableEmailSent,
+			boolean useReminderEmailSent, Date reminderEmailSent) {
+		int updated = 0;
+		String queryString01 = "insert into TQM_EMAIL_RECIPIENT (email_template_id, SAKAI_USER_ID, id, eval_count, earliest_due_date) select tua.email_template_id as email_template_id, tua.sakai_user_id as sakai_user_id, min(tua.id) as id, count(tua.id) as eval_count, min(tua.due_date) as earliest_due_date from TQM_USER_ASSIGNMENT tua group by tua.email_template_id, tua.sakai_user_id order by tua.email_template_id, tua.sakai_user_id";
+		Session session = this.getSession();
+		Query query01 = session.createSQLQuery(queryString01);
+		updated = query01.executeUpdate();
+		if(updated > 0) {
+		    String queryString02 = "update TQM_USER_ASSIGNMENT tua set tua.EMAIL_RECIPIENT_ID = (select ter.id from TQM_EMAIL_RECIPIENT ter where tua.sakai_user_id=ter.sakai_user_id)";
+			Query query02 = session.createSQLQuery(queryString02);
+			updated = query02.executeUpdate();
+		}
+		
+		return updated ;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#resetEmailTemplatesForConsolidatedEmails()
+	 */
+	public int resetEmailTemplatesForConsolidatedEmails() {
+		String queryString = "delete from TQM_EMAIL_TEMPLATE";
+		Session session = this.getSession();
+		Query query = session.createSQLQuery(queryString);
+		int updated = query.executeUpdate();
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#resetEvaluationsForConsolidatedEmails()
+	 */
+	public int resetEvaluationsForConsolidatedEmails() {
+		String queryString = "delete from TQM_EVALUATION_INFO";
+		Session session = this.getSession();
+		Query query = session.createSQLQuery(queryString);
+		int updated = query.executeUpdate();
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#resetUserAssignmentsForConsolidatedEmails()
+	 */
+	public int resetUserAssignmentsForConsolidatedEmails() {
+		String queryString = "delete from TQM_USER_ASSIGNMENT";
+		Session session = this.getSession();
+		Query query = session.createSQLQuery(queryString);
+		int updated = query.executeUpdate();
+		return updated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#resetRecipientsForConsolidatedEmails()
+	 */
+	public int resetRecipientsForConsolidatedEmails() {
+		String queryString = "delete from TQM_EMAIL_RECIPIENT";
+		Session session = this.getSession();
+		Query query = session.createSQLQuery(queryString);
+		int updated = query.executeUpdate();
+		return updated;
+	}
 
 }

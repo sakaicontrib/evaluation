@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1227,5 +1229,96 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
  		return to;
  	}
+
+	public String[] sendConsolidatedNotifications(
+			JobStatusReporter jobStatusReporter, String jobId,
+			String emailTemplateType, boolean sendingReminders) {
+				
+		List<String> recipients = new ArrayList<String>();
+		List<String> actuallySent = new ArrayList<String>();
+		Set<String> groups = new HashSet<String>();
+		SortedSet<Long> emailTemplateIds = new TreeSet<Long>();
+		Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
+		
+		List<EvalEvaluation> allOpenEvals = this.evaluationService.getEvaluationsByState(EvalConstants.EVALUATION_STATE_ACTIVE);
+		for(EvalEvaluation eval : allOpenEvals) {
+			EvalEmailTemplate emailTemplate = null;
+			
+			if(sendingReminders) {
+				emailTemplate = eval.getReminderEmailTemplate();
+			} else {
+				emailTemplate = eval.getAvailableEmailTemplate();
+			}
+			if(emailTemplate.getType().equalsIgnoreCase(emailTemplateType)) {
+				List<EvalEvaluation> evalList = emailTemplate2EvalMap.get(emailTemplate.getId());
+				if(evalList == null) {
+					evalList = new ArrayList<EvalEvaluation>();
+					emailTemplate2EvalMap.put(emailTemplate.getId(), evalList);
+					
+					emailTemplateIds.add(emailTemplate.getId());
+				}
+				evalList.add(eval);
+			}
+		}
+
+		
+		for(Long emailTemplateId : emailTemplateIds) {
+			Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
+			List<EvalEvaluation> evals = emailTemplate2EvalMap.get(emailTemplateId);
+			if(evals != null) {
+				for(EvalEvaluation eval : evals) {
+					List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+					if(evalAssignUsers != null) {
+						for(EvalAssignUser evalAssignUser : evalAssignUsers) {
+							if(evalAssignUser.getCompletedDate() == null) {
+								Map<String, Object> emailData = emailDataMap.get(evalAssignUser.getUserId());
+								if(emailData == null) {
+									emailData = new HashMap<String, Object>();
+									emailDataMap.put(evalAssignUser.getUserId(), emailData);
+								}
+								emailData.put(EvalConstants.KEY_USER_ID, evalAssignUser.getUserId());
+								Date earliestDueDate = (Date) emailData.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
+								if(earliestDueDate == null || earliestDueDate.after(eval.getDueDate())) {
+									emailData.put(EvalConstants.KEY_EARLIEST_DUE_DATE, eval.getDueDate());
+								}
+								Integer evalCount = (Integer) emailData.get(EvalConstants.KEY_EVAL_COUNT);
+								if(evalCount == null) {
+									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(1));
+								} else {
+									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(evalCount.intValue() + 1));
+								}
+								emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, emailTemplateId);
+								
+								recipients.add(evalAssignUser.getUserId());
+								groups.add(evalAssignUser.getEvalGroupId());
+								if(sendingReminders) {
+									evalAssignUser.setReminderEmailSent(new Date());
+								} else {
+									evalAssignUser.setAvailableEmailSent(new Date());
+								}
+								this.evaluationService.updateEvalAssignUser(evalAssignUser);
+							}
+						}
+					}
+				}
+			}
+			List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>();
+			for(String recipient : recipients) {
+				Map<String, Object> emailData = emailDataMap.get(recipient);
+				if(emailData == null) {
+					// log??
+				} else {
+					emailDataList.add(emailData);
+				}
+			}
+			List<String> processed = this.processConsolidatedEmails(jobId, emailDataList, jobStatusReporter);
+			if(processed != null) {
+				actuallySent.addAll(processed);
+			}
+		}
+		
+		return (String[]) recipients.toArray();
+		
+	}
 
 }

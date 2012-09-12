@@ -1159,7 +1159,23 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	 */
 	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
-		return this.dao.selectConsolidatedEmailRecipients(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent, emailTemplateType);
+		int recipientCount = 0;
+		int evalCount = 0;
+		int assignmentCount = 0;
+		int templateCount = this.dao.selectEmailTemplatesForConsolidatedEmails(emailTemplateType);
+		if(templateCount > 0) {
+			// startTime is used to select evals that opened before a particular time.
+			// should this be *NOW* or some other time (e.g. the most recent midnight)? 
+			Date startTime = new Date();
+			evalCount = this.dao.selectEvaluationsForConsolidatedEmails(true, startTime); 
+		}
+		if(evalCount > 0) {
+			assignmentCount = this.dao.selectUserAssignmentsForConsolidatedEmails(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent);
+		}
+		if(assignmentCount > 0) {
+			recipientCount = this.dao.selectRecipientsForConsolidatedEmails(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent);
+		}
+		return recipientCount;
 	}
 	
 	/*
@@ -1167,7 +1183,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#resetConsolidatedEmailRecipients()
 	 */
 	public int resetConsolidatedEmailRecipients() {
-		return this.dao.resetConsolidatedEmailRecipients();
+		
+		int templateCount = this.dao.resetEmailTemplatesForConsolidatedEmails();
+		int evalCount = this.dao.resetEvaluationsForConsolidatedEmails();
+		int assignmentCount = this.dao.resetUserAssignmentsForConsolidatedEmails();
+		int recipientCount = this.dao.resetRecipientsForConsolidatedEmails();
+		
+		return recipientCount;
 	}
 	
 	/*
@@ -1176,6 +1198,53 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
 		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
+	}
+
+
+	@Override
+	public List<EvalEmailTemplate> getEmailTemplates(String emailTemplateType) {
+		
+		return this.dao.findBySearch(EvalEmailTemplate.class, new Search("type", emailTemplateType));
+	}
+
+
+	@Override
+	public List<EvalEvaluation> getOpenEvaluationsByReminderEmailTemplate(
+			EvalEmailTemplate emailTemplate) {
+		List<EvalEvaluation> evals = new ArrayList<EvalEvaluation>();
+		Search search = new Search();
+		search.addRestriction(new Restriction("reminderEmailTemplate", emailTemplate));
+		List<EvalEvaluation> candidates = this.dao.findBySearch(EvalEvaluation.class, search);
+		for(EvalEvaluation candidate : candidates) {
+			String state = this.returnAndFixEvalState(candidate, true);
+			if(state != null && (EvalConstants.EVALUATION_STATE_ACTIVE.equalsIgnoreCase(state) || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equalsIgnoreCase(state))) {
+				evals.add(candidate);
+			}
+		}
+		return evals;
+	}
+
+
+	@Override
+	public List<EvalEvaluation> getOpenEvaluationsByAvailableEmailTemplate(
+			EvalEmailTemplate emailTemplate) {
+		List<EvalEvaluation> evals = new ArrayList<EvalEvaluation>();
+		Search search = new Search();
+		search.addRestriction(new Restriction("availableEmailTemplate", emailTemplate));
+		List<EvalEvaluation> candidates = this.dao.findBySearch(EvalEvaluation.class, search);
+		for(EvalEvaluation candidate : candidates) {
+			String state = this.returnAndFixEvalState(candidate, true);
+			if(state != null && (EvalConstants.EVALUATION_STATE_ACTIVE.equalsIgnoreCase(state) || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equalsIgnoreCase(state))) {
+				evals.add(candidate);
+			}
+		}
+		return evals;
+	}
+
+
+	@Override
+	public void updateEvalAssignUser(EvalAssignUser evalAssignUser) {
+		this.dao.update(evalAssignUser);
 	}
     
 }
