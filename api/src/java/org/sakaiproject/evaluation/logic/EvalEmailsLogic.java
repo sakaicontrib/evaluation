@@ -143,5 +143,8 @@ public interface EvalEmailsLogic {
      * @return the email address of the user
      */
     public String sendEvalSubmissionConfirmationEmail(String userId, Long evalId);
+
+	public String[] sendConsolidatedNotifications(JobStatusReporter jobStatusReporter, String jobId,
+			String emailTemplateType, boolean sendingReminders);
     
 }

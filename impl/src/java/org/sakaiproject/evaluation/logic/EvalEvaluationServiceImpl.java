@@ -1196,5 +1196,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
 		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
 	}
+
+
+	public void updateEvalAssignUser(EvalAssignUser evalAssignUser) {
+		this.dao.update(evalAssignUser);
+	}
     
 }

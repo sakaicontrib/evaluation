@@ -27,6 +27,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
 import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
@@ -117,11 +118,14 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				}
 				
 				if(sendAvailableEmails.booleanValue()) {
-					String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
-					if(recipients == null) {
-						log.debug("announcements sent: 0");
-					} else {
-						log.debug("announcements sent: " + recipients.length);
+					//String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
+					String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, false);
+					if(log.isDebugEnabled()) {
+						if(recipients == null) {
+							log.debug("announcements sent: 0");
+						} else {
+							log.debug("announcements sent: " + recipients.length);
+						}
 					}
 				}
 		
@@ -153,11 +157,14 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					if (tdate >= (rdate - 6L * one_hour)) {
 						
 		
-						String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
-						if(recipients == null) {
-							log.debug("reminders sent: 0");
-						} else {
-							log.debug("reminders sent: " + recipients.length);
+						//String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
+						String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, true);
+						if(log.isDebugEnabled()) {
+							if(recipients == null) {
+								log.debug("reminders sent: 0");
+							} else {
+								log.debug("reminders sent: " + recipients.length);
+							}
 						}
 						Calendar cal = Calendar.getInstance();
 						cal.setTimeInMillis(tdate + reminderInterval * one_day);
