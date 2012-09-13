@@ -1366,7 +1366,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 		}
 		
-		return (String[]) recipients.toArray();
+		return (String[]) recipients.toArray(new String[recipients.size()]);
 		
 	}
 
