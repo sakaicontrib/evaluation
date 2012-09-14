@@ -695,4 +695,22 @@ public interface EvalEvaluationService {
 	 */
 	public int resetConsolidatedEmailRecipients();
 
+	/**
+	 * Update one or more EvalAssignUser records to indicate that Available Notifications
+	 * were sent at the specified time.
+	 * @param evalAssignUserIds
+	 * @param timeEmailSent
+	 */
+	public void updateEvalAssignUsersAnnouncementsSent(
+			List<Long> evalAssignUserIds, Date timeEmailSent);
+
+	/**
+	 * Update one or more EvalAssignUser records to indicate that Reminder Notifications
+	 * were sent at the specified time.
+	 * @param evalAssignUserIds
+	 * @param timeEmailSent
+	 */
+	public void updateEvalAssignUsersRemindersSent(
+			List<Long> evalAssignUserIds, Date timeEmailSent);
+
 }

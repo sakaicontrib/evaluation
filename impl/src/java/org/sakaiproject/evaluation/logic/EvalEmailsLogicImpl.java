@@ -1068,6 +1068,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// setting reportingInterval to zero results in no incremental reports.
 			reportingInterval = new Integer(0);
 		}
+		Date timeEmailSent = new Date();
 		int userCounter = 0;
 		int emailCounter = 0;
 		List<String> recipients = new ArrayList<String>();
@@ -1120,6 +1121,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					this.commonLogic.sendEmailsToUsers(from, new String[]{userId}, subject, message, false, EvalConstants.EMAIL_DELIVERY_DEFAULT);
 					emailCounter++;
 					recipients.add(user.displayId);
+					List<Long> evalAssignUserIds = (List<Long>) entry.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
+					if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equalsIgnoreCase(template.getType())) {
+						this.evaluationService.updateEvalAssignUsersAnnouncementsSent(evalAssignUserIds, timeEmailSent);
+					} else if(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(template.getType())) {
+						this.evaluationService.updateEvalAssignUsersRemindersSent(evalAssignUserIds, timeEmailSent);
+					}
 				}
 			} catch (Exception e) {
 				if(jobStatusReporter != null) {
@@ -1337,6 +1344,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 //									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(evalCount.intValue() + 1));
 //								}
 								emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, emailTemplateId);
+								
+								List<Long> assignments = (List<Long>) emailData.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
+								if(assignments == null) {
+									assignments = new ArrayList<Long>();
+									emailData.put(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS, assignments);
+								}
+								assignments.add(new Long(evalAssignUser.getId().longValue()));
 								
 								recipients.add(evalAssignUser.getUserId());
 								groups.add(evalAssignUser.getEvalGroupId());

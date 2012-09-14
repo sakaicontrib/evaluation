@@ -1201,5 +1201,30 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	public void updateEvalAssignUser(EvalAssignUser evalAssignUser) {
 		this.dao.update(evalAssignUser);
 	}
+
+	@Override
+	public void updateEvalAssignUsersAnnouncementsSent(
+			List<Long> evalAssignUserIds, Date timeEmailSent) {
+		// This method could be more efficient if it called a custom DAO method
+		// that used HQL to update that field for a set of records selected by id.
+		for(Long evalAssignUserId : evalAssignUserIds) {
+			EvalAssignUser evalAssignUser = this.getAssignUserById(evalAssignUserId);
+			evalAssignUser.setAvailableEmailSent(timeEmailSent);
+			this.updateEvalAssignUser(evalAssignUser);
+		}
+	}
+
+
+	@Override
+	public void updateEvalAssignUsersRemindersSent(
+			List<Long> evalAssignUserIds, Date timeEmailSent) {
+		// This method could be more efficient if it called a custom DAO method
+		// that used HQL to update that field for a set of records selected by id.
+		for(Long evalAssignUserId : evalAssignUserIds) {
+			EvalAssignUser evalAssignUser = this.getAssignUserById(evalAssignUserId);
+			evalAssignUser.setReminderEmailSent(timeEmailSent);
+			this.updateEvalAssignUser(evalAssignUser);
+		}
+	}
     
 }
