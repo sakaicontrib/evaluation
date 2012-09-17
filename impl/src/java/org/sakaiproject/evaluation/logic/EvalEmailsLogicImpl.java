@@ -61,7 +61,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     protected final String EVENT_EMAIL_SUBMISSION =                   "eval.email.eval.submission";
 
     protected static final int MIN_BATCH_SIZE = 10;
-	protected static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
+    protected static final long MILLISECONDS_PER_HOUR = 60L * 60L * 1000L;
+	protected static final long MILLISECONDS_PER_DAY = 24L * MILLISECONDS_PER_HOUR;
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -1293,6 +1294,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List<String> recipients = new ArrayList<String>();
 		List<String> actuallySent = new ArrayList<String>();
 		
+		Boolean usingAnnouncements = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+		Integer reminderIntervalDays = (Integer) this.settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY);
+		long reminderIntervalMilliseconds = (reminderIntervalDays * MILLISECONDS_PER_DAY) + (2L * MILLISECONDS_PER_HOUR);
+		Date twentyFourHoursAgo = new Date(startTime.getTime() - reminderIntervalMilliseconds);
+		
+		
 		try {
 			Set<String> groups = new HashSet<String>();
 			Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
@@ -1319,20 +1326,22 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			int templateCount = 0;
 			for(Map.Entry<Long, List<EvalEvaluation>> entry : emailTemplate2EvalMap.entrySet()) {
 				templateCount++;
-				StringBuilder templateMsgBuf = new StringBuilder();
-				templateMsgBuf.append(emailTemplateType);
-				templateMsgBuf.append(": Handling email template #");
-				templateMsgBuf.append(templateCount);
-				templateMsgBuf.append(" of ");
-				templateMsgBuf.append(emailTemplate2EvalMap.size());
-				log.info(templateMsgBuf.toString());
+				if(log.isInfoEnabled()) {
+					StringBuilder templateMsgBuf = new StringBuilder();
+					templateMsgBuf.append(emailTemplateType);
+					templateMsgBuf.append(": Handling email template #");
+					templateMsgBuf.append(templateCount);
+					templateMsgBuf.append(" of ");
+					templateMsgBuf.append(emailTemplate2EvalMap.size());
+					log.info(templateMsgBuf.toString());
+				}
 				Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
 				List<EvalEvaluation> evals = entry.getValue();
 				if(evals != null) {
 					int evalCount = 0;
 					for(EvalEvaluation eval : evals) {
 						evalCount++;
-						if(evalCount % 100 == 0) {
+						if(log.isInfoEnabled() && evalCount % 100 == 0) {
 							StringBuilder evalMsgBuf = new StringBuilder();
 							evalMsgBuf.append(emailTemplateType);
 							evalMsgBuf.append(": Processed ");
@@ -1348,68 +1357,91 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
 						if(evalAssignUsers != null) {
 							for(EvalAssignUser evalAssignUser : evalAssignUsers) {
-								if(evalAssignUser.getCompletedDate() == null) {
-									Map<String, Object> emailData = emailDataMap.get(evalAssignUser.getUserId());
-									if(emailData == null) {
-										emailData = new HashMap<String, Object>();
-										emailDataMap.put(evalAssignUser.getUserId(), emailData);
+								if(sendingReminders) {
+									// sending reminders; need to check that no emails have been sent too recently
+									// and that announcement has been sent if it's required first
+									if(usingAnnouncements.booleanValue()) {
+										// need to check that announcement has been sent but not too recently  
+										if(evalAssignUser.getAvailableEmailSent() == null) {
+											// skip this one; announcement not sent yet
+											continue;
+										} else if(evalAssignUser.getAvailableEmailSent().after(twentyFourHoursAgo)) {
+											// skip this one; announcement sent to recently
+											continue;
+										}
+									} 
+									// need to check that reminder has not been sent too recently 
+									if(evalAssignUser.getReminderEmailSent() != null && evalAssignUser.getReminderEmailSent().after(twentyFourHoursAgo)) {
+										// skip this one; reminder sent too recently
+										continue;
 									}
-									emailData.put(EvalConstants.KEY_USER_ID, evalAssignUser.getUserId());
-									Date earliestDueDate = (Date) emailData.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
-									if(earliestDueDate == null || earliestDueDate.after(eval.getDueDate())) {
-										emailData.put(EvalConstants.KEY_EARLIEST_DUE_DATE, eval.getDueDate());
-									}
-	//								Integer evalCount = (Integer) emailData.get(EvalConstants.KEY_EVAL_COUNT);
-	//								if(evalCount == null) {
-	//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(1));
-	//								} else {
-	//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(evalCount.intValue() + 1));
-	//								}
-									emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, entry.getKey());
-									
-									List<Long> assignments = (List<Long>) emailData.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
-									if(assignments == null) {
-										assignments = new ArrayList<Long>();
-										emailData.put(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS, assignments);
-									}
-									assignments.add(new Long(evalAssignUser.getId().longValue()));
-									
-									recipients.add(evalAssignUser.getUserId());
-									groups.add(evalAssignUser.getEvalGroupId());
-									if(sendingReminders) {
-										evalAssignUser.setReminderEmailSent(startTime);
+								} else {
+									// sending announcements; check whether announcement has been sent
+									if(evalAssignUser.getAvailableEmailSent() == null) {
+										// proceed
 									} else {
-										evalAssignUser.setAvailableEmailSent(startTime);
+										// skip this one; announcement has been sent
+										continue;
 									}
+								}
+								if(evalAssignUser.getCompletedDate() == null) {
+									// skip this one; user has completed eval
+									continue;
+								}
+								Map<String, Object> emailData = emailDataMap.get(evalAssignUser.getUserId());
+								if(emailData == null) {
+									emailData = new HashMap<String, Object>();
+									emailDataMap.put(evalAssignUser.getUserId(), emailData);
+								}
+								emailData.put(EvalConstants.KEY_USER_ID, evalAssignUser.getUserId());
+								Date earliestDueDate = (Date) emailData.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
+								if(earliestDueDate == null || earliestDueDate.after(eval.getDueDate())) {
+									emailData.put(EvalConstants.KEY_EARLIEST_DUE_DATE, eval.getDueDate());
+								}
+								emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, entry.getKey());
+								
+								List<Long> assignments = (List<Long>) emailData.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
+								if(assignments == null) {
+									assignments = new ArrayList<Long>();
+									emailData.put(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS, assignments);
+								}
+								assignments.add(new Long(evalAssignUser.getId().longValue()));
+								
+								recipients.add(evalAssignUser.getUserId());
+								groups.add(evalAssignUser.getEvalGroupId());
+								if(sendingReminders) {
+									evalAssignUser.setReminderEmailSent(startTime);
+								} else {
+									evalAssignUser.setAvailableEmailSent(startTime);
 								}
 							}
 						}
 					}
 				}
 				
+				List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>(emailDataMap.values());
+				
 		    	if(jobId != null && jobStatusReporter != null) {
 		    		if(sendingReminders) {
-		    			jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(recipients.size()));
+		    			jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(emailDataList.size()));
 		    			jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(groups.size()));
 		    		} else {
-		    			jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(recipients.size()));
+		    			jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(emailDataList.size()));
 		    			jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(groups.size()));
 		    		}
 		    	}
 		    	
-				List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>(emailDataMap.values());
-				
 				List<String> processed = this.processConsolidatedEmails(jobId, emailDataList, jobStatusReporter);
 				if(processed != null) {
 					actuallySent.addAll(processed);
 				}
 			}
 	
-		} catch(RuntimeException t) {
-			log.warn("Unexpected error processing consolidated notifications", t);
+		} catch(RuntimeException e) {
+			log.warn("Unexpected error processing consolidated notifications", e);
 			
 			if(jobStatusReporter != null) {
-				jobStatusReporter.reportError(jobId, true, "error", "Fatal error attempting to send consolidated notifications. See server logs for details. ");
+				jobStatusReporter.reportError(jobId, true, "error", "Fatal error attempting to send consolidated notifications. See server logs for details. " + e.getMessage());
 			}
 		} finally {
 			if(jobId != null && jobStatusReporter != null) {
