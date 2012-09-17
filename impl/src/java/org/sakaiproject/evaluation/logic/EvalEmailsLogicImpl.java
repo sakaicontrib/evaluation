@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -867,146 +869,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         return new EvalEmailMessage(subjectTemplate, messageTemplate, subject, message);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedAvailableNotifications()
-     */
-	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId) {
-		// need to figure out selection criteria for Consolidated-Available Notifications:
-		// admin settings and individual eval settings determine whether available emails should be sent.
-		// then we can tell whether an announcement has been sent (once eval is Active) by whether the 
-		// EvalAssignUser.availableEmailSent column is null (no email sent) or contains a date (indicating
-		// the date and approximate time when the email was sent to that user).
-		
-		Integer batchSize = (Integer) this.settings.get(EvalSettings.EMAIL_BATCH_SIZE);
-		if(batchSize == null || batchSize.intValue() < MIN_BATCH_SIZE) {
-			batchSize = new Integer(MIN_BATCH_SIZE);
-		}
-		Integer waitInterval = (Integer) this.settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
-		if(waitInterval == null || waitInterval.intValue() < 0) {
-			waitInterval = new Integer(0);
-		}
-
-		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-		if(logRecipients == null) {
-			logRecipients = new Boolean(false);
-		}
-		
-		Date startTime = new Date();
-
-		int count = this.evaluationService.selectConsoliatedEmailRecipients(true, null, true, null, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-		if(log.isDebugEnabled()) {
-			log.debug("Number of evalAssignUser entities selected for available emails: " + count);
-		}
-    	List<String> recipients = new ArrayList<String>();
-    	
-    	if(count > 0) {
-        	if(jobStatusReporter != null) {
-        		jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(count));
-        		jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
-        	}
-
-	    	int page = 0;
-	    	List<String> userIds = null;
-	    	do {
-		    	List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(true, batchSize.intValue(), page++);
-		    	userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
-		    	if(userIds != null) {
-		    		recipients.addAll(userIds);
-		    	}
-	    		takeShortBreak(waitInterval);
-	    	} while(userIds != null && !userIds.isEmpty());
-	    	
-	    	this.evaluationService.resetConsolidatedEmailRecipients();
-		}
-    	
-		if(jobId != null && jobStatusReporter != null) {
-			jobStatusReporter.reportProgress(jobId, "announcements", calculateElapsedTimeMessage(new Date(), startTime));
-			jobStatusReporter.reportProgress(jobId, "announcementUsers", Integer.toString(recipients.size()));
-		}
-    	
-		//this.evaluationService.setAvailableEmailSent(evalIds)
-    	return recipients.toArray(new String[]{});
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendConsolidatedReminderNotifications()
-     */
-	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId) {
-		// need to figure out selection criteria for Consolidated-Reminder Notifications:
-		// admin settings and individual eval settings determine whether available emails should be sent.
-		// admin settings indicate how frequently and at what time of day reminders should be sent. 
-		// We can tell whether a reminder has been sent (once eval is Active) by whether the 
-		// EvalAssignUser.reminderEmailSent column is null (no email sent) or contains a date (indicating
-		// the date and approximate time when the email was sent to that user). 
-		
-		// If available email is being sent, the first reminder should be n days later (where n is the frequency
-		// of sending reminders).  Otherwise, the first reminder should be sent the next time reminders are sent 
-		// after the eval becomes Active.  Reminders should be repeated every n days.
-		
-		Integer batchSize = (Integer) this.settings.get(EvalSettings.EMAIL_BATCH_SIZE);
-		if(batchSize == null || batchSize.intValue() < MIN_BATCH_SIZE) {
-			batchSize = new Integer(MIN_BATCH_SIZE);
-		}
-		Integer waitInterval = (Integer) this.settings.get(EvalSettings.EMAIL_WAIT_INTERVAL);
-		if(waitInterval == null || waitInterval.intValue() < 0) {
-			waitInterval = new Integer(0);
-		}
-		
-		Boolean availableEmailEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
-		if(availableEmailEnabled == null) {
-			availableEmailEnabled = new Boolean(false);
-		}
-		
-		Integer reminderFrequency = (Integer) this.settings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS);
-		if(reminderFrequency == null) {
-			// assume daily reminders if not specified
-			reminderFrequency = new Integer(1);
-		}
-
-		Boolean logRecipients = (Boolean) this.settings.get(EvalSettings.LOG_EMAIL_RECIPIENTS);
-		if(logRecipients == null) {
-			logRecipients = new Boolean(false);
-		}
-		
-    	List<String> recipients = new ArrayList<String>();
-    	
-    	Date availableEmailSent = null;
-    	if(availableEmailEnabled.booleanValue()) {
-    		// do not send email to users who have gotten an available email recently (wait number of days specified by reminderFrequency) 
-    		availableEmailSent = new Date(System.currentTimeMillis() - (reminderFrequency.longValue() * MILLISECONDS_PER_DAY));
-    	}
-		Date reminderEmailSent = new Date();
-		
-		int count = this.evaluationService.selectConsoliatedEmailRecipients(availableEmailEnabled.booleanValue(), availableEmailSent , true, reminderEmailSent , EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
-    	log.debug("Number of evalAssignUser entities selected for reminder emails: " + count);
-    	if(count > 0) {
-        	if(jobStatusReporter != null) {
-        		jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(count));
-        		jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(this.evaluationService.countDistinctGroupsInConsolidatedEmailMapping()));
-        	}
-        	int page = 0;
-        	List<String> userIds = null;
-	    	do {
-	    		List<Map<String,Object>> userMap = this.evaluationService.getConsolidatedEmailMapping(false, batchSize.intValue(), page++);
-	    		userIds = processConsolidatedEmails(jobId, userMap, jobStatusReporter);
-	    		if(userIds != null)
-	    		recipients.addAll(userIds);
-	    		takeShortBreak(waitInterval);
-	    	} while(userIds != null && !userIds.isEmpty());
-    	}
-    	this.evaluationService.resetConsolidatedEmailRecipients();
-    	
-		if(jobId != null && jobStatusReporter != null) {
-			jobStatusReporter.reportProgress(jobId, "reminders", calculateElapsedTimeMessage(new Date(), reminderEmailSent));
-			jobStatusReporter.reportProgress(jobId, "reminderUsers", Integer.toString(recipients.size()));
-		}
-    	return recipients.toArray(new String[]{});
-    }
-
-   
-
     // INTERNAL METHODS
 	
 	/**
@@ -1287,18 +1149,42 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	@Override
 	public String[] sendConsolidatedNotifications(
 			JobStatusReporter jobStatusReporter, String jobId,
-			String emailTemplateType, boolean sendingReminders) {
+			String emailTemplateType) {
 		
 		Date startTime = new Date();
 		
-		List<String> recipients = new ArrayList<String>();
 		List<String> actuallySent = new ArrayList<String>();
 		
-		Boolean usingAnnouncements = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
-		Integer reminderIntervalDays = (Integer) this.settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY);
-		long reminderIntervalMilliseconds = (reminderIntervalDays * MILLISECONDS_PER_DAY) + (2L * MILLISECONDS_PER_HOUR);
-		Date twentyFourHoursAgo = new Date(startTime.getTime() - reminderIntervalMilliseconds);
+		boolean sendingReminders = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType); 
 		
+		Boolean usingAnnouncements = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+		Integer reminderInterval = (Integer) this.settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY);
+		if(reminderInterval == null) {
+			reminderInterval = new Integer(0);
+		}
+		Date whenPreviousEmailJobStarted = null;
+		if(reminderInterval > 0) {
+			Date thisJobStartTime = null;
+			String thisJobStartTimeStr = (String) this.settings.get(EvalSettings.NEXT_REMINDER_DATE);
+			if(thisJobStartTimeStr == null || thisJobStartTimeStr.trim().equals("")) {
+				thisJobStartTime = new Date();
+			} else {
+		        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy"); //DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.FULL);
+				try {
+					thisJobStartTime = df.parse( thisJobStartTimeStr );
+				} catch (ParseException e) {
+					// Use current date
+					thisJobStartTime = new Date();
+				}
+			}
+			long reminderIntervalMilliseconds = reminderInterval * MILLISECONDS_PER_DAY;
+			whenPreviousEmailJobStarted = new Date(thisJobStartTime.getTime() - reminderIntervalMilliseconds);
+		}
+		
+		if(whenPreviousEmailJobStarted == null) {
+			// TODO: This is set to avoid Null Pointer.  Need to ensure the result is correct.
+			whenPreviousEmailJobStarted = new Date();
+		}
 		
 		try {
 			Set<String> groups = new HashSet<String>();
@@ -1348,8 +1234,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							evalMsgBuf.append(evalCount);
 							evalMsgBuf.append(" evals of ");
 							evalMsgBuf.append(evals.size());
-							evalMsgBuf.append("; recipients.size == ");
-							evalMsgBuf.append(recipients.size());
 							evalMsgBuf.append("; emailDataMap.size == ");
 							evalMsgBuf.append(emailDataMap.size());
 							log.info(evalMsgBuf.toString());
@@ -1358,20 +1242,20 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						if(evalAssignUsers != null) {
 							for(EvalAssignUser evalAssignUser : evalAssignUsers) {
 								if(sendingReminders) {
-									// sending reminders; need to check that no emails have been sent too recently
+									// sending reminders; check that no emails have been sent too recently
 									// and that announcement has been sent if it's required first
 									if(usingAnnouncements.booleanValue()) {
-										// need to check that announcement has been sent but not too recently  
+										// check that announcement has been sent but not too recently  
 										if(evalAssignUser.getAvailableEmailSent() == null) {
 											// skip this one; announcement not sent yet
 											continue;
-										} else if(evalAssignUser.getAvailableEmailSent().after(twentyFourHoursAgo)) {
-											// skip this one; announcement sent to recently
+										} else if(evalAssignUser.getAvailableEmailSent().after(whenPreviousEmailJobStarted)) {
+											// skip this one; announcement sent too recently
 											continue;
 										}
 									} 
-									// need to check that reminder has not been sent too recently 
-									if(evalAssignUser.getReminderEmailSent() != null && evalAssignUser.getReminderEmailSent().after(twentyFourHoursAgo)) {
+									// check that reminder has not been sent too recently 
+									if(evalAssignUser.getReminderEmailSent() != null && evalAssignUser.getReminderEmailSent().after(whenPreviousEmailJobStarted)) {
 										// skip this one; reminder sent too recently
 										continue;
 									}
@@ -1407,7 +1291,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 								}
 								assignments.add(new Long(evalAssignUser.getId().longValue()));
 								
-								recipients.add(evalAssignUser.getUserId());
 								groups.add(evalAssignUser.getEvalGroupId());
 								if(sendingReminders) {
 									evalAssignUser.setReminderEmailSent(startTime);

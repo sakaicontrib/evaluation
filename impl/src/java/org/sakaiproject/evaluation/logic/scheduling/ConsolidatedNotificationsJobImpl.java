@@ -119,7 +119,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				
 				if(sendAvailableEmails.booleanValue()) {
 					//String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
-					String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, false);
+					String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
 					if(log.isDebugEnabled()) {
 						if(recipients == null) {
 							log.debug("announcements sent: 0");
@@ -156,9 +156,8 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					long tdate = System.currentTimeMillis();
 					if (tdate >= (rdate - 6L * one_hour)) {
 						
-		
 						//String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
-						String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, true);
+						String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
 						if(log.isDebugEnabled()) {
 							if(recipients == null) {
 								log.debug("reminders sent: 0");

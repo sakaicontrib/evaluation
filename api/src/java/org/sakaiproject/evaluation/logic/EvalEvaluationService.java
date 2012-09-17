@@ -637,63 +637,12 @@ public interface EvalEvaluationService {
 	public List<EvalEvaluation> getEvaluations(String searchString,
 			String order, int startResult, int maxResults);
 
-    /**
-     * Access one page of summary info needed to render consolidated email templates. 
-     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) and the earliest 
-     * due date of Active evals which use the email template and which the referenced user can take.
-     * @param sendingAvailableEmails TODO
-     * @param pageSize The maximum number of mappings to return. A mapping consists of a user-id, an email template
-     * 		id and a date.
-     * @param page The zero-based starting page. In other words, return a page of items beginning at index 
-     * 		(pageSize * page).
-     * @param availableEmailSent A boolean value indicating whether the summary data should include evals for which 
-     * 		available emails have been sent (if parameter is Boolean.TRUE) or have not been sent (if parameter is 
-     * 		Boolean.FALSE). A null value indicates all Active evals should be included.
-     * @param emailTemplateType The category of email templates to include in the mapping (either 
-     * 		EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE or EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,
-     * 		but not both)
-     *    
-     * @return A mapping from user-id to data about the evals that user can take. The data for each users is 
-     * 		a mapping from string values (EvalConstants.KEY_USER_ID, EvalConstants.KEY_USER_EID, 
-     * 		EvalConstants.KEY_EMAIL_TEMPLATE_ID and EvalConstants.KEY_EARLIEST_DUE_DATE) to a String 
-     * 		object for EvalConstants.KEY_USER_ID, a String object for EvalConstants.KEY_USER_EID, a Long 
-     * 		object for EvalConstants.KEY_EMAIL_TEMPLATE_ID and a Date object forEvalConstants.KEY_EARLIEST_DUE_DATE).  
-
-     */
-	public List<Map<String, Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
-
-	/**
-	 * Retrieve the email processing queue by adding one record for each evalAssignUser record 
-	 * matching the search criteria.  Search criteria are determined based on the values of 
-	 * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
-	 * EvalEmailTemplate.emailTemplateType.   
-	 * @param useAvailableEmailSent Should be true if the availableEmailSent date should be used in selecting records.
-	 * @param availableEmailSent The date to use if querying by availableEmailSent.
-	 * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
-	 * @param reminderEmailSent The date to use if querying by reminderEmailSent.
-	 * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
-	 * @return count
-	 */
-	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
-			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
-	
-	/**
-	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
-	 * @return count
-	 */
-	public int countDistinctGroupsInConsolidatedEmailMapping();
-	
    /**
     * getInProgressEvaluationOwners returns a set of Owner ID that have a saved
     * but not submitted evaluation response
     * @return a set of User IDs that have a response that is saved but not completed
     */
 	public Set<String> getInProgressEvaluationOwners();
-
-	/**
-	 * Remove all records from the the email processing queue and report the number of items removed.
-	 */
-	public int resetConsolidatedEmailRecipients();
 
 	/**
 	 * Update one or more EvalAssignUser records to indicate that Available Notifications

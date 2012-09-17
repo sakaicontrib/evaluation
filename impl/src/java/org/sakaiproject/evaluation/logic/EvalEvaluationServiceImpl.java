@@ -1153,32 +1153,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     	return null;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getConsolidatedEmailMapping(java.lang.Boolean, java.lang.String, int, int)
-     */
-	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
-		
-		return this.dao.getConsolidatedEmailMapping(sendingAvailableEmails, pageSize, page);
-	}
-    
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#selectConsoliatedEmailRecipients(boolean, java.util.Date, boolean, java.util.Date, java.lang.String)
-	 */
-	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
-			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
-		return this.dao.selectConsolidatedEmailRecipients(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent, emailTemplateType);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#resetConsolidatedEmailRecipients()
-	 */
-	public int resetConsolidatedEmailRecipients() {
-		return this.dao.resetConsolidatedEmailRecipients();
-	}
-	
  	public Set<String> getInProgressEvaluationOwners() {
  		boolean activeEvaluationsOnly = true;
  		List<EvalResponse> responses = this.dao.getResponsesSavedInProgress(activeEvaluationsOnly);
@@ -1189,15 +1163,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
  		return results;
  	}     
  	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countDistinctGroupsInConsolidatedEmailMapping()
-	 */
-	public int countDistinctGroupsInConsolidatedEmailMapping() {
-		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
-	}
-
-
 	public void updateEvalAssignUser(EvalAssignUser evalAssignUser) {
 		this.dao.update(evalAssignUser);
 	}

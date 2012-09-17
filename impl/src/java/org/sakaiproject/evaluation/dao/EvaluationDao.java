@@ -481,44 +481,6 @@ public interface EvaluationDao extends GeneralGenericDao {
      */
     public Boolean releaseLock(String lockId, String executerId);
 
-    /**
-     * Access one page of summary info needed to render consolidated email templates. 
-     * The summary info consists of a user-id, a user-eid, a template-id (EmailTemplate.ID) and the earliest 
-     * due date of Active evals which use the email template and which the referenced user can take.
-     * @param sendingAvailableEmails Should be true if the results will be used to send notifications that new 
-     * 		evaluations are opening, and false if they are to be used for reminders. 
-     * @param pageSize The maximum number of mappings to return. A mapping consists of a user-id, an email template
-     * 		id and a date.
-     * @param page The zero-based starting page. In other words, return a page of items beginning at index 
-     * 		(pageSize * page).
-     * @return A mapping from user-id to data about the evals that user can take. The data for each users is 
-     * 		a mapping from string values (EvalConstants.KEY_USER_ID, EvalConstants.KEY_USER_EID, 
-     * 		EvalConstants.KEY_EMAIL_TEMPLATE_ID and EvalConstants.KEY_EARLIEST_DUE_DATE) to a String 
-     * 		object for EvalConstants.KEY_USER_ID, a String object for EvalConstants.KEY_USER_EID, a Long 
-     * 		object for EvalConstants.KEY_EMAIL_TEMPLATE_ID and a Date object forEvalConstants.KEY_EARLIEST_DUE_DATE).  
-     */
-	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
-
-	/**
-	 * Build the email processing queue by adding one record for each evalAssignUser record 
-	 * matching the search criteria.  Search criteria are determined based on the values of 
-	 * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
-	 * EvalEmailTemplate.emailTemplateType.   
-	 * @param useAvailableEmailSent Should be true if the availableEmailSent date should be used in selecting records.
-	 * @param availableEmailSent The date to use if querying by availableEmailSent.
-	 * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
-	 * @param reminderEmailSent The date to use if querying by reminderEmailSent.
-	 * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
-	 * @return
-	 */
-	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
-			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
-
-	/**
-	 * Remove all records from the the email processing queue and report the number of items removed.
-	 */
-	public int resetConsolidatedEmailRecipients();
-
 	/**
 	 * Returns a list of evaluation responses that have been saved but not 
 	 * submitted (completed)
@@ -529,11 +491,5 @@ public interface EvaluationDao extends GeneralGenericDao {
  	 * @return a List of EvalResponse objects
 	 */
 	public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly);
-
-	/**
-	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
-	 * @return
-	 */
-	public int countDistinctGroupsInConsolidatedEmailMapping();
 
 }

@@ -123,20 +123,6 @@ public interface EvalEmailsLogic {
     public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
 
     /**
-     * 
-     * @param jobStatusReporter TODO
-     * @return
-     */
-	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId);
-
-	/**
-	 * 
-	 * @param jobStatusReporter TODO
-	 * @return
-	 */
-	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId);
-
-    /**
      * Send confirmation to a user that an evaluation has been submitted (might be required by Instructor)
      * @param evalId the id of an EvalEvaluation object
      * @param userId the UUID of the user to send this email to
@@ -144,7 +130,22 @@ public interface EvalEmailsLogic {
      */
     public String sendEvalSubmissionConfirmationEmail(String userId, Long evalId);
 
+    /**
+     * Send consolidated available emails or consolidated reminder emails and post messages to 
+     * an implementation of JobStatusReporter to indicate progress toward completion.    
+     * Will find all email templates of the type specified by emailTemplateType,
+     * collect data about each person who is an evaluator for one or more evals using the
+     * template and send one email per template.  Will also update the availableEmailSent or the 
+     * reminderEmailSent property of each affected EvalAssignUser entity with a current timestamp
+     * to indicate when the email was sent (or more precisely, when the email job started).    
+     * @param jobStatusReporter
+     * @param jobId
+     * @param emailTemplateType One of the EvalConstants values for the type of a 
+     * consoldiated notification (i.e. EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE or 
+     * EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER).
+     * @return
+     */
 	public String[] sendConsolidatedNotifications(JobStatusReporter jobStatusReporter, String jobId,
-			String emailTemplateType, boolean sendingReminders);
+			String emailTemplateType);
     
 }
