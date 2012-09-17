@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1289,98 +1287,119 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public String[] sendConsolidatedNotifications(
 			JobStatusReporter jobStatusReporter, String jobId,
 			String emailTemplateType, boolean sendingReminders) {
-				
+		
+		Date startTime = new Date();
+		
 		List<String> recipients = new ArrayList<String>();
 		List<String> actuallySent = new ArrayList<String>();
-		Set<String> groups = new HashSet<String>();
-		SortedSet<Long> emailTemplateIds = new TreeSet<Long>();
-		Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
 		
-		List<EvalEvaluation> allOpenEvals = this.evaluationService.getEvaluationsByState(EvalConstants.EVALUATION_STATE_ACTIVE);
-		for(EvalEvaluation eval : allOpenEvals) {
-			EvalEmailTemplate emailTemplate = null;
+		try {
+			Set<String> groups = new HashSet<String>();
+			Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
 			
-			if(sendingReminders) {
-				emailTemplate = eval.getReminderEmailTemplate();
-			} else {
-				emailTemplate = eval.getAvailableEmailTemplate();
-			}
-			if(emailTemplate.getType().equalsIgnoreCase(emailTemplateType)) {
-				List<EvalEvaluation> evalList = emailTemplate2EvalMap.get(emailTemplate.getId());
-				if(evalList == null) {
-					evalList = new ArrayList<EvalEvaluation>();
-					emailTemplate2EvalMap.put(emailTemplate.getId(), evalList);
-					
-					emailTemplateIds.add(emailTemplate.getId());
+			List<EvalEvaluation> allOpenEvals = this.evaluationService.getEvaluationsByState(EvalConstants.EVALUATION_STATE_ACTIVE);
+			for(EvalEvaluation eval : allOpenEvals) {
+				EvalEmailTemplate emailTemplate = null;
+				
+				if(sendingReminders) {
+					emailTemplate = eval.getReminderEmailTemplate();
+				} else {
+					emailTemplate = eval.getAvailableEmailTemplate();
 				}
-				evalList.add(eval);
+				if(emailTemplate.getType().equalsIgnoreCase(emailTemplateType)) {
+					List<EvalEvaluation> evalList = emailTemplate2EvalMap.get(emailTemplate.getId());
+					if(evalList == null) {
+						evalList = new ArrayList<EvalEvaluation>();
+						emailTemplate2EvalMap.put(emailTemplate.getId(), evalList);
+					}
+					evalList.add(eval);
+				}
 			}
-		}
-
-		
-		for(Long emailTemplateId : emailTemplateIds) {
-			Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
-			List<EvalEvaluation> evals = emailTemplate2EvalMap.get(emailTemplateId);
-			if(evals != null) {
-				for(EvalEvaluation eval : evals) {
-					List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-					if(evalAssignUsers != null) {
-						for(EvalAssignUser evalAssignUser : evalAssignUsers) {
-							if(evalAssignUser.getCompletedDate() == null) {
-								Map<String, Object> emailData = emailDataMap.get(evalAssignUser.getUserId());
-								if(emailData == null) {
-									emailData = new HashMap<String, Object>();
-									emailDataMap.put(evalAssignUser.getUserId(), emailData);
+	
+			for(Map.Entry<Long, List<EvalEvaluation>> entry : emailTemplate2EvalMap.entrySet()) {
+				Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
+				List<EvalEvaluation> evals = entry.getValue();
+				if(evals != null) {
+					for(EvalEvaluation eval : evals) {
+						List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+						if(evalAssignUsers != null) {
+							for(EvalAssignUser evalAssignUser : evalAssignUsers) {
+								if(evalAssignUser.getCompletedDate() == null) {
+									Map<String, Object> emailData = emailDataMap.get(evalAssignUser.getUserId());
+									if(emailData == null) {
+										emailData = new HashMap<String, Object>();
+										emailDataMap.put(evalAssignUser.getUserId(), emailData);
+									}
+									emailData.put(EvalConstants.KEY_USER_ID, evalAssignUser.getUserId());
+									Date earliestDueDate = (Date) emailData.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
+									if(earliestDueDate == null || earliestDueDate.after(eval.getDueDate())) {
+										emailData.put(EvalConstants.KEY_EARLIEST_DUE_DATE, eval.getDueDate());
+									}
+	//								Integer evalCount = (Integer) emailData.get(EvalConstants.KEY_EVAL_COUNT);
+	//								if(evalCount == null) {
+	//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(1));
+	//								} else {
+	//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(evalCount.intValue() + 1));
+	//								}
+									emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, entry.getKey());
+									
+									List<Long> assignments = (List<Long>) emailData.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
+									if(assignments == null) {
+										assignments = new ArrayList<Long>();
+										emailData.put(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS, assignments);
+									}
+									assignments.add(new Long(evalAssignUser.getId().longValue()));
+									
+									recipients.add(evalAssignUser.getUserId());
+									groups.add(evalAssignUser.getEvalGroupId());
+									if(sendingReminders) {
+										evalAssignUser.setReminderEmailSent(startTime);
+									} else {
+										evalAssignUser.setAvailableEmailSent(startTime);
+									}
 								}
-								emailData.put(EvalConstants.KEY_USER_ID, evalAssignUser.getUserId());
-								Date earliestDueDate = (Date) emailData.get(EvalConstants.KEY_EARLIEST_DUE_DATE);
-								if(earliestDueDate == null || earliestDueDate.after(eval.getDueDate())) {
-									emailData.put(EvalConstants.KEY_EARLIEST_DUE_DATE, eval.getDueDate());
-								}
-//								Integer evalCount = (Integer) emailData.get(EvalConstants.KEY_EVAL_COUNT);
-//								if(evalCount == null) {
-//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(1));
-//								} else {
-//									emailData.put(EvalConstants.KEY_EVAL_COUNT, new Integer(evalCount.intValue() + 1));
-//								}
-								emailData.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID, emailTemplateId);
-								
-								List<Long> assignments = (List<Long>) emailData.get(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS);
-								if(assignments == null) {
-									assignments = new ArrayList<Long>();
-									emailData.put(EvalConstants.KEY_USER2EVAL_ASSIGNMENTS, assignments);
-								}
-								assignments.add(new Long(evalAssignUser.getId().longValue()));
-								
-								recipients.add(evalAssignUser.getUserId());
-								groups.add(evalAssignUser.getEvalGroupId());
-								if(sendingReminders) {
-									evalAssignUser.setReminderEmailSent(new Date());
-								} else {
-									evalAssignUser.setAvailableEmailSent(new Date());
-								}
-								//this.evaluationService.updateEvalAssignUser(evalAssignUser);
 							}
 						}
 					}
 				}
-			}
-			List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>();
-			for(String recipient : recipients) {
-				Map<String, Object> emailData = emailDataMap.get(recipient);
-				if(emailData == null) {
-					// log??
-				} else {
-					emailDataList.add(emailData);
+				
+		    	if(jobId != null && jobStatusReporter != null) {
+		    		if(sendingReminders) {
+		    			jobStatusReporter.reportProgress(jobId, "sendingReminders", Integer.toString(recipients.size()));
+		    			jobStatusReporter.reportProgress(jobId, "reminderGroups", Integer.toString(groups.size()));
+		    		} else {
+		    			jobStatusReporter.reportProgress(jobId, "sendingAnnouncements", Integer.toString(recipients.size()));
+		    			jobStatusReporter.reportProgress(jobId, "announcementGroups", Integer.toString(groups.size()));
+		    		}
+		    	}
+		    	
+				List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>(emailDataMap.values());
+				
+				List<String> processed = this.processConsolidatedEmails(jobId, emailDataList, jobStatusReporter);
+				if(processed != null) {
+					actuallySent.addAll(processed);
 				}
 			}
-			List<String> processed = this.processConsolidatedEmails(jobId, emailDataList, jobStatusReporter);
-			if(processed != null) {
-				actuallySent.addAll(processed);
+	
+		} catch(RuntimeException t) {
+			log.warn("Unexpected error processing consolidated notifications", t);
+			
+			if(jobStatusReporter != null) {
+				jobStatusReporter.reportError(jobId, true, "error", "Fatal error attempting to send consolidated notifications. See server logs for details. ");
+			}
+		} finally {
+			if(jobId != null && jobStatusReporter != null) {
+				if(sendingReminders) {
+					jobStatusReporter.reportProgress(jobId, "reminders", calculateElapsedTimeMessage(new Date(), startTime));
+					jobStatusReporter.reportProgress(jobId, "reminderUsers", Integer.toString(actuallySent.size()));
+				} else {
+					jobStatusReporter.reportProgress(jobId, "announcements", calculateElapsedTimeMessage(new Date(), startTime));
+					jobStatusReporter.reportProgress(jobId, "announcementUsers", Integer.toString(actuallySent.size()));
+				}
 			}
 		}
-		
-		return (String[]) recipients.toArray(new String[recipients.size()]);
+
+		return (String[]) actuallySent.toArray(new String[actuallySent.size()]);
 		
 	}
 
