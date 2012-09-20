@@ -66,6 +66,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     protected static final long MILLISECONDS_PER_HOUR = 60L * 60L * 1000L;
 	protected static final long MILLISECONDS_PER_DAY = 24L * MILLISECONDS_PER_HOUR;
 
+	// ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME is an offset used when selecting EvalAssignGroup records 
+	// for Consolidated Email processing.  We estimate the timestamp that would have been used in 
+	// the previous email job, add two hours to that time and select records with a timestamp before
+	// that time. 
+	private static final long ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME = 2L * MILLISECONDS_PER_HOUR;
+
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
@@ -1177,13 +1183,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					thisJobStartTime = new Date();
 				}
 			}
+			
 			long reminderIntervalMilliseconds = reminderInterval * MILLISECONDS_PER_DAY;
-			whenPreviousEmailJobStarted = new Date(System.currentTimeMillis() - reminderIntervalMilliseconds);
-		}
-		
-		if(whenPreviousEmailJobStarted == null) {
-			// TODO: This is set to avoid Null Pointer.  Need to ensure the result is correct.
-			whenPreviousEmailJobStarted = new Date();
+			// ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME is an offset used when selecting EvalAssignGroup records 
+			// for Consolidated Email processing.  We estimate the timestamp that would have been used in 
+			// the previous email job, add two hours to that time and select records with a timestamp before
+			// that time. 
+			whenPreviousEmailJobStarted = new Date(System.currentTimeMillis() - reminderIntervalMilliseconds + ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME);
 		}
 		
 		try {
