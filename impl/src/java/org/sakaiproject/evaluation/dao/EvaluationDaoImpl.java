@@ -328,6 +328,63 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         return assignments;
     }
 
+    
+	public List<EvalAssignUser> getEvaluatorsForEval(Long evaluationId,
+			Boolean includeAvailableEmailSentNull,
+			Date includeAvailableEmailSentBefore,
+			Boolean includeReminderEmailSentNull,
+			Date includeReminderEmailSentBefore) {
+		Map<String,Object> params = new HashMap<String,Object>(); 
+		StringBuilder hqlQuery = new StringBuilder();
+		hqlQuery.append("from EvalAssignUser ");
+		hqlQuery.append("where evaluation.id = :evaluationId ");
+		params.put("evaluationId", evaluationId);
+		
+		if(includeAvailableEmailSentNull == null) {
+			if(includeAvailableEmailSentBefore != null) {
+				hqlQuery.append("and availableEmailSent < :availableEmailSent ");
+				params.put("availableEmailSent", includeAvailableEmailSentBefore);
+			}			
+		} else if(includeAvailableEmailSentNull.booleanValue()) {
+			hqlQuery.append("and availableEmailSent is null ");
+			if(includeAvailableEmailSentBefore != null) {
+				hqlQuery.append("or availableEmailSent < :availableEmailSent ");
+				params.put("availableEmailSent", includeAvailableEmailSentBefore);
+			}			
+		} else {
+			hqlQuery.append("and availableEmailSent is not null ");
+			if(includeAvailableEmailSentBefore != null) {
+				hqlQuery.append("and availableEmailSent < :availableEmailSent ");
+				params.put("availableEmailSent", includeAvailableEmailSentBefore);
+			}			
+		}
+				
+		if(includeReminderEmailSentNull == null) {
+			if(includeReminderEmailSentBefore != null) {
+				hqlQuery.append("and reminderEmailSent < :reminderEmailSent ");
+				params.put("reminderEmailSent", includeReminderEmailSentBefore);
+			}
+		} else if(includeReminderEmailSentNull.booleanValue()) {
+			hqlQuery.append("and reminderEmailSent is null ");
+			if(includeReminderEmailSentBefore != null) {
+				hqlQuery.append("or reminderEmailSent < :reminderEmailSent ");
+				params.put("reminderEmailSent", includeReminderEmailSentBefore);
+			}
+		} else {
+			hqlQuery.append("and reminderEmailSent is not null ");
+			if(includeReminderEmailSentBefore != null) {
+				hqlQuery.append("and reminderEmailSent < :reminderEmailSent ");
+				params.put("reminderEmailSent", includeReminderEmailSentBefore);
+			}
+		}
+		log.info(hqlQuery.toString());
+		
+		
+		List<EvalAssignUser> assignments = (List<EvalAssignUser>) executeHqlQuery(hqlQuery.toString(), params, 0, 0);
+		
+		return assignments;
+		
+	}
     /*  SELECT * FROM eval_evaluation as EVAL
         LEFT join eval_assign_user as AU on EVAL.ID = AU.EVALUATION_FK 
         WHERE AU.ID IS NULL

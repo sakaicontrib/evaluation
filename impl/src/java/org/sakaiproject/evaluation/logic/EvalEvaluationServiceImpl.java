@@ -403,6 +403,22 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
         }
         return totalEnrollments;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluatorsForEval(java.lang.Long, java.lang.Boolean, java.util.Date, java.lang.Boolean, java.util.Date)
+     */
+	public List<EvalAssignUser> getEvaluatorsForEval(Long evaluationId,
+			Boolean includeAvailableEmailSentNull,
+			Date includeAvailableEmailSentBefore,
+			Boolean includeReminderEmailSentNull,
+			Date includeReminderEmailSentBefore) {
+		if(evaluationId == null) {
+			return new ArrayList<EvalAssignUser>();
+		}
+		return dao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, includeAvailableEmailSentBefore, 
+				includeReminderEmailSentNull, includeReminderEmailSentBefore);
+	}
 
     /**
      * JIRA EvalSys-588

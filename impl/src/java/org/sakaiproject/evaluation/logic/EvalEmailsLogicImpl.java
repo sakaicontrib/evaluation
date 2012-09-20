@@ -1178,7 +1178,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				}
 			}
 			long reminderIntervalMilliseconds = reminderInterval * MILLISECONDS_PER_DAY;
-			whenPreviousEmailJobStarted = new Date(thisJobStartTime.getTime() - reminderIntervalMilliseconds);
+			whenPreviousEmailJobStarted = new Date(System.currentTimeMillis() - reminderIntervalMilliseconds);
 		}
 		
 		if(whenPreviousEmailJobStarted == null) {
@@ -1190,6 +1190,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			Set<String> groups = new HashSet<String>();
 			Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
 			
+			// TODO: Limit the set of evals to those ready for available/reminder email?
 			List<EvalEvaluation> allOpenEvals = this.evaluationService.getEvaluationsByState(EvalConstants.EVALUATION_STATE_ACTIVE);
 			for(EvalEvaluation eval : allOpenEvals) {
 				EvalEmailTemplate emailTemplate = null;
@@ -1238,37 +1239,33 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							evalMsgBuf.append(emailDataMap.size());
 							log.info(evalMsgBuf.toString());
 						}
-						List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+						Long evaluationId = eval.getId();
+						Boolean includeAvailableEmailSentNull = null;
+						Date includeAvailableEmailSentBefore = null;
+						Boolean includeReminderEmailSentNull = null;
+						Date includeReminderEmailSentBefore = null;
+						if(sendingReminders) {
+							// sending reminders; check that no emails have been sent too recently
+							// and that announcement has been sent if it's required first
+							if(usingAnnouncements.booleanValue()) {
+								// check that announcement has been sent but not too recently  
+								includeAvailableEmailSentNull = false;
+								includeAvailableEmailSentBefore = whenPreviousEmailJobStarted;
+							} 
+							includeReminderEmailSentNull = true;
+							includeReminderEmailSentBefore = whenPreviousEmailJobStarted;
+						} else {
+							if(usingAnnouncements.booleanValue()) {
+								// check that announcement has been sent but not too recently  
+								includeAvailableEmailSentNull = true;
+								includeAvailableEmailSentBefore = whenPreviousEmailJobStarted;
+							}							
+						}
+						List<EvalAssignUser> evalAssignUsers = this.evaluationService.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+						// List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
 						if(evalAssignUsers != null) {
 							for(EvalAssignUser evalAssignUser : evalAssignUsers) {
-								if(sendingReminders) {
-									// sending reminders; check that no emails have been sent too recently
-									// and that announcement has been sent if it's required first
-									if(usingAnnouncements.booleanValue()) {
-										// check that announcement has been sent but not too recently  
-										if(evalAssignUser.getAvailableEmailSent() == null) {
-											// skip this one; announcement not sent yet
-											continue;
-										} else if(evalAssignUser.getAvailableEmailSent().after(whenPreviousEmailJobStarted)) {
-											// skip this one; announcement sent too recently
-											continue;
-										}
-									} 
-									// check that reminder has not been sent too recently 
-									if(evalAssignUser.getReminderEmailSent() != null && evalAssignUser.getReminderEmailSent().after(whenPreviousEmailJobStarted)) {
-										// skip this one; reminder sent too recently
-										continue;
-									}
-								} else {
-									// sending announcements; check whether announcement has been sent
-									if(evalAssignUser.getAvailableEmailSent() == null) {
-										// proceed
-									} else {
-										// skip this one; announcement has been sent
-										continue;
-									}
-								}
-								if(evalAssignUser.getCompletedDate() == null) {
+								if(evalAssignUser.getCompletedDate() != null) {
 									// skip this one; user has completed eval
 									continue;
 								}
@@ -1343,3 +1340,5 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
 
 }
+
+

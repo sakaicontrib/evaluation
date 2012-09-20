@@ -1737,6 +1737,124 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(1, evalClosedResponses.size());
         assertEquals(evalClosedResponses.get(0).getId(), responseInactive.getId());
     }
+    
+    public void testGetEvaluatorsForEval() {
+    	
+    	Long evaluationId = etdl.evaluationActive.getId();
+		Boolean includeAvailableEmailSentNull = true;
+		Date includeAvailableEmailSentBefore = null;
+		Boolean includeReminderEmailSentNull = null;
+		Date includeReminderEmailSentBefore = null;
+		
+		List<EvalAssignUser> assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, 
+    			includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets both of the EAU's for this eval because they both have null availableEmailSent
+		assertNotNull(assignments);
+		assertEquals(2, assignments.size());
+		
+		EvalAssignUser assignment = assignments.get(0);
+		assignment.setAvailableEmailSent(new Date());
+		evaluationDao.save(assignment);
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, 
+    			includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets one of the EAU's for this eval because only one of them now has null availableEmailSent
+		assertNotNull(assignments);
+		assertEquals(1, assignments.size());
+		
+		includeAvailableEmailSentBefore = new Date(System.currentTimeMillis() + 3600000L);
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, 
+    			includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets both EAU's for this eval because one has null availableEmailSent and the other has availableEmailSent before the specified time
+		assertNotNull(assignments);
+		assertEquals(2, assignments.size());
+
+		includeAvailableEmailSentNull = false;
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, 
+    			includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+
+		// this gets one of the EAU's for this eval because we are no longer including the one with null availableEmailSent 
+		assertNotNull(assignments);
+		assertEquals(1, assignments.size());
+		
+		includeAvailableEmailSentBefore = new Date(System.currentTimeMillis() - 3600000L);
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, 
+    			includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets no EAU's because one has null availableEmailSent and the other has availableEmailSent that is after the specified time
+		assertNotNull(assignments);
+		assertEquals(0, assignments.size());
+
+		includeAvailableEmailSentBefore = new Date();
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, true, 
+    			null, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		// now set a time for the other EAU
+		assignment = assignments.get(0);
+		assignment.setAvailableEmailSent(new Date(includeAvailableEmailSentBefore.getTime() + 100L));
+		evaluationDao.save(assignment);
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, true, 
+    			null, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets no EAU's because neither has null availableEmailSent
+		assertNotNull(assignments);
+		assertEquals(0, assignments.size());
+
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, true, 
+				includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets one EAU because one has availableEmailSent before the specified time and the other is after that time.
+		assertNotNull(assignments);
+		assertEquals(1, assignments.size());
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, includeReminderEmailSentNull, includeReminderEmailSentBefore);
+		
+		// this gets two EAU's because both have null reminderEmailSent 
+		assertNotNull(assignments);
+		assertEquals(2, assignments.size());
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, false, includeReminderEmailSentBefore);
+		
+		// this gets no EAU's because both have null reminderEmailSent 
+		assertNotNull(assignments);
+		assertEquals(0, assignments.size());
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, true, includeReminderEmailSentBefore);
+		
+		assignment = assignments.get(0);
+		assignment.setReminderEmailSent(new Date(includeAvailableEmailSentBefore.getTime() - 100L));
+		evaluationDao.save(assignment);
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, false, includeReminderEmailSentBefore);
+		
+		// this gets one EAU because one has null reminderEmailSent and the other is set
+		assertNotNull(assignments);
+		assertEquals(1, assignments.size());
+
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, true, new Date());
+		
+		// this gets two EAU's because one has null reminderEmailSent and the other is set before the specified time
+		assertNotNull(assignments);
+		assertEquals(2, assignments.size());
+		
+		assignments = this.evaluationDao.getEvaluatorsForEval(evaluationId, null, 
+				null, false, new Date());
+		
+		// this gets one EAU because one has null reminderEmailSent and the other is set before the specified time
+		assertNotNull(assignments);
+		assertEquals(1, assignments.size());
+		
+
+    }
 
     /**
      * Add anything that supports the unit tests below here

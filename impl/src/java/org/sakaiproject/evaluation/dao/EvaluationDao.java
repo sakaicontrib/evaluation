@@ -98,6 +98,45 @@ public interface EvaluationDao extends GeneralGenericDao {
             String[] evalGroupIds, String assignTypeConstant, String assignStatusConstant, 
             String includeConstant, String evalStateConstant);
 
+	/**
+     * Get a list of EvalAssignUser objects representing evaluators for an evaluation, 
+     * filtering based on whether and when consolidated notifications have been sent. 
+     * 
+     * This method is intended for use in selecting participants needing to receive 
+     * an available or reminder email, based on persisted values for availableEmailSent
+     * and/or reminderEmailSent.  The evaluationId must be specified.  A null evaluationId 
+     * returns an empty list.  Null values for other parameters mean "don't care".   
+     * 
+     * To find all evaluators who have not yet received an available email for an eval, 
+     * includeAvailableEmailSentNull should be true, includeReminderEmailSentNull should 
+     * be null, and both dates (includeAvailableEmailSentBefore and 
+     * includeReminderEmailSentBefore) should be null.  
+     * 
+     * To find all evaluators who have received either an available email or a reminder
+     * before a certain time, includeAvailableEmailSentNull should be false, 
+     * includeReminderEmailSentNull should be true, and both dates 
+     * (includeAvailableEmailSentBefore and includeReminderEmailSentBefore) should be 
+     * set to that time. 
+     * 
+     * To find all evaluators who have not received a reminder or received a reminder
+     * before a certain time (regardless of whether an available email was sent), 
+     * includeAvailableEmailSentNull should be null, includeReminderEmailSentNull 
+     * should be true, includeAvailableEmailSentBefore should be null, and 
+     * includeReminderEmailSentBefore should be set to that time. 
+	 * 
+	 * @param evaluationId the unique id of an {@link EvalEvaluation} object. If this is null, an empty list is returned.
+	 * @param includeAvailableEmailSentNull  
+	 * @param includeAvailableEmailSentBefore
+	 * @param includeReminderEmailSentNull
+	 * @param includeReminderEmailSentBefore
+	 * @return a list of EvalAssignUser objects matching the search criteria.
+	 */
+	public List<EvalAssignUser> getEvaluatorsForEval(Long evaluationId,
+			Boolean includeAvailableEmailSentNull,
+			Date includeAvailableEmailSentBefore,
+			Boolean includeReminderEmailSentNull,
+			Date includeReminderEmailSentBefore);
+
     /**
      * Returns all evaluations which the given user can take,
      * can also include anonymous evaluations and filter on active/approved
