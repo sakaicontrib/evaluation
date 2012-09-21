@@ -1233,10 +1233,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 								// check that announcement has been sent but not too recently  
 								includeAvailableEmailSentNull = false;
 								includeAvailableEmailSentBefore = priorToThisJob;
-							} else {
-								includeReminderEmailSentNull = true;
-								includeReminderEmailSentBefore = priorToThisJob;
-							}
+							} 
+							includeReminderEmailSentNull = true;
+							includeReminderEmailSentBefore = priorToThisJob;
 						} else {
 							if(usingAnnouncements.booleanValue()) {
 								// check that announcement has not been sent   

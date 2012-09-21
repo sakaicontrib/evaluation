@@ -125,9 +125,13 @@ public interface EvaluationDao extends GeneralGenericDao {
      * includeReminderEmailSentBefore should be set to that time. 
 	 * 
 	 * @param evaluationId the unique id of an {@link EvalEvaluation} object. If this is null, an empty list is returned.
-	 * @param includeAvailableEmailSentNull  
-	 * @param includeAvailableEmailSentBefore
-	 * @param includeReminderEmailSentNull
+	 * @param includeAvailableEmailSentNull true to include EvalAssignUser's with null availableEmailSent, 
+	 * false to include those with non-null availableEmailSent, and null is the status of availableEmailSent
+	 * is of no concern   
+	 * @param includeAvailableEmailSentBefore  
+	 * @param includeReminderEmailSentNull true to include EvalAssignUser's with null reminderEmailSent, 
+	 * false to include those with non-null reminderEmailSent, and null is the status of reminderEmailSent
+	 * is of no concern
 	 * @param includeReminderEmailSentBefore
 	 * @return a list of EvalAssignUser objects matching the search criteria.
 	 */

@@ -339,6 +339,8 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 		hqlQuery.append("from EvalAssignUser ");
 		hqlQuery.append("where evaluation.id = :evaluationId ");
 		params.put("evaluationId", evaluationId);
+		hqlQuery.append("and type = :assignType ");
+		params.put("assignType", EvalAssignUser.TYPE_EVALUATOR);
 		
 		if(includeAvailableEmailSentNull == null) {
 			if(includeAvailableEmailSentBefore != null) {
