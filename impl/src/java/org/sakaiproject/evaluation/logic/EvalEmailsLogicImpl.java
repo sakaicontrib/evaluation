@@ -1164,40 +1164,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		boolean sendingReminders = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType); 
 		
 		Boolean usingAnnouncements = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
-		Integer reminderInterval = (Integer) this.settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY);
-		if(reminderInterval == null) {
-			reminderInterval = new Integer(0);
-		}
-		Date whenPreviousEmailJobStarted = null;
-		if(reminderInterval > 0) {
-			Date thisJobStartTime = null;
-			String thisJobStartTimeStr = (String) this.settings.get(EvalSettings.NEXT_REMINDER_DATE);
-			if(thisJobStartTimeStr == null || thisJobStartTimeStr.trim().equals("")) {
-				thisJobStartTime = new Date();
-			} else {
-		        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy"); //DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.FULL);
-				try {
-					thisJobStartTime = df.parse( thisJobStartTimeStr );
-				} catch (ParseException e) {
-					// Use current date
-					thisJobStartTime = new Date();
-				}
-			}
-			
-			long reminderIntervalMilliseconds = reminderInterval * MILLISECONDS_PER_DAY;
-			// ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME is an offset used when selecting EvalAssignGroup records 
-			// for Consolidated Email processing.  We estimate the timestamp that would have been used in 
-			// the previous email job, add two hours to that time and select records with a timestamp before
-			// that time. 
-			whenPreviousEmailJobStarted = new Date(System.currentTimeMillis() - reminderIntervalMilliseconds + ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME);
-		}
+		Date priorToThisJob = new Date(System.currentTimeMillis() - ESTIMATED_CONSOLIDATED_EMAIL_JOB_TIME);
 		
 		try {
 			Set<String> groups = new HashSet<String>();
 			Map<Long,List<EvalEvaluation>> emailTemplate2EvalMap = new HashMap<Long,List<EvalEvaluation>>();
 			
 			// TODO: Limit the set of evals to those ready for available/reminder email?
+			
 			List<EvalEvaluation> allOpenEvals = this.evaluationService.getEvaluationsByState(EvalConstants.EVALUATION_STATE_ACTIVE);
+			
 			for(EvalEvaluation eval : allOpenEvals) {
 				EvalEmailTemplate emailTemplate = null;
 				
@@ -1256,15 +1232,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							if(usingAnnouncements.booleanValue()) {
 								// check that announcement has been sent but not too recently  
 								includeAvailableEmailSentNull = false;
-								includeAvailableEmailSentBefore = whenPreviousEmailJobStarted;
-							} 
-							includeReminderEmailSentNull = true;
-							includeReminderEmailSentBefore = whenPreviousEmailJobStarted;
+								includeAvailableEmailSentBefore = priorToThisJob;
+							} else {
+								includeReminderEmailSentNull = true;
+								includeReminderEmailSentBefore = priorToThisJob;
+							}
 						} else {
 							if(usingAnnouncements.booleanValue()) {
-								// check that announcement has been sent but not too recently  
+								// check that announcement has not been sent   
 								includeAvailableEmailSentNull = true;
-								includeAvailableEmailSentBefore = whenPreviousEmailJobStarted;
+								// includeAvailableEmailSentBefore = whenPreviousEmailJobStarted;
 							}							
 						}
 						List<EvalAssignUser> evalAssignUsers = this.evaluationService.getEvaluatorsForEval(evaluationId, includeAvailableEmailSentNull, includeAvailableEmailSentBefore, includeReminderEmailSentNull, includeReminderEmailSentBefore);
