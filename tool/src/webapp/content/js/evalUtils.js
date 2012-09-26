@@ -170,6 +170,26 @@ var EvalSystem = function() {
 				$(escIdForJquery(allTextResponsesId)).show();
 				EvalSystem.makeToggle(allTextResponsesId + "Show", allTextResponsesId + "Hide", null, "showtextresponses", false);
 			}
+			// create the pie chart for summary data
+			jQuery.plot(jQuery("#reportStatsChart"), reportStatsData,{
+			  series: {
+			      pie: {
+			          show: true,
+			          tilt: 0.5,
+			          startAngle: 0.6,
+			          radius: 1,
+			          label: {
+			              radius: 2/3,
+			              formatter: function(label, series){
+			                  return '<div style="font-weight:bold;padding:2px;font-size:10pt;text-align:center;color:white;">'+label+'<br/>'+series.data[0][1]+' ('+Math.round(series.percent)+'%)</div>';},background: {opacity: 0.5,color: '#000'
+			              }
+			          }
+			      }
+			  },
+			  legend: {
+			      show: false
+			  }
+			});
 		},
 		
 		initModifyHierarchyNodePerms: function(userEidInputId, addUserButtonId, noUserEidErrorMsg, noPermsErrorMsg) {
@@ -388,30 +408,4 @@ var EvalSystem = function() {
 
 $(document).ready(function() {
 	EvalSystem.windowsChromeStyleFixes();
-});
-
-
-/**
- * create the pie chart for summary data
- */
-jQuery(document).ready(function() {    
-    jQuery.plot(jQuery("#reportStatsChart"), reportStatsData,{
-        series: {
-            pie: {
-                show: true,
-                tilt: 0.5,
-                startAngle: 0.6,
-                radius: 1,
-                label: {
-                    radius: 2/3,
-                    formatter: function(label, series){
-                        return '<div style="font-weight:bold;padding:2px;font-size:10pt;text-align:center;color:white;">'+label+'<br/>'+series.data[0][1]+' ('+Math.round(series.percent)+'%)</div>';},background: {opacity: 0.5,color: '#000'
-                    }
-                }
-            }
-        },
-        legend: {
-            show: false
-        }
-    });
 });
