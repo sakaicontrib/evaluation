@@ -654,10 +654,16 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             emails = externalLogic.sendEmailsToAddresses(from, to, subject, message, deferExceptions);
         } else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
             for (String email : emails) {
-                log.debug("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+                if (log.isDebugEnabled()) {
+                    log.debug("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+                } else if (log.isInfoEnabled()) {
+                    log.info("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+                } else {
+                    log.warn("Email Delivery logs are not visible because INFO and DEBUG logging are disabled (Email Delivery Logging is enabled but requires at least INFO level logging to output the email logs)");
+                }
             }
         } else {
-            log.warn("Delivery NONE: No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
+            log.warn("Delivery NONE: (Email Delivery DISABLED): No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
         }
         return emails;
     }
