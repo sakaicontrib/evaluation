@@ -261,9 +261,11 @@
     }
     
     .compact {
+      overflow: hidden;
+      
       .title {
         float: left;
-        width: auto !important;
+        width: 60% !important;
         margin-top: 6px;
       }
       .content {

@@ -1851,9 +1851,12 @@ table.tablesorter th.header.headerSortDown {
 .evaluation .scale .matrix .matrixRadioItems-5 {
   min-width: 60px;
 }
+.evaluation .scale .compact {
+  overflow: hidden;
+}
 .evaluation .scale .compact .title {
   float: left;
-  width: auto !important;
+  width: 60% !important;
   margin-top: 6px;
 }
 .evaluation .scale .compact .content {
