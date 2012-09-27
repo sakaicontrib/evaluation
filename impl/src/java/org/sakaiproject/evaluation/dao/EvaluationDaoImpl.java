@@ -379,7 +379,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 				params.put("reminderEmailSent", includeReminderEmailSentBefore);
 			}
 		}
-		log.info(hqlQuery.toString());
+		// log.info(hqlQuery.toString());
 		
 		
 		List<EvalAssignUser> assignments = (List<EvalAssignUser>) executeHqlQuery(hqlQuery.toString(), params, 0, 0);

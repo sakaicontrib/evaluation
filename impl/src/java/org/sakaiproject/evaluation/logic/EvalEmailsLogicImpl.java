@@ -1195,31 +1195,29 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			int templateCount = 0;
 			for(Map.Entry<Long, List<EvalEvaluation>> entry : emailTemplate2EvalMap.entrySet()) {
 				templateCount++;
-				if(log.isInfoEnabled()) {
-					StringBuilder templateMsgBuf = new StringBuilder();
-					templateMsgBuf.append(emailTemplateType);
-					templateMsgBuf.append(": Handling email template #");
-					templateMsgBuf.append(templateCount);
-					templateMsgBuf.append(" of ");
-					templateMsgBuf.append(emailTemplate2EvalMap.size());
-					log.info(templateMsgBuf.toString());
-				}
+				StringBuilder templateMsgBuf = new StringBuilder();
+				templateMsgBuf.append(emailTemplateType);
+				templateMsgBuf.append(": Email template ");
+				templateMsgBuf.append(templateCount);
+				templateMsgBuf.append(" of ");
+				templateMsgBuf.append(emailTemplate2EvalMap.size());
+				jobStatusReporter.reportProgress(jobId, "newTemplate", templateMsgBuf.toString());
 				Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
 				List<EvalEvaluation> evals = entry.getValue();
 				if(evals != null) {
 					int evalCount = 0;
 					for(EvalEvaluation eval : evals) {
 						evalCount++;
-						if(log.isInfoEnabled() && evalCount % 100 == 0) {
+						if(evalCount % 100 == 0) {
 							StringBuilder evalMsgBuf = new StringBuilder();
 							evalMsgBuf.append(emailTemplateType);
 							evalMsgBuf.append(": Processed ");
 							evalMsgBuf.append(evalCount);
 							evalMsgBuf.append(" evals of ");
 							evalMsgBuf.append(evals.size());
-							evalMsgBuf.append("; emailDataMap.size == ");
+							evalMsgBuf.append("; Evaluators in queue for email: ");
 							evalMsgBuf.append(emailDataMap.size());
-							log.info(evalMsgBuf.toString());
+							jobStatusReporter.reportProgress(jobId, "buildingQueue", evalMsgBuf.toString());
 						}
 						Long evaluationId = eval.getId();
 						Boolean includeAvailableEmailSentNull = null;
