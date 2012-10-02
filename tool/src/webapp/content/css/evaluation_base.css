@@ -1856,7 +1856,7 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .scale .compact .title {
   float: left;
-  width: 50% !important;
+  width: 48% !important;
   margin-top: 6px;
 }
 .evaluation .scale .compact .content {
