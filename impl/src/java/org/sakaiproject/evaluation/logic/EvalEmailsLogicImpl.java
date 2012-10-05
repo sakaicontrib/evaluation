@@ -89,7 +89,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
      */
     public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
-        log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
+        log.debug("sendEvalCreatedNotifications:: evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
 
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         String from = getFromEmailOrFail(eval);
