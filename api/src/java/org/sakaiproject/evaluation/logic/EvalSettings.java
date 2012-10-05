@@ -444,7 +444,7 @@ public interface EvalSettings {
 	 * modify the evaluation.  Only applies if the email settings are set to 
 	 * Consolidated emails
 	 */
-	public static final String CONSOLIDATED_FORCE_SEND_CREATED_EMAIL = "CONSOLIDATED_FORCE_SEND_CREATED_EMAIL:java.lang.Boolean";
+	public static final String FORCE_SEND_CREATED_EMAIL = "FORCE_SEND_CREATED_EMAIL:java.lang.Boolean";
 	
 	/**
 	 * EVALSYS-1236
@@ -495,7 +495,7 @@ public interface EvalSettings {
         ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
         ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION,
         CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE,
-        CONSOLIDATED_FORCE_SEND_CREATED_EMAIL,
+        FORCE_SEND_CREATED_EMAIL,
         CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION,
         DISABLE_ITEM_BANK,
         DISABLE_QUESTION_BLOCKS,

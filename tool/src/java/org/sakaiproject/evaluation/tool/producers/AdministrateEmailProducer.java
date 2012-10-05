@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
@@ -55,6 +56,11 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
+    }
+
+    protected EvalEmailsLogic emailsLogic;
+    public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
+        this.emailsLogic = emailsLogic;
     }
 
     private EvalSettings evalSettings;
@@ -114,6 +120,8 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
         /* enable an email to be sent to the admin/helpdesk address when a email job has completed. */
         AdministrateProducer.makeBoolean(emailForm, "enable-job-completion-email", EMAIL_SETTINGS_WBL, EvalSettings.ENABLE_JOB_COMPLETION_EMAIL);
 
+        makeForceCreated(emailForm, "force-send-created-email");
+
         /* enable the updating of reminder status while remiders are running. */
         AdministrateProducer.makeBoolean(emailForm, "enable-reminder-status", EMAIL_SETTINGS_WBL, EvalSettings.ENABLE_REMINDER_STATUS);       
 
@@ -122,6 +130,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
         //allow eval begin email notification - eval specific toggle 
         AdministrateProducer.makeBoolean(emailForm, "allow-eval-begin-email",
                 EMAIL_SETTINGS_WBL, EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
+
 
         // control options for consolidated emails
 
@@ -148,16 +157,13 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
 
         AdministrateProducer.makeBoolean(oneemail, "consolidated-send-available", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 
+        makeForceCreated(oneemail, "force-send-created-email-consolidated");
+
         // EVALSYS-1236
         // overrides logic to send an evaluation available e-mail.  Logic contained in EvalJobLogicImpl.jobAction() 
         // would not send an available email for consolidated e-mails.  This setting says send one anyway
         AdministrateProducer.makeBoolean(oneemail, "force-send-available-notification-immediately", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION);
 
-        // EVALSYS-1236
-        // overrides logic to send a created e-mail to instructors even if the instructor cannot modify the evaluation.
-        // Logic says that the instructor must be able to add a question or InstructorOpt must not be required
-        // This setting says it will send a created e-mail regardless
-        AdministrateProducer.makeBoolean(oneemail, "force-send-created-email", EMAIL_SETTINGS_WBL, EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL);
 
         AdministrateProducer.makeSelect(emailForm, "reminders-frequency-selection",
                 EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES,
@@ -220,6 +226,18 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
         // this fills in the javascript call
         UIInitBlock.make(tofill, "initEvalJS", "EvalSystem.addNumericOnly", 
                 new Object[] { evalTimeToWaitSecs.getFullID(), "time-wait-errmsg"} );
+    }
+
+    private void makeForceCreated(UIContainer oneemail, String id) {
+        // EVALSYS-1236
+        if (!emailsLogic.isSendCreatedEmails(null)) {
+            // display warning message when created emails will not send
+            UIBranchContainer.make(oneemail, "created-emails-warning:");
+        }
+        // overrides logic to send a created e-mail to instructors even if the instructor cannot modify the evaluation.
+        // Logic says that the instructor must be able to add a question or InstructorOpt must not be required
+        // This setting says it will send a created e-mail regardless
+        AdministrateProducer.makeBoolean(oneemail, id, EMAIL_SETTINGS_WBL, EvalSettings.FORCE_SEND_CREATED_EMAIL);
     }
 
 

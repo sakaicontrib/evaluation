@@ -30,6 +30,13 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public interface EvalEmailsLogic {
 
     /**
+     * Check if emails can be sent for a given evaluation
+     * @param eval if null then only checks the general permissions
+     * @return true if the created emails should be sent, false otherwise
+     */
+    public boolean isSendCreatedEmails(EvalEvaluation eval);
+
+    /**
      * Sends a message to a set of recipients for an evaluation and optionally some groups 
      * based on the include constant (e.g. {@link EvalConstants#EVAL_INCLUDE_NONTAKERS} )
      * 

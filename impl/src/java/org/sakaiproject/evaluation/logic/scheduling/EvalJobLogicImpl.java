@@ -258,7 +258,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         return eval;
     }
 
-
     /**
      * Handles the processing of new evaluation only if not in partial state
      * 
@@ -278,17 +277,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             timeToWaitSecs = ttws.intValue();
         }
 
-        // EVALSYS-1236
-        // send the instructors a created e-mail, even if they are not allowed to edit it, because instAddItemNum is 0
-        // and instructorOpt is "Required" (which it is hard-coded at this point to be "Required")
-        boolean forceSendCreatedNotification = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL);
-        // send created email if instructor can add questions or opt-in or opt-out
-        boolean instructorRequired = eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED);
-        Integer instAddItemsNum = (Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
-        if (instAddItemsNum == null) instAddItemsNum = 0;
-        if ( instAddItemsNum > 0 || 
-                !instructorRequired ||
-                forceSendCreatedNotification) {
+        if (emails.isSendCreatedEmails(eval)) {
             /*
              * Note: email should NOT be sent at this point, so we
              * schedule email for EvalConstants.EVALUATION_TIME_TO_WAIT_MINS minutes from now, 
@@ -296,16 +285,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
              */
             long runAt = new Date().getTime() + (1000 * timeToWaitSecs);
             scheduleJob(eval.getId(), new Date(runAt), EvalConstants.JOB_TYPE_CREATED);
-            if (log.isDebugEnabled()) log.debug("processNewEvaluation:: Scheduled created eval ("+eval.getId()+") emails to run at "+new Date(runAt)
-                    +", instAddItemsNum="+instAddItemsNum+" (<0), instructorRequired="
-                    +instructorRequired+" (true), forceSendCreatedNotification="+forceSendCreatedNotification+" (false)");
-        } else {
-            if (log.isDebugEnabled()) log.debug("processNewEvaluation:: No created eval ("+eval.getId()+") emails because instAddItemsNum="+instAddItemsNum
-                    +" (<0), instructorRequired="+instructorRequired+" (true), forceSendCreatedNotification="+forceSendCreatedNotification+" (false)");
+            if (log.isDebugEnabled()) log.debug("processNewEvaluation:: Scheduled created eval ("+eval.getId()+") emails to run at "+new Date(runAt));
         }
 
         // process available email handling and processing
-        long nowAvailSecs = new Date().getTime() + timeToWaitSecs;
+        long nowAvailSecs = new Date().getTime() + (1000 * timeToWaitSecs);
         Date runAvailAt = eval.getStartDate();
         if (runAvailAt.getTime() < nowAvailSecs) {
             // delay the available emails the same way we delay the created evals emails

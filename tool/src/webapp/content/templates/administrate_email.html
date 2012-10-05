@@ -60,7 +60,7 @@
                     <legend>
                         <span rsf:id="msg=controlemail.individual.emails.settings">One email per student per evaluation options</span>
                     </legend>
-                <p class=   "longtext indnt1">
+                    <p class=   "longtext indnt1">
                             <label for="default-reminders-frequency-selection" class="block"> Set
                                 the default reminder frequency to use for new evaluations </label>
                             <select rsf:id="default-reminders-frequency-selection" id="default-reminders-frequency-selection"
@@ -75,19 +75,26 @@
                                 <option value="7">Every week</option>
                                 <option value="-1">24 hours before the survey closes</option>
                             </select>
-                </p>
-                <p class=   "checkbox indnt1">
+                    </p>
+                    <p rsf:id="created-emails-warning:" class="longtext indnt1 alertMessage">
+                      <span rsf:id="msg=controlemail.created.emails.warning">Message re current email delivery setting here</span>
+                    </p>
+                    <p class=  "checkbox indnt1">
+                      <input rsf:id="force-send-created-email" value="false" type="checkbox" name="force-send-created-email" id="force-send-created-email" />
+                      <label rsf:id="msg=controlemail.force.send.created.email" for="force-send-created-email">Force Send E-mail Creation notification, even if instructor cannot modify evaluation</label>
+                    </p>
+                    <p class=   "checkbox indnt1">
                         <input rsf:id="enable-job-completion-email" name="enable-job-completion-email"
                             id="enable-job-completion-email" value="true" type="checkbox" />
                         <label for="enable-job-completion-email"> Enable an email to be sent to
                             the evaluation admin when an email job has completed </label>
-				</p>
-                <p class=   "checkbox indnt1">
+                    </p>
+                    <p class=   "checkbox indnt1">
                         <input rsf:id="enable-reminder-status" name="enable-reminder-status" id="enable-reminder-status"
                             value="true" type="checkbox" />
                         <label for="enable-reminder-status"> Enable the job status while
                             reminders are running. </label>
-                </p>
+                    </p>
                 <p class=   "longtext indnt1">
                         <label for="eval-time-to-wait-secs" class="block"> The time in seconds
                             between the creation of an evaluation and the send of the available
@@ -130,17 +137,22 @@
                         </legend>
 	                    <p class="checkbox indnt1">
 	                         <input rsf:id="consolidated-send-available" name="consolidated-send-available" id="consolidated-send-available"
-	                                value="true" type="checkbox" disabled="disabled" /><!-- TODO disabled since this does not do anything, enable it once it is fixed -AZ -->
+	                                value="true" type="checkbox" />
 	                         <label rsf:id="msg=controlemail.consolidated.available.enabled" for="consolidated-send-available"> Send notifications when evaluations become active </label>
-						</p>
-                        <p class=  "checkbox indnt1">
-                                <input rsf:id="force-send-created-email" value="false" type="checkbox" name="force-send-created-email" id="force-send-created-email" />
-                                <label rsf:id="msg=controlemail.consolidated.force.send.created.email" for="force-send-created-email">Force Send E-mail Creation notification, even if instructor cannot modify evaluation</label>
                         </p>
+                        <p rsf:id="created-emails-warning:" class="longtext indnt1 alertMessage">
+                          <span rsf:id="msg=controlemail.created.emails.warning">Message re current email delivery setting here</span>
+                        </p>
+                        <p class=  "checkbox indnt1">
+                            <input rsf:id="force-send-created-email-consolidated" value="false" type="checkbox" name="force-send-created-email-consolidated" id="force-send-created-email-consolidated" />
+                            <label rsf:id="msg=controlemail.force.send.created.email" for="force-send-created-email-consolidated">Force Send E-mail Creation notification, even if instructor cannot modify evaluation</label>
+                        </p>
+                        <!-- TODO this was added because the available emails appeared to not work for consoliated emails - EVALSYS-1236
                         <p class=  "checkbox indnt1">
                                 <input rsf:id="force-send-available-notification-immediately" value="false" type="checkbox" name="force-send-available-notification-immediately" id="force-send-available-notification-immediately" />
                                 <label rsf:id="msg=controlemail.consolidated.force.send.available.notification.immediately" for="force-send-available-notification-immediately">Force Send E-mail Available notification</label>
                         </p>
+                        -->
 	                    <p class="longtext indnt1">
 	                            <label rsf:id="msg=controlemail.reminder.defaults" for="reminders-frequency-selection" class="block"> Set
 	                                the default reminder frequency to use for new evaluations </label>

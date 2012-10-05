@@ -84,6 +84,38 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#isSendCreatedEmails(org.sakaiproject.evaluation.model.EvalEvaluation)
+     */
+    public boolean isSendCreatedEmails(EvalEvaluation eval) {
+        boolean sendCreated = false;
+        // EVALSYS-1236
+        // send the instructors a created e-mail, even if they are not allowed to edit it, because instAddItemNum is 0
+        // and instructorOpt is "Required" (which it is hard-coded at this point to be "Required")
+        boolean forceSendCreatedNotification = (Boolean) this.settings.get(EvalSettings.FORCE_SEND_CREATED_EMAIL);
+        // send created email if instructor can add questions or opt-in or opt-out
+        boolean instructorRequired = false;
+        String evalId = "NONE";
+        if (eval != null) {
+            instructorRequired = EvalConstants.INSTRUCTOR_REQUIRED.equals(eval.getInstructorOpt());
+            evalId = eval.getId().toString();
+        } else {
+            String systemInstructorOptSetting = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+            instructorRequired = EvalConstants.INSTRUCTOR_REQUIRED.equals(systemInstructorOptSetting);
+        }
+        Integer instAddItemsNum = (Integer) settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
+        if (instAddItemsNum == null) instAddItemsNum = 0;
+        if ( instAddItemsNum > 0 || 
+                !instructorRequired ||
+                forceSendCreatedNotification) {
+            sendCreated = true;
+        }
+        if (log.isDebugEnabled()) log.debug("processNewEvaluation:: created eval ("+evalId+") emails "
+                +(sendCreated?"enabled":"disabled")+" because instAddItemsNum="+instAddItemsNum
+                +" (<0), instructorRequired="+instructorRequired+" (true), forceSendCreatedNotification="
+                +forceSendCreatedNotification+" (false)");
+        return sendCreated;
+    }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
