@@ -653,7 +653,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         
         return data;
     }
-    
+
     /**
      * creates each dynamic scaled item label variable
      * @param labelVar label data variable name
@@ -664,16 +664,19 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
      */
     private String createScaledItemLabels(String labelVar, String[] scaleLabels, int[] choicesCount, int selectionsTotal){
         String label = "var " + labelVar + " = [";
-        
-        for(int i = 0; i < scaleLabels.length;i++){
-            label += "['" + scaleLabels[i] + "','" + choicesCount[i] +  " (" + Math.round(choicesCount[i] * 100 / selectionsTotal) + "%)'],";
+
+        for (int i = 0; i < scaleLabels.length;i++) {
+            String percent = ((selectionsTotal > 0) ? Math.round(choicesCount[i] * 100 / selectionsTotal) + "" : "0");
+            int choiceLabel = i;
+            if (choicesCount.length > i) {
+                choiceLabel = choicesCount[i];
+            }
+            label += "['" + scaleLabels[i] + "','" + choiceLabel +  " (" + percent + "%)'],";
         }
-        
         label = label.substring(0, label.length() - 1) + "];\n";
-        
         return label;
     }
-    
+
     /**
      * creates each dynamic chart jQuery plot code
      * @param chartDivId the id of the div the chart will reside in
