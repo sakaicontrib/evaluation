@@ -75,7 +75,7 @@
 <!--org.sakaiprojectsakai-entity-api-->
 <!-- Quartz scheduling -->
     <dependency>
-      <groupId>quartz</groupId>
+      <groupId>org.opensymphony.quartz</groupId>
       <artifactId>quartz</artifactId>
     </dependency>
   <!-- taskstatus enum 
