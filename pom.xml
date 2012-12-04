@@ -39,7 +39,7 @@
     <relativePath>../master/pom.xml</relativePath>
   </parent>
   <properties>
-    <tss.client.version>0.2.1</tss.client.version>
+    <tss.client.version>0.2.4</tss.client.version>
   </properties>
   <profiles>
     <profile>
