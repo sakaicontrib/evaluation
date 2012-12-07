@@ -1203,16 +1203,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				templateMsgBuf.append(emailTemplate2EvalMap.size());
 				jobStatusReporter.reportProgress(jobId, "newTemplate", templateMsgBuf.toString());
 				Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
-				int evaluatorsInQueue = emailDataMap.size();
 				List<EvalEvaluation> evals = entry.getValue();
 				if(evals != null) {
 					int evalCount = 0;
 					for(EvalEvaluation eval : evals) {
-						int totalEvalsToProcess = evals.size();
 						if(evalCount % 100 == 0) {
 							reportQueueSize(jobStatusReporter, jobId,
 									emailTemplateType, evalCount,
-									totalEvalsToProcess, evaluatorsInQueue);
+									evals.size(), emailDataMap.size());
 						}
 						evalCount++;
 						Long evaluationId = eval.getId();
