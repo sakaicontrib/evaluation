@@ -1203,22 +1203,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				templateMsgBuf.append(emailTemplate2EvalMap.size());
 				jobStatusReporter.reportProgress(jobId, "newTemplate", templateMsgBuf.toString());
 				Map<String, Map<String, Object>> emailDataMap = new HashMap<String, Map<String, Object>>();
+				int evaluatorsInQueue = emailDataMap.size();
 				List<EvalEvaluation> evals = entry.getValue();
 				if(evals != null) {
 					int evalCount = 0;
 					for(EvalEvaluation eval : evals) {
-						evalCount++;
+						int totalEvalsToProcess = evals.size();
 						if(evalCount % 100 == 0) {
-							StringBuilder evalMsgBuf = new StringBuilder();
-							evalMsgBuf.append(emailTemplateType);
-							evalMsgBuf.append(": Processed ");
-							evalMsgBuf.append(evalCount);
-							evalMsgBuf.append(" evals of ");
-							evalMsgBuf.append(evals.size());
-							evalMsgBuf.append("; Evaluators in queue for email: ");
-							evalMsgBuf.append(emailDataMap.size());
-							jobStatusReporter.reportProgress(jobId, "buildingQueue", evalMsgBuf.toString());
+							reportQueueSize(jobStatusReporter, jobId,
+									emailTemplateType, evalCount,
+									totalEvalsToProcess, evaluatorsInQueue);
 						}
+						evalCount++;
 						Long evaluationId = eval.getId();
 						Boolean includeAvailableEmailSentNull = null;
 						Date includeAvailableEmailSentBefore = null;
@@ -1317,6 +1313,28 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		return (String[]) actuallySent.toArray(new String[actuallySent.size()]);
 		
+	}
+
+	/**
+	 * @param jobStatusReporter
+	 * @param jobId
+	 * @param emailTemplateType
+	 * @param evalCount
+	 * @param totalEvalsToProcess
+	 * @param evaluatorsInQueue
+	 */
+	protected void reportQueueSize(JobStatusReporter jobStatusReporter,
+			String jobId, String emailTemplateType, int evalCount,
+			int totalEvalsToProcess, int evaluatorsInQueue) {
+		StringBuilder evalMsgBuf = new StringBuilder();
+		evalMsgBuf.append(emailTemplateType);
+		evalMsgBuf.append(": Processed ");
+		evalMsgBuf.append(evalCount);
+		evalMsgBuf.append(" evals of ");
+		evalMsgBuf.append(totalEvalsToProcess );
+		evalMsgBuf.append("; Evaluators in queue for email: ");
+		evalMsgBuf.append(evaluatorsInQueue );
+		jobStatusReporter.reportProgress(jobId, "buildingQueue", evalMsgBuf.toString());
 	}
 
 }

@@ -105,30 +105,11 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		String serverId = this.externalLogic.getServerId();
 		Boolean gotLock = lockManager.obtainLock(LOCK_CONSOLIDATED_EMAIL_JOB, serverId, TWO_HOURS);
 		if(gotLock != null && gotLock.booleanValue()) {
-			try {
-				
-				Date beginTime = new Date();
+			Date beginTime = new Date();
+			String jobId = this.jobStatusReporter.reportStarted("Email");
+			this.jobStatusReporter.reportProgress(jobId, "server-id", serverId);
 			
-				String jobId = this.jobStatusReporter.reportStarted("Email");
-				this.jobStatusReporter.reportProgress(jobId, "server-id", serverId);
-				
-				Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
-				if(sendAvailableEmails == null) {
-					sendAvailableEmails = new Boolean(true);
-				}
-				
-				if(sendAvailableEmails.booleanValue()) {
-					//String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
-					String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
-					if(log.isDebugEnabled()) {
-						if(recipients == null) {
-							log.debug("announcements sent: 0");
-						} else {
-							log.debug("announcements sent: " + recipients.length);
-						}
-					}
-				}
-		
+			try {
 				int reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS)).intValue();
 				// check if reminders are to be sent
 				if(reminderInterval > 0) {
@@ -177,36 +158,59 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 						}
 						this.evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, cal.getTime());
 						
-						Date endTime = new Date();
-						
-						//"FINISHED" "summary" The email job took <elapsed-time> seconds to run. It kicked off at <begin-time> and ended at <begin-time>.
-						
-						StringBuilder buf = new StringBuilder();
-						DateFormat df = DateFormat.getTimeInstance();
-						long seconds = endTime.getTime() - beginTime.getTime();
-						long milliseconds = seconds % 1000;
-						seconds = seconds / 1000;
-						
-						buf.append("The email job took ");
-						buf.append(seconds);
-						buf.append(".");
-						if(milliseconds < 10) {
-							buf.append("00");
-						} else if (milliseconds < 100) {
-							buf.append("0");
-						}
-						buf.append(milliseconds);
-						buf.append(" seconds to run. It kicked off at ");
-						buf.append(df.format(beginTime));
-						buf.append(" and ended at ");
-						buf.append(df.format(endTime));
-						buf.append(".");
-						
-						jobStatusReporter.reportFinished(jobId, false, "finished", buf.toString());
 					}
+					
+					
+					Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
+					if(sendAvailableEmails == null) {
+						sendAvailableEmails = new Boolean(true);
+					}
+					
+					if(sendAvailableEmails.booleanValue()) {
+						//String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
+						String[] recipients = this.emailLogic.sendConsolidatedNotifications(jobStatusReporter, jobId, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+						if(log.isDebugEnabled()) {
+							if(recipients == null) {
+								log.debug("announcements sent: 0");
+							} else {
+								log.debug("announcements sent: " + recipients.length);
+							}
+						}
+					}
+
+					Date endTime = new Date();
+					
+					//"FINISHED" "summary" The email job took <elapsed-time> seconds to run. It kicked off at <begin-time> and ended at <begin-time>.
+					
+					StringBuilder buf = new StringBuilder();
+					DateFormat df = DateFormat.getTimeInstance();
+					long seconds = endTime.getTime() - beginTime.getTime();
+					long milliseconds = seconds % 1000;
+					seconds = seconds / 1000;
+					
+					buf.append("The email job took ");
+					
+					buf.append(seconds);
+					buf.append(".");
+					if(milliseconds < 10) {
+						buf.append("00");
+					} else if (milliseconds < 100) {
+						buf.append("0");
+					}
+					buf.append(milliseconds);
+					
+					buf.append(" seconds to run. It kicked off at ");
+					buf.append(df.format(beginTime));
+					buf.append(" and ended at ");
+					buf.append(df.format(endTime));
+					buf.append(".");
+					
+					jobStatusReporter.reportFinished(jobId, false, "finished", buf.toString());
 				}
 			} catch(Exception e) {
 				log.warn("Error processing email job",e);
+				// report early exit from job
+				jobStatusReporter.reportFinished(jobId, true, "finished", e.getMessage());
 			} finally {
 				// this server must release lock
 				lockManager.releaseLock(LOCK_CONSOLIDATED_EMAIL_JOB, serverId);
