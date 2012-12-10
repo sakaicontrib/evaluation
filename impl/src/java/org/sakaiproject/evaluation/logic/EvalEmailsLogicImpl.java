@@ -1271,6 +1271,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							}
 						}
 					}
+					reportQueueSize(jobStatusReporter, jobId,
+						emailTemplateType, evalCount,
+						evals.size(), emailDataMap.size());
 				}
 				
 				List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>(emailDataMap.values());

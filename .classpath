@@ -15,5 +15,15 @@
 			<attribute name="javadoc_location" value="jar:file:/home/dhorwitz/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga.jar" sourcepath="M2_REPO/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/jimeng/.m2/repository/org/hibernate/hibernate/3.2.7.ga/hibernate-3.2.7.ga-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/sakaiproject/generic-dao/0.9.18/generic-dao-0.9.18.jar" sourcepath="M2_REPO/org/sakaiproject/generic-dao/0.9.18/generic-dao-0.9.18-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/jimeng/.m2/repository/org/sakaiproject/generic-dao/0.9.18/generic-dao-0.9.18-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="m2-target/classes"/>
 </classpath>
