@@ -348,9 +348,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 				params.put("availableEmailSent", includeAvailableEmailSentBefore);
 			}			
 		} else if(includeAvailableEmailSentNull.booleanValue()) {
-			hqlQuery.append("and availableEmailSent is null ");
-			if(includeAvailableEmailSentBefore != null) {
-				hqlQuery.append("or availableEmailSent < :availableEmailSent ");
+			if(includeAvailableEmailSentBefore == null) {
+				hqlQuery.append("and availableEmailSent is null ");
+			} else {
+				hqlQuery.append("and (availableEmailSent is null or availableEmailSent < :availableEmailSent) ");
 				params.put("availableEmailSent", includeAvailableEmailSentBefore);
 			}			
 		} else {
@@ -367,9 +368,10 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 				params.put("reminderEmailSent", includeReminderEmailSentBefore);
 			}
 		} else if(includeReminderEmailSentNull.booleanValue()) {
-			hqlQuery.append("and reminderEmailSent is null ");
-			if(includeReminderEmailSentBefore != null) {
-				hqlQuery.append("or reminderEmailSent < :reminderEmailSent ");
+			if(includeReminderEmailSentBefore == null) {
+				hqlQuery.append("and reminderEmailSent is null ");
+			} else {
+				hqlQuery.append("and (reminderEmailSent is null or reminderEmailSent < :reminderEmailSent) ");
 				params.put("reminderEmailSent", includeReminderEmailSentBefore);
 			}
 		} else {
@@ -379,7 +381,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 				params.put("reminderEmailSent", includeReminderEmailSentBefore);
 			}
 		}
-		// log.info(hqlQuery.toString());
+		//log.info(hqlQuery.toString());
 		
 		
 		List<EvalAssignUser> assignments = (List<EvalAssignUser>) executeHqlQuery(hqlQuery.toString(), params, 0, 0);
