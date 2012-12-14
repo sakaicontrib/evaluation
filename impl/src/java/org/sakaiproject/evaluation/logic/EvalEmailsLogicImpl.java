@@ -1159,6 +1159,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		
 		Date startTime = new Date();
 		
+		Integer reportingInterval = (Integer) this.settings.get(EvalSettings.LOG_PROGRESS_EVERY);
+		if(reportingInterval == null) {
+			// setting reportingInterval to zero results in no incremental reports.
+			reportingInterval = new Integer(0);
+		}
+		
 		List<String> actuallySent = new ArrayList<String>();
 		
 		boolean sendingReminders = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equalsIgnoreCase(emailTemplateType); 
@@ -1207,10 +1213,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				if(evals != null) {
 					int evalCount = 0;
 					for(EvalEvaluation eval : evals) {
-						if(evalCount % 100 == 0) {
-							reportQueueSize(jobStatusReporter, jobId,
-									emailTemplateType, evalCount,
-									evals.size(), emailDataMap.size());
+						if(jobId != null && reportingInterval.intValue() > 0) {
+							if(evalCount % reportingInterval.intValue() == 0) {
+								reportQueueSize(jobStatusReporter, jobId,
+										emailTemplateType, evalCount,
+										evals.size(), emailDataMap.size());
+							}
 						}
 						evalCount++;
 						Long evaluationId = eval.getId();
@@ -1239,6 +1247,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 						// List<EvalAssignUser> evalAssignUsers = this.evaluationService.getParticipantsForEval(eval.getId(), null, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
 						if(evalAssignUsers != null) {
 							for(EvalAssignUser evalAssignUser : evalAssignUsers) {
+								// evalAssignUser.getCompletedDate() is used in 1.5.x but may not be available in 1.4.x
+								// TODO: For 1.4.x, look for an EvalResponse and skip if it is found 
 								if(evalAssignUser.getCompletedDate() != null) {
 									// skip this one; user has completed eval
 									continue;
@@ -1271,9 +1281,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 							}
 						}
 					}
-					reportQueueSize(jobStatusReporter, jobId,
-						emailTemplateType, evalCount,
-						evals.size(), emailDataMap.size());
+					if(jobId != null && reportingInterval.intValue() > 0) {
+						reportQueueSize(jobStatusReporter, jobId,
+							emailTemplateType, evalCount,
+							evals.size(), emailDataMap.size());
+					}
 				}
 				
 				List<Map<String,Object>> emailDataList = new ArrayList<Map<String,Object>>(emailDataMap.values());
