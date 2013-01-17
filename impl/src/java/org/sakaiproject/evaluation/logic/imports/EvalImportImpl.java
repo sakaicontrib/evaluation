@@ -151,7 +151,9 @@ public class EvalImportImpl implements EvalImport {
             //object types not in the XML file will just be ignored during the load
             resource = contentHostingService.getResource(id);
             in = resource.streamContent();
-            doc = new SAXBuilder().build(in);
+            SAXBuilder builder = new SAXBuilder();
+            builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            doc = builder.build(in);
 
             //save in this order for db referential integrity
             saveOrUpdateScales(doc);
