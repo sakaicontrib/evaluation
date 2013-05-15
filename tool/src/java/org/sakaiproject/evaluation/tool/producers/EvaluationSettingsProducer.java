@@ -353,6 +353,9 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         // Instructor view date
         Boolean instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
         Boolean instructorViewAllResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
+        if (instructorViewAllResults == null && instructorViewResults != null) {
+        	instructorViewAllResults = instructorViewResults;
+        }
         UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
         generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
                 evaluationOTP + "instructorViewResults", instructorViewResults, form, 
