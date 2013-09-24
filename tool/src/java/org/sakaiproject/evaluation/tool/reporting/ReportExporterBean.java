@@ -85,7 +85,7 @@ public class ReportExporterBean {
 	        resultsOutputStream = getOutputStream(response);
 	        
 		    // All response Headers that are the same for all Output types
-	        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename);
+	        response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
 		    response.setContentType(exporter.getContentType());
 	        
 	        exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
@@ -95,10 +95,10 @@ public class ReportExporterBean {
         	int columnSize = xlsReportExporter.getEvalTDIsize(evaluation, drvp.groupIds);
 	        response.setHeader("Content-disposition", "inline");
 	        if( columnSize > 255 ){
-		        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename + "x");
+		        response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename + "x\"");
 			    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	        }else{
-		        response.setHeader("Content-disposition", "inline; filename=" + drvp.filename);
+		        response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
 			    response.setContentType( xlsReportExporter.getContentType() );
 	        }	        
 		    xlsReportExporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
