@@ -597,8 +597,6 @@ td.fullDisplayHorizontalColoredWrapper {
 
 .fullDisplayHorizontalScale span {
   font-weight: bold;
-  padding-left: 2em !important;
-  padding-right: 2em !important;
   -moz-border-radius: .5em;
   -webkit-border-radius: .5em;
 }
