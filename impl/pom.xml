@@ -215,12 +215,12 @@
         <!-- Spring and Hibernate dependencies. -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
+            <artifactId>hibernate-core</artifactId>
         </dependency>
 
         <!-- Required for hibernate 3 HQL queries -->
@@ -272,6 +272,7 @@
         </dependency>
 
         <!-- testing dependencies -->
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
