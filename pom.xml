@@ -254,72 +254,10 @@
         </developer>
     </developers>
 
-    <repositories>
-        <repository>
-            <id>sakai-maven</id>
-            <name>Sakai Maven Repo</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sakai-maven2-snapshots</id>
-            <name>Sakai Maven Repo</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>default</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Sakai-Maven2</id>
-            <name>Sakaiproject Maven 2 repository</name>
-            <url>file://source.sakaiproject.org/maven2/</url>
-        </repository>
-        <site>
-            <id>local site</id>
-            <url>file:./site/</url>
-        </site>
-    </distributionManagement>
-
     <issueManagement>
         <system>JIRA</system>
         <url>http://jira.sakaiproject.org/jira/browse/EVALSYS</url>
     </issueManagement>
-
-    <ciManagement>
-        <system>Continuum</system>
-        <url>http://saffron.caret.cam.ac.uk/continuum</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration>
-                    <address>aaron@caret.cam.ac.uk</address>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
 
     <!-- define the license -->
     <licenses>
