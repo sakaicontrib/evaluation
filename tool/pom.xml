@@ -90,6 +90,10 @@
 		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
 		            <type>war</type>
 		        </dependency>
+               <dependency>
+                 <groupId>org.springframework</groupId>
+                 <artifactId>spring</artifactId>
+               </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -136,6 +140,10 @@
 		            <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
 		            <type>war</type>
 		        </dependency>
+               <dependency>
+                 <groupId>org.springframework</groupId>
+                 <artifactId>spring</artifactId>
+               </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -192,7 +200,6 @@
             <id>sakai2.8</id>
 			<activation> 
 				<property><name>sakai2.8</name></property>
-                <activeByDefault>true</activeByDefault>
 			</activation>
 		    <properties>
 		        <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
@@ -237,6 +244,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </dependency>
+               <dependency>
+                 <groupId>org.springframework</groupId>
+                 <artifactId>spring</artifactId>
+               </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -295,6 +306,73 @@
             		<artifactId>spring-webmvc</artifactId>
         			<scope>compile</scope>
             	</dependency>
+               <dependency>
+                 <groupId>org.springframework</groupId>
+                 <artifactId>spring</artifactId>
+               </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sakai-10</id>
+			<activation> 
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		    <properties>
+                <rsfutil.version>0.8.0-SNAPSHOT</rsfutil.version>
+                <sakairsf.version>0.8.0-SNAPSHOT</sakairsf.version>
+		    </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.sakaiproject.kernel</groupId>
+                    <artifactId>sakai-kernel-util</artifactId>
+                </dependency>
+                <dependency>
+					<groupId>org.sakaiproject.kernel</groupId>
+					<artifactId>sakai-component-manager</artifactId>
+                </dependency>
+                <dependency>
+                	<groupId>org.sakaiproject.scheduler</groupId>
+					<artifactId>scheduler-api</artifactId>
+				</dependency>
+		        <!-- RSF dependencies -->
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>sakairsf</artifactId>
+		            <version>${sakairsf.version}</version>
+		            <type>jar</type>
+		        </dependency>
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>SakaiRSFComponents-evolvers</artifactId>
+		            <version>${sakairsf.version}</version>
+		            <type>jar</type>
+		        </dependency>
+		        <dependency>
+		            <groupId>uk.org.ponder.sakairsf</groupId>
+		            <artifactId>SakaiRSFComponents-templates</artifactId>
+		            <version>${sakairsf.version}</version>
+		            <type>war</type>
+		        </dependency>
+		        <dependency>
+		            <groupId>uk.org.ponder.rsfutil</groupId>
+		            <artifactId>RSFComponents-templates</artifactId>
+		            <version>${rsfutil.version}</version>
+		            <type>war</type>
+		        </dependency>
+            	<dependency>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-webmvc</artifactId>
+        			<scope>compile</scope>
+            	</dependency>
+               <!-- Spring dependency -->
+               <dependency>
+                 <groupId>org.springframework</groupId>
+                 <artifactId>spring-core</artifactId>
+               </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -377,12 +455,6 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.9</version>
             <type>jar</type>
-        </dependency>
-
-        <!-- Spring dependency -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
         </dependency>
 
         <!-- needed for generating CSVs for export -->
