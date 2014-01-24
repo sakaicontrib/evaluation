@@ -6,7 +6,7 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>10.0-SNAPSHOT</version>
         <!--eval.version-->
     </parent>
     <name>Sakai Evaluation Impl</name>
@@ -250,6 +250,11 @@
                   <groupId>org.hibernate</groupId>
                   <artifactId>hibernate-core</artifactId>
                 </dependency>
+                <dependency>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-test</artifactId>
+                   <scope>test</scope>
+                </dependency>   
             </dependencies>
         </profile>
     </profiles>

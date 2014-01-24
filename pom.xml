@@ -32,7 +32,7 @@
     </description>
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
-    <version>1.4-SNAPSHOT</version><!--eval.version-->
+    <version>10.0-SNAPSHOT</version><!--eval.version-->
     <inceptionYear>2005</inceptionYear>
     
     <parent>
@@ -193,13 +193,13 @@
             <dependency>
                 <groupId>org.sakaiproject.evaluation</groupId>
                 <artifactId>sakai-evaluation-api</artifactId>
-                <version>1.4-SNAPSHOT</version><!--eval.version-->
+                <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.sakaiproject.evaluation</groupId>
                 <artifactId>sakai-evaluation-impl</artifactId>
-                <version>1.4-SNAPSHOT</version><!--eval.version-->
+                <version>${project.version}</version>
             </dependency>
             <!-- needed until EB is in the Sakai master dependency management -->
             <dependency>
