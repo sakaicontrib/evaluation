@@ -184,6 +184,19 @@ public interface EvalSettings {
      * It must be less than or equal to this many days old to count as recent
      */
     public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
+
+    /**
+     * CONSTANT: Minimum length allowed for lists in a response - {@link Integer}, default 2<br/>
+     * Needs to be greater than 0 and less than EVAL_MAX_LIST_LENGTH
+     */
+    public static final String EVAL_MIN_LIST_LENGTH = "EVAL_MIN_LIST_LENGTH:java.lang.Integer";
+
+    /**
+     * CONSTANT: Maximum length allowed for lists in a response - {@link Integer}, default 40<br/>
+     * Needs to be greater than EVAL_MIN_LIST_LENGTH
+     */
+    public static final String EVAL_MAX_LIST_LENGTH = "EVAL_MAX_LIST_LENGTH:java.lang.Integer";
+
     /**
      * CONSTANT: How many days old can an eval be and still be recently closed (for the be evaluated box) - {@link Integer}, default 10<br/>
      * It must be less than or equal to this many days old to count as recent

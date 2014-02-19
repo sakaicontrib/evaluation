@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.locators;
 
+import java.lang.Integer;
+
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
@@ -92,10 +94,36 @@ public class SettingsWBL implements WriteableBeanLocator {
                         ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE) ) {
                     // special handling for 4 part select
                     toset = null;
-                } else {
+                } 
+               
+                else {
                     Class<?> proptype = SettingsLogicUtils.getTypeClass(beanname);
                     toset = leafParser.parse(proptype, (String) toset);
                 }
+            }
+            else if (toset instanceof Integer) {
+                if (EvalSettings.EVAL_MIN_LIST_LENGTH.equals(beanname)) {
+                    Integer evalMax = (Integer) evalSettings.get(EvalSettings.EVAL_MAX_LIST_LENGTH);
+                    if (evalMax == null)
+                        evalMax = 40;
+
+                    int evalMin = (Integer) toset;
+                    if (evalMin < 1)
+                        toset = 1;
+                    else if (evalMin > evalMax)
+                        toset = evalMax;
+                }
+                else if (EvalSettings.EVAL_MAX_LIST_LENGTH.equals(beanname)) {
+                    Integer evalMin = (Integer) evalSettings.get(EvalSettings.EVAL_MIN_LIST_LENGTH);
+                    if (evalMin == null)
+                        evalMin = 1;
+
+                    int evalMax = (Integer) toset;
+                    if (evalMax < evalMin) 
+                        toset = evalMin;
+                    
+                }
+ 
             }
         }
         evalSettings.set(beanname, toset);

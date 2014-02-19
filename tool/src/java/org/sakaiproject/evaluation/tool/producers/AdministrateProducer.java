@@ -310,6 +310,21 @@ public class AdministrateProducer extends EvalCommonProducer {
         if (evaluateeRecentlyClosedDays == null) { evaluateeRecentlyClosedDays = 10; }
         UIInput.make(form, "dash-evaluatee-closed-still-recent", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS), evaluateeRecentlyClosedDays.toString());
 
+        //Min and Max List Length
+        Integer minListLength = (Integer) evalSettings.get(EvalSettings.EVAL_MIN_LIST_LENGTH);
+        Integer maxListLength = (Integer) evalSettings.get(EvalSettings.EVAL_MAX_LIST_LENGTH);
+        if (minListLength == null) { minListLength = 2; }
+        if (maxListLength == null) { maxListLength = 40; }
+
+        //Sanity check, if min > max or max < min set them equal
+        if (minListLength > maxListLength) 
+            minListLength = maxListLength;
+        if (maxListLength < minListLength) 
+            maxListLength = minListLength;
+        UIInput.make(form, "min-list-length", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_MIN_LIST_LENGTH), minListLength.toString());
+
+        UIInput.make(form, "max-list-length", PathUtil.composePath(ADMIN_WBL, EvalSettings.EVAL_MAX_LIST_LENGTH), maxListLength.toString());
+
         makeBoolean(form, "dash-enable-administrating-box", ADMIN_WBL, EvalSettings.ENABLE_ADMINISTRATING_BOX);
 
         //Number of days old can an eval be and still be recently closed
