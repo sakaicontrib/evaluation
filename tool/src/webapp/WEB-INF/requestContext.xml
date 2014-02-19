@@ -688,6 +688,7 @@
         <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"

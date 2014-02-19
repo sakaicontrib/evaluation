@@ -43,6 +43,8 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
+import org.sakaiproject.evaluation.logic.EvalSettings;
+
 /**
  * Handles scale addition, removal, and modification.
  * 
@@ -75,6 +77,11 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
 	}
+
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings=evalSettings;
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -116,8 +123,8 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         boundedDynamicListInputEvolver.setLabels(
                 UIMessage.make("modifyscale.remove.scale.option.button"), 
                 UIMessage.make("modifyscale.add.scale.option.button"));
-        boundedDynamicListInputEvolver.setMinimumLength(2);
-        boundedDynamicListInputEvolver.setMaximumLength(40);
+        boundedDynamicListInputEvolver.setMinimumLength((Integer)evalSettings.get(EvalSettings.EVAL_MIN_LIST_LENGTH));
+        boundedDynamicListInputEvolver.setMaximumLength((Integer)evalSettings.get(EvalSettings.EVAL_MAX_LIST_LENGTH));
 
         UIInputMany modifypoints = UIInputMany.make(form, 
                 "modify-scale-points:", scaleOTP + "options");

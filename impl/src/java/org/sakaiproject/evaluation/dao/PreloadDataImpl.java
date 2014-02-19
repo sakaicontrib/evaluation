@@ -439,6 +439,9 @@ public class PreloadDataImpl {
 
         evalConfigMap.put(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
 
+        evalConfigMap.put(EvalSettings.EVAL_MIN_LIST_LENGTH, 2);
+        evalConfigMap.put(EvalSettings.EVAL_MAX_LIST_LENGTH, 40);
+
         // Default Student settings
         evalConfigMap.put(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
         evalConfigMap.put(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
