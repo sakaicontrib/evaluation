@@ -32,7 +32,7 @@
     </description>
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
-    <version>10.0-SNAPSHOT</version><!--eval.version-->
+    <version>10-SNAPSHOT</version><!--eval.version-->
     <inceptionYear>2005</inceptionYear>
     
     <parent>
@@ -43,7 +43,7 @@
     </parent>
 
     <properties>
-        <hierarchy.version>1.2.7-SNAPSHOT</hierarchy.version>
+        <hierarchy.version>10-SNAPSHOT</hierarchy.version>
         <evalsys.pom.basedir>${project.basedir}</evalsys.pom.basedir>
         <evalsys.project.name>${project.name}</evalsys.project.name>
         <evalsys.project.year>${project.inceptionYear}</evalsys.project.year>
@@ -305,6 +305,7 @@
                             <exclude>m2-target/**</exclude>
                             <exclude>bin/**</exclude>
                             <exclude>src/ddl/**</exclude>
+                            <exclude>.idea/**</exclude>
                             <exclude>**/*.properties</exclude>
                             <exclude>**/*.txt</exclude>
                             <exclude>**/js/facebox/**</exclude>

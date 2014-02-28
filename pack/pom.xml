@@ -19,7 +19,7 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>10.0-SNAPSHOT</version><!--eval.version -->
+        <version>10-SNAPSHOT</version><!--eval.version -->
     </parent>
 
     <!-- the components pack should include your dao and logic impl in the war bundle and the components.xml file (which 

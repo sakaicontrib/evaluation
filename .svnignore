@@ -1,6 +1,8 @@
 bin
+*.iml
 target
 m2-target
 .classpath
+.idea
 .project
 .settings
