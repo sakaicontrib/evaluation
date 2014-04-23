@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.Set;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -108,19 +110,40 @@ public class ReportChooseGroupsProducer extends EvalCommonProducer implements Vi
             UIForm form = UIForm.make(tofill, "report-groups-form", rvp);
             UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");
 
-            String[] possibleGroupIdsToView = new String[evalGroupIds.size()];
-            String[] possibleGroupTitlesToView = new String[evalGroupIds.size()];
+            final String[] possibleGroupIdsToView = new String[evalGroupIds.size()];
+            final String[] possibleGroupTitlesToView = new String[evalGroupIds.size()];
             int counter = 0;
+			
             for (String evalGroupId : evalGroupIds) {
                 possibleGroupIdsToView[counter] = evalGroupId;
                 possibleGroupTitlesToView[counter] = commonLogic.makeEvalGroupObject(evalGroupId).title;
                 counter++;
             }
+			
+            //Sort strings so the groups are listed alphabetically
+            String[] possibleGroupIdsToViewSorted = new String[possibleGroupIdsToView.length];
+            String[] possibleGroupTitlesToViewSorted = new String[possibleGroupTitlesToView.length];
+			
+            // Initialize index array
+            Integer[] sortOrder = new Integer[possibleGroupIdsToView.length];
+            for(int i=0; i<sortOrder.length; i++){
+                sortOrder[i] = i;
+            }
+            // sort and save to index
+            Arrays.sort(sortOrder,new Comparator<Integer>() {
+                public int compare(Integer a, Integer b){
+                	return possibleGroupTitlesToView[a].compareTo(possibleGroupTitlesToView[b]);
+                }
+            });
+            for(int i=0;i<sortOrder.length;i++){
+                possibleGroupIdsToViewSorted[i] = possibleGroupIdsToView[sortOrder[i]];
+                possibleGroupTitlesToViewSorted[i] = possibleGroupTitlesToView[sortOrder[i]];
+            }
 
-            UISelect radios = UISelect.makeMultiple(form, "selectHolder", possibleGroupIdsToView, possibleGroupTitlesToView, "groupIds", null);
+            UISelect radios = UISelect.makeMultiple(form, "selectHolder", possibleGroupIdsToViewSorted, possibleGroupTitlesToViewSorted, "groupIds", null);
             String selectID = radios.getFullID();
 
-            for (int i = 0; i < possibleGroupIdsToView.length; i++) {
+            for (int i = 0; i < possibleGroupIdsToViewSorted.length; i++) {
                 UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
                 UISelectChoice choice = UISelectChoice.make(groupBranch, "groupCheck", selectID, i);
                 UISelectLabel.make(groupBranch, "groupName", selectID, i).decorate(new UILabelTargetDecorator(choice) );
