@@ -1,0 +1,64 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <title rsf:id="msg=assigneval.page.title">Assign Evaluation to groups</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+  </head>
+  
+  <body>
+    <div class="portletBody">
+
+      <h3 rsf:id="page-title">Modify or Create Adhoc Groups</h3>
+      
+      <div rsf:id="message-for:*" class="alertMessage">
+         <ul style="margin:0px;">
+            <li>Message for user here</li>
+         </ul>
+      </div>
+      
+      <p class="instruction" rsf:id="msg=modifyadhocgroup.message.instructions">
+      	Please enter a group name and email addresses, one per line.
+      </p>
+      
+      <form rsf:id="adhoc-group-form" method="post">
+	      <div>
+	      	  <p>
+	          		<span rsf:id="msg=modifyadhocgroup.title.label">Give this group a name:</span>
+	          		<input rsf:id="group-name-input" type="text" />
+	          </p>
+	          <p rsf:id="no-members-message">There are currently no members in this group.</p>
+	          <div rsf:id="existing-members">
+	            <p>Click the <b>X</b> by an email address to remove it from the adhoc survey group</p>
+	            <table width="50%">
+	              <tr rsf:id="member-row:" style="color:#666">
+	             	  <td rsf:id="user-id" width="40%">Adhoc or hmt24</td> 
+	              	  <td rsf:id="user-display" width="40%">hmt24@cam.ac.uk</td>
+	              	  <td width="20%">
+	              	      <input type="submit" rsf:id="remove-member" value="X"/>
+	              	  </td>
+	              </tr>
+	            </table>
+	          </div>
+
+	          <span>Paste or type the emails of the people you want to survey below. One username/email per line.</span>
+	          <textarea rsf:id="add-members-input" rows="5" cols="80"></textarea>
+	
+			  <p>
+	          	<input rsf:id="save-button" type="submit" value="Save Group"/>
+	          	<input rsf:id="save-return-button" type="submit" value="Save and Return" />
+	          </p>
+	        </div>
+	        
+	        <a href="#" rsf:id="return-link">Return to Evaluation Wizard</a>
+	    </form>
+    </div>
+  </body>
+</html>

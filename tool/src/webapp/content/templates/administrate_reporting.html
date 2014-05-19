@@ -1,0 +1,72 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="page-title">Control Hierarchy</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+<body>
+<div class="portletBody">
+    <ul class="breadCrumb" style="clear: both; height: 1.5em">
+        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li rsf:id="page-title" class="lastCrumb" style="float: left">Reporting</li>
+    </ul>
+    
+    <div rsf:id="message-for:*" class="alertMessage">
+      <ul style="margin:0px;">
+        <li>Message for user here</li>
+      </ul>
+    </div>
+    
+    <h3 rsf:id="msg=controlreporting.page.title">Administrate Reporting</h3>
+<form rsf:id="settings-form" method="post">
+    <fieldset class="visibleFS">
+        <legend>
+          <span rsf:id="msg=controlreporting.exportformats.fieldtitle">Enabled Export Formats</span>
+        </legend>
+        <p class="checkbox indnt1">
+            <input type="checkbox" rsf:id="allow-csv-export" id="allow-csv-export"/>
+            <label for="allow-csv-export"  rsf:id="allow-csv-export-note">Enable CSV Export</label>
+        </p>
+        <p class="checkbox indnt1">
+            <input type="checkbox" rsf:id="allow-xls-export" id="allow-xls-export"/>
+            <label for="allow-xls-export"  rsf:id="allow-xls-export-note">Enable XLS Export</label>
+        </p>
+        <p class="checkbox indnt1">
+            <input type="checkbox" rsf:id="allow-pdf-export" id="allow-pdf-export"/>
+            <label for="allow-pdf-export"  rsf:id="allow-pdf-export-note">Enable PDF Export</label>
+        </p>
+        <p class="checkbox indnt1">
+            <input type="checkbox" rsf:id="allow-list-of-takers-export" id="allow-list-of-takers-export"/>
+            <label for="allow-pdf-export"  rsf:id="allow-list-of-takers-export-note">Enable List of Takers Export</label>
+        </p>
+        
+    </fieldset>
+    
+    <fieldset class="visibleFS">
+        <legend>
+            <span rsf:id="msg=controlreporting.pdfoptions.fieldtitle">PDF Options</span>
+        </legend>
+        <p class="checkbox indnt1">
+            <input type="checkbox" rsf:id="include-pdf-banner-image" id="include-pdf-banner-image"/>
+            <label for="include-pdf-banner-image"  rsf:id="include-pdf-banner-image-note">Include Banner Image on PDF</label>
+        </p>
+        <p class="longtext indnt1">
+            <label class="block" rsf:id="pdf-banner-image-location-note" for="pdf-banner-image-location">Resources path to image. (Be sure the image is publicly viewable)</label>
+            <input type="text" rsf:id="pdf-banner-image-location" id="pdf-banner-image-location-id" />
+        </p>
+    </fieldset>
+    
+    <p class="act">
+        <input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
+        <input type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
+    </p>
+</form>
+</div>
+</body>
+</html>

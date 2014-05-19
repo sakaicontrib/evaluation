@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Expert Items - Choose Objective</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<!--<link  href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
+		<link  href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link  href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />-->
+         <script type="text/javascript"> 
+		$(document).ready(function() { 
+			$.facebox.setHeader($(".portletBody .titleHeader"));
+			$('a[rel*=facebox]').facebox();
+			var opt = {
+				beforeSend: function(){
+					var img = '<img src="/library/image/sakai/spinner.gif"/>';
+					$('.act .active').attr('disabled','disabled');
+					$('.act .active').parent().append(img);
+				},
+				success: function(){
+					$(document).trigger('close.facebox');
+				}
+			};
+			//$('[id=form-branch::insert-items-form]').ajaxForm(opt);
+		}); 
+   
+</script> 
+	</head>
+	
+	<body>
+		<div class="portletBody">
+        
+       <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>			
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+	
+			<div class=" messageStepGraphic">
+				<div class=" first-noncur-step"> 
+					<span rsf:id="expert-items" class="expertItem">Expert Items:</span>
+				</div>	
+				<div class=" med-noncur-step">
+					<span>
+						<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
+					</span>
+				</div>	
+				<div class=" med-cur-step">	
+					<span rsf:id="choose-objective-2" class="expertItemCategoryCurrent">(2) Choose Objective</span>
+				</div>
+				<div class=" last-noncur-step">
+					<span rsf:id="choose-items-3" class="expertItemCategory">(3) Choose Items</span>
+				</div>	
+			</div>
+	
+			<h3>
+				<span rsf:id="category">Category</span>: 
+				<span rsf:id="category-current" class="highlight">Current Category</span>
+			</h3>
+	
+			<div class="instruction">
+				<div rsf:id="objective-header:">
+					<span rsf:id="objective"  >Objective</span> :
+					<span rsf:id="objective-instructions" class="instruction" >Click on an objective to select items related to it</span>
+				</div>
+			</div>
+			
+			<!-- //gsilver: need to come up with a min-width for this table -->
+			<!-- //gsilver:if this list has no items - omit, as it will not validate -->
+			
+			<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%">
+				<caption rsf:id="objective-list-summary" class="skip">Column 1 has links used to select objectives, Column 2 has information about these objectives</caption>
+				<thead>
+					<tr>
+						<th rsf:id="objective"  scope="col">Objective</th>
+						<th rsf:id="description" scope="col">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr rsf:id="expert-objective-list:">
+						<td>
+							<h5>
+								<a rsf:id="objective-title-link" rel="facebox" href="choose_expert_items.html">objective title</a>
+							</h5>	
+						</td>
+						<td rsf:id="objective-description">
+							This is the objective description for the expert objective which I expect will be quite long and involved and will explain to the user what items are in this objective and what it is good for
+						</td>
+					</tr>
+					<tr rsf:id="expert-objective-list:">
+						<td>
+							<a rsf:id="objective-title-link" rel="facebox" href="choose_expert_items.html">objective title 2</a>
+						</td>
+						<td>
+							<span rsf:id="objective-description">This is the objective description for the expert objective which I expect will be quite long and involved and will explain to the user what items are in this objective and what it is good for</span>
+							<span rsf:id="objective-no-description" class="instruction"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<!--//gsilver:not sure how to activate this, so leave alone -->
+			
+			<div rsf:id="objective-or-choice:" style="text-align:center;width:100%;">
+				- <span rsf:id="objective-or-text" style="font-weight:bold;text-align:center;width:100%;">OR</span> -
+			</div>
+			
+			<div rsf:id="form-branch:">
+				<form rsf:id="insert-items-form" id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
+					<p class="instruction">	
+						<span rsf:id="items">Items</span> :
+						<span rsf:id="items-instructions">Check the items you want to use in your template and click the Insert button at the bottom</span>
+					</p>	
+		
+					<!-- //gsilver: need to come up with a min-width for this table -->
+					<!-- //gsilver:if this list has no items - omit, as it will not validate -->
+		
+					<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%;">
+						<caption rsf:id="item-list-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
+						<thead>
+							<tr>
+								<th class="attach" scope="col">&nbsp;</th>
+								<th rsf:id="items" scope="col">Expert Items</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr rsf:id="expert-item-list:">
+								<td >
+									<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
+								</td>
+								<td >
+									<h5>
+										<label rsf:id="item-label" for="id1">
+											<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+										</label>
+									</h5>
+									<div class="instruction">	
+										<span rsf:id="item-scale"  class="instruction">Item Scale (the title of the scale and the points in parens)</span>
+										<span rsf:id="item-expert-desc"class="instruction">Expert description (the description of what this item is good for assessing and where it should be used</span>
+									</div>	
+			
+								</td>
+							</tr>
+							<tr rsf:id="expert-item-list:">
+								<td align="center" nowrap="nowrap" valign="top">
+									<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
+								</td>
+								<td align="left" valign="top">
+									<label rsf:id="item-label" for="id2">
+										<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
+										<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>
+										<span rsf:id="item-expert-desc" class="itemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
+									</label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<p class="act">
+						<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
+						<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
+					</p>
+				</form>
+			</div>
+			
+		</div>
+	</body>
+</html>

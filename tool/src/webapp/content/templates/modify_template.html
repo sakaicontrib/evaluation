@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title rsf:id="template-title-desc-title">Edit Template Title/Desc.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- No need to call these css and js if page is in a lightbox -->
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet"
+          media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript"
+            src="/library/js/headscripts.js"></script>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all"/>
+</head>
+
+<body>
+<div class="portletBody">
+        <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+         <ul rsf:id="breadcrumbs:" class="breadCrumb">
+             <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+             <li><a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li>
+             <li class="lastCrumb" rsf:id="template-title-desc-title">Edit Template Title/Desc.</li>
+         </ul>
+    <h2 rsf:id="msg=modifytemplatetitledesc.page.title" class="titleHeader pageHeaderOnPage">Add/Modify Item</h2>
+
+    <div rsf:id="message-for:*" class="alertMessage">
+        <ul style="margin:0px;">
+            <li>Message for user here</li>
+        </ul>
+    </div>
+
+    <form rsf:id="basic-form" id="basic-form" method="post">
+        <p class="shorttext">
+            <label rsf:id="title-header" for="title">Title</label>
+            <input name="title" rsf:id="title" type="text" value="" maxlength="250" size="50" id="title"/>
+        </p>
+
+        <div class="longtext">
+            <label rsf:id="description-header" class="block" for="description">Description</label>
+            <textarea rsf:id="description" id="description" name="description" cols="70" rows="3"> </textarea>
+
+            <p class="instruction textPanelFooter" rsf:id="description-note">
+                For you or other admins. Place notes or comments about this template here.
+            </p>
+        </div>
+
+        <p rsf:id="showSharingOptions:" class="longtext">
+            <label rsf:id="sharing-note" class="block" for="showSharingOptions:::sharing-selection">
+                Sharing level
+            </label>
+            <select rsf:id="sharing" id="sharing">
+                <option>Sharing option 1</option>
+                <option>Sharing option 2</option>
+            </select>
+        </p>
+
+        <div rsf:id="sharingValueToDisplay" style="font-weight:bold;margin-top:0.5em;"> </div>
+
+        <p class="act">
+            <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active"/>
+            <input type="button" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x" onclick="javascript:history.go(-1);"/>
+            <input type="button" value="Cancel" class="cancelButtonLightbox close" rsf:id="cancel-button-lightbox" accesskey="x"/>
+        </p>
+    </form>
+
+</div>
+</body>
+</html>

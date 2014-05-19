@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAdhocGroup" table="EVAL_ADHOC_GROUP" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_ahgroup_owner">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <property name="title" type="java.lang.String">
+            <column name="TITLE" length="255" />
+        </property>
+        <array name="participantIds" table="EVAL_ADHOC_PARTICIPANTS" cascade="all">
+            <key column="GROUP_ID" not-null="true" />
+            <list-index column="PARTICIPANTS_INDEX" />
+            <element type="string" column="USER_ID" not-null="true" />
+        </array>
+        <array name="evaluateeIds" table="EVAL_ADHOC_EVALUATEES" cascade="all">
+            <key column="GROUP_ID" not-null="true" />
+            <list-index column="EVALUATEES_INDEX" />
+            <element type="string" column="USER_ID" not-null="true" />
+        </array>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,227 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=modifyitem.page.title">Add/Modify Item</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+     </head>
+	
+	<body>
+		
+	
+		<div class="portletBody">
+            <div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+
+			<div class="navPanel evalEditorSmall">
+				<div class="viewNav">
+					<span rsf:id="item-header">Item:</span>
+					<!--//gsilver: this always seems to return "Scaled" -->
+					<span rsf:id="item-classification" class="highlight">classification</span>
+
+					(<span rsf:id="added-by-item-owner" class="instruction">added by username</span>)
+				</div>
+				<div class="listNav itemAction">
+						<a rsf:id="remove-item-link" href="remove_item.html">Remove</a>&nbsp;<a rsf:id="preview-item-link" href="preview_item.html" target="_blank">Preview</a>
+				</div>
+			</div>	
+
+			<form rsf:id="item-form" method="post" id="item-form">
+
+			<p>
+				<span rsf:id="item-text-header">Item Text:</span>
+				
+				<span rsf:id="item-text-instruction" class="instruction">(this is the question or statement that the evaluator will respond to)</span>
+			</p>
+			<div class="evalEditorSmall">
+                
+				 <!--<div rsf:id="item-text:">
+					<textarea name="item-text-dummy" cols="80" rows="5"></textarea>
+				</div> -->
+				<textarea rsf:id="item-text" name="item-text-dummy" cols="80" rows="5"></textarea>
+
+
+
+
+
+			</div>
+
+			<div rsf:id="show-item-scale:" id="" class="longtext">
+				<label rsf:id="msg=modifyitem.item.scale.header" class="block" for="show-item-scale:::item-scale-list-selection">Scale:</label>
+                <span rsf:id="item-scale-current"></span>
+				<select rsf:id="item-scale-list" id="item-scale-list">
+					<option value="6">5 pt - Adequacy scale (Unsatisfactory, Inadequate, Adequate, Good, Excellent)</option>
+					<option value="1">5 pt - Agree disagree scale (Strongly Disagree, Disagree, Uncertain, Agree, Strongly agree)</option>
+					<option value="4">3 pt - Averages scale (Less than Average, Average, More than Average)</option>
+					<option value="9">4 pt - Correctness scale (No, Somewhat, Mostly, Yes)</option>
+
+					<option value="5">5 pt - Effectiveness scale (Not effective, Somewhat effective, Moderately effective, Effective, Very effective)</option>
+					<option value="2">5 pt - Frequency scale (Hardly ever, Occasionally, Sometimes, Frequently, Always)</option>
+					<option value="13">2 pt - Gender scale (Female, Male)</option>
+					<option value="14">6 pt - Grade (A-F) scale (F, D, C, B, A, Pass)</option>
+					<option value="12">3 pt - Length scale (Too short, Okay, Too long)</option>
+					<option value="8">5 pt - Low high scale (Very low, High, Moderately high, High, Very high)</option>
+
+					<option value="7">5 pt - Relationships scale (Much less, Less, Some, More, Much more)</option>
+					<option value="3">4 pt - Relative rating scale (Poor, Fair, Good, Excellent)</option>
+					<option value="11">3 pt - Size scale (Too small, Okay, Too large)</option>
+					<option value="10">3 pt - Speed scale (Too slow, Okay, Too fast)</option>
+				</select>
+			</div>
+
+            <div rsf:id="show-item-choices:" class="longtext">
+				<h4 rsf:id="msg=modifyitem.item.choices.header">Choices:</h4>
+				<div class="labelindnt">
+				    <div rsf:id="modify-scale-points:">
+				    <!-- start div for evolver widget - contents below are dummy -->
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="1">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="2">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" class="removeItem"/>
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <input rsf:id="scale-options-path" type="hidden" name="scale-options-path"/>
+				        <input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
+				        <span id="myNewSpan"> </span>
+				
+				        <input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();" class="addItem" />  
+				    <!-- End div for evolver widget - contents above are dummy -->
+				    </div>
+				</div>
+            </div>
+
+			<div rsf:id="show-item-sharing:" class="longtext">
+				<label  rsf:id="item-sharing-header" class="block" for="show-item-sharing:::item-sharing-list-selection">Sharing:</label>
+				<select rsf:id="item-sharing-list" id="item-sharing-list">
+					<option value="private" selected="selected">Private - Item is private (visible to you only)</option>
+					<option value="public">Public - Item is modifiable by any admin</option>
+				</select>
+			</div>
+
+			<div rsf:id="show-item-expert:">
+			 	<div class="checkbox"> 
+					<input rsf:id="item-expert" type="checkbox" id="item-expert" />
+					<label rsf:id="item-expert-header" for="show-item-expert:::item-expert">Expert Item:</label>
+					<span rsf:id="item-expert-instruction" class="instruction">indicates that this item was authored by an expert</span>
+				</div>
+				<p>
+				<span  rsf:id="expert-desc-header" >Expert Description:</span>
+				<span rsf:id="expert-desc-instruction" class="instruction">this text describes the appropriate usage of this item for template authors</span>
+				</p>
+				<div  class="evalEditorSmall">
+					<div>
+						<textarea rsf:id="expert-desc" name="expert-desc-dummy" cols="80" rows="5"></textarea>
+					</div>
+				</div>	
+			</div>
+
+            <div rsf:id="showItemResultSharing:">
+            	<p>
+                <b><span rsf:id="item-results-sharing-header">Result Sharing :</span></b>
+                <span rsf:id="item_results_sharing"/>
+                <input type="radio" name="item_results_sharing_AD" rsf:id="item_results_sharing_AD" id="item_results_sharing_AD"/>
+                <label for="showItemResultSharing:::item_results_sharing_AD" rsf:id="item-results-sharing-AD">Administrative</label>
+                <input type="radio" name="item_results_sharing_ST" rsf:id="item_results_sharing_ST" id="item_results_sharing_ST" />
+                <label for="showItemResultSharing:::item_results_sharing_ST" rsf:id="item-results-sharing-ST">Student</label>
+                </p>
+            </div>
+
+            <!-- DIV tag for node selector renderer -->
+            <div rsf:id="hierarchyNodeSelector:">
+              <div>
+                 <h4><span>Hierarchy Assignment :</span></h4>
+                 <select style="font-family: monospace">
+                    <option value="TOP_LEVEL">Top Level</option>
+                    <option value="BIOL_DEPT">+ Biology Dept</option>
+                    <option value="BIOL_101">  - Bio 101</option>
+                 </select>
+              </div>
+            </div>
+
+			<fieldset rsf:id="showItemDisplayHints:" class="visibleFS evalEditorSmall">
+				<legend rsf:id="item-display-hint-header">Display Setting Hints</legend>
+				<div id="nonBlockSettings">
+				<div rsf:id="item-display-hint-instruction" class="instruction">these optional settings allow the item author to provide hints as to how this item should be displayed</div>
+
+				<p rsf:id="show-scale-display:" class="longtext">
+					<label rsf:id="scale-display-header" class="block">Scale Display Setting:</label>
+					<select rsf:id="scale-display-list" id="scale-display-list">
+						<option value="Compact">Compact</option>
+						<option value="CompactColored">Compact Colored</option>
+						<option value="Full">Full</option>
+						<option value="FullColored">Full Colored</option>
+						<option value="Stepped">Stepped</option>
+						<option value="SteppedColored">Stepped Colored</option>
+						<option value="Vertical">Vertical</option>
+					</select>
+				</p>
+
+				<p rsf:id="show-response-size:" class="longtext">
+					<label rsf:id="item-response-size-header" class="block">Response size:</label>
+					<select rsf:id="item-response-size-list">
+						<option value="2">2 lines</option>
+						<option value="3">3 lines</option>
+						<option value="4">4 lines</option>
+						<option value="5">5 lines</option>
+					</select>
+				</p>
+
+				<p rsf:id="showNA:" class="checkbox">
+					<input rsf:id="item-na" type="checkbox" id="item-na" />
+					<label rsf:id="item-na-header" for="showNA:::item-na">N/A (not applicable)</label>
+				</p>
+
+                <p rsf:id="showItemComment:" class="checkbox">
+                    <input rsf:id="item-comment" type="checkbox" id="item-comment" />
+                    <label rsf:id="item-comment-header" for="showItemComment:::item-comment">Include comment box</label>
+                </p>
+				</div>
+				
+				<!-- Compulsary non/compulsary should be shown in block editing -->
+				    <p rsf:id="showItemCompulsory:" class="checkbox">
+                    <input rsf:id="item-compulsory" type="checkbox" id="item-compulsory" />
+                    <label rsf:id="item-compulsory-header" for="showItemCompulsory:::item-compulsory">Must be answered</label>
+                	</p>
+                <div id="nonBlockSettings2">
+				<div rsf:id="showItemCategory:">
+					<b rsf:id="item-category-header">Category:</b>
+
+					<span rsf:id="item-category-list" />
+					<span rsf:id="item-category-branch:" class="checkbox">
+						<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
+						<label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>									
+					</span>
+					<span rsf:id="item-category-branch:"  class="checkbox">
+						<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
+						<label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
+					</span>
+				</div>
+				</div>
+				
+						
+				
+				<div class="cleaner">&nbsp;</div>
+			</fieldset>
+			<div class="act">
+				<input rsf:id="save-item-action" type="submit" value="Save item" class="active submit" accesskey="s" />
+				<input rsf:id="cancel-button" type="button" value="Cancel" class="close" accesskey="x" />
+			</div> 
+			</form>
+		</div>
+	</body>
+</html>

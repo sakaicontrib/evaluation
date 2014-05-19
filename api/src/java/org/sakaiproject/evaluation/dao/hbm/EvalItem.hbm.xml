@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalItem" table="EVAL_ITEM" lazy="false" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="eid" type="java.lang.String" index="eval_item_eid">
+            <column name="EID" length="255" />
+        </property>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_item_owner">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- the item text which is displayed to users -->
+        <property name="itemText" type="text">
+            <column name="ITEM_TEXT" not-null="true" />
+        </property>
+        <!-- the description which is used for item editors only -->
+        <property name="description" type="text">
+            <column name="DESCRIPTION" />
+        </property>
+        <!-- sharing setting for this item (private, public, etc...) -->
+		<property name="sharing" type="java.lang.String" index="eval_item_sharing">
+            <column name="SHARING" not-null="true" length="255" />
+        </property>
+        <!-- used to determine the type of item (scaled, text, etc.) -->
+        <property name="classification" type="java.lang.String">
+            <column name="CLASSIFICATION" not-null="true" length="255" />
+        </property>
+        <!-- is this an expert item or not -->
+        <property name="expert" type="java.lang.Boolean">
+            <column name="EXPERT" not-null="true" index="eval_item_expert" />
+        </property>
+        <!-- the expert description of usage for this item -->
+        <property name="expertDescription" type="text">
+            <column name="EXPERT_DESCRIPTION" />
+        </property>
+		<!-- the scale for this item (if uses a scale) -->
+        <many-to-one name="scale" class="org.sakaiproject.evaluation.model.EvalScale" foreign-key="ITEM_SCALE_FKC" lazy="false" fetch="join">
+            <column name="SCALE_FK" />
+        </many-to-one>
+		<!-- maps from items to templates via the itemtemplate joining table -->
+        <set name="templateItems" inverse="true">
+            <key column="item_id" not-null="true" />
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />
+        </set>
+        <!-- Should this item include Not Available as an answer -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="usesNA" type="java.lang.Boolean">
+            <column name="USES_NA" />
+        </property>
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="usesComment" type="java.lang.Boolean">
+            <column name="USES_COMMENT" />
+        </property>
+        <!-- how big should the text box be when rendering this item -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="displayRows" type="java.lang.Integer">
+            <column name="DISPLAY_ROWS" />
+        </property>
+        <!-- how should the scale be rendered -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="scaleDisplaySetting" type="java.lang.String">
+            <column name="SCALE_DISPLAY_SETTING" length="255" />
+        </property>
+        <!-- should this item be compulsory (must be answered) -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="compulsory" type="java.lang.Boolean">
+            <column name="COMPULSORY"/>
+        </property>
+        <!-- used to determine the category of the item (course, instructor, etc.) -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="category" type="java.lang.String">
+            <column name="CATEGORY" length="255" />
+        </property>
+        <!-- locked items cannot be removed or modified, items which are linked to a locked template should also be locked -->
+        <property name="locked" type="java.lang.Boolean">
+            <column name="LOCKED" />
+        </property>
+        <property name="copyOf" type="java.lang.Long">
+            <column name="COPY_OF" />
+        </property>
+        <property name="hidden" type="java.lang.Boolean">
+            <column name="HIDDEN" />
+        </property>
+        <!-- Allows for linking this data to evals automatically when they are created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
+    </class>
+</hibernate-mapping>

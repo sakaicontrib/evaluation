@@ -1,0 +1,40 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title rsf:id="page-title">Remove Item</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<div class="portletBody">
+
+<div rsf:id="navIntraTool:" class="navIntraTool"/>
+    
+<div id="removeBody"> 
+  <div class="messageComfirm">
+    <ul>
+      <li> <span rsf:id="remove-item-confirm-text"> Are you sure you want to remove item ## (shown below) from Template_Title? The removal is permanent. </span> </li>
+    </ul>
+  </div>
+  <div rsf:id="remove-item-block-text" class="instruction"> Block child items will be split out and placed into the template in the same location as block occupied and in the same order </div>
+  <div rsf:id="inUse:"> <b rsf:id="inUseWarning">Warning: this item is currently in use in X templates, removing it will only cause it to be hidden</b>
+    <ol>
+      <li rsf:id="items:"> <span rsf:id="itemInfo">Info about the template</span> </li>
+    </ol>
+  </div>
+ 
+  <div class="act">
+    <form rsf:id="remove-item-form" action="modify_template_items.html" method="post" class="inlineForm act" id="delete-form">
+      <input rsf:id="remove-item-command-link" type="submit" value="Yes" class="active submit" accesskey="s"/>
+      <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
+      &nbsp;
+    </form>
+  </div>
+  </div>   
+  
+  
+  
+</div>
+</body>
+</html>

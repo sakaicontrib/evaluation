@@ -1,0 +1,10 @@
+This folder contains all the javascript used in this project. 
+The structure is laid out as shown below so please adhere to this practice when adding new JS files.
+/js - js files written for this project
+  /(dir) - js files from other frameworks (e.g. /jquery)
+
+The files in /js are written for the eval project 
+and any files that are imported are placed into the subfolders.
+Please ensure that you do not import duplicates.
+Thanks
+-AZ

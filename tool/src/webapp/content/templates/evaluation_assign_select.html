@@ -1,0 +1,76 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Select</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h2 class="titleHeader" id="title" style="display:none;" rsf:id="title">Select Instructors from ABC123 for Eval Name</h2>
+    <form rsf:id="form" action="modify_template" method="post" id="basic-form">
+		<div rsf:id="selectInstructorTA:">
+            <p rsf:id="select-instructions" class="instruction" style="clear:both;">
+                    These options control which Instructor and Teaching Assistant questions are repeated in the evaluation.
+            </p>
+            <!-- Instructors Options -->
+            <span rsf:id="selectionRadioInstructors" />
+            <div rsf:id="selectInstructorsChoice:">
+              <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio" value="radio" checked="checked" />
+              <label rsf:id="radioLabel" for="radio" >Respondents evaluate all instructors included in the evaluation</label>
+            </div>
+            <div rsf:id="selectInstructorsChoice:">
+               <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio2" value="radio2" />
+               <label rsf:id="radioLabel" for="radio2">Respondents select one instructor to evaluate</label>
+            </div>
+            <div rsf:id="selectInstructorsChoice:">
+              <input rsf:id="radioValue" type="radio" name="instructorSelection" id="radio3" value="radio3"/>
+              <label rsf:id="radioLabel" for="radio3">Respondents may select multiple instructors to evaluate</label>
+            </div>
+			<!-- TA Options -->
+            <span rsf:id="selectionRadioTAs" />                  
+            <div rsf:id="selectTAsChoice:">
+              <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio4" value="radio4" checked="checked" />
+              <label rsf:id="radioLabel" for="radio4">Respondents evaluate all TAs included in the evaluation</label>
+            </div>
+            <div rsf:id="selectTAsChoice:">
+              <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio5" value="radio5" />
+              <label rsf:id="radioLabel" for="radio5">Respondents select one TA to evaluate</label>
+            </div>
+            <div rsf:id="selectTAsChoice:">
+              <input rsf:id="radioValue"  type="radio" name="assistantSelection" id="radio6" value="radio6" />
+              <label rsf:id="radioLabel" for="radio6">Respondents may select multiple TAs to evaluate</label>
+            </div>
+        </div>
+        <p rsf:id="instruction" class="instruction clear">Choose the instructors to be included in the above evaluation.</p>
+        <div class="selectTable">
+        	<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines ">
+                <thead>
+                <tr>
+                    <th>
+                    	<input type="checkbox" id="selectorControl"/>
+						<span rsf:id="msg=assigneval.select.header">Select</span>
+					</th>
+                    <th >
+                        <span rsf:id="col-number">Staff/Student number</span></th>
+                    <th><span rsf:id="col-name">Name</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr rsf:id="item-row:">
+                    <td>
+                        <input rsf:id="row-select" class="evalgroupselect" type="checkbox" id="evalGroupId"/></td>
+                    <td>
+                        <span rsf:id="row-number">01419112</span></td>
+                    <td><span rsf:id="row-name">Marquard,  Stephen</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="act">
+            <input rsf:id="save-item-action" value="Save" accesskey="s" class="active" name="" type="button" id=""/>
+            <input rsf:id="cancel-button" value="Cancel" accesskey="x"
+                   onclick="$(document).trigger('close.facebox');return false;" type="button"/>
+        </p>
+    </form>
+</body>
+</html>

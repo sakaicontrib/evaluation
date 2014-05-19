@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<!-- Beans are in the following dependency order: BOTTOM (external) -> LOWER -> BACKUP -> SERVICES -->
+<beans>
+
+    <!-- Bring in the hibernate related beans (DAO) -->
+    <import resource="spring-hibernate.xml" />
+    <import resource="sakai-hibernate.xml" />
+
+    <!-- Bring in external logic beans (BOTTOM level) -->
+    <import resource="external-logic.xml" />
+
+    <!-- Bring in any logic support beans (LOWER level) -->
+    <import resource="logic-support.xml" />
+
+    <!-- Bring in any sakai entity providers -->
+    <import resource="entity-providers.xml" />
+
+    <!-- create the logic beans (BACKUP level) -->
+    <import resource="logic-backup.xml" />
+
+    <!-- create the logic service beans (SERVICES level) -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
+        class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl"
+        init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="securityChecks"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
+        class="org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl"
+        init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="securityChecks"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+        <property name="evalJobLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+        <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="evalBeanUtils"
+            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
+        class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl"
+        init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="emailsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+    </bean>
+
+
+    <!-- DATA PRELOADING -->
+    <!-- this will attempt to preload the database with data in a way that is cluster safe,
+        this is located in the main set of beans because these are never used in the tests
+        and the tests already have a test data preloader and tests do not need to be cluster safe -->
+    <bean class="org.sakaiproject.evaluation.dao.EvalDataPreloaderImpl"
+        init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="preloadData" ref="org.sakaiproject.evaluation.dao.PreloadData" />
+    </bean>
+
+    <!-- Related to jobs logic -->
+    <bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation"
+        class="org.sakaiproject.evaluation.logic.scheduling.EvalScheduledInvocationImpl">
+        <property name="evalJobLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+    </bean>
+
+    <!-- IMPORTING -->
+    <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportJob"
+        class="org.sakaiproject.evaluation.logic.imports.EvalImportJobImpl">
+    </bean>
+
+</beans>

@@ -1,0 +1,244 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title rsf:id="modify-template-title">Edit Template</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+<link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.2.6.js"></script> 
+<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-ui-core-drag-sort-1.5.2.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-ui-all-effects-1.6rc4.packed.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/fluid/Fluid.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/facebox/facebox.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/reorderUtils.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.utils.js"></script>        
+<script type="text/javascript" language="JavaScript" src="../js/evalAjax.js"></script>
+<script type="text/javascript" language="JavaScript" src="/library/editor/FCKeditor/fckeditor.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/SakaiRSFWidgets.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.tipsy.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/toggleCommentBox.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.facebox.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.events.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.sort.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.order.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
+</head><body>
+<div class="portletBody">
+	<div rsf:id="navIntraTool:" class="navIntraTool"/> 
+	<ul class="breadCrumb">
+    <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+    <li><a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li>
+    <li class="lastCrumb" rsf:id="modify-template-title">Edit Template</li>
+  </ul>
+  <div rsf:id="message-for:*" class="alertMessage" id="messageInformation">
+    <ul style="margin:0px;">
+      <li>Message for user here</li>
+    </ul>
+  </div>
+  <div style="width:96%">
+    <!-- //squezzed to avoid scrollbars when sorting // -->
+    <span rsf:id="site-id" id="site-id" style="display:none">Site Id</span>
+    <div class="navPanel  highlightPanel">
+      <h3 class="viewNav"> <span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span> <span rsf:id="title" class="highlight" id="">Title</span> </h3>
+      <div class="listNav itemAction"> <a href="modify_template.html" rsf:id="modify_title_desc_link" rel="faceboxGrid">Edit Template Title/Description</a> | <a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank" >View a preview</a> | <span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a></span> | <a href="evaluation_start.html" rsf:id="begin_eval_link" id="begin_eval_link">Begin an evaluation using this template</a> <span rsf:id="begin-eval-dummylink" id="begin-eval-dummylink" style="color:gray;"></span></div>
+    </div>
+    <div rsf:id="description-switch:" class="textPanel"> <span rsf:id="description" id="">Template description goes here, this would be notes for other admins or yourself, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui laoreet libero, nec pulvinar sem mi ac felis.</span> </div>
+    <div class="navPanel">
+    <div rsf:id="template-owner" style="display:none;" class="templateOwner">Owner</div>
+      <div class="listNav">
+        <div class="instruction">
+		<span rsf:id="level-header-level">Current Level - </span> <span rsf:id="level-header-number" id="level-header-number">#</span> <span rsf:id="level-header-items"> existing items</span>
+		</div>
+        <label rsf:id="add-item-note">Add Item:</label>
+        <div rsf:id="add-item-control:" style="display:inline;">
+          <form name="modify_template_items_form" style="display:inline;">
+            <select	id="itemClassification-selection">
+              <option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+              <option value="modify_essay.html">Short Answer/Essay</option>
+              <option value="modify_header.html">Text Header</option>
+              <option value="modify_block.html">Question Block</option>
+              <option value="choose_expert_category.html">Expert</option>
+            </select>
+            <input id="add_questions" type="button" value="Add"
+									onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- // gsilver: this block should be rendered only if there are items to be rendered, otherwise a message such as "No items have been added yet. To add items select from left. -->
+    <div style="padding:.3em 0;">
+      <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
+        <input rsf:id="hiddenBtn" type="submit" id="hiddenBtn" style="display:none;" />
+        <div class="itemOperations" id="orderInputs">
+          <input rsf:id="revertOrderButton" type="button" disabled="disabled" value="Revert Order" id="revertOrderButton" />
+          <input rsf:id="saveReorderButton" type="submit" disabled="disabled" value="Save Order" id="saveReorderButton" />
+          <span rsf:id="orderingInstructions" class="instruction" > Drag the items to reorder them and click save to set the new order or use the pulldowns to reorder a single item </span> </div>
+        <div id="itemTable">
+          <div id="itemList" class="itemList">
+            <div rsf:id="item-row:" class="itemRow" id="item-row::0:">
+                <input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="0" id="item-row::0:hidden-item-num" />
+                <input rsf:id="template-item-id" type="hidden" name="template-item-id" value="0"/>
+                <input rsf:id="item-classification" type="hidden" name="item-classification" value="0"/>
+             <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
+                <label rsf:id="block-check-branch" class="itemCheckbox" for="cb0">
+                <input rsf:id="block-checkbox" type="checkbox" 
+												title="Mark item to use in block" id="cb0" />
+                &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
+                <select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+                  <option value="1" selected="selected">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+                 <span class="itemTextReplacementHolder">
+                <h4 rsf:id="item-text:" class="itemText"> <span rsf:id="item-text-short">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-control" href="#" class="more">more</a> <a rsf:id="item-text-block" href="#" class="blockExpandText"> [Hide child items] </a></h4>
+
+<h4 rsf:id="item-text-hidden:" class="itemText" style="display:none"> <span rsf:id="item-text-long">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-hidden-control" href="#" class="less">less</a></h4>
+                </span>
+                <div class="scaleDesc textPanelFooter">
+                    <span class="textPanelReplacementHolder">
+                        <span rsf:id="item-results-sharing"> Results Sharing </span>
+                        <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span>
+                        <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span>
+                        <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>   &nbsp;
+                        <img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>    &nbsp;
+                    </span>
+                    <span>
+                        <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"> <img src="/library/image/silk/zoom.png" alt="Preview" border="0"/></a> &nbsp;
+                        <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0"/></a> &nbsp;
+				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a>
+                <a rsf:id="remove-row-item-unblock"href="remove_question.html" rel="unblock">Ungroup</a> </span>
+                </div>
+                <div class="cleaner">&nbsp;</div>
+              </div>
+                            <div rsf:id="block-children:" id="block-children:" class="itemLine3">
+               	<div id="itemTableBlock" class="itemTableBlock">
+             			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
+                       <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+					 <span  rsf:id="modifyblock-items-list-instructions" class="instruction">Drag and drop to rearrange the blocked items</span>
+				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
+							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRowBlock::1:hidden-item-id" />
+							 <span rsf:id="item-block-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
+							<span rsf:id="item-block-text" class="text">Child item text here</span>
+							
+							<span class="itemRight">
+								&nbsp;
+								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
+                                <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
+                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><img border="0" alt="Remove" src="/library/image/sakai/cross.png"/></a>
+<span rsf:id="remove-row-item-disabled" >Remove</span>
+     					   </span>						</div>
+					</div>   
+                 </div>
+            </div>
+            
+            <div rsf:id="item-row:" class="itemRow" id="item-row::1:">
+              <input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="1" id="item-row::1:hidden-item-num" />
+                <input rsf:id="template-item-id" type="hidden" name="template-item-id" value="0"/>
+                <input rsf:id="item-classification" type="hidden" name="item-classification" value="0"/>
+              <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
+                <label rsf:id="block-check-branch" class="itemCheckbox" for="cb1">
+                <input rsf:id="block-checkbox" type="checkbox" 
+												title="Mark item to use in block" id="cb1" />
+                &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
+                <select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+                  <option value="1">1</option>
+                  <option value="2" selected="selected">2</option>
+                  <option value="3">3</option>
+                </select>
+                  <span class="itemTextReplacementHolder">
+                <h4 rsf:id="item-text" class="itemText"> Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. <a class="more">more</a> </h4>
+                </span>
+                <div class="scaleDesc textPanelFooter">
+                    <span class="itemType textPanelReplacementHolder">
+                        <span rsf:id="item-results-sharing"> Results Sharing </span>
+                        <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span> <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span> <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>
+                        &nbsp;
+                        <img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>    &nbsp;
+                </span>
+                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><img src="/library/image/silk/zoom.png" alt="Preview" border="0" /></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
+								 &nbsp; <a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a> </span>
+                </div>
+                <div class="cleaner">&nbsp;</div>
+              </div>
+                            <div rsf:id="block-children:" id="block-children:" class="itemLine3">
+               <div id="itemTableBlock" class="itemTableBlock">
+             			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
+                   <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+					 <span rsf:id="modifyblock-items-list-instructions" class="instruction">Drag and drop to rearrange the blocked items</span>
+				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
+							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
+							<span rsf:id="item-block-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
+							<span rsf:id="item-block-text" class="text">Child item text here</span>
+							
+							<span class="itemRight">
+								
+								&nbsp;
+								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
+                                <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
+                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><img border="0" alt="Remove" src="/library/image/sakai/cross.png"/></a>
+<span rsf:id="remove-row-item-disabled" >Remove</span>
+    							
+				</span>						</div>
+					</div>   
+                 </div>           
+            </div>
+            <div rsf:id="item-row:" class="itemRow" id="item-row::2:">
+              <input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="2" id="item-row::2:hidden-item-num" />
+              <input rsf:id="hidden-item-id" type="hidden" name="hidden-item-id" value="2" id="item-row::2:hidden-item-id" />
+              <input rsf:id="template-item-id" type="hidden" name="hidden-item-id" value="2" id="item-row::2:hidden-item-id" />
+              <div class="itemLine2"> <span class="checkPlaceholder" rsf:id="check-placeholder">&nbsp;</span>
+                <label rsf:id="block-check-branch" class="itemCheckbox" for="cb2">
+                <input rsf:id="block-checkbox" type="checkbox" 
+												title="Mark items to use in block" id="cb2" />
+                &nbsp; <span class="skip" rsf:id="check-input-label">Select to add to block</span> </label>
+                <select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder" title="Choose a new order for this item">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3" selected="selected">3</option>
+                </select>
+                  <span class="itemTextReplacementHolder">
+                <span rsf:id="item-text" class="itemText"> Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. </span>
+                      </span>
+                <div class="scaleDesc textPanelFooter">
+                    					 <span class="itemType textPanelReplacementHolder">
+                	<span rsf:id="item-results-sharing"> Results Sharing </span>
+                         <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span> <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span> <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>
+                     &nbsp;<img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>  &nbsp;
+                     </span>
+
+                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><img src="/library/image/silk/zoom.png" alt="Preview" border="0" /></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a> &nbsp;
+                &nbsp;
+				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a>
+                <a rsf:id="remove-row-item-unblock" href="remove_question.html" rel="unblock">Ungroup</a>
+                 </span>  
+                </div>
+                <div class="cleaner">&nbsp;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <span rsf:id="total-rows" class="totalRows" style="display:none"></span>
+      <div>
+        <div class="itemOperations" id="blockInputs">
+          <form rsf:id="createBlockForm" id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html" class="inlineForm">
+            <input type="hidden" name="templateItemIds"/>
+            <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="button" value="Create Group" disabled="disabled" />
+          </form>
+          <span rsf:id="blockInstructions"class="instruction"> Check the boxes next to a set of items and click Create Block to make a block with the chosen items </span> </div>
+        <div class="cleaner">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

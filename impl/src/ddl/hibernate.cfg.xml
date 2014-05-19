@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- these mapping resource paths must point to your hibernate template files (.hbm.xml),
+            this should be the classpath location (typically after the src directory) -->
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTags.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTagsMeta.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml" />
+        <mapping resource="org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>

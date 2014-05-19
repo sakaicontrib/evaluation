@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Expert Items - Choose Category</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</head>
+	<body>
+		<div class="portletBody">		
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<!--//gsilver: this looks like a breadcrumb -->			
+			<div class=" messageStepGraphic">
+				<div class=" first-noncur-step"> 
+					<span rsf:id="expert-items">Expert Items:</span>
+				</div>
+				<div class=" med-cur-step">  
+					<span rsf:id="choose-category-1" class="expertItemCategoryCurrent">(1) Choose Category</span>
+				</div>	
+				<div class=" med-noncur-step">  
+					<span rsf:id="choose-objective-2" class="expertItemCategory">(2) Choose Objective</span>
+				</div>
+				<div class=" last-noncur-step">  
+					<span rsf:id="choose-items-3" class="expertItemCategory">(3) Choose Items</span>
+				</div>	
+			</div>
+
+			<p rsf:id="category-instructions" class="instruction">Click on a category to see objectives within it</p>
+			
+			<table  summary="Column 1 has links to categories, Column 2 has descriptions of categories" cellpadding="0" cellspacing="0"  class="listHier lines nolines" style="width:100%">
+				<caption rsf:id="category-list-summary" class="skip">Column 1 has links to categories, Column 2 has descriptions of categories</caption>	
+				<thead>
+					<tr>
+						<th rsf:id="category" scope="col">Category</th>
+						<th rsf:id="description" scope="col">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr rsf:id="expert-category-list:">
+						<td>
+							<a rsf:id="category-title-link" rel="facebox" href="choose_expert_objective.html">category title</a>
+						</td>
+						<td rsf:id="category-description">
+							This is the category description for the expert category which I expect will be quite long and involved and will explain to the user what items are in this category and what it is good for
+						</td>
+					</tr>
+					<tr rsf:id="expert-category-list:">
+						<td>
+							<a rsf:id="category-title-link" rel="facebox" href="choose_expert_objective.html">category title 2</a>
+						</td>
+						<td>
+							<span rsf:id="category-description">This is the category description for the expert category which I expect will be quite long and involved and will explain to the user what items are in this category and what it is good for</span>
+							<span rsf:id="category-no-description" style="font-style:italic;"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<p class="act">			
+					<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
+			</p>		
+			
+		</div>
+	</body>
+</html>

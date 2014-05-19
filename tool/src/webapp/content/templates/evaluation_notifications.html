@@ -1,0 +1,75 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=evalnotify.page.title">Evaluation Notifications</title>
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+
+	<body>
+        <div class="portletBody">
+           <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+            <ul class="breadCrumb">
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li><li class="lastCrumb"><a rsf:id="evalSettingsLink" href="evaluation_settings.html">Evaluation Settings</a></li>
+            </ul>
+
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>Message for user here</li>
+                </ul>
+            </div>
+
+            <h3 rsf:id="msg=evalnotify.page.title">Evaluation Notifications</h3>
+            <div>
+                <span rsf:id="notifyEval" style="font-weight: bold; font-size: 1.1em;"><!-- evalnotify.eval.info -->Evaluation Title (Start - Due)</span>
+                <span rsf:id="notifyGroup" style="font-weight: bold;"><!-- evalnotify.group.info -->Group: Title</span>
+                -
+                <a rsf:id="evalRespondersLink" href="evaluation_responders.html">Evaluation Responders</a>
+            </div>
+
+			<form rsf:id="emailForm" name="emailForm" method="post">
+				<div style="width:80%">
+					<p rsf:id="msg=modifyemail.modify.text.instructions" class="instruction">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
+					<div rsf:id="email_templates_fieldhints" class="highlightPanel" style="background:#eee;">
+${EvalTitle} - the title of this evaluation <br/>
+${EvalStartDate} - the start date of this evaluation <br/>
+${EvalDueDate} - the due date of this evaluation <br/>
+${EvalResultsDate} - the view results date of this evaluation <br/>
+${EvalGroupTitle} - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user <br/>
+${HelpdeskEmail} - the email address for the helpdesk (or the support contact) <br/>
+${URLtoAddItems} - the direct URL for evaluatees to add items to evals assigned from above <br/>
+${URLtoTakeEval} - the direct URL for evaluators to take this evaluation <br/>
+${URLtoViewResults} - the direct URL to view results for this evaluation <br/>
+${URLtoSystem} - the main URL to the system this is running in <br/>
+${URLtoAddItems} - the direct URL to add items to an evaluation <br/>
+${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
+					</div>
+                    <div>
+                        <label rsf:id="msg=modifyemail.template.subject" for="emailSubject">Subject:</label>
+                        <input rsf:id="emailSubject" type="text" id="emailSubject" size="80" maxlength="250" />
+                    </div>
+					<textarea rsf:id="emailMessage" rows="20" cols="120" name="emailMessage" id="emailMessage">
+                         The text of the email message will appear here
+                    </textarea>
+				</div>	
+                <div style="width:80%">
+                    <label rsf:id="msg=evalnotify.send.to.list" for="emailSendTo">Send message to:</label>
+                    <select rsf:id="emailSendTo" id="emailSendTo">
+                        <option value="send-non-respond" selected="selected">Non-responding participants</option>
+                        <option value="send-responded">Responded participants</option>
+                        <option value="send-all">All participants</option>
+                    </select>
+                </div>
+				<p class="act">
+                    <input rsf:id="emailSubmit" type="submit" value="Send Emails" accesskey="s" class="active" /><!-- evalnotify.send.emails -->
+                    <input rsf:id="msg=general.cancel.button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
+				</p>
+			</form>
+
+		</div>	
+	</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalResponse" table="EVAL_RESPONSE" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_response_owner">
+            <column name="OWNER" not-null="true" length="255" unique-key="uniqueOwnerGroupEval" />
+        </property>
+        <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
+        <property name="evalGroupId" type="java.lang.String" index="eval_response_groupid">
+            <column name="GROUP_ID" not-null="true" length="255" unique-key="uniqueOwnerGroupEval" />
+        </property>
+        <!-- This is the time when this response was initiated -->
+        <property name="startTime" type="java.util.Date">
+            <column name="START_TIME" not-null="true" />
+        </property>
+        <property name="comment" type="text">
+            <column name="COMMENT_RESPONSE" />
+        </property>
+        <property name="selectionsCode" type="text">
+            <column name="SELECTIONS_CODE" />
+        </property>
+        <!-- This is the time when this response was submitted -->
+        <property name="endTime" type="java.util.Date">
+            <column name="END_TIME" not-null="false" />
+        </property>
+        <!-- this is the set of answers for the evaluation associated with this response -->
+        <set name="answers" order-by="RESPONSE_FK" lazy="true" fetch="select" inverse="true">
+            <key foreign-key="ANSWER_RESPONSE_FKC">
+                <column name="RESPONSE_FK" />
+            </key>
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalAnswer"/>
+        </set>
+        <!-- this is the associated evaluation -->
+        <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="RESPONSE_EVALUATION_FKC" lazy="proxy" fetch="select" not-null="true">
+            <column name="EVALUATION_FK" not-null="true" unique-key="uniqueOwnerGroupEval" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

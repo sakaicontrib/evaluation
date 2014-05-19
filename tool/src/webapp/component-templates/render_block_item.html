@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Block Item Renderer:</title>
+</head>
+<body>
+
+<!-- html template for the block item renderer -AZ -->
+<div rsf:id="render-block-item:">
+
+<!--  DIV tag for Block type: Stepped display -->
+<div rsf:id="blockStepped:">
+	<!--[if IE 7]>
+	<style type="text/css">
+		td.exclude input {padding:0px;margin:4px;}
+		td.exclude {border:1px solid none !important;padding:0 !important;height:12px !important}
+	</style>
+<![endif]-->
+
+<table border="0" cellspacing="0" cellpadding="0" width="99%"  class="blockItemGroup">
+	<tr>
+		<td>
+			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+				<tr rsf:id="blockRowBranch:">
+					<td rsf:id="itemText" width="90%" rowspan="4" style="padding:5px;" valign="bottom" class="fakeHeader">
+					<!-- //gsilver:this should really be an h4 for the main text, a list for the sub-items  -->
+						Block parent header text here<br/>
+						this is really long block<br/>
+						parent header text which is probably typical
+					</td>
+					<td width="10%" nowrap="nowrap" align="right" style="padding-right:.4em">
+						<span style="font-weight:bold;" rsf:id="topLabel" class="actualHeader">choice name</span>&nbsp;
+						<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+						<span rsf:id="blockAfterTopLabelBranch:">
+						</span>
+					</td>
+				</tr>
+				<tr rsf:id="blockRowBranch:">
+					<td width="10%" nowrap="nowrap" align="right" style="padding-right:.4em">
+						<span style="font-weight:bold;" rsf:id="topLabel" class="actualHeader">choice name</span>&nbsp;
+						<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+						<span rsf:id="blockAfterTopLabelBranch:">
+							<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+						</span>
+					</td>
+				</tr>
+				<tr rsf:id="blockRowBranch:">
+					<td width="10%" nowrap="nowrap" align="right" style="padding-right:.4em">
+						<span style="font-weight:bold;" rsf:id="topLabel" class="actualHeader">choice name</span>&nbsp;
+						<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+						<span rsf:id="blockAfterTopLabelBranch:">
+							<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+							<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<!-- rowspan fills this td -->
+					<td width="10%" nowrap="nowrap" align="right" style="padding-right:.4em">
+						<label rsf:id="na-desc" style="font-weight:bold;"class="actualHeader">N/A</label>&nbsp;&nbsp;
+						<span rsf:id="blockBottomLabelBranch:">
+							<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+						</span>
+						<span rsf:id="blockBottomLabelBranch:">
+							<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+						</span>
+						<span rsf:id="blockBottomLabelBranch:">
+							<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+						</span>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<table border="0" cellspacing="0" cellpadding="0" width="100%" class="steppedRowContainer">
+				<tr rsf:id="childRow:">
+					<td style="padding:.2em"  class="questionCell first" >
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="childNum" class="label">1</span><span class="label">.</span>
+						<span rsf:id="childText" class="label">Child item text here</span>
+					</td>
+					<td  class="answerCell" nowrap="nowrap" valign="top" align="right" style="height:24px;">
+						<table border="0" cellspacing="0" cellpadding="0" width="auto" class="choiceGroup">
+							<tr>
+								<td align="right" valign="middle" class="exclude NACell itemDoneCheck">
+									<div rsf:id="na-parent:">
+										<label class="blockItemLabelNA"><span class="blockChoice skip"></span><input rsf:id="na-input" type="radio" name="block1" title=""/></label>
+									</div>
+								</td>
+								<td width="70%" align="left" nowrap="nowrap"  style="height:27px;overflow:hidden;" class="last exclude">
+									<div rsf:id="childRadio" />
+									<div style="width:100%;position:relative;">
+										<div style="width:100%;display:block;position:absolute;z-index:5;">
+											<img rsf:id="idealImage" src="../content/images/ideal-high.jpg" style="width:100%;height:28px;"  alt="ideal coloring image" />
+										</div>
+
+										<!-- For correct spacing there are 2 sets of radio buttons. This is the colored one -->
+										<div class="blockChoiceColored">
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+										</div>
+									</div>
+									<div  class="blockChoiceNotColored">
+										<!-- This is the real set of radio buttons -->
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr rsf:id="childRow:">
+					<td style="padding:.2em"  class="questionCell first" >
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="childNum" class="label">1</span><span class="label">.</span>
+						<span rsf:id="childText" class="label">Child item text here</span>
+					</td>
+					<td  class="answerCell" nowrap="nowrap" valign="top" align="right" style="height:24px;">
+						<table border="0" cellspacing="0" cellpadding="0" width="auto" class="choiceGroup">
+							<tr>
+								<td align="right" valign="middle" class="exclude NACell itemDoneCheck">
+									<div rsf:id="na-parent:">
+										<label class="blockItemLabelNA"><span class="blockChoice skip"></span><input rsf:id="na-input" type="radio" name="block1" title=""/></label>
+									</div>
+								</td>
+								<td width="70%" align="left" nowrap="nowrap"  style="height:27px;overflow:hidden;" class="last exclude">
+									<div rsf:id="childRadio" />
+									<div style="width:100%;position:relative;">
+										<div style="width:100%;display:block;position:absolute;z-index:5;">
+											<img rsf:id="idealImage" src="../content/images/ideal-high.jpg" style="width:100%;height:28px;"  alt="ideal coloring image" />
+										</div>
+
+										<!-- For correct spacing there are 2 sets of radio buttons. This is the colored one -->
+										<div class="blockChoiceColored">
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+										</div>
+									</div>
+									<div  class="blockChoiceNotColored">
+										<!-- This is the real set of radio buttons -->
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr rsf:id="childRow:">
+					<td style="padding:.2em"  class="questionCell first" >
+						<span class="validFailGlyph">*</span><span class="compulsoryGlyph">*</span> <span rsf:id="childNum" class="label">1</span><span class="label">.</span>
+						<span rsf:id="childText" class="label">Child item text here</span>
+					</td>
+					<td  class="answerCell" nowrap="nowrap" valign="top" align="right" style="height:24px;">
+						<table border="0" cellspacing="0" cellpadding="0" width="auto" class="choiceGroup">
+							<tr>
+								<td align="right" valign="middle" class="exclude NACell itemDoneCheck">
+									<div rsf:id="na-parent:">
+										<label class="blockItemLabelNA"><span class="blockChoice skip"></span><input rsf:id="na-input" type="radio" name="block1" title=""/></label>
+									</div>
+								</td>
+								<td width="70%" align="left" nowrap="nowrap"  style="height:27px;overflow:hidden;" class="last exclude">
+									<div rsf:id="childRadio" />
+									<div style="width:100%;position:relative;">
+										<div style="width:100%;display:block;position:absolute;z-index:5;">
+											<img rsf:id="idealImage" src="../content/images/ideal-high.jpg" style="width:100%;height:28px;"  alt="ideal coloring image" />
+										</div>
+
+										<!-- For correct spacing there are 2 sets of radio buttons. This is the colored one -->
+										<div class="blockChoiceColored">
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+											<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValueColored" type="radio" name="block1" style="" class="blockItemChoice" title="" /></label>
+										</div>
+									</div>
+									<div  class="blockChoiceNotColored">
+										<!-- This is the real set of radio buttons -->
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+										<label  rsf:id="scaleOption:"  class="blockItemLabel"><span class="blockChoice skip"></span><input rsf:id="radioValue" type="radio" name="block1" id="block1" style="" title="" /></label >
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+</table>
+</div>
+
+</div>
+
+</body>
+</html>

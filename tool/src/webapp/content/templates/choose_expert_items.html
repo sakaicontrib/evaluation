@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Expert Items - Choose Items</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+         <script type="text/javascript"> 
+		$(document).ready(function() { 
+			$.facebox.setHeader($(".portletBody .titleHeader"));
+			$('a[rel*=facebox]').facebox();
+		}); 
+   
+</script> 
+	</head>
+	
+	<body>
+		<div class="portletBody">
+         <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
+		
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+				<li>Message for user here</li>
+			</ul>
+		</div>
+
+		<div class=" messageStepGraphic">
+			<div class=" first-noncur-step"> 
+				<span rsf:id="expert-items" class="item">Expert Items:</span>
+			</div>
+			<div class=" med-noncur-step">
+				<span>
+					<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a>
+				</span>
+			</div>
+			<div class=" med-noncur-step">
+				<span>
+					<a rsf:id="choose-objective-2-link" rel="facebox" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a>
+				</span>	
+			</div>	
+			<div class=" last-cur-step">
+				<span rsf:id="choose-items-3" class="expertItemCategoryCurrent">(3) Choose Items</span>
+			</div>	
+		</div>
+		<h4>
+			<span rsf:id="category"  class="highlight">Category</span>: 
+			<span rsf:id="category-current">Current Category</span>
+		</h4>
+		<h4>
+			<span rsf:id="objective"  class="highlight">Objective</span> :
+			<span rsf:id="objective-current">Current Objective</span>
+		</h4>
+		<p class="instruction">
+			<span rsf:id="items" >Items</span> :
+			<span rsf:id="items-instructions">Check the items you want to use in your template and click the Insert button at the bottom</span>
+		</p>	
+		<form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
+		
+		<!-- //gsilver: need to come up with a min-width for this table -->
+		<!-- //gsilver:if this list has no items - omit, as it will not validate -->
+
+        <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->            
+        <p class="act">
+            <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
+            <input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />	         
+        </p>    
+      
+			
+		<table  summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:auto;min-width:50%">
+			<caption rsf:id="expert-items-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
+			<thead>
+				<tr>
+					<th class="attach" scope="col">&nbsp;&nbsp;</th>
+					<th scope="col">Expert Items</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr rsf:id="expert-item-list:">
+					<td>
+						<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
+					</td>
+					<td>
+						<label rsf:id="item-label" for="id1">
+							<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+						</label>
+						<div class="instruction">
+							<span rsf:id="item-scale">Item Scale (the title of the scale and the points in parens)</span>
+							<span rsf:id="item-expert-desc">Expert description (the description of what this item is good for assessing and where it should be used</span>
+						</div>	
+					</td>
+				</tr>
+				<tr rsf:id="expert-item-list:">
+					<td>
+						<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
+					</td>
+					<td>
+						<label rsf:id="item-label" for="id2">
+							<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+						</label>
+						<div class="instruction">
+							<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>
+							<span rsf:id="item-expert-desc" class="itemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
+						</div>	
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p class="act">
+			<input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
+			<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />	
+		</p>	
+		
+		</form>
+		
+		</div>
+	</body>
+</html>

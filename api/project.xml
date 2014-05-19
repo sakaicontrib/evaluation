@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/3.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/3.0.0 http://maven.apache.org/maven-v3_0_0.xsd">
+   <pomVersion>3</pomVersion>
+   <extend>../../master/project.xml</extend>
+   <name>sakai-evaluation-api</name>
+   <groupId>sakaiproject</groupId>
+   <id>sakai-evaluation-api</id>
+   <currentVersion>${sakai.version}</currentVersion>
+   <organization>
+      <name>Sakai Project</name>
+      <url>http://www.sakaiproject.org/</url>
+   </organization>
+   <inceptionYear>2006</inceptionYear>
+
+   <!-- you must deploy your business API to shared or it will be 
+      inaccessible from your tool -->
+   <properties>
+      <deploy.type>jar</deploy.type>
+      <deploy.target>shared</deploy.target>
+   </properties>
+
+   <dependencies>
+
+      <!-- our plugin so we can run maven from this directory for testing -->
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai</artifactId>
+         <version>${sakai.plugin.version}</version>
+         <type>plugin</type>
+      </dependency>
+
+      <!-- our tool internal dependencies (none for api) -->
+
+      <!-- Apache commons dependencies -->
+      <dependency>
+         <groupId>commons-logging</groupId>
+         <artifactId>commons-logging</artifactId>
+         <version>1.0.4</version>
+      </dependency>
+
+      <!-- sakai dependencies -->
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-entity-api</artifactId>
+         <version>${sakai.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-entitybroker-api</artifactId>
+         <version>${sakai.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-scheduler-api</artifactId>
+         <version>${sakai.version}</version>
+      </dependency>
+
+      <!-- Quartz scheduling -->
+      <dependency>
+         <groupId>quartz</groupId>
+         <artifactId>quartz</artifactId>
+         <version>1.5.2</version>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <sourceDirectory>src/java</sourceDirectory>
+      <resources>
+         <resource>
+            <directory>src/java</directory>
+            <includes>
+               <include>**/*.xml</include>
+            </includes>
+         </resource>
+      </resources>
+   </build>
+
+</project>
+

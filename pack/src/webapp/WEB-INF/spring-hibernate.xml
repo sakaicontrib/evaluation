@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+    <!-- define the list of HBM mapping files -->
+    <bean id="evaluation.hbmMappingList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignUser.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTags.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTagsMeta.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalTranslation.hbm.xml</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- create a DAO bean, use the hibernate implementation -->
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl" init-method="init">
+        <property name="sessionFactory" 
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+        <property name="persistentClasses">
+            <list>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocUser</value>
+                <value>org.sakaiproject.evaluation.model.EvalAnswer</value>
+                <value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
+                <value>org.sakaiproject.evaluation.model.EvalAssignUser</value>
+                <value>org.sakaiproject.evaluation.model.EvalConfig</value>
+                <value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
+                <value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
+                <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>
+                <value>org.sakaiproject.evaluation.model.EvalItem</value>
+                <value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalLock</value>
+                <value>org.sakaiproject.evaluation.model.EvalResponse</value>
+                <value>org.sakaiproject.evaluation.model.EvalScale</value>
+                <value>org.sakaiproject.evaluation.model.EvalTags</value>
+                <value>org.sakaiproject.evaluation.model.EvalTagsMeta</value>
+                <value>org.sakaiproject.evaluation.model.EvalTemplate</value>
+                <value>org.sakaiproject.evaluation.model.EvalTemplateItem</value>
+                <value>org.sakaiproject.evaluation.model.EvalTranslation</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- create a data preloading bean which will be used by the data preloader -->
+    <bean id="org.sakaiproject.evaluation.dao.PreloadData"
+        class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    </bean>
+
+    <!-- handles the adhoc user/group data saving/retrieval -->
+    <bean id="org.sakaiproject.evaluation.dao.EvalAdhocSupport"
+        class="org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+
+    <!-- handles api based retrieval of application settings,
+        this is in here because adhoc-dao-support needs it -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
+        class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="externalLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+    </bean>
+
+    <!-- provides the invoker access to the dao -->
+    <bean id="org.sakaiproject.evaluation.dao.EvalDaoInvoker"
+        class="org.sakaiproject.evaluation.dao.EvalDaoInvokerImpl">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+    </bean>
+
+    <!-- beans for handling transactional access to all services -->
+
+    <!-- a general transaction interceptor for the logic beans -->
+    <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
+        class="org.springframework.transaction.interceptor.TransactionInterceptor">
+      <property name="transactionManager" 
+        ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+      <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="can*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="check*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+                <!-- <prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop> -->
+            </props>
+        </property>
+    </bean>
+
+    <!-- bean to wrap DAO and all the logic beans inside the transaction interceptor -->
+    <bean
+        class="org.sakaiproject.genericdao.springutil.CurrentClassLoaderBeanNameAutoProxyCreator">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy" />
+            </list>
+        </property>
+        <property name="beanNames">
+            <list>
+                <value>org.sakaiproject.evaluation.dao.EvaluationDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
+                <value>org.sakaiproject.evaluation.logic.Eval*</value>
+                <value>org.sakaiproject.evaluation.beans.Eval*</value>
+                <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>

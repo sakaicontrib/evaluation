@@ -1,0 +1,63 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=controlemailtemplates.page.title">Email Templates Control</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+		<div class="portletBody">
+
+           <div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+			<ul class="breadCrumb"  style="clear:both;height:1.5em">
+				<li  style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+				<li  style="float:left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+				<li rsf:id="msg=controlemailtemplates.page.title" class="lastCrumb"  style="float:left">Email Templates</li>
+			</ul>
+
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+
+			<h3>
+				<span rsf:id="msg=controlemailtemplates.page.title">Control Email Templates</span>
+			</h3>	
+
+            <div rsf:id="showSwitch:" style="text-align: right">
+                <a rsf:id="showDefaultsLink" href="control_email_templates.html">Show Default Templates</a> |
+                <a rsf:id="showOthersLink" href="control_email_templates.html">Show Other Templates</a>
+                &nbsp;
+            </div>
+
+			<p class="instruction" rsf:id="msg=controlemailtemplates.instructions">A blurb here about this list, underscoring default templates</p>
+			<ol class="scaleOuterList">
+				<li rsf:id="templatesList:" class="scaleOuterListLi">
+					<div class="scaleTitleLine">
+						<span rsf:id="template_number" class="scaleTitleLineNum">#</span>
+						<div rsf:id="template_title" class="scaleTitle">Template title</div>
+						<div class="itemAction">
+							<a rsf:id="modify_link" href="modify_email.html">Modify</a><span rsf:id="modify_link_disabled" />
+                            &nbsp;
+                            <form rsf:id="removeForm" method="post" action="control_email_templates.html" class="inlineForm">
+							   <input rsf:id="removeCommand" type="submit" value="remove" class="makeLink" />
+                            </form>
+                            <span rsf:id="remove_link_disabled" />
+						</div>	
+					</div>
+					<div rsf:id="template_subject" style="font-weight:bold;">Subject: Email Subject</div>
+                    <div rsf:id="template_text">Email Text goes here</div>
+                    <br/><br/>
+				</li>
+			</ol>
+            <span rsf:id="templatesList_none" style="font-style: italic;" />
+
+		</div>
+	</body>
+</html>

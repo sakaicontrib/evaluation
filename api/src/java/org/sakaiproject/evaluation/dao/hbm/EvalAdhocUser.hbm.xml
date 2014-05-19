@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAdhocUser" table="EVAL_ADHOC_USER" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- must be unique, cannot be changed -->
+        <property name="email" type="java.lang.String">
+            <column name="EMAIL" length="255" unique="true" not-null="true" />
+        </property>
+        <property name="type" type="java.lang.String" index="eval_ahuser_type">
+            <column name="USER_TYPE" length="255" />
+        </property>
+        <!-- must be unique -->
+        <property name="username" type="java.lang.String">
+            <column name="USERNAME" length="255" unique="true" not-null="false" />
+        </property>
+        <property name="displayName" type="java.lang.String">
+            <column name="DISPLAY_NAME" length="255" />
+        </property>
+    </class>
+</hibernate-mapping>

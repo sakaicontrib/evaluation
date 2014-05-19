@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/3.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/3.0.0 http://maven.apache.org/maven-v3_0_0.xsd">
+   <pomVersion>3</pomVersion>
+   <extend>../../master/project.xml</extend>
+   <name>Sakai Evaluation Pack</name>
+   <groupId>sakaiproject</groupId>
+   <id>sakai-evaluation-pack</id>
+   <currentVersion>${sakai.version}</currentVersion>
+   <organization>
+      <name>Sakai Project</name>
+      <url>http://www.sakaiproject.org/</url>
+   </organization>
+   <inceptionYear>2006</inceptionYear>
+
+   <!-- you must deploy your pack to components -->
+   <properties>
+      <deploy.type>components</deploy.type>
+   </properties>
+
+   <!-- the components pack should include your dao and logic impl 
+      in the war bundle and the components.xml file 
+      (which is basically a spring-config file with a special name -->
+   <dependencies>
+
+      <!-- our plugin so we can run maven from this directory for testing -->
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai</artifactId>
+         <version>${sakai.plugin.version}</version>
+         <type>plugin</type>
+      </dependency>
+
+      <!-- Internal dependencies -->
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-evaluation-impl</artifactId>
+         <version>${sakai.version}</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+      <!-- for processing text templates -->
+      <dependency>
+         <groupId>org.freemarker</groupId>
+         <artifactId>freemarker</artifactId>
+         <version>2.3.10</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+      <dependency>
+         <groupId>velocity</groupId>
+         <artifactId>velocity-dep</artifactId>
+         <version>1.5-beta2</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+      <!-- sakai dependencies -->
+      <dependency>
+         <groupId>sakaiproject</groupId>
+         <artifactId>sakai-util</artifactId>
+         <version>${sakai.version}</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+      <!-- generic DAO -->
+      <dependency>
+         <groupId>generic-dao</groupId>
+         <artifactId>generic-dao</artifactId>
+         <version>0.9.8</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <sourceDirectory>src/java</sourceDirectory>
+      <resources>
+         <resource>
+            <directory>src/java</directory>
+            <includes>
+               <include>**/*.xml</include>
+            </includes>
+         </resource>
+      </resources>
+   </build>
+
+</project>
