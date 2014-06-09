@@ -1429,7 +1429,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 DetachedCriteria dc = DetachedCriteria.forClass(EvalItem.class).add(
                         Restrictions.eq("locked", Boolean.TRUE)).add(Restrictions.eq("scale.id", scale.getId()))
                         .setProjection(Projections.rowCount());
-                if (((Integer) getHibernateTemplate().findByCriteria(dc).get(0)).intValue() > 0) {
+                if (((Long) getHibernateTemplate().findByCriteria(dc).get(0)).intValue() > 0) {
                     // this is locked by something, we cannot unlock it
                     log.info("Cannot unlock scale (" + scale.getId() + "), it is locked elsewhere");
                     return false;

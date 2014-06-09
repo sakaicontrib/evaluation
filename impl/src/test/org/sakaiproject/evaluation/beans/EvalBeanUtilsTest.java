@@ -26,6 +26,10 @@ public class EvalBeanUtilsTest extends BaseTestEvalLogic {
 
    protected EvalBeanUtils evalBeanUtils;
    protected EvalSettings settings;
+   
+   public EvalBeanUtilsTest() {
+   	
+   }
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
