@@ -341,6 +341,7 @@
             <version>2.0.6</version>
             <scope>test</scope>
         </dependency>
+        -->
  
         <dependency>
             <groupId>hsqldb</groupId>
@@ -348,7 +349,13 @@
             <version>1.8.0.7</version>
             <scope>test</scope>
         </dependency>
-
+		
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
+<!--
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -420,7 +427,7 @@
         <sourceDirectory>src/java</sourceDirectory>
 
         <!-- unit testing: NEED TO BE BROUGHT UP TO DATE -->
-        <!--
+        
         <testSourceDirectory>src/test</testSourceDirectory>
         <testResources>
             <testResource>
@@ -438,7 +445,7 @@
                 </includes>
             </testResource>
         </testResources>
-        -->
+        
         <plugins>
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
