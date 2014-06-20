@@ -318,14 +318,31 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
              * Area 1. Selection GUI for Hierarchy Nodes and Evaluation Groups
              */
             if (showHierarchy) {
+            	//need to determine who can see what nodes in the hierarchy:
+            	//null means the user is an admin, empty means the user has no access
+            	Set<String> parentNodes = null;
+            	Set<String> accessNodes = null;
+            	if(!commonLogic.isUserAdmin(currentUserId)){
+            		parentNodes = new HashSet<String>();
+            		accessNodes = new HashSet<String>();
+            		Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesForUserPerm(currentUserId, EvalConstants.HIERARCHY_PERM_ASSIGN_EVALUATION);
+            		for(EvalHierarchyNode node : nodes){
+            			accessNodes.add(node.id);
+            			accessNodes.addAll(node.childNodeIds);
+            			parentNodes.add(node.id);
+            			parentNodes.addAll(node.parentNodeIds);
+            		}
+            	}
+            	
+            	
                 UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
 
                 addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
-                        "hierarchy-assignment-area", "hide-button", "show-button", true);
+                        "hierarchy-assignment-area", "hide-button", "show-button", evalViewParams.expanded == null);
 
                 hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:",
                         evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
-                        hierNodesLabels, hierNodesValues);
+                        hierNodesLabels, hierNodesValues, evalViewParams, accessNodes, parentNodes);
             }
             
             /*
@@ -622,7 +639,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         for (EvalGroup evalGroup: evalGroups) {
             evalGroupIDs.add(evalGroup.evalGroupId);
         }
-
+/*
         // 2. All the Evaluation Group IDs that are assigned to Hierarchy Nodes
         EvalHierarchyNode rootNode = hierarchyLogic.getRootLevelNode();
         String[] rootNodeChildren = rootNode.childNodeIds.toArray(new String[] {});
@@ -636,7 +653,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             // 3. Remove all EvalGroup IDs that have been assigned to 
             evalGroupIDs.removeAll(hierAssignedGroupIDs);
         }
-
+*/
 
         return evalGroupIDs;
     }

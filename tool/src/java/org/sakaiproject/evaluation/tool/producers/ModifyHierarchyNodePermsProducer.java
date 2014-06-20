@@ -211,7 +211,7 @@ public class ModifyHierarchyNodePermsProducer extends EvalCommonProducer impleme
 		UICommand addButton = UICommand.make(newUserBranch, "add-user-button", UIMessage.make("modifynodeperms.add.user.button"), actionBean + "addUser");
 		addButton.parameters.add(new UIELBinding(actionBean + "selectedUserIndex", newUserConstant));
 		
-		UIInternalLink.make(tofill, "return-link", new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "return-link", new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
 		
 		// init js
 		Object[] initParams = new Object[] {
