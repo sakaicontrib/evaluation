@@ -243,14 +243,14 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         List<String> hierNodesLabels = new ArrayList<String>();
         List<String> hierNodesValues = new ArrayList<String>();
         UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder",
-                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedHierarchyNodeIDs", new String[] {});
+                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedHierarchyNodeIDs", evalViewParams.selectedHierarchyNodeIDs);
         String hierNodesSelectID = hierarchyNodesSelect.getFullID();
 
         // Things for building the UISelect of Eval Group Checkboxes
         List<String> evalGroupsLabels = new ArrayList<String>();
         List<String> evalGroupsValues = new ArrayList<String>();
         UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder",
-                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedGroupIDs", new String[] {});
+                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedGroupIDs",evalViewParams.selectedGroupIDs == null ? new String[]{} : evalViewParams.selectedGroupIDs);
         String evalGroupsSelectID = evalGroupsSelect.getFullID();
 
         /*
@@ -337,12 +337,14 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             	
                 UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
 
-                addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
-                        "hierarchy-assignment-area", "hide-button", "show-button", evalViewParams.expanded == null);
-
                 hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:",
                         evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
                         hierNodesLabels, hierNodesValues, evalViewParams, accessNodes, parentNodes);
+                
+                addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
+                        "hierarchy-assignment-area", "hide-button", "show-button", evalViewParams.expanded == null);
+
+                form.parameters.add( new UIELBinding(actionBean + "expanded", evalViewParams.expanded) );
             }
             
             /*

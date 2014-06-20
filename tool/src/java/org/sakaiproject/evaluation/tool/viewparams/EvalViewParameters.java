@@ -67,6 +67,7 @@ public class EvalViewParameters extends BaseViewParameters {
    public int adminSearchPage = 0;
    
    public String[] expanded = null;
+   public String nodeClicked = null;
    
    public EvalViewParameters() { }
 
