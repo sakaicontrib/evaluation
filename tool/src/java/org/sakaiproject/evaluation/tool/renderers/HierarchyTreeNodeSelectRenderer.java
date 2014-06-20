@@ -16,15 +16,21 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer;
+import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
 import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -87,7 +93,7 @@ public class HierarchyTreeNodeSelectRenderer {
    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, 
             String groupsSelectID, String hierNodesSelectID,
             List<String> evalGroupLabels, List<String> evalGroupValues,
-            List<String> hierNodeLabels, List<String> hierNodeValues) {
+            List<String> hierNodeLabels, List<String> hierNodeValues, EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds) {
        this.groupsSelectID = groupsSelectID;
        this.hierNodesSelectID = hierNodesSelectID;
        this.evalGroupLabels = evalGroupLabels;
@@ -102,7 +108,7 @@ public class HierarchyTreeNodeSelectRenderer {
 
        EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
 
-       renderSelectHierarchyNode(joint, root, 0);
+       renderSelectHierarchyNode(joint, root, 0, evalViewParams, accessNodeIds, parentNodeIds);
     }
     
 
@@ -113,20 +119,22 @@ public class HierarchyTreeNodeSelectRenderer {
     * @param node
     * @param level
     */
-   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level ) {
-       renderRow(tofill, "hierarchy-level-row:", level, node);
-       
-       Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
-       for (String groupID: groupIDs) {
-           EvalGroup evalGroupObj = commonLogic.makeEvalGroupObject(groupID);
-           renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj);
+   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds) {
+	   //a null "accessNodeIds varaible means the user is admin
+       if(parentNodeIds == null || parentNodeIds.contains(node.id) || accessNodeIds.contains(node.id)){
+    	   boolean expanded = renderRow(tofill, "hierarchy-level-row:", level, node, evalViewParams, accessNodeIds);
+    	   Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
+    	   for (String groupID: groupIDs) {
+    		   EvalGroup evalGroupObj = commonLogic.makeEvalGroupObject(groupID);
+    		   renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj, evalViewParams, accessNodeIds);
+    	   }
+    	   if(expanded){
+    		   for (String childNodeID: node.directChildNodeIds) {
+    			   EvalHierarchyNode childHierNode = hierarchyLogic.getNodeById(childNodeID);
+    			   renderSelectHierarchyNode(tofill, childHierNode, level+1, evalViewParams, accessNodeIds, parentNodeIds);
+    		   }
+    	   }
        }
-       
-       for (String childNodeID: node.directChildNodeIds) {
-           EvalHierarchyNode childHierNode = hierarchyLogic.getNodeById(childNodeID);
-           renderSelectHierarchyNode(tofill, childHierNode, level+1);
-       }
-       
     }
     
    /**
@@ -138,7 +146,8 @@ public class HierarchyTreeNodeSelectRenderer {
     * @param level
     * @param toRender
     */
-   private void renderRow(UIContainer parent, String clientID, int level, Object toRender) {
+   private boolean renderRow(UIContainer parent, String clientID, int level, Object toRender, EvalViewParameters evalViewParams, Set<String> accessNodeIds) {
+	   boolean expanded = false;
         UIBranchContainer tableRow = UIBranchContainer.make(parent, "hierarchy-level-row:");
         
         UIOutput.make(tableRow, "node-select-cell");
@@ -150,8 +159,45 @@ public class HierarchyTreeNodeSelectRenderer {
           
             hierNodeLabels.add(title);
             hierNodeValues.add(evalHierNode.id);
-            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
-                hierNodesSelectID, hierNodeLabels.size()-1);
+            if(accessNodeIds == null || accessNodeIds.contains(evalHierNode.id)){
+            	UISelectChoice.make(tableRow, "select-checkbox",
+            			hierNodesSelectID, hierNodeLabels.size()-1);
+            }
+            
+            String[] original = null;
+            String[] expandedParamArr = new String[1];
+            String[] collapseParamArr = new String[]{};
+            int collapseI = 0;
+            if(evalViewParams.expanded != null && evalViewParams.expanded.length > 0){
+            	original = Arrays.copyOf(evalViewParams.expanded, evalViewParams.expanded.length);
+            	collapseParamArr = new String[evalViewParams.expanded.length];
+            	for(int i = 0; i < evalViewParams.expanded.length; i++){
+            		if(evalViewParams != null && evalViewParams.expanded[i] != null && evalHierNode != null
+            				&& evalViewParams.expanded[i].equals(evalHierNode.id)){
+            			expanded = true;
+            		}else if(evalViewParams != null && evalViewParams.expanded[i] != null){
+            			collapseParamArr[collapseI] = evalViewParams.expanded[i];
+            			collapseI++;
+            		}
+            	}
+            }
+            
+            if(!expanded){
+            	int newLength = evalViewParams.expanded != null ? evalViewParams.expanded.length + 1 : 1;
+            	//add this node to the parameter so that if the link is clicked, we know that it is expanded
+            	if(newLength > 1){
+            		expandedParamArr = Arrays.copyOf(evalViewParams.expanded, newLength);
+            	}
+            	expandedParamArr[newLength - 1] = evalHierNode.id;
+            	UIOutput.make(tableRow, "node-collapsed");
+            	evalViewParams.expanded = expandedParamArr;
+            }else{
+            	evalViewParams.expanded = collapseParamArr;
+            	UIOutput.make(tableRow, "node-expanded");
+            }
+            UIInternalLink.make(tableRow, "node-name-link", title, evalViewParams);
+            //now reset this for the next loop
+            evalViewParams.expanded = original;
         }
         else if (toRender instanceof EvalGroup) {
             EvalGroup evalGroup = (EvalGroup) toRender;
@@ -162,11 +208,14 @@ public class HierarchyTreeNodeSelectRenderer {
             
             UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
                 groupsSelectID, evalGroupLabels.size()-1);
+            UIOutput name = UIOutput.make(tableRow, "node-name", title);
         }
         else {
             title = "";
         }
-        UIOutput name = UIOutput.make(tableRow, "node-name", title);
+        UIOutput name = UIOutput.make(tableRow, "node-name-indent");
         name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
+        
+        return expanded;
     }
 }

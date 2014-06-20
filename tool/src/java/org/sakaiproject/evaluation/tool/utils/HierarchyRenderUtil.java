@@ -14,8 +14,12 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +28,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
@@ -88,7 +93,7 @@ public class HierarchyRenderUtil {
      * @param showGroups if true then all the groups are rendered for each node
      * @param showUsers if true then all users are rendered for each node
      */
-    public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers) {
+    public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers, String[] expanded) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
         
         translateTableHeaders(joint);
@@ -98,18 +103,9 @@ public class HierarchyRenderUtil {
 
         // get the root node and the counts of all assigned groups for all nodes
         EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-        String[] allChildrenNodeIds = root.childNodeIds.toArray(new String[root.childNodeIds.size()]);
-        Map<String, Set<String>> groupsNodesMap = hierarchyLogic.getEvalGroupsForNodes(allChildrenNodeIds);
-        // get all nodes at once for use in rendering the hierarchy
-        Set<EvalHierarchyNode> allChildren = hierarchyLogic.getChildNodes(root.id, false);
-        Map<String, EvalHierarchyNode> nodeIdToNode = new HashMap<String, EvalHierarchyNode>();
-        nodeIdToNode.put(root.id, root);
-        for (EvalHierarchyNode node : allChildren) {
-            nodeIdToNode.put(node.id, node);
-        }
-
+        
         //showGroups = true;
-        renderHierarchyNode(joint, root, 0, groupsNodesMap, nodeIdToNode, showGroups, showUsers);
+        renderHierarchyNode(joint, root, 0, new HashMap<String, Set<String>>(), new HashMap<String, EvalHierarchyNode>(), showGroups, showUsers, expanded);
     }
 
     //   private void renderSelectHierarchyGroup(UIContainer tofill, String groupID, int level, Set<String> evalGroupIDs, String clientID) {
@@ -138,7 +134,18 @@ public class HierarchyRenderUtil {
      */
     private void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, 
             Map<String, Set<String>> groupsNodesMap, Map<String, EvalHierarchyNode> nodeIdToNode, 
-            boolean showGroups, boolean showUsers) {
+            boolean showGroups, boolean showUsers, String[] expandedNodes) {
+    	
+    	String[] allChildrenNodeIds = node.directChildNodeIds.toArray(new String[node.directChildNodeIds.size()]);
+        Map<String, Set<String>> groupsNodesMapAdd = hierarchyLogic.getEvalGroupsForNodes(allChildrenNodeIds);
+        groupsNodesMap.putAll(groupsNodesMapAdd);
+        // get all nodes at once for use in rendering the hierarchy
+        Set<EvalHierarchyNode> allChildren = hierarchyLogic.getChildNodes(node.id, true);
+        nodeIdToNode.put(node.id, node);
+        for (EvalHierarchyNode nodeItr : allChildren) {
+            nodeIdToNode.put(nodeItr.id, nodeItr);
+        }
+    	
         String title = node.title != null ? node.title : "Null Title?";
         UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
 
@@ -159,9 +166,42 @@ public class HierarchyRenderUtil {
         // not rendering the node-select cell right now
         //UIOutput.make(tableRow, "node-select-cell");
 
-        UIOutput name = UIOutput.make(tableRow, "node-name", title);
-        name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
+        UIOutput nameTr = UIOutput.make(tableRow, "node-name-indent");
+        nameTr.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
 
+        boolean expanded = false;
+        String[] expandedParamArr = new String[1];
+        String[] collapseParamArr = new String[]{};
+        int collapseI = 0;
+        if(expandedNodes != null && expandedNodes.length > 0){
+        	collapseParamArr = new String[expandedNodes.length];
+        	for(int i = 0; i < expandedNodes.length; i++){
+        		if(expandedNodes[i].equals(node.id)){
+        			expanded = true;
+        		}else{
+        			collapseParamArr[collapseI] = expandedNodes[i];
+        			collapseI++;
+        		}
+        	}
+        }
+        
+        if(!expanded){
+        	int newLength = expandedNodes != null ? expandedNodes.length + 1 : 1;
+        	//add this node to the parameter so that if the link is clicked, we know that it is expanded
+        	if(newLength > 1){
+        		expandedParamArr = Arrays.copyOf(expandedNodes, newLength);
+        	}
+        	expandedParamArr[newLength - 1] = node.id;
+        	UIOutput.make(tableRow, "node-collapsed");
+        }else{
+        	expandedParamArr = Arrays.copyOf(collapseParamArr, collapseParamArr.length - 1);
+        	UIOutput.make(tableRow, "node-expanded");
+        }
+        
+        UIInternalLink.make(tableRow, "node-name-link", title,
+                new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, node.id, expandedParamArr));
+        
+        
         UIOutput.make(tableRow, "nodes-cell");
         UIOutput.make(tableRow, "groups-cell");
         UIOutput.make(tableRow, "users-cell");
@@ -170,16 +210,21 @@ public class HierarchyRenderUtil {
         int numberOfAssignedGroups = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id).size() : 0;
         if (numberOfAssignedGroups <= 0) {
             UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
-                    new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
+                    new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true, expandedNodes));
         }
         UIInternalLink.make(tableRow, "modify-node-link", UIMessage.make("controlhierarchy.modify"),
-                new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
+                new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false, expandedNodes));
         // If the node has children, render the number of children, but no remove button.
-        int childrenNodesSize = node.directChildNodeIds.size();
+        int childrenNodesSize = 0;
+        for (String childId : node.directChildNodeIds) {
+            if (nodeIdToNode.containsKey(childId)) {
+            	childrenNodesSize++;
+            }
+        }
         UIOutput.make(tableRow, "number-children", childrenNodesSize + "");
         if (childrenNodesSize <= 0) { 
             // no children nodes
-            if (numberOfAssignedGroups <= 0) {
+            if (numberOfAssignedGroups <= 0 && node.directChildNodeIds.size() <= 0) {
                 // remove node if no groups are assigned
                 UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
                 UICommand removeButton = UICommand.make(removeForm, "remove-node-button", UIMessage.make("controlhierarchy.remove"));
@@ -188,13 +233,13 @@ public class HierarchyRenderUtil {
 
             // assigned groups
             UIInternalLink.make(tableRow, "assign-groups-link", UIMessage.make("controlhierarchy.assigngroups"), 
-                    new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
+                    new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id, expandedNodes));
             UIOutput.make(tableRow, "assign-group-count", numberOfAssignedGroups+"");
         }
 
         // assigned users (permissions)
         UIInternalLink.make(tableRow, "assign-users-link", UIMessage.make("controlhierarchy.assignusers"), 
-                new HierarchyNodeParameters(ModifyHierarchyNodePermsProducer.VIEW_ID, node.id));
+                new HierarchyNodeParameters(ModifyHierarchyNodePermsProducer.VIEW_ID, node.id, expandedNodes));
 
         // if show users is on then we show the full list of all users with perms in this node
         if (showUsers && numberOfAssignedGroups > 0) {
@@ -213,12 +258,14 @@ public class HierarchyRenderUtil {
             }
         }
 
-        // now render all direct children
-        for (String childId : node.directChildNodeIds) {
-            EvalHierarchyNode childNode = nodeIdToNode.get(childId);
-            if (childNode != null) {
-                renderHierarchyNode(tofill, childNode, level+1, groupsNodesMap, nodeIdToNode, showGroups, showUsers);
-            }
+//        // now render all direct children
+        if(expanded){
+        	for (String childId : node.directChildNodeIds) {
+        		EvalHierarchyNode childNode = nodeIdToNode.get(childId);
+        		if (childNode != null) {
+        			renderHierarchyNode(tofill, childNode, level+1, groupsNodesMap, nodeIdToNode, showGroups, showUsers, expandedNodes);
+        		}
+        	}
         }
     }
     

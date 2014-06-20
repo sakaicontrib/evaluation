@@ -142,7 +142,7 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
         UICommand.make(form, "save-groups-button", UIMessage.make("hierarchynode.groups.save"),
         "hierNodeGroupsLocator.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("hierarchynode.groups.cancel"),
-                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+                new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
     }
 
     public ViewParameters getViewParameters() {
