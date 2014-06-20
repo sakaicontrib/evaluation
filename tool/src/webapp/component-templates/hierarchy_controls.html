@@ -25,7 +25,29 @@
 <body>
 
 <div rsf:id="hierarchy_table_treeview:">
+	    <script type="text/javascript">
+    	function clickHierarchyNode(link){
+    		link.href='#';
+    		document.forms[0].action='';
+			document.forms[0].method='get';
+			$("input[type='hidden'][name='selectedHierarchyNodeIDs']").remove();
+			$("input[type='hidden'][name='selectedGroupIDs']").remove();
+			$("input[name='hierarchyNodeSelectHolder-selection']").attr("name","selectedHierarchyNodeIDs")
+			$("input[name='evalGroupSelectHolder-selection']").attr("name","selectedGroupIDs")
+    		document.getElementById('nodeClicked').value=link.getAttribute("nodeId");
+    		document.forms[0].submit();
+    	}
+    	function clickHierarchyCheckbox(checkbox){
+    		var parentClass = "parentNode" + checkbox.getAttribute("nodeId");
+    		if(checkbox.checked){
+    			$("." + parentClass).attr('disabled', 'disabled');
+    		}else{
+    			$("." + parentClass).removeAttr('disabled');
+    		}
+    	}
+    </script>
 	<div rsf:id="selectColumnCheckboxes"/>
+	<input id="nodeClicked" name="nodeClicked" type="hidden"/>
     <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
         <thead>
             <tr>
@@ -46,10 +68,12 @@
                 <td rsf:id="row-data" style="text-indent:0em" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
                 <td rsf:id="node-select-cell" width="10%">
                     <input rsf:id="select-checkbox" class="evalgroupselect" type="checkbox" />
+                    <input rsf:id="select-checkbox-hide" class="evalgroupselect" type="checkbox" onchange="clickHierarchyCheckbox(this);" />
                 </td>
                 <td rsf:id="node-name-indent">
                 	<img rsf:id="node-collapsed" src="../content/images/tipsy-east.gif"/>
                 	<img rsf:id="node-expanded" src="../content/images/tipsy-south.gif"/>
+                   	<a rsf:id="node-name-link-submit" nodeId="1234" href="#" onclick="clickHierarchyNode(this);">- Institution Level</a>
                    	<a rsf:id="node-name-link" href="">- Institution Level</a>
                    	<span rsf:id="node-name"/>
                 </td>
