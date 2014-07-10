@@ -116,19 +116,24 @@ var evalTemplateOrder = (function(){
 
     //Internal functions
     privateInitDropDownForRow = function(_this){
-        var oldPosition =  _this.options[_this.selectedIndex].value,
+        log.debug("Selected Index %s",_this.selectedIndex);
+        log.debug(_this.options);
+        if (_this.selectedIndex == -1)
+            return;
+
+        var oldPosition =  parseInt(_this.options[_this.selectedIndex].value);
         that = $(_this);
         //First unbind onChange event
         that.unbind("change");
         that.bind("change", function(){
-            var newPosition = this.options[this.selectedIndex].value -1,
+            var newPosition = parseInt(this.options[this.selectedIndex].value) -1,
             diff = newPosition - oldPosition,
             moveUp = newPosition < oldPosition,
             allRows = $("#itemList > div.itemRow").not('.ui-sortable-helper'),
             thisRow = $(this).parents("div.itemRow"),
             clone = evalTemplateUtils.vars.isIE ? thisRow.clone(false) : thisRow.clone(true);
             clone.hide();
-            log.info("Moving row %i from %i to position: %i", thisRow.find("input[name*=item-select-selection-fossil]").val(), oldPosition, newPosition + 1);
+            log.info("Moving row %s from %i to position: %i", thisRow.find("input[name*=item-select-selection-fossil]").val(), oldPosition, newPosition + 1);
             thisRow.fadeOut(0, function(){
                 if ( moveUp ){
                     if( (diff === 2 || diff === -2) && newPosition !== 0 ){      //if row to move to is immediatley above this row
@@ -142,6 +147,7 @@ var evalTemplateOrder = (function(){
                     clone.insertAfter(allRows.eq(newPosition));
                 }
 
+                thisRow.remove();
                 clone.fadeIn(0, function(){
                             evalTemplateSort.updateLabelling(false);
                             initDropDowns();
@@ -155,7 +161,6 @@ var evalTemplateOrder = (function(){
                             }
                         })
                         .effect("highlight", "normal");
-                thisRow.remove();
             });
         });
     };
