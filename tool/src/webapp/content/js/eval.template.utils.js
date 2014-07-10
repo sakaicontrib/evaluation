@@ -18,6 +18,7 @@
 var evalTemplateUtils = (function() {
 
     //Configurable private variables
+    //Switch this to true to see debug messages
     var canDebug = false,
             canDebugLevels = "info,debug,warn,error", //Comma delimitated set of the debug levels to show. Select from info,debug,warn,error
             entityTemplateItemURL = "/direct/eval-templateitem/:ID:.xml",
@@ -105,28 +106,28 @@ var evalTemplateUtils = (function() {
             // Debugging. Acts on Firebug console methods described at http://getfirebug.com/console.html
             if (canDebug && typeof console !== "undefined") {
                 if (typeof console.info !== "undefined" && canDebugLevels.search(/info/i) !== -1) {
-                    evalTemplateUtils.debug.info = console.info;
+                    evalTemplateUtils.debug.info = console.info.bind(console);
                 }
                 if (typeof console.debug !== "undefined" && canDebugLevels.search(/debug/i) !== -1) {
-                    evalTemplateUtils.debug.debug = console.debug;
+                    evalTemplateUtils.debug.debug = console.debug.bind(console);
                 }
                 if (typeof console.warn !== "undefined" && canDebugLevels.search(/warn/i) !== -1) {
-                    evalTemplateUtils.debug.warn = console.warn;
+                    evalTemplateUtils.debug.warn = console.warn.bind(console);
                 }
                 if (typeof console.error !== "undefined" && canDebugLevels.search(/error/i) !== -1) {
-                    evalTemplateUtils.debug.error = console.error;
+                    evalTemplateUtils.debug.error = console.error.bind(console);
                 }
                 if (typeof console.group !== "undefined") {
-                    evalTemplateUtils.debug.group = console.group;
+                    evalTemplateUtils.debug.group = console.group.bind(console);
                 }
                 if (typeof console.groupEnd !== "undefined") {
-                    evalTemplateUtils.debug.groupEnd = console.groupEnd;
+                    evalTemplateUtils.debug.groupEnd = console.groupEnd.bind(console);
                 }
                 if (typeof console.time !== "undefined") {
-                    evalTemplateUtils.debug.time = console.time;
+                    evalTemplateUtils.debug.time = console.time.bind(console);
                 }
                 if (typeof console.timeEnd !== "undefined") {
-                    evalTemplateUtils.debug.timeEnd = console.timeEnd;
+                    evalTemplateUtils.debug.timeEnd = console.timeEnd.bind(console);
                 }
             }
             //browser check
