@@ -807,7 +807,7 @@ label.blockItemLabel:hover {
 
 .itemDoneCheckShow {
   background: url(../images/tick.png) center left no-repeat;
-  display: inline-block;
+  display: table-cell;
   height: 16px;
   width: 16px;
 }
