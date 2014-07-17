@@ -306,12 +306,6 @@
             <version>1.0</version>
         </dependency>
 
-        <!-- Quartz dependencies -->
-        <dependency>
-            <groupId>quartz</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
-
         <!-- processing text templates -->
         <dependency>
             <groupId>org.freemarker</groupId>
