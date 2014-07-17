@@ -509,41 +509,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <!-- We need this temporarily to pick up the snapshot jar for the IE 6
-            MA crashing problem. -->
-        <repository>
-            <id>caret-maven2-dev</id>
-            <name>Caret Maven 2 Dev Repo</name>
-            <layout>default</layout>
-            <url>https://www2.caret.cam.ac.uk/maven2dev</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sakai-maven2-snapshots</id>
-            <name>Sakai Maven Repo</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>default</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <build>
         <plugins>
             <plugin>
