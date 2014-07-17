@@ -145,13 +145,6 @@
 			<artifactId>entitybroker-api</artifactId>
 		</dependency>
 
-
-        <!-- Quartz scheduling -->
-        <dependency>
-            <groupId>quartz</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
