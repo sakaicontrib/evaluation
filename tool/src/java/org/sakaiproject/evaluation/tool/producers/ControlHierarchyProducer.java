@@ -24,12 +24,15 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 /*
  * This producer renders GUI for viewing the Eval Hierarchy as well as 
  * modifying the hierarchy.  It can only be viewed by Sakai System Administrators.
  */
-public class ControlHierarchyProducer extends EvalCommonProducer {
+public class ControlHierarchyProducer extends EvalCommonProducer implements ViewParamsReporter{
 
     public static final String VIEW_ID = "control_hierarchy";
     public String getViewID() {
@@ -66,13 +69,19 @@ public class ControlHierarchyProducer extends EvalCommonProducer {
          */
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
+        String[] expanded = null;
+        if(viewparams instanceof HierarchyNodeParameters){
+        	expanded = ((HierarchyNodeParameters) viewparams).expanded;
+        }
         // start rendering the hierarchy controls
-        hierUtil.renderModifyHierarchyTree(tofill, "hierarchy-tree:", false, false, false);
+        hierUtil.renderModifyHierarchyTree(tofill, "hierarchy-tree:", false, false, false, expanded);
 
         // done rendering the hierarchy controls
         UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
                 new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
     }
-
+    public ViewParameters getViewParameters() {
+        return new HierarchyNodeParameters();
+    }
 }

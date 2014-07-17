@@ -23,9 +23,10 @@ public class ModifyHierarchyNodeParameters extends HierarchyNodeParameters {
     public ModifyHierarchyNodeParameters() {
     }
     
-    public ModifyHierarchyNodeParameters(String viewID, String nodeId, boolean addingchild) {
+    public ModifyHierarchyNodeParameters(String viewID, String nodeId, boolean addingchild, String[] expanded) {
         this.viewID = viewID;
         this.nodeId = nodeId;
         this.addingChild = addingchild;
+        this.expanded = expanded;
     }
 }

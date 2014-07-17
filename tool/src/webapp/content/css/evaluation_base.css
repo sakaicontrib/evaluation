@@ -2082,3 +2082,14 @@ table.tablesorter th.header.headerSortDown {
 .evaluation .content .response-list .selected:hover span, .evaluation .content .response-list .selected:focus span {
   color: #ffffff;
 }
+table tr.node td.node-1 {
+  background: url(../images/tipsy-east.gif) 1.4em .5em no-repeat;
+}
+
+table tr.node td.node-2 {
+  background: url(../images/tipsy-east.gif) 3.3em .5em no-repeat;
+}
+
+table tr.node td.node-3 {
+  background: url(../images/tipsy-east.gif) 5.4em .5em no-repeat;
+}

@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
+import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -113,7 +114,7 @@ public class ModifyHierarchyNodeProducer extends EvalCommonProducer implements V
         UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
 
         UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocator.saveAll");
-        UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+        UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
     }
 
     public ViewParameters getViewParameters() {
