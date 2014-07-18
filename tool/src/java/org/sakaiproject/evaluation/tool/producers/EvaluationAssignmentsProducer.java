@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -152,6 +154,17 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
            UIMessage.make(tofill, "title-assistants", "evaluationassignments.groups.assistants.header");
          }
 
+         Collections.sort(assignGroups, new Comparator<Object>() {
+			 @Override
+			 public int compare(Object arg0, Object arg1) {
+			 	EvalAssignGroup ag1 = (EvalAssignGroup) arg0;
+				EvalAssignGroup ag2 = (EvalAssignGroup) arg1;
+				EvalGroup g1 = commonLogic.makeEvalGroupObject(ag1.getEvalGroupId());
+				EvalGroup g2 = commonLogic.makeEvalGroupObject(ag2.getEvalGroupId());
+				return g1.title.compareToIgnoreCase(g2.title);
+			 }
+         	});
+		 
          UIBranchContainer groupsBranch = UIBranchContainer.make(tofill, "showSelectedGroups:");
          for (EvalAssignGroup assignGroup : assignGroups) {
             if (assignGroup.getNodeId() == null) {
