@@ -2092,3 +2092,7 @@ table tr.node td.node-2 {
 table tr.node td.node-3 {
   background: url(../images/tipsy-east.gif) 5.4em .5em no-repeat;
 }
+
+div.options-2 td.last.exclude {
+	width: 50% !important;
+}
