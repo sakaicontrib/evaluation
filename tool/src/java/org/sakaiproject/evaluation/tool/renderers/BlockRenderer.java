@@ -209,6 +209,7 @@ public class BlockRenderer implements ItemRenderer {
         } else {
         	
             UIBranchContainer blockStepped = UIBranchContainer.make(container, "blockStepped:");
+            blockStepped.decorate( new UIStyleDecorator("options-"+optionCount) );
 
             // setup simple variables to make code more clear
             boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) || 
@@ -224,7 +225,7 @@ public class BlockRenderer implements ItemRenderer {
             if (colored) {
                 String ideal = scale.getIdeal();
                 // Get the scale ideal value (none, low, mid, high )
-                if (ideal == null) {
+                if (ideal == null || "*NULL*".equals(ideal)) {
                     // When no ideal is specified then just plain blue for both start and end
                     idealImage = EvalToolConstants.COLORED_IMAGE_URLS[0];
                 } else if (EvalConstants.SCALE_IDEAL_LOW.equals(ideal)) {
