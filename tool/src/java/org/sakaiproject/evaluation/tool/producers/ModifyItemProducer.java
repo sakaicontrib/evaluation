@@ -572,7 +572,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             // hierarchy node selector control
             Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
             if (showHierarchyOptions  && ! isGroupable && ! isGrouped ) {
-                hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
+                // commented out until someone can make this interface more robust
+                //hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
             }
 
             /*

@@ -273,8 +273,9 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             // hierarchy node selector control
             Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
             if (showHierarchyOptions) {
-                hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form,
-                        "hierarchyNodeSelector:", itemPath + ".hierarchyNodeId", null);
+                // commented out until someone can make this interface more robust
+                /* hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form,
+                        "hierarchyNodeSelector:", itemPath + ".hierarchyNodeId", null); */
             }
 
 
