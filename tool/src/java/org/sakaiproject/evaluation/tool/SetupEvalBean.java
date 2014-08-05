@@ -564,14 +564,14 @@ public class SetupEvalBean {
 				// set selection settings for assign group
 				String settingInstructor = assignGroupSelectionSettings.getInstructorSetting(currentGroupId);
 				String settingAssistant = assignGroupSelectionSettings.getAssistantSetting(currentGroupId);
-				if( settingInstructor == null || "".equals(settingInstructor)){
+				if( (settingInstructor == null || "".equals(settingInstructor)) && hasInstructorQuestions){
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, EvalAssignGroup.SELECTION_OPTION_MULTIPLE );
-				}else{
+				}else if (hasInstructorQuestions) {
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, settingInstructor );
 				}
-				if( settingAssistant == null || "".equals(settingAssistant)){
+				if( (settingAssistant == null || "".equals(settingAssistant)) && hasAssistantQuestions){
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_MULTIPLE );
-				}else{
+				}else if (hasAssistantQuestions) {
 					assignGroup.setSelectionOption(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, settingAssistant );
 				}
 				//Save selection settings
