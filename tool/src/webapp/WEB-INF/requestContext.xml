@@ -554,6 +554,7 @@
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="hierarchyNodeSelectorRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
     </bean>
@@ -588,6 +589,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="boundedDynamicListInputEvolver"
             ref="standardDynamicListInputEvolver" />
+        <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="hierarchyNodeSelectorRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
     </bean>
