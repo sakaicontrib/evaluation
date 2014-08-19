@@ -51,6 +51,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -94,6 +95,10 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
         this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
     }
 
+    private TextInputEvolver richTextEvolver;
+    public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
+        this.richTextEvolver = richTextEvolver;
+    }
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
@@ -311,8 +316,8 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             }
 
 
-            UIInput.make(form, "item-text", itemPath + ".item.itemText", null);
-            
+            UIInput itemtext = UIInput.make(form, "item-text:", itemPath + ".item.itemText", null);
+            richTextEvolver.evolveTextInput(itemtext);
 
             // render the items below
             UIMessage.make(form, "items-header", "modifyitem.item.header");

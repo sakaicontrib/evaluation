@@ -25,7 +25,6 @@ var evalTemplateLoaderEvents = (function($) {
 
     _modify_block = function(){
                 var siteId = $('#site-id').text();
-        SakaiProject.fckeditor.initializeEditor("item-text", siteId);
         $.facebox.setHeader(evalTemplateUtils.pages.modify_block_page);
 
 		var baseId = ""; // "blockPage::";
@@ -41,7 +40,7 @@ var evalTemplateLoaderEvents = (function($) {
 			    evalTemplateData.postFCKform('#blockForm', false, 'modify_block', $('#saveBlockAction'));
                 return false;
             }else{
-                evalTemplateData.postFCKform('#blockForm', 'item-text', 'modify_block', $('#saveBlockAction'));
+                evalTemplateData.postFCKform('#blockForm', 'item-text::input', 'modify_block', $('#saveBlockAction'));
                 return false;
             }
 		});
@@ -195,13 +194,12 @@ var evalTemplateLoaderEvents = (function($) {
         //modify_item.html view
         modify_item: function() {
             var siteId = $('#site-id').text();
-            SakaiProject.fckeditor.initializeEditor("item-text", siteId);
             $.facebox.setHeader(evalTemplateUtils.pages.modify_item_page);
             if ($('.act .submit').attr('name').search(/templateBBean.saveTemplateItemToGroupAction/) !== -1) {
                 //proper submit  skip validation - it is not important
             } else if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
                 $('.act .submit').bind('click', function() {
-                    evalTemplateData.postFCKform('#item-form', 'item-text', 'modify_item', $(this));
+                    evalTemplateData.postFCKform('#item-form', 'item-text::input', 'modify_item', $(this));
                     return false;
                 });
             }
@@ -284,13 +282,13 @@ var evalTemplateLoaderEvents = (function($) {
 
                     $(".itemLine2").removeAttr('style');
                     if (count_CheckBoxes_CHECKED > 0){
-                        for (var a in checkBoxes_CHECKED_array) {
+                        for (var a=0; a< checkBoxes_CHECKED_array.length;a++) {
                             var target = $(checkBoxes_CHECKED_array[a]),
                                 targetId = target.attr('id');
                                 target.parents(".itemLine2:eq(0)").attr('style', 'background-color:#FFFFCC;');
                             var scaleId = targetId.substring(targetId.indexOf('-')+1, targetId.lastIndexOf('-'));
                             //disable other check box which has different scale id
-                             for(var b in checkBoxes_ALL_array){
+                             for(var b=0;b<checkBoxes_ALL_array.length;b++){
                                  var other = $(checkBoxes_ALL_array[b]),
                                     otherId = other.attr('id');
                                  if(other !== target){

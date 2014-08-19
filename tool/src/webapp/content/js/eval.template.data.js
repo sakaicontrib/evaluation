@@ -18,7 +18,7 @@
 var evalTemplateData = (function() {
     //Private data
     var currentRow = undefined,
-    // if @textarea is boolen FALSE, treat form as a non fck editor form.
+    // if @textarea is boolen FALSE, treat form as a non ck editor form.
     _postFCKform = function(form, textarea, target, btn) {
         evalTemplateUtils.debug.group("Starting Fn submitFCKform", [form, textarea, target, btn]);
         evalTemplateUtils.debug.time("submitFCKform");
@@ -33,20 +33,21 @@ var evalTemplateData = (function() {
         //evalTemplateUtils.debug.info("Saving item %i", templateItemId);
         if (isFCKEditor) {
             try {
-                if (typeof FCKeditorAPI !== "undefined" && textarea !== null) {
-                    fckEditor = FCKeditorAPI.GetInstance(textarea);
-                    fckEditorValue = fckEditor.GetHTML(); //Actual editor textarea value
-                    evalTemplateUtils.debug.info("User entered: %s ( from DOM object %o )", fckEditorValue, fckEditor);
+                if (typeof CKEDITOR !== "undefined" && textarea !== null) {
+                    ckEditor = CKEDITOR.instances[textarea];
+                    ckEditorValue = ckEditor.getData(); //Actual editor textarea value
+                    //ckEditorValue = ckEditor.document.getBody().getHtml(); //Actual editor textarea value
+                    evalTemplateUtils.debug.info("User entered: %s ( from DOM object %o )", ckEditorValue, ckEditor);
                 }else{
-                    fckEditorValue = $("textarea[name="+textarea+"]").val();
+                    ckEditorValue = $("textarea[name="+textarea+"]").val();
                 }
             }
             catch(e) {
                 evalTemplateUtils.debug.error('Check if you have imported FCKeditor.js Error: FCKeditorAPI not found. ', e);
-                fckEditorValue = $("textarea[name="+textarea+"]").val();
+                ckEditorValue = $("textarea[name="+textarea+"]").val();
             }
             //Validate text
-            if (fckEditorValue === null || fckEditorValue.length === 0) {
+            if (ckEditorValue === null || ckEditorValue.length === 0) {
                 alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
                                        evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header')));
                 return false;
@@ -55,7 +56,7 @@ var evalTemplateData = (function() {
             //iterate through returned formToArray elements and replace input value with editor value
             for (var i = 0; i < formAsArray.length; i++) {
                 if (formAsArray[i].name === textarea) {
-                    $(formAsArray[i]).attr('value', fckEditorValue);
+                    $(formAsArray[i]).attr('value', ckEditorValue);
                 }
             }
             //formToArray does not save submit button, add submit button manually
@@ -77,9 +78,6 @@ var evalTemplateData = (function() {
                 $("#facebox option").each(function(){
                     this.disabled = true;
                 });
-                try{ //if fckEditor is in source mode at this time, an exception could occur: EVALSYS-836
-                    fckEditor.EditorDocument.body.disabled = true;
-                }catch(e){}
                 btn.parent().append(img);
             },
             success: function(d) {
@@ -144,7 +142,7 @@ var evalTemplateData = (function() {
                         }else{
                             //this is an EDIT action
                             if (isBlockChild){
-                                currentRow.find(".text").text(fckEditorValue);
+                                currentRow.find(".text").html(ckEditorValue);
                                 currentRow.effect('highlight', 3000);
                             }else{
                                 newRow = successDOM.find("div.itemRow:eq(0)");
