@@ -42,7 +42,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
       // point to the needed spring config files, must be on the classpath
       // (add component/src/webapp/WEB-INF to the build path in Eclipse),
       // they also need to be referenced in the project.xml file
-      return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
+      return new String[] {"hibernate-test.xml", "classpath:org/sakaiproject/evaluation/spring-hibernate.xml", "classpath:org/sakaiproject/evaluation/logic-support.xml"};
    }
 
    // run this before each test starts

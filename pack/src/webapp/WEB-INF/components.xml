@@ -22,14 +22,14 @@
 <beans>
 
     <!-- Bring in the hibernate related beans (DAO) -->
-    <import resource="spring-hibernate.xml" />
+    <import resource="classpath:org/sakaiproject/evaluation/spring-hibernate.xml" />
     <import resource="sakai-hibernate.xml" />
 
     <!-- Bring in external logic beans (BOTTOM level) -->
     <import resource="external-logic.xml" />
 
     <!-- Bring in any logic support beans (LOWER level) -->
-    <import resource="logic-support.xml" />
+    <import resource="classpath:org/sakaiproject/evaluation/logic-support.xml" />
 
     <!-- Bring in any sakai entity providers -->
     <import resource="entity-providers.xml" />

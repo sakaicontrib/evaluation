@@ -63,7 +63,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         // point to the needed spring config files, must be on the classpath
         // (add component/src/webapp/WEB-INF to the build path in Eclipse),
         // they also need to be referenced in the maven file
-        return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
+        return new String[] {"hibernate-test.xml", "classpath:org/sakaiproject/evaluation/spring-hibernate.xml"};
     }
 
     // run this before each test starts

@@ -422,17 +422,12 @@
         <testSourceDirectory>src/test</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>${basedir}/../pack/src/webapp/WEB-INF</directory>
-                <includes>
-                    <include>spring-hibernate.xml</include>
-                    <include>logic-support.xml</include>
-                </includes>
-            </testResource>
-            <testResource>
                 <directory>${basedir}/src/test</directory>
                 <includes>
                     <include>hibernate-test.xml</include>
                     <include>hibernate.properties</include>
+                    <include>spring-hibernate.xml</include>
+                    <include>logic-support.xml</include>
                 </includes>
             </testResource>
         </testResources>
