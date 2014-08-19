@@ -104,6 +104,8 @@ api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text svn
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemDataList.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
+impl/src/bundle/org/sakaiproject/evaluation/logic-support.xml -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/bundle/org/sakaiproject/evaluation/spring-hibernate.xml -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/ddl/LICENSE_HEADER -text
 impl/src/ddl/conversion/mysql/eval-1-2_to_eval-1-3.sql -text
 impl/src/ddl/conversion/mysql/eval-1-3_to_eval-1-4.sql svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -192,8 +194,6 @@ pack/src/webapp/WEB-INF/components.xml -text svn_keywords=Date+Revision+Author+U
 pack/src/webapp/WEB-INF/entity-providers.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/external-logic.xml -text svn_keywords=Date+Revision+Author+URL+Id
 pack/src/webapp/WEB-INF/logic-backup.xml -text svn_keywords=Date+Revision+Author+URL+Id
-pack/src/webapp/WEB-INF/logic-support.xml -text svn_keywords=Date+Revision+Author+URL+Id
-pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Author+URL+Id
 /pom.xml svn_keywords=Date+Revision+Author+URL+Id
 /project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 /project.xml -text svn_keywords=Date+Revision+Author+URL+Id
