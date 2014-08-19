@@ -1,6 +1,4 @@
 * text=auto !eol
-/.classpath -text svn_keywords=Date+Revision+Author+URL+Id
-/.project -text svn_keywords=Date+Revision+Author+URL+Id
 /.springBeans -text
 /.svnignore -text svn_keywords=Date+Revision+Author+URL+Id
 /Evaluation.jws -text
