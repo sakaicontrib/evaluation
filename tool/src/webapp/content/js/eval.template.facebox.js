@@ -32,7 +32,7 @@ var evalTemplateFacebox = (function() {
         };
         $.facebox.settings.faceboxHtml = '<div id="facebox" style="display:none;">' +
                                          '<div class="popup"> ' +
-                                         '<table width="1000px"> ' +
+                                         '<table width="820px"> ' +
                                          '<tbody> ' +
                                          '<tr>' +
                                          '<td class="tl"/><td class="b"/><td class="tr"/>' +
