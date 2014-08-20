@@ -102,6 +102,8 @@ public class PDFReportExporter implements ReportExporter {
         String currentUserId = commonLogic.getCurrentUserId();
         String evalOwner = evaluation.getOwner();
 
+        boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
+
         Boolean useBannerImage = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER);
         byte[] bannerImageBytes = null;
         if (useBannerImage != null && useBannerImage == true) {
@@ -158,7 +160,7 @@ public class PDFReportExporter implements ReportExporter {
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
             
             if (!instructorViewAllResults   // If the eval is so configured,
-              && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
+              && !isCurrentUserAdmin // and currentUser is not an admin
               && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
               && !EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
               && !currentUserId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
@@ -199,7 +201,7 @@ public class PDFReportExporter implements ReportExporter {
                     DataTemplateItem dti = dtis.get(i);
                     
                     if (!instructorViewAllResults // If the eval is so configured,
-                      && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
+                      && !isCurrentUserAdmin  // and currentUser is not an admin
                       && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
                       && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
                       && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
