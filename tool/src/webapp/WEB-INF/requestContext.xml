@@ -943,6 +943,8 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="addItemControlRenderer"
+            ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
         <property name="reportingPermissions"
             ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
         <property name="evalResponseAggregatorUtil"
