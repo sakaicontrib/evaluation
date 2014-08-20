@@ -35,6 +35,16 @@ public interface ReportExporter {
     */
    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream);
    
+   /**
+    * Generates the export which will be placed into the OutputStream for sending to the user via an HTTP response
+    * 
+    * @param evaluation the {@link EvalEvaluation} object to build the report for
+    * @param groupIds the set of groups to include results data from
+	* @param evaluateeId restrict this report to only the results for this instructor
+    * @param outputStream the resulting data will be placed into this
+    */
+   public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream);
+   
    public String getContentType();
 
 }

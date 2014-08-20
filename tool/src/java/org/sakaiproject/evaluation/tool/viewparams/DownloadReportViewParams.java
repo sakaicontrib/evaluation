@@ -27,6 +27,7 @@ public class DownloadReportViewParams extends BaseViewParameters {
 	public Long templateId; 
 	public Long evalId;
 	public String filename;
+	public String evaluateeId;
 
 	// See the comment in EssayResponseParams.java
 	public String[] groupIds;
@@ -40,9 +41,19 @@ public class DownloadReportViewParams extends BaseViewParameters {
 		this.groupIds = groupIds;
 		this.filename = filename;
 	}
+	
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId) {
+		System.out.println("DownloadReportViewParams called with "+evaluateeId);
+		this.viewID = viewID;
+		this.templateId = templateId;
+		this.evalId = evalId;
+		this.groupIds = groupIds;
+		this.filename = filename;
+		this.evaluateeId = evaluateeId;
+	}
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",templateId,evalId,groupIds,filename";
+		return super.getParseSpec() + ",templateId,evalId,groupIds,filename,evaluateeId";
 	}
 }
