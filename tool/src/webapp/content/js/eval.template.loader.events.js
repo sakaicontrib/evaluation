@@ -331,7 +331,7 @@ var evalTemplateLoaderEvents = (function($) {
                 if (checkBoxes_CHECKED.length > 0 && destinationForm) {
                     var idList = [];
                     // look for checkboxes which have IDs of the form "block-12-11" and keep track of the ones that are checked.
-                    for (var a in checkBoxes_CHECKED_array) {
+                    for (var a=0;a<checkBoxes_CHECKED_array.length;a++) {
                         var target = $(checkBoxes_CHECKED_array[a]),
                             targetId = target.attr('id'),
                             scaleId = targetId.substr(targetId.lastIndexOf('-')+1);
