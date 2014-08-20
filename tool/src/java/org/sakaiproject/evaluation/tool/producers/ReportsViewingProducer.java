@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -569,6 +571,23 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         if (allowPDFExport != null && allowPDFExport == true) {
             UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new DownloadReportViewParams(
                     "pdfResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
+			
+			List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+            evaluatees.addAll(evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_ASSISTANT, null, null, null));
+            List<String> listedEvaluatees = new ArrayList<String>();
+
+			for (int i = 0; i < evaluatees.size(); i++) {
+				EvalAssignUser evaluatee = evaluatees.get(i);
+                if (!listedEvaluatees.contains(evaluatee.getUserId())) {
+				  UIBranchContainer evaluateeBranch = UIBranchContainer.make(tofill, "pdfResultsReportIndividual:", i+"");
+				  EvalUser user = commonLogic.getEvalUserById( evaluatee.getUserId() );
+				
+				  UIInternalLink.make(evaluateeBranch, "pdfResultsReportIndividualLink", UIMessage.make("viewreport.view.pdf.individual", new Object[] {user.displayName}), new DownloadReportViewParams(
+				  "pdfResultsReportIndividual", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
+                  listedEvaluatees.add(evaluatee.getUserId());
+                }
+			}
+			
         }
 
         // FIXME should this be protected with an option?

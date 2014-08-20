@@ -88,7 +88,12 @@ public class ReportExporterBean {
 	        response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
 		    response.setContentType(exporter.getContentType());
 	        
-	        exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
+	        if ("pdfResultsReportIndividual".equals(drvp.viewID)) {
+	            exporter.buildReport(evaluation, drvp.groupIds, drvp.evaluateeId, resultsOutputStream);
+	        } else {
+	            exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
+	        }
+			
         }else{
         	XLSReportExporter xlsReportExporter = (XLSReportExporter) exportersMap.get(drvp.viewID);
         	resultsOutputStream = getOutputStream(response);

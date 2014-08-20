@@ -58,6 +58,10 @@ public class CSVTakersReportExporter implements ReportExporter {
     }
 
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
+        buildReport(evaluation, groupIds, null, outputStream);
+    }
+	
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
         OutputStreamWriter osw = new OutputStreamWriter(outputStream);
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try {

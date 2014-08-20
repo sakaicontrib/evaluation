@@ -2097,3 +2097,6 @@ table tr.node td.node-3 {
 div.options-2 td.last.exclude {
 	width: 50% !important;
 }
+li.exportIndividual {
+	list-style-type: none;
+}
