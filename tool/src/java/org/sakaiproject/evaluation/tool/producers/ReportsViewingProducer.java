@@ -48,7 +48,6 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.util.Validator;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -113,11 +112,6 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         this.reportingPermissions = perms;
     }
     
-    private AddItemControlRenderer addItemControlRenderer;
-    public void setAddItemControlRenderer(AddItemControlRenderer addItemControlRenderer) {
-        this.addItemControlRenderer = addItemControlRenderer;
-    }
-
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
 		this.navBarRenderer = navBarRenderer;
@@ -581,21 +575,18 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 			List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
             evaluatees.addAll(evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_ASSISTANT, null, null, null));
             List<String> listedEvaluatees = new ArrayList<String>();
-            ArrayList downloadReportVPList = new ArrayList();
 
 			for (int i = 0; i < evaluatees.size(); i++) {
 				EvalAssignUser evaluatee = evaluatees.get(i);
                 if (!listedEvaluatees.contains(evaluatee.getUserId())) {
+				  UIBranchContainer evaluateeBranch = UIBranchContainer.make(tofill, "pdfResultsReportIndividual:", i+"");
 				  EvalUser user = commonLogic.getEvalUserById( evaluatee.getUserId() );
 				
-				  downloadReportVPList.add(new DownloadReportViewParams("pdfResultsReportIndividual", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
-
+				  UIInternalLink.make(evaluateeBranch, "pdfResultsReportIndividualLink", UIMessage.make("viewreport.view.pdf.individual", new Object[] {user.displayName}), new DownloadReportViewParams(
+				  "pdfResultsReportIndividual", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
                   listedEvaluatees.add(evaluatee.getUserId());
                 }
 			}
-
-            //TODO: Is this part of the feature?
-            //addItemControlRenderer.renderControl(tofill, "pdfResultsReportIndividual:", downloadReportVPList.toArray(new DownloadReportViewParams[downloadReportVPList.size()]), listedEvaluatees.toArray(new String[listedEvaluatees.size()]), UIMessage.make("viewreport.view.pdf.individual"), templateId);
 			
         }
 

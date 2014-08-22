@@ -49,14 +49,9 @@
             <li style="float:right" class="lastCrumb"><a rsf:id="exportListOfEvaluationTakers" href="#" target="_blank" class="exportAction">Export csv of evaluation takers</a></li>
          </ul>
 		 
-         <div rsf:id="pdfResultsReportIndividual:" style="text-align: right">
-            <form name="view_pdf_results_individual_form" style="display:inline;">
-              <select id="pdfResultsIndividual-selection">
-                <option value="" selected="selected">Instructor</option>
-              </select>
-              <input id="view_pdf_individual" type="button" value="See Report"  onclick="EvalSystem.operateSelectLink(this.id, 'pdfResultsIndividual-selection')" />
-            </form>
-         </div>
+         <ul style="text-align: right">
+            <li rsf:id="pdfResultsReportIndividual:" class="exportIndividual"><a href="#" rsf:id="pdfResultsReportIndividualLink" target="_blank" class="exportAction">Export individual pdf</a></li>
+         </ul>
 
          <div class="navPanel">
 				 	<div class="viewNav">
