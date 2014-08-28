@@ -26,8 +26,6 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
 
-    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript" language="JavaScript"></script>
-    <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
     <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
@@ -163,11 +161,8 @@
     							<select rsf:id="consolidated-job-start-time-minutes" id="consolidated-job-start-time-minutes"></select>
     					</p>
 						<div rsf:id="nextReminderDateDiv:" class="longtext indnt1">
-							<label rsf:id="msg=controlemail.next-reminder-date" for="nextReminderDate:::date-field" class="block">Next reminder date/time </label>
-							<span rsf:id="nextReminderDate:" class="block">
-								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-								<img src="../images/calendar.gif" />
-							</span>
+							<label rsf:id="msg=controlemail.next-reminder-date" for="nextReminderDate" class="block">Next reminder date/time </label>
+								<input rsf:id="nextReminderDate:" type="hidden" id="nextReminderDate" name="nextReminderDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
 							<div rsf:id="msg=controlemail.setting-reminder-date" class="instruction textPanelFooter block indnt1">
 								Evaluation ends on this date, no more responses after this date
 							</div>
