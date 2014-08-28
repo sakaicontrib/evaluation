@@ -420,9 +420,8 @@
         <property name="evalSettings" 
         	ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	
-        <property name="dateEvolver" ref="fieldDateInputEvolver" />
+        <property name="dateEvolver" ref="sakaiDateFieldEvolver"/>
     </bean>
-
     <bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
         <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
@@ -754,7 +753,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="dateEvolver" ref="fieldDateInputEvolver" />
+        <property name="dateEvolver" ref="sakaiDateFieldEvolver"/>
         <property name="richTextEvolver" ref="richTextEvolver" />
         <property name="locale" ref="requestLocale" />
 		<property name="navBarRenderer" ref="navBarRenderer" />	

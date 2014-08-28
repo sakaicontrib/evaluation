@@ -673,6 +673,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                 dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
             }
             dateevolver.evolveDateInput(datePicker, initValue);
+            
         }
     }
 
@@ -698,13 +699,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                 UIMessage.make(parent, rsfId + "_label", "evalsettings.view.results.date.label");
             } else {
                 // allow them to choose the date using a date picker
-                UIInput dateInput = UIInput.make(parent, rsfId + ":", binding);
-                if (useDateTime) {
-                    dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
-                } else {
-                    dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
-                }
-                dateevolver.evolveDateInput(dateInput);
+                UIInput dateInput = UIInput.make(parent, rsfId + "-iso8601", binding);
             }         
         }
     }
