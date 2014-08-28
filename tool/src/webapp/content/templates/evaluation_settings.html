@@ -26,7 +26,6 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
 
-    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript" language="JavaScript"></script>
     <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
 
 	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -104,32 +103,25 @@
                         </span>
                     </div>
 					<div rsf:id="showStartDate:" class="shorttext">
-						<label rsf:id="msg=evalsettings.start.date.header" for="startDate:::date-field">Start Date:</label>
-						<span  rsf:id="startDate:">
-						  <input type="text" id="start_date_dummy" name="start_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-						  <img src="../images/calendar.gif" />
-						</span>
+						<label rsf:id="msg=evalsettings.start.date.header" for="startDate">Start Date:</label>
+						<input rsf:id="startDate:" type="hidden" id="dateStart" name="dateStart" value="MM/DD/YYYY" size="15" maxlength="15"/>
                         <span rsf:id="startDate_disabled" />
 						<span rsf:id="msg=evalsettings.start.date.desc"  class="instruction textPanelFooter">
 							Users may begin submitting evaluation responses on this date
 						</span>
 					</div>
 					<div rsf:id="showDueDate:" class="shorttext">
-						<label rsf:id="msg=evalsettings.due.date.header" for="dueDate:::date-field">Due Date:</label>
-						<span rsf:id="dueDate:">
-							<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-							<img src="../images/calendar.gif" />
-						</span>
+						<label rsf:id="msg=evalsettings.due.date.header" for="dueDate">Due Date:</label>
+							<input rsf:id="dueDate:" type="hidden" name="dueDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
                         <span rsf:id="dueDate_disabled" />
 						<span rsf:id="msg=evalsettings.due.date.desc" class="instruction textPanelFooter">
 							Evaluation ends on this date, no more responses after this date
 						</span>
 					</div>
 					<div rsf:id="showStopDate:" class="shorttext">
-						<label rsf:id="msg=evalsettings.stop.date.header" for="stopDate:::date-field">Stop Date:</label>
+						<label rsf:id="msg=evalsettings.stop.date.header" for="stopDate">Stop Date:</label>
 						<span style="display:inline" rsf:id="stopDate:">
-							<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-							<img src="../images/calendar.gif" />
+							<input rsf:id="stopDate:" type="hidden" id="stopDate" name="stopDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
 						</span>
                         <span rsf:id="stopDate_disabled" />
 						<span rsf:id="msg=evalsettings.stop.date.desc" class="instruction textPanelFooter">
@@ -161,11 +153,8 @@
                   </div>
                 </div>
                 <div rsf:id="showViewDate:" class="shorttext" id="evaluation_show_viewdate_area">
-                     <label rsf:id="msg=evalsettings.view.date.header" for="viewDate:::date-field">View Date:</label>
-                     <span rsf:id="viewDate:">
-                         <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                         <img src="../images/calendar.gif" />
-                     </span>
+                     <label rsf:id="msg=evalsettings.view.date.header" for="viewDate">View Date:</label>
+                     <input rsf:id="viewDate:" type="hidden" id="viewDate" name="viewDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
                      <span rsf:id="viewDate_disabled" />
                      <span rsf:id="msg=evalsettings.view.date.desc" class="instruction textPanelFooter">
                          Results are not viewable until this date

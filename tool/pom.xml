@@ -317,10 +317,6 @@
 			<activation> 
 				<activeByDefault>true</activeByDefault>
 			</activation>
-		    <properties>
-                <rsfutil.version>0.8.0-SNAPSHOT</rsfutil.version>
-                <sakairsf.version>0.8.0-SNAPSHOT</sakairsf.version>
-		    </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.sakaiproject.kernel</groupId>

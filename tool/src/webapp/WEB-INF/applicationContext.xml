@@ -53,7 +53,7 @@
 		      evaluationBeanLocator, takeEvalBean, settingsBean, emailSettingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
               emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, 
-              assignGroupSelectionSettings, evalAdminBean, hierarchyBean, propertiesFileParser, overwriteSettingsHandler" />
+              assignGroupSelectionSettings, evalAdminBean, hierarchyBean, propertiesFileParser, overwriteSettingsHandler, iso8601DateTransit" />
     </bean>
 
     <!-- allows us to identify entities used in OTP on the EL path,
@@ -202,7 +202,7 @@
         <property name="templateNames"
             value="render_header_item, render_text_item, render_scaled_item, render_block_item, 
 			     render_multiplechoice_item, render_multipleanswer_item, render_admin_box,
-			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector, nav_bar" />
+			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector, nav_bar, new_date_field_input" />
         <property name="expected" value="true" />
     </bean>
 
