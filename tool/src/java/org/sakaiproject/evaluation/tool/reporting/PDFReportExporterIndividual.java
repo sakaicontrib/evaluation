@@ -52,9 +52,9 @@ import uk.org.ponder.messageutil.MessageLocator;
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PDFReportExporter implements ReportExporter {
+public class PDFReportExporterIndividual implements ReportExporter {
 
-    private static Log log = LogFactory.getLog(PDFReportExporter.class);
+    private static Log log = LogFactory.getLog(PDFReportExporterIndividual.class);
 
     int displayNumber;
 
@@ -95,9 +95,9 @@ public class PDFReportExporter implements ReportExporter {
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
-        buildReport(evaluation, groupIds, null, outputStream);
-    }
+	public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
+		buildReport(evaluation, groupIds, null, outputStream);
+	}
 	
     /*
      * (non-Javadoc)
@@ -107,13 +107,11 @@ public class PDFReportExporter implements ReportExporter {
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
-				
-        EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
+		
+		EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
         Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
         String currentUserId = commonLogic.getCurrentUserId();
         String evalOwner = evaluation.getOwner();
-
-        boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
 
         Boolean useBannerImage = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER);
         byte[] bannerImageBytes = null;
@@ -171,13 +169,18 @@ public class PDFReportExporter implements ReportExporter {
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
             
             if (!instructorViewAllResults   // If the eval is so configured,
-              && !isCurrentUserAdmin // and currentUser is not an admin
+              && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
               && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
               && !EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
               && !currentUserId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
                 // skip items that aren't for the current user
                 continue;
             }
+			
+			if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
+			  && !evaluateeId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
+				continue;
+			}
             
             // Print the type of the next group we're doing
             if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
@@ -212,13 +215,18 @@ public class PDFReportExporter implements ReportExporter {
                     DataTemplateItem dti = dtis.get(i);
                     
                     if (!instructorViewAllResults // If the eval is so configured,
-                      && !isCurrentUserAdmin  // and currentUser is not an admin
+                      && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
                       && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
                       && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
                       && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                         //skip instructor items that aren't for the current user
                         continue;
                     }
+					
+					if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+					   && !evaluateeId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+						continue;
+					}
                     
                     renderDataTemplateItem(evalPDFReportBuilder, dti);
                 }

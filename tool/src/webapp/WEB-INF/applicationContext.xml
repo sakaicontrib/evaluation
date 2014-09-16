@@ -254,6 +254,7 @@
         		<entry key="csvResultsReport" value-ref="CSVReportExporter"/>
         		<entry key="xlsResultsReport" value-ref="XLSReportExporter"/>
         		<entry key="pdfResultsReport" value-ref="PDFReportExporter"/>
+        		<entry key="pdfResultsReportIndividual" value-ref="PDFReportExporterIndividual"/>
         		<entry key="csvTakersReport" value-ref="CSVTakersExporter"/>
         	</map>
         </property>	
@@ -300,6 +301,21 @@
             ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
         <property name="messageLocator" ref="messageLocator" />
     </bean>
+	
+	<bean id="PDFReportExporterIndividual"
+        class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporterIndividual">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="deliveryService"
+            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalResponseAggregatorUtil"
+            ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+        <property name="messageLocator" ref="messageLocator" />
+	</bean>
 
     <bean id="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil"
         class="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil">
@@ -368,6 +384,12 @@
 
     <bean parent="viewParamsRegistrarParent">
         <property name="viewID" value="pdfResultsReport" />
+        <property name="viewParamsClass"
+            value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
+    </bean>
+	
+    <bean parent="viewParamsRegistrarParent">
+        <property name="viewID" value="pdfResultsReportIndividual" />
         <property name="viewParamsClass"
             value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
