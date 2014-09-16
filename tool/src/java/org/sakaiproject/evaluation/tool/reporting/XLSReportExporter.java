@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
@@ -119,15 +118,7 @@ public class XLSReportExporter implements ReportExporter {
     	// 2: get DTIs for this eval from tidl
         List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);
  
-        Workbook wb;
-        
-        if(dtiList.size() < 256){
-        	wb = new HSSFWorkbook();
-        }else{
-        	// allow columns greater than 255 - EVALSYS-775
-        	wb = new XSSFWorkbook();
-        }
-        
+        Workbook wb = new XSSFWorkbook();
         creationHelper = wb.getCreationHelper();
         
         Sheet sheet = wb.createSheet(messageLocator.getMessage("reporting.xls.sheetname"));
@@ -334,13 +325,7 @@ public class XLSReportExporter implements ReportExporter {
     }
 
     public String getContentType() {
-        return "application/vnd.ms-excel";
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     }
     
-    public int getEvalTDIsize(EvalEvaluation evaluation,
-			String[] groupIds) {
-    	List<DataTemplateItem> dtiList = getEvalTIDL(evaluation, groupIds).getFlatListOfDataTemplateItems(true);
-    	return dtiList == null? 0 : dtiList.size();
-    }
-
 }
