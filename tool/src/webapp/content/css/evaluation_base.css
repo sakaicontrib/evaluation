@@ -754,7 +754,6 @@ remove input width in template and use these instead
 }
 
 .NACell {
-  width: 75px !important;
   padding-right: .5em;
 }
 
@@ -808,7 +807,7 @@ label.blockItemLabel:hover {
 
 .itemDoneCheckShow {
   background: url(../images/tick.png) center left no-repeat;
-  display: inline-block;
+  display: table-cell;
   height: 16px;
   width: 16px;
 }
