@@ -177,7 +177,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         	
             int reminderDays = eval.getReminderDaysInt();
             if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-                    && reminderDays != 0) {
+                    && reminderDays != 0
+                    && EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl())) {
                 if (eval.getDueDate() == null 
                         || eval.getDueDate().after(now)) {
                     sendReminderEmail(evaluationId);
