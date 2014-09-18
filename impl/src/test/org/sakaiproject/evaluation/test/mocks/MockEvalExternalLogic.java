@@ -653,6 +653,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return null;
     }
 
+    public void setSessionTimeout(int Seconds) {
+        // TODO Auto-generated method stub
+    }
+
 }
-
-

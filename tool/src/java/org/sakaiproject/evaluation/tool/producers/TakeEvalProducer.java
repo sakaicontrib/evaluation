@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -161,6 +162,12 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         this.httpServletResponse = httpServletResponse;
     }
 
+    
+    private EvalExternalLogic evalExternalLogic;
+    public void setEvalExternalLogic(EvalExternalLogic evalExternalLogic) {
+		this.evalExternalLogic = evalExternalLogic;
+	}
+
     Long responseId;
 
     int displayNumber=1;
@@ -190,6 +197,10 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         boolean isUserSitePublished = true; //is the users' valid group(s) published? At least one group must be
 
         String currentUserId = commonLogic.getCurrentUserId();
+
+        // set the session timeout to 5 hours
+        evalExternalLogic.setSessionTimeout(18000);
+        
         // use a date which is related to the current users locale
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 

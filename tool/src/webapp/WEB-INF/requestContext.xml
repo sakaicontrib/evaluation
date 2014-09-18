@@ -898,6 +898,7 @@
         <property name="locale" ref="requestLocale" />
         <property name="httpServletResponse" ref="httpServletResponse" />
         <property name="messageLocator" ref="messageLocator" />
+        <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"/>
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
