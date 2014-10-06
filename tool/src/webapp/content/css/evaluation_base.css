@@ -1053,6 +1053,10 @@ label.block {
   width: 50em;
 }
 
+.evalEditorLarge {
+  width: 60em;
+}
+
 /*delete button*/
 .hideComment {
   padding-left: 2em;
