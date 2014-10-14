@@ -105,4 +105,10 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
    
+   /**
+    * Set the session timeout for the current user session
+    * @param Seconds
+    */
+   public void setSessionTimeout(int Seconds);
+
 }
