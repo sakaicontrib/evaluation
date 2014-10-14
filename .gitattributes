@@ -363,7 +363,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/TemplateActionResultInterceptor.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/test/org/sakaiproject/evaluation/tool/utils/RenderingUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/WEB-INF/applicationContext.xml -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/WEB-INF/classes/log4j.properties -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/WEB-INF/requestContext.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/WEB-INF/web.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/Messages.html -text svn_keywords=Date+Revision+Author+URL+Id
