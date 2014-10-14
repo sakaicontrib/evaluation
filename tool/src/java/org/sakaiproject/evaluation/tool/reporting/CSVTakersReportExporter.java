@@ -78,12 +78,14 @@ public class CSVTakersReportExporter implements ReportExporter {
         List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
         Collections.sort(users, new EvalUser.SortNameComparator());
         log.debug("users.size(): " + users.size());
-        String[] row = new String[2];
+        String[] row = new String[3];
 
         try {
+
             for (EvalUser user : users) {
-                row[0] = user.email;
-                row[1] = user.sortName;
+                row[0] = user.username;
+                row[1] = user.email;
+                row[2] = user.sortName;
                 writer.writeNext(row);
             }
             writer.close();
