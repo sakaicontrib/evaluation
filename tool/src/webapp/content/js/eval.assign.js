@@ -52,6 +52,12 @@ $(document).ready(function() {
         }
         return true;
     });
+    //re-select previously selected groups
+    $('tr.selectedGroup').find('input[type=checkbox]').each(function(){
+    	this.checked = true;
+        $(this).parents('tr.selectedGroup').find('a[rel=assignInstructorSelector]').fadeIn('fast');
+        $(this).parents('tr.selectedGroup').find('a[rel=assignTaSelector]').fadeIn('fast');
+    });
 });
 
 (function($) {
@@ -255,12 +261,6 @@ $(document).ready(function() {
                 that.fadeOut('fast');
 
             }
-        });
-        that.parents('tr.selectedGroup').find('input[type=checkbox]').each(function(){
-            //$(this).trigger("click");
-            this.checked = true;
-            that.fadeIn('fast');
-            
         });
 
     }
