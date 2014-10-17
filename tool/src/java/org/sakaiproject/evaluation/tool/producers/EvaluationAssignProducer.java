@@ -435,7 +435,12 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	                //keep deselected user info as a result of changes in EVALSYS-660
 	                Set<String> deselectedInsructorIds = new HashSet<String>();
 	                Set<String> deselectedAssistantIds = new HashSet<String>();
-	                
+
+	                //Assign attribute to row to help JS set checkbox selection to true
+	                if(assignGroupsIds.contains(evalGroupId)){
+	                	checkboxRow.decorate(new UIStyleDecorator("selectedGroup"));
+	                }
+		                 
 	                if (useSelectionOptions){
 		                
 		                if (! newEval) {
@@ -451,11 +456,6 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 		                	deselectedAssistantIds.add(deselectedUser.getUserId());
 		                }
 		               
-		                //Assign attribute to row to help JS set checkbox selection to true
-		                if(assignGroupsIds.contains(evalGroupId)){
-		                	checkboxRow.decorate(new UIStyleDecorator("selectedGroup"));
-		                }
-		                 
 		                }else{
 		                	//add blank selection options for this group for use by evalAssign.js
 		                	form.parameters.add(new UIELBinding(groupSelectionOTP + evalGroupId.replaceAll("/site/", "") + ".instructor", ""));
