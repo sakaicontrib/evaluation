@@ -42,6 +42,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import uk.org.ponder.beanutil.PathUtil;
 
 public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
     public static final String VIEW_ID = "modify_hierarchy_node_groups";
@@ -135,7 +136,8 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
         UIForm form = UIForm.make(tofill, "assign-groups-form");
         for (EvalGroup group: evalGroups) {
             UIBranchContainer tablerow = UIBranchContainer.make(form, "group-row:");
-            UIBoundBoolean.make(tablerow, "group-checkbox", "hierNodeGroupsLocator."+nodeId+"."+group.evalGroupId);
+            UIBoundBoolean.make(tablerow, "group-checkbox", 
+            		PathUtil.buildPath( new String[] { "hierNodeGroupsLocator", nodeId, group.evalGroupId } ));
             UIOutput.make(tablerow, "group-title", group.title);
         }
 
