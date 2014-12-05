@@ -1651,6 +1651,7 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .item .compulsory .title .required {
   display: inline-block;
+  left: 0;
 }
 .evaluation .item .numberWrapper {
   text-align: right;
