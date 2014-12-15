@@ -529,10 +529,10 @@ public class PreloadDataImpl {
         evalConfigMap.put(EvalSettings.LOG_PROGRESS_EVERY, 0);
         
         // Default settings for scheduling sync with Group Provider
-        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE, true);
+        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE, false);
         evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE, false);
-        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE, true);
-        evalConfigMap.put(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP, true);
+        evalConfigMap.put(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE, false);
+        evalConfigMap.put(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP, false);
 	
     }
     
