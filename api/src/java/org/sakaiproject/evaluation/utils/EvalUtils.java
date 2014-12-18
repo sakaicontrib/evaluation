@@ -605,7 +605,7 @@ public class EvalUtils {
      */
     public static boolean isBlank(String value) {
         boolean blank = false;
-        if (value == null || "".equals(value)) {
+        if (value == null || "".equals(value) || "Comment text...".equals(value.trim())) {
             blank = true;
         } else {
             if (value.trim().length() == 0) {
