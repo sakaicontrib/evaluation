@@ -323,6 +323,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalLikertChartBuilder.
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalPDFReportBuilder.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/LikertPercentageItemLabelGenerator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporterIndividual.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportExporter.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportExporterBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportHandlerHook.java -text svn_keywords=Date+Revision+Author+URL+Id

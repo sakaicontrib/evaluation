@@ -90,6 +90,17 @@ public class XLSReportExporter implements ReportExporter {
      * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
+        buildReport(evaluation, groupIds, null, outputStream);
+    }
+	
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
+     * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
+     */
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
     	
         /*
          * Logic for creating this view 1) make tidl 2) get DTIs for this eval from tidl 3) use DTIs
