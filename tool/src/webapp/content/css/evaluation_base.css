@@ -2104,3 +2104,6 @@ div.options-2 td.last.exclude {
 li.exportIndividual {
 	list-style-type: none;
 }
+.individualExports {
+    text-align: right;
+}

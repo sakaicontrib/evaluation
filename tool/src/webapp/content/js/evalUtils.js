@@ -382,10 +382,49 @@ var EvalSystem = function() {
 			if ( windows && chrome ) {
 				$(".evaluation .item-group .response-scale-label").css("padding", "0 20px");
 			}
+		},
+
+		// EVALSYS-1436 Convert each individual link to a dropdown
+		convertIndividualLinksToADropdown: function() {
+			if ($('#evalIndividualExports')) {
+				$("<select id=\"evalIndividualExporter\" style=\"display:none\" />").insertAfter("#evalIndividualExports");
+				// Create default option 
+				$("<option />", {
+					"selected": "selected",
+					"value"   : "",
+					"text"    : " -- ",
+					}).appendTo("#evalIndividualExporter");
+
+				$("#evalIndividualExports li a").each(function() {
+					var el = $(this);
+					$("<option />", {
+						"value"   : el.attr("href"),
+						"text"    : el.text()
+					}).appendTo("#evalIndividualExporter");
+
+					$('#evalIndividualExporter').show();
+				});
+
+				// Now hide the original links
+				$('#evalIndividualExports').hide();
+			}
+		},
+
+		listenForIndividualDropdown: function() {
+			$('#evalIndividualExporter').change(
+				function() {
+					var selectedHref = $('#evalIndividualExporter option:selected').val();
+					if (selectedHref !== "") {
+						window.location.href = selectedHref;
+					}
+				}
+			);
 		}
 	};
 }();
 
 $(document).ready(function() {
 	EvalSystem.windowsChromeStyleFixes();
+	EvalSystem.convertIndividualLinksToADropdown();
+	EvalSystem.listenForIndividualDropdown();
 });
