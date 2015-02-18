@@ -257,4 +257,11 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
      */
     public void registerEvalGroupsProvider(EvalGroupsProvider provider);
 
+    /**
+     * Check if this user has readonly admin access in the evaluation system
+     * 
+     * @param userId the internal user id (not username)
+     * @return true if the user has readonly admin access, false otherwise
+     */
+    public boolean isUserReadonlyAdmin(String userId);
 }

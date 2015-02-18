@@ -119,8 +119,9 @@ public class AdminBoxRenderer {
     private void renderBox(UIContainer tofill) {
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+        boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-        if (log.isDebugEnabled()) log.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", beginEvaluation=" + beginEvaluation);
+        if (log.isDebugEnabled()) log.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", userReadonlyAdmin=" + userReadonlyAdmin + ", beginEvaluation=" + beginEvaluation);
 
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, false, false);
 
@@ -130,9 +131,11 @@ public class AdminBoxRenderer {
          * 
          * NOTE: no longer showing evals they do not own (removed the
          * INSTRUCTOR_ALLOWED_VIEW_RESULTS handling)
+         * 
+         * EVALSYS-1437: readonly admin can view evals like a normal admin can
          */
 
-        if (!userAdmin) {
+        if (!userAdmin && !userReadonlyAdmin) {
             List<EvalEvaluation> newEvals = new ArrayList<EvalEvaluation>();
             if (log.isDebugEnabled()) log.debug("non-admin special case: " + evals.size() + " evals, " + EvalUtils.getEvalIdsFromEvaluations(evals));
             for (EvalEvaluation evaluation : evals) {
@@ -193,15 +196,23 @@ public class AdminBoxRenderer {
                     UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
                     String title = humanDateRenderer.renderEvalTitle(eval, group);
-                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                        // only preview after the eval closes
-                        UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
+                    
+                    if(userReadonlyAdmin) {
+                    	// only ever show the preview
+                    	UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
                                 PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
                         evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
                     } else {
-                        // edit while the eval is open
-                        UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", title, new EvalViewParameters(
-                                EvaluationSettingsProducer.VIEW_ID, eval.getId()));
+	                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+	                        // only preview after the eval closes
+	                        UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
+	                                PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
+	                        evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
+	                    } else {
+	                        // edit while the eval is open
+	                        UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", title, new EvalViewParameters(
+	                                EvaluationSettingsProducer.VIEW_ID, eval.getId()));
+	                    }
                     }
 
                     humanDateRenderer.renderDate(evalrow, "evalAdminStartDate", eval.getStartDate());
@@ -214,8 +225,14 @@ public class AdminBoxRenderer {
                     String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
                     if (log.isDebugEnabled()) log.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
 
+                    boolean allowedViewResponders = true;
+                    boolean allowedEmailStudents = true;
+                    if(userReadonlyAdmin) {
+                    	allowedViewResponders = false;
+                    	allowedEmailStudents = false;
+                    }
                     RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded, 
-                            responseString, true, true);
+                            responseString, allowedViewResponders, allowedEmailStudents);
 
                     // owner can view the results but only early IF the setting is enabled
                     boolean viewResultsEval = viewResultsIgnoreDates ? true : EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);

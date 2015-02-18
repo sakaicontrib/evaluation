@@ -41,5 +41,12 @@ public interface ExternalSecurity {
     * @return true if allowed, false otherwise
     */
    public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId);
+   
+   /**
+    * Check if this user has the readonly admin permission
+    * @param userId the internal user id (not username)
+    * @return true if the user has readonly admin access, false otherwise
+    */
+   public boolean isUserReadonlyAdmin(String userId);
 
 }

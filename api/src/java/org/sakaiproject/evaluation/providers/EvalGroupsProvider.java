@@ -34,10 +34,11 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  * </bean>
  * </xmp>
  * <br/>
- * The 3 permissions this provider has to deal with 
+ * The 4 permissions this provider has to deal with 
  * are {@link #PERM_BE_EVALUATED} (roughly equivalent to instructor role) 
  * and {@link #PERM_TAKE_EVALUATION} (roughly equivalent to student role) 
- * and {@link #PERM_TA_ROLE} (roughly equivalent to teaching assistants role), 
+ * and {@link #PERM_TA_ROLE} (roughly equivalent to teaching assistants role)
+ * and {@link #PERM_ADMIN_READONLY} (an admin read only role) 
  * compare the incoming permission to the constant
  * and only handle the cases indicated (do not try to handle all possible permissions)<br/>
  * <b>Note</b>: Specifically this allows us to reference eval groups and enrollments which
@@ -64,7 +65,10 @@ public interface EvalGroupsProvider {
      * it means they can see the groups in the listing when assigning the eval to users via groups
      */
     public final static String PERM_ASSIGN_EVALUATION = "provider.assign.eval";
-	/**
+	
+    public final static String PERM_ADMIN_READONLY = "provider.admin.readonly";
+    
+    /**
 	 * Permission: User is marked as a TA in a section/course and will be treated as such,
 	 * this is a special case permission
 	 * http://bugs.sakaiproject.org/jira/browse/EVALSYS-345
