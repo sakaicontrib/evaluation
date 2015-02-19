@@ -657,4 +657,10 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         // TODO Auto-generated method stub
     }
 
+	@Override
+	public boolean isUserReadonlyAdmin(String userId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

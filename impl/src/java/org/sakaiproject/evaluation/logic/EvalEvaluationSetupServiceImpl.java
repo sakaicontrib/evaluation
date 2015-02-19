@@ -653,9 +653,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }
 
         String[] evalGroupIds = null;
-        if (commonLogic.isUserAdmin(userId)) {
+        if (commonLogic.isUserAdmin(userId) || commonLogic.isUserReadonlyAdmin(userId)) {
             // null out the userId so we get all evaluations
-            userId = null;
+            userId = null;            
         } else {
             if (showNotOwned) {
                 // get the list of all assignments where this user is instructor

@@ -262,6 +262,13 @@ public class EvalConstants {
      * Permission: User can take an evaluation for any group they have this permission in
      */
     public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
+    
+    /**
+     * Permission: admin read only. Assign just theis role to a user to grant them admin access to view evaluation and evaluation reports but not modify anything
+     */
+    public final static String PERM_ADMIN_READONLY = "eval.admin.readonly";
+    
+    
     /**
      * SPECIAL CASE
      * Permission: User is marked as an assistant in a section/course/group,

@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.dao.EvalAdminSupport;
@@ -881,5 +880,19 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             this.evalGroupsProvider = null;
         }
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalSecurity#isUserReadonlyAdmin(java.lang.String)
+     */
+	public boolean isUserReadonlyAdmin(String userId) {
+		//unlock check will always return true for sakai admins.
+		//sakai admins cant be readonly admins though as readonly is a lower privilege, so override this
+		if(this.isUserSakaiAdmin(userId)){
+			return false;
+		}
+		
+		return externalLogic.isUserReadonlyAdmin(userId);
+	}
 
 }

@@ -100,7 +100,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
 
         boolean canViewResponses = false; // is user able to view any results/responses at all
         boolean checkBasedOnRole = false; // get the groups based on the current user role
-
+        
         // 1) Is this user an admin or evaluation owner
         // 2) Is this user the evaluation owner?
         if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
@@ -119,6 +119,11 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         }
         else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
             canViewResponses = false;
+        }
+        else if (commonLogic.isUserReadonlyAdmin(currentUserId)) {
+        	//same settings for admin
+        	canViewResponses = true;
+        	checkBasedOnRole = false;
         }
         else {
             canViewResponses = true;
@@ -185,6 +190,10 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         // 4/5 (combined check)
         else if ( checkGroupsForEvalUserGroups(evaluation, groupIds, currentUserId) ) {
             canViewResponses = true;
+        }
+        else if (commonLogic.isUserReadonlyAdmin(currentUserId)) {
+        	//same settings for admin
+        	canViewResponses = true;
         }
         else {
             canViewResponses = false;
