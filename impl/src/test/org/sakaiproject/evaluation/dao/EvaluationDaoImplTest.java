@@ -752,8 +752,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         assertEquals(ids.get(6), etdl.evaluationActive.getId());
         assertEquals(ids.get(7), etdl.evaluationProvided.getId());
         assertEquals(ids.get(8), etdl.evaluationActiveUntaken.getId());
-        assertEquals(ids.get(9), etdl.evaluationActive_viewIgnoreDates.getId());
-        assertEquals(ids.get(10), evalUnLocked.getId());
+        assertEquals(ids.get(9), evalUnLocked.getId());
+        assertEquals(ids.get(10), etdl.evaluationActive_viewIgnoreDates.getId());
         assertEquals(ids.get(11), etdl.evaluationNewAdmin.getId());
         assertEquals(ids.get(12), etdl.evaluationNew.getId());
         assertEquals(ids.get(13), etdl.evaluation_allRoleAssignments_allRolesParticipate.getId());
