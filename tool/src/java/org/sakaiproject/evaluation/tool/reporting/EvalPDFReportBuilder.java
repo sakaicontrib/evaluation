@@ -18,13 +18,18 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jfree.chart.JFreeChart;
 
 import uk.org.ponder.util.UniversalRuntimeException;
 
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -37,6 +42,10 @@ import com.lowagie.text.pdf.MultiColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.ColumnText;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
@@ -47,7 +56,9 @@ public class EvalPDFReportBuilder {
 
     private Document document;
     private PdfWriter pdfWriter;
-    private MultiColumnText responseArea;
+    private ColumnText responseArea;
+    private int column=0;
+    private int status = ColumnText.START_COLUMN;
 
     private int frontTitleSize = 26;
     private Font questionTextFont;
@@ -56,6 +67,19 @@ public class EvalPDFReportBuilder {
     private Font frontTitleFont;
     private Font frontAuthorFont;
     private Font frontInfoFont;
+    private Font titleTextFont; //Added for survey title
+    private Font boldTextFont; //Added for block's weighted mean
+    
+    private final float SPACING_AFTER_COMMENT=7.0f;
+    private final float SPACING_AFTER_COMMENT_TITLE=7.0f;
+    private final float SPACING_AFTER_LIST_TITLE=7.0f;
+    private final float SPACING_AFTER_HEADER=10.0f;
+    private final float SPACING_AFTER_LAST_LIST_ITEM=7.0f;
+    private final float SPACING_BETWEEN_LIST_ITEMS=1.0f;
+    
+    float pagefooter = 16.0f;
+    
+    private static Log log = LogFactory.getLog(EvalPDFReportBuilder.class);
 
     public EvalPDFReportBuilder(OutputStream outputStream) {
         document = new Document();
@@ -70,6 +94,8 @@ public class EvalPDFReportBuilder {
             // paragraphFont = new Font(evalBF, 9, Font.NORMAL);
             // paragraphFont = new Font(Font.TIMES_ROMAN, 9, Font.NORMAL);
 
+            titleTextFont = new Font(Font.TIMES_ROMAN, 22, Font.BOLD);
+            boldTextFont = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
             questionTextFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, Font.BOLD);
             paragraphFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 9, Font.NORMAL);
             paragraphFontBold = FontFactory.getFont(FontFactory.TIMES_ROMAN, 9, Font.BOLD);
@@ -82,17 +108,14 @@ public class EvalPDFReportBuilder {
     }
 
     public void close() {
-        try {
-            document.add(responseArea);
             document.close();
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Unable to finish PDF Report.");
-        }
     }
 
     public void addTitlePage(String evaltitle, String groupNames, String startDate, String endDate,
-            String responseInformation, byte[] bannerImageBytes, String evalSystemTitle) {
+            String responseInformation, byte[] bannerImageBytes, String evalSystemTitle, String informationTitle) {
         try {
+        	float pagefooter = paragraphFont.getSize();
+        	
             PdfContentByte cb = pdfWriter.getDirectContent();
 
             float docMiddle = (document.right() - document.left()) / 2 + document.leftMargin();
@@ -113,7 +136,7 @@ public class EvalPDFReportBuilder {
             document.add(groupPara);
 
             // Little info area? I don't know, it was on the mockup though
-            Paragraph infoPara = new Paragraph("Results of survey", frontInfoFont);
+            Paragraph infoPara = new Paragraph(informationTitle, frontInfoFont);
             infoPara.setAlignment(Element.ALIGN_CENTER);
             infoPara.setSpacingBefore(90.0f);
             document.add(infoPara);
@@ -152,83 +175,131 @@ public class EvalPDFReportBuilder {
 
             document.newPage();
 
-            responseArea = new MultiColumnText();
-            responseArea.addRegularColumns(document.left(), document.right(), 20f, 2);
+            responseArea = new ColumnText(cb);
+            responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
+            responseArea.go();
         } catch (Exception de) {
             throw UniversalRuntimeException.accumulate(de, "Unable to create title page");
         }
     }
 
     public void addIntroduction(String title, String text) {
-        this.addQuestionText(title);
-
-        // Paragraph textPara = new Paragraph(text);
-        // responseArea.addElement(textPara);
+    	this.addTitleText(title);
         this.addRegularText(text);
     }
 
-    public void addSectionHeader(String headerText) {
-        try {
-            Paragraph headerPara = new Paragraph(headerText);
-            responseArea.addElement(headerPara);
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Unable to add Header to PDF Report");
-        }
+    public void addSectionHeader(String headerText,boolean lastElementIsHeader, float theSize)
+    {
+    	log.debug("Added a header with text: "+headerText+" and size: "+theSize+". Previous element was another header: "+lastElementIsHeader);
+    	if (!lastElementIsHeader)
+    	{
+    		Paragraph emptyPara = new Paragraph(" ");
+        	this.addElementWithJump(emptyPara, true);
+    	}
+    	Paragraph headerPara = new Paragraph(headerText);
+    	Font fuente = headerPara.getFont();
+    	fuente.setSize(theSize);
+    	headerPara.setFont(fuente);
+    	headerPara.setSpacingAfter(SPACING_AFTER_HEADER);
+    	this.addElementWithJump(headerPara, true);
     }
+    
+    public void addCommentList(String header, List<String> textItems, String none, String textNumberOfComments)
+    {
+    	ArrayList<Element> myElements = new ArrayList<Element>();
+    	
+        com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
+    	
+    	Paragraph emptyPara = new Paragraph(" ",paragraphFont);
+    	myElements.add(emptyPara);
+    	
+        Paragraph para = new Paragraph(header, paragraphFontBold);
+    	para.setSpacingAfter(SPACING_AFTER_COMMENT_TITLE);
+        myElements.add(para);
 
-    public void addCommentList(String header, List<String> textItems, String none) {
-        try {
-            Paragraph para = new Paragraph(header, paragraphFontBold);
-            this.responseArea.addElement(para);
-
-            if (textItems == null || textItems.size() == 0) {
-                Paragraph p = new Paragraph(none, paragraphFont);
-                this.responseArea.addElement(p);
-            } else {
-                com.lowagie.text.List list = new com.lowagie.text.List(
-                        com.lowagie.text.List.UNORDERED);
-                list.setListSymbol("\u2022   ");
-                list.setIndentationLeft(20f);
-                for (String text : textItems) {
-                    if (text != null && text.length() > 0) {
-                        com.lowagie.text.ListItem item = new com.lowagie.text.ListItem(text,
-                                this.paragraphFont);
-                        item.setSpacingAfter(8f);
-                        list.add(item);
-                    }
-                }
-                this.responseArea.addElement(list);
-            }
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Unable to add Essay question (" + header
-                    + ") to PDF Report");
+        if (textItems == null || textItems.size() == 0)
+        {
+            Paragraph p = new Paragraph(none, paragraphFont);
+            myElements.add(p);
         }
-    }
-
-    public void addTextItemsList(String header, List<String> textItems) {
-        try {
-            // Paragraph questionPara = new Paragraph(question);
-            // responseArea.addElement(questionPara);
-            this.addQuestionText(header);
-            com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
+        else
+        {
             list.setListSymbol("\u2022   ");
             list.setIndentationLeft(20f);
             for (String text : textItems) {
                 if (text != null && text.length() > 0) {
                     com.lowagie.text.ListItem item = new com.lowagie.text.ListItem(text,
                             this.paragraphFont);
-                    item.setSpacingAfter(8f);
+                    item.setKeepTogether(false);
+                    item.setSpacingAfter(SPACING_BETWEEN_LIST_ITEMS);
                     list.add(item);
                 }
             }
-            this.responseArea.addElement(list);
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Unable to add Essay question (" + header
-                    + ") to PDF Report");
+            myElements.add(list);
+            log.debug("Current comment list has "+textItems.size()+" comments.");
+            myElements.add(new Paragraph(textNumberOfComments + " : " + textItems.size(), paragraphFont));
         }
+        
+        //With more than 30 answers, we do not try to calculate the space.
+        if (list.size()<=30)
+        	this.addElementArrayWithJump(myElements);
+        else
+        	this.addBigElementArray(myElements);
     }
 
-    /**
+    public void addTextItemsList(String header, List<String> textItems, boolean comment, String textNumberOfAnswers)
+    {
+    	
+    	ArrayList<Element> myElements = new ArrayList<Element>();
+    	
+        com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
+        list.setListSymbol("\u2022   ");
+        list.setIndentationLeft(20f);
+        
+        int numItem = 0;
+        
+        for (String text : textItems)
+        {
+        	numItem++;
+            if (text != null && text.length() > 0)
+            {
+                com.lowagie.text.ListItem item = new com.lowagie.text.ListItem(text,
+                        this.paragraphFont);
+                item.setKeepTogether(false);
+                item.setSpacingBefore(SPACING_BETWEEN_LIST_ITEMS);
+                if (numItem<textItems.size()) item.setSpacingAfter(1f);
+                else item.setSpacingAfter(SPACING_AFTER_LAST_LIST_ITEM);
+                list.add(item);
+            }
+        }
+        
+        if (!comment)
+        {
+        	Paragraph emptyPara = new Paragraph(" ");
+        	myElements.add(emptyPara);
+        	Paragraph para = new Paragraph(header, questionTextFont);
+        	para.setSpacingAfter(SPACING_AFTER_COMMENT_TITLE);
+        	myElements.add(para);
+        }
+        else
+        {
+        	Paragraph emptyPara = new Paragraph(" ");
+        	myElements.add(emptyPara);
+            Paragraph para = new Paragraph(header, paragraphFont);
+            para.setSpacingAfter(SPACING_AFTER_LIST_TITLE);
+        	myElements.add(para);
+        }
+        
+        myElements.add(list);
+        myElements.add(new Paragraph(textNumberOfAnswers + " : " + textItems.size(), paragraphFont));
+        //With more than 30 answers, we do not try to calculate the space.
+        if (list.size()<=30)
+        	this.addElementArrayWithJump(myElements);
+        else
+        	this.addBigElementArray(myElements);
+    }
+
+	/**
      * @param question
      *            the question text
      * @param choices
@@ -242,62 +313,284 @@ public class EvalPDFReportBuilder {
      * @param answersAndMean
      *            the text which will be displayed above the chart (normally the answers count and
      *            mean)
+     * @param lastElementIsHeader
+     *            If the last element was a header, the extra spacing paragraph is not needed.
      */
     public void addLikertResponse(String question, String[] choices, int[] values,
-            int responseCount, boolean showPercentages, String answersAndMean) {
-        try {
-            responseArea.addElement(new Paragraph(question, questionTextFont));
+            int responseCount, boolean showPercentages, String answersAndMean, boolean lastElementIsHeader)
+    {
+    	ArrayList <Element> myElements = new ArrayList<Element>();
+    	
+        try
+        {
+        	if (!lastElementIsHeader)
+        	{
+        		Paragraph emptyPara = new Paragraph(" ");
+            	this.addElementWithJump(emptyPara, false);
+        	}
+        	
+        	Paragraph myPara = new Paragraph(question, questionTextFont);
+        	myPara.setSpacingAfter(SPACING_AFTER_HEADER);
+        	myElements.add(myPara);
 
-            if (answersAndMean != null) {
-                Paragraph header = new Paragraph(answersAndMean, paragraphFont);
-                header.setSpacingAfter(1.0f);
-                responseArea.addElement(header);
-            }
+			EvalLikertChartBuilder chartBuilder = new EvalLikertChartBuilder();
+			chartBuilder.setValues(values);
+			chartBuilder.setResponses(choices);
+			chartBuilder.setShowPercentages(showPercentages);
+			chartBuilder.setResponseCount(responseCount);
+			JFreeChart chart = chartBuilder.makeLikertChart();
 
-            EvalLikertChartBuilder chartBuilder = new EvalLikertChartBuilder();
-            chartBuilder.setValues(values);
-            chartBuilder.setResponses(choices);
-            chartBuilder.setShowPercentages(showPercentages);
-            chartBuilder.setResponseCount(responseCount);
-            JFreeChart chart = chartBuilder.makeLikertChart();
+			/* The height is going to be based off the number of choices */
+			int height = 15 * choices.length;
 
-            /* The height is going to be based off the number of choices */
-            int height = 15 * choices.length;
+			PdfContentByte cb = pdfWriter.getDirectContent();
+			PdfTemplate tp = cb.createTemplate(200, height);
+			Graphics2D g2d = tp.createGraphics(200, height, new DefaultFontMapper());
+			Rectangle2D r2d = new Rectangle2D.Double(0, 0, 200, height);
+			chart.draw(g2d, r2d);
+			g2d.dispose();
+			Image image = Image.getInstance(tp);
 
-            PdfContentByte cb = pdfWriter.getDirectContent();
-            PdfTemplate tp = cb.createTemplate(200, height);
-            Graphics2D g2d = tp.createGraphics(200, height, new DefaultFontMapper());
-            Rectangle2D r2d = new Rectangle2D.Double(0, 0, 200, height);
-            chart.draw(g2d, r2d);
-            g2d.dispose();
-            Image image = Image.getInstance(tp);
-
-            // put image in the document
-            responseArea.addElement(image);
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e);
-        }
+			// put image in the document
+			myElements.add(image);
+			
+			if (answersAndMean != null)
+			{
+			    Paragraph header = new Paragraph(answersAndMean, paragraphFont);
+			    header.setSpacingAfter(SPACING_BETWEEN_LIST_ITEMS);
+			    myElements.add(header);
+			}
+			
+			this.addElementArrayWithJump(myElements);
+		} catch (BadElementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
-    public void addRegularText(String text) {
+    public void addRegularText(String text)
+    {
         Paragraph para = new Paragraph(text, paragraphFont);
-        try {
-            responseArea.addElement(para);
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Cannot add regular text");
-        }
+        para.setSpacingAfter(SPACING_AFTER_HEADER);
+    	//this.addElementWithJump(para, false);
+        this.addLittleElementWithJump(para);
     }
 
-    private void addQuestionText(String question) {
+    private void addQuestionText(String question)
+    {
         Paragraph para = new Paragraph(question, questionTextFont);
-        para.setSpacingAfter(1.0f);
-        // Paragraph spacer = new Paragraph(" "); // Should probably just set margins on
-        // questionTextFont
-        try {
-            responseArea.addElement(para);
-        } catch (DocumentException e) {
-            throw UniversalRuntimeException.accumulate(e, "Cannot add question text");
-        }
+    	//this.addElementWithJump(para, false);
+    	this.addLittleElementWithJump(para);
+    }
+    
+    public void addTitleText(String title)
+    {
+    	Paragraph para = new Paragraph(title, titleTextFont);
+		//this.addElementWithJump(para, false);
+    	this.addLittleElementWithJump(para);
+    }
+    
+    public void addBoldText(String title)
+    {
+    	Paragraph para = new Paragraph(title, boldTextFont);
+		//this.addElementWithJump(para, false);
+    	this.addLittleElementWithJump(para);
     }
 
+    public void addFooter(String text)
+    {
+    	HeaderFooter footer = new HeaderFooter((new Phrase(text+" - Pag. ",paragraphFont)),true);;
+    	footer.setAlignment(HeaderFooter.ALIGN_RIGHT);
+    	footer.disableBorderSide(footer.BOTTOM);
+    	
+    	document.setFooter(footer);
+    }
+
+    public void addElementWithJump(Element currentPara, boolean jumpIfLittleSpace)
+    {
+    	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
+    	//Adds a big size element (a header or a graphic) and jumps to another page/column if it detects that is below the last third of the document.
+    	float y = responseArea.getYLine();
+    	log.debug("Vertical position Y: "+y);
+    	try
+    	{
+    		if ((jumpIfLittleSpace) && (y<(document.top()/3)))
+    		{
+    			//If there's little space to the bottom border, we jump to the next column. I use this only for headers.
+    			
+   				column = Math.abs(column - 1);
+    			
+    			if (column==0)
+    			{
+    				document.newPage();
+    				responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
+    			}
+    			else
+    			{
+    				responseArea.setSimpleColumn(document.right()/2,document.top(),document.right(), document.bottom()+pagefooter);
+    			}
+    			//Just to align vertically the top elements
+				if (!currentPara.toString().equals("[ ]")) responseArea.addElement(new Paragraph(" "));
+    		}
+			responseArea.addElement(currentPara);
+			responseArea.go();
+		}
+    	catch (DocumentException e) {
+			// TODO Auto-generated catch block
+    		throw UniversalRuntimeException.accumulate(e, "Unable to add element to PDF Report");
+		}
+    }
+    
+    public void addElementArrayWithJump(ArrayList<Element> arrayElements)
+    {
+    	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
+    	//Adds an array of elements, jumping to next column/page if there is not space enough.
+    	//First it tests if current element fits in current column.
+    	//If it does not fit, we test if it fits in a whole column.
+    	//If it neither fits, we call another method that adds the array element by element.
+    	
+    	try
+    	{
+    		//First test. Do the elements fit in current column?
+    		float y = responseArea.getYLine();
+    		log.debug("Vertical position Y: "+y);
+    		
+			for (Element element:arrayElements)
+			{
+				responseArea.addElement(element);
+			}
+
+			status = responseArea.go(true); //Add elements in simulation mode to see if there is a column jump or not.
+			
+			if (status==responseArea.NO_MORE_COLUMN)
+			{
+				//Element has not fit in the column, a new column is needed.
+				column = Math.abs(column - 1);
+			
+				if (column==0)
+				{
+					document.newPage();
+					responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
+				}
+				else
+				{
+					responseArea.setSimpleColumn(document.right()/2,document.top(),document.right(), document.bottom()+pagefooter);
+				}
+				//Just to align vertically the top elements
+				if (!((Element)arrayElements.get(0)).toString().equals("[ ]")) arrayElements.add(0, new Paragraph(" "));
+				
+				//Second test: Do the elements fit in a new column?
+				responseArea.setText(null);
+				
+				y = responseArea.getYLine();
+				for (Element element:arrayElements)
+				{
+					responseArea.addElement(element);
+				}
+				status = responseArea.go(true);
+				
+				if (status==responseArea.NO_MORE_COLUMN)
+				{
+					responseArea.setYLine(y);
+					addBigElementArray(arrayElements);
+				}
+				else
+				{
+					responseArea.setYLine(y);
+					
+					//After testing that they fit, we put the elements in a new column.
+					responseArea.setText(null);
+					for (Element element:arrayElements)
+					{
+						responseArea.addElement(element);
+					}
+					responseArea.go();
+				}
+			}
+			else
+			{
+				responseArea.setYLine(y);
+				
+				//After testing that they fit, we put the elements in the current column.
+				responseArea.setText(null);
+				for (Element element:arrayElements)
+				{
+					responseArea.addElement(element);
+				}
+				responseArea.go();
+			}
+			
+
+		}
+    	catch (DocumentException e) {
+			// TODO Auto-generated catch block
+    		throw UniversalRuntimeException.accumulate(e, "Unable to add elements to PDF Report");
+		}
+    }
+
+    private void addBigElementArray(ArrayList<Element> myElements)
+    {
+    	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
+    	//Adds an array of elements that does not fit in a column, one by one.
+    	//Current lowagie library does not allow to copy a List if it exceeds a whole page. It is truncated.
+    	//So we add Lists always one element at a time.
+    	log.debug("Entering in AddBigElementArray with: "+myElements.toString()+". Curent column is: "+column);
+
+		responseArea.setText(null);
+		log.debug("Initial vertical position: "+responseArea.getYLine());
+		
+		for (Element element:myElements)
+		{
+			if (element.getClass().equals(com.lowagie.text.List.class))
+			{
+				log.debug("We have a List element to add.");
+				com.lowagie.text.List myList=(com.lowagie.text.List)element;
+				for (int i=0;i<myList.size();i++)
+				{
+					ArrayList<ListItem> arrayItems = myList.getItems();
+					ListItem miItem = arrayItems.get(i);
+					String text = (String) miItem.getContent();
+					Paragraph para = new Paragraph("\u2022   "+text, paragraphFont);
+			    	para.setIndentationLeft(20f);
+			    	this.addLittleElementWithJump(para);
+				}
+			}
+			else
+			{
+				addLittleElementWithJump(element);
+			}
+		}
+
+	}
+    
+    public void addLittleElementWithJump(Element littleElement)
+    {
+    	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
+    	//Adds a little element testing if it fits in current column.
+    	try
+    	{
+	    	responseArea.addElement(littleElement);
+	    	
+	    	status=responseArea.go();
+			if (status==responseArea.NO_MORE_COLUMN)
+			{
+				column = Math.abs(column - 1);
+			
+				if (column==0)
+				{
+					document.newPage();
+					responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
+				}
+				else
+				{
+					responseArea.setSimpleColumn(document.right()/2,document.top(),document.right(), document.bottom()+pagefooter);
+				}
+			}
+		}
+		catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			throw UniversalRuntimeException.accumulate(e, "Unable to add elements to PDF Report");
+		}
+    }
+    
 }

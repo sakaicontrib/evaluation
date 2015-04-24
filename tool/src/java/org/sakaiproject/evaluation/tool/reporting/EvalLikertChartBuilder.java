@@ -82,8 +82,11 @@ public class EvalLikertChartBuilder {
         rangeAxis.setVisible(false);
         // System.out.println("THE UPPER MARGIN IS: " + rangeAxis.getUpperMargin());
         rangeAxis.setUpperMargin(0.35);
+        rangeAxis.resizeRange(1.1f);
 
         CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setMaximumCategoryLabelWidthRatio(0.4f);
+        domainAxis.setMaximumCategoryLabelLines(2);
 
         // Set the font for the labels
         Font labelFont = new Font("Serif", Font.PLAIN, 6);
