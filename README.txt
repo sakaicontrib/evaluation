@@ -1,5 +1,8 @@
 BUILDING EVALUATION
 
+[![Build Status](https://travis-ci.org/sakaiproject/evaluation.svg?branch=master)](https://travis-ci.org/sakaiproject/evaluation)
+
+
 The evaluation project can be built and deployed with Sakai 2.5.x, 2.6.x, 2.7.x, or 2.8.x. 
 This is enabled by use of maven profiles, which are described in maven documentation:
 
