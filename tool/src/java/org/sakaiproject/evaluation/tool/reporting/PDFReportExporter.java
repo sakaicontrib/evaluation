@@ -376,22 +376,28 @@ public class PDFReportExporter implements ReportExporter {
     }
 
 
-    private float calculateFontSize(String itemText)
+    float calculateFontSize(String itemText)
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
-        int fontIndex = itemText.indexOf("font-size:");
-        String itemSize;
-        if (fontIndex!=-1) itemSize=itemText.substring(fontIndex+10,itemText.indexOf(";", fontIndex+10)).trim();
-        else return 10.0f;
+        Matcher matcher = Pattern.compile("font-size:\\W*([a-zA-Z-]+)?").matcher(itemText);
+        if (matcher.find())
+        {
+            String itemSize = matcher.group(1);
 
-        //Switch not available for Strings until Java 1.7
-        if (itemSize.equals("xx-large")) return 24.0f;
-        else if (itemSize.equals("x-large")) return 18.0f;
-        else if (itemSize.equals("large")) return 14.0f;
-        else if (itemSize.equals("medium")) return 12.0f;
-        else if (itemSize.equals("small")) return 10.0f;
+            //Switch not available for Strings until Java 1.7
+            if ("xx-large".equals(itemSize)) return 24.0f;
+            else if ("x-large".equals(itemSize)) return 18.0f;
+            else if ("large".equals(itemSize))return 14.0f;
+            else if ("medium".equals(itemSize)) return 12.0f;
+            else if ("small".equals(itemSize)) return 10.0f;
 
-        return 12.0f;
+            // If we have a font size but can't work out what it is attempt to model it on the medium which is
+            // slightly bigger than the default font size.
+            return 12.0f;
+        }
+
+        return 10.0f;
+
     }
 
     private int numberAnswersInQuestion(int [] values, boolean usaNA)
