@@ -502,10 +502,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
                 //Reset.
                 processingBlock=false;
-                for (int n=0;n<collectedValues.size();n++)
-                {
-                    collectedValues.set(n,0);
-                }
+                collectedValues = new ArrayList<Integer>();
             }
 
             if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType))
