@@ -54,6 +54,20 @@ public interface EvalEmailsLogic {
      */
     public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
           EvalGroup group);
+    
+    /**
+     * Builds the email message from a template and a bunch of replacement variables
+     * (passed in and otherwise)
+     * 
+     * @param messageTemplate an email message template with variables to replace
+     * @param subjectTemplate TODO
+     * @param eval the evaluation related to this message (for replacements)
+     * @param group the eval group related to the message (for replacements)
+     * @param includeConstant the bunch of replacement variables
+     * @return the processed message template with replacements and logic handled
+     */
+    public EvalEmailMessage makeEmailMessage(String messageTemplate, String subjectTemplate, EvalEvaluation eval,
+            EvalGroup group, String includeConstant);
 
     // NOTIFICATION methods
 
