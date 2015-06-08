@@ -96,6 +96,66 @@ public class RenderingUtils {
         }
         return new AnswersMean(totalAnswers, weightedAverage);
     }
+    
+    
+    
+    public static AnswersMean calculateAnswersMean(int[] responseArray, String[] answersArray, boolean usaNA)
+    {
+    	/* 20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
+    	 * Calculate weighted mean of answers or of answer numbers depending if values are numeric.
+    	 * In all cases, N/A value is excluded.
+    	 * responseArray: 3,7,2,9,5,3 (votes of each answer)
+    	 * answersArray: 2,4,6,8,10 || A,B,C,D,E || 1,2,3,4,5,N/A  || A,B,C,D,E,N/A
+    	 */
+        if (responseArray == null) {
+            throw new IllegalArgumentException("responseArray cannot be null");
+        }
+        int responseCount = (usaNA) ? responseArray.length -1 : responseArray.length; // remove the NA count from the end
+        int totalAnswers = 0;
+        int totalValue = 0;
+        int totalWeight = 0;
+        
+        int [] realValues = new int[responseCount];
+        boolean numerico=true; //If there is a non-numeric value, mean of indexes is made.
+        
+        //We take all answers. If N/A is used, all but the last one.
+        for (int i=0; i<responseCount;i++)
+        {
+        	try
+        	{
+	        	realValues[i]=new Integer(answersArray[i]).intValue();
+        	}
+        	catch (Exception e)
+        	{
+        		numerico=false;
+        		break;
+        	}
+        }
+        
+        for (int i = 0; i < responseCount; i++)
+        {
+            if (!numerico)
+            {
+            	//Not numeric values. Mean of answers indexes.
+            	int weight = i+1;
+            	totalWeight += weight;
+            	totalAnswers += responseArray[i];
+            	totalValue += (weight * responseArray[i]);
+            }
+            else
+            {
+            	//Numeric values. Mean of answers.
+            	totalWeight += realValues[i];
+            	totalAnswers += responseArray[i];
+            	totalValue += (realValues[i] * responseArray[i]);
+            }
+        }
+        double weightedAverage = 0.0d;
+        if (totalAnswers > 0) {
+            weightedAverage = (double)totalValue / (double)totalAnswers;
+        }
+        return new AnswersMean(totalAnswers, weightedAverage);
+    }
 
     public static class AnswersMean {
         private DecimalFormat df = new DecimalFormat("#0.00");

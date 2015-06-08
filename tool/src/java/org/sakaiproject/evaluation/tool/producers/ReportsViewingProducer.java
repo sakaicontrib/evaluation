@@ -360,9 +360,16 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
                 }
 
                 // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
-                AnswersMean answersMean = RenderingUtils.calculateMean(choicesCounts);
-                Object[] params = new Object[] {answersMean.getAnswersCount()+"", answersMean.getMeanText()};
-                UIMessage.make(scaled, "statistics", "viewreport.answers.mean", params);
+                // 20140226 - daniel.merino@unavarra.es - Change this method by another one.
+                // Mean is made for answers if they are numeric or for answer numbers if they are not.
+                // https://jira.sakaiproject.org/browse/EVALSYS-1100
+                //AnswersMean answersMean = RenderingUtils.calculateMean(choicesCounts);
+                AnswersMean answersMean = RenderingUtils.calculateAnswersMean(choicesCounts, scaleOptions, templateItem.getUsesNA());
+                if (answersMean!=null)
+                {
+                	Object[] params = new Object[] {answersMean.getAnswersCount()+"", answersMean.getMeanText()};
+                	UIMessage.make(scaled, "statistics", "viewreport.answers.mean", params);
+                }
             }
 
             if (dti.usesComments()) {
