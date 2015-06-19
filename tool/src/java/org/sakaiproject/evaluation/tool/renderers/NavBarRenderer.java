@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.tool.producers.ControlItemsProducer;
 import org.sakaiproject.evaluation.tool.producers.ControlScalesProducer;
 import org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
+import org.sakaiproject.evaluation.tool.viewparams.EvalListParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -86,7 +87,7 @@ public class NavBarRenderer {
         if(adminAllowedToSee || showMyToplinks) {
         	
         	if (adminAllowedToSee || canBeginEvaluation) {
-        		renderLink(joint, ControlEvaluationsProducer.VIEW_ID, "controlevaluations.page.title");
+        		renderLinkForMyEvals(joint, ControlEvaluationsProducer.VIEW_ID, "controlevaluations.page.title");
         	}
         	
         	if (adminAllowedToSee || canCreateTemplate) {
@@ -118,7 +119,7 @@ public class NavBarRenderer {
         }
         UIInternalLink.make(tofill, "control-evaluations-link",
                 UIMessage.make("controlevaluations.page.title"),
-                new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+                new EvalListParameters(ControlEvaluationsProducer.VIEW_ID,6));
         if(isUserAdmin || canCreateTemplate){
         	UIInternalLink.make(tofill, "control-templates-link",
     				UIMessage.make("controltemplates.page.title"), 
@@ -137,6 +138,17 @@ public class NavBarRenderer {
 		UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
 		UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
 				new SimpleViewParameters(linkViewID));
+
+		if (currentViewID != null && currentViewID.equals(linkViewID)) {
+			link.decorate( new UIStyleDecorator("inactive"));
+		}
+	}
+	
+	private void renderLinkForMyEvals(UIJointContainer joint, String linkViewID, String messageKey) {
+
+		UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
+		UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
+				new EvalListParameters(linkViewID,6));
 
 		if (currentViewID != null && currentViewID.equals(linkViewID)) {
 			link.decorate( new UIStyleDecorator("inactive"));

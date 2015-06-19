@@ -116,8 +116,11 @@ public interface EvalEvaluationSetupService {
      * evaluations which are both owned and not-owned, else only return the owned evaluations.
      * @param includePartial if true then partial evaluations will be returned as well,
      * otherwise only fully created evaluations are returned
+     * @param maxAgeToDisplay 
      * @return a List of {@link EvalEvaluation} objects
      */
+    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial, int maxAgeToDisplay);
+    
     public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial);
 
     /**
