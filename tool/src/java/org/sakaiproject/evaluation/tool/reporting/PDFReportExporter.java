@@ -458,7 +458,14 @@ public class PDFReportExporter implements ReportExporter {
         for (int n=0;n<collectedValues.size();n++)
         {
             numeroValores=numeroValores+collectedValues.get(n);
-            answer=new Integer(answers[n]);
+            try
+            {
+            	answer=new Integer(answers[n]);
+            }
+            catch (NumberFormatException e)
+            {
+            	answer=n+1;
+            }
             accumulator=accumulator+((answer)*collectedValues.get(n));
         }
         double blockWeightedMean;
@@ -536,7 +543,14 @@ public class PDFReportExporter implements ReportExporter {
                     {
                         for (int n=0;n<optionLabels.length;n++)
                         {
-                            currentNumericAnswer=new Integer(optionLabels[n]);
+                        	try
+                        	{
+                        		currentNumericAnswer=new Integer(optionLabels[n]);
+                        	}
+                        	catch (NumberFormatException e)
+                        	{
+                        		//Don't do nothing here, mean is calculated with answer's number
+                        	}
 
                             if (n>=collectedValues.size())
                             {
