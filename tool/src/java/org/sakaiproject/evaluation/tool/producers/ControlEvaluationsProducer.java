@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalListParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -51,13 +52,14 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * This lists evaluations for users so they can add, modify, remove them
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlEvaluationsProducer extends EvalCommonProducer {
+public class ControlEvaluationsProducer extends EvalCommonProducer implements ViewParamsReporter {
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ViewComponentProducer#getViewID()
@@ -118,6 +120,10 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
     */
    public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+      EvalListParameters evalListParams = (EvalListParameters) viewparams;
+      int maxAgeToDisplay = evalListParams.maxAgeToDisplay; // max age in months to display closed evals
+      
+      
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -147,7 +153,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
       // UM specific code for checking unpublished groups - collect evaluation Ids for evaluations that are pending and active ONLY
       List<Long> takableEvaluationIds = new ArrayList<Long>();
 
-      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(commonLogic.getCurrentUserId(), false, false, true);
+      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(commonLogic.getCurrentUserId(), false, false, true, maxAgeToDisplay);
       for (int j = 0; j < evals.size(); j++) {
          // get queued, active, closed evaluations by date
          // check the state of the eval to determine display data
@@ -429,10 +435,13 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
             RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
                     responsesNeeded, responsesRequired, viewResultsEval);
          }
+         
       } else {
          UIMessage.make(tofill, "no-closed-evals", "controlevaluations.closed.none");
       }
-
+      
+      // Links for limiting amount of closed evals
+      createClosedEvalDisplayLinks(tofill, maxAgeToDisplay);
    }
 
    /**
@@ -461,5 +470,65 @@ public class ControlEvaluationsProducer extends EvalCommonProducer {
       }
       return text;
    }
+   
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
+   public ViewParameters getViewParameters() {
+       return new EvalListParameters();
+   }
 
+   /*
+    * Arrange the links to show the options that are not currently being shown. So if we're 
+    * looking at 12 months of closed evals right now, we don't need a link to look at 12 months.
+    * 
+    * UIContainer tofill
+    * int maxAgeToDisplay: int in months to display the older evals. 0 means don't limit and 
+    * 		display all.
+    * 
+    */
+   private void createClosedEvalDisplayLinks(UIContainer tofill, int maxAgeToDisplay) {
+	  UIMessage.make("controlevaluations.closed.displaying");
+	  String monthText = Integer.toString(maxAgeToDisplay);
+	  if (maxAgeToDisplay == 0) monthText = "All";
+	  UIOutput.make(tofill, "eval-months-displayed", monthText);
+	  UIMessage.make("controlevaluations.closed.months");
+	  
+	  switch(maxAgeToDisplay) {
+	  	case 6: 
+		  	  UIInternalLink.make(tofill, "x-month-evals-link", UIMessage.make("controlevaluations.closed.twelve"), 
+			          new EvalListParameters(VIEW_ID, 12) );
+			  UIInternalLink.make(tofill, "y-month-evals-link", UIMessage.make("controlevaluations.closed.eighteen"), 
+			          new EvalListParameters(VIEW_ID, 18) );
+			  UIInternalLink.make(tofill, "z-month-evals-link", UIMessage.make("controlevaluations.closed.all"), 
+			          new EvalListParameters(VIEW_ID, 0) ); // zero means no limit
+		  break;
+	  	case 12: 
+		  	  UIInternalLink.make(tofill, "x-month-evals-link", UIMessage.make("controlevaluations.closed.six"), 
+			          new EvalListParameters(VIEW_ID, 6) );
+			  UIInternalLink.make(tofill, "y-month-evals-link", UIMessage.make("controlevaluations.closed.eighteen"), 
+			          new EvalListParameters(VIEW_ID, 18) );
+			  UIInternalLink.make(tofill, "z-month-evals-link", UIMessage.make("controlevaluations.closed.all"), 
+			          new EvalListParameters(VIEW_ID, 0) );
+			  break;
+	  	case 18: 
+		  	  UIInternalLink.make(tofill, "x-month-evals-link", UIMessage.make("controlevaluations.closed.six"), 
+			          new EvalListParameters(VIEW_ID, 6) );
+			  UIInternalLink.make(tofill, "y-month-evals-link", UIMessage.make("controlevaluations.closed.twelve"), 
+			          new EvalListParameters(VIEW_ID, 12) );
+			  UIInternalLink.make(tofill, "z-month-evals-link", UIMessage.make("controlevaluations.closed.all"), 
+			          new EvalListParameters(VIEW_ID, 0) );
+			  break;
+	  	default: // all 
+		  	  UIInternalLink.make(tofill, "x-month-evals-link", UIMessage.make("controlevaluations.closed.six"), 
+			          new EvalListParameters(VIEW_ID, 6) );
+			  UIInternalLink.make(tofill, "y-month-evals-link", UIMessage.make("controlevaluations.closed.twelve"), 
+			          new EvalListParameters(VIEW_ID, 12) );
+			  UIInternalLink.make(tofill, "z-month-evals-link", UIMessage.make("controlevaluations.closed.eighteen"), 
+			          new EvalListParameters(VIEW_ID, 18) );
+			  break;
+	  		
+	  } // end switch
+   }
+   
 }

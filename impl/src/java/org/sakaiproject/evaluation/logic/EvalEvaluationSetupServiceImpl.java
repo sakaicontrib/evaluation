@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
@@ -636,11 +638,18 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         return evaluation;
     }
-
+    
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean, boolean)
      */
     public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial) {
+    	return getVisibleEvaluationsForUser(userId, recentOnly, showNotOwned, includePartial,0);
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean, boolean)
+     */
+    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial, int maxAgeToDisplay) {
 
         Date recentClosedDate = null;
         if (recentOnly) {
@@ -650,6 +659,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             Calendar calendar = GregorianCalendar.getInstance();
             calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
             recentClosedDate = calendar.getTime();
+        }
+        
+        // Limit the recentClosedDate if necessary based on maxAgeToDisplay (in months). This will
+        // only come into play for the "My Evaluations" screen for the purpose of limiting closed evals.
+        if (maxAgeToDisplay != 0) { 
+        	Calendar calendar = GregorianCalendar.getInstance();
+        	calendar.add(Calendar.MONTH, -1*maxAgeToDisplay); // subtracts maxAgeToDisplay from months
+        	recentClosedDate = calendar.getTime();
         }
 
         String[] evalGroupIds = null;
