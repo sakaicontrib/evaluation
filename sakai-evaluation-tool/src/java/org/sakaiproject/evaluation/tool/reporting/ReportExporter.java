@@ -18,6 +18,8 @@ import java.io.OutputStream;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
+import uk.org.ponder.messageutil.MessageLocator;
+
 
 /**
  * An interface to implement when exporting reports
@@ -44,6 +46,8 @@ public interface ReportExporter {
     * @param outputStream the resulting data will be placed into this
     */
    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream);
+   public void setMessageLocator(MessageLocator locator);
+
    
    public String getContentType();
 

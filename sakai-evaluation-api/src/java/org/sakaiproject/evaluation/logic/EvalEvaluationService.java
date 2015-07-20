@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.toolaccess.ToolApi;
 
 
 /**
@@ -694,5 +696,16 @@ public interface EvalEvaluationService {
 	 * Remove all records from the the email processing queue and report the number of items removed.
 	 */
 	public int resetConsolidatedEmailRecipients();
+
+	/* Method used to get access to the ToolAPI */
+    public void setToolApi(ToolApi t);
+
+    /**
+     * exportReport - exports a report from the tool
+     * @param evaluation
+     * @param groupIds
+     * @param outputStream
+     */
+    public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType);
 
 }

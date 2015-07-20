@@ -112,6 +112,8 @@ public class PDFReportExporterIndividual implements ReportExporter {
      */
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
 		
+    	//Make sure responseAggregator is using this messageLocator
+        responseAggregator.setMessageLocator(messageLocator);
 		EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
         Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
         String currentUserId = commonLogic.getCurrentUserId();

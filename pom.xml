@@ -311,6 +311,7 @@
                             <exclude>**/css/scss/**</exclude>
                             <exclude>LICENSE*</exclude>
                             <exclude>**/README</exclude>
+                            <exclude>.recommenders/**</exclude>
                         </excludes>
                         <mapping>
                             <tag>DYNASCRIPT_STYLE</tag>

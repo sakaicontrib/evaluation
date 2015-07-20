@@ -108,7 +108,11 @@ public class XLSReportExporter implements ReportExporter {
          * DTIs 7) check answersmap for an answer, if there put in cell, if missing, insert blank 8)
          * done
          */
-         
+
+    	
+    	//Make sure responseAggregator is using this messageLocator
+        responseAggregator.setMessageLocator(messageLocator);
+
          Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
          String currentUserId = commonLogic.getCurrentUserId();
          String evalOwner = evaluation.getOwner();
