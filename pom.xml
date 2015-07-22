@@ -83,10 +83,10 @@
                 <property><name>sakai2.5</name></property>
             </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
         </profile>
         <profile>
@@ -95,10 +95,10 @@
                 <property><name>sakai2.6</name></property>
             </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
         </profile>
         <profile>
@@ -107,10 +107,10 @@
                 <property><name>sakai2.7</name></property>
             </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
         </profile>
         <profile>
@@ -119,10 +119,10 @@
                 <property><name>sakai2.8</name></property>
             </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
         </profile>
         <profile>
@@ -131,10 +131,10 @@
                 <property><name>sakai2.9</name></property>
             </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
         </profile>
         <profile>
@@ -144,10 +144,10 @@
             <property><name>sakai-10</name></property>
           </activation>
             <modules>
-                <module>api</module>
-                <module>impl</module>
-                <module>pack</module>
-                <module>tool</module>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
             </modules>
           
           <!-- Spring & Hibernate -->
