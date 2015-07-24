@@ -1,4 +1,4 @@
-* text=auto !eol
+#* text=auto !eol
 /.springBeans -text
 /.svnignore -text svn_keywords=Date+Revision+Author+URL+Id
 /Evaluation.jws -text
