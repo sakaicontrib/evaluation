@@ -53,28 +53,28 @@ public class ReportExporterBean implements ToolApi {
     // This probably could be fixed in RSF to avoid the error and use a simpler version
 
     public MessageSource getMessageSource() {
-		return messageSource;
-	}
+      return messageSource;
+    }
 
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
+    public void setMessageSource(MessageSource messageSource) {
+      this.messageSource = messageSource;
+    }
 
-	public class MyMessageLocator extends MessageLocator {
-    	public String getMessage(String[] code, Object[] args) {
-    		if (code != null) {
-    			for (String s: code) {
-    				try {
-    					return messageSource.getMessage(s, args, Locale.getDefault());
-    				} catch (Exception e) {
-    					// message not found, one presumes
-    				}
-    			}
-    			// if none found, just use the code
-    			return code[0];
-    		} else
-    			return "";
-    	}
+    public class MyMessageLocator extends MessageLocator {
+      public String getMessage(String[] code, Object[] args) {
+        if (code != null) {
+          for (String s: code) {
+            try {
+              return messageSource.getMessage(s, args, Locale.getDefault());
+            } catch (Exception e) {
+              // message not found, one presumes
+            }
+          }
+          // if none found, just use the code
+          return code[0];
+        } else
+          return "";
+      }
     }
 
     private EvalCommonLogic commonLogic;
@@ -97,62 +97,70 @@ public class ReportExporterBean implements ToolApi {
         this.exportersMap = exportersMap;
     }
 
-	EvaluationAccessAPI evaluationAccessAPI = null;
+    EvaluationAccessAPI evaluationAccessAPI = null;
 
-	public void setEvaluationAccessAPI(EvaluationAccessAPI s) {
-		evaluationAccessAPI = s;
-	}
-	
-	public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
-		ReportExporter exporter = exportersMap.get(exportType);
-		if (exporter == null) {
-			throw new IllegalArgumentException("No exporter found for ViewID: " + exportType);
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
-		}
-		CSVParser parser= new CSVParser();
-		String[] groupIdsArray = new String [] {};
-		if (groupIds != null) {
-			try {
-				groupIdsArray = parser.parseLine(groupIds);
-			} catch (IOException e) {
-				//Is fine if this happens, empty array still
-			}
-		}
-		else {
-			//Get the default groupIds
-	        groupIdsArray = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluation).toArray(groupIdsArray);
-		}
-			
+    public void setEvaluationAccessAPI(EvaluationAccessAPI s) {
+      evaluationAccessAPI = s;
+    }
 
-		// do a permission check
-        if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIdsArray)) {
-            String currentUserId = commonLogic.getCurrentUserId();
-            throw new SecurityException("Invalid user attempting to access report downloads: "
-                    + currentUserId);
-        }
+    //Export report with no evaluateeId (for sinngle export)
+    public void exportReport(EvalEvaluation evaluation, String groupIds,OutputStream outputStream, String exportType) {
+    	exportReport(evaluation,groupIds,null,outputStream,exportType);
+    }
+    
+    //Special convenience method to allow passing of groupIds as a CSV
+    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+    	String[] groupIdsArray = new String [] {};
+    	CSVParser parser= new CSVParser();
+    	if (groupIds != null) {
+    		try {
+    			groupIdsArray = parser.parseLine(groupIds);
+    		} catch (IOException e) {
+    			//Is fine if this happens, empty array still
+    		}
+    	}
+    	exportReport(evaluation,groupIdsArray,evaluateeId,outputStream,exportType);
+    }
 
-		MyMessageLocator messageLocator = new MyMessageLocator();
-		exporter.setMessageLocator(messageLocator);
-		exporter.buildReport(evaluation,groupIdsArray,outputStream);
-		
-	}
-	
-	public void init() {
-		evaluationAccessAPI.setToolApi(this);
-	}
+    //Allows for general report exporting
+    private void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+      ReportExporter exporter = exportersMap.get(exportType);
+      if (exporter == null) {
+        throw new IllegalArgumentException("No exporter found for ViewID: " + exportType);
+      }
+      if (log.isDebugEnabled()) {
+        log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
+      }
+      if (groupIds == null || groupIds.length==0) {
+        //Get the default groupIds
+    	String[] groupIdsArray = new String [] {};
+        groupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluation).toArray(groupIdsArray);
+      }
+
+      // do a permission check
+      if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
+        String currentUserId = commonLogic.getCurrentUserId();
+        throw new SecurityException("Invalid user attempting to access report downloads: "
+            + currentUserId);
+      }
+
+      MyMessageLocator messageLocator = new MyMessageLocator();
+      exporter.setMessageLocator(messageLocator);
+      if ("pdfResultsReportIndividual".equals(exportType)) {
+        exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream);
+      } else {
+        exporter.buildReport(evaluation, groupIds, outputStream);
+      }
+
+    }
+
+    public void init() {
+      evaluationAccessAPI.setToolApi(this);
+    }
 
     public boolean export(DownloadReportViewParams drvp, HttpServletResponse response) {
         // get evaluation and template from DAO
         EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
-
-        // do a permission check
-        if (!reportingPermissions.canViewEvaluationResponses(evaluation, drvp.groupIds)) {
-            String currentUserId = commonLogic.getCurrentUserId();
-            throw new SecurityException("Invalid user attempting to access report downloads: "
-                    + currentUserId);
-        }
 
         OutputStream resultsOutputStream = null;
         
@@ -168,12 +176,9 @@ public class ReportExporterBean implements ToolApi {
         resultsOutputStream = getOutputStream(response);
         response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
         response.setContentType(exporter.getContentType());
-        
-        if ("pdfResultsReportIndividual".equals(drvp.viewID)) {
-            exporter.buildReport(evaluation, drvp.groupIds, drvp.evaluateeId, resultsOutputStream);
-        } else {
-            exporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
-        }
+
+        //Support drvp.evaluateeId
+        this.exportReport(evaluation,drvp.groupIds,drvp.evaluateeId,resultsOutputStream,drvp.viewID);
 
         return true;
     }
