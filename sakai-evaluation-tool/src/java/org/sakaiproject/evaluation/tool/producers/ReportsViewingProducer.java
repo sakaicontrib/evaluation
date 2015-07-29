@@ -563,20 +563,20 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
         Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
         if (allowCSVExport != null && allowCSVExport == true) {
-            UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new DownloadReportViewParams(
-                    "csvResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
+            UIInternalLink.make(tofill, EvalEvaluationService.CSV_RESULTS_REPORT, UIMessage.make("viewreport.view.csv"), new DownloadReportViewParams(
+            		EvalEvaluationService.CSV_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
         }
 
         Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT); 
         if (allowXLSExport != null && allowXLSExport == true) {
-            UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new DownloadReportViewParams(
-                    "xlsResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xlsx"));
+            UIInternalLink.make(tofill, EvalEvaluationService.XLS_RESULTS_REPORT, UIMessage.make("viewreport.view.xls"), new DownloadReportViewParams(
+            		EvalEvaluationService.XLS_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xlsx"));
         }
 
         Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
         if (allowPDFExport != null && allowPDFExport == true) {
-            UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new DownloadReportViewParams(
-                    "pdfResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
+            UIInternalLink.make(tofill, EvalEvaluationService.PDF_RESULTS_REPORT, UIMessage.make("viewreport.view.pdf"), new DownloadReportViewParams(
+            		EvalEvaluationService.PDF_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
 			
 			List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
             evaluatees.addAll(evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_ASSISTANT, null, null, null));
@@ -589,7 +589,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 				  EvalUser user = commonLogic.getEvalUserById( evaluatee.getUserId() );
 				
 				  UIInternalLink.make(evaluateeBranch, "pdfResultsReportIndividualLink", UIMessage.make("viewreport.view.pdf.individual", new Object[] {user.displayName}), new DownloadReportViewParams(
-				  "pdfResultsReportIndividual", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
+						  EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
                   listedEvaluatees.add(evaluatee.getUserId());
                 }
 			}

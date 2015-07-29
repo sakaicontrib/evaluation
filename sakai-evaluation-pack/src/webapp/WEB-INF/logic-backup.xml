@@ -143,22 +143,25 @@
         ref="org.sakaiproject.evaluation.logic.EvalLockManager" />
       <property name="serverConfigurationService"
         ref="org.sakaiproject.component.api.ServerConfigurationService" />
+      <property name="sessionManager" 
+        ref="org.sakaiproject.tool.api.SessionManager" />
     </bean>
 
 
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.ExportEvaluationReportsJob"
-      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobBeanWrapper"
       singleton="true" init-method="init">
       <property name="beanId">
         <value>org.sakaiproject.evaluation.logic.scheduling.ExportEvaluationReportsJob</value>
       </property>
       <property name="jobName">
-        <value>Export Evaluation Reports</value>
+        <value>Evaluation - Export Evaluations by Term ID (Must have Term ID option enabled)</value>
       </property>
       <property name="schedulerManager">
         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
       </property>
+      <property name="resourceBundleBase" value="org.sakaiproject.evaluation.logic.scheduling.Messages"/>
       <property name="configurableJobProperties">
         <set>
           <bean class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobProperty">
@@ -191,23 +194,24 @@
 
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.DeleteEvaluationsJob"
-      class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+      class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobBeanWrapper"
       singleton="true" init-method="init">
       <property name="beanId">
         <value>org.sakaiproject.evaluation.logic.scheduling.DeleteEvaluationsJob</value>
       </property>
       <property name="jobName">
-        <value>Delete Evaluations</value>
+        <value>Evaluation - Delete Evaluations by Term ID (Must have Term ID option enabled)</value>
       </property>
       <property name="schedulerManager">
         <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
       </property>
+      <property name="resourceBundleBase" value="org.sakaiproject.evaluation.logic.scheduling.Messages"/>
       <property name="configurableJobProperties">
         <set>
           <bean class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobProperty">
             <property name="required" value="true"/>
-            <property name="labelResourceKey" value="site.id"/>
-            <property name="descriptionResourceKey" value="site.id.description"/>
+            <property name="labelResourceKey" value="term.id"/>
+            <property name="descriptionResourceKey" value="term.id.description"/>
             <property name="defaultValue" value=""/>
           </bean>
         </set>

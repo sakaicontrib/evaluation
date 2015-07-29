@@ -60,9 +60,7 @@ public class EvalReportsEntityProviderImpl implements EvalReportsEntityProvider,
         }
         return false;
     }
-    // Type can be csvResultsReport  xlsResultsReport  pdfResultsReport  pdfResultsReportIndividual, maybe I'll set up separate methods for this, currently this is just CSV
-    // Maybe should use outputStream as a parameter on this method for those other ines
-    // TODO: Look at chat for how to do i18n on an impl to better document this
+
 	@EntityCustomAction(action = "CSVReport", viewKey = EntityView.VIEW_LIST) 
     public String exportCSVReport(EntityView view, Map<String,Object> params) {
 		Map<String, Object> exportData = new HashMap<String, Object>();
@@ -89,7 +87,7 @@ public class EvalReportsEntityProviderImpl implements EvalReportsEntityProvider,
 		String groupIds = view.getPathSegment(3);
 		EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		evaluationService.exportReport(evaluation,groupIds,outputStream,"csvResultsReport");
+		evaluationService.exportReport(evaluation,groupIds,outputStream,EvalEvaluationService.CSV_RESULTS_REPORT);
 		return outputStream.toString();
 	}
 

@@ -29,6 +29,7 @@ import org.quartz.JobExecutionException;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
+import org.sakaiproject.evaluation.logic.EvalLockManager;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -60,6 +61,10 @@ public class DeleteEvaluationsImpl implements DeleteEvaluations {
     public void setEvalSettings(EvalSettings settings) {
         this.evalSettings = settings;
     }
+	protected EvalLockManager lockManager;
+	public void setEvalLockManager(EvalLockManager lockManager) {
+		this.lockManager = lockManager;
+	}
 
     /*
      * (non-Javadoc)
@@ -69,8 +74,10 @@ public class DeleteEvaluationsImpl implements DeleteEvaluations {
 		logger.debug("DeleteEvaluations.execute()");
         String termId = context.getMergedJobDataMap().getString("term.id");
         List<EvalEvaluation> evaluations = evaluationService.getEvaluationsByTermId(termId);
+        logger.info("Found "+ evaluations.size() + " evaluations to delete matching " + termId);
         for (EvalEvaluation evaluation: evaluations) {
         	//Set admin as the id, I don't think there's any way to get this from the job scheduler
+        	logger.info("Deleting evaluation id " + evaluation.getId());
         	evaluationSetupService.deleteEvaluation(evaluation.getId(), "admin");
         }
 	}
