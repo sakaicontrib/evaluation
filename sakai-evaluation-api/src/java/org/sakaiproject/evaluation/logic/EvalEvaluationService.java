@@ -715,6 +715,7 @@ public interface EvalEvaluationService {
      *   For pdfResultsReportIndividual use the method with evaluateeId
      *  @throws SecurityException
      */
+
     public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType);
 
     /**
