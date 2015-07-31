@@ -150,6 +150,13 @@
     <build>
         <sourceDirectory>src/java</sourceDirectory>
         <resources>
+          <!-- Included for special configurable jobs -->
+          <resource>
+            <directory>${basedir}/src/bundle</directory>
+            <includes>
+              <include>**/*.properties</include>
+            </includes>
+          </resource>
             <!-- include the readme.txt file and the java source files -->
             <resource>
                 <directory>${basedir}</directory>

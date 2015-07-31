@@ -146,7 +146,7 @@ public class ReportExporterBean implements ToolApi {
 
       MyMessageLocator messageLocator = new MyMessageLocator();
       exporter.setMessageLocator(messageLocator);
-      if ("pdfResultsReportIndividual".equals(exportType)) {
+      if (EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL.equals(exportType)) {
         exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream);
       } else {
         exporter.buildReport(evaluation, groupIds, outputStream);
