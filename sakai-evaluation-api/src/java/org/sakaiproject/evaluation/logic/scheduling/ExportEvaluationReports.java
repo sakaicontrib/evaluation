@@ -12,16 +12,15 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+package org.sakaiproject.evaluation.logic.scheduling;
 
-package org.sakaiproject.evaluation.toolaccess;
+import org.quartz.Job;
 
-import java.io.OutputStream;
+public interface ExportEvaluationReports extends Job {
 
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-
-public interface ToolApi {
-	public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType);
-
-	public void exportReport(EvalEvaluation evaluation, String groupIds,
-			String evaluateeId, OutputStream outputStream, String exportType);
+	/**
+	 * ExportEvaluationsReports: Name of class that handles report exporting
+	 */
+	public static final String EXPORT_EVALUATIONS_REPORTS_BEAN_NAME = "org.sakaiproject.evaluation.logic.scheduling.ExportEvaluationReports";
+	
 }
