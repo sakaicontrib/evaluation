@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -42,7 +43,8 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
-
+import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
+import org.sakaiproject.evaluation.toolaccess.ToolApi;
 
 /**
  * Implementation of the evals service,
@@ -50,7 +52,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalEvaluationServiceImpl implements EvalEvaluationService {
+public class EvalEvaluationServiceImpl implements EvalEvaluationService, EvaluationAccessAPI {
 
     private static Log log = LogFactory.getLog(EvalEvaluationServiceImpl.class);
 
@@ -79,6 +81,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
     }
+    
+    private ToolApi toolApi = null;
+    public void setToolApi(ToolApi t) {
+        toolApi = t;
+    }
+    
+
+    public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
+    	toolApi.exportReport(evaluation, groupIds, outputStream, exportType);
+    }
+
+    public void exportReport(EvalEvaluation evaluation, String groupIds,
+			String evaluateeId, OutputStream outputStream, String exportType) {
+    	toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
+	}
 
 
     /* (non-Javadoc)
@@ -1196,5 +1213,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
 		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
 	}
+
+
     
 }

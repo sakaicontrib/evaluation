@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.toolaccess.ToolApi;
 
 
 /**
@@ -695,4 +697,26 @@ public interface EvalEvaluationService {
 	 */
 	public int resetConsolidatedEmailRecipients();
 
+	/* Method used to get access to the ToolAPI */
+    public void setToolApi(ToolApi t);
+
+    /**
+     * exportReport - exports a report from the tool
+     * @param evaluation - Evaluation to generate report for
+     * @param groupIds - Group ids include, if this is null it uses getResultsViewableEvalGroupIdsForCurrentUser
+     * @param outputStream - Output stream to write report to
+     * @param exportType - Type to export as. Currently is based on the exprot beans
+     *   Can be csvResultsReport, xlsResultsReport, pdfResultsReport
+     *   For pdfResultsReportIndividual use the method with evaluateeId
+     *  @throws SecurityException
+     */
+
+    public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType);
+
+    /**
+     * This is similar to but for the case of pdfResultsReportIndividual {@link #exportReport(EvalEvaluation, String, OutputStream, String)
+     * @param evaluateeId - evaluatee id to export
+     */
+    
+    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType); 
 }

@@ -73,6 +73,9 @@ public class CSVReportExporter implements ReportExporter {
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
+    	//Make sure responseAggregator is using this messageLocator
+        responseAggregator.setMessageLocator(messageLocator);
+
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
         CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
         
