@@ -106,8 +106,6 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 				logger.warn("You need to define the evaluation.exportjob.outputlocation property to be a directory to write these reports before running this job");
 				return;
 			}
-			
-			logger.info("Evaluation query returned" + evaluations.size() + " results to export for " + termId);
 
 			//Maybe make a termId folder for these to go in?
 			for (EvalEvaluation evaluation: evaluations) {
@@ -116,11 +114,8 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					//Make the term directories structure
 					String dirName = reportPath + "/" + evaluation.getTermId();
 					new File(dirName).mkdirs();
-					String addDate = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
-					//Clean up non-alpha characters from title
-					String evaluationTitle = evaluation.getTitle();
-					evaluationTitle = evaluationTitle.replaceAll("\\W+","_");
-					String outputName = dirName + "/" + evaluationTitle + "_" + addDate;
+					String addDate = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss'.tsv'").format(new Date());
+					String outputName = dirName + "/" + evaluation.getTitle() + "_" + addDate;
 					logger.info("Writing reports to a basename of "+ outputName);
 					outputStream = new FileOutputStream(outputName+".csv", false);
 					evaluationService.exportReport(evaluation, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
@@ -134,12 +129,7 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					return;
 				} catch (IOException e) {
 					logger.warn("Error writing to file " + outputStream + ". Job aborting");
-					return;
-				} catch (Exception e) {
-					logger.warn("Unknown exception " + e.getMessage() + " found. Job aborting");;
-					return;
 				}
-
 			}
 		} 
 		finally {

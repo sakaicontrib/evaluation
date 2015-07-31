@@ -87,7 +87,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         toolApi = t;
     }
     
-    
+
     public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
     	toolApi.exportReport(evaluation, groupIds, outputStream, exportType);
     }

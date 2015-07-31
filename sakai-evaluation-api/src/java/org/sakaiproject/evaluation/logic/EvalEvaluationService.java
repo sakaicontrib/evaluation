@@ -711,7 +711,7 @@ public interface EvalEvaluationService {
      * @param groupIds - Group ids include, if this is null it uses getResultsViewableEvalGroupIdsForCurrentUser
      * @param outputStream - Output stream to write report to
      * @param exportType - Type to export as. Currently is based on the exprot beans
-     *   Can be csvResultsReport, xlsResultsReport, pdfResultsReport
+     *   Can be EvalEvaluationService.CSV_RESULTS_REPORT, EvalEvaluationService.XLS_RESULTS_REPORT, EvalEvaluationService.PDF_RESULTS_REPORT
      *   For pdfResultsReportIndividual use the method with evaluateeId
      *  @throws SecurityException
      */
@@ -719,7 +719,7 @@ public interface EvalEvaluationService {
     public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType);
 
     /**
-     * This is similar to but for the case of pdfResultsReportIndividual {@link #exportReport(EvalEvaluation, String, OutputStream, String)
+     * This is similar to but for the case of EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL {@link #exportReport(EvalEvaluation, String, OutputStream, String)
      * @param evaluateeId - evaluatee id to export
      */
     
