@@ -406,7 +406,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
          * the evaluation was created OR on the administrator setting
          */
         else {
-        	if(evaluation.getAllRolesParticipate() || 
+        	if(Boolean.TRUE.equals(evaluation.getAllRolesParticipate()) || 
         			!Boolean.FALSE.equals(allRolesCanParticipate)) {
         		
         		UIBranchContainer showAllRolesCanParticipate = UIBranchContainer.make(form, "showAllRolesCanParticipate:");
