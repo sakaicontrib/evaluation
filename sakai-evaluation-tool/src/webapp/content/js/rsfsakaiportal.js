@@ -28,6 +28,7 @@ function setMainFrameHeightFixed(dokkument, outerid) {
 
 // Very long function name, since this can't be safely put in the RSF namespace!
 function addSakaiRSFDomModifyHook(frameID) {
+  /* Could not get this to work (in sakai-10.x r86819)
   if (typeof(RSF) != "undefined" && RSF.getDOMModifyFirer) {
     var firer = RSF.getDOMModifyFirer();
     firer.addListener(
@@ -37,4 +38,20 @@ function addSakaiRSFDomModifyHook(frameID) {
         });
     }
   }
-  
+  */
+	MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+	var observer = new MutationObserver(function(mutations, observer) {
+        setMainFrameHeightFixed(document, frameID);
+        setFocus(focus_path);
+	});
+
+	// define what element should be observed by the observer
+	// and what types of mutations trigger the callback
+	observer.observe(document, {
+		subtree: true,
+		childList: true
+	});
+	
+	
+  }
