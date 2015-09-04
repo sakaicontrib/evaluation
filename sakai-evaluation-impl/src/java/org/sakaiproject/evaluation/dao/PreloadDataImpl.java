@@ -401,6 +401,8 @@ public class PreloadDataImpl {
                 EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_CREATED));
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
                 EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
+    	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE, EvalEmailConstants.EMAIL_AVAILABLE_EVALUATEE_DEFAULT_SUBJECT,
+                EvalEmailConstants.EMAIL_AVAILABLE_EVALUATEE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE));
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
                 EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN));
     	defaultEmailTempates.add(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_REMINDER, EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,

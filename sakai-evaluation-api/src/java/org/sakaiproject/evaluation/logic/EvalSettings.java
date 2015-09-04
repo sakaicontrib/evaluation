@@ -431,6 +431,11 @@ public interface EvalSettings {
      */
     public static final String ENABLE_SUBMISSION_CONFIRMATION_EMAIL = "ENABLE_SUBMISSION_CONFIRMATION_EMAIL:java.lang.Boolean";
     
+/**
+     * CONSTANT: Send an email notification when an evaluation opens to evaluatees. - {@link Boolean}, default False
+     */
+    public static final String ENABLE_SUBMISSION_EVALUATEE_EMAIL = "ENABLE_SUBMISSION_EVALUATEE_EMAIL:java.lang.Boolean";
+    
     /**
      * The time and date of the next scheduled reminder.
      */
@@ -542,6 +547,7 @@ public interface EvalSettings {
         ENABLE_SINGLE_EMAIL_PER_STUDENT,
         ENABLE_SITE_GROUP_PUBLISH_CHECK,
         ENABLE_SUBMISSION_CONFIRMATION_EMAIL,
+        ENABLE_SUBMISSION_EVALUATEE_EMAIL,
         ENABLE_SUMMARY_SITES_BOX,
         ENABLE_TEMPLATE_COPYING,
         ENABLE_XLS_REPORT_EXPORT,

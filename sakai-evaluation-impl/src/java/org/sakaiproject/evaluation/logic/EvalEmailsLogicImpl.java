@@ -172,10 +172,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
         Set<String> userIdsSet = null;
         boolean studentNotification = true;
+        boolean evaluateeNotification = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_EVALUATEE_EMAIL);
 
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         String from = getFromEmailOrFail(eval);
         EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluationId);
+        EvalEmailTemplate emailTemplateEvaluatee = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE, evaluationId);
+
         // get the instructor opt-in email template
         EvalEmailTemplate emailOptInTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, null);
 
@@ -255,6 +258,26 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             for (int j = 0; j < emailAddresses.length; j++) {
                 sentEmails.add(emailAddresses[j]);            
             }
+
+            if (evaluateeNotification) {
+            	em = makeEmailMessage(emailTemplateEvaluatee.getMessage(), emailTemplateEvaluatee.getSubject(), eval, group);
+            	List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
+            			new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
+            	userIdsSet = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
+                // turn the set into an array
+                toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+                if (log.isDebugEnabled()) {
+                	log.debug("Found " + toUserIds.length + " users (" + ArrayUtils.arrayToString(toUserIds) + ") to send "
+                			+ EvalConstants.EMAIL_TEMPLATE_CREATED + " notification to for available evaluation ("
+                			+ evaluationId + ") and group (" + group.evalGroupId + ")");
+                }
+            	emailAddresses = sendUsersEmails(from, toUserIds, em.subject, em.message);
+            	for (int j = 0; j < emailAddresses.length; j++) {
+            		sentEmails.add(emailAddresses[j]);            
+            	}
+            	log.info("Sent evaluation available evaluatee message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            }
+
             commonLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
         }
 
@@ -1171,7 +1194,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         EvalEmailTemplate emailTemplate = null;
         if (evaluationId != null &&
                 ( EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(typeConstant) ||
-                        EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(typeConstant) ) ) {
+                        EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(typeConstant) || EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE.equals(typeConstant) ) ) {
             // get the template from the evaluation itself
             EvalEmailTemplate evalEmailTemplate = evaluationService.getEmailTemplate(evaluationId, typeConstant);
             if (evalEmailTemplate != null) {
