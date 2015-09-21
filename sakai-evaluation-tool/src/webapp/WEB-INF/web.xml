@@ -90,7 +90,7 @@
   
   <servlet>
     <servlet-name>sakai.rsf.evaluation</servlet-name>
-    <servlet-class>uk.ac.cam.caret.sakai.rsf.servlet.ReasonableSakaiServlet</servlet-class>
+    <servlet-class>org.sakaiproject.rsf.servlet.ReasonableSakaiServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

@@ -78,67 +78,54 @@
             </modules>
         </profile>
         <profile>
-            <id>sakai2.5</id>
-            <activation>
-                <property><name>sakai2.5</name></property>
-            </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sakai2.6</id>
-            <activation>
-                <property><name>sakai2.6</name></property>
-            </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sakai2.7</id>
-            <activation>
-                <property><name>sakai2.7</name></property>
-            </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sakai2.8</id>
-            <activation>
-                <property><name>sakai2.8</name></property>
-            </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sakai2.9</id>
-            <activation>
-                <property><name>sakai2.9</name></property>
-            </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-        </profile>
-        <profile>
           <id>sakai-10</id>
+          <activation>
+            <activeByDefault>false</activeByDefault>
+            <property><name>sakai-10</name></property>
+          </activation>
+            <modules>
+                <module>sakai-evaluation-api</module>
+                <module>sakai-evaluation-impl</module>
+                <module>sakai-evaluation-pack</module>
+                <module>sakai-evaluation-tool</module>
+            </modules>
+          
+          <!-- Spring & Hibernate -->
+          <dependencies>
+            <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-core</artifactId>
+            </dependency>
+            <!-- needed by hibernate unit tests -->
+            <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-ehcache</artifactId>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-beans</artifactId>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-orm</artifactId>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-context</artifactId>
+            </dependency>
+            <dependency>
+              <groupId>org.quartz-scheduler</groupId>
+              <artifactId>quartz</artifactId>
+              <version>${sakai.quartz.version}</version>
+            </dependency>
+          </dependencies>
+        </profile>
+        <profile>
+          <id>sakai-11</id>
           <activation>
             <activeByDefault>true</activeByDefault>
             <property><name>sakai-10</name></property>
@@ -184,6 +171,7 @@
             </dependency>
           </dependencies>
         </profile>
+
     </profiles>
 
     <!-- handles the management of all related dependencies -->
