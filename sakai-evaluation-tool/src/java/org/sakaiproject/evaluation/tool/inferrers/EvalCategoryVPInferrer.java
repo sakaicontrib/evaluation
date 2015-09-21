@@ -19,7 +19,7 @@ import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
 
-import uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer;
+import org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -30,14 +30,14 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 public class EvalCategoryVPInferrer implements EntityViewParamsInferrer {
 
 	/* (non-Javadoc)
-	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
+	 * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
 	 */
 	public String[] getHandledPrefixes() {
 		return new String[] { EvalCategoryEntityProvider.ENTITY_PREFIX };
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
+	 * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
 	 */
 	public ViewParameters inferDefaultViewParameters(String reference) {
 		String category = EntityReference.getIdFromRef(reference);

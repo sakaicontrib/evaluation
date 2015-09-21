@@ -24,7 +24,7 @@ import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.util.ResourceLoader;
 
-import uk.ac.cam.caret.sakai.rsf.helper.HelperViewParameters;
+import org.sakaiproject.rsf.helper.HelperViewParameters;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIOutput;

@@ -20,7 +20,7 @@ import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.PreviewItemProducer;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 
-import uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer;
+import org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 
@@ -32,14 +32,14 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 public class ItemVPInferrer implements EntityViewParamsInferrer {
 
    /* (non-Javadoc)
-    * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
+    * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
     */
    public String[] getHandledPrefixes() {
       return new String[] {ItemEntityProvider.ENTITY_PREFIX, TemplateItemEntityProvider.ENTITY_PREFIX};
    }
 
    /* (non-Javadoc)
-    * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
+    * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
     */
    public ViewParameters inferDefaultViewParameters(String reference) {
       EntityReference ep = new EntityReference(reference);

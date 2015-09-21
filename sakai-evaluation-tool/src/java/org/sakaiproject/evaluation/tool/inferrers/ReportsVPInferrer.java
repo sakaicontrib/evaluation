@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 
 
-import uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer;
+import org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -53,7 +53,7 @@ public class ReportsVPInferrer implements EntityViewParamsInferrer {
     }
 
     /* (non-Javadoc)
-     * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
+     * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#getHandledPrefixes()
      */
     public String[] getHandledPrefixes() {
         return new String[] {
@@ -62,7 +62,7 @@ public class ReportsVPInferrer implements EntityViewParamsInferrer {
     }
 
     /* (non-Javadoc)
-     * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
+     * @see org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
      */
     public ViewParameters inferDefaultViewParameters(String reference) {
         String refId = EntityReference.getIdFromRef(reference);
