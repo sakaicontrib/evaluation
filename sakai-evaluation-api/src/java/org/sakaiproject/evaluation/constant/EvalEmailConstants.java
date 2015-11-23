@@ -116,6 +116,42 @@ public class EvalEmailConstants {
       "4) Click on '${EvalGroupTitle}' link under '${EvalTitle}'.. \n";
 
    /**
+    * EmailTemplate subject: Available
+    */
+   public static final String EMAIL_AVAILABLE_EVALUATEE_DEFAULT_SUBJECT = 
+      "The Evaluation: ${EvalTitle} for ${EvalGroupTitle} is available to be taken";
+   /**
+    * EmailTemplate message setting:
+    * This is the default template for when the evaluation is available for users to take
+    * Replaceable strings:<br/>
+    * ${EvalTitle} - the title of this evaluation
+    * ${EvalStartDate} - the open date of this evaluation
+    * ${EvalDueDate} - the due date of this evaluation
+    * ${EvalResultsDate} - the view results date of this evaluation
+    * ${EvalGroupTitle} - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
+    * ${HelpdeskEmail} - the email address for the helpdesk (or the support contact)
+    * ${URLtoTakeEval} - the direct URL for evaluators to take this evaluation
+    * ${URLtoSystem} - the main URL to the system this is running in
+    */
+   public static final String EMAIL_AVAILABLE_EVALUATEE_DEFAULT_TEXT = 
+      "All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to ${HelpdeskEmail}. \n" +
+      "\n" +
+      "An evaluation (${EvalTitle}) for: ${EvalGroupTitle} is ready to be filled out by students." +
+      "It has an open date of ${EvalStartDate} and is due by ${EvalDueDate} at the latest.\n" +
+      "\n" +
+      "You may access the evaluation at:\n" +
+      "${URLtoTakeEval} \n" +
+      "If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
+      "Enter the site using your username and password.\n" +
+      "------------------------------------------------------------\n" +
+      "Should you encounter any technical difficulty in filling out the evaluation, please send an email to ${HelpdeskEmail} clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
+      "\n" +
+      "Alternate Instructions: \n" +
+      "1) Go to ${URLtoSystem} \n" +
+      "2) Enter your username and password and click on 'Login' button. \n" +
+      "3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+      "4) Click on '${EvalGroupTitle}' link under '${EvalTitle}'.. \n";
+   /**
     * EmailTemplate subject: Available OPT IN
     */
    public static final String EMAIL_AVAILABLE_OPT_IN_SUBJECT = 

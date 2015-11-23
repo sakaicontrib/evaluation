@@ -196,6 +196,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
 
         // Send submission confirmation?
         AdministrateProducer.makeBoolean(emailForm, "send-submitted", EMAIL_SETTINGS_WBL, EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+        AdministrateProducer.makeBoolean(emailForm, "send-evaluatee", EMAIL_SETTINGS_WBL, EvalSettings.ENABLE_SUBMISSION_EVALUATEE_EMAIL);
 
         // control the general email options
         AdministrateProducer.makeBoolean(emailForm, "general-use-admin-from-email", EMAIL_SETTINGS_WBL, EvalSettings.USE_ADMIN_AS_FROM_EMAIL);

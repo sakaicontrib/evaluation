@@ -587,6 +587,12 @@ public class EvalConstants {
     public static final String EMAIL_TEMPLATE_AVAILABLE = "Available";
     /**
      * EmailTemplate type setting:
+     * This identifies a template as the "evaluation available template for evaluatee",
+     * used when the evaluation is available for users to take and evaluatees to see
+     */
+    public static final String EMAIL_TEMPLATE_AVAILABLE_EVALUATEE = "Available Evaluatee";
+    /**
+     * EmailTemplate type setting:
      * This identifies a template as the "instructor must opt in for availability template",
      * used when the evaluation is available for users to take
      */

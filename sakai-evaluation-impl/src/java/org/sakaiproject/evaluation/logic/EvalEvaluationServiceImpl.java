@@ -994,7 +994,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         // check the type constant
         Long emailTemplateId = null;
         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)
-        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateTypeConstant)) {
+        		|| EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateTypeConstant) || EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE.equals(emailTemplateTypeConstant)) {
             if (eval.getAvailableEmailTemplate() != null) {
                 emailTemplateId = eval.getAvailableEmailTemplate().getId();
             }
