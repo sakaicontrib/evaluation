@@ -664,9 +664,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String groupId = r.getId();
                         Group group = siteService.findGroup(groupId);
                         if (group == null) {
-                            throw new RuntimeException("Could not get group from group id:" + groupId);
+                            log.info("Could not get Sakai group from group id:" + groupId);
                         }
-                        l.add(new EvalGroup(r.getReference(), group.getTitle(), getContextType(r.getType())));
+                        else {
+                            l.add(new EvalGroup(r.getReference(), group.getTitle(), getContextType(r.getType())));
+                        }
                     }
                 }
             }
