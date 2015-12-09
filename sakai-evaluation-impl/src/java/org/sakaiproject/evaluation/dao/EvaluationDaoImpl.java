@@ -945,7 +945,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	String hql = "select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id= ?";
         Object[] params = new Object[] {itemId};
         
-        List<Long> results = getHibernateTemplate().find(hql, params);
+        List<Long> results = (List<Long>) getHibernateTemplate().find(hql, params);
         if (! results.isEmpty() 
                 && results.get(0) != null) {
             itemGroupId = results.get(0);
@@ -1164,7 +1164,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             params = new String[] { userId };
         }
         hql += " order by eval.evalCategory";
-        return getHibernateTemplate().find(hql, params);
+        return (List<String>) getHibernateTemplate().find(hql, params);
     }
 
     /**
@@ -1180,7 +1180,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         // switched to join from the subselect version
         //    String hql = "select egn.nodeId from EvalGroupNodes egn where ? in elements(egn.evalGroups) order by egn.nodeId";
         String[] params = new String[] {evalGroupId};
-        List<String> l = getHibernateTemplate().find(hql, params);
+        List<String> l = (List<String>) getHibernateTemplate().find(hql, params);
         if (l.isEmpty()) {
             return null;
         }
@@ -1198,7 +1198,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         Long templateId = null;
         String hql = "select eval.template.id from EvalEvaluation eval where eval.id = ?";
         Object[] params = new Object[] {evaluationId};
-        List<Long> results = getHibernateTemplate().find(hql, params);
+        List<Long> results = (List<Long>) getHibernateTemplate().find(hql, params);
         if (! results.isEmpty() 
                 && results.get(0) != null) {
             templateId = results.get(0);
@@ -1633,7 +1633,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     protected Long[] getItemIdsUsingScale(Long scaleId) {
         String hql = "select item.id from EvalItem item join item.scale itemScale where itemScale.id = ? order by item.id";
         Object[] params = new Object[] {scaleId};
-        List<Long> l = getHibernateTemplate().find(hql, params);
+        List<Long> l = (List<Long>) getHibernateTemplate().find(hql, params);
         return l.toArray(new Long[] {});
     }
 

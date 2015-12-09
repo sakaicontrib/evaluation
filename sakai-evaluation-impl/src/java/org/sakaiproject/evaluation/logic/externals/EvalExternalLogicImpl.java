@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -38,12 +37,19 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.sakaiproject.api.app.scheduler.DelayedInvocation;
 import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
@@ -1143,7 +1149,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
      */
-    public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap) {
+    @Override
+    public String scheduleCronJob(Class<? extends Job> jobClass, Map<String, String> dataMap) {
 
         String jobFullName = null;
         SchedulerManager scheduleManager = getBean(SchedulerManager.class);
@@ -1156,14 +1163,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         String cronExpression = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION);
 
-        try {
-            trigger = new CronTrigger(triggerName, triggerGroup, jobName, jobGroup, cronExpression);
-            if(log.isDebugEnabled()) {
-                log.debug("Created trigger: " + trigger.getCronExpression());
-            }
-        } catch(ParseException e) {
-            log.warn("SchedulerException in scheduleCronJob()", e);
-        }
+        trigger = TriggerBuilder.newTrigger()
+				.withIdentity(triggerName, triggerGroup)
+				.forJob(jobName, jobGroup)
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+				.build();
+		if(log.isDebugEnabled()) {
+		    log.debug("Created trigger: " + trigger.getCronExpression());
+		}
 
         if(trigger != null) {
             // create job
@@ -1174,11 +1181,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             }
 
-            JobDetail jobDetail = new JobDetail();
-            jobDetail.setName(jobName);
-            jobDetail.setGroup(jobGroup);		
-            jobDetail.setJobDataMap(jobDataMap);
-            jobDetail.setJobClass(jobClass);
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
+            		.withIdentity(jobName, jobGroup)
+            		.usingJobData(jobDataMap)
+            		.build();
             Scheduler scheduler = scheduleManager.getScheduler();
             if(scheduler == null) {
                 log.warn("Unable to access scheduler", new Throwable());
@@ -1188,7 +1194,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                     if(log.isDebugEnabled()) {
                         log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
                     }
-                    jobFullName =  jobDetail.getFullName();
+                    jobFullName =  jobDetail.getKey().toString();
                 } catch(SchedulerException e) {
                     log.warn("SchedulerException in scheduleCronJob()", e);
                 }
@@ -1201,10 +1207,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
      */
-    public String scheduleCronJob(String jobClassBeanId,
-            Map<String, String> dataMap) {
+    @Override
+    public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
         String fullJobName = null;
-        Object jobClass = ComponentManager.get(jobClassBeanId);
+        Job jobClass = (Job) ComponentManager.get(jobClassBeanId);
         if (jobClass == null) {
             throw new IllegalArgumentException(jobClassBeanId + " could not be found");
         } else {
@@ -1226,19 +1232,20 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             log.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
-                String[] jobNames = scheduler.getJobNames(jobGroup);
-                for(String jobName : jobNames) {
+                Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroup));
+                for(JobKey jobKey : jobKeys) {
                     try {
-                        JobDetail job = scheduler.getJobDetail(jobName, jobGroup);
+                        JobDetail job = scheduler.getJobDetail(jobKey);
                         JobDataMap jobDataMap = job.getJobDataMap();
-                        Trigger[] triggers = scheduler.getTriggersOfJob(jobName, jobGroup);
+                        List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
                         for(Trigger trigger : triggers) {
+                        	TriggerKey triggerKey = trigger.getKey();
                             Map<String, String> map = new HashMap<String, String>();
-                            map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobName);
-                            map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobGroup);
+                            map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobKey.getName());
+                            map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobKey.getGroup());
 
-                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, trigger.getName());
-                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, trigger.getGroup());
+                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, triggerKey.getName());
+                            map.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, triggerKey.getGroup());
                             if(trigger instanceof CronTrigger) {
                                 map.put(EvalConstants.CRON_SCHEDULER_CRON_EXPRESSION, ((CronTrigger) trigger).getCronExpression());
                             }
@@ -1249,7 +1256,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                                 }
                             }
 
-                            cronJobs.put(trigger.getFullName(), map);
+                            cronJobs.put(triggerKey.toString(), map);
                         }
                     } catch(SchedulerException e) {
                         log.warn("SchedulerException processing one trigger in getCronJobs", e);					
@@ -1275,7 +1282,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             log.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
-                success = scheduler.deleteJob(jobName, jobGroup);
+                success = scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
             } catch(SchedulerException e) {
                 log.warn("SchedulerException in scheduleCronJob()", e);
             }

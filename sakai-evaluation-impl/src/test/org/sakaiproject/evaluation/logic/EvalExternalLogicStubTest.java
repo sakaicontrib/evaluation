@@ -17,9 +17,9 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -34,14 +34,12 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalExternalLogicStubTest extends TestCase {
+public class EvalExternalLogicStubTest {
 
 	protected MockEvalExternalLogic external;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		// create and setup the object to be tested
 		external = new MockEvalExternalLogic();
 	}
@@ -50,6 +48,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getCurrentUserId()}.
 	 */
+	@Test
 	public void testGetCurrentUserId() {
 
 		String userId = external.getCurrentUserId();
@@ -61,6 +60,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserUsername(java.lang.String)}.
 	 */
+	@Test
 	public void testGetUserUsername() {
 
 		String username = external.getUserUsername(EvalTestDataLoad.USER_ID);
@@ -80,6 +80,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserDisplayName(java.lang.String)}.
 	 */
+	@Test
 	public void testGetEvalUserById() {
 
 		EvalUser user = external.getEvalUserById(EvalTestDataLoad.USER_ID);
@@ -99,6 +100,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#isUserAdmin(java.lang.String)}.
 	 */
+	@Test
 	public void testIsUserAdmin() {
 
 		Assert.assertTrue( external.isUserSakaiAdmin(EvalTestDataLoad.ADMIN_USER_ID) );
@@ -110,6 +112,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getCurrentEvalGroup()}.
 	 */
+	@Test
 	public void testGetCurrentEvalGroup() {
 
 		String context = external.getCurrentEvalGroup();
@@ -121,6 +124,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getDisplayTitle(java.lang.String)}.
 	 */
+	@Test
 	public void testGetDisplayTitle() {
 
 		String title = external.getDisplayTitle(EvalTestDataLoad.SITE1_REF);
@@ -136,6 +140,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#countEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
+	@Test
 	public void testCountEvalGroupsForUser() {
 
 		int count = external.countEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
@@ -146,6 +151,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
+	@Test
 	public void testGetEvalGroupsForUser() {
 
 		List<EvalGroup> l = external.getEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
@@ -157,6 +163,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
+	@Test
 	public void testGetUserIdsForEvalGroup() {
 
 		Set<String> s = external.getUserIdsForEvalGroup(EvalTestDataLoad.SITE1_REF, EvalConstants.PERM_WRITE_TEMPLATE);
@@ -170,6 +177,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#countUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
+	@Test
 	public void testCountUserIdsForEvalGroup() {
 
 		int count = external.countUserIdsForEvalGroup(EvalTestDataLoad.SITE1_REF, EvalConstants.PERM_WRITE_TEMPLATE);
@@ -180,6 +188,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#makeEvalGroupObject(java.lang.String)}.
 	 */
+	@Test
 	public void testMakeEvalGroupObject() {
 
 		EvalGroup c = external.makeEvalGroupObject(EvalTestDataLoad.SITE1_REF);
@@ -191,6 +200,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
+	@Test
 	public void testIsUserAllowedInEvalGroup() {
 
 		Assert.assertTrue( external.isUserAllowedInEvalGroup(

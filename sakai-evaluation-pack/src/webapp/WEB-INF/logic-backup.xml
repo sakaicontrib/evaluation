@@ -15,10 +15,9 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<!-- Aaron Zeckoski (aaronz@vt.edu) -->
-<!-- some of these beans access Sakai services directly -->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- email notifications -->
     <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
@@ -72,8 +71,7 @@
 
     <bean id="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync" 
     	class="org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSyncImpl" 
-    	init-method="init" 
-    	singleton="true">
+    	init-method="init">
 		<property name="evaluationService"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evaluationSetupService"
@@ -86,7 +84,7 @@
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.GroupMembershipSync"
         class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
-        singleton="true" init-method="init">
+        init-method="init">
         <property name="beanId">
             <value>org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync</value>
         </property>
@@ -100,8 +98,7 @@
     
     <bean id="org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob"
     	class="org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJobImpl"
-    	init-method="init"
-    	singleton="true">
+    	init-method="init">
     	<property name="emailLogic"
     		ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 		<property name="evalSettings" 
@@ -115,7 +112,7 @@
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.ConsolidatedNotificationsJob"
         class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
-        singleton="true" init-method="init">
+		init-method="init">
         <property name="beanId">
             <value>org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob</value>
         </property>
@@ -129,8 +126,7 @@
 
     <bean id="org.sakaiproject.evaluation.logic.scheduling.ExportEvaluationReportsJob"
       class="org.sakaiproject.evaluation.logic.scheduling.ExportEvaluationReportsImpl"
-      init-method="init"
-      singleton="true">
+      init-method="init">
       <property name="evaluationService"
         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evalSettings" 
@@ -151,7 +147,7 @@
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.ExportEvaluationReportsJob"
       class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobBeanWrapper"
-      singleton="true" init-method="init">
+      init-method="init">
       <property name="beanId">
         <value>org.sakaiproject.evaluation.logic.scheduling.ExportEvaluationReportsJob</value>
       </property>
@@ -176,8 +172,7 @@
 
     <bean id="org.sakaiproject.evaluation.logic.scheduling.DeleteEvaluationsJob"
       class="org.sakaiproject.evaluation.logic.scheduling.DeleteEvaluationsImpl"
-      init-method="init"
-      singleton="true">
+      init-method="init">
       <property name="evalSettings" 
         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationService"
@@ -195,7 +190,7 @@
     <!-- this is the helper that will register the above bean with the job scheduler -->
     <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.DeleteEvaluationsJob"
       class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobBeanWrapper"
-      singleton="true" init-method="init">
+      init-method="init">
       <property name="beanId">
         <value>org.sakaiproject.evaluation.logic.scheduling.DeleteEvaluationsJob</value>
       </property>

@@ -15,10 +15,9 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<!-- Aaron Zeckoski (aaronz@vt.edu) -->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- tool entity providers -->
 	<bean
@@ -244,7 +243,7 @@
 
     <!-- Reporting Utilities -->
 
-    <bean id="reportExporterBean" class="org.sakaiproject.evaluation.tool.reporting.ReportExporterBean" init-method="init" singleton="true">
+    <bean id="reportExporterBean" class="org.sakaiproject.evaluation.tool.reporting.ReportExporterBean" init-method="init">
       <property name="evaluationAccessAPI" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 
       <property name="messageSource" ref="messageSource" />
@@ -404,5 +403,4 @@
         <property name="viewParamsClass"
             value="org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams" />
     </bean>
-
 </beans>

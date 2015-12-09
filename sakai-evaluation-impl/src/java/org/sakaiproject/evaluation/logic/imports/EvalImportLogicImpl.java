@@ -16,25 +16,20 @@ package org.sakaiproject.evaluation.logic.imports;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.quartz.JobDataMap;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
-
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.imports.EvalImport;
-import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
-import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
@@ -103,17 +98,20 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		Scheduler scheduler = null;
 		
 		//pass Reference's id in job detail and schedule job to run
-		JobDetail jobDetail = new JobDetail("EvalImportJob",
-				Scheduler.DEFAULT_GROUP, evalImportJob.getClass());
-		JobDataMap jobDataMap = jobDetail.getJobDataMap();
-		jobDataMap.put("ID", (String)id);
-		jobDataMap.put("CURRENT_USER", commonLogic.getCurrentUserId() ); //sessionManager.getCurrentSessionUserId());
+		JobDetail jobDetail = JobBuilder.newJob(evalImportJob.getClass())
+				.withIdentity("EvalImportJob", Scheduler.DEFAULT_GROUP)
+				.usingJobData("ID", id)
+				.usingJobData("CURRENT_USER", commonLogic.getCurrentUserId())
+				.build();
 		
 		//job name + group should be unique
 		String jobGroup = EvalUtils.makeUniqueIdentifier(20); //idManager.createUuid();
 		
 		//associate a trigger with the job
-		SimpleTrigger trigger = new SimpleTrigger("EvalImportTrigger", jobGroup, new Date());
+		Trigger trigger = TriggerBuilder.newTrigger()
+				.withIdentity("EvalImportTrigger", jobGroup)
+				.startNow()
+				.build();
 		try
 		{
 			//get a scheduler instance from the factory

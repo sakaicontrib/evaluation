@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl;
 import org.sakaiproject.evaluation.logic.BaseTestEvalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -38,9 +40,10 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
    EvalAdhocSupportImpl adhocSupportLogic;
 
-   @Override
    // run this before each test starts
-   protected void onSetUpBeforeTransaction() throws Exception {
+   @Override
+   @Before
+   public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
@@ -72,67 +75,71 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUserById(java.lang.Long)}.
     */
+   @Test
    public void testGetAdhocUserById() {
       EvalAdhocUser user = null;
 
       user = adhocSupportLogic.getAdhocUserById(etdl.user1.getId());
-      assertNotNull(user);
-      assertEquals(user.getUserId(), etdl.user1.getUserId());
+      Assert.assertNotNull(user);
+      Assert.assertEquals(user.getUserId(), etdl.user1.getUserId());
 
       user = adhocSupportLogic.getAdhocUserById(EvalTestDataLoad.INVALID_LONG_ID);
-      assertNull(user);
+      Assert.assertNull(user);
 
       user = adhocSupportLogic.getAdhocUserById(null);
-      assertNull(user);
+      Assert.assertNull(user);
    }
 
+   @Test
    public void testGetAdhocUserByEmail() {
       EvalAdhocUser user = null;
 
       user = adhocSupportLogic.getAdhocUserByEmail(etdl.user1.getEmail());
-      assertNotNull(user);
-      assertEquals(etdl.user1.getId(), user.getId());
-      assertEquals(etdl.user1.getEmail(), user.getEmail());
+      Assert.assertNotNull(user);
+      Assert.assertEquals(etdl.user1.getId(), user.getId());
+      Assert.assertEquals(etdl.user1.getEmail(), user.getEmail());
 
       user = adhocSupportLogic.getAdhocUserByEmail(EvalTestDataLoad.INVALID_CONSTANT_STRING);
-      assertNull(user);
+      Assert.assertNull(user);
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUsersByIds(java.lang.Long[])}.
     */
+   @Test
    public void testGetAdhocUsersByIds() {
       List<EvalAdhocUser> l = null;
       List<Long> ids = null;
 
       l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {etdl.user1.getId(), etdl.user2.getId()});
-      assertNotNull(l);
-      assertEquals(2, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);      
-      assertTrue(ids.contains(etdl.user1.getId()));
-      assertTrue(ids.contains(etdl.user2.getId()));
+      Assert.assertTrue(ids.contains(etdl.user1.getId()));
+      Assert.assertTrue(ids.contains(etdl.user2.getId()));
 
       l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {etdl.user1.getId(), EvalTestDataLoad.INVALID_LONG_ID});
-      assertNotNull(l);
-      assertEquals(1, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains(etdl.user1.getId()));
+      Assert.assertTrue(ids.contains(etdl.user1.getId()));
 
       // get no users with empty
       l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {});
-      assertNotNull(l);
-      assertEquals(0, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
 
       // get all users with a null
       l = adhocSupportLogic.getAdhocUsersByIds(null);
-      assertNotNull(l);
-      assertEquals(3, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(3, l.size());
 
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUsersByUserIds(java.lang.String[])}.
     */
+   @Test
    public void testGetAdhocUsersByUserIds() {
       Map<String, EvalAdhocUser> m = null;
       List<Long> ids = null;
@@ -140,61 +147,62 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
       // first try with 2 internal users
       m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), etdl.user3.getUserId()} );
-      assertNotNull(m);
-      assertEquals(2, m.size());
+      Assert.assertNotNull(m);
+      Assert.assertEquals(2, m.size());
       ids = EvalTestDataLoad.makeIdList(m.values());
-      assertTrue(ids.contains(etdl.user1.getId()));
-      assertTrue(ids.contains(etdl.user3.getId()));
+      Assert.assertTrue(ids.contains(etdl.user1.getId()));
+      Assert.assertTrue(ids.contains(etdl.user3.getId()));
       userIds = m.keySet();
-      assertNotNull(userIds);
-      assertTrue(userIds.contains(etdl.user1.getUserId()));
-      assertTrue(userIds.contains(etdl.user3.getUserId()));
+      Assert.assertNotNull(userIds);
+      Assert.assertTrue(userIds.contains(etdl.user1.getUserId()));
+      Assert.assertTrue(userIds.contains(etdl.user3.getUserId()));
 
       // mix of internal and external
       m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), EvalTestDataLoad.USER_ID} );
-      assertNotNull(m);
-      assertEquals(1, m.size());
+      Assert.assertNotNull(m);
+      Assert.assertEquals(1, m.size());
       ids = EvalTestDataLoad.makeIdList(m.values());
-      assertTrue(ids.contains(etdl.user1.getId()));
+      Assert.assertTrue(ids.contains(etdl.user1.getId()));
 
       // only external
       m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {EvalTestDataLoad.USER_ID, EvalTestDataLoad.STUDENT_USER_ID} );
-      assertNotNull(m);
-      assertEquals(0, m.size());
+      Assert.assertNotNull(m);
+      Assert.assertEquals(0, m.size());
 
       // empty array
       m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {} );
-      assertNotNull(m);
-      assertEquals(0, m.size());
+      Assert.assertNotNull(m);
+      Assert.assertEquals(0, m.size());
 
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#saveAdhocUser(org.sakaiproject.evaluation.model.EvalAdhocUser, java.lang.String)}.
     */
+   @Test
    public void testSaveAdhocUser() {
 
       EvalAdhocUser user1 = new EvalAdhocUser(EvalTestDataLoad.MAINT_USER_ID, "aaron@caret.cam.ac.uk", null, "Aaron", null);
       adhocSupportLogic.saveAdhocUser(user1);
-      assertNotNull( user1.getId() );
-      assertNotNull( user1.getType() );
-      assertNotNull( user1.getEmail() );
-      assertNotNull( user1.getLastModified() );
+      Assert.assertNotNull( user1.getId() );
+      Assert.assertNotNull( user1.getType() );
+      Assert.assertNotNull( user1.getEmail() );
+      Assert.assertNotNull( user1.getLastModified() );
 
       // check that defaults work
       EvalAdhocUser user2 = new EvalAdhocUser(EvalTestDataLoad.ADMIN_USER_ID, "billy@caret.cam.ac.uk");
       adhocSupportLogic.saveAdhocUser(user2);
-      assertNotNull( user2.getId() );
-      assertNotNull( user2.getType() );
-      assertNotNull( user2.getEmail() );
-      assertNotNull( user2.getLastModified() );
+      Assert.assertNotNull( user2.getId() );
+      Assert.assertNotNull( user2.getType() );
+      Assert.assertNotNull( user2.getEmail() );
+      Assert.assertNotNull( user2.getLastModified() );
 
       // check that trying to save a user that already exists simply sets the input object to the persisted user
       EvalAdhocUser user3 = new EvalAdhocUser(EvalTestDataLoad.MAINT_USER_ID, "aaron@caret.cam.ac.uk", null, "Aaron Z", null);
       adhocSupportLogic.saveAdhocUser(user3);
-      assertNotNull( user3.getId() );
-      assertEquals(user3.getId(), user1.getId());
-      assertEquals(user3.getUserId(), user1.getUserId());
+      Assert.assertNotNull( user3.getId() );
+      Assert.assertEquals(user3.getId(), user1.getId());
+      Assert.assertEquals(user3.getUserId(), user1.getUserId());
 
       // test saving an existing user
       EvalAdhocUser existing = adhocSupportLogic.getAdhocUserById(etdl.user2.getId());
@@ -202,7 +210,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       adhocSupportLogic.saveAdhocUser(existing);
 
       EvalAdhocUser check = adhocSupportLogic.getAdhocUserById(etdl.user2.getId());
-      assertEquals("Jimmy Joe Bob", check.getDisplayName());
+      Assert.assertEquals("Jimmy Joe Bob", check.getDisplayName());
 
       // test trying to save an existing user with a new email that matches another existing one,
       // the email address should not actually end up changing
@@ -214,75 +222,78 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       try {
          EvalAdhocUser user4 = new EvalAdhocUser(EvalTestDataLoad.MAINT_USER_ID, null);
          adhocSupportLogic.saveAdhocUser(user4);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocGroupById(java.lang.Long)}.
     */
+   @Test
    public void testGetAdhocGroupById() {
       EvalAdhocGroup group = null;
 
       group = adhocSupportLogic.getAdhocGroupById(etdl.group1.getId());
-      assertNotNull(group);
-      assertEquals(group.getEvalGroupId(), etdl.group1.getEvalGroupId());
+      Assert.assertNotNull(group);
+      Assert.assertEquals(group.getEvalGroupId(), etdl.group1.getEvalGroupId());
 
       group = adhocSupportLogic.getAdhocGroupById(EvalTestDataLoad.INVALID_LONG_ID);
-      assertNull(group);
+      Assert.assertNull(group);
 
       group = adhocSupportLogic.getAdhocGroupById(null);
-      assertNull(group);
+      Assert.assertNull(group);
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocGroupsForOwner(java.lang.String)}.
     */
+   @Test
    public void testGetAdhocGroupsForOwner() {
       List<EvalAdhocGroup> l = null;
       EvalAdhocGroup group = null;
 
       l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.MAINT_USER_ID);
-      assertNotNull(l);
-      assertEquals(1, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
       group = l.get(0);
-      assertNotNull(group);
-      assertEquals(etdl.group2.getId(), group.getId());
+      Assert.assertNotNull(group);
+      Assert.assertEquals(etdl.group2.getId(), group.getId());
 
       l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.ADMIN_USER_ID);
-      assertNotNull(l);
-      assertEquals(1, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
       group = l.get(0);
-      assertNotNull(group);
-      assertEquals(etdl.group1.getId(), group.getId());
+      Assert.assertNotNull(group);
+      Assert.assertEquals(etdl.group1.getId(), group.getId());
 
       l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.USER_ID);
-      assertNotNull(l);
-      assertEquals(0, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#saveAdhocGroup(org.sakaiproject.evaluation.model.EvalAdhocGroup, java.lang.String)}.
     */
+   @Test
    public void testSaveAdhocGroup() {
 
       EvalAdhocGroup group1 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, "new group");
       adhocSupportLogic.saveAdhocGroup(group1);
-      assertNotNull( group1.getId() );
-      assertNotNull( group1.getOwner() );
-      assertNotNull( group1.getTitle() );
-      assertNotNull( group1.getLastModified() );
+      Assert.assertNotNull( group1.getId() );
+      Assert.assertNotNull( group1.getOwner() );
+      Assert.assertNotNull( group1.getTitle() );
+      Assert.assertNotNull( group1.getLastModified() );
 
       EvalAdhocGroup group2 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, "another new group", 
             new String[] { EvalTestDataLoad.STUDENT_USER_ID, EvalTestDataLoad.USER_ID }, null);
       adhocSupportLogic.saveAdhocGroup(group2);
-      assertNotNull( group2.getId() );
-      assertNotNull( group2.getOwner() );
-      assertNotNull( group2.getTitle() );
-      assertNotNull( group2.getLastModified() );
+      Assert.assertNotNull( group2.getId() );
+      Assert.assertNotNull( group2.getOwner() );
+      Assert.assertNotNull( group2.getTitle() );
+      Assert.assertNotNull( group2.getLastModified() );
 
       // test retrieving a group and editing it
       EvalAdhocGroup existing = adhocSupportLogic.getAdhocGroupById(etdl.group2.getId());
@@ -290,67 +301,69 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       adhocSupportLogic.saveAdhocGroup(existing);
 
       EvalAdhocGroup check = adhocSupportLogic.getAdhocGroupById(etdl.group2.getId());
-      assertEquals("new title 2", check.getTitle());
+      Assert.assertEquals("new title 2", check.getTitle());
 
       // exception if try to save without setting the title
       try {
          EvalAdhocGroup group5 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, null);
          adhocSupportLogic.saveAdhocGroup(group5);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
 
    }
 
+   @Test
    public void testGetEvalAdhocGroupsByUserAndPerm() {
       List<EvalAdhocGroup> l = null;
       List<Long> ids = null;
 
       l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      assertEquals(etdl.group2.getId(), l.get(0).getId());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
+      Assert.assertEquals(etdl.group2.getId(), l.get(0).getId());
 
       l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(EvalTestDataLoad.STUDENT_USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      assertEquals(etdl.group1.getId(), l.get(0).getId());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
+      Assert.assertEquals(etdl.group1.getId(), l.get(0).getId());
 
       l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
-      assertNotNull(l);
-      assertEquals(2, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains(etdl.group1.getId()));
-      assertTrue(ids.contains(etdl.group2.getId()));
+      Assert.assertTrue(ids.contains(etdl.group1.getId()));
+      Assert.assertTrue(ids.contains(etdl.group2.getId()));
 
       l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
-      assertNotNull(l);
-      assertEquals(0, l.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
 
    }
 
+   @Test
    public void testIsUserAllowedInAdhocGroup() {
       boolean allowed = false;
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION, etdl.group2.getEvalGroupId());
-      assertTrue(allowed);
+      Assert.assertTrue(allowed);
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_BE_EVALUATED, etdl.group2.getEvalGroupId());
-      assertFalse(allowed);
+      Assert.assertFalse(allowed);
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
-      assertTrue(allowed);
+      Assert.assertTrue(allowed);
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
-      assertFalse(allowed);
+      Assert.assertFalse(allowed);
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
-      assertFalse(allowed);
+      Assert.assertFalse(allowed);
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
-      assertFalse(allowed);
+      Assert.assertFalse(allowed);
    }
 
 }

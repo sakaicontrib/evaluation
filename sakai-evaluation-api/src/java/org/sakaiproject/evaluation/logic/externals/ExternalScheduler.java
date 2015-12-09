@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic.externals;
 import java.util.Date;
 import java.util.Map;
 
+import org.quartz.Job;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 
 
@@ -70,7 +71,7 @@ public interface ExternalScheduler {
 	* @return A string giving the full name of the scheduled job, or null if an error occurred 
 	* 	while attempting to schedule the job.
 	*/
-   public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap);
+   public String scheduleCronJob(Class<? extends Job> jobClass, Map<String, String> dataMap);
 
    /**
     * Create and schedule a job using cron-job syntax for the timing of execution(s) of the job. 

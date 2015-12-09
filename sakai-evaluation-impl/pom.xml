@@ -85,7 +85,7 @@
 
         <!-- generic DAO -->
         <dependency>
-            <groupId>org.sakaiproject</groupId>
+            <groupId>org.sakaiproject.genericdao</groupId>
             <artifactId>generic-dao</artifactId>
         </dependency>
 

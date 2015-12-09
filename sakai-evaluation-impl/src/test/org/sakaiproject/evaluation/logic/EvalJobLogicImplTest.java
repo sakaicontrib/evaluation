@@ -14,8 +14,9 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -31,7 +32,8 @@ public class EvalJobLogicImplTest extends BaseTestEvalLogic {
    private EvalEvaluationService evaluationService;
 
 	// run this before each test starts
-	protected void onSetUpBeforeTransaction() throws Exception {
+   @Before
+   public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
@@ -61,15 +63,10 @@ public class EvalJobLogicImplTest extends BaseTestEvalLogic {
 		
 	}
 	
-	// run this before each test starts and as part of the transaction
-	protected void onSetUpInTransaction() {
-		// preload additional data if desired
-		
-	}
-	
 	/**
 	 * Test method for {@link EvalJobLogicImpl#isValidJobType(String)}
 	 */
+   @Test
 	public void testIsValidJobType() {
 		//each valid type returns true
 		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_ACTIVE));

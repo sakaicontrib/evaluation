@@ -15,11 +15,10 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<!-- Aaron Zeckoski (aaronz@vt.edu) -->
-<beans>
-
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
 	<!-- place entity provider beans here -->
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider"
 			class="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProviderImpl">

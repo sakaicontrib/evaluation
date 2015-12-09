@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.Job;
 import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -102,7 +103,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		
 		dataMap.put(SPRING_BEAN_NAME, ConsolidatedNotificationsJob.BEAN_NAME);
 
-		Object jobClass = ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.ConsolidatedNotificationsJob");
+		Job jobClass = (Job) ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.ConsolidatedNotificationsJob");
 
 		String fullJobName = this.commonLogic.scheduleCronJob(jobClass.getClass(), dataMap);
 		
