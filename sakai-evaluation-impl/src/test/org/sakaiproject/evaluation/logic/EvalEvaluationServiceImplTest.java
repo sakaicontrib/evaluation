@@ -1132,7 +1132,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     // EMAIL TEMPLATES
 
-    @Ignore
     @Test
     public void testGetEmailTemplatesForUser() {
         List<EvalEmailTemplate> l = null;
@@ -1141,13 +1140,15 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
         Assert.assertNotNull(l);
         // EVALSYS-1179 added submitted-confirmation email, increasing total count to 14
-        Assert.assertEquals(14, l.size());
+        // EVALSYS-1456 added evalautees email
+        Assert.assertEquals(15, l.size());
 
         // get only default templates
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
         Assert.assertNotNull(l);
         // EVALSYS-1179 added submitted-confirmation email, increasing default count to 9
-        Assert.assertEquals(9, l.size());
+        // EVALSYS-1456 added evalautees email
+        Assert.assertEquals(10, l.size());
         for (EvalEmailTemplate emailTemplate : l) {
             Assert.assertNotNull(emailTemplate.getDefaultType());
         }
