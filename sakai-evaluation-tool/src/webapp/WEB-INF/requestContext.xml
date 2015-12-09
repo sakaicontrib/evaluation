@@ -15,17 +15,16 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<!-- Aaron Zeckoski (aaronz@vt.edu) -->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- specialty beans -->
 
     <!-- for now we will just hardwire the rich text control for this app to be
         the Sakai FCKEditor-based rich text control -->
     <bean id="richTextEvolver"
-        class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+        class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
         <!--  disabling the rich text editor since it seems to be failing in firefox -AZ -->
         <property name="targetBeanName" value="sakaiFCKTextEvolver" />
         <!--      <property name="targetBeanName" value="plainTextInputEvolver" />-->

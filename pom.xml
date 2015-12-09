@@ -206,9 +206,9 @@
                 <version>${hierarchy.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.sakaiproject</groupId>
+                <groupId>org.sakaiproject.genericdao</groupId>
                 <artifactId>generic-dao</artifactId>
-                <version>${generic-dao.version}</version>
+                <version>${sakai.genericdao.version}</version>
             </dependency>
             <dependency>
               	<groupId>com.mobilvox.ossi.mojo</groupId>

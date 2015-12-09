@@ -68,7 +68,7 @@ public class EvalImportJobImpl implements EvalImportJob{
 			
 			//job details 
 			JobDetail jobDetail = context.getJobDetail();
-			jobName = jobDetail.getName();
+			jobName = jobDetail.getKey().getName();
 			JobDataMap dataMap = jobDetail.getJobDataMap();
 			
 			//job execution parameters

@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.quartz.Job;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -620,7 +621,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return true;
     }
 
-    public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap) {
+    @Override
+    public String scheduleCronJob(Class<? extends Job> jobClass, Map<String, String> dataMap) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -643,6 +645,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return false;
     }
 
+    @Override
     public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
         // TODO Auto-generated method stub
         return null;

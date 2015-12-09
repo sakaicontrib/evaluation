@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.Job;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.dao.EvalAdminSupport;
@@ -839,7 +840,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.Class, java.util.Map)
      */
-	public String scheduleCronJob(Class<?> jobClass, Map<String, String> dataMap) {
+    @Override
+	public String scheduleCronJob(Class<? extends Job> jobClass, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClass, dataMap);
 	}
 
@@ -863,8 +865,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#scheduleCronJob(java.lang.String, java.util.Map)
 	 */
-	public String scheduleCronJob(String jobClassBeanId,
-			Map<String, String> dataMap) {
+	@Override
+	public String scheduleCronJob(String jobClassBeanId, Map<String, String> dataMap) {
 		return this.externalLogic.scheduleCronJob(jobClassBeanId, dataMap);
 	}
 

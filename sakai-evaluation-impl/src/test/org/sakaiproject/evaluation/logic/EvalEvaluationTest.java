@@ -14,10 +14,10 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-
-import junit.framework.TestCase;
 
 
 /**
@@ -25,36 +25,37 @@ import junit.framework.TestCase;
  * 
  * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
-public class EvalEvaluationTest extends TestCase {
+public class EvalEvaluationTest {
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.model.EvalEvaluation#getReminderStatus()}.
      */
+	@Test
     public void testReminderStatus() {
         EvalReminderStatus ers = null;
 
         ers = new EvalReminderStatus("50:5:abcde12345");
-        assertNotNull(ers);
-        assertEquals(50, ers.totalNum);
-        assertEquals(5, ers.currentNum);
-        assertEquals("abcde12345", ers.currentEvalGroupId);
+        Assert.assertNotNull(ers);
+        Assert.assertEquals(50, ers.totalNum);
+        Assert.assertEquals(5, ers.currentNum);
+        Assert.assertEquals("abcde12345", ers.currentEvalGroupId);
 
         EvalEvaluation eval = new EvalEvaluation();
         ers = eval.getCurrentReminderStatus();
-        assertNull(ers);
+        Assert.assertNull(ers);
 
         eval.setReminderStatus(null);
         ers = eval.getCurrentReminderStatus();
-        assertNull(ers);
-        assertNull(eval.getReminderStatus());
+        Assert.assertNull(ers);
+        Assert.assertNull(eval.getReminderStatus());
 
         eval.setReminderStatus("50:5:abcde12345");
         ers = eval.getCurrentReminderStatus();
-        assertNotNull(ers);
-        assertEquals(50, ers.totalNum);
-        assertEquals(5, ers.currentNum);
-        assertEquals("abcde12345", ers.currentEvalGroupId);
-        assertEquals("50:5:abcde12345", eval.getReminderStatus());
+        Assert.assertNotNull(ers);
+        Assert.assertEquals(50, ers.totalNum);
+        Assert.assertEquals(5, ers.currentNum);
+        Assert.assertEquals("abcde12345", ers.currentEvalGroupId);
+        Assert.assertEquals("50:5:abcde12345", eval.getReminderStatus());
     }
 
 }

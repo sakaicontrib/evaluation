@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -32,7 +35,8 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 	private MockEvalExternalLogic externalLogicMock;
 
 	// run this before each test starts
-	protected void onSetUpBeforeTransaction() throws Exception {
+	@Before
+	public void onSetUpBeforeTransaction() throws Exception {
 	   super.onSetUpBeforeTransaction();
 
 		// load up any other needed spring beans
@@ -66,25 +70,26 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#getFromEmailOrFail(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
+	@Test
    public void testGetFromEmailOrFail() {
       String fromEmail = null;
 
       fromEmail = emailsLogic.getFromEmailOrFail(etdl.evaluationActive);
-      assertNotNull(fromEmail);
-      assertEquals(EvalTestDataLoad.EVAL_FROM_EMAIL, fromEmail);
+      Assert.assertNotNull(fromEmail);
+      Assert.assertEquals(EvalTestDataLoad.EVAL_FROM_EMAIL, fromEmail);
 
       fromEmail = emailsLogic.getFromEmailOrFail(etdl.evaluationNew);
-      assertNotNull(fromEmail);
-      assertEquals("helpdesk@institution.edu", fromEmail);
+      Assert.assertNotNull(fromEmail);
+      Assert.assertEquals("helpdesk@institution.edu", fromEmail);
 
       // should not throw exception unless no from email can be found
       settings.set(EvalSettings.FROM_EMAIL_ADDRESS, null);
       try {
          emailsLogic.getFromEmailOrFail(etdl.evaluationNew);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalStateException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
 
       settings.set(EvalSettings.FROM_EMAIL_ADDRESS, "helpdesk@email.com");
@@ -94,104 +99,107 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#getEmailTemplateOrFail(java.lang.String, java.lang.Long)}.
     */
+	@Test
    public void testGetEmailTemplateOrFail() {
       EvalEmailTemplate template = null;
 
       // test getting templates from evals
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, etdl.evaluationNew.getId());
-      assertNotNull(template);
-      assertEquals(etdl.emailTemplate1.getId(), template.getId());
+      Assert.assertNotNull(template);
+      Assert.assertEquals(etdl.emailTemplate1.getId(), template.getId());
 
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_REMINDER, etdl.evaluationActive.getId());
-      assertNotNull(template);
-      assertEquals(etdl.emailTemplate3.getId(), template.getId());
+      Assert.assertNotNull(template);
+      Assert.assertEquals(etdl.emailTemplate3.getId(), template.getId());
 
       // test getting templates without evals
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, null);
-      assertNotNull(template);
-      assertEquals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, template.getDefaultType());
+      Assert.assertNotNull(template);
+      Assert.assertEquals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, template.getDefaultType());
 
       // test getting non-eval template from evals
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_CREATED, etdl.evaluationActive.getId());
-      assertNotNull(template);
-      assertEquals(EvalConstants.EMAIL_TEMPLATE_CREATED, template.getDefaultType());
+      Assert.assertNotNull(template);
+      Assert.assertEquals(EvalConstants.EMAIL_TEMPLATE_CREATED, template.getDefaultType());
 
       // exception if eval id is invalid
       try {
          emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalTestDataLoad.INVALID_LONG_ID);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
       
       // exception if invalid template type
       try {
          emailsLogic.getEmailTemplateOrFail("XXXXXXXXXXXXX", etdl.evaluationActive.getId());
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
     */
+	@Test
    public void testSendEvalCreatedNotifications() {
       String[] sentEmails = null;
 
       // test send to just the evaluatees
       externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), false);
-      assertNotNull(sentEmails);
-      assertEquals(1, sentEmails.length);
-      assertEquals(1, externalLogicMock.getNumEmailsSent());
+      Assert.assertNotNull(sentEmails);
+      Assert.assertEquals(1, sentEmails.length);
+      Assert.assertEquals(1, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluatees and owner
       externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), true);
-      assertNotNull(sentEmails);
-      assertEquals(2, sentEmails.length);
-      assertEquals(2, externalLogicMock.getNumEmailsSent());
+      Assert.assertNotNull(sentEmails);
+      Assert.assertEquals(2, sentEmails.length);
+      Assert.assertEquals(2, externalLogicMock.getNumEmailsSent());
 
-      // test that invalid evaluation id causes failure
+      // test that invalid evaluation id causes Assert.failure
       try {
          emailsLogic.sendEvalCreatedNotifications(EvalTestDataLoad.INVALID_LONG_ID, false);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
    }
 
    /**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
+	@Test
 	public void testSendEvalAvailableNotifications() {
       String[] sentEmails = null;
 
       // test send to just the evaluators
       externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), false);
-		assertNotNull(sentEmails);
-      assertEquals(2, sentEmails.length);
-      assertEquals(2, externalLogicMock.getNumEmailsSent());
+		Assert.assertNotNull(sentEmails);
+      Assert.assertEquals(2, sentEmails.length);
+      Assert.assertEquals(2, externalLogicMock.getNumEmailsSent());
 
       // test send to evaluators and evaluatees
       externalLogicMock.resetEmailsSentCounter();
       sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), true);
-      assertNotNull(sentEmails);
-      assertEquals(3, sentEmails.length);
-      assertEquals(3, externalLogicMock.getNumEmailsSent());
+      Assert.assertNotNull(sentEmails);
+      Assert.assertEquals(3, sentEmails.length);
+      Assert.assertEquals(3, externalLogicMock.getNumEmailsSent());
 
-      // test that invalid evaluation id causes failure
+      // test that invalid evaluation id causes Assert.failure
       try {
          emailsLogic.sendEvalAvailableNotifications(EvalTestDataLoad.INVALID_LONG_ID, false);
-         fail("Should have thrown exception");
+         Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
+         Assert.assertNotNull(e);
+         //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
       }
 	}
 
@@ -200,29 +208,33 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalAvailableGroupNotification(java.lang.Long, java.lang.String)}.
     */
+	@Test
    public void testSendEvalAvailableGroupNotification() {
-      // TODO fail("Not yet implemented");
+      // TODO Assert.fail("Not yet implemented");
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
     */
+	@Test
    public void testSendEvalReminderNotifications() {
-   // TODO fail("Not yet implemented");
+   // TODO Assert.fail("Not yet implemented");
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean, java.lang.String)}.
     */
+	@Test
    public void testSendEvalResultsNotifications() {
-   // TODO fail("Not yet implemented");
+   // TODO Assert.fail("Not yet implemented");
    }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#makeEmailMessage(java.lang.String, String, org.sakaiproject.evaluation.model.EvalEvaluation, org.sakaiproject.evaluation.logic.model.EvalGroup)}.
     */
+	@Test
    public void testMakeEmailMessage() {
-   // TODO fail("Not yet implemented");
+   // TODO Assert.fail("Not yet implemented");
    }
 
 }

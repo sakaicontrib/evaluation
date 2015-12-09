@@ -17,6 +17,9 @@ package org.sakaiproject.evaluation.logic;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
@@ -45,7 +48,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     private EvalAuthoringService authoringService;
 
     // run this before each test starts
-    protected void onSetUpBeforeTransaction() throws Exception {
+    @Before
+    public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
 
         // load up any other needed spring beans
@@ -110,6 +114,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#saveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
      */
+    @Test
     public void testSaveEvaluation() {
         EvalEvaluation eval = null;
 
@@ -121,12 +126,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
         evaluationSetupService.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID, false );
         EvalEvaluation checkEval = evaluationService.getEvaluationById(eval.getId());
-        assertNotNull(checkEval);
+        Assert.assertNotNull(checkEval);
 
         // check that the template was copied
-        assertNotSame(etdl.templatePublic.getId(), eval.getTemplate().getId());
-        assertTrue(eval.getTemplate().isHidden());
-        assertNotNull(eval.getTemplate().getCopyOf());
+        Assert.assertNotSame(etdl.templatePublic.getId(), eval.getTemplate().getId());
+        Assert.assertTrue(eval.getTemplate().isHidden());
+        Assert.assertNotNull(eval.getTemplate().getCopyOf());
 
 
         // save a valid evaluation in partial state
@@ -137,19 +142,19 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
         evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, false );
         checkEval = evaluationService.getEvaluationById(partialEval.getId());
-        assertNotNull(checkEval);
-        assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, partialEval.getState());
+        Assert.assertNotNull(checkEval);
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, partialEval.getState());
 
         // check that the template WAS copied
         EvalTemplate partialTemplate = partialEval.getTemplate();
-        assertNotSame(etdl.templatePublic.getId(), partialTemplate.getId());
-        assertEquals(etdl.templatePublic.getId(), partialTemplate.getCopyOf());
-        assertNotNull(partialTemplate.getCopyOf());
-        assertTrue(partialTemplate.isHidden());
+        Assert.assertNotSame(etdl.templatePublic.getId(), partialTemplate.getId());
+        Assert.assertEquals(etdl.templatePublic.getId(), partialTemplate.getCopyOf());
+        Assert.assertNotNull(partialTemplate.getCopyOf());
+        Assert.assertTrue(partialTemplate.isHidden());
 
         // now save the partial eval and complete
         evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, true );
-        assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, partialEval.getState());
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, partialEval.getState());
 
         // save a valid evaluation (due and stop date identical), and create
         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
@@ -185,11 +190,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.MAINT_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (BlankRequiredFieldException e) {
-            assertNotNull(e);
-            assertEquals("startDate", e.fieldName);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            Assert.assertEquals("startDate", e.fieldName);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
         // try save evaluation with dates that are out of order
@@ -201,11 +206,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.MAINT_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (InvalidDatesException e) {
-            assertNotNull(e);
-            assertEquals("dueDate", e.dateField);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            Assert.assertEquals("dueDate", e.dateField);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
         try {
@@ -215,11 +220,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.MAINT_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (InvalidDatesException e) {
-            assertNotNull(e);
-            assertEquals("dueDate", e.dateField);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            Assert.assertEquals("dueDate", e.dateField);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
         // test stop date must be same as or after due date
@@ -230,11 +235,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.MAINT_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (InvalidDatesException e) {
-            assertNotNull(e);
-            assertEquals("stopDate", e.dateField);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            Assert.assertEquals("stopDate", e.dateField);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
 
@@ -246,8 +251,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.EVALUATION_STATE_INQUEUE, 
                 EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
         evaluationSetupService.saveEvaluation( testStartEval, EvalTestDataLoad.MAINT_USER_ID, false );
-        assertNotNull(testStartEval.getId());
-        assertTrue(testStartEval.getStartDate().compareTo(new Date()) <= 0);
+        Assert.assertNotNull(testStartEval.getId());
+        Assert.assertTrue(testStartEval.getStartDate().compareTo(new Date()) <= 0);
 
         // test due date in the past
         try {
@@ -257,11 +262,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.MAINT_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (InvalidDatesException e) {
-            assertNotNull(e);
-            assertEquals("dueDate", e.dateField);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            Assert.assertEquals("dueDate", e.dateField);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
         // test create eval when do not have permission (USER_ID)
@@ -272,13 +277,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                     EvalTestDataLoad.USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (SecurityException e) {
-            assertNotNull(e);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
-        // test saving an evaluation with an empty template fails
+        // test saving an evaluation with an empty template Assert.fails
         try {
             evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                     EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
@@ -286,10 +291,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templateAdminNoItems), 
                     EvalTestDataLoad.ADMIN_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertNotNull(e);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
         try {
@@ -299,10 +304,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.EVALUATION_STATE_INQUEUE, 
                     EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), null), 
                     EvalTestDataLoad.ADMIN_USER_ID, false );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertNotNull(e);
-            //fail("Exception: " + e.getMessage()); // see why failing
+            Assert.assertNotNull(e);
+            //Assert.fail("Exception: " + e.getMessage()); // see why Assert.failing
         }
 
     }
@@ -310,63 +315,64 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
      */
+    @Test
     public void testDeleteEvaluation() {
         // remove evaluation which has not started (uses 2 email templates)
         EvalEvaluation unStarted = evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
-        assertNotNull(unStarted);
+        Assert.assertNotNull(unStarted);
         Long availableId = unStarted.getAvailableEmailTemplate().getId();
         Long reminderId = unStarted.getReminderEmailTemplate().getId();
         long countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class,
                 new Search("id", new Long[] {availableId, reminderId}) );
-        assertEquals(2, countEmailTemplates);
+        Assert.assertEquals(2, countEmailTemplates);
 
         evaluationSetupService.deleteEvaluation(unStarted.getId(), EvalTestDataLoad.MAINT_USER_ID);
         EvalEvaluation eval = evaluationService.getEvaluationById(unStarted.getId());
-        assertNull(eval);
+        Assert.assertNull(eval);
 
         // check to make sure the associated email templates were also removed
         countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class, 
                 new Search("id", new Long[] {availableId, reminderId}) );
-        assertEquals(0, countEmailTemplates);
+        Assert.assertEquals(0, countEmailTemplates);
 
         // attempt to remove evaluation which is not owned
         try {
             evaluationSetupService.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (SecurityException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // attempt to remove evaluation with assigned groups (check for cleanup)
         long countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
-        assertEquals(3, countACs);
+        Assert.assertEquals(3, countACs);
         evaluationSetupService.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.ADMIN_USER_ID);
         eval = evaluationService.getEvaluationById(etdl.evaluationNewAdmin.getId());
-        assertNull(eval);
+        Assert.assertNull(eval);
         countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
-        assertEquals(0, countACs);
+        Assert.assertEquals(0, countACs);
 
         // attempt to remove evaluation which is active
         try {
             evaluationSetupService.deleteEvaluation(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // attempt to remove evaluation which is completed but no responses (allowed)
         Long evalIdToRemove = etdl.evaluationClosedUntaken.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
-        assertNull( evaluationDao.findById(EvalEvaluation.class, evalIdToRemove) );
+        Assert.assertNull( evaluationDao.findById(EvalEvaluation.class, evalIdToRemove) );
 
         // remove eval with responses (check that it is not actually removed)
         evalIdToRemove = etdl.evaluationClosed.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
         EvalEvaluation deletedEval = evaluationService.getEvaluationById(evalIdToRemove);
-        assertNotNull( deletedEval );
-        assertEquals(EvalConstants.EVALUATION_STATE_DELETED, deletedEval.getState());
+        Assert.assertNotNull( deletedEval );
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_DELETED, deletedEval.getState());
 
         // http://jira.sakaiproject.org/jira/browse/EVALSYS-485 - remove eval and copied template (no responses)
         // first create the evaluation which should copy the template
@@ -377,13 +383,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
         evaluationSetupService.saveEvaluation( evalTest485, EvalTestDataLoad.MAINT_USER_ID, false );
         EvalEvaluation checkEval485 = evaluationService.getEvaluationById(evalTest485.getId());
-        assertNotNull(checkEval485);
+        Assert.assertNotNull(checkEval485);
         Long templateId = checkEval485.getTemplate().getId();
 
         evalIdToRemove = evalTest485.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
-        assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
-        assertNull( evaluationDao.findById(EvalTemplate.class, templateId) );
+        Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
+        Assert.assertNull( evaluationDao.findById(EvalTemplate.class, templateId) );
 
         // test for an invalid Eval that it does not cause an exception
         evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
@@ -399,39 +405,40 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), template545);
         evaluationSetupService.saveEvaluation( evalTest545, EvalTestDataLoad.MAINT_USER_ID, false ); // partial
         EvalEvaluation checkEval545 = evaluationService.getEvaluationById(evalTest545.getId());
-        assertNotNull(checkEval545);
+        Assert.assertNotNull(checkEval545);
         Long checkEval545templateId = checkEval545.getTemplate().getId();
-        assertEquals(templateId545, checkEval545templateId);
+        Assert.assertEquals(templateId545, checkEval545templateId);
 
         evalIdToRemove = evalTest545.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
-        assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
-        assertNotNull( evaluationDao.findById(EvalTemplate.class, checkEval545templateId) );
+        Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
+        Assert.assertNotNull( evaluationDao.findById(EvalTemplate.class, checkEval545templateId) );
 
     }
 
+    @Test
     public void testCloseEvaluation() {
         EvalEvaluation eval = null;
 
         // testing closing an active eval
         eval = evaluationSetupService.closeEvaluation(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID);
-        assertNotNull(eval);
-        assertEquals(etdl.evaluationActive.getId(), eval.getId());
-        assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, eval.getState());
-        assertTrue(eval.getDueDate().getTime() < System.currentTimeMillis());
+        Assert.assertNotNull(eval);
+        Assert.assertEquals(etdl.evaluationActive.getId(), eval.getId());
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, eval.getState());
+        Assert.assertTrue(eval.getDueDate().getTime() < System.currentTimeMillis());
 
         // testing closing a viewable eval
         eval = evaluationSetupService.closeEvaluation(etdl.evaluationViewable.getId(), EvalTestDataLoad.MAINT_USER_ID);
-        assertNotNull(eval);
-        assertEquals(etdl.evaluationViewable.getId(), eval.getId());
-        assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, eval.getState());
+        Assert.assertNotNull(eval);
+        Assert.assertEquals(etdl.evaluationViewable.getId(), eval.getId());
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, eval.getState());
 
-        // test invalid id fails
+        // test invalid id Assert.fails
         try {
             eval = evaluationSetupService.closeEvaluation(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
     }
@@ -439,6 +446,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, Boolean, Boolean, Boolean)}.
      */
+    @Test
     public void testGetEvaluationsForUser() {
         List<EvalEvaluation> evals = null;
         List<Long> ids = null;
@@ -450,14 +458,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         // get all evaluations for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, null, null, true);
-        assertNotNull(evals);
-        assertEquals(6, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(6, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActive.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
-        assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
 
         // check sorting
         Date lastDate = null;
@@ -469,133 +477,135 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 if (lastDate.compareTo(eval.getDueDate()) <= 0) {
                     lastDate = eval.getDueDate();
                 } else {
-                    fail("Order failure:" + lastDate + " less than " + eval.getDueDate());
+                    Assert.fail("Order Assert.failure:" + lastDate + " less than " + eval.getDueDate());
                 }
             }
         }
 
         // test get for another user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, null, null, true);
-        assertNotNull(evals);
-        assertEquals(4, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(4, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
-        assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
         // get only assigned evals for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, null, null, null);
-        assertNotNull(evals);
-        assertEquals(2, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(2, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
-        assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
         // get all active evaluations for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, null, true);
-        assertNotNull(evals);
-        assertEquals(3, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(3, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationActive.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
 
         // get assigned active evaluations for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, true, null, null);
-        assertNotNull(evals);
-        assertEquals(0, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(0, evals.size());
 
         // test active evals for another user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, true, null, true);
-        assertNotNull(evals);
-        assertEquals(2, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(2, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
 
         // don't include taken evaluations
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, true, true);
-        assertNotNull(evals);
-        assertEquals(2, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(2, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
 
         // try to get for invalid user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.INVALID_USER_ID, true, null, true);
-        assertNotNull(evals);
-        assertEquals(2, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(2, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationGracePeriod.getId() ));
     }
     
     /**
      * Test method for getEvaluationsForEvaluatee
      */
+    @Test
     public void testGetEvaluationsForEvaluatee() {
     	List<EvalEvaluation> evals = null;
     	
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, null);
-    	assertNotNull(evals);
-    	assertEquals(7, evals.size());
+    	Assert.assertNotNull(evals);
+    	Assert.assertEquals(7, evals.size());
     	
     	for(EvalEvaluation eval : evals) {
             List<EvalAssignUser> assignUsers = evaluationService.getParticipantsForEval(eval.getId(), EvalTestDataLoad.MAINT_USER_ID, 
                     null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
-            assertNotNull(assignUsers);
+            Assert.assertNotNull(assignUsers);
     	}
 
         evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, true);
-        assertNotNull(evals);
-        assertEquals(6, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(6, evals.size());
 
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.MAINT_USER_ID, false);
-        assertNotNull(evals);
-        assertEquals(4, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(4, evals.size());
 
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.STUDENT_USER_ID, null);
-    	assertNotNull(evals);
-    	assertEquals(0,evals.size());
+    	Assert.assertNotNull(evals);
+    	Assert.assertEquals(0,evals.size());
 
     	evals = this.evaluationSetupService.getEvaluationsForEvaluatee(EvalTestDataLoad.USER_ID, null);
-    	assertNotNull(evals);
-    	assertEquals(0,evals.size());
+    	Assert.assertNotNull(evals);
+    	Assert.assertEquals(0,evals.size());
     }
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean, boolean)}.
      */
+    @Test
     public void testGetVisibleEvaluationsForUser() {
         // test getting visible evals for the maint user
         List<EvalEvaluation> evals = null;
         List<Long> ids = null;
 
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false, false);
-        assertNotNull(evals);
-        assertEquals(4, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(4, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationNew.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActive.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
-        assertTrue(ids.contains( etdl.evaluationProvided.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationNew.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationProvided.getId() ));
 
         // test getting visible evals for the admin user (should be all)
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false, false);
-        assertNotNull(evals);
-        assertEquals(18, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(18, evals.size());
 
         // test getting recent closed evals for the admin user
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false, false);
-        assertNotNull(evals);
-        assertEquals(17, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(17, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
+        Assert.assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 
         // test getting visible evals for the normal user (should be none)
         evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false, false);
-        assertNotNull(evals);
-        assertEquals(0, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(0, evals.size());
 
     }
 
@@ -603,78 +613,81 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvalCategories(java.lang.String)}.
      */
+    @Test
     public void testGetEvalCategories() {
         String[] cats = null;
 
         // get all categories in the system
         cats = evaluationSetupService.getEvalCategories(null);
-        assertNotNull(cats);
-        assertEquals(2, cats.length);
-        assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
-        assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
+        Assert.assertNotNull(cats);
+        Assert.assertEquals(2, cats.length);
+        Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+        Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
 
         // get all categories for a user
         cats = evaluationSetupService.getEvalCategories(EvalTestDataLoad.ADMIN_USER_ID);
-        assertNotNull(cats);
-        assertEquals(2, cats.length);
-        assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
-        assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
+        Assert.assertNotNull(cats);
+        Assert.assertEquals(2, cats.length);
+        Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+        Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
 
         cats = evaluationSetupService.getEvalCategories(EvalTestDataLoad.MAINT_USER_ID);
-        assertNotNull(cats);
-        assertEquals(1, cats.length);
-        assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+        Assert.assertNotNull(cats);
+        Assert.assertEquals(1, cats.length);
+        Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
 
         // get no categories for user with none
         cats = evaluationSetupService.getEvalCategories(EvalTestDataLoad.USER_ID);
-        assertNotNull(cats);
-        assertEquals(0, cats.length);
+        Assert.assertNotNull(cats);
+        Assert.assertEquals(0, cats.length);
 
     }
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
      */
+    @Test
     public void testGetEvaluationsByCategory() {
         List<EvalEvaluation> evals = null;
         List<Long> ids = null;
 
         // get all evaluationSetupService for a category
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, null);
-        assertNotNull(evals);
-        assertEquals(2, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(2, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_2, null);
-        assertNotNull(evals);
-        assertEquals(1, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(1, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
         // get evaluationSetupService for a category and user
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, EvalTestDataLoad.USER_ID);
-        assertNotNull(evals);
-        assertEquals(1, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(1, evals.size());
         ids = EvalTestDataLoad.makeIdList(evals);
-        assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+        Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_2, EvalTestDataLoad.USER_ID);
-        assertNotNull(evals);
-        assertEquals(0, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(0, evals.size());
 
         // get evaluationSetupService for invalid or non-existent category
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.INVALID_CONSTANT_STRING, null);
-        assertNotNull(evals);
-        assertEquals(0, evals.size());
+        Assert.assertNotNull(evals);
+        Assert.assertEquals(0, evals.size());
 
         // get evaluationSetupService for invalid or non-existent user
         evals = evaluationSetupService.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, null);
-        assertNotNull(evals);
+        Assert.assertNotNull(evals);
 
     }
-
+    
+    @Test
     public void testSaveEmailTemplate() {
         // test valid new saves
         evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( EvalTestDataLoad.MAINT_USER_ID,
@@ -691,8 +704,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "subject", "a message", 
                 EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
         evaluationSetupService.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
-        assertNotNull( testTemplate.getId() );
-        assertNull( testTemplate.getDefaultType() );
+        Assert.assertNotNull( testTemplate.getId() );
+        Assert.assertNull( testTemplate.getDefaultType() );
 
         // test invalid update to default template as non-admin
         EvalEmailTemplate defaultTemplate = 
@@ -701,9 +714,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             defaultTemplate.setMessage("new message for default");
             evaluationSetupService.saveEmailTemplate( defaultTemplate, 
                     EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // ok as admin though
@@ -722,18 +735,18 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.emailTemplate1.setMessage("new message 1");
             evaluationSetupService.saveEmailTemplate( etdl.emailTemplate1, 
                     EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         try {
             etdl.emailTemplate2.setMessage("new message 2");
             evaluationSetupService.saveEmailTemplate( etdl.emailTemplate2, 
                     EvalTestDataLoad.USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test associated eval is active but we can still update (relaxed perms)
@@ -743,31 +756,32 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
     }
 
+    @Test
     public void testRemoveEmailTemplate() {
         // check user cannot remove
         try {
             evaluationSetupService.removeEmailTemplate(etdl.emailTemplate2.getId(), EvalTestDataLoad.USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test user can remove
         EvalEvaluation eval = (EvalEvaluation) evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
-        assertNotNull(eval.getReminderEmailTemplate());
+        Assert.assertNotNull(eval.getReminderEmailTemplate());
 
         evaluationSetupService.removeEmailTemplate(etdl.emailTemplate2.getId(), EvalTestDataLoad.MAINT_USER_ID);
 
-        assertNull(eval.getReminderEmailTemplate());
-        assertNull( evaluationDao.findById(EvalEmailTemplate.class, etdl.emailTemplate2.getId()) );
+        Assert.assertNull(eval.getReminderEmailTemplate());
+        Assert.assertNull( evaluationDao.findById(EvalEmailTemplate.class, etdl.emailTemplate2.getId()) );
 
         // test cannot remove default templates
         EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
         try {
             evaluationSetupService.removeEmailTemplate(defaultTemplate.getId(), EvalTestDataLoad.ADMIN_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
     }
@@ -775,7 +789,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
 
     // GROUP ASSIGNMENTS
-
+    
+    @Test
     public void testSaveAssignGroup() {
 
         // test adding evalGroupId to inqueue eval
@@ -787,9 +802,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // check save worked
         List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationNew.getId()) );
-        assertNotNull(l);
-        assertEquals(1, l.size());
-        assertTrue(l.contains(eacNew));
+        Assert.assertNotNull(l);
+        Assert.assertEquals(1, l.size());
+        Assert.assertTrue(l.contains(eacNew));
 
         // test adding evalGroupId to active eval
         EvalAssignGroup eacActive = new EvalAssignGroup(EvalConstants.GROUP_TYPE_SITE, 
@@ -801,9 +816,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // check save worked
         l = evaluationDao.findBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationActive.getId()) );
-        assertNotNull(l);
-        assertEquals(2, l.size());
-        assertTrue(l.contains(eacActive));
+        Assert.assertNotNull(l);
+        Assert.assertEquals(2, l.size());
+        Assert.assertTrue(l.contains(eacActive));
 
         // test modify safe part while active
         EvalAssignGroup testEac1 = (EvalAssignGroup) evaluationDao.
@@ -831,9 +846,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
                     Boolean.FALSE),
                     EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot add duplicate evalGroupId to active eval
@@ -843,9 +858,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.GROUP_TYPE_SITE, etdl.evaluationActive, Boolean.FALSE, Boolean.TRUE, 
                     Boolean.FALSE),
                     EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test user without perm cannot add evalGroupId to eval
@@ -855,9 +870,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
                     Boolean.FALSE), 
                     EvalTestDataLoad.USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot add evalGroupId to closed eval
@@ -867,18 +882,18 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                     EvalConstants.GROUP_TYPE_SITE, etdl.evaluationViewable, Boolean.FALSE, Boolean.TRUE, 
                     Boolean.FALSE), 
                     EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot modify non-owned evalGroupId
         try {
             etdl.assign7.setStudentsViewResults( Boolean.TRUE );
             evaluationSetupService.saveAssignGroup(etdl.assign7, EvalTestDataLoad.MAINT_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
 
@@ -889,9 +904,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         //          findById( EvalAssignContext.class, etdl.assign6.getId() );
         //       testEac4.setContext( EvalTestDataLoad.CONTEXT3 );
         //       evaluationSetupService.saveAssignContext(testEac4, EvalTestDataLoad.MAINT_USER_ID);
-        //       fail("Should have thrown exception");
+        //       Assert.fail("Should have thrown exception");
         //    } catch (RuntimeException e) {
-        //       assertNotNull(e);
+        //       Assert.assertNotNull(e);
         //    }
         //    
         //    // test modify evalGroupId while active eval
@@ -900,9 +915,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         //          findById( EvalAssignContext.class, etdl.assign1.getId() );
         //       testEac5.setContext( EvalTestDataLoad.CONTEXT2 );
         //       evaluationSetupService.saveAssignContext(testEac5, EvalTestDataLoad.MAINT_USER_ID);
-        //       fail("Should have thrown exception");
+        //       Assert.fail("Should have thrown exception");
         //    } catch (RuntimeException e) {
-        //       assertNotNull(e);
+        //       Assert.assertNotNull(e);
         //    }
         //
         //    // test modify evalGroupId while closed eval
@@ -911,9 +926,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         //          findById( EvalAssignContext.class, etdl.assign4.getId() );
         //       testEac6.setContext( EvalTestDataLoad.CONTEXT1 );
         //       evaluationSetupService.saveAssignContext(testEac6, EvalTestDataLoad.MAINT_USER_ID);
-        //       fail("Should have thrown exception");
+        //       Assert.fail("Should have thrown exception");
         //    } catch (RuntimeException e) {
-        //       assertNotNull(e);
+        //       Assert.assertNotNull(e);
         //    }
 
         // TODO - test that evaluation cannot be changed
@@ -923,6 +938,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testDeleteAssignGroup() {
         // save some ACs to test removing
         EvalAssignGroup eac1 = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
@@ -937,10 +953,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // check save worked
         List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationNew.getId()) );
-        assertNotNull(l);
-        assertEquals(2, l.size());
-        assertTrue(l.contains(eac1));
-        assertTrue(l.contains(eac2));
+        Assert.assertNotNull(l);
+        Assert.assertEquals(2, l.size());
+        Assert.assertTrue(l.contains(eac1));
+        Assert.assertTrue(l.contains(eac2));
 
         // test can remove contexts from new Evaluation
         Long eacId = eac1.getId();
@@ -951,124 +967,124 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // check save worked
         l = evaluationDao.findBySearch(EvalAssignGroup.class, 
                 new Search("evaluation.id", etdl.evaluationNew.getId()) );
-        assertNotNull(l);
-        assertEquals(1, l.size());
-        assertTrue(! l.contains(eac1));
+        Assert.assertNotNull(l);
+        Assert.assertEquals(1, l.size());
+        Assert.assertTrue(! l.contains(eac1));
 
         // test cannot remove evalGroupId from active eval
         try {
             evaluationSetupService.deleteAssignGroup( etdl.assign1.getId(), 
                     EvalTestDataLoad.MAINT_USER_ID );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot remove evalGroupId from closed eval
         try {
             evaluationSetupService.deleteAssignGroup( etdl.assign4.getId(), 
                     EvalTestDataLoad.MAINT_USER_ID );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot remove evalGroupId without permission
         try {
             evaluationSetupService.deleteAssignGroup( eac2.getId(), 
                     EvalTestDataLoad.USER_ID );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test cannot remove evalGroupId without ownership
         try {
             evaluationSetupService.deleteAssignGroup( etdl.assign7.getId(), 
                     EvalTestDataLoad.MAINT_USER_ID );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
         // test remove invalid eac
         try {
             evaluationSetupService.deleteAssignGroup( EvalTestDataLoad.INVALID_LONG_ID, 
                     EvalTestDataLoad.MAINT_USER_ID );
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
     }
 
-
+    @Test
     public void testSetDefaults() {
         EvalAssignGroup eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive);
 
         // make sure it fills in nulls
-        assertNull(eah.getInstructorApproval());
-        assertNull(eah.getInstructorsViewResults());
-        assertNull(eah.getStudentsViewResults());
+        Assert.assertNull(eah.getInstructorApproval());
+        Assert.assertNull(eah.getInstructorsViewResults());
+        Assert.assertNull(eah.getStudentsViewResults());
         evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
-        assertNotNull(eah.getInstructorApproval());
-        assertNotNull(eah.getInstructorsViewResults());
-        assertNotNull(eah.getStudentsViewResults());
+        Assert.assertNotNull(eah.getInstructorApproval());
+        Assert.assertNotNull(eah.getInstructorsViewResults());
+        Assert.assertNotNull(eah.getStudentsViewResults());
 
         // make sure it does not wipe existing settings
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, false, false, false);
         evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
         // TODO - temporary disable
-        //      assertEquals(Boolean.FALSE, eah.getInstructorApproval());
-        assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
-        assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
+        //      Assert.assertEquals(Boolean.FALSE, eah.getInstructorApproval());
+        Assert.assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
+        Assert.assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
 
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, true, true, true);
         evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
-        assertEquals(Boolean.TRUE, eah.getInstructorApproval());
-        assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
-        assertEquals(Boolean.TRUE, eah.getStudentsViewResults());
+        Assert.assertEquals(Boolean.TRUE, eah.getInstructorApproval());
+        Assert.assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
+        Assert.assertEquals(Boolean.TRUE, eah.getStudentsViewResults());
 
     }
 
-
+    @Test
     public void testAssignEmailTemplate() {
         EvalEvaluation eval = null;
 
         // check assigning works
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
-        assertNull(eval.getAvailableEmailTemplate());
+        Assert.assertNull(eval.getAvailableEmailTemplate());
         evaluationSetupService.assignEmailTemplate(etdl.emailTemplate1.getId(), etdl.evaluationActive.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
-        assertNotNull(eval.getAvailableEmailTemplate());
-        assertEquals(etdl.emailTemplate1.getId(), eval.getAvailableEmailTemplate().getId());
+        Assert.assertNotNull(eval.getAvailableEmailTemplate());
+        Assert.assertEquals(etdl.emailTemplate1.getId(), eval.getAvailableEmailTemplate().getId());
 
         // check unassigning works
         evaluationSetupService.assignEmailTemplate(null, etdl.evaluationActive.getId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalTestDataLoad.ADMIN_USER_ID);
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
-        assertNull(eval.getAvailableEmailTemplate());
+        Assert.assertNull(eval.getAvailableEmailTemplate());
 
         // check default template unassigns
         EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
-        assertNotNull(defaultTemplate);
+        Assert.assertNotNull(defaultTemplate);
         evaluationSetupService.assignEmailTemplate(defaultTemplate.getId(), etdl.evaluationNew.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
         eval = evaluationService.getEvaluationById(etdl.evaluationNew.getId());
-        assertNull(eval.getAvailableEmailTemplate());
+        Assert.assertNull(eval.getAvailableEmailTemplate());
 
-        // invalid evalid causes failure
+        // invalid evalid causes Assert.failure
         try {
             evaluationSetupService.assignEmailTemplate(etdl.emailTemplate1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null, EvalTestDataLoad.ADMIN_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
-        // invalid argument combination causes failure
+        // invalid argument combination causes Assert.failure
         try {
             evaluationSetupService.assignEmailTemplate(null, etdl.evaluationActive.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
     }
@@ -1076,14 +1092,15 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteUserAssignments(java.lang.Long, java.lang.Long[])}.
      */
+    @Test
     public void testDeleteUserAssignments() {
         externalLogic.setCurrentUserId(EvalTestDataLoad.ADMIN_USER_ID);
 
         Long evaluationId = etdl.evaluationNewAdmin.getId();
         List<EvalAssignUser> assignUsers = evaluationService.getParticipantsForEval(evaluationId, null, 
                 new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, null);
-        assertNotNull(assignUsers);
-        assertTrue(assignUsers.size() > 1);
+        Assert.assertNotNull(assignUsers);
+        Assert.assertTrue(assignUsers.size() > 1);
 
         Long[] userAssignmentIds = new Long[assignUsers.size()];
         for (int i = 0; i < userAssignmentIds.length; i++) {
@@ -1094,20 +1111,21 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         assignUsers = evaluationService.getParticipantsForEval(evaluationId, null, 
                 new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, null);
-        assertNotNull(assignUsers);
-        assertTrue(assignUsers.size() == 0);
+        Assert.assertNotNull(assignUsers);
+        Assert.assertTrue(assignUsers.size() == 0);
     }
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#saveUserAssignments(java.lang.Long, org.sakaiproject.evaluation.model.EvalAssignUser[])}.
      */
+    @Test
     public void testSaveUserAssignments() {
         externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
         Long evaluationId = etdl.evaluationNew.getId();
         List<EvalAssignUser> currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, null);
-        assertNotNull(currentAssign);
-        assertTrue(currentAssign.size() == 0);
+        Assert.assertNotNull(currentAssign);
+        Assert.assertTrue(currentAssign.size() == 0);
 
         EvalAssignUser[] assignUsers = new EvalAssignUser[] { 
                 new EvalAssignUser(EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF),
@@ -1117,13 +1135,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, null);
-        assertNotNull(currentAssign);
-        assertTrue(currentAssign.size() == 2);
+        Assert.assertNotNull(currentAssign);
+        Assert.assertTrue(currentAssign.size() == 2);
     }
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments() {
         Long evaluationId = null;
         List<EvalAssignUser> currentAssign = null;
@@ -1135,57 +1154,57 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationId = etdl.evaluationNewAdmin.getId();
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
-        assertTrue(currentSize > 0);
+        Assert.assertTrue(currentSize > 0);
         currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(currentEAUs > 0);
+        Assert.assertTrue(currentEAUs > 0);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
-        assertTrue(newSize > 0);
+        Assert.assertTrue(newSize > 0);
         newEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(newEAUs > 0);
+        Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
-        assertEquals(currentSize, newSize);
-        assertEquals(currentEAUs, newEAUs);
+        Assert.assertEquals(currentSize, newSize);
+        Assert.assertEquals(currentEAUs, newEAUs);
 
         // also test with an ongoing one
         evaluationId = etdl.evaluationActive.getId();
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
-        assertTrue(currentSize > 0);
+        Assert.assertTrue(currentSize > 0);
         currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(currentEAUs > 0);
+        Assert.assertTrue(currentEAUs > 0);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
-        assertTrue(newSize > 0);
+        Assert.assertTrue(newSize > 0);
         newEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(newEAUs > 0);
+        Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
-        assertEquals(currentSize, newSize);
-        assertEquals(currentEAUs, newEAUs);
+        Assert.assertEquals(currentSize, newSize);
+        Assert.assertEquals(currentEAUs, newEAUs);
 
-        // now try it with a closed one (should fail)
+        // now try it with a closed one (should Assert.fail)
         evaluationId = etdl.evaluationClosed.getId();
         try {
             evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
-            fail("Should have thrown exception");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertNotNull(e);
+            Assert.assertNotNull(e);
         }
 
     }
@@ -1193,6 +1212,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_noAssignments_notAllRolesParticipate() {
     	Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1209,11 +1229,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 		evaluationId = testedEvaluation.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1222,24 +1242,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize, newEvalTotalSize);
-        assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize, newEvalTotalSize);
+        Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize, newAllAssignmentsSize);
     }
     
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_noAssignments_allRolesParticipate() {
     	Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1256,11 +1277,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 		evaluationId = testedEvaluation.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1269,24 +1290,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize, newEvalTotalSize);
-        assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize, newEvalTotalSize);
+        Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize, newAllAssignmentsSize);
     }
     
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_simpleAssignments_allRolesParticipate() {
         Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1301,11 +1323,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationId = etdl.evaluation_simpleAssignments_allRolesParticipate.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1314,24 +1336,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize, newEvalTotalSize);
-        assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize, newEvalTotalSize);
+        Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize, newAllAssignmentsSize);
     }
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_allRoleAssignments_allRolesParticipate() {
         Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1360,11 +1383,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationId = etdl.evaluation_allRoleAssignments_allRolesParticipate.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1374,24 +1397,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotal = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize -1, newEvalTotal);
-        assertEquals(evalEvaluatorSize-1, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize-1, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize -1, newEvalTotal);
+        Assert.assertEquals(evalEvaluatorSize-1, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize-1, newAllAssignmentsSize);
     }
     
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_simpleAssignments_notAllRolesParticipate() {
     	Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1408,11 +1432,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationId = testEvalEvaluation.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1421,24 +1445,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize, newEvalTotalSize);
-        assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize, newEvalTotalSize);
+        Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize, newAllAssignmentsSize);
     }
     
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Test
     public void testSynchronizeUserAssignments_allRoleAssignments_notAllRolesParticipate() {
         Long evaluationId = null;
         List<EvalAssignUser> evalEvaluatorAssignments = null;
@@ -1468,12 +1493,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         evalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);
+        Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
         allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
@@ -1482,24 +1507,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(evalAllAssignments);
+        Assert.assertNotNull(evalAllAssignments);
         newEvalTotalSize = evalAllAssignments.size();
         
         evalEvaluatorAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        assertNotNull(evalEvaluatorAssignments);        
+        Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
         newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
 
-        assertEquals(evalTotalSize - 1, newEvalTotalSize);
-        assertEquals(evalEvaluatorSize - 1, newEvalEvaluatorSize);
-        assertEquals(allAssignmentsSize - 1, newAllAssignmentsSize);
+        Assert.assertEquals(evalTotalSize - 1, newEvalTotalSize);
+        Assert.assertEquals(evalEvaluatorSize - 1, newEvalEvaluatorSize);
+        Assert.assertEquals(allAssignmentsSize - 1, newAllAssignmentsSize);
     }        
 
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignmentsForced(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String, boolean)}.
      */
+    @Test
     public void testSynchronizeUserAssignmentsForced() {
         Long evaluationId = null;
         EvalEvaluation evaluation = null;
@@ -1512,36 +1538,36 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationId = etdl.evaluationActive.getId();
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
-        assertTrue(currentSize > 0);
+        Assert.assertTrue(currentSize > 0);
         currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(currentEAUs > 0);
+        Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
         evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
-        assertTrue(newSize > 0);
+        Assert.assertTrue(newSize > 0);
         newEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(newEAUs > 0);
+        Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
-        assertEquals(currentSize, newSize);
-        assertEquals(currentEAUs, newEAUs);
+        Assert.assertEquals(currentSize, newSize);
+        Assert.assertEquals(currentEAUs, newEAUs);
 
         // also test with an ongoing one
         evaluationId = etdl.evaluationClosed.getId();
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
-        assertNotNull(currentAssign);
+        Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
-        assertTrue(currentSize > 0);
+        Assert.assertTrue(currentSize > 0);
         currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
-        assertTrue(currentEAUs > 0);
+        Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
         evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
@@ -1550,52 +1576,54 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#setEvalAssignments(java.lang.Long, java.lang.String[], java.lang.String[], boolean)}.
      */
+    @Test
     public void testSetEvalAssignments() {
         List<EvalAssignGroup> assignGroups = null;
         externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
         Long evaluationId = etdl.evaluationNew.getId();
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
-        assertNotNull(assignGroups);
-        assertTrue(assignGroups.size() == 0);
+        Assert.assertNotNull(assignGroups);
+        Assert.assertTrue(assignGroups.size() == 0);
 
         evaluationSetupService.setEvalAssignments(evaluationId, null, new String[] {EvalTestDataLoad.SITE1_REF}, true);
 
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
-        assertNotNull(assignGroups);
-        assertTrue(assignGroups.size() == 1);
+        Assert.assertNotNull(assignGroups);
+        Assert.assertTrue(assignGroups.size() == 1);
 
         evaluationSetupService.setEvalAssignments(evaluationId, null, 
                 new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, true);
 
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
-        assertNotNull(assignGroups);
-        assertTrue(assignGroups.size() == 2);
+        Assert.assertNotNull(assignGroups);
+        Assert.assertTrue(assignGroups.size() == 2);
     }
     
+    @Test
     public void testSetEvalAssignments_noAuthnNoGroups() {
 
         List<EvalAssignGroup> assignGroups = null;
         externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID_3);
         Long evaluationId = etdl.evaluationPartial_noAuthNoGroups.getId();
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
-        assertNotNull(assignGroups);
-        assertTrue(assignGroups.size() == 0);
+        Assert.assertNotNull(assignGroups);
+        Assert.assertTrue(assignGroups.size() == 0);
 
         evaluationSetupService.setEvalAssignments(evaluationId, null, null, false);
 
         assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false).get(evaluationId);
-        assertNotNull(assignGroups);
-        assertTrue(assignGroups.size() == 1);
+        Assert.assertNotNull(assignGroups);
+        Assert.assertTrue(assignGroups.size() == 1);
         
         EvalAssignGroup evalAssignGroup = assignGroups.get(0);
-        assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, evalAssignGroup.getOwner());
-        assertEquals(EvalConstants.GROUP_TYPE_PROVIDED, evalAssignGroup.getEvalGroupType());
+        Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, evalAssignGroup.getOwner());
+        Assert.assertEquals(EvalConstants.GROUP_TYPE_PROVIDED, evalAssignGroup.getEvalGroupType());
         
         List<EvalAssignUser> participantsForEval = evaluationDao.getParticipantsForEval(evaluationId, null, null, null, 
         		null, null, null);
         
-        assertEquals(1, participantsForEval.size());
-        assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, participantsForEval.get(0).getUserId());
+        Assert.assertEquals(1, participantsForEval.size());
+        Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, participantsForEval.get(0).getUserId());
     }
 
 }
