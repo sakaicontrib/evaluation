@@ -37,6 +37,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -1085,12 +1086,20 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     public byte[] getFileContent(String abspath) {
         try {
-            ContentResource contentResource = contentHostingService.getResource(abspath);
-            return contentResource.getContent();
+        	if (StringUtils.isNotBlank(abspath) && !"null".equals(abspath)) {
+        		ContentResource contentResource = contentHostingService.getResource(abspath);
+        		return contentResource.getContent();
+        	}
         } catch (Exception e) {
-            log.warn("Cannot byte array for Content Hosting File", e);
+            if (log.isDebugEnabled()) {
+            	log.debug("Cannot byte array for Content Hosting File " + abspath,e);
+            }
+            else {
+            	log.info("Cannot byte array for Content Hosting File " + abspath);
+            }
             return null;
         }
+        return null;
     }
 
 
