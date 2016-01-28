@@ -110,8 +110,9 @@ public class RenderingUtils {
         if (responseArray == null) {
             throw new IllegalArgumentException("responseArray cannot be null");
         }
-        int responseCount = (usaNA) ? responseArray.length -1 : responseArray.length; // remove the NA count from the end
+        int responseCount = responseArray.length - 1; // remove the NA count from the end
         int totalAnswers = 0;
+        int totalAnswersWithNA = 0;
         int totalValue = 0;
         int totalWeight = 0;
         
@@ -150,11 +151,14 @@ public class RenderingUtils {
             	totalValue += (realValues[i] * responseArray[i]);
             }
         }
+        if (usaNA) totalAnswersWithNA = totalAnswers + responseArray[responseArray.length-1];
+        else totalAnswersWithNA = totalAnswers;
+        
         double weightedAverage = 0.0d;
         if (totalAnswers > 0) {
             weightedAverage = (double)totalValue / (double)totalAnswers;
         }
-        return new AnswersMean(totalAnswers, weightedAverage);
+        return new AnswersMean(totalAnswersWithNA, weightedAverage);
     }
 
     public static class AnswersMean {
