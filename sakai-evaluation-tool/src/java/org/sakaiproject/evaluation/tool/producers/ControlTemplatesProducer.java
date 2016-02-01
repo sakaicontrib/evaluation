@@ -139,6 +139,16 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
             UICommand copy = UICommand.make(templateBranch, "template-copy-link", 
                     UIMessage.make("general.copy"), "templateBBean.copyTemplate");
             copy.parameters.add(new UIELBinding("templateBBean.templateId", template.getId()));
+            
+            // WL-1369 change owner
+            if ( ! template.getLocked().booleanValue() &&
+                    authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
+                UIInternalLink.make(templateBranch, "template-chown-link", UIMessage.make("general.command.chown"),
+                        new TemplateViewParameters( ChownTemplateProducer.VIEW_ID, template.getId() ));
+            } else {
+                UIMessage.make(templateBranch, "template-chown-dummy", "general.command.chown")
+                .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
+            }
         }
         else{
             // page title
@@ -211,6 +221,15 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                             UIMessage.make("general.copy"), "templateBBean.copyTemplate");
                     copy.parameters.add(new UIELBinding("templateBBean.templateId", template.getId()));
 
+                 // WL-1369 change owner
+                    if ( ! template.getLocked().booleanValue() &&
+                            authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
+                        UIInternalLink.make(templateBranch, "template-chown-link", UIMessage.make("general.command.chown"), 
+                                new TemplateViewParameters( ChownTemplateProducer.VIEW_ID, template.getId() ));
+                    } else {
+                        UIMessage.make(templateBranch, "template-chown-dummy", "general.command.chown")
+                        .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
+                    }
                 }	
             } else {
                 UIMessage.make(tofill, "no-templates", "controltemplates.templates.none");
