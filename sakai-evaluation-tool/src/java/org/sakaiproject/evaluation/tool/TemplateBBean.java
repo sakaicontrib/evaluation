@@ -103,6 +103,7 @@ public class TemplateBBean {
     public String blockTextChoice;
     public String orderedChildIds;
     public String templateItemIds;
+    public String templateOwner;
     
     public Long groupItemId;
 
@@ -151,6 +152,35 @@ public class TemplateBBean {
         authoringService.deleteTemplate(templateId, ownerId);
         messages.addMessage( new TargettedMessage("controltemplates.remove.user.message", 
                 new Object[] {template.getTitle()}, TargettedMessage.SEVERITY_INFO) );
+        return "success";
+    }
+    
+    /**
+     * Chown a template and create a user message,
+     * templateId must be set
+     */
+    public String chownTemplate() {
+        String ownerId = commonLogic.getCurrentUserId();
+        String userId = commonLogic.getUserId(templateOwner);
+        if (null == userId) {
+        	return "failed";
+        }
+        
+        EvalTemplate template = authoringService.getTemplateById(templateId);
+
+        if (!authoringService.canCreateTemplate(userId) ||
+        		!authoringService.canModifyTemplate(ownerId, templateId)) {
+        	messages.addMessage( new TargettedMessage("controltemplates.chown.permission.message", 
+        			new Object[] {template.getTitle(), templateOwner}, TargettedMessage.SEVERITY_ERROR) );
+        	return "failed";
+        }
+        
+        authoringService.copyTemplate(templateId, 
+        		template.getTitle()+ " (shared)", userId, false, true);
+        authoringService.deleteTemplate(templateId, ownerId);
+
+        messages.addMessage( new TargettedMessage("controltemplates.chown.user.message", 
+                new Object[] {template.getTitle(), templateOwner}, TargettedMessage.SEVERITY_INFO) );
         return "success";
     }
 
