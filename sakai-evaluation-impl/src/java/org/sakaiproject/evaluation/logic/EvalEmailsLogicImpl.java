@@ -531,6 +531,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                     List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
                             new String[] {group.evalGroupId}, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
                     Set<String> userIds = EvalUtils.getUserIdsFromUserAssignments(userAssignments);
+                    if (userIds.contains(eval.getOwner())) userIds.remove(eval.getOwner());
                     userIdsSet.addAll(userIds);
                 }
 
