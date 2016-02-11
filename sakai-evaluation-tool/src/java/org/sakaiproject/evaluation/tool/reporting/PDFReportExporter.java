@@ -406,8 +406,9 @@ public class PDFReportExporter implements ReportExporter {
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
         int temporal=0;
-        int responseCount = (usaNA) ? values.length -1 : values.length; // remove the NA count from the end
+        int responseCount = values.length-1; // remove the NA count from the end
         for (int i=0;i<responseCount;i++) temporal=temporal+values[i];
+        if (usaNA) temporal=temporal+values[responseCount];
         return temporal;
     }
 
