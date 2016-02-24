@@ -116,8 +116,11 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					//Make the term directories structure
 					String dirName = reportPath + "/" + evaluation.getTermId();
 					new File(dirName).mkdirs();
-					String addDate = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss'").format(new Date());
-					String outputName = dirName + "/" + evaluation.getTitle() + "_" + addDate;
+					String addDate = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
+					//Clean up non-alpha characters from title
+					String evaluationTitle = evaluation.getTitle();
+					evaluationTitle = evaluationTitle.replaceAll("\\W+","_");
+					String outputName = dirName + "/" + evaluationTitle + "_" + addDate;
 					logger.info("Writing reports to a basename of "+ outputName);
 					outputStream = new FileOutputStream(outputName+".csv", false);
 					evaluationService.exportReport(evaluation, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
