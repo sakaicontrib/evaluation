@@ -24,4 +24,7 @@ public interface ToolApi {
 
 	public void exportReport(EvalEvaluation evaluation, String groupIds,
 			String evaluateeId, OutputStream outputStream, String exportType);
+	
+	public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType);
+
 }

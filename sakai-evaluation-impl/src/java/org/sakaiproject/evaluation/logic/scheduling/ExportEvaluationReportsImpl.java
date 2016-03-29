@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,8 +36,11 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalLockManager;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.site.api.Group;
+import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 
@@ -72,6 +76,12 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
     public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {
     	this.serverConfigurationService = serverConfigurationService;
     }
+    
+	private SiteService siteService;
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
+	}
+
 	protected EvalLockManager lockManager;
 
 	public void setEvalLockManager(EvalLockManager lockManager) {
@@ -82,6 +92,12 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
     public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
 	}
+    
+    private ReportingPermissions reportingPermissions;
+    public void setReportingPermissions(ReportingPermissions perms) {
+        this.reportingPermissions = perms;
+    }
+    
 
 	/*
      * (non-Javadoc)
@@ -95,6 +111,7 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 			session.setUserId("admin");
 			logger.debug("ExportEvaluationReports.execute()");
 			String termId = context.getMergedJobDataMap().getString("term.id");
+			Boolean mergeGroups = context.getMergedJobDataMap().getBoolean("merge.groups");
 			List<EvalEvaluation> evaluations = evaluationService.getEvaluationsByTermId(termId);
 			String reportPath = serverConfigurationService.getString("evaluation.exportjob.outputlocation");
 			if (reportPath == null) {
@@ -108,11 +125,15 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 			}
 			
 			logger.info("Evaluation query returned" + evaluations.size() + " results to export for " + termId);
+			
 
 			//Maybe make a termId folder for these to go in?
 			for (EvalEvaluation evaluation: evaluations) {
 				OutputStream outputStream = null;
 				try {
+					String [] evalGroupIds = null;
+					evalGroupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluation).toArray(new String[] {});
+					
 					//Make the term directories structure
 					String dirName = reportPath + "/" + evaluation.getTermId();
 					new File(dirName).mkdirs();
@@ -120,14 +141,36 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					//Clean up non-alpha characters from title
 					String evaluationTitle = evaluation.getTitle();
 					evaluationTitle = evaluationTitle.replaceAll("\\W+","_");
-					String outputName = dirName + "/" + evaluationTitle + "_" + addDate;
-					logger.info("Writing reports to a basename of "+ outputName);
-					outputStream = new FileOutputStream(outputName+".csv", false);
-					evaluationService.exportReport(evaluation, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
-					outputStream.close();
-					outputStream = new FileOutputStream(outputName+".pdf",false);
-					evaluationService.exportReport(evaluation, null, outputStream, EvalEvaluationService.PDF_RESULTS_REPORT);
-					outputStream.close();
+
+					/* This is where merged and non-merged groups will differ */
+					if (mergeGroups == true) {
+						String outputName = dirName + "/" + evaluationTitle + "_" + addDate;
+						logger.info("Writing reports to a basename of "+ outputName);
+						outputStream = new FileOutputStream(outputName+".csv", false);
+						evaluationService.exportReport(evaluation, evalGroupIds, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
+						outputStream.close();
+						outputStream = new FileOutputStream(outputName+".pdf",false);
+						evaluationService.exportReport(evaluation, evalGroupIds, null, outputStream, EvalEvaluationService.PDF_RESULTS_REPORT);
+					}
+					else {
+						//Export each group in it's own file
+						for (String groupId: evalGroupIds) {
+							Group group = siteService.findGroup(groupId);		
+							String groupTitle = groupId;
+							//If it's not null the group exists, so look up the title
+							if (group != null) {
+								groupTitle = group.getTitle();
+								groupTitle = groupTitle.replaceAll("\\W+","_");
+							}
+							String outputName = dirName + "/" + evaluationTitle + "_" + groupTitle + "_" + addDate;
+							logger.info("Writing reports to a basename of "+ outputName);
+							outputStream = new FileOutputStream(outputName+".csv", false);
+							evaluationService.exportReport(evaluation, new String[] {groupId}, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
+							outputStream.close();
+							outputStream = new FileOutputStream(outputName+".pdf",false);
+							evaluationService.exportReport(evaluation, new String[] {groupId}, null, outputStream, EvalEvaluationService.PDF_RESULTS_REPORT);
+						}
+					}
 				}
 				catch (FileNotFoundException e) {
 					logger.warn("Error writing to file " + outputStream + ". Job aborting");

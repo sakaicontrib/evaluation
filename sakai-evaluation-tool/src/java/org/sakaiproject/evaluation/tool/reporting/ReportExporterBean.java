@@ -103,7 +103,7 @@ public class ReportExporterBean implements ToolApi {
       evaluationAccessAPI = s;
     }
 
-    //Export report with no evaluateeId (for sinngle export)
+    //Export report with no evaluateeId (for single export)
     public void exportReport(EvalEvaluation evaluation, String groupIds,OutputStream outputStream, String exportType) {
     	exportReport(evaluation,groupIds,null,outputStream,exportType);
     }
@@ -123,7 +123,7 @@ public class ReportExporterBean implements ToolApi {
     }
 
     //Allows for general report exporting
-    private void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+    public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
       ReportExporter exporter = exportersMap.get(exportType);
       if (exporter == null) {
         throw new IllegalArgumentException("No exporter found for ViewID: " + exportType);

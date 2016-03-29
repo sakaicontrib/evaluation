@@ -723,5 +723,13 @@ public interface EvalEvaluationService {
      * @param evaluateeId - evaluatee id to export
      */
     
-    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType); 
+    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType);
+    
+    /** 
+     * This just allows passing groupIds as a direct array
+     * @see exportReport
+     */
+
+    public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType);
+
 }
