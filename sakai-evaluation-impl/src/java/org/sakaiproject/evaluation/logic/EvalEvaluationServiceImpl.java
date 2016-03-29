@@ -89,15 +89,18 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     
 
     public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
-    	toolApi.exportReport(evaluation, groupIds, outputStream, exportType);
+        toolApi.exportReport(evaluation, groupIds, outputStream, exportType);
     }
 
     public void exportReport(EvalEvaluation evaluation, String groupIds,
-			String evaluateeId, OutputStream outputStream, String exportType) {
-    	toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
-	}
+            String evaluateeId, OutputStream outputStream, String exportType) {
+        toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
+    }
 
-
+    public void exportReport(EvalEvaluation evaluation, String[] groupIds,
+            String evaluateeId, OutputStream outputStream, String exportType) {
+        toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
+    }
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationById(java.lang.Long)
      */

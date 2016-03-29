@@ -140,6 +140,10 @@
         ref="org.sakaiproject.evaluation.logic.EvalLockManager" />
       <property name="serverConfigurationService"
         ref="org.sakaiproject.component.api.ServerConfigurationService" />
+      <property name="siteService"
+        ref="org.sakaiproject.site.api.SiteService" />
+      <property name="reportingPermissions"
+          ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
       <property name="sessionManager" 
         ref="org.sakaiproject.tool.api.SessionManager" />
     </bean>
@@ -166,6 +170,12 @@
             <property name="labelResourceKey" value="term.id"/>
             <property name="descriptionResourceKey" value="term.id.description"/>
             <property name="defaultValue" value=""/>
+          </bean>
+          <bean class="org.sakaiproject.component.app.scheduler.jobs.SpringConfigurableJobProperty">
+            <property name="required" value="true"/>
+            <property name="labelResourceKey" value="merge.groups"/>
+            <property name="descriptionResourceKey" value="merge.groups.description"/>
+            <property name="defaultValue" value="true"/>
           </bean>
         </set>
       </property>
