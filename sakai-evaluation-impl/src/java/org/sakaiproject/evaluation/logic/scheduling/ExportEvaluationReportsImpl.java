@@ -157,11 +157,11 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 						for (String groupId: evalGroupIds) {
 							Group group = siteService.findGroup(groupId);		
 							String groupTitle = groupId;
-							//If it's not null the group exists, so look up the title
+							//If it's not null the group exists in the system, so look up the title
 							if (group != null) {
 								groupTitle = group.getTitle();
-								groupTitle = groupTitle.replaceAll("\\W+","_");
 							}
+							groupTitle = groupTitle.replaceAll("\\W+","_");
 							String outputName = dirName + "/" + evaluationTitle + "_" + groupTitle + "_" + addDate;
 							logger.info("Writing reports to a basename of "+ outputName);
 							outputStream = new FileOutputStream(outputName+".csv", false);
