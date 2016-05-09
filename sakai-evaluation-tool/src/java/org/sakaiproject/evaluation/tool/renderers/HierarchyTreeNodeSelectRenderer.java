@@ -73,8 +73,8 @@ public class HierarchyTreeNodeSelectRenderer {
     List<String> evalGroupValues;
     List<String> hierNodeLabels; 
     List<String> hierNodeValues;
-    
-    
+    private boolean sectionAware;
+
    /**
     * This is the main entry point for rendering the hierarchy with selectable
     * checkboxes.  The parent container should be inside whatever form is being
@@ -181,37 +181,88 @@ public class HierarchyTreeNodeSelectRenderer {
 	   }
 	   
     }
-    
 
-   /**
-    * Performs the recursive rendering logic for a single hierarchy node.
-    * 
-    * @param tofill
-    * @param node
-    * @param level
-    */
-   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds,
-	      List<String> selectedNodes, List<String> selectedGroups) {
-	   //a null "accessNodeIds varaible means the user is admin
-       if(parentNodeIds == null || parentNodeIds.contains(node.id) || accessNodeIds.contains(node.id)){
-    	   boolean expanded = renderRow(tofill, "hierarchy-level-row:", level, node, evalViewParams, accessNodeIds, null, false);
-		   selectedNodes.remove(""+node.id);
-    	   if(expanded){
-			   Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
-			   for (String groupID: groupIDs) {
-				   EvalGroup evalGroupObj = commonLogic.makeEvalGroupObject(groupID);
-				   Set<String> currentNodeParents = node.parentNodeIds;
-				   currentNodeParents.add(node.id);
-				   selectedGroups.remove(groupID);
-				   renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj, evalViewParams, accessNodeIds, currentNodeParents, false);
-			   }
-    		   for (EvalHierarchyNode childHierNode: hierarchyLogic.getChildNodes(node.id, true)) {
-    			   renderSelectHierarchyNode(tofill, childHierNode, level+1, evalViewParams, accessNodeIds, parentNodeIds, selectedNodes, selectedGroups);
-    		   }
-    	   }
-       }
+    /**
+     * This is the main entry point for rendering the hierarchy with selectable
+     * checkboxes.  The parent container should be inside whatever form is being
+     * used. The groups and nodes SelectID's are the getFullID's that were generated
+     * from the UISelect. We're doing a GET form here so there are no EL Bindings
+     * for these checkboxes.  The Lists of things are used for storing the option
+     * label/value at each point.  These are live references that are passed in 
+     * and used after this method invocation to update the UISelect.optionslist
+     * and UISelect.optionnames for the Hierarchy Nodes and Group Nodes.
+     * 
+     * From a visual perspective, the Hierarchy and Group Nodes are interspersed
+     * together throughout the page, but we keep them seperate with the two 
+     * UISelects.
+     * 
+     * @param parent
+     * @param clientID
+     * @param groupsSelectID
+     * @param hierNodesSelectID
+     * @param evalGroupLabels
+     * @param evalGroupValues
+     * @param hierNodeLabels
+     * @param hierNodeValues
+     * @param evalViewParams
+     * @param accessNodeIds
+     * @param parentNodeIds
+     * @param sectionAware
+     */
+    public void renderSelectHierarchyNodesTree( UIContainer parent, String clientID, String groupsSelectID, String hierNodesSelectID,
+             List<String> evalGroupLabels, List<String> evalGroupValues, List<String> hierNodeLabels, List<String> hierNodeValues, 
+             EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds, boolean sectionAware )
+    {
+        this.sectionAware = sectionAware;
+        renderSelectHierarchyNodesTree( parent, clientID, groupsSelectID, hierNodesSelectID, evalGroupLabels, evalGroupValues, hierNodeLabels,
+                hierNodeValues, evalViewParams, accessNodeIds, parentNodeIds );
     }
-    
+
+    /**
+     * Performs the recursive rendering logic for a single hierarchy node.
+     * 
+     * @param tofill
+     * @param node
+     * @param level
+     */
+    private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds,
+           List<String> selectedNodes, List<String> selectedGroups) {
+
+        //a null "accessNodeIds varaible means the user is admin
+        if(parentNodeIds == null || parentNodeIds.contains(node.id) || accessNodeIds.contains(node.id)){
+            boolean expanded = renderRow(tofill, "hierarchy-level-row:", level, node, evalViewParams, accessNodeIds, null, false);
+            selectedNodes.remove(""+node.id);
+            if(expanded){
+                Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
+                for( String groupID : groupIDs )
+                {
+                    Set<String> currentNodeParents = node.parentNodeIds;
+                    currentNodeParents.add( node.id );
+                    selectedGroups.remove( groupID );
+
+                    if( !sectionAware )
+                    {
+                        EvalGroup evalGroup = commonLogic.makeEvalGroupObject( groupID );
+                        renderRow( tofill, "hierarchy-level-row:", level + 1, evalGroup, evalViewParams, accessNodeIds, currentNodeParents, false );
+                    }
+                    else
+                    {
+                        // Get the eval groups (child sections) under this group ID (parent site), and render a row for each
+                        List<EvalGroup> evalGroups = commonLogic.makeEvalGroupObjectsForSectionAwareness( groupID );
+                        for( EvalGroup evalGroup : evalGroups )
+                        {
+                            renderRow( tofill, "hierarchy-level-row:", level + 1, evalGroup, evalViewParams, accessNodeIds, currentNodeParents, false );
+                        }
+                    }
+                }
+
+                for (EvalHierarchyNode childHierNode: hierarchyLogic.getChildNodes(node.id, true)) {
+                    renderSelectHierarchyNode(tofill, childHierNode, level+1, evalViewParams, accessNodeIds, parentNodeIds, selectedNodes, selectedGroups);
+                }
+            }
+        }
+    }
+
    /**
     * Renders a single row, which could either be a hierarchy node or eval group
     * with a checkbox.

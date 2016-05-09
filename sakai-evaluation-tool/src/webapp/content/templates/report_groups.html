@@ -25,6 +25,10 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
+    <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -58,6 +62,12 @@
 				Choose the groups you would like to view results for. Results will be displayed in aggregate.
 			</p>
 			<span rsf:id="selectHolder"></span>
+
+			<p class="act">
+				<input name="select_all" type="button" value="Select All" onclick="evalsys.toggleCheckboxes( 'report_groups_form', true );" rsf:id="select-all" />
+				<input name="deselect_all" type="button" value="Deselect All" onclick="evalsys.toggleCheckboxes( 'report_groups_form', false );" rsf:id="deselect-all" />
+			</p>
+
 			<ol>
 				<!--//gsilver: need to make below actual input/label pair -->
 				<li rsf:id="groupRow:" class="checkbox">

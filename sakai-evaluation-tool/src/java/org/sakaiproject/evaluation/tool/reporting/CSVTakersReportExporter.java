@@ -57,11 +57,11 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.messageLocator = locator;
     }
 
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
-        buildReport(evaluation, groupIds, null, outputStream);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
+        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
     }
 	
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
         OutputStreamWriter osw = new OutputStreamWriter(outputStream);
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try {
@@ -83,6 +83,11 @@ public class CSVTakersReportExporter implements ReportExporter {
         Collections.sort(users, new EvalUser.SortNameComparator());
         log.debug("users.size(): " + users.size());
         String[] row = new String[3];
+
+        // Headers
+        row[0] = messageLocator.getMessage( "viewreport.takers.csv.email.header" );
+        row[1] = messageLocator.getMessage( "viewreport.takers.csv.name.header" );
+        writer.writeNext( row );
 
         try {
 

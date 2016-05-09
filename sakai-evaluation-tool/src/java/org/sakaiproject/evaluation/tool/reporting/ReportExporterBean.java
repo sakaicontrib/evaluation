@@ -45,6 +45,14 @@ public class ReportExporterBean implements ToolApi {
 
     private static Log log = LogFactory.getLog(ReportExporterBean.class);
 
+    // Section awareness/new report style bindings
+    public String viewID            = null;
+    public Long templateID          = 0L;
+    public String fileName          = null;
+    public Long evalID              = 0L;
+    public String[] groupIDs        = null;
+    public boolean newReportStyle   = false;
+
     private MessageSource messageSource;
     
     // the real MessageLocator won't work except in an RSAC session, which we can't reasonably create
@@ -97,6 +105,11 @@ public class ReportExporterBean implements ToolApi {
         this.exportersMap = exportersMap;
     }
 
+    public DownloadReportViewParams processReport()
+    {
+        return new DownloadReportViewParams( viewID, templateID, evalID, groupIDs, fileName, newReportStyle );
+    }
+
     EvaluationAccessAPI evaluationAccessAPI = null;
 
     public void setEvaluationAccessAPI(EvaluationAccessAPI s) {
@@ -147,9 +160,9 @@ public class ReportExporterBean implements ToolApi {
       MyMessageLocator messageLocator = new MyMessageLocator();
       exporter.setMessageLocator(messageLocator);
       if (EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL.equals(exportType)) {
-        exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream);
+        exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream, newReportStyle);
       } else {
-        exporter.buildReport(evaluation, groupIds, outputStream);
+        exporter.buildReport(evaluation, groupIds, outputStream, newReportStyle);
       }
 
     }
@@ -163,7 +176,10 @@ public class ReportExporterBean implements ToolApi {
         EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
 
         OutputStream resultsOutputStream = null;
-        
+
+         // Get rid of spaces in the filename
+        drvp.filename = drvp.filename.replaceAll( " ", "_" );
+
         ReportExporter exporter = exportersMap.get(drvp.viewID);
 	
         if (exporter == null) {
@@ -172,17 +188,45 @@ public class ReportExporterBean implements ToolApi {
         if (log.isDebugEnabled()) {
             log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
         }
-	        
+
         resultsOutputStream = getOutputStream(response);
-        response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
-        response.setContentType(exporter.getContentType());
+
+        // If it's a CSV export in the new report format, we need to change the filename extension to '.zip' instead of '.csv',
+        // as it will contain 2 files (instructor items and course items)
+        if( isCSV( drvp.viewID ) && newReportStyle )
+        {
+            drvp.filename = drvp.filename.replace( ".csv", ".zip" );
+        }
+
+        // If it's a .csv or .pdf download, force the browser to download the file instead of displaying it inside the iframe
+        if( isCSVTakers( drvp.viewID ) || isCSV( drvp.viewID ) || isPDF( drvp.viewID ) )
+        {
+            response.setHeader( "Content-disposition", "attachment; filename=\"" + drvp.filename + "\"" );
+            response.setHeader( "Pragma", "public" );
+            response.setHeader( "Expires", "0" );
+            response.setHeader( "Cache-Control", "must-revalidate, post-check=0, pre-check=0" );
+            response.setHeader( "Content-Transfer-Encoding", "binary" );
+            response.setContentType( "application/octet-stream" );
+        }
+
+        // If it's anything else, just do the normal header content
+        else
+        {
+            response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
+            response.setContentType(exporter.getContentType());
+        }
 
         //Support drvp.evaluateeId
         this.exportReport(evaluation,drvp.groupIds,drvp.evaluateeId,resultsOutputStream,drvp.viewID);
 
         return true;
     }
-    
+
+    // Utility methods
+    private boolean isCSVTakers ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_TAKERS_REPORT ); }
+    private boolean isCSV       ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_RESULTS_REPORT ); }
+    private boolean isPDF       ( String viewID ) { return viewID.equals( EvalEvaluationService.PDF_RESULTS_REPORT ); }
+
     private OutputStream getOutputStream(HttpServletResponse response){
     	try {
             return response.getOutputStream();

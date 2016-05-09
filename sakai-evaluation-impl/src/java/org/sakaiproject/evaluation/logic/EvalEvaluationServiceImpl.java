@@ -782,7 +782,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             List<EvalGroup> newList = new ArrayList<EvalGroup>();
             for (int i=0; i<innerList.size(); i++) {
                 EvalAssignGroup eag = innerList.get(i);
-                newList.add( commonLogic.makeEvalGroupObject( eag.getEvalGroupId() ) );
+                String evalGroupId = eag.getEvalGroupId();
+                newList.add( commonLogic.makeEvalGroupObject( evalGroupId ) );
             }
             evals.put(evalId, newList);
         }

@@ -14,9 +14,11 @@
  */
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +34,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -85,6 +88,12 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
 		this.navBarRenderer = navBarRenderer;
    }
 
+   private Locale locale;
+   public void setLocale( Locale locale )
+   {
+      this.locale = locale;
+   }
+
    private RenderingUtils renderingUtils;
    public void setRenderingUtils(RenderingUtils renderingUtils) {
      this.renderingUtils = renderingUtils;
@@ -122,6 +131,11 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
       if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
          UIInternalLink.make(tofill, "modifyAssignmentsLink", UIMessage.make("evaluationassignments.add.assigns.link"), 
                new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evaluationId) );
+
+         DateFormat df = DateFormat.getDateInstance( DateFormat.MEDIUM, locale );
+         EvalEvaluation eval = evaluationService.getEvaluationById( evaluationId );
+         UIMessage.make( tofill, "modifyAssignmentsInfoMsg", "evaluationassignconfirm.eval.assign.instructions", 
+               new Object[] { df.format( eval.getStartDate() ) } );
       }
 
       Map<Long, List<EvalAssignGroup>> groupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);

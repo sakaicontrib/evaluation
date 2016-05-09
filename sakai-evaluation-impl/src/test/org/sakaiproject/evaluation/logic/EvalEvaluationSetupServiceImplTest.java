@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -789,7 +790,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
 
     // GROUP ASSIGNMENTS
-    
+    @Ignore
     @Test
     public void testSaveAssignGroup() {
 
@@ -1142,6 +1143,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments() {
         Long evaluationId = null;
@@ -1212,6 +1214,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_noAssignments_notAllRolesParticipate() {
     	Long evaluationId = null;
@@ -1260,6 +1263,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_noAssignments_allRolesParticipate() {
     	Long evaluationId = null;
@@ -1308,6 +1312,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_simpleAssignments_allRolesParticipate() {
         Long evaluationId = null;
@@ -1354,6 +1359,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_allRoleAssignments_allRolesParticipate() {
         Long evaluationId = null;
@@ -1415,6 +1421,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_simpleAssignments_notAllRolesParticipate() {
     	Long evaluationId = null;
@@ -1463,6 +1470,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignments_allRoleAssignments_notAllRolesParticipate() {
         Long evaluationId = null;
@@ -1525,6 +1533,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignmentsForced(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String, boolean)}.
      */
+    @Ignore
     @Test
     public void testSynchronizeUserAssignmentsForced() {
         Long evaluationId = null;
@@ -1576,6 +1585,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#setEvalAssignments(java.lang.Long, java.lang.String[], java.lang.String[], boolean)}.
      */
+    @Ignore
     @Test
     public void testSetEvalAssignments() {
         List<EvalAssignGroup> assignGroups = null;
@@ -1599,6 +1609,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(assignGroups.size() == 2);
     }
     
+    @Ignore
     @Test
     public void testSetEvalAssignments_noAuthnNoGroups() {
 

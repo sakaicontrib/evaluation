@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -50,14 +51,20 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.Validator;
 
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
@@ -69,13 +76,15 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
  */
-public class ReportsViewingProducer extends EvalCommonProducer implements ViewParamsReporter {
+public class ReportsViewingProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
     private static Log log = LogFactory.getLog(ReportsViewingProducer.class);
 
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
     private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
     private static final String VIEWMODE_SELECTITEMS = "viewmode_selectitems";
+
+    private static boolean newReportStyleDefault = ServerConfigurationService.getBoolean( "evalsys.report.new.style.default", false );
 
     public static final String VIEW_ID = "report_view";
     public String getViewID() {
@@ -134,6 +143,15 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     String currentViewMode = VIEWMODE_REGULAR;
     boolean collapseEssays = true;
     Long[] itemsToView;
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+     */
+    public void interceptActionResult( ARIResult result, ViewParameters incoming, Object actionReturn )
+    {
+        DownloadReportViewParams params = (DownloadReportViewParams) actionReturn;
+        result.resultingView = new DownloadReportViewParams( params.viewID, params.templateId, params.evalId, params.groupIds, params.filename, params.useNewReportStyle );
+    }
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -227,6 +245,10 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
                 // Evaluation Info
                 UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
+
+                // New report style toggle, intialize with default from sakai.properties
+                UIBranchContainer newReportStyle = UIBranchContainer.make( tofill, "newReportStyleBranch:" );
+                UIBoundBoolean.make( newReportStyle, "newReportStyle", newReportStyleDefault );
 
                 // The Groups we are viewing
                 UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
@@ -561,23 +583,40 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         // FIXME don't use sakai classes directly (plus what the crap does this do anyway? -AZ)
         evaltitle = Validator.escapeZipEntry(evaltitle);
 
-        Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
-        if (allowCSVExport != null && allowCSVExport == true) {
-            UIInternalLink.make(tofill, EvalEvaluationService.CSV_RESULTS_REPORT, UIMessage.make("viewreport.view.csv"), new DownloadReportViewParams(
-            		EvalEvaluationService.CSV_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
-        }
+        // New report style form and parameters
+        String actionBean = "reportExporterBean.";
+        UIForm form = UIForm.make( tofill, "evalReportForm" );
+        form.parameters.add( new UIELBinding( actionBean + "templateID", templateId ) );
+        form.parameters.add( new UIELBinding( actionBean + "evalID", evaluation.getId() ) );
+        form.parameters.add( new UIELBinding( actionBean + "groupIDs", reportViewParams.groupIds ) );
+        form.parameters.add( new UIELBinding( actionBean + "newReportStyle", newReportStyleDefault ) );
 
+        // New report style - xls export button and parameters
         Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT); 
-        if (allowXLSExport != null && allowXLSExport == true) {
-            UIInternalLink.make(tofill, EvalEvaluationService.XLS_RESULTS_REPORT, UIMessage.make("viewreport.view.xls"), new DownloadReportViewParams(
-            		EvalEvaluationService.XLS_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xlsx"));
+        if( allowXLSExport != null && allowXLSExport == true )
+        {
+            UICommand xlsButton = UICommand.make( form, EvalEvaluationService.XLS_RESULTS_REPORT, UIMessage.make("viewreport.view.xls"), actionBean + "processReport" );
+            xlsButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.XLS_RESULTS_REPORT ) );
+            xlsButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + ".xls" ) );
         }
 
+        // New report style - csv export button and parameters
+        Boolean allowCSVExport = (Boolean) evalSettings.get( EvalSettings.ENABLE_CSV_REPORT_EXPORT );
+        if( allowCSVExport != null && allowCSVExport == true ) 
+        {
+            UICommand csvButton = UICommand.make( form, EvalEvaluationService.CSV_RESULTS_REPORT, UIMessage.make("viewreport.view.csv"), actionBean + "processReport" );
+            csvButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.CSV_RESULTS_REPORT ) );
+            csvButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + ".csv" ) );
+        }
+        
+        // New report style - pdf export button and parameters
         Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
-        if (allowPDFExport != null && allowPDFExport == true) {
-            UIInternalLink.make(tofill, EvalEvaluationService.PDF_RESULTS_REPORT, UIMessage.make("viewreport.view.pdf"), new DownloadReportViewParams(
-            		EvalEvaluationService.PDF_RESULTS_REPORT, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
-			
+        if( allowPDFExport != null && allowPDFExport == true )
+        {
+            UICommand pdfButton = UICommand.make( form, EvalEvaluationService.PDF_RESULTS_REPORT, UIMessage.make("viewreport.view.pdf"), actionBean + "processReport" );
+            pdfButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.PDF_RESULTS_REPORT ) );
+            pdfButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + ".pdf" ) );
+
 			List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
             evaluatees.addAll(evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_ASSISTANT, null, null, null));
             List<String> listedEvaluatees = new ArrayList<String>();
@@ -589,7 +628,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 				  EvalUser user = commonLogic.getEvalUserById( evaluatee.getUserId() );
 				
 				  UIInternalLink.make(evaluateeBranch, "pdfResultsReportIndividualLink", UIMessage.make("viewreport.view.pdf.individual", new Object[] {user.displayName}), new DownloadReportViewParams(
-						  EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId()));
+						  EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL, templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"Individual.pdf", evaluatee.getUserId(), false));
                   listedEvaluatees.add(evaluatee.getUserId());
                 }
 			}
@@ -597,10 +636,14 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         }
 
         // FIXME should this be protected with an option?
+        // New report style - csv eval takers export button and parameters
         Boolean allowListOfEvalTakers = (Boolean) evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
-        if (allowListOfEvalTakers != null && allowListOfEvalTakers == true) {
-            UIInternalLink.make(tofill, "exportListOfEvaluationTakers", UIMessage.make("viewreport.view.listofevaluationtakers"), new DownloadReportViewParams(
-                    "csvTakersReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+"-takers.csv"));
+        if( allowListOfEvalTakers != null && allowListOfEvalTakers == true )
+        {
+            UICommand csvTakersButton = UICommand.make( form, EvalEvaluationService.CSV_TAKERS_REPORT, UIMessage.make("viewreport.view.listofevaluationtakers"), 
+                    actionBean + "processReport" );
+            csvTakersButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.CSV_TAKERS_REPORT ) );
+            csvTakersButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + "-takers.csv" ) );
         }
     }
 

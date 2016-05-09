@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalHierarchyRule" table="EVAL_HIERARCHY_RULE" dynamic-insert="false" dynamic-update="false">
+
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+
+        <property name="nodeID" type="java.lang.Long">
+            <column name="NODE_ID" not-null="true" />
+        </property>
+
+        <property name="rule" type="java.lang.String">
+            <column name="RULE" not-null="true" length="255" />
+        </property>
+
+        <property name="opt" type="java.lang.String">
+            <column name="OPT" not-null="true" length="10" />
+        </property>
+
+    </class>
+</hibernate-mapping>

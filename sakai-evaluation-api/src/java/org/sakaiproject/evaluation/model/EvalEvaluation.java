@@ -231,6 +231,15 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     private String autoUseInsertion;
 
+    /**
+     * Controls whether or not the evaluation will be section aware. If this is set to true,
+     * evaluator's will only evaluate evaluatees that are in their section/roster in the
+     * site/group. Also, when creating the evaluation and releasing to HierarchyNodes, the
+     * creator will see a list of selectable sections that match the node rules, rather than
+     * a list of selectable sites if they elected not to make the evaluation section aware.
+     */
+    private Boolean sectionAwareness;
+
     // NON_PERSISTENT
 
     /**
@@ -344,6 +353,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.sendAvailableNotifications = eval.sendAvailableNotifications;
         this.autoUseTag = eval.autoUseTag;
         this.autoUseInsertion = eval.autoUseInsertion;
+        this.sectionAwareness = eval.sectionAwareness;
         // NON_PERSISTENT
         this.customStartDate = eval.customStartDate;
         this.useDueDate = eval.useDueDate;
@@ -422,7 +432,26 @@ public class EvalEvaluation implements java.io.Serializable {
         this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
-                evalCategory, selectionSettings, Boolean.TRUE);
+                evalCategory, selectionSettings, Boolean.TRUE, null);
+    }
+
+    /**
+     * full constructor with sectionAware
+     */
+    public EvalEvaluation( String type, String owner, String title, String instructions,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
+            Date studentsDate, Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate, String state,
+            String resultsSharing, String instructorOpt, Integer reminderDays,
+            String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
+            EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
+            Boolean unregisteredAllowed, Boolean locked, String authControl,
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness )
+    {
+        this( type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
+                resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
+                evalCategory, selectionSettings, Boolean.TRUE, sectionAwareness );
     }
 
     /**
@@ -436,7 +465,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean allRolesParticipate,  Boolean locked, String authControl,
-            String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness) {
 
         this.lastModified = new Date();
         this.type = type;
@@ -471,6 +500,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
         this.sendAvailableNotifications = emailOpenNotification;
+        this.sectionAwareness = sectionAwareness;
     }
 
     /**
@@ -1020,5 +1050,19 @@ public class EvalEvaluation implements java.io.Serializable {
         this.localSelector = localSelector;
     }
 
-}
+    /**
+     * @return the sectionAware
+     */
+    public Boolean getSectionAwareness()
+    {
+        return this.sectionAwareness;
+    }
 
+    /**
+     * @param sectionAwareness the sectionAware to set
+     */
+    public void setSectionAwareness( Boolean sectionAwareness )
+    {
+        this.sectionAwareness = sectionAwareness;
+    }
+}

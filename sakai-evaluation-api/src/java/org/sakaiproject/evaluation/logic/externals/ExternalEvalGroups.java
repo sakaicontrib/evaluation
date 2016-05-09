@@ -49,6 +49,14 @@ public interface ExternalEvalGroups {
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId);
 
+	/**
+	 * Construct a Set of {@link EvalGroup} objects (child sections) based on the unique string id (parent site),
+	 * group will have a special type {@link EvalConstants#GROUP_TYPE_INVALID} if data cannot be found
+	 * 
+	 * @param evalGroupId the internal unique ID for an evalGroup
+	 * @return a Set of {@link EvalGroup} objects (special return if not found)
+	 */
+	public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId );
 
 	// ENROLLMENTS
 
@@ -57,18 +65,20 @@ public interface ExternalEvalGroups {
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
 	 * @param permission a permission string constant
+	 * @param sectionAware if returning users for one section of a site/group or all sections
 	 * @return a Set of Strings which represent the user Ids of all users in the site with that permission
 	 */
-	public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission);
+	public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission, Boolean sectionAware);
 
 	/**
 	 * Get a count of all user ids that have a specific permission in a evalGroupId
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
 	 * @param permission a permission string constant
+	 * @param sectionAware if returning count of users for one section of a site/group or all sections
 	 * @return a count of the users
 	 */
-	public int countUserIdsForEvalGroup(String evalGroupId, String permission);
+	public int countUserIdsForEvalGroup(String evalGroupId, String permission, Boolean sectionAware);
 
 	/**
 	 * Get a list of all eval groups that a user has a specific permission in

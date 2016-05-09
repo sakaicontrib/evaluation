@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
@@ -93,7 +94,7 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
         for (String hierarchyEvalGroupId : hierarchyEvalGroupIds) {
             EvalGroup c = null;
             try {
-                c = commonLogic.makeEvalGroupObject("/site/"+hierarchyEvalGroupId.substring(6));
+                c = commonLogic.makeEvalGroupObject(EvalConstants.GROUP_ID_SITE_PREFIX+hierarchyEvalGroupId.substring(6));
             } catch (Exception e) {
                 System.out.println("Exception: " + e.getMessage());
             }
@@ -133,18 +134,36 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
         UIMessage.make(tofill, "select-header", "hierarchynode.groups.table.select");
         UIMessage.make(tofill, "title-header", "hierarchynode.groups.table.title");
 
+        // Sections header
+        UIMessage.make(tofill, "sections-header", "hierarchynode.groups.table.sections");
+
         UIForm form = UIForm.make(tofill, "assign-groups-form");
         for (EvalGroup group: evalGroups) {
             UIBranchContainer tablerow = UIBranchContainer.make(form, "group-row:");
             UIBoundBoolean.make(tablerow, "group-checkbox", 
             		PathUtil.buildPath( new String[] { "hierNodeGroupsLocator", nodeId, group.evalGroupId } ));
             UIOutput.make(tablerow, "group-title", group.title);
+
+            // List of sections under eval group (single section or sections under a site)
+            StringBuilder sb = new StringBuilder();
+            String prefix = "";
+            List<Section> sections = hierarchyLogic.getSectionsUnderEvalGroup( group.evalGroupId );
+            for( Section section : sections )
+            {
+                sb.append( prefix ).append( section.getTitle() );
+                prefix = ", ";
+            }
+
+            UIOutput.make( tablerow, "sections", sb.toString() );
         }
 
-        UICommand.make(form, "save-groups-button", UIMessage.make("hierarchynode.groups.save"),
-        "hierNodeGroupsLocator.saveAll");
-        UIInternalLink.make(form, "cancel-link", UIMessage.make("hierarchynode.groups.cancel"),
-                new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
+        // Render the return links and save groups buttons
+        UICommand.make( form, "save-groups-button1", UIMessage.make( "hierarchynode.groups.save" ), "hierNodeGroupsLocator.saveAll" );
+        UICommand.make( form, "save-groups-button2", UIMessage.make( "hierarchynode.groups.save" ), "hierNodeGroupsLocator.saveAll" );
+        UIInternalLink.make( form, "return-link1", UIMessage.make( "controlhierarchy.return.link" ),
+                new HierarchyNodeParameters( ControlHierarchyProducer.VIEW_ID, null, params.expanded ) );
+        UIInternalLink.make( form, "return-link2", UIMessage.make( "controlhierarchy.return.link" ),
+                new HierarchyNodeParameters( ControlHierarchyProducer.VIEW_ID, null, params.expanded ) );
     }
 
     public ViewParameters getViewParameters() {

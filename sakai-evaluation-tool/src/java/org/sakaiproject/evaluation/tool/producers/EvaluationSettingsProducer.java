@@ -308,6 +308,10 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                     reOpenStopDate, currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
         }
 
+        // Evaluation section awareness checkbox
+        UIBranchContainer enableSectionAware = UIBranchContainer.make( form, "sectionAwareness:" );
+        UIBoundBoolean.make( enableSectionAware, "sectionAwareness", evaluationOTP + "sectionAwareness" );
+
         // EVALUATION RESULTS VIEWING/SHARING
 
         // radio buttons for the results sharing options

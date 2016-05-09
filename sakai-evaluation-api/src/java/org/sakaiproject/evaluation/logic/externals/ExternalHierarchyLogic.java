@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.providers.EvalHierarchyProvider;
 
@@ -26,9 +27,37 @@ import org.sakaiproject.evaluation.providers.EvalHierarchyProvider;
  * This brings in the hierarchy information and gives us the ability to control the
  * hierarchy
  *
- * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk), bjones86 (ExternalHierarchyRules)
  */
-public interface ExternalHierarchyLogic extends EvalHierarchyProvider, ExternalHierarchyPermissions {
+public interface ExternalHierarchyLogic extends EvalHierarchyProvider, ExternalHierarchyPermissions, ExternalHierarchyRules {
+
+   /**
+    * Determine what sections are attached (fall under) the given eval group ID.
+    * The given eval group ID could be a single site, in which case all sections
+    * attached to the site would be returned. The given eval group ID could also
+    * be a single section (/site/<site_id>/section/<section_id>), in which case
+    * only the single section would be returned.
+    * 
+    * @param evalGroupID
+    * @return a list of Section objects that fall under the given eval group ID
+    */
+   public List<Section> getSectionsUnderEvalGroup( String evalGroupID );
+
+   /**
+    * Utility method to determine which qualifier was chosen based on the final rule text
+    * 
+    * @param ruleText - the final rule text from the DB
+    * @return the qualifier used for the final rule text
+    */
+   public String determineQualifierFromRuleText( String ruleText );
+
+   /**
+    * Utility method to remove the qualifier from the final rule text and return only the raw rule text
+    * 
+    * @param ruleText - the final rule text from the DB
+    * @return the raw rule text with qualifier removed
+    */
+   public String removeQualifierFromRuleText( String ruleText );
 
    /**
     * Add a new node to a hierarchy

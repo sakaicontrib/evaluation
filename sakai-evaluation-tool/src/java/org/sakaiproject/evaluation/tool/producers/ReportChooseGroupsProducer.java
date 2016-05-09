@@ -149,6 +149,11 @@ public class ReportChooseGroupsProducer extends EvalCommonProducer implements Vi
                 UISelectLabel.make(groupBranch, "groupName", selectID, i).decorate(new UILabelTargetDecorator(choice) );
             }
 
+            // Cancel button, select all button, select none button
+            UICommand.make( form, "cancel-button", UIMessage.make( "general.cancel.button" ) );
+            UICommand.make( form, "select-all", UIMessage.make( "modifytemplate.group.add.select.all" ) );
+            UICommand.make( form, "deselect-all", UIMessage.make( "modifytemplate.group.add.select.none" ) );
+
             UICommand.make(form, "viewReport", UIMessage.make("general.submit.button"));
         } else {
             throw new IllegalArgumentException("Evaluation id must be set");

@@ -456,9 +456,9 @@ public class SetupEvalBean {
 
 			Set<String> userIdsForEvalGroup = null;
 			for(i = 0;i<evalGroupIDs.length;i++) {
-				userIdsForEvalGroup = commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_BE_EVALUATED);
-				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE));
-				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION));
+				userIdsForEvalGroup = commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_BE_EVALUATED, eval.getSectionAwareness());
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE, eval.getSectionAwareness()));
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness()));
 			}
 
 			if (userIdsForEvalGroup != null) {

@@ -451,5 +451,43 @@ public class EvalToolConstants {
     	"modifynodeperms.perm.assign.eval",
     };
 
-}
+    /**
+     * Defines the options for the site/section drop down
+     */
+    public static final String[] HIERARCHY_RULE_OPTION_VALUES =
+    {
+        EvalConstants.HIERARCHY_RULE_SITE,
+        EvalConstants.HIERARCHY_RULE_SECTION
+    };
 
+    /**
+     * Defines the labels for the site/section drop down
+     */
+    public static final String[] HIERARCHY_RULE_OPTION_LABELS =
+    {
+        "modifynoderules.criterion.site.title",
+        "modifynoderules.criterion.section.title"
+    };
+
+    /**
+     * Defines the options for rule qualifier drop down
+     */
+    public static final String[] HIERARCHY_RULE_QUALIFIER_VALUES = 
+    {
+        EvalConstants.HIERARCHY_QUALIFIER_CONTAINS,
+        EvalConstants.HIERARCHY_QUALIFIER_STARTS_WITH,
+        EvalConstants.HIERARCHY_QUALIFIER_ENDS_WITH,
+        EvalConstants.HIERARCHY_QUALIFIER_IS
+    };
+
+    /**
+     * Defines the labels for rule qualifier drop down
+     */
+    public static final String[] HIERARCHY_RULE_QUALIFIER_LABELS = 
+    {
+        "modifynoderules.criterion.options.contains",
+        "modifynoderules.criterion.options.startsWith",
+        "modifynoderules.criterion.options.endsWith",
+        "modifynoderules.criterion.options.is"
+    };
+}

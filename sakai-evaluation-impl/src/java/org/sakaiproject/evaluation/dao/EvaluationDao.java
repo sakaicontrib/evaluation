@@ -497,43 +497,59 @@ public interface EvaluationDao extends GeneralGenericDao {
      * 		object for EvalConstants.KEY_USER_ID, a String object for EvalConstants.KEY_USER_EID, a Long 
      * 		object for EvalConstants.KEY_EMAIL_TEMPLATE_ID and a Date object forEvalConstants.KEY_EARLIEST_DUE_DATE).  
      */
-	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
+    public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page);
 
-	/**
-	 * Build the email processing queue by adding one record for each evalAssignUser record 
-	 * matching the search criteria.  Search criteria are determined based on the values of 
-	 * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
-	 * EvalEmailTemplate.emailTemplateType.   
-	 * @param useAvailableEmailSent Should be true if the availableEmailSent date should be used in selecting records.
-	 * @param availableEmailSent The date to use if querying by availableEmailSent.
-	 * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
-	 * @param reminderEmailSent The date to use if querying by reminderEmailSent.
-	 * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
-	 * @return
-	 */
-	public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
-			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
+    /**
+     * Build the email processing queue by adding one record for each evalAssignUser record 
+     * matching the search criteria.  Search criteria are determined based on the values of 
+     * EvalAssignUser.availableEmailSent, EvalAssignUser.reminderEmailSent and 
+     * EvalEmailTemplate.emailTemplateType.   
+     * @param useAvailableEmailSent Should be true if the availableEmailSent date should be used in selecting records.
+     * @param availableEmailSent The date to use if querying by availableEmailSent.
+     * @param useReminderEmailSent Should be true if the reminderEmailSent date should be used in selecting records.
+     * @param reminderEmailSent The date to use if querying by reminderEmailSent.
+     * @param emailTemplateType The type of template (ConsolidatedAvailable or ConsolidateReminder) to find.
+     * @return
+     */
+    public int selectConsolidatedEmailRecipients(boolean useAvailableEmailSent,
+            Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType);
 
-	/**
-	 * Remove all records from the the email processing queue and report the number of items removed.
-	 */
-	public int resetConsolidatedEmailRecipients();
+    /**
+     * Remove all records from the the email processing queue and report the number of items removed.
+     * @return 
+     */
+    public int resetConsolidatedEmailRecipients();
 
-	/**
-	 * Returns a list of evaluation responses that have been saved but not 
-	 * submitted (completed)
-	 * @param activeEvaluationsOnly If true, only responses assigned to an 
-	 * evaluations that is currently in an Active state will be returned.  If 
-	 * false, only responses assigned to an evaluations not in an Active state 
-	 * will be returned.
- 	 * @return a List of EvalResponse objects
-	 */
-	public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly);
+    /**
+     * Returns a list of evaluation responses that have been saved but not 
+     * submitted (completed)
+     * @param activeEvaluationsOnly If true, only responses assigned to an 
+     * evaluations that is currently in an Active state will be returned.  If 
+     * false, only responses assigned to an evaluations not in an Active state 
+     * will be returned.
+     * @return a List of EvalResponse objects
+     */
+    public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly);
 
-	/**
-	 * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
-	 * @return
-	 */
-	public int countDistinctGroupsInConsolidatedEmailMapping();
+    /**
+     * Reports the number of distinct eval groups for which mappings are currently in the email processing queue. 
+     * @return
+     */
+    public int countDistinctGroupsInConsolidatedEmailMapping();
 
+    /**
+     * Get a list of site IDs that have a section attached that matches the section title provided
+     * 
+     * @param sectionTitleWithWildcards - the section title to match on
+     * @return a list of site IDs which all have a section attached with the given section title
+     */
+    public Set<String> getAllSiteIDsMatchingSectionTitle( String sectionTitleWithWildcards );
+
+    /**
+     * Get a list of site IDs, where the title of the sites matches the given title (with wildcards in place)
+     * 
+     * @param siteTitleWithWildcards - the title to match on, with wildcards in place
+     * @return a list of site IDs that match the criteria
+     */
+    public Set<String> getAllSiteIDsMatchingSiteTitle( String siteTitleWithWildcards );
 }

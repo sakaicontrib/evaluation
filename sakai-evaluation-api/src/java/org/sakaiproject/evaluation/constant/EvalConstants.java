@@ -244,6 +244,36 @@ public class EvalConstants {
     public static final String HIERARCHY_PERM_ASSIGN_EVALUATION = "HierarchyAssignEval";
 
     /**
+     * Hierarchy Rule for site titles
+     */
+    public static final String HIERARCHY_RULE_SITE = "SITE";
+
+    /**
+     * Hierarchy Rule for section titles
+     */
+    public static final String HIERARCHY_RULE_SECTION = "SECTION";
+
+    /**
+     * Hierarchy Rule qualifier 'contains'; site/section title must contain the rule text
+     */
+    public static final String HIERARCHY_QUALIFIER_CONTAINS = "CONTAINS";
+
+    /**
+     * Hierarchy Rule qualifier 'starts with'; site/section title must start with the rule text
+     */
+    public static final String HIERARCHY_QUALIFIER_STARTS_WITH = "STARTS_WITH";
+
+    /**
+     * Hierarchy Rule qualifier 'ends with'; site/section title must end with the rule text
+     */
+    public static final String HIERARCHY_QUALIFIER_ENDS_WITH = "ENDS_WITH";
+
+    /**
+     * Hierarchy Rule qualifier 'is'; site/section title must be exactly the rule text
+     */
+    public static final String HIERARCHY_QUALIFIER_IS = "IS";
+
+    /**
      * Permission: User can create, update, delete evaluation templates
      */
     public final static String PERM_WRITE_TEMPLATE = "eval.write.template";
@@ -324,6 +354,26 @@ public class EvalConstants {
      * EvalGroup class: Adhoc type (represents an adhoc group of users)
      */
     public final static String GROUP_TYPE_ADHOC = "Adhoc";
+
+    /**
+     * EvalGroup class: Section type (represents a section within a site)
+     */
+    public final static String GROUP_TYPE_SECTION = "Section";
+
+    /**
+     * Evaluation group id prefix denoting a site id to follow
+     */
+    public final static String GROUP_ID_SITE_PREFIX = "/site/";
+
+    /**
+     * Evaluation group id prefix denoting a section id to follow
+     */
+    public final static String GROUP_ID_SECTION_PREFIX = "/section/";
+
+    /**
+     * Evaluation group id prefix denoting a group id to follow
+     */
+    public final static String GROUP_ID_GROUP_PREFIX = "/group/";
 
     /**
      * Scale ideal setting: no selection of this scale is the ideal one

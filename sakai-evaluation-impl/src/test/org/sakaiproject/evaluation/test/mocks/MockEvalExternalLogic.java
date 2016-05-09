@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -103,6 +104,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         }
         return 0;
     }
+
 
     /**
      * Note: Admin has all perms in all sites
@@ -660,10 +662,68 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         // TODO Auto-generated method stub
     }
 
-	@Override
-	public boolean isUserReadonlyAdmin(String userId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isUserReadonlyAdmin(String userId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
+    public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId )
+    {
+        return new ArrayList<EvalGroup>();
+    }
+
+    public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        return getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ).size();
+    }
+
+    public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        return new HashSet<String>();
+    }
+
+    @Override
+    public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void removeNodeRule( Long ruleID )
+    {
+    }
+
+    @Override
+    public void removeAllRulesForNode( Long nodeID )
+    {
+    }
+
+    @Override
+    public HierarchyNodeRule getRuleByID( Long ruleID )
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
+    {
+        return false;
+    }
+
+    @Override
+    public List<HierarchyNodeRule> getAllRules()
+    {
+        return new ArrayList<>();
+    }
 }

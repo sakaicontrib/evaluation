@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -79,7 +80,16 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
     protected static final int MAX_UPDATE_SIZE = 999;
 
-	//private String dialect = "mysql";
+    private static final String SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE = "SELECT DISTINCT realm.realm_id "
+            + "FROM SAKAI_REALM realm "
+            + "JOIN SAKAI_REALM_PROVIDER provider "
+            + "ON realm.realm_key = provider.realm_key "
+            + "JOIN CM_MEMBER_CONTAINER_T section "
+            + "ON provider.provider_id = section.enterprise_id "
+            + "WHERE section.class_discr = 'org.sakaiproject.coursemanagement.impl.SectionCmImpl' "
+            + "AND section.title LIKE :title "
+            + "AND realm.realm_id NOT LIKE '%/group/%'";
+    private static final String SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE = "SELECT site_id FROM SAKAI_SITE WHERE title LIKE :title";
 
     public void init() {
         log.debug("init");
@@ -2022,6 +2032,34 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 		
     	return count;
 	}
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getAllSiteIDsMatchingSectionTitle(java.lang.String)
+     */
+    public Set<String> getAllSiteIDsMatchingSectionTitle( String sectionTitleWithWildcards )
+    {
+        Session session = getSessionFactory().openSession();
+        SQLQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE );
+        query.setParameter( "title", sectionTitleWithWildcards );
+        Set<String> results = new HashSet<>( query.list() );
+        session.close();
+        return results;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getAllSiteIDsMatchingSiteTitle(java.lang.String)
+     */
+    public Set<String> getAllSiteIDsMatchingSiteTitle( String siteTitleWithWildcards )
+    {
+        Session session = getSessionFactory().openSession();
+        SQLQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE );
+        query.setParameter( "title", siteTitleWithWildcards );
+        Set<String> results = new HashSet<>( query.list() );
+        session.close();
+        return results;
+    }
 
     /**
      * Cleans up lock if there was a failure

@@ -24,7 +24,6 @@
         <dependency>
             <groupId>org.sakaiproject.evaluation</groupId>
             <artifactId>sakai-evaluation-api</artifactId>
-            <version>12-SNAPSHOT</version><!--eval.version-->
             <scope>provided</scope>
         </dependency>
 

@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
@@ -97,10 +98,10 @@ public class PDFReportExporter implements ReportExporter {
      * 
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
-     * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
+     * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream, boolean)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
-        buildReport(evaluation, groupIds, null, outputStream);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
+        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
     }
 	
     /*
@@ -108,9 +109,9 @@ public class PDFReportExporter implements ReportExporter {
      * 
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
-     * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
+     * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream, boolean)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
 				
     	//Make sure responseAggregator is using this messageLocator
         responseAggregator.setMessageLocator(messageLocator);
@@ -144,20 +145,18 @@ public class PDFReportExporter implements ReportExporter {
 
         String groupNames = responseAggregator.getCommaSeparatedGroupNames(groupIds);
 
-        // TODO this is so hard to read it makes me cry, it should not be written as a giant single line like this -AZ
-        evalPDFReportBuilder.addTitlePage(
-                evaluation.getTitle(), 
-                groupNames, 
-                messageLocator.getMessage("reporting.pdf.startdatetime", df.format(evaluation.getStartDate())),
-                messageLocator.getMessage("reporting.pdf.enddatetime", df.format(evaluation.getDueDate())), 
-                messageLocator.getMessage("reporting.pdf.replyrate", new String[] { 
-                        EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) 
-                }), 
-                bannerImageBytes, 
-                messageLocator.getMessage("reporting.pdf.defaultsystemname"),
-                messageLocator.getMessage("reporting.pdf.informationTitle")
-                );
-        
+        // Configurable system title
+        String evalSystemTitle = messageLocator.getMessage( "reporting.pdf.defaultsystemname", 
+                new Object[] { ServerConfigurationService.getString( "ui.service", "Sakai" ) } );
+
+        // Create the title page
+        String startDate = messageLocator.getMessage( "reporting.pdf.startdatetime", df.format( evaluation.getStartDate() ) );
+        String endDate = messageLocator.getMessage( "reporting.pdf.enddatetime", df.format( evaluation.getDueDate() ) );
+        String responseInfo = messageLocator.getMessage( "reporting.pdf.replyrate", 
+                new String[] { EvalUtils.makeResponseRateStringFromCounts( responsesCount, enrollmentsCount ) } );
+        String informationTitle = messageLocator.getMessage( "reporting.pdf.informationTitle" );
+        evalPDFReportBuilder.addTitlePage( evaluation.getTitle(), groupNames, startDate, endDate, responseInfo, bannerImageBytes, evalSystemTitle, informationTitle );
+
         /**
          * set title and instructions
          * 

@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -42,6 +43,14 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 public class EvalBeanUtils {
 
     private static Log log = LogFactory.getLog(EvalBeanUtils.class);
+
+    // Section awareness default setting from sakai.properties
+    private static final String SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT = "evalsys.section.aware.default";
+    private static final String SAKAI_PROP_EVALSYS_RESULTS_SHARING_DEFAULT = "evalsys.results.sharing.default";
+    private static final String SAKAI_PROP_EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT = "evalsys.instructor.view.responses.default";
+    private static final boolean EVALSYS_SECTION_AWARE_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT, false );
+    private static final String EVALSYS_RESULTS_SHARING_DEFAULT = ServerConfigurationService.getString( SAKAI_PROP_EVALSYS_RESULTS_SHARING_DEFAULT, EvalConstants.SHARING_VISIBLE );
+    private static final boolean EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT, true );
 
     private EvalCommonLogic commonLogic;   
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -331,9 +340,40 @@ public class EvalBeanUtils {
         	}
         }
         
-        if (eval.getResultsSharing() == null) {
-            eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
+        // Section awareness default controlled by sakai.property
+        if( eval.getSectionAwareness() == null )
+        {
+        	if( EVALSYS_SECTION_AWARE_DEFAULT )
+        		eval.setSectionAwareness( Boolean.TRUE );
+        	else
+        		eval.setSectionAwareness( Boolean.FALSE );
         }
+
+        // Results sharing default controlled by sakai.property
+        if( eval.getResultsSharing() == null )
+        {
+            if( !EvalConstants.SHARING_VISIBLE.equals( EVALSYS_RESULTS_SHARING_DEFAULT )
+                    && !EvalConstants.SHARING_PRIVATE.equals( EVALSYS_RESULTS_SHARING_DEFAULT )
+                    && !EvalConstants.SHARING_PUBLIC.equals( EVALSYS_RESULTS_SHARING_DEFAULT ) )
+            {
+                eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
+            }
+            else
+            {
+                eval.setResultsSharing( EVALSYS_RESULTS_SHARING_DEFAULT );
+            }
+        }
+
+        // Instructors view results default controlled by sakai.property
+        if( (Boolean) eval.getInstructorViewResults() == null )
+        {
+            eval.setInstructorViewResults( EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT );
+        }
+        if( eval.getInstructorViewAllResults() == null )
+        {
+            eval.setInstructorViewAllResults( EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT );
+        }
+
         if (EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing())) {
             eval.setStudentViewResults(  false );
             eval.setInstructorViewResults( false );

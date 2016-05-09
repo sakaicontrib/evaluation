@@ -90,12 +90,19 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
 			selectType = evalParameters.evalCategory;
 			isInstructor = EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR.equals(selectType);
 			isAssistant = EvalAssignGroup.SELECTION_TYPE_ASSISTANT.equals(selectType);
+
+			/**
+			 * This is the evaluation we are working with on this page,
+			 * this should ONLY be read from, do not change any of these fields
+			 */
+			EvalEvaluation evaluation = evaluationService.getEvaluationById(evalId);
+
 			Set<String> users;
 			if(isInstructor){
-				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED, evaluation.getSectionAwareness());
 				actionBeanVariable = actionBeanVariable+"deselectedInstructors";
 			}else if(isAssistant){
-				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);	
+				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE, evaluation.getSectionAwareness());
 				actionBeanVariable = actionBeanVariable+"deselectedAssistants";
 			}else{
 				throw new InvalidParameterException("Cannot handle this selection type: "+selectType);
@@ -114,11 +121,6 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
 	            UIOutput.make(row, "row-name", evalUser.sortName);
 	        }
 			
-		 /**
-         * This is the evaluation we are working with on this page,
-         * this should ONLY be read from, do not change any of these fields
-         */
-        EvalEvaluation evaluation = evaluationService.getEvaluationById(evalId);
         String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
         
         //do a check for the Header

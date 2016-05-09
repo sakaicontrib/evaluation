@@ -34,15 +34,16 @@ public class DownloadReportViewParams extends BaseViewParameters {
 
 	public DownloadReportViewParams() {}
 
-	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename) {
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, boolean useNewReportStyle) {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.evalId = evalId;
 		this.groupIds = groupIds;
 		this.filename = filename;
+		this.useNewReportStyle = useNewReportStyle;
 	}
 	
-	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId) {
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId, boolean useNewReportStyle) {
 		System.out.println("DownloadReportViewParams called with "+evaluateeId);
 		this.viewID = viewID;
 		this.templateId = templateId;
@@ -50,6 +51,7 @@ public class DownloadReportViewParams extends BaseViewParameters {
 		this.groupIds = groupIds;
 		this.filename = filename;
 		this.evaluateeId = evaluateeId;
+		this.useNewReportStyle = useNewReportStyle;
 	}
 
 	public String getParseSpec() {

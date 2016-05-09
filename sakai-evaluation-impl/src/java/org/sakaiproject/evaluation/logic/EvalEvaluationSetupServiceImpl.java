@@ -32,6 +32,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
@@ -73,6 +74,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
     private final String EVENT_EVAL_DELETE = "eval.evaluation.deleted";
     private final String EVENT_EVAL_CLOSED = "eval.evaluation.closed.early";
+
+    private static final String SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT = "evalsys.section.aware.default";
+    private static final String SAKAI_PROP_EVALSYS_RESULTS_SHARING_DEFAULT = "evalsys.results.sharing.default";
+    private static final String SAKAI_PROP_EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT = "evalsys.instructor.view.responses.default";
+    private static final Boolean EVALSYS_SECTION_AWARE_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT, false );
+    private static final String EVALSYS_RESULTS_SHARING_DEFAULT = ServerConfigurationService.getString( SAKAI_PROP_EVALSYS_RESULTS_SHARING_DEFAULT, EvalConstants.SHARING_VISIBLE );
+    private static final boolean EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT, true );
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao dao) {
@@ -380,11 +388,38 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (evaluation.getLocked() == null) {
             evaluation.setLocked( Boolean.FALSE );
         }
-        if (evaluation.getResultsSharing() == null) {
-            evaluation.setResultsSharing( EvalConstants.SHARING_VISIBLE );
+        if( evaluation.getResultsSharing() == null )
+        {
+            if( !EvalConstants.SHARING_VISIBLE.equals( EVALSYS_RESULTS_SHARING_DEFAULT )
+                    && !EvalConstants.SHARING_PRIVATE.equals( EVALSYS_RESULTS_SHARING_DEFAULT )
+                    && !EvalConstants.SHARING_PUBLIC.equals( EVALSYS_RESULTS_SHARING_DEFAULT ) )
+            {
+                evaluation.setResultsSharing( EvalConstants.SHARING_VISIBLE );
+            }
+            else
+            {
+                evaluation.setResultsSharing( EVALSYS_RESULTS_SHARING_DEFAULT );
+            }
         }
+
+        // Instructors view results default controlled by sakai.property
+        if( (Boolean) evaluation.getInstructorViewResults() == null )
+        {
+            evaluation.setInstructorViewResults( EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT );
+        }
+        if( evaluation.getInstructorViewAllResults() == null )
+        {
+            evaluation.setInstructorViewAllResults( EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT );
+        }
+
         if (evaluation.getAuthControl() == null) {
             evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );
+        }
+
+        // Section awareness default controlled by sakai.property
+        if( evaluation.getSectionAwareness() == null )
+        {
+            evaluation.setSectionAwareness( EVALSYS_SECTION_AWARE_DEFAULT );
         }
 
         // make sure the evaluation type required field is set
@@ -1048,9 +1083,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             String egid = evalAssignGroup.getEvalGroupId();
             evalGroupIdsFromEvals.add(egid);
             // get all the users who currently have permission for this group
-            Set<String> currentEvaluated = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_BE_EVALUATED);
-            Set<String> currentAssistants = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_ASSISTANT_ROLE);
-            Set<String> currentTakers = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_TAKE_EVALUATION);
+            Set<String> currentEvaluated = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_BE_EVALUATED, evaluation.getSectionAwareness());
+            Set<String> currentAssistants = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_ASSISTANT_ROLE, evaluation.getSectionAwareness());
+            Set<String> currentTakers = commonLogic.getUserIdsForEvalGroup(egid, EvalConstants.PERM_TAKE_EVALUATION, evaluation.getSectionAwareness());
                         
             if(evaluation.getAllRolesParticipate()) {
             	currentTakers.addAll(currentAssistants);
@@ -1809,8 +1844,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
         for (String evalGroupId : evalGroupIdsSet) {
             String type = EvalConstants.GROUP_TYPE_PROVIDED;
-            if (evalGroupId.startsWith("/site")) {
-                type = EvalConstants.GROUP_TYPE_SITE;
+            if (evalGroupId.startsWith(EvalConstants.GROUP_ID_SITE_PREFIX))
+            {
+                // Determine type (section or site)
+                if( evalGroupId.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
+                {
+                    type = EvalConstants.GROUP_TYPE_SECTION;
+                }
+                else
+                {
+                    type = EvalConstants.GROUP_TYPE_SITE;
+                }
             }
             // set the booleans to null to get the correct defaults set
             EvalAssignGroup eag = new EvalAssignGroup(userId, evalGroupId, type, eval);

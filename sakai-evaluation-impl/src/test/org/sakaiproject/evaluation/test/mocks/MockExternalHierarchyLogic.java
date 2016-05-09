@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 
@@ -288,4 +290,65 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
         return null;
     }
 
+    @Override
+    public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<HierarchyNodeRule> getAllRules()
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public HierarchyNodeRule getRuleByID( Long ruleID )
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
+    {
+        return false;
+    }
+
+    @Override
+    public List<Section> getSectionsUnderEvalGroup( String evalGroupID )
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String determineQualifierFromRuleText( String ruleText )
+    {
+        return null;
+    }
+
+    @Override
+    public String removeQualifierFromRuleText( String ruleText )
+    {
+        return null;
+    }
+
+    @Override
+    public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void removeAllRulesForNode( Long nodeID )
+    {
+    }
+
+    @Override
+    public void removeNodeRule( Long ruleID )
+    {
+    }
 }

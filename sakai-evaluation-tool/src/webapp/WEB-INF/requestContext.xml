@@ -29,18 +29,22 @@
         <property name="targetBeanName" value="sakaiFCKTextEvolver" />
         <!--      <property name="targetBeanName" value="plainTextInputEvolver" />-->
     </bean>
-	
-	<!-- navigation renderer -->
-	<bean id="navBarRenderer" class="org.sakaiproject.evaluation.tool.renderers.NavBarRenderer">
-		<property name="authoringService"
+
+    <!-- navigation renderer -->
+    <bean id="navBarRenderer" class="org.sakaiproject.evaluation.tool.renderers.NavBarRenderer">
+        <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-		<property name="evaluationService"
+        <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-		<property name="settings"
+        <property name="settings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="commonLogic"
+        <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-	</bean>
+        <property name="developerHelperService"
+            ref="org.sakaiproject.entitybroker.DeveloperHelperService" />
+        <property name="serverConfigurationService"
+            ref="org.sakaiproject.component.api.ServerConfigurationService" />
+    </bean>
 
     <bean id="humanDateRenderer" class="org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer" init-method="init">
       <property name="locale" ref="requestLocale" />
@@ -480,7 +484,16 @@
 		<property name="navBarRenderer" ref="navBarRenderer" />
 		<property name="messageLocator" ref="messageLocator" />
     </bean>
-	
+
+    <!-- Admin console, hierarchy rules -->
+    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeRulesProducer">
+        <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
+        <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="navBarRenderer" ref="navBarRenderer" />
+        <property name="messageLocator" ref="messageLocator" />
+    </bean>
+
     <!-- SUMMARY producers -->
     <bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
         <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
@@ -828,8 +841,9 @@
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="externalHierarchyLogic"
             ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-		<property name="navBarRenderer" ref="navBarRenderer" />	
+        <property name="navBarRenderer" ref="navBarRenderer" />
         <property name="renderingUtils" ref="renderingUtils" />
+        <property name="locale" ref="requestLocale" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">

@@ -49,7 +49,7 @@ public interface EvalEvaluationService {
     public static final String PDF_RESULTS_REPORT = "pdfResultsReport";
     public static final String CSV_RESULTS_REPORT = "csvResultsReport";
     public static final String PDF_RESULTS_REPORT_INDIVIDUAL = "pdfResultsReportIndividual";
-    
+    public static final String CSV_TAKERS_REPORT = "csvTakersReport";
     // EVALUATIONS
 
     /**

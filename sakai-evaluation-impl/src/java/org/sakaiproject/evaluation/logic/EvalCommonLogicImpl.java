@@ -346,6 +346,25 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		return this.externalLogic.getMyWorkspaceDashboard(userId);
 	}
 
+    /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#makeEvalGroupObjectsForSectionAwareness(java.lang.String)
+    */
+    public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId )
+    {
+       if( evalGroupId == null )
+       {
+           throw new IllegalArgumentException( "evalGroupId cannot be null" );
+       }
+
+       if( !evalGroupId.startsWith( EvalConstants.GROUP_ID_SITE_PREFIX ) )
+       {
+           throw new IllegalArgumentException( "cannot determine sections of groupId='" + evalGroupId + "' (must be a site)" );
+       }
+
+       return externalLogic.makeEvalGroupObjectsForSectionAwareness( evalGroupId );
+    }
+
     public EvalGroup makeEvalGroupObject(String evalGroupId) {
         if (evalGroupId == null) {
             throw new IllegalArgumentException("evalGroupId cannot be null");
@@ -471,63 +490,97 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return l;
     }
 
-    public int countUserIdsForEvalGroup(String evalGroupId, String permission) {
-        // get the count from the method which retrieves all the groups,
-        // this method might be better to retire
-        return getUserIdsForEvalGroup(evalGroupId, permission).size();
+    /* (non-Javadoc)
+     * 
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String, java.lang.Boolean)
+     */
+    public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        return getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ).size();
     }
 
-    public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
-        Set<String> userIds = new HashSet<String>();
+    /* (non-Javadoc)
+     * 
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String, java.lang.Boolean)
+     */
+    public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        Set<String> userIDs = new HashSet<String>();
+        if( sectionAware )
+        {
+            userIDs.addAll( externalLogic.getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) );
+        }
 
-        /* NOTE: we are assuming there is not much chance that there will be some users stored in
-         * multiple data stores for the same group id so we only check until we find at least one user,
-         * this means checks for user in groups with no users in them end up being really costly
-         */
+        // If it's not section aware, or if we didn't find anything from external logic, do the normal lookup call
+        if( !sectionAware || userIDs.size() == 0 )
+        {
+            // Strip out the '/section/<section_id>' part of the evalGroupID if its there
+            if( !sectionAware && evalGroupID.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
+            {
+                evalGroupID = evalGroupID.substring( 0, evalGroupID.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) );
+            }
 
-        // check external
-        userIds.addAll( externalLogic.getUserIdsForEvalGroup(evalGroupId, permission) );
+            /* NOTE: we are assuming there is not much chance that there will be some users stored in
+             * multiple data stores for the same group id so we only check until we find at least one user,
+             * this means checks for user in groups with no users in them end up being really costly
+             */
 
-        // only go on to check the internal adhocs if nothing was found
-        if (userIds.size() == 0) {
-            // check internal adhoc groups
-            if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
-                    EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-                Long id = EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId);
-                if (id != null) {
-                    EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(id);
-                    if (adhocGroup != null) {
-                        String[] ids = null;
-                        if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
-                            ids = adhocGroup.getEvaluateeIds();
-                        } else if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
-                            ids = adhocGroup.getParticipantIds();
-                        }
-                        if (ids != null) {
-                            for (int i = 0; i < ids.length; i++) {
-                                userIds.add( ids[i] );
+            // Check external
+            userIDs.addAll( externalLogic.getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) );
+
+            // Only go on to check the internal adhocs if nothing was found
+            if( userIDs.size() == 0 )
+            {
+                // Check internal adhoc groups
+                if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+                    EvalConstants.PERM_TAKE_EVALUATION.equals( permission ) )
+                {
+                    Long id = EvalAdhocGroup.getIdFromAdhocEvalGroupId( evalGroupID );
+                    if( id != null )
+                    {
+                        EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(id);
+                        if( adhocGroup != null )
+                        {
+                            String[] ids = null;
+                            if( EvalConstants.PERM_BE_EVALUATED.equals( permission ) )
+                            {
+                                ids = adhocGroup.getEvaluateeIds();
+                            }
+                            else if( EvalConstants.PERM_TAKE_EVALUATION.equals( permission ) )
+                            {
+                                ids = adhocGroup.getParticipantIds();
+                            }
+                            if( ids != null )
+                            {
+                                for( int i = 0; i < ids.length; i++ )
+                                {
+                                    userIDs.add( ids[i] );
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        // check the provider if we still found nothing
-        if (userIds.size() == 0) {
-            // also check provider
-            if (evalGroupsProvider != null) {
-                if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
+            // Check the provider if we still found nothing
+            if( userIDs.size() == 0 )
+            {
+                // Also check provider
+                if( evalGroupsProvider != null )
+                {
+                    if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                         || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
-                        || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
-                    log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
-                    userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, 
+                        || EvalConstants.PERM_ASSISTANT_ROLE.equals( permission ) )
+                    {
+                        log.debug( "Using eval groups provider: evalGroupId: " + evalGroupID + ", permission: " + permission );
+                        userIDs.addAll( evalGroupsProvider.getUserIdsForEvalGroups( new String[] { evalGroupID }, 
                             EvalExternalLogicImpl.translatePermission(permission)) );
+                    }
                 }
             }
         }
 
-        return userIds;
+        return userIDs;
     }
 
 	public String calculateViewability(String state) {

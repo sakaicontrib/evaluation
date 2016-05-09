@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 
 import uk.org.ponder.beanutil.BeanLocator;
 /**
@@ -32,7 +33,7 @@ public class AssignGroupSelectionSettings implements BeanLocator {
 	private Map<String, EvalAssignGroupSelection> localStore = new HashMap<String, EvalAssignGroupSelection>();
 	
 	public Object locateBean(String name) {
-		String checkName = "/site/" + name;
+		String checkName = EvalConstants.GROUP_ID_SITE_PREFIX + name;
 		if (localStore.containsKey(checkName)) {
 			return localStore.get(checkName); 
 		} else {
