@@ -214,7 +214,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             UIBranchContainer showResponsesBranch = UIBranchContainer.make(groupBranch, "showGroupResponses:");
             for (EvalUser evalUser : users) {
                 UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
-                UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName);
+                UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName + "(" + evalUser.username + ")");
                 if (showStatus) {
                     String messagekey = "evalresponders.status.untaken"; // untaken (no response)
                     EvalResponse response = userResponses.get(evalUser.userId);
