@@ -39,7 +39,10 @@ public class EvalConfig implements java.io.Serializable {
     public EvalConfig() {
     }
 
-    /** full constructor */
+    /** full constructor
+     * @param name
+     * @param value 
+     */
     public EvalConfig(String name, String value) {
         this.lastModified = new Date();
         this.name = name;

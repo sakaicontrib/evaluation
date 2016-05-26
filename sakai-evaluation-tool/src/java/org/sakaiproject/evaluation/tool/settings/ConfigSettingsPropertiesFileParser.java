@@ -33,14 +33,14 @@ import org.springframework.web.multipart.MultipartFile;
  * @author chasegawa
  */
 public class ConfigSettingsPropertiesFileParser {
-    private static Log log = LogFactory.getLog(ConfigSettingsPropertiesFileParser.class);
+    private static final Log LOG = LogFactory.getLog(ConfigSettingsPropertiesFileParser.class);
 
     /**
      * @return "uploadSuccess" if the parsing was completed without issue. Otherwise, return "uploadFailure".
      */
     public String parse() {
         MultipartFile file = (MultipartFile) multipartMap.get("configFile");
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         /* We manually parse the properties file rather than using the java.util.Properties due to the keys having a ':' in
          * the string (':' is one of the three valid separator values in the Java properties file definition).
          */
@@ -53,7 +53,7 @@ public class ConfigSettingsPropertiesFileParser {
                 result.put(keyValuePair[0], keyValuePair[1]);
             }
         } catch (IOException ioe) {
-            log.error("Error reading uploaded properties file for overwrite settings", ioe);
+            LOG.error("Error reading uploaded properties file for overwrite settings", ioe);
             return "uploadFailure";
         } finally {
             IOUtils.closeQuietly(reader);

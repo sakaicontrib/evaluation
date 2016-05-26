@@ -31,14 +31,12 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils.AnswersMean;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -55,7 +53,7 @@ import uk.org.ponder.messageutil.MessageLocator;
  */
 public class PDFReportExporterIndividual implements ReportExporter {
 
-    private static Log log = LogFactory.getLog(PDFReportExporterIndividual.class);
+    private static final Log LOG = LogFactory.getLog(PDFReportExporterIndividual.class);
 
     int displayNumber;
 
@@ -223,7 +221,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
                 for (int i = 0; i < dtis.size(); i++) {
                     DataTemplateItem dti = dtis.get(i);
-                    log.debug("Item text: "+dti.templateItem.getItem().getItemText());
+                    LOG.debug("Item text: "+dti.templateItem.getItem().getItemText());
                     
                     if (!instructorViewAllResults // If the eval is so configured,
                       && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
@@ -287,7 +285,6 @@ public class PDFReportExporterIndividual implements ReportExporter {
         if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType))
         {
             evalPDFReportBuilder.addSectionHeader(questionText, lastElementIsHeader, itemSize);
-            lastElementIsHeader=true;
         }
         else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType))
         {
@@ -298,17 +295,15 @@ public class PDFReportExporterIndividual implements ReportExporter {
                 evalPDFReportBuilder.addBoldText(messageLocator.getMessage("viewreport.blockWeightedMean")+": "+new DecimalFormat("#.##").format(weightedMeansBlocks.get(blockNumber)));
             }
             blockNumber++;
-            lastElementIsHeader=true;
         }
         else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType))
         {
             displayNumber++;
-            List<String> essays = new ArrayList<String>();
+            List<String> essays = new ArrayList<>();
             for (EvalAnswer answer : itemAnswers) {
                 essays.add(answer.getText());
             }
             evalPDFReportBuilder.addTextItemsList(displayNumber + ". " + questionText, essays, false, messageLocator.getMessage("viewreport.numberanswers"));
-            lastElementIsHeader=false;
         }
         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)
                 || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
@@ -369,10 +364,9 @@ public class PDFReportExporterIndividual implements ReportExporter {
                         messageLocator.getMessage("viewreport.numbercomments")
                         );
             }
-            lastElementIsHeader=false;
 
         } else {
-            log.warn("Trying to add unknown type to PDF: " + templateItemType);
+            LOG.warn("Trying to add unknown type to PDF: " + templateItemType);
         }
     }
 
@@ -385,11 +379,21 @@ public class PDFReportExporterIndividual implements ReportExporter {
             String itemSize = matcher.group(1);
 
             //Switch not available for Strings until Java 1.7
-            if ("xx-large".equals(itemSize)) return 24.0f;
-            else if ("x-large".equals(itemSize)) return 18.0f;
-            else if ("large".equals(itemSize))return 14.0f;
-            else if ("medium".equals(itemSize)) return 12.0f;
-            else if ("small".equals(itemSize)) return 10.0f;
+            if ("xx-large".equals(itemSize)) {
+                return 24.0f;
+            }
+            else if ("x-large".equals(itemSize)) {
+                return 18.0f;
+            }
+            else if ("large".equals(itemSize)) {
+                return 14.0f;
+            }
+            else if ("medium".equals(itemSize)) {
+                return 12.0f;
+            }
+            else if ("small".equals(itemSize)) {
+                return 10.0f;
+            }
 
             // If we have a font size but can't work out what it is attempt to model it on the medium which is
             // slightly bigger than the default font size.
@@ -453,7 +457,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
     public double calculateBlockWeightedMean(ArrayList<Integer> collectedValues, String[] answers)
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
-        int accumulator=0, numeroValores=0, answer=0;
+        int accumulator=0, numeroValores=0, answer;
         for (int n=0;n<collectedValues.size();n++)
         {
             numeroValores=numeroValores+collectedValues.get(n);
@@ -477,17 +481,16 @@ public class PDFReportExporterIndividual implements ReportExporter {
     private ArrayList<Double> getWeightedMeansBlocks(List<DataTemplateItem> dtis)
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
-        ArrayList<Double> alTemporal = new ArrayList<Double>();  //List of means of each block.
+        ArrayList<Double> alTemporal = new ArrayList<>();  //List of means of each block.
 
         //Number of answers for the block we are working in
         //If is not the same for every block element, mean is invalidated.
-        ArrayList<Integer> collectedValues = new ArrayList<Integer>();
+        ArrayList<Integer> collectedValues = new ArrayList<>();
 
         DataTemplateItem dti;
         EvalTemplateItem templateItem;
         EvalItem item;
 
-        int currentBlock=0;
         boolean processingBlock=false;
         int numberOfChildren=0;
 
@@ -511,13 +514,12 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
                 //Reset.
                 processingBlock=false;
-                collectedValues = new ArrayList<Integer>();
+                collectedValues = new ArrayList<>();
             }
 
             if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType))
             {
                 processingBlock=true;
-                currentBlock++;
                 numberOfChildren = templateItem.childTemplateItems.size();
             }
             else if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType))
@@ -534,7 +536,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
                     if (numberOfChildren>0) numberOfChildren--;
 
                     int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
-                    int temporal=0, currentNumericAnswer=0;
+                    int temporal;
 
                     optionLabels = item.getScale().getOptions();
 
@@ -542,22 +544,13 @@ public class PDFReportExporterIndividual implements ReportExporter {
                     {
                         for (int n=0;n<optionLabels.length;n++)
                         {
-                        	try
-                        	{
-                        		currentNumericAnswer=new Integer(optionLabels[n]);
-                        	}
-                        	catch (NumberFormatException e)
-                        	{
-                        		//Don't do nothing here, mean is calculated with answer's number
-                        	}
-
                             if (n>=collectedValues.size())
                             {
                                 collectedValues.add(responseArray[n]);
                             }
                             else
                             {
-                                temporal=(Integer)(collectedValues.get(n));
+                                temporal=(collectedValues.get(n));
                                 collectedValues.set(n,temporal+responseArray[n]);
                             }
                         }
@@ -570,7 +563,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
                 }
             }
             else {
-                log.warn("Trying to add unknown type to PDF: " + templateItemType);
+                LOG.warn("Trying to add unknown type to PDF: " + templateItemType);
             }
         }
 

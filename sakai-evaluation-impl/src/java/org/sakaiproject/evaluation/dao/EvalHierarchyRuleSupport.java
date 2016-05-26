@@ -16,6 +16,9 @@ package org.sakaiproject.evaluation.dao;
 
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyRules;
 
+/**
+ * Empty interface for Spring API->Impl injection.
+ */
 public interface EvalHierarchyRuleSupport extends ExternalHierarchyRules
 {
     

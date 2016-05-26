@@ -52,7 +52,7 @@ public class EvalItem implements java.io.Serializable {
 
     private EvalScale scale;
 
-    private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
+    private Set<EvalTemplateItem> templateItems = new HashSet<>(0);
 
     /**
      * display hint
@@ -117,12 +117,37 @@ public class EvalItem implements java.io.Serializable {
     public EvalItem() {
     }
 
-    /** minimal constructor */
+    /**
+     * minimal constructor
+     * @param owner
+     * @param itemText
+     * @param sharing
+     * @param classification
+     * @param expert 
+     */
     public EvalItem(String owner, String itemText, String sharing, String classification, Boolean expert) {
         this(owner, itemText, null, sharing, classification, expert, null, null, null, null, null, false, null, null, null, null);
     }
 
-    /** full constructor */
+    /**
+     * full constructor
+     * @param owner
+     * @param itemText
+     * @param description
+     * @param sharing
+     * @param classification
+     * @param expert
+     * @param expertDescription
+     * @param scale
+     * @param templateItems
+     * @param usesNA
+     * @param usesComment
+     * @param compulsory
+     * @param displayRows
+     * @param scaleDisplaySetting
+     * @param category
+     * @param locked 
+     */
     public EvalItem(String owner, String itemText, String description, String sharing, String classification,
             Boolean expert, String expertDescription, EvalScale scale, Set<EvalTemplateItem> templateItems,
             Boolean usesNA, Boolean usesComment, Boolean compulsory,

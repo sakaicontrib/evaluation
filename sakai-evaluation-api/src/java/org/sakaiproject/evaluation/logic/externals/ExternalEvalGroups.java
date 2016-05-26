@@ -50,11 +50,11 @@ public interface ExternalEvalGroups {
 	public EvalGroup makeEvalGroupObject(String evalGroupId);
 
 	/**
-	 * Construct a Set of {@link EvalGroup} objects (child sections) based on the unique string id (parent site),
+	 * Construct a List of {@link EvalGroup} objects (child sections) based on the unique string id (parent site),
 	 * group will have a special type {@link EvalConstants#GROUP_TYPE_INVALID} if data cannot be found
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
-	 * @return a Set of {@link EvalGroup} objects (special return if not found)
+	 * @return a List of {@link EvalGroup} objects (special return if not found)
 	 */
 	public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId );
 

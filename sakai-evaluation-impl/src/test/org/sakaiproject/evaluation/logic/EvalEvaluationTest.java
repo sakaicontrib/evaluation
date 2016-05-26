@@ -32,7 +32,7 @@ public class EvalEvaluationTest {
      */
 	@Test
     public void testReminderStatus() {
-        EvalReminderStatus ers = null;
+        EvalReminderStatus ers;
 
         ers = new EvalReminderStatus("50:5:abcde12345");
         Assert.assertNotNull(ers);

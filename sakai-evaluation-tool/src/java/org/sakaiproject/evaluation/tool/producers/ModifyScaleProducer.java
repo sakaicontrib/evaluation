@@ -131,13 +131,13 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         boundedDynamicListInputEvolver.evolve(modifypoints);
 
         UISelect radios = UISelect.make(form, "scaleIdealRadio", 
-                EvalToolConstants.scaleIdealValues, 
-                EvalToolConstants.scaleIdealLabels, 
+                EvalToolConstants.SCALE_IDEA_VALUES, 
+                EvalToolConstants.SCALE_IDEAL_LABELS, 
                 scaleOTP + "ideal").setMessageKeys();
         radios.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 
         String selectID = radios.getFullID();
-        for (int i = 0; i < EvalToolConstants.scaleIdealValues.length; ++i) {
+        for (int i = 0; i < EvalToolConstants.SCALE_IDEA_VALUES.length; ++i) {
             UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
             UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
             UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);

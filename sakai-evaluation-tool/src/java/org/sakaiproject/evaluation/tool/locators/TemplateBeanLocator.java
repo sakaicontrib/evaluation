@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -39,7 +38,7 @@ public class TemplateBeanLocator implements BeanLocator {
       this.localTemplateLogic = localTemplateLogic;
    }
 
-   private Map<String, EvalTemplate> delivered = new HashMap<String, EvalTemplate>();
+   private Map<String, EvalTemplate> delivered = new HashMap<>();
 
    public Object locateBean(String name) {
       EvalTemplate togo = delivered.get(name);
@@ -55,13 +54,13 @@ public class TemplateBeanLocator implements BeanLocator {
    }
 
    public void saveAll() {
-      for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-         String key = it.next();
-         EvalTemplate template = delivered.get(key);
-         if (key.startsWith(NEW_PREFIX)) {
-            // could do stuff here
-         }
-         localTemplateLogic.saveTemplate(template);
-      }
+       for( String key : delivered.keySet() )
+       {
+           EvalTemplate template = delivered.get(key);
+           if (key.startsWith(NEW_PREFIX)) {
+               // could do stuff here
+           }
+           localTemplateLogic.saveTemplate(template);
+       }
    }
 }

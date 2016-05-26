@@ -65,100 +65,6 @@ public class EvalResponseAggregatorUtil {
         this.commonLogic = commonLogic;
     }
 
-
-    /**
-     * This method iterates through list of answers for the concerned question 
-     * and updates the list of responses.
-     * 
-     * @param numOfResponses number of responses for the concerned evaluation
-     * @param responseIds list of response ids
-     * @param responseRows list containing all responses (i.e. list of answers for each question)
-     * @param itemAnswers list of answers for the concerened question
-     * @param templateItem EvalTemplateItem object for which the answers are fetched
-     */
-    // FIXME UNUSED method
-    //   private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
-    //         EvalTemplateItem templateItem) {
-    //
-    //      /* 
-    //       * Fix for EVALSYS-123 i.e. export CSV functionality 
-    //       * fails when answer for a question left unanswered by 
-    //       * student.
-    //       * 
-    //       * Basically we need to check if the particular student 
-    //       * (identified by a response id) has answered a particular
-    //       * question. If yes, then add the answer to the list, else
-    //       * add empty string - kahuja 23rd Apr 2007. 
-    //       */
-    //      int actualIndexOfResponse = 0;
-    //      int idealIndexOfResponse = 0;
-    //      List<String> currRow = null;
-    //      int lengthOfAnswers = itemAnswers.size();
-    //      for (int j = 0; j < lengthOfAnswers; j++) {
-    //
-    //         EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
-    //         actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
-    //
-    //         EvalUtils.decodeAnswerNA(currAnswer);
-    //
-    //         // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
-    //         if (actualIndexOfResponse > idealIndexOfResponse) {
-    //            for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
-    //               currRow = responseRows.get(idealIndexOfResponse);
-    //               currRow.add(" ");
-    //            }
-    //         }
-    //
-    //         /*
-    //          * Add the answer to item within the current response to the output row.
-    //          * If text/essay type item just add the text 
-    //          * else (scaled type or block child, which is also scaled) item then look up the label
-    //          */
-    //         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
-    //         currRow = responseRows.get(actualIndexOfResponse);
-    //         if (currAnswer.NA) {
-    //            currRow.add(messageLocator.getMessage("reporting.notapplicable.shortlabel"));
-    //         }
-    //         else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
-    //            currRow.add(currAnswer.getText());
-    //         } 
-    //         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-    //            String labels[] = templateItem.getItem().getScale().getOptions();
-    //            StringBuilder sb = new StringBuilder();
-    //            Integer[] decoded = EvalUtils.decodeMultipleAnswers(currAnswer.getMultiAnswerCode());
-    //            for (int k = 0; k < decoded.length; k++) {
-    //               sb.append(labels[decoded[k].intValue()]);
-    //               if (k+1 < decoded.length) 
-    //                  sb.append(",");
-    //            }
-    //            currRow.add(sb.toString());
-    //         }
-    //         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
-    //               || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
-    //               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
-    //            String labels[] = templateItem.getItem().getScale().getOptions();
-    //            currRow.add(labels[currAnswer.getNumeric().intValue()]);
-    //         }
-    //         else {
-    //            throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
-    //                  + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
-    //         }
-    //
-    //         /*
-    //          * Update the ideal index to "actual index + 1" 
-    //          * because now actual answer has been added to list.
-    //          */
-    //         idealIndexOfResponse = actualIndexOfResponse + 1;
-    //      }
-    //
-    //      // If empty answers occurs at end such that all responses have not been filled.
-    //      for (int count = idealIndexOfResponse; count < numOfResponses; count++) {
-    //         currRow = responseRows.get(idealIndexOfResponse);
-    //         currRow.add(" ");
-    //      }
-    //
-    //   }
-
     public String formatForSpreadSheet(EvalTemplateItem templateItem, EvalAnswer answer) {
         String togo = "";
 
@@ -178,9 +84,9 @@ public class EvalResponseAggregatorUtil {
                 if (k > 0) {
                     sb.append(",");
                 }
-                int decode = decoded[k].intValue();
+                int decode = decoded[k];
                 if (decode >= 0 && decode < labels.length) {
-                    sb.append( labels[decoded[k].intValue()] );
+                    sb.append( labels[decoded[k]] );
                 } else {
                     sb.append(decode);
                 }
@@ -191,7 +97,7 @@ public class EvalResponseAggregatorUtil {
                 || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
             String labels[] = RenderingUtils.makeReportingScaleLabels(templateItem, templateItem.getItem().getScale().getOptions());
-            int value = answer.getNumeric().intValue();
+            int value = answer.getNumeric();
             if (value >= 0 && value < labels.length) {
                 togo = labels[value];
             } else {
@@ -224,7 +130,8 @@ public class EvalResponseAggregatorUtil {
      * @param templateItemType The template item type. Should be like EvalConstants.ITEM_TYPE_SCALED
      * @param scaleSize The size of the scale items. The returned integer array will
      * be this big (+1 for NA). With each index being a count of responses for that scale type.
-     * @param answers The List of EvalAnswers to work with.
+     * @param itemAnswers The List of EvalAnswers to work with.
+     * @return 
      * @deprecated use {@link TemplateItemDataList#getAnswerChoicesCounts(String, int, List)}
      */
     public static int[] countResponseChoices(String templateItemType, int scaleSize, List<EvalAnswer> itemAnswers) {
@@ -246,7 +153,7 @@ public class EvalResponseAggregatorUtil {
                     if (! EvalConstants.NO_MULTIPLE_ANSWER.equals(answer.getMultiAnswerCode())) {
                         Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
                         for (Integer decodedAnswer: decoded) {
-                            int answerValue = decodedAnswer.intValue();
+                            int answerValue = decodedAnswer;
                             if (answerValue >= 0 && answerValue < togo.length) {
                                 // answer will fit in the array
                                 togo[answerValue]++;
@@ -259,7 +166,7 @@ public class EvalResponseAggregatorUtil {
                 }
                 else {
                     // standard handling for single answer items
-                    int answerValue = answer.getNumeric().intValue();
+                    int answerValue = answer.getNumeric();
                     if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answerValue)) {
                         // this numeric answer is not one that should be ignored
                         if (answerValue >= 0 && answerValue < togo.length) {

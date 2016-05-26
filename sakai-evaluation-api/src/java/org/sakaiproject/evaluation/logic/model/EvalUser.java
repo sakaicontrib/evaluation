@@ -107,6 +107,7 @@ public class EvalUser implements Serializable {
      * @param username the login name (eid) for the user or default text "------" if it cannot be found
      * @param displayName the user display name or default text "--------" if it cannot be found
      * @param sortName the name to use when sorting users or defaults to username if none set
+     * @param displayId
      */
     public EvalUser(String userId, String type, String email, String username, String displayName, String sortName, String displayId) {
         if (userId == null || "".equals(userId)) {

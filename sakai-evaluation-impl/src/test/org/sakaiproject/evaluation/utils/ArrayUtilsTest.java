@@ -19,9 +19,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.sakaiproject.evaluation.utils.ArrayUtils;
-
-
 /**
  * Testing out the array utils
  * 
@@ -33,10 +30,10 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#removeDuplicates(java.util.List)}.
     */
    public void testRemoveDuplicates() {
-      List<String> l = null;
+      List<String> l;
 
       // positive
-      List<String> testDups = new ArrayList<String>();
+      List<String> testDups = new ArrayList<>();
       testDups.add("aaron");
       testDups.add("zeckoski");
       testDups.add("duplicates");
@@ -51,7 +48,7 @@ public class ArrayUtilsTest extends TestCase {
       assertTrue(l.contains("duplicates"));
 
       // even more dups
-      testDups = new ArrayList<String>();
+      testDups = new ArrayList<>();
       testDups.add("aaron");
       testDups.add("zeckoski");
       testDups.add("duplicates");
@@ -69,7 +66,7 @@ public class ArrayUtilsTest extends TestCase {
       assertTrue(l.contains("duplicates"));
 
       // negative
-      List<String> testNoDups = new ArrayList<String>();
+      List<String> testNoDups = new ArrayList<>();
       testNoDups.add("aaron");
       testNoDups.add("zeckoski");
       testNoDups.add("no_duplicates");
@@ -83,7 +80,7 @@ public class ArrayUtilsTest extends TestCase {
 
       // exception
       try {
-         l = ArrayUtils.removeDuplicates(null);
+         ArrayUtils.removeDuplicates(null);
          fail("Should have thrown exception");
       } catch (NullPointerException e) {
          assertNotNull(e);
@@ -95,7 +92,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(java.lang.String[], java.lang.String)}.
     */
    public void testAppendArrayStringArrayString() {
-      String[] strings = null;
+      String[] strings;
 
       strings = new String[] { "test1", "test2" };
       assertEquals(2, strings.length);
@@ -122,7 +119,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(java.lang.Object[], java.lang.Object)}.
     */
    public void testAppendArrayObjectArrayObject() {
-      Object[] objects = null;
+      Object[] objects;
 
       objects = new Object[] { "test1", "test2" };
       assertEquals(2, objects.length);
@@ -149,7 +146,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(int[], int)}.
     */
    public void testAppendArrayIntArrayInt() {
-      int[] ints = null;
+      int[] ints;
 
       ints = new int[] { 1, 2 };
       assertEquals(2, ints.length);
@@ -176,7 +173,7 @@ public class ArrayUtilsTest extends TestCase {
       String[] a1 = new String[] {"aaa", "bbb", "ccc"};
       String[] a2 = new String[] {"ddd", "eee"};
 
-      String[] result = null;
+      String[] result;
 
       result = ArrayUtils.appendArrays(a1, a2);
       assertNotNull(result);
@@ -204,7 +201,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(java.lang.String[], java.lang.String)}.
     */
    public void testPrependArrayStringArrayString() {
-      String[] strings = null;
+      String[] strings;
 
       strings = new String[] { "test1", "test2" };
       assertEquals(2, strings.length);
@@ -231,7 +228,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(java.lang.Object[], java.lang.Object)}.
     */
    public void testPrependArrayObjectArrayObject() {
-      Object[] objects = null;
+      Object[] objects;
 
       objects = new Object[] { "test1", "test2" };
       assertEquals(2, objects.length);
@@ -258,7 +255,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(int[], int)}.
     */
    public void testPrependArrayIntArrayInt() {
-      int[] ints = null;
+      int[] ints;
 
       ints = new int[] { 1, 2 };
       assertEquals(2, ints.length);
@@ -285,7 +282,7 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#arrayToString(java.lang.Object[])}.
     */
    public void testArrayToString() {
-      String result = null;
+      String result;
 
       String[] strings = new String[] { "Aaron", "Testing", "Arrays" };
       assertEquals(3, strings.length);
@@ -308,11 +305,11 @@ public class ArrayUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#listToIntArray(java.util.List)}.
     */
    public void testListToIntArray() {
-      int[] ints = null;
+      int[] ints;
 
-      List<Number> numList = new ArrayList<Number>();
-      numList.add(new Integer(1));
-      numList.add(new Integer(2));
+      List<Number> numList = new ArrayList<>();
+      numList.add(1);
+      numList.add(2);
 
       ints = ArrayUtils.listToIntArray(numList);
       assertNotNull(ints);
@@ -320,7 +317,7 @@ public class ArrayUtilsTest extends TestCase {
       assertEquals(1, ints[0]);
       assertEquals(2, ints[1]);
 
-      List<Number> emptyList = new ArrayList<Number>();
+      List<Number> emptyList = new ArrayList<>();
       ints = ArrayUtils.listToIntArray(emptyList);
       assertNotNull(ints);
       assertEquals(0, ints.length);

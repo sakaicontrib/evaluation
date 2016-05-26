@@ -42,6 +42,7 @@ import org.sakaiproject.user.cover.UserDirectoryService;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 import au.com.bytecode.opencsv.CSVWriter;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -112,10 +113,8 @@ public class CSVReportExporter implements ReportExporter {
      */
     private void buildReportSectionAware( EvalEvaluation evaluation, String[] groupIDs, OutputStream outputStream )
     {
-        try
+        try( ZipOutputStream zout = new ZipOutputStream( outputStream ) )
         {
-            // Create the output stream, eval title
-            ZipOutputStream zout = new ZipOutputStream( outputStream );
             String evalTitle = evaluation.getTitle().replaceAll( " ", "_" );
 
             // Get permission to view, current user and eval owner
@@ -128,10 +127,10 @@ public class CSVReportExporter implements ReportExporter {
             List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems( true );
 
             // Create all the holders
-            List<String> instructorRelatedQuestionHeaders = new ArrayList<String>();
-            List<String> courseRelatedQuestionHeaders = new ArrayList<String>();
-            List<List<String>> courseRelatedQuestions = new ArrayList<List<String>>();
-            List<List<String>> instructorRelatedQuestions = new ArrayList<List<String>>();
+            List<String> instructorRelatedQuestionHeaders = new ArrayList<>();
+            List<String> courseRelatedQuestionHeaders = new ArrayList<>();
+            List<List<String>> courseRelatedQuestions = new ArrayList<>();
+            List<List<String>> instructorRelatedQuestions = new ArrayList<>();
 
             // Generate static column headers
             if( evaluation.getSectionAwareness() )
@@ -153,13 +152,10 @@ public class CSVReportExporter implements ReportExporter {
             // Generate dynamic question (column) headers
             for( DataTemplateItem dti : dtiList )
             {
-                if( !instructorViewAllResults                                                           // If the eval is so configured,
-                          && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
-                          && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
-                          && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                          && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId ) )
+                // Skip items that aren't for the current user
+                if( isItemNotForCurrentUser( instructorViewAllResults, currentUserID, evalOwner, dti ) )
                 {
-                    continue;                                                                           // skip items that aren't for the current user
+                    continue;
                 }
 
                 // If there's already a header for a specific instructor question, don't list it twice
@@ -190,31 +186,32 @@ public class CSVReportExporter implements ReportExporter {
 
             // Loop through the responses
             List<Long> responseIDs = tidl.getResponseIdsForAnswers();
-            Map<Long, Map<User, List<EvalAnswer>>> answerMap = new HashMap<Long, Map<User, List<EvalAnswer>>>();
+            Map<Long, Map<User, List<EvalAnswer>>> answerMap = new HashMap<>();
             for( Long responseID : responseIDs )
             {
                 // Course related: section/site
-                List<String> row = new ArrayList<String>();
-                String sectionName = responseAggregator.getCommaSeparatedGroupNames(
-                        new String[] { tidl.getAnswersByResponseId( responseID ).get( 0 ).getResponse().getEvalGroupId() } );
+                List<String> row = new ArrayList<>();
+                String sectionName = "";
+                List<EvalAnswer> answers = tidl.getAnswersByResponseId( responseID );
+                if( answers != null && !answers.isEmpty() )
+                {
+                    sectionName = responseAggregator.getCommaSeparatedGroupNames( new String[] { answers.get( 0 ).getResponse().getEvalGroupId() } );
+                }
                 row.add( sectionName );
 
                 // Course related: response ID
                 row.add( responseID.toString() );
 
                 // Add the response ID to the answer map
-                answerMap.put( responseID, new HashMap<User, List<EvalAnswer>>() );
+                answerMap.put( responseID, new HashMap<>() );
 
                 // Loop through the DTIs
                 for( DataTemplateItem dti : dtiList )
                 {
-                    if( !instructorViewAllResults                                                       // If the eval is so configured,
-                          && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
-                          && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
-                          && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                          && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId ) )
+                    // Skip items that aren't for the current user
+                    if( isItemNotForCurrentUser( instructorViewAllResults, currentUserID, evalOwner, dti ) )
                     {
-                        continue;                                                                       // skip items that aren't for the current user
+                        continue;
                     }
 
                     // If it's an instructor related item...
@@ -224,7 +221,7 @@ public class CSVReportExporter implements ReportExporter {
                         // If the answer is NOT null (it would be null for an instructor from a different section than the evaluator)
                         if( answer != null )
                         {
-                            User instructor = null;
+                            User instructor;
                             try { instructor = UserDirectoryService.getUser( answer.getAssociatedId() ); }
                             catch( UserNotDefinedException ex ) { continue; }
 
@@ -238,7 +235,7 @@ public class CSVReportExporter implements ReportExporter {
                             // create the list and add the answer to it
                             else
                             {
-                                List<EvalAnswer> list = new ArrayList<EvalAnswer>();
+                                List<EvalAnswer> list = new ArrayList<>();
                                 list.add( answer );
                                 answerMap.get( responseID ).put( instructor, list );
                             }
@@ -263,7 +260,7 @@ public class CSVReportExporter implements ReportExporter {
                         // If this DTI uses comments, put in the comment or a blank placeholder in the next column
                         if( dti.usesComments() )
                         {
-                            row.add( EvalUtils.isBlank( answer.getComment() ) ? "" : answer.getComment() );
+                            row.add( StringUtils.trimToEmpty( answer.getComment() ) );
                         }
                     }
                 }
@@ -280,7 +277,7 @@ public class CSVReportExporter implements ReportExporter {
                 {
                     // Loop through the questions for the current instructor and response
                     int answerCounter = 0;
-                    List<String> row = new ArrayList<String>();
+                    List<String> row = new ArrayList<>();
                     for( EvalAnswer answer : answerMap.get( responseID ).get( instructor ) )
                     {
                         // If this is the first answer for this instructor and this response ID, add the qualifying columns
@@ -360,7 +357,24 @@ public class CSVReportExporter implements ReportExporter {
             // Close the ZipOutputStream
             zout.close();
         }
-        catch( IOException ex ) { throw UniversalRuntimeException.accumulate( ex, "Something went wrong..." ); }
+        catch( IOException ex ) { throw UniversalRuntimeException.accumulate( ex, "Could not close the ZipOutputStream" ); }
+    }
+
+    /**
+     * Determine if the current DataTemplateItem should be included in the report (for the current user)
+     * @param instructorViewAllResults
+     * @param currentUserID
+     * @param evalOwner
+     * @param dti
+     * @return true if the item is for the current user; false otherwise
+     */
+    public boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
+    {
+        return !instructorViewAllResults                                                       // If the eval is so configured,
+                && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
+                && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
+                && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
+                && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId );
     }
 
     /* (non-Javadoc)
@@ -403,9 +417,9 @@ public class CSVReportExporter implements ReportExporter {
             List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);
 
             // 3 use DTIs to make the headers
-            List<String> questionCatRow = new ArrayList<String>();
-            List<String> questionTypeRow = new ArrayList<String>();
-            List<String> questionTextRow = new ArrayList<String>();
+            List<String> questionCatRow = new ArrayList<>();
+            List<String> questionTypeRow = new ArrayList<>();
+            List<String> questionTextRow = new ArrayList<>();
             for (DataTemplateItem dti : dtiList) {
 
                 if (!instructorViewAllResults // If the eval is so configured,
@@ -455,7 +469,7 @@ public class CSVReportExporter implements ReportExporter {
             // 5) loop over response ids
             for (Long responseId : responseIds) {
                 // 6) loop over DTIs
-                List<String> nextResponseRow = new ArrayList<String>();
+                List<String> nextResponseRow = new ArrayList<>();
                 for (DataTemplateItem dti : dtiList) {
 
                     if (!instructorViewAllResults // If the eval is so configured,
@@ -472,7 +486,7 @@ public class CSVReportExporter implements ReportExporter {
                         nextResponseRow.add(responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
                         if (dti.usesComments()) {
                             // put comment in the next column
-                            nextResponseRow.add(EvalUtils.isBlank(answer.getComment()) ? "" : answer.getComment());
+                            nextResponseRow.add(StringUtils.trimToEmpty(answer.getComment()));
                         }
                     } else {
                         nextResponseRow.add("");
@@ -483,20 +497,6 @@ public class CSVReportExporter implements ReportExporter {
                 }
                 writer.writeNext(nextResponseRow.toArray(new String[] {}));
             }
-
-            // convert the top row to an array
-            /*
-             * String[] topRowArray = new String[responses.topRow.size()]; for (int i = 0; i <
-             * responses.topRow.size(); i++) { String questionString =
-             * commonLogic.cleanupUserStrings(responses.topRow.get(i)); topRowArray[i] = (String)
-             * questionString; } //write the top row to CSVWriter object writer.writeNext(topRowArray);
-             * 
-             * //for each response for (int i = 0; i < responses.numOfResponses; i++) { List currRow =
-             * (List) responses.responseRows.get(i); //convert the current response to an array String[]
-             * currRowArray = new String[currRow.size()]; for (int j = 0; j < currRow.size(); j++) {
-             * currRowArray[j] = (String) currRow.get(j); } //writer the current response to CSVWriter
-             * object writer.writeNext(currRowArray); }
-             */
 
             try {
                 writer.close();

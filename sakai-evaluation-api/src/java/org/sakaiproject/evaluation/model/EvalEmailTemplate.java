@@ -62,6 +62,10 @@ public class EvalEmailTemplate implements java.io.Serializable {
 
     /** 
      * minimal constructor 
+     * @param owner
+     * @param type
+     * @param subject
+     * @param message
      */
     public EvalEmailTemplate(String owner, String type, String subject, String message) {
         this(owner, type, subject, message, null);
@@ -69,6 +73,11 @@ public class EvalEmailTemplate implements java.io.Serializable {
 
     /** 
      * full constructor 
+     * @param owner
+     * @param message
+     * @param type
+     * @param subject
+     * @param defaultType
      */
     public EvalEmailTemplate(String owner, String type, String subject, String message, String defaultType) {
         this.lastModified = new Date();

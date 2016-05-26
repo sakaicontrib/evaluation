@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -78,13 +77,13 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class ReportsViewingProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 
-    private static Log log = LogFactory.getLog(ReportsViewingProducer.class);
+    private static final Log LOG = LogFactory.getLog(ReportsViewingProducer.class);
 
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
     private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
     private static final String VIEWMODE_SELECTITEMS = "viewmode_selectitems";
 
-    private static boolean newReportStyleDefault = ServerConfigurationService.getBoolean( "evalsys.report.new.style.default", false );
+    private static final boolean NEW_REPORT_STYLE_DEFAULT = ServerConfigurationService.getBoolean( "evalsys.report.new.style.default", false );
 
     public static final String VIEW_ID = "report_view";
     public String getViewID() {
@@ -104,11 +103,6 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
-    }
-
-    private EvalAuthoringService authoringService;
-    public void setAuthoringService(EvalAuthoringService authoringService) {
-        this.authoringService = authoringService;
     }
 
     private EvalSettings evalSettings;
@@ -248,7 +242,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
                 // New report style toggle, intialize with default from sakai.properties
                 UIBranchContainer newReportStyle = UIBranchContainer.make( tofill, "newReportStyleBranch:" );
-                UIBoundBoolean.make( newReportStyle, "newReportStyle", newReportStyleDefault );
+                UIBoundBoolean.make( newReportStyle, "newReportStyle", NEW_REPORT_STYLE_DEFAULT );
 
                 // The Groups we are viewing
                 UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
@@ -357,7 +351,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             UIVerbatim.make(scaled, "itemText", templateItem.getItem().getItemText());
             UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount});
 
-            int naCount = 0;
+            int naCount;
             if (! VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
                 // if we are in essay view mode then do not show the scale or the answers counts
                 EvalScale scale = templateItem.getItem().getScale();
@@ -464,7 +458,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             UIVerbatim.make(textual, "itemText", templateItem.getItem().getItemText());
 
         } else {
-            log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
+            LOG.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
         }
     }
 
@@ -500,7 +494,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     private boolean renderAnyBasedOnOptions(List<EvalTemplateItem> templateItems, EvalUser associatedUser, String owner, Boolean instructorViewAllResults) {
         //TODO check for course item types.
         String currentUserId = commonLogic.getCurrentUserId();
-        log.debug("ViewAll: "+instructorViewAllResults+", Current user: "+currentUserId+", Item user: "+associatedUser.userId+", Owner: "+owner);
+        LOG.debug("ViewAll: "+instructorViewAllResults+", Current user: "+currentUserId+", Item user: "+associatedUser.userId+", Owner: "+owner);
                 
         if (!"invalid:null".equals(associatedUser.userId)   // if this is a instructor question
           && !commonLogic.isUserAdmin(currentUserId)   // and currentUser is not admin
@@ -589,20 +583,20 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         form.parameters.add( new UIELBinding( actionBean + "templateID", templateId ) );
         form.parameters.add( new UIELBinding( actionBean + "evalID", evaluation.getId() ) );
         form.parameters.add( new UIELBinding( actionBean + "groupIDs", reportViewParams.groupIds ) );
-        form.parameters.add( new UIELBinding( actionBean + "newReportStyle", newReportStyleDefault ) );
+        form.parameters.add( new UIELBinding( actionBean + "newReportStyle", NEW_REPORT_STYLE_DEFAULT ) );
 
         // New report style - xls export button and parameters
         Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT); 
-        if( allowXLSExport != null && allowXLSExport == true )
+        if( Boolean.TRUE.equals( allowXLSExport ) )
         {
             UICommand xlsButton = UICommand.make( form, EvalEvaluationService.XLS_RESULTS_REPORT, UIMessage.make("viewreport.view.xls"), actionBean + "processReport" );
             xlsButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.XLS_RESULTS_REPORT ) );
-            xlsButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + ".xls" ) );
+            xlsButton.parameters.add( new UIELBinding( actionBean + "fileName", evaltitle + ".xlsx" ) );
         }
 
         // New report style - csv export button and parameters
         Boolean allowCSVExport = (Boolean) evalSettings.get( EvalSettings.ENABLE_CSV_REPORT_EXPORT );
-        if( allowCSVExport != null && allowCSVExport == true ) 
+        if( Boolean.TRUE.equals( allowCSVExport ) )
         {
             UICommand csvButton = UICommand.make( form, EvalEvaluationService.CSV_RESULTS_REPORT, UIMessage.make("viewreport.view.csv"), actionBean + "processReport" );
             csvButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.CSV_RESULTS_REPORT ) );
@@ -611,7 +605,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         
         // New report style - pdf export button and parameters
         Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
-        if( allowPDFExport != null && allowPDFExport == true )
+        if( Boolean.TRUE.equals( allowPDFExport ) )
         {
             UICommand pdfButton = UICommand.make( form, EvalEvaluationService.PDF_RESULTS_REPORT, UIMessage.make("viewreport.view.pdf"), actionBean + "processReport" );
             pdfButton.parameters.add( new UIELBinding( actionBean + "viewID", EvalEvaluationService.PDF_RESULTS_REPORT ) );
@@ -619,7 +613,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
 
 			List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);
             evaluatees.addAll(evaluationService.getParticipantsForEval(evaluation.getId(), null, null, EvalAssignUser.TYPE_ASSISTANT, null, null, null));
-            List<String> listedEvaluatees = new ArrayList<String>();
+            List<String> listedEvaluatees = new ArrayList<>();
 
 			for (int i = 0; i < evaluatees.size(); i++) {
 				EvalAssignUser evaluatee = evaluatees.get(i);
@@ -638,7 +632,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
         // FIXME should this be protected with an option?
         // New report style - csv eval takers export button and parameters
         Boolean allowListOfEvalTakers = (Boolean) evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT);
-        if( allowListOfEvalTakers != null && allowListOfEvalTakers == true )
+        if( Boolean.TRUE.equals( allowListOfEvalTakers ) )
         {
             UICommand csvTakersButton = UICommand.make( form, EvalEvaluationService.CSV_TAKERS_REPORT, UIMessage.make("viewreport.view.listofevaluationtakers"), 
                     actionBean + "processReport" );

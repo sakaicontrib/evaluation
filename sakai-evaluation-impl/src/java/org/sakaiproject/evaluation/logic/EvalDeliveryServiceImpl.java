@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +50,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
-    private static Log log = LogFactory.getLog(EvalDeliveryServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalDeliveryServiceImpl.class);
 
     // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
     protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
@@ -92,14 +93,14 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
     // INIT method
     public void init() {
-        log.debug("Init");
+        LOG.debug("Init");
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, java.lang.String)
      */
     public void saveResponse(EvalResponse response, String userId) {
-        log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
+        LOG.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
 
         // set the date modified
         response.setLastModified(new Date());
@@ -127,7 +128,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
             // check to make sure answers are valid for this evaluation
             if (response.getAnswers() == null) {
-                response.setAnswers( new HashSet<EvalAnswer>(0) );
+                response.setAnswers( new HashSet<>(0) );
             } else {
                 // cleanup the answers before saving them, this removes empty answers and may end up removing all answers
                 // strip out answers with no value set
@@ -172,7 +173,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             // save everything in one transaction
 
             // response has to be saved first
-            Set<EvalResponse> responseSet = new HashSet<EvalResponse>();
+            Set<EvalResponse> responseSet = new HashSet<>();
             responseSet.add(response);
 
             Set<EvalAnswer> answersSet = response.getAnswers();
@@ -181,7 +182,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 dao.saveMixedSet(new Set[] {responseSet, answersSet});
             } catch (Exception e) {
                 // failed to save so we should assume for now this is caused by the darn unique constraint
-                log.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
+                LOG.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
                         + evaluationId + ") in this evalGroupId (" + evalGroupId + "): " + e.getMessage());
                 // this will produce a nicer message
                 throw new ResponseSaveException("User (" + userId + ") cannot save response for this evaluation (" + evaluationId
@@ -193,7 +194,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 /* the response is complete (submission of an evaluation) 
                  * and not just creating the empty response so lock related evaluation
                  */
-                log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
+                LOG.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
                 EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
                 dao.lockEvaluation(evaluation, true);
                 completeMessage = ", response is complete";
@@ -207,15 +208,15 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             
             //send an confirmation email to the responder 
             try {
-            	if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL)).booleanValue()) {
+            	if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL))) {
                 	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
                   }
             }catch(Exception e){
-            	log.debug("Unable to send the confirmation email to user: " + userId);
+            	LOG.debug("Unable to send the confirmation email to user: " + userId);
             }
             
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
-            log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
+            LOG.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
                     "evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +
                     " with " + answerCount + " answers" + completeMessage);
             return;
@@ -230,7 +231,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getResponseById(java.lang.Long)
      */
     public EvalResponse getResponseById(Long responseId) {
-        log.debug("responseId: " + responseId);
+        LOG.debug("responseId: " + responseId);
         // get the response by passing in id
         EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
         return response;
@@ -269,7 +270,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     }
 
     public List<EvalResponse> getEvaluationResponsesForUser(String userId, Long[] evaluationIds, Boolean completed) {
-        log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
+        LOG.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
 
         if (evaluationIds.length <= 0) {
             throw new IllegalArgumentException("evaluationIds cannot be empty");
@@ -296,7 +297,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     }
 
     public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
-        log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
+        LOG.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -334,7 +335,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvalResponseIds(java.lang.Long, java.lang.String[], java.lang.Boolean)
      */
     public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
-        log.debug("evaluationId: " + evaluationId);
+        LOG.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -347,7 +348,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvaluationResponses(java.lang.Long, java.lang.String[], java.lang.Boolean)
      */
     public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
-        log.debug("evaluationId: " + evaluationId);
+        LOG.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -371,7 +372,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getAnswersForEval(java.lang.Long, java.lang.String[], java.lang.Long[])
      */
     public List<EvalAnswer> getAnswersForEval(Long evaluationId, String[] evalGroupIds, Long[] templateItemIds) {
-        log.debug("evaluationId: " + evaluationId);
+        LOG.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -393,7 +394,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     // PERMISSIONS
 
     public boolean canModifyResponse(String userId, Long responseId) {
-        log.debug("userId: " + userId + ", responseId: " + responseId);
+        LOG.debug("userId: " + userId + ", responseId: " + responseId);
         // get the response by id
         EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
         if (response == null) {
@@ -404,7 +405,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         try {
             return checkUserModifyResponse(userId, response);
         } catch (RuntimeException e) {
-            log.info(e.getMessage());
+            LOG.info(e.getMessage());
         }
         return false;
     }
@@ -419,7 +420,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @return true if they do, exception otherwise
      */
     protected boolean checkUserModifyResponse(String userId, EvalResponse response) {
-        log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
+        LOG.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
         String state = EvalUtils.getEvaluationState(response.getEvaluation(), false);
         if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)) {
@@ -461,7 +462,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
         // EVALSYS-618 - handle the special case of instructor/assistant selections
         boolean selectionsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
-        HashMap<String, Set<String>> typeToIdsFilter = new HashMap<String, Set<String>>();
+        HashMap<String, Set<String>> typeToIdsFilter = new HashMap<>();
         if (selectionsEnabled) {
         	// check the selections are valid for the response and handle required items in a special way
             EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
@@ -480,11 +481,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 }
                 // expose the map of selection type => selection Ids so we can filter required items out
                 for (Entry<String, String[]> entry : selections.entrySet()) {
-                    HashSet<String> s = new HashSet<String>();
+                    HashSet<String> s = new HashSet<>();
                     String[] ids = entry.getValue();
-                    for (String id : ids) {
-                        s.add(id);
-                    }
+                    s.addAll( Arrays.asList( ids ) );
                     typeToIdsFilter.put(entry.getKey(), s);
                 }
             } else {
@@ -517,14 +516,14 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
 
         // create the set of answerable items
-        Set<Long> answerableTemplateItemIds = new HashSet<Long>();
-        Set<String> requiredAnswerKeys = new HashSet<String>();
+        Set<Long> answerableTemplateItemIds = new HashSet<>();
+        Set<String> requiredAnswerKeys = new HashSet<>();
         for (DataTemplateItem dti : allDTIs) {
             if (dti.isAnswerable()) {
                 answerableTemplateItemIds.add(dti.templateItem.getId());
             }
             if (checkRequiredAnswers) {
-                boolean required = false;
+                boolean required;
                 if (requireNonBlankAnswerableItemsForEval) {
                     // all items which can be answered must be
                     required = dti.isRequireable();
@@ -557,7 +556,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         // check the validity of all answers (just making sure they are not invalid)
-        Set<String> answeredAnswerKeys = new HashSet<String>();
+        Set<String> answeredAnswerKeys = new HashSet<>();
         for (EvalAnswer answer : response.getAnswers()) {
 
             // check the answer for correctness
@@ -584,7 +583,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 // check that the associated id is filled in for associated items
                 if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getCategory())) {
                     if (answer.getAssociatedId() != null) {
-                        log.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
+                        LOG.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
                                 answer.getAssociatedType(), answer.getAssociatedId()) +") should have the associated id "
                                 + "("+answer.getAssociatedId()+") field null, "
                                 + "for templateItem (" + answer.getTemplateItem().getId() + "), setting associated id and type to null");

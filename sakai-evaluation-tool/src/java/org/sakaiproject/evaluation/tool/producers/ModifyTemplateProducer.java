@@ -80,7 +80,7 @@ public class ModifyTemplateProducer extends EvalCommonProducer implements ViewPa
 
         // local variables used in the render logic
         TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
-        boolean editing = (evalViewParams.templateId == null)? false:true;
+        boolean editing = (evalViewParams.templateId != null);
 
         /*
          * top links here
@@ -100,7 +100,7 @@ public class ModifyTemplateProducer extends EvalCommonProducer implements ViewPa
         UIMessage.make(tofill, "template-title-desc-title", "modifytemplatetitledesc.page.title");
 
         // setup the OTP binding strings
-        String templateOTPBinding = null;
+        String templateOTPBinding;
         if (editing) {
             templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId;
         } else {

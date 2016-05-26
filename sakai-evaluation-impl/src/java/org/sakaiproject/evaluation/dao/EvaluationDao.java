@@ -113,6 +113,8 @@ public interface EvaluationDao extends GeneralGenericDao {
      * @param includeAnonymous if true, only include evaluations authcontrol = anon, 
      * if false, include any evaluations with authcontrol != anon,
      * if null, include all evaluations regardless of authcontrol
+     * @param startResult
+     * @param maxResults
      * @return a List of EvalEvaluation objects sorted by due date, title, and id
      */
     public List<EvalEvaluation> getEvalsUserCanTake(String userId, Boolean activeOnly,
@@ -312,7 +314,6 @@ public interface EvaluationDao extends GeneralGenericDao {
      * be sure to check that responses can be removed (system setting) and that they can be removed for this evaluation and user
      * 
      * @param responseIds the array of ids for {@link EvalResponse} objects to remove
-     * @throws Exception if there is a failure
      */
     public void removeResponses(Long[] responseIds);
 
@@ -384,7 +385,7 @@ public interface EvaluationDao extends GeneralGenericDao {
      * Check if a user has a specified permission/role within an adhoc group
      * 
      * @param userId the internal user id (not username)
-     * @param permission a permission string PERM constant (from this API),
+     * @param permissionConstant a permission string PERM constant (from this API),
      * <b>Note</b>: only take evaluation and be evaluated are supported
      * @param evalGroupId the unique id of an eval group
      * @return true if allowed, false otherwise
@@ -460,7 +461,7 @@ public interface EvaluationDao extends GeneralGenericDao {
      * control the failure so instead we return null as a marker
      * 
      * @param lockId the name of the lock which we are seeking
-     * @param holderId a unique id for the holder of this lock (normally a server id)
+     * @param executerId a unique id for the executer of this lock (normally a server id)
      * @param timePeriod the length of time (in milliseconds) that the lock should be valid for,
      * set this very low for non-repeating processes (the length of time the process should take to run)
      * and the length of the repeat period plus the time to run the process for repeating jobs
@@ -476,7 +477,7 @@ public interface EvaluationDao extends GeneralGenericDao {
      * control the failure so instead we return null as a marker
      * 
      * @param lockId the name of the lock which we are seeking
-     * @param holderId a unique id for the holder of this lock (normally a server id)
+     * @param executerId a unique id for the executer of this lock (normally a server id)
      * @return true if a lock was released, false if not, null if failure
      */
     public Boolean releaseLock(String lockId, String executerId);

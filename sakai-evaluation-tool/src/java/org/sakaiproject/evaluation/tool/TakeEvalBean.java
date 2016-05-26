@@ -37,7 +37,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class TakeEvalBean {
 
-    private static Log log = LogFactory.getLog(TakeEvalBean.class);
+    private static final Log LOG = LogFactory.getLog(TakeEvalBean.class);
 
     public EvalEvaluation eval;
     public String evalGroupId;
@@ -64,9 +64,9 @@ public class TakeEvalBean {
     }
     
     public String saveEvaluationWithoutSubmit() {
-        log.debug("save evaluation without submit");
+        LOG.debug("save evaluation without submit");
         try {
-            Map<String, String[]> selectionOptions = new HashMap<String, String[]>();
+            Map<String, String[]> selectionOptions = new HashMap<>();
             if (selectioninstructorIds != null) {
                 selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, selectioninstructorIds);
                 }
@@ -75,7 +75,7 @@ public class TakeEvalBean {
             }
             responseBeanLocator.saveAll(eval, evalGroupId, startDate, selectionOptions, false);
         } catch (ResponseSaveException e) {
-            String messageKey = "unknown.caps";
+            String messageKey;
             if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
                 messageKey = "takeeval.user.must.answer.all.exception";
             } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {
@@ -95,9 +95,9 @@ public class TakeEvalBean {
     }
 
     public String submitEvaluation() {
-        log.debug("submit evaluation");
+        LOG.debug("submit evaluation");
         try {
-        	Map<String, String[]> selectionOptions = new HashMap<String, String[]>();
+        	Map<String, String[]> selectionOptions = new HashMap<>();
             if (selectioninstructorIds != null) {
                 selectionOptions.put(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, selectioninstructorIds);
                 }
@@ -106,7 +106,7 @@ public class TakeEvalBean {
             }
             responseBeanLocator.saveAll(eval, evalGroupId, startDate, selectionOptions);
         } catch (ResponseSaveException e) {
-            String messageKey = "unknown.caps";
+            String messageKey;
             if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
                 messageKey = "takeeval.user.must.answer.all.exception";
             } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {

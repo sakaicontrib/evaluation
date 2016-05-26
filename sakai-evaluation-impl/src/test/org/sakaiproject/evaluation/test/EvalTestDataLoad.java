@@ -82,8 +82,8 @@ public class EvalTestDataLoad {
     public final static String AUTHZGROUP1B_ID = "authzg-bbbbbbbb";
     public final static String AUTHZGROUP2A_ID = "authzg-cccccccc";
 
-    public final static Set<String> AUTHZGROUPSET1 = new HashSet<String>();
-    public final static Set<String> AUTHZGROUPSET2 = new HashSet<String>();
+    public final static Set<String> AUTHZGROUPSET1 = new HashSet<>();
+    public final static Set<String> AUTHZGROUPSET2 = new HashSet<>();
 
     public final static String SITE1_CONTEXT = "siteC1";
     public final static String SITE1_REF = "/sites/ref-111111";
@@ -110,9 +110,9 @@ public class EvalTestDataLoad {
     public final static Boolean UNLOCKED = Boolean.FALSE;
 
     public final static String ANSWER_TEXT = "text answer";
-    public final static Integer ANSWER_SCALED_ONE = new Integer(1);
-    public final static Integer ANSWER_SCALED_TWO = new Integer(2);
-    public final static Integer ANSWER_SCALED_THREE = new Integer(3);
+    public final static Integer ANSWER_SCALED_ONE = 1;
+    public final static Integer ANSWER_SCALED_TWO = 2;
+    public final static Integer ANSWER_SCALED_THREE = 3;
 
     public final static String EMAIL_MESSAGE = "This is a big long email message";
 
@@ -122,9 +122,9 @@ public class EvalTestDataLoad {
     public final static String INVALID_CONSTANT_STRING = "XXXXXXX_XXXXXXXX";
     public final static int INVALID_CONSTANT_INT = -10;
 
-    public final static Set<?> EMPTY_SET = new HashSet<Object>();
-    public final static List<?> EMPTY_LIST = new ArrayList<Object>();
-    public final static Map<?, ?> EMPTY_MAP = new HashMap<Object, Object>();
+    public final static Set<?> EMPTY_SET = new HashSet<>();
+    public final static List<?> EMPTY_LIST = new ArrayList<>();
+    public final static Map<?, ?> EMPTY_MAP = new HashMap<>();
     public final static String[] EMPTY_STRING_ARRAY = new String[0];
 
     public final static String EVAL_CATEGORY_1 = "category one";
@@ -673,6 +673,7 @@ public class EvalTestDataLoad {
     /**
      * initialize all the objects in this data load pea
      * (this will make sure all the public properties are not null)
+     * @param dao
      */
     public void initializeAndSave(GenericDao dao) {
         String[] options1 = {"Bad", "Average", "Good"};
@@ -741,17 +742,17 @@ public class EvalTestDataLoad {
         item4.setAutoUseTag(AUTO_USE_TAG);
         item5 = new EvalItem(MAINT_USER_ID, "Textual locked", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
-        item5.setDisplayRows( new Integer(2) );
+        item5.setDisplayRows(2);
         item5.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         item5.setLocked(LOCKED);
         item6 = new EvalItem(MAINT_USER_ID, "Textual unlocked", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_TEXT, EXPERT);
-        item6.setDisplayRows( new Integer(3) );
+        item6.setDisplayRows(3);
         item6.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         item6.setLocked(UNLOCKED);
         item7 = new EvalItem(ADMIN_USER_ID, "Textual unlocked", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
-        item7.setDisplayRows( new Integer(4) );
+        item7.setDisplayRows(4);
         item7.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         item7.setLocked(UNLOCKED);
         item8 = new EvalItem(MAINT_USER_ID, "Header unlocked", EvalConstants.SHARING_PRIVATE, 
@@ -766,7 +767,7 @@ public class EvalTestDataLoad {
         item9.setCompulsory(true);
         item10 = new EvalItem(MAINT_USER_ID, "Textual instructor added", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
-        item10.setDisplayRows( new Integer(4) );
+        item10.setDisplayRows(4);
         item10.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         item10.setLocked(UNLOCKED);
         item11 = new EvalItem(MAINT_USER_ID, ITEM_TEXT, EvalConstants.SHARING_PRIVATE, 
@@ -892,93 +893,93 @@ public class EvalTestDataLoad {
 
         // assign items to templates
         templateItem1User = new EvalTemplateItem( USER_ID, templateUser, 
-                item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item1, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, null, null, null);
         templateItem1P = new EvalTemplateItem( MAINT_USER_ID, templatePublic, 
-                item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item1, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, null, null, null);
         templateItem1P.setCompulsory(false);
         templateItem1U = new EvalTemplateItem( MAINT_USER_ID, templateUnused, 
-                item1, new Integer(1), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item1, 1, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, Boolean.TRUE, null, null, null); // compulsory
         templateItem2A = new EvalTemplateItem( ADMIN_USER_ID, templateAdmin, 
-                item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item2, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, false, null, null, null);
         templateItem2A.setAutoUseTag(AUTO_USE_TAG);
         templateItem3A = new EvalTemplateItem( ADMIN_USER_ID, templateAdmin, 
-                item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item3, 2, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, false, false, null, null, null);
         templateItem3U = new EvalTemplateItem( MAINT_USER_ID, templateUnused, 
-                item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item3, 2, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, false, null, null, null);
         templateItem3PU = new EvalTemplateItem( ADMIN_USER_ID, templatePublicUnused, 
-                item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item3, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, false, null, null, null);
         templateItem5A = new EvalTemplateItem( ADMIN_USER_ID, templateAdmin, 
-                item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
-                EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(3),
+                item5, 3, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
+                EvalConstants.HIERARCHY_NODE_ID_NONE, 3,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem5User = new EvalTemplateItem( USER_ID, templateUser, 
-                item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
-                EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(2),
+                item5, 2, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
+                EvalConstants.HIERARCHY_NODE_ID_NONE, 2,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem5U = new EvalTemplateItem( MAINT_USER_ID, templateUnused, 
-                item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
-                EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(3),
+                item5, 3, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, EvalConstants.HIERARCHY_LEVEL_TOP,
+                EvalConstants.HIERARCHY_NODE_ID_NONE, 3,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem6UU = new EvalTemplateItem( USER_ID, templateUserUnused, 
-                item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
-                EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(4),
+                item6, 3, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                EvalConstants.HIERARCHY_NODE_ID_NONE, 4,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem6UU.setAutoUseTag(AUTO_USE_TAG);
         // items block
         templateItem9B = new EvalTemplateItem( ADMIN_USER_ID, templateAdminBlock, 
-                item9, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item9, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, Boolean.TRUE, null, null);
         templateItem2B = new EvalTemplateItem( ADMIN_USER_ID, templateAdminBlock, 
-                item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item2, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, Boolean.FALSE, templateItem9B.getId(), null );
         templateItem3B = new EvalTemplateItem( ADMIN_USER_ID, templateAdminBlock, 
-                item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item3, 2, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, Boolean.FALSE, templateItem9B.getId(), null );
         // added items
         templateItem10AC1 = new EvalTemplateItem( MAINT_USER_ID, templateAdminComplex, 
-                item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR,
-                MAINT_USER_ID, new Integer(2),
+                item10, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR,
+                MAINT_USER_ID, 2,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem10AC2 = new EvalTemplateItem( MAINT_USER_ID, templateAdminComplex, 
-                item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_GROUP,
-                SITE1_REF, new Integer(2),
+                item10, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_GROUP,
+                SITE1_REF, 2,
                 null, Boolean.FALSE, false, false, null, null, null);
         templateItem10AC3 = new EvalTemplateItem( MAINT_USER_ID, templateAdminComplex, 
-                item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_GROUP,
-                SITE2_REF, new Integer(2),
+                item10, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_GROUP,
+                SITE2_REF, 2,
                 null, Boolean.FALSE, false, false, null, null, null);
 
         templateItem1Eid = new EvalTemplateItem( ADMIN_USER_ID, templateEid, 
-                item1Eid, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item1Eid, 1, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, null, null, null);
         templateItem1Eid.setEid("test-templateitem-1");
 
         templateItem2Eid = new EvalTemplateItem( ADMIN_USER_ID, templateEid, 
-                item2Eid, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item2Eid, 2, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, null, null, null);
         templateItem2Eid.setEid("test-templateitem-2");
 
         templateItem3Eid = new EvalTemplateItem( ADMIN_USER_ID, templateEid, 
-                item3Eid, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
+                item3Eid, 3, EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP,
                 EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, false, null, null, null);
         templateItem3Eid.setEid("test-templateitem-3");
@@ -1013,41 +1014,41 @@ public class EvalTestDataLoad {
 
 
         // associate the templates with the link
-        templateAdmin.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateAdmin.setTemplateItems( new HashSet<>() );
         templateAdmin.getTemplateItems().add( templateItem2A );
         templateAdmin.getTemplateItems().add( templateItem3A );
         templateAdmin.getTemplateItems().add( templateItem5A );
 
-        templatePublicUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templatePublicUnused.setTemplateItems( new HashSet<>() );
         templatePublicUnused.getTemplateItems().add( templateItem3PU );
 
-        templatePublic.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templatePublic.setTemplateItems( new HashSet<>() );
         templatePublic.getTemplateItems().add( templateItem1P );
 
-        templateUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateUnused.setTemplateItems( new HashSet<>() );
         templateUnused.getTemplateItems().add( templateItem1U );
         templateUnused.getTemplateItems().add( templateItem3U );
         templateUnused.getTemplateItems().add( templateItem5U );
 
-        templateUser.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateUser.setTemplateItems( new HashSet<>() );
         templateUser.getTemplateItems().add( templateItem1User );
         templateUser.getTemplateItems().add( templateItem5User );
 
-        templateUserUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateUserUnused.setTemplateItems( new HashSet<>() );
         templateUserUnused.getTemplateItems().add( templateItem6UU );
 
-        templateAdminBlock.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateAdminBlock.setTemplateItems( new HashSet<>() );
         templateAdminBlock.getTemplateItems().add( templateItem9B );
         templateAdminBlock.getTemplateItems().add( templateItem2B );
         templateAdminBlock.getTemplateItems().add( templateItem3B );
 
-        templateAdminComplex.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateAdminComplex.setTemplateItems( new HashSet<>() );
         templateAdminComplex.getTemplateItems().add( templateItem10AC1 );
         templateAdminComplex.getTemplateItems().add( templateItem10AC2 );
         templateAdminComplex.getTemplateItems().add( templateItem10AC3 );
 
 
-        templateEid.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        templateEid.setTemplateItems( new HashSet<>() );
         templateEid.getTemplateItems().add( templateItem1Eid );
         templateEid.getTemplateItems().add( templateItem2Eid );
         templateEid.getTemplateItems().add( templateItem3Eid);
@@ -1067,47 +1068,47 @@ public class EvalTestDataLoad {
 
 
         // associate the items with the link
-        item1.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item1.setTemplateItems( new HashSet<>() );
         item1.getTemplateItems().add( templateItem1P );
         item1.getTemplateItems().add( templateItem1User );
         item1.getTemplateItems().add( templateItem1U );
 
-        item2.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item2.setTemplateItems( new HashSet<>() );
         item2.getTemplateItems().add( templateItem2A );
         item2.getTemplateItems().add( templateItem2B );
 
-        item3.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item3.setTemplateItems( new HashSet<>() );
         item3.getTemplateItems().add( templateItem3A );
         item3.getTemplateItems().add( templateItem3PU );
         item3.getTemplateItems().add( templateItem3U );
         item3.getTemplateItems().add( templateItem3B );
 
-        item4.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item4.setTemplateItems( new HashSet<>() );
 
-        item5.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item5.setTemplateItems( new HashSet<>() );
         item5.getTemplateItems().add( templateItem5A );
         item5.getTemplateItems().add( templateItem5U );
         item5.getTemplateItems().add( templateItem5User );
 
-        item6.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item6.setTemplateItems( new HashSet<>() );
         item6.getTemplateItems().add( templateItem6UU );
 
-        item9.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item9.setTemplateItems( new HashSet<>() );
         item9.getTemplateItems().add( templateItem9B );
 
-        item10.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item10.setTemplateItems( new HashSet<>() );
         item10.getTemplateItems().add( templateItem10AC1 );
         item10.getTemplateItems().add( templateItem10AC2 );
         item10.getTemplateItems().add( templateItem10AC3 );
 
 
-        item1Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item1Eid.setTemplateItems( new HashSet<>() );
         item1Eid.getTemplateItems().add( templateItem1Eid );
 
-        item2Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item2Eid.setTemplateItems( new HashSet<>() );
         item2Eid.getTemplateItems().add( templateItem2Eid );
 
-        item3Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
+        item3Eid.setTemplateItems( new HashSet<>() );
         item3Eid.getTemplateItems().add( templateItem3Eid);
 
         // reSAVE items
@@ -1153,31 +1154,31 @@ public class EvalTestDataLoad {
         // init evaluations
         evaluationPartial = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval partial", null, 
                 tomorrow, null, null, null, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PRIVATE, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PRIVATE, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
         // Evaluation not started yet (starts tomorrow)
         evaluationNew = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval new", null, 
                 tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 1, null, null, null, null,
                 templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
         // Evaluation not started yet (starts tomorrow), ADMIN
         evaluationNewAdmin = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval admin", null, 
                 tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture,  false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 1, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_1, null);
         // Evaluation Active (ends today), viewable tomorrow
         evaluationActive = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval active", null, 
                 yesterday, today, today, tomorrow, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), EVAL_FROM_EMAIL, null, null, null,
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 1, EVAL_FROM_EMAIL, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
         //Evaluation Provided (has eid set, not null)
         evaluationProvided = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval provided", null, 
                 yesterday, today, today, tomorrow, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, 1, null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
         evaluationProvided.setEid("test-eid");
@@ -1185,7 +1186,7 @@ public class EvalTestDataLoad {
         // Evaluation Active (open until tomorrow), immediate viewing
         evaluationActiveUntaken = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval active not taken", null, 
                 yesterday, tomorrow, null, null, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), EVAL_FROM_EMAIL, null, null, null,
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, 1, EVAL_FROM_EMAIL, null, null, null,
                 templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1, null);
         // evaluation in the DUE state
@@ -1197,25 +1198,25 @@ public class EvalTestDataLoad {
         // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
         evaluationClosed = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval closed", null, 
                 threeDaysAgo, yesterday, yesterday, tomorrow, true, null, true, null, 
-                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_2, null);
         // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
         evaluationClosedUntaken = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval closed untaken", null, 
                 threeDaysAgo, yesterday, yesterday, tomorrow, true, null, true, null, 
-                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
         // evaluation complete (20 days ago) and viewable (15 ago), also viewable to instructors but not students (til tomorrow)
         evaluationViewable = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval viewable", null, 
                 twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, true, tomorrow, true, null, 
-                EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
         evaluationDeleted = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval deleted", null, 
                 fifteenDaysAgo, fourDaysAgo, null, null, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
 
@@ -1229,7 +1230,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_simpleAssignments_allRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1243,7 +1244,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_simpleAssignments_notAllRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1255,7 +1256,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_noAssignments_allRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1267,7 +1268,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_noAssignments_notAllRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1281,7 +1282,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_allRoleAssignments_allRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1295,7 +1296,7 @@ public class EvalTestDataLoad {
                 EvalTestDataLoad.ADMIN_USER_ID_2, "evaluation_allRoleAssignments_notAllRolesParticipate", null, 
                 tomorrow, threeDaysFuture, null, null, false, null, false, null, 
                 EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE,
                 EvalTestDataLoad.LOCKED,
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
@@ -1307,31 +1308,31 @@ public class EvalTestDataLoad {
                 threeDaysAgo, yesterday, 
                 tomorrow, tomorrow, false, null,
                 false, null, 
-                EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
 
         evaluationActive_viewIgnoreDates = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EVALSYS_1007_MAINT_USER_ID_01, "evaluationActive_viewIgnoreDates", null, 
                 yesterday, tomorrow, tomorrow, tomorrow, true, tomorrow, true, tomorrow, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
         evaluationDue_viewIgnoreDates = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EVALSYS_1007_MAINT_USER_ID_01, "evaluationDue_viewIgnoreDates", null, 
                 threeDaysAgo, yesterday, tomorrow, tomorrow, true, tomorrow, true, tomorrow, 
-                EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
         evaluationClosed_viewIgnoreDates = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EVALSYS_1007_MAINT_USER_ID_01, "evaluationClosed_viewIgnoreDates", null, 
                 fourDaysAgo, threeDaysAgo, yesterday, tomorrow, true, tomorrow, true, tomorrow, 
-                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 evalsys_1007_templateUser01, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
         evaluationPartial_noAuthNoGroups = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID_3, "evaluationInque_noAuthNoGroups", null, 
                 tomorrow, fourDaysFuture, null, null, false, null, false, null, 
-                EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PUBLIC, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 templateUser_4, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE, null, null);
 
@@ -1535,29 +1536,29 @@ public class EvalTestDataLoad {
 
 
         // associate the answers
-        Set<EvalAnswer> answers = new HashSet<EvalAnswer>();
+        Set<EvalAnswer> answers = new HashSet<>();
         answers.add(answer1_1P);
         response1.setAnswers(answers);
 
-        answers = new HashSet<EvalAnswer>();
+        answers = new HashSet<>();
         answers.add(answer2_2A);
         answers.add(answer2_5A);
         response2.setAnswers(answers);
 
-        answers = new HashSet<EvalAnswer>();
+        answers = new HashSet<>();
         answers.add(answer3_2A);
         response3.setAnswers(answers);
 
-        answers = new HashSet<EvalAnswer>();
+        answers = new HashSet<>();
         answers.add(answer4_1User);
         answers.add(answer4_5User);
         response4.setAnswers(answers);
 
-        answers = new HashSet<EvalAnswer>();
+        answers = new HashSet<>();
         answers.add(answer5_5User);
         response5.setAnswers(answers);
 
-        answers = new HashSet<EvalAnswer>();
+        answers = new HashSet<>();
         response6.setAnswers(answers); // left all answers blank
 
         // reSAVE responses
@@ -1572,7 +1573,7 @@ public class EvalTestDataLoad {
         // catgories and objectives
         categoryA = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY, "A",
                 "description", Boolean.TRUE, null, null);
-        Set<EvalItem> itemsB = new HashSet<EvalItem>();
+        Set<EvalItem> itemsB = new HashSet<>();
         itemsB.add( item1 );
         categoryB = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY, "B",
                 "description", Boolean.TRUE, null, itemsB);
@@ -1587,7 +1588,7 @@ public class EvalTestDataLoad {
         dao.save(categoryD);
 
 
-        Set<EvalItem> itemsA1 = new HashSet<EvalItem>();
+        Set<EvalItem> itemsA1 = new HashSet<>();
         itemsA1.add( item2 );
         itemsA1.add( item6 );
         objectiveA1 = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, "A1",
@@ -1627,8 +1628,8 @@ public class EvalTestDataLoad {
     }
 
     private int makeUserAssigns(GenericDao dao, EvalAssignGroup assignGroup) {
-        List<String> userIds = new ArrayList<String>();
-        List<String> userTypes = new ArrayList<String>();
+        List<String> userIds = new ArrayList<>();
+        List<String> userTypes = new ArrayList<>();
         // make the list of users and types from the perms
         Set<String> instIds = externalLogic.getUserIdsForEvalGroup(assignGroup.getEvalGroupId(), EvalConstants.PERM_BE_EVALUATED);
         for (String userId : instIds) {
@@ -1668,20 +1669,16 @@ public class EvalTestDataLoad {
      * @return a list of IDs (Long)
      */
     public static List<Long> makeIdList(Collection<?> c) {
-        List<Long> l = new ArrayList<Long>();
+        List<Long> l = new ArrayList<>();
         for (Iterator<?> iter = c.iterator(); iter.hasNext();) {
             Serializable element = (Serializable) iter.next();
-            Long id = null;
+            Long id;
             try {
                 Class<?> elementClass = element.getClass();
                 Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
                 id = (Long) getIdMethod.invoke(element, (Object[])null);
                 l.add(id);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Failed to make id list from collection",e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("Failed to make id list from collection",e);
-            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Failed to make id list from collection",e);
             }
         }
@@ -1740,15 +1737,7 @@ public class EvalTestDataLoad {
                     id = new Long(idCounter++);
                     setIdMethod.invoke(object, new Object[] { id });
                 }
-            } catch (SecurityException e) {
-                throw new RuntimeException("Failed to get id methods from object",e);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Failed to get id methods from object",e);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Failed to get id methods from object",e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("Failed to get id methods from object",e);
-            } catch (InvocationTargetException e) {
+            } catch (SecurityException | IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Failed to get id methods from object",e);
             }
         }

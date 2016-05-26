@@ -34,17 +34,15 @@ public class DateResolver implements BeanLocator {
    }
 
    public Object locateBean(final String name) {
-      return new BeanResolver () {
-
-         public String resolveBean(Object date) {
-            DateFormat df = null;
-            if (name.equals("time")) {
-               df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, localeGetter.get());
-            } else {
-               df = DateFormat.getDateInstance(DateFormat.LONG, localeGetter.get());
-            }
-            return df.format(date);
-         }
+      return (BeanResolver) (Object date) ->
+      {
+          DateFormat df;
+          if (name.equals("time")) {
+              df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, localeGetter.get());
+          } else {
+              df = DateFormat.getDateInstance(DateFormat.LONG, localeGetter.get());
+          }
+          return df.format(date);
       };
    }
 

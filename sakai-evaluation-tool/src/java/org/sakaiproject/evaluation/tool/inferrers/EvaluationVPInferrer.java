@@ -44,7 +44,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
-    private static Log log = LogFactory.getLog(EvaluationVPInferrer.class);
+    private static final Log LOG = LogFactory.getLog(EvaluationVPInferrer.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -63,7 +63,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
 
     public void init() {
-        log.debug("VP init");
+        LOG.debug("VP init");
     }
 
     /* (non-Javadoc)
@@ -84,11 +84,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         final String ref = reference;
         final ViewParameters[] togo = new ViewParameters[1];
         // this is needed to provide transactional protection
-        wrapperInvoker.invokeRunnable( new Runnable() {
-            public void run() {
-                togo [0] = inferDefaultViewParametersImpl(ref);
-            }
-        });
+        wrapperInvoker.invokeRunnable(() -> { togo [0] = inferDefaultViewParametersImpl(ref); } );
         return togo[0];
     }
 
@@ -115,7 +111,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
             // anonymous evaluation URLs ALWAYS go to the take_eval page
-            log.debug("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
+            LOG.debug("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
             EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
             vp.external = true;
             return vp;
@@ -123,7 +119,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
             boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-            log.debug("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
+            LOG.debug("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
 
             // eval has not started
             if ( EvalUtils.checkStateBefore(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
@@ -165,7 +161,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // check perms if not anonymous
                 // switched to take check first
                 if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
-                    log.debug("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
+                    LOG.debug("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
                     EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                     vp.external = true;
                     return vp;

@@ -82,7 +82,7 @@ public class LocalTemplateLogic {
     */
    public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
       if (templateId == null) {
-         return new ArrayList<EvalTemplateItem>();
+         return new ArrayList<>();
       } else {
          return authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
       }
@@ -98,7 +98,7 @@ public class LocalTemplateLogic {
       EvalTemplateItem newTemplateItem = new EvalTemplateItem( commonLogic.getCurrentUserId(), 
             newTemplate(), newItem(), null, EvalToolConstants.ITEM_CATEGORY_VALUES[0], 
             level, nodeId);
-      newTemplateItem.setUsesNA(new Boolean(false));
+      newTemplateItem.setUsesNA(false);
       return newTemplateItem;
    }
 
@@ -216,7 +216,7 @@ public class LocalTemplateLogic {
       EvalScale currScale = new EvalScale(commonLogic.getCurrentUserId(), 
             null, EvalConstants.SCALE_MODE_SCALE, 
             EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
-      currScale.setOptions((String[]) arrayCopy(EvalToolConstants.defaultInitialScaleValues));
+      currScale.setOptions((String[]) arrayCopy(EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES));
       currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }

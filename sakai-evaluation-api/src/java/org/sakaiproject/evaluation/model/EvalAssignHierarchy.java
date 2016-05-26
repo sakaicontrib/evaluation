@@ -85,6 +85,9 @@ public class EvalAssignHierarchy implements java.io.Serializable {
      * BELOW min constructor<br/>
      * Must use a default setting method to set the Booleans setDefaults(EvalEvaluation eval,
      * EvalAssignHierarchy eah)
+     * @param owner
+     * @param nodeId
+     * @param evaluation
      */
     public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation) {
         this(owner, nodeId, evaluation, null, null, null, null, null);
@@ -98,6 +101,15 @@ public class EvalAssignHierarchy implements java.io.Serializable {
 
     /** 
      * full constructor
+     * @param owner
+     * @param nodeId
+     * @param evaluation
+     * @param instructorApproval
+     * @param instructorsViewResults
+     * @param instructorsViewAllResults
+     * @param studentsViewResults
+     * @param instructorSelection
+     * @param assistantSelection
      */
     public EvalAssignHierarchy(String owner, String nodeId, EvalEvaluation evaluation,
             Boolean instructorApproval, Boolean instructorsViewResults, Boolean instructorsViewAllResults, Boolean studentsViewResults, 

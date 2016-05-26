@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,8 +28,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +67,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupService {
 
-    private static Log log = LogFactory.getLog(EvalEvaluationSetupServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalEvaluationSetupServiceImpl.class);
 
     private final String EVENT_EVAL_CREATE = "eval.evaluation.created";
     private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
@@ -135,25 +134,25 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
     // INIT method
     public void init() {
-        log.debug("INIT");
+        LOG.debug("INIT");
         // update evaluation user assignments for evals with none yet (migration code)
         
         Boolean syncUnassignedGroupsOnServerStartup = (Boolean) settings.get(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP);
-        log.debug("syncUnassignedGroupsOnServerStartup == " + syncUnassignedGroupsOnServerStartup);
+        LOG.debug("syncUnassignedGroupsOnServerStartup == " + syncUnassignedGroupsOnServerStartup);
         if(syncUnassignedGroupsOnServerStartup == null) {
         	// use default, true
-        	syncUnassignedGroupsOnServerStartup = new Boolean(true);
+        	syncUnassignedGroupsOnServerStartup = true;
         }
-        if(syncUnassignedGroupsOnServerStartup.booleanValue()) {
+        if(syncUnassignedGroupsOnServerStartup) {
             List<EvalEvaluation> evals = dao.getEvalsWithoutUserAssignments();
             if (! evals.isEmpty()) {
-                log.info("Creating user assignments for "+evals.size()+" evals with none yet (auto-migration), may take awhile for a large number of evaluations");
+                LOG.info("Creating user assignments for "+evals.size()+" evals with none yet (auto-migration), may take awhile for a large number of evaluations");
                 int counter = 0;
                 for (EvalEvaluation evaluation : evals) {
                     List<Long> l = synchronizeUserAssignmentsForced(evaluation, null, false);
                     counter += l.size();
                 }
-                log.info("Synchronized "+counter+" user assignments for "+evals.size()+" evals (auto-migration)");
+                LOG.info("Synchronized "+counter+" user assignments for "+evals.size()+" evals (auto-migration)");
             }
         }
 
@@ -196,7 +195,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             })
                     );
                     if (evals.size() > 0) {
-                        log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
+                        LOG.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
                         // only do partial purge if constant > 0
                         long partialPurgeTime = -1;
                         if (EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS > 0) {
@@ -213,7 +212,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                                     && partialPurgeTime > -1) {
                                 // purge out partial evaluations older than the partial purge time
                                 if (evaluation.getLastModified().getTime() < partialPurgeTime) {
-                                    log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
+                                    LOG.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
                                     deleteEvaluation(evaluation.getId(), commonLogic.getAdminUserId());
                                     continue;
                                 }
@@ -221,14 +220,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             // fix up the state if needed
                             String currentEvalState = evaluation.getState();
                             if (! currentEvalState.equals(evalState) ) {
-                                evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
+                                evaluationService.returnAndFixEvalState(evaluation, true); // update the state
                                 count++;
                                 // trigger the jobs logic to look at this since the state changed
                                 evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
                             }
                         }
                         if (count > 0) {
-                            log.info("Updated the state of "+count+" evaluations...");
+                            LOG.info("Updated the state of "+count+" evaluations...");
                         }
                     }
 
@@ -240,7 +239,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         // now we need to obtain a lock and then run the task if we have it
         Timer timer = new Timer(true);
-        log.info("Initializing the repeating timer task for evaluation, first run in " + (startDelay/1000) + " seconds " +
+        LOG.info("Initializing the repeating timer task for evaluation, first run in " + (startDelay/1000) + " seconds " +
                 "and subsequent runs will happen every " + (repeatInterval/1000) + " seconds after that");
         timer.schedule(runStateUpdateTask, startDelay, repeatInterval);
     }
@@ -249,7 +248,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     // EVALUATIONS
 
     public void saveEvaluation(EvalEvaluation evaluation, String userId, boolean created) {
-        log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
+        LOG.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
 
         // NOTE: The defaults for the evaluation should be set by calling this when evals are created and before they are saved
         //EvalBeanUtils.setEvaluationDefaults(evaluation, EvalConstants.EVALUATION_TYPE_EVALUATION);
@@ -318,7 +317,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             // test if new evaluation occurs in the past
             if (evaluation.getStartDate().before(today)) {
-                log.warn("Evaluation was set to start in the past ("+evaluation.getStartDate()+"), it has been reset to start now...");
+                LOG.warn("Evaluation was set to start in the past ("+evaluation.getStartDate()+"), it has been reset to start now...");
                 evaluation.setStartDate( new Date() );
             }
 
@@ -372,7 +371,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         default and allows an instance not to make copies of templates, template-items, items and scales
         when creating a new template.  http://jira.sakaiproject.org/browse/EVALSYS-863 
          **/
-        if (isNew && ((Boolean)settings.get(EvalSettings.ENABLE_TEMPLATE_COPYING)).booleanValue()) {
+        if (isNew && ((Boolean)settings.get(EvalSettings.ENABLE_TEMPLATE_COPYING))) {
             // copy the template on first time saved - http://jira.sakaiproject.org/jira/browse/EVALSYS-647
             if (template.getCopyOf() == null ||
                     template.isHidden() == false) {
@@ -470,12 +469,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         // initialize new evaluation with available email sent false
         if(evaluation.getId() == null) {
-            evaluation.setAvailableEmailSent(new Boolean(false));
+            evaluation.setAvailableEmailSent(false);
         }
         
         // save the eval
         dao.save(evaluation);
-        log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), state="+evaluation.getState()+", title: " + evaluation.getTitle());
+        LOG.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), state="+evaluation.getState()+", title: " + evaluation.getTitle());
 
         // initialize the scheduling for the eval jobs (only if state is not partial)
         if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
@@ -501,9 +500,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }
 
         // effectively we are locking the evaluation when a user replies to it, otherwise the chain can be changed
-        if (evaluation.getLocked().booleanValue()) {
+        if (evaluation.getLocked()) {
             // lock evaluation and associated template
-            log.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
+            LOG.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
             dao.lockEvaluation(evaluation, true);
         }
 
@@ -513,11 +512,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#deleteEvaluation(java.lang.Long, java.lang.String)
      */
     public void deleteEvaluation(Long evaluationId, String userId) {
-        log.debug("evalId: " + evaluationId + ",userId: " + userId);
+        LOG.debug("evalId: " + evaluationId + ",userId: " + userId);
 
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
         if (evaluation == null) {
-            log.warn("Cannot find evaluation to delete with id: " + evaluationId);
+            LOG.warn("Cannot find evaluation to delete with id: " + evaluationId);
             return;
         }
 
@@ -548,19 +547,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // remove associated AssignGroups
                 List<EvalAssignGroup> acs = dao.findBySearch(EvalAssignGroup.class, 
                         new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
+                Set<EvalAssignGroup> assignGroupSet = new HashSet<>(acs);
                 dao.deleteSet(assignGroupSet);
 
                 // remove associated assigned hierarchy nodes
                 List<EvalAssignHierarchy> ahs = dao.findBySearch(EvalAssignHierarchy.class, 
                         new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
+                Set<EvalAssignHierarchy> assignHierSet = new HashSet<>(ahs);
                 dao.deleteSet(assignHierSet);
 
                 // remove associated assigned users
                 List<EvalAssignUser> eus = dao.findBySearch(EvalAssignUser.class, 
                         new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignUser> eusSet = new HashSet<EvalAssignUser>(eus);
+                Set<EvalAssignUser> eusSet = new HashSet<>(eus);
                 dao.deleteSet(eusSet);
 
                 // remove the evaluation and copied template since there are no responses
@@ -577,7 +576,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // this has to be after the removal of the evaluation
 
             // remove associated unused email templates
-            Set<EvalEmailTemplate> emailSet = new HashSet<EvalEmailTemplate>();
+            Set<EvalEmailTemplate> emailSet = new HashSet<>();
             if (available != null) {
                 if (available.getDefaultType() == null) {
                     // only remove non-default templates
@@ -606,7 +605,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, false)) {
                     // this is not partial (partials do not have copies made yet)
                     // remove the associated template if it is a copy (it should be)
-                    EvalTemplate template = null;
+                    EvalTemplate template;
                     if (evaluation.getTemplate() != null 
                             || evaluation.getTemplate().getId() != null) {
                         // there is a template so get it and check to see if it needs to be removed
@@ -617,7 +616,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             if (securityChecks.checkUserControlTemplate(userId, template)) {
                                 authoringService.deleteTemplate(template.getId(), userId);
                             } else {
-                                log.warn("Could not remove the template ("+template.getId()+") associated with this "
+                                LOG.warn("Could not remove the template ("+template.getId()+") associated with this "
                                         + "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
                             }
                         }
@@ -625,7 +624,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
             }
 
-            log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
+            LOG.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
             return;
         }
 
@@ -668,7 +667,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // fire the evaluation closed event
             commonLogic.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);
         } else {
-            log.warn(userId + " tried to close eval that is already closed ("+evaluationId+"): " + evaluation.getTitle());
+            LOG.warn(userId + " tried to close eval that is already closed ("+evaluationId+"): " + evaluation.getTitle());
         }
 
         return evaluation;
@@ -692,7 +691,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
             if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
             Calendar calendar = GregorianCalendar.getInstance();
-            calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
+            calendar.add(Calendar.DATE, -1 * recentlyClosedDays);
             recentClosedDate = calendar.getTime();
         }
         
@@ -734,7 +733,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("userId must be set");
         }
 
-        String[] evalGroupIds = getGroupIdsForUserToEvaluate(userId, (activeOnly == null ? false : true) );
+        String[] evalGroupIds = getGroupIdsForUserToEvaluate(userId, (activeOnly != null) );
 
         // get the evaluations
         List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
@@ -797,7 +796,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // date calculations for recently closed
         Date today = new Date();
         Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS);
-        int recentlyClosedHours = recentlyClosedDays.intValue() * 24;
+        int recentlyClosedHours = recentlyClosedDays * 24;
 
         for (Iterator<EvalEvaluation> iterator = evals.iterator(); iterator.hasNext();) {
             EvalEvaluation evaluation = iterator.next();
@@ -810,13 +809,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     // filter out evals older than recently closed
                     int hoursDiff = EvalUtils.getHoursDifference(evaluation.getDueDate(), today);
                     if (hoursDiff > recentlyClosedHours) {
-                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is not recently closed: "+evaluation.getId()+", due="+evaluation.getDueDate());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Dropping Evaluatee eval which is not recently closed: "+evaluation.getId()+", due="+evaluation.getDueDate());
+                        }
                         iterator.remove();
                     }
                 } else {
                     // filter out all closed evals
                     if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                        if (log.isDebugEnabled()) log.debug("Dropping Evaluatee eval which is closed: "+evaluation.getId());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Dropping Evaluatee eval which is closed: "+evaluation.getId());
+                        }
                         iterator.remove();
                     }
                 }
@@ -853,12 +856,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         // does not populate the eval groups
                     } else if (limitEvalGroups.isEmpty()) {
                         // include none
-                        eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
-                        eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                        eval.setEvalAssignGroups(new ArrayList<>(0));
+                        eval.setEvalGroups(new ArrayList<>(0));
                     } else {
                         // include the groups passed in only
-                        List<EvalAssignGroup> evaluationAssignGroups = new ArrayList<EvalAssignGroup>();
-                        List<EvalGroup> evaluationGroups = new ArrayList<EvalGroup>();
+                        List<EvalAssignGroup> evaluationAssignGroups = new ArrayList<>();
+                        List<EvalGroup> evaluationGroups = new ArrayList<>();
                         for (EvalGroup eg : limitEvalGroups) {
                             for (EvalAssignGroup eag : assignGroups) {
                                 if (eag.getEvalGroupId().equals(eg.evalGroupId)) {
@@ -872,8 +875,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         eval.setEvalGroups(evaluationGroups);
                     }
                 } else {
-                    eval.setEvalAssignGroups(new ArrayList<EvalAssignGroup>(0));
-                    eval.setEvalGroups(new ArrayList<EvalGroup>(0));
+                    eval.setEvalAssignGroups(new ArrayList<>(0));
+                    eval.setEvalGroups(new ArrayList<>(0));
                 }
             }
         }
@@ -889,7 +892,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      */
     private String[] getGroupIdsForUserToEvaluate(String userId, boolean activeOnly) {
         String[] evalGroupIds = null;
-        List<EvalAssignUser> userAssignments = null;
+        List<EvalAssignUser> userAssignments;
         
         if(activeOnly) {
         	
@@ -918,7 +921,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     // CATEGORIES
 
     public String[] getEvalCategories(String userId) {
-        log.debug("userId: " + userId );
+        LOG.debug("userId: " + userId );
 
         // return all current categories or only return categories created by this user if not null
         List<String> l = dao.getEvalCategories(userId);
@@ -927,13 +930,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
 
     public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId) {
-        log.debug("evalCategory: " + evalCategory + ", userId: " + userId );
+        LOG.debug("evalCategory: " + evalCategory + ", userId: " + userId );
 
         if (evalCategory == null || evalCategory.equals("")) {
             throw new IllegalArgumentException("evalCategory cannot be blank or null");
         }
 
-        List<EvalEvaluation> evals = new ArrayList<EvalEvaluation>();
+        List<EvalEvaluation> evals = new ArrayList<>();
         if (userId == null) {
             // get all evals for a category
             evals = dao.findBySearch(EvalEvaluation.class, new Search(
@@ -1030,10 +1033,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 currentUserId = commonLogic.getAdminUserId();
             }
         }
-        ArrayList<Long> changedUserAssignments = new ArrayList<Long>();
+        ArrayList<Long> changedUserAssignments = new ArrayList<>();
         // now the syncing logic
-        HashSet<Long> assignUserToRemove = new HashSet<Long>();
-        HashSet<EvalAssignUser> assignUserToSave = new HashSet<EvalAssignUser>();
+        HashSet<Long> assignUserToRemove = new HashSet<>();
+        HashSet<EvalAssignUser> assignUserToSave = new HashSet<>();
         // get all user assignments for this evaluation (and possibly limit by group)
         String[] limitGroupIds = null;
         if (evalGroupId != null) {
@@ -1042,9 +1045,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // all users assigned to this eval (and group if specified)
         List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(evaluationId, null, limitGroupIds, null, EvalEvaluationService.STATUS_ANY, null, null);
         // keys of all assignments which are unlinked or removed
-        HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<String>();
+        HashSet<String> assignUserUnlinkedRemovedKeys = new HashSet<>();
         // all assignments which are linked (groupId => assignments)
-        HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<String, List<EvalAssignUser>>();
+        HashMap<String, List<EvalAssignUser>> groupIdLinkedAssignedUsersMap = new HashMap<>();
         for (EvalAssignUser evalAssignUser : assignedUsers) {
             if (EvalAssignUser.STATUS_UNLINKED.equals(evalAssignUser.getStatus()) 
                     || EvalAssignUser.STATUS_REMOVED.equals(evalAssignUser.getStatus())) {
@@ -1056,7 +1059,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 if (EvalAssignUser.STATUS_LINKED.equals(evalAssignUser.getStatus())) {
                     List<EvalAssignUser> l = groupIdLinkedAssignedUsersMap.get(egid);
                     if (l == null) {
-                        l = new ArrayList<EvalAssignUser>();
+                        l = new ArrayList<>();
                         groupIdLinkedAssignedUsersMap.put(egid, l);
                     }
                     l.add(evalAssignUser);
@@ -1070,14 +1073,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             assignedGroups = m.get(evaluationId);
         } else {
             // only dealing with a single assign group (or possibly none if invalid)
-            assignedGroups = new ArrayList<EvalAssignGroup>();
+            assignedGroups = new ArrayList<>();
             EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
             if (assignGroup != null) {
                 assignedGroups.add(assignGroup);
             }
         }
         // iterate through all assigned groups (may have been limited to one only)
-        Set<String> evalGroupIdsFromEvals = new HashSet<String>(assignedGroups.size());
+        Set<String> evalGroupIdsFromEvals = new HashSet<>(assignedGroups.size());
         for (EvalAssignGroup evalAssignGroup : assignedGroups) {
             Long assignGroupId = evalAssignGroup.getId();
             String egid = evalAssignGroup.getEvalGroupId();
@@ -1092,7 +1095,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             	currentTakers.addAll(currentEvaluated);
             }
            
-            HashSet<String> currentAll = new HashSet<String>();
+            HashSet<String> currentAll = new HashSet<>();
             currentAll.addAll(currentEvaluated);
             currentAll.addAll(currentAssistants);
             currentAll.addAll(currentTakers);
@@ -1105,7 +1108,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             List<EvalAssignUser> linkedUserAssignsInThisGroup = groupIdLinkedAssignedUsersMap.get(egid);
             if (linkedUserAssignsInThisGroup == null) {
                 // this group has not been assigned yet
-                linkedUserAssignsInThisGroup = new ArrayList<EvalAssignUser>();
+                linkedUserAssignsInThisGroup = new ArrayList<>();
             }
             // filter out all linked user assignments which match exactly with the existing ones
             for (Iterator<EvalAssignUser> iterator = linkedUserAssignsInThisGroup.iterator(); iterator.hasNext();) {
@@ -1157,7 +1160,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (removeAllowed 
                     && ! assignUserToRemove.isEmpty()) {
                 Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
-                if (log.isDebugEnabled()) log.debug("Deleting user eval assignment Ids: "+assignUserToRemove);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Deleting user eval assignment Ids: "+assignUserToRemove);
+                }
                 dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
                 message += ": removed the following assignments: " + assignUserToRemove;
                 changedUserAssignments.addAll( assignUserToRemove );
@@ -1167,8 +1172,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     setAssignUserDefaults(evalAssignUser, evaluation, currentUserId);
                 }
                 // this is meant to force the assigned users set to be re-calculated
-                assignUserToSave = new HashSet<EvalAssignUser>(assignUserToSave);
-                if (log.isDebugEnabled()) log.debug("Saving user eval assignments: "+assignUserToSave);
+                assignUserToSave = new HashSet<>(assignUserToSave);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Saving user eval assignments: "+assignUserToSave);
+                }
                 dao.saveSet(assignUserToSave);
                 message += ": created the following assignments: " + assignUserToSave;
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
@@ -1182,7 +1189,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         evalGroupIdsFromUsers.removeAll(evalGroupIdsFromEvals);
         if ( ! evalGroupIdsFromUsers.isEmpty() ) {
             // there are users assigned to group ids in this eval which are not part of the assigned groups
-            HashSet<Long> orphanedUserAssignments = new HashSet<Long>();
+            HashSet<Long> orphanedUserAssignments = new HashSet<>();
             for (EvalAssignUser evalAssignUser : assignedUsers) {
                 String egid = evalAssignUser.getEvalGroupId();
                 if (egid != null 
@@ -1200,7 +1207,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
 
-        log.info(message);
+        LOG.info(message);
         return changedUserAssignments;
     }
 
@@ -1212,7 +1219,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      */
     private Set<EvalAssignUser> makeUserAssignmentsFromUserIdSet(Set<String> userIds, String evalGroupId, 
             String typeConstant, Long assignGroupId, Set<String> matchingUserGroupKeys) {
-        HashSet<EvalAssignUser> eaus = new HashSet<EvalAssignUser>();
+        HashSet<EvalAssignUser> eaus = new HashSet<>();
         for (String userId : userIds) {
             EvalAssignUser evalAssignUser = new EvalAssignUser(userId, evalGroupId, null, typeConstant, EvalAssignUser.STATUS_LINKED);
             evalAssignUser.setAssignGroupId(assignGroupId);
@@ -1262,14 +1269,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             String currentUserId = commonLogic.getCurrentUserId();
             // create the set of user assignments for this eval
             List<EvalAssignUser> assignedUsers = evaluationService.getParticipantsForEval(eval.getId(), null, null, null, EvalEvaluationService.STATUS_ANY, null, null);
-            HashMap<String, EvalAssignUser> assignedKeysToEAUs = new HashMap<String, EvalAssignUser>();
+            HashMap<String, EvalAssignUser> assignedKeysToEAUs = new HashMap<>();
             for (EvalAssignUser evalAssignUser : assignedUsers) {
                 String key = makeEvalAssignUserKey(evalAssignUser, true, false);
                 assignedKeysToEAUs.put(key, evalAssignUser);
             }
 
             // now create the set of all assignments to save (only save the ones that do not already exist though)
-            HashSet<EvalAssignUser> eauSet = new HashSet<EvalAssignUser>();
+            HashSet<EvalAssignUser> eauSet = new HashSet<>();
             for (EvalAssignUser evalAssignUser : assignUsers) {
                 evalAssignUser.setLastModified( new Date() );
                 // switch over to unlinked if the status changes
@@ -1282,7 +1289,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     EvalAssignUser existing = assignedKeysToEAUs.get(key);
                     if (! existing.getId().equals(evalAssignUser.getId())) {
                         // trying to save an assignment over top of one that exists already
-                        log.warn("Found an user assignment that matches an existing one so it will not be saved: " + evalAssignUser);
+                        LOG.warn("Found an user assignment that matches an existing one so it will not be saved: " + evalAssignUser);
                         continue; // SKIP
                     }
                 }
@@ -1362,21 +1369,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (securityChecks.checkCreateAssignments(userId, eval)) {
 
             // first we have to get all the assigned hierarchy nodes for this eval
-            Set<String> nodeIdsSet = new HashSet<String>();
-            Set<String> currentNodeIds = new HashSet<String>();
+            Set<String> nodeIdsSet = new HashSet<>();
+            Set<String> currentNodeIds = new HashSet<>();
 
             List<EvalAssignHierarchy> currentAssignHierarchies = evaluationService.getAssignHierarchyByEval(evaluationId);
             for (EvalAssignHierarchy assignHierarchy : currentAssignHierarchies) {
                 currentNodeIds.add(assignHierarchy.getNodeId());
             }
 
-            for (int i = 0; i < nodeIds.length; i++) {
-                nodeIdsSet.add(nodeIds[i]);
-            }
+            nodeIdsSet.addAll( Arrays.asList( nodeIds ) );
 
             if (! appendMode) {
-                Set<String> selectedNodeIds = new HashSet<String>(nodeIdsSet);
-                Set<String> existingNodeIds = new HashSet<String>(currentNodeIds);
+                Set<String> selectedNodeIds = new HashSet<>(nodeIdsSet);
+                Set<String> existingNodeIds = new HashSet<>(currentNodeIds);
                 existingNodeIds.removeAll(selectedNodeIds);
                 // now remove all the nodes remaining in the current set
                 if (existingNodeIds.size() > 0) {
@@ -1397,7 +1402,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             nodeIds = nodeIdsSet.toArray(new String[] {});
 
             // now we need to create all the persistent hierarchy assignment objects
-            Set<EvalAssignHierarchy> nodeAssignments = new HashSet<EvalAssignHierarchy>();
+            Set<EvalAssignHierarchy> nodeAssignments = new HashSet<>();
             for (String nodeId : nodeIdsSet) {
                 // set the settings to null to allow the defaults to override correctly
                 EvalAssignHierarchy eah = new EvalAssignHierarchy(userId, nodeId, eval);
@@ -1407,8 +1412,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // next we have to get all the assigned eval groups for this eval
-            Set<String> evalGroupIdsSet = new HashSet<String>();
-            Set<String> currentEvalGroupIds = new HashSet<String>();
+            Set<String> evalGroupIdsSet = new HashSet<>();
+            Set<String> currentEvalGroupIds = new HashSet<>();
 
             // get the current list of assigned eval groups
             Map<Long, List<EvalAssignGroup>> groupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
@@ -1417,13 +1422,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
             }
 
-            for (int i = 0; i < evalGroupIds.length; i++) {
-                evalGroupIdsSet.add(evalGroupIds[i]);
-            }
+            evalGroupIdsSet.addAll( Arrays.asList( evalGroupIds ) );
 
             if (! appendMode) {
-                Set<String> selectedGroupIds = new HashSet<String>(evalGroupIdsSet);
-                Set<String> existingGroupIds = new HashSet<String>();
+                Set<String> selectedGroupIds = new HashSet<>(evalGroupIdsSet);
+                Set<String> existingGroupIds = new HashSet<>();
                 for (EvalAssignGroup assignGroup : currentGroups) {
                     if (assignGroup.getNodeId() == null) {
                         existingGroupIds.add(assignGroup.getEvalGroupId());
@@ -1432,7 +1435,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 existingGroupIds.removeAll(selectedGroupIds);
                 // now remove all the groups remaining in the existing set
                 if (existingGroupIds.size() > 0) {
-                    Set<EvalAssignGroup> removeAssignGroups = new HashSet<EvalAssignGroup>();
+                    Set<EvalAssignGroup> removeAssignGroups = new HashSet<>();
                     for (EvalAssignGroup assignGroup : currentGroups) {
                         if (existingGroupIds.contains(assignGroup.getEvalGroupId())) {
                             removeAssignGroups.add(assignGroup);
@@ -1464,7 +1467,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             evalGroupIds = evalGroupIdsSet.toArray(new String[] {});
 
             // now we need to create all the persistent group assignment objects for the new groups
-            Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
+            Set<EvalAssignGroup> groupAssignments = new HashSet<>();
             groupAssignments.addAll( makeAssignGroups(eval, userId, evalGroupIdsSet, null) );
 
             // finally we add in the groups for all the new expanded assign groups for the expanded nodes set
@@ -1476,18 +1479,18 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             // save everything at once
             dao.saveMixedSet(new Set[] {nodeAssignments, groupAssignments});
-            log.info("User (" + userId + ") added nodes (" + ArrayUtils.arrayToString(nodeIds)
+            LOG.info("User (" + userId + ") added nodes (" + ArrayUtils.arrayToString(nodeIds)
                     + ") and groups (" + ArrayUtils.arrayToString(evalGroupIds) + ") to evaluation ("
                     + evaluationId + ")");
-            List<EvalAssignHierarchy> results = new ArrayList<EvalAssignHierarchy>(nodeAssignments);
+            List<EvalAssignHierarchy> results = new ArrayList<>(nodeAssignments);
             results.addAll(groupAssignments);
 
             Boolean syncUserAssignmentsOnGroupSave = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE);
             if(syncUserAssignmentsOnGroupSave == null) {
             	// use default, true
-            	syncUserAssignmentsOnGroupSave = new Boolean(true);
+            	syncUserAssignmentsOnGroupSave = true;
             }
-            if(syncUserAssignmentsOnGroupSave.booleanValue()) {
+            if(syncUserAssignmentsOnGroupSave) {
 	            // sync all the user assignments after the groups are saved
 	            synchronizeUserAssignmentsForced(eval, null, ! appendMode);
             }
@@ -1507,10 +1510,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // get the list of hierarchy assignments
         List<EvalAssignHierarchy> l = dao.findBySearch(EvalAssignHierarchy.class, new Search("id", assignHierarchyIds) );
         if (l.size() > 0) {
-            Set<String> nodeIds = new HashSet<String>();         
+            Set<String> nodeIds = new HashSet<>();
             Long evaluationId = l.get(0).getEvaluation().getId();
 
-            Set<EvalAssignHierarchy> eahs = new HashSet<EvalAssignHierarchy>();
+            Set<EvalAssignHierarchy> eahs = new HashSet<>();
             for (EvalAssignHierarchy evalAssignHierarchy : l) {
                 if (evaluationService.canDeleteAssignGroup(userId, evalAssignHierarchy.getId())) {
                     nodeIds.add(evalAssignHierarchy.getNodeId());
@@ -1524,19 +1527,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             new Restriction("evaluation.id", evaluationId),
                             new Restriction("nodeId", nodeIds)
                     }) );
-            Set<EvalAssignGroup> groups = new HashSet<EvalAssignGroup>();
+            Set<EvalAssignGroup> groups = new HashSet<>();
             StringBuilder groupListing = new StringBuilder();
             if (eags.size() > 0) {
                 for (EvalAssignGroup evalAssignGroup : groups) {
                     if (evaluationService.canDeleteAssignGroup(userId, evalAssignGroup.getId())) {
                         groups.add(evalAssignGroup);
-                        groupListing.append(evalAssignGroup.getEvalGroupId() + ":");
+                        groupListing.append( evalAssignGroup.getEvalGroupId() ).append(":");
                     }
                 }
             }
 
             dao.deleteMixedSet(new Set[] {eahs, groups});
-            log.info("User (" + userId + ") deleted existing hierarchy assignments ("
+            LOG.info("User (" + userId + ") deleted existing hierarchy assignments ("
                     + ArrayUtils.arrayToString(assignHierarchyIds) + ") and groups ("+groupListing.toString()+")");
 
             // sync all the user assignments after the groups are saved
@@ -1555,7 +1558,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     // GROUPS
 
     public void saveAssignGroup(EvalAssignGroup assignGroup, String userId) {
-        log.debug("userId: " + userId + ", evalGroupId: " + assignGroup.getEvalGroupId());
+        LOG.debug("userId: " + userId + ", evalGroupId: " + assignGroup.getEvalGroupId());
 
         // set the date modified
         assignGroup.setLastModified( new Date() );
@@ -1585,21 +1588,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
                 // if a late instructor opt-in, notify students in this group that an evaluation is available
                 if (EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt())
-                        && assignGroup.getInstructorApproval().booleanValue()
+                        && assignGroup.getInstructorApproval()
                         && assignGroup.getEvaluation().getStartDate().before(new Date())) {
                     emails.sendEvalAvailableGroupNotification(
                             assignGroup.getEvaluation().getId(), assignGroup.getEvalGroupId());
                 }
 
-                log.info("User ("+userId+") created a new assignGroup ("+assignGroup.getId()+"), " +
+                LOG.info("User ("+userId+") created a new assignGroup ("+assignGroup.getId()+"), " +
                         "linked evalGroupId ("+assignGroup.getEvalGroupId()+") with eval ("+eval.getId()+")");
 
                 Boolean syncUserAssignmentsOnGroupSave = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE);
                 if(syncUserAssignmentsOnGroupSave == null) {
                 	// use default, true
-                	syncUserAssignmentsOnGroupSave = new Boolean(true);
+                	syncUserAssignmentsOnGroupSave = true;
                 }
-                if(syncUserAssignmentsOnGroupSave.booleanValue()) {
+                if(syncUserAssignmentsOnGroupSave) {
                     // sync the user assignments related to this assign group
                     synchronizeUserAssignmentsForced(eval, assignGroup.getEvalGroupId(), false);
                 }
@@ -1626,12 +1629,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             // allow any other changes
             dao.save(assignGroup);
-            log.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
+            LOG.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
             
             Boolean syncUserAssignmentsOnGroupUpdate = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE);
             if(syncUserAssignmentsOnGroupUpdate == null) {
             	// if setting is null, use default, false
-            	syncUserAssignmentsOnGroupUpdate = new Boolean(false);
+            	syncUserAssignmentsOnGroupUpdate = false;
             }
             if(syncUserAssignmentsOnGroupUpdate) {
                 // sync the user assignments related to this assign group
@@ -1645,7 +1648,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#deleteAssignGroup(java.lang.Long, java.lang.String)
      */
     public void deleteAssignGroup(Long assignGroupId, String userId) {
-        log.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
+        LOG.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
 
         // get AC
         EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(assignGroupId);
@@ -1676,7 +1679,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         String userId = commonLogic.getCurrentUserId();
         Long assignGroupId = assignGroup.getId();
         dao.delete(assignGroup);
-        log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
+        LOG.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
 
         // also need to remove any user assignments related to this group
         List<EvalAssignUser> assignedUsers = dao.findBySearch(EvalAssignUser.class, new Search( new Restriction[] {
@@ -1685,13 +1688,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }));
         Set<EvalAssignUser> assignedUsersSet = new HashSet<EvalAssignUser>(assignedUsers);
         dao.deleteSet( assignedUsersSet );
-        log.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
+        LOG.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
     }
 
     // EMAIL TEMPLATES
 
     public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId) {
-        log.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
+        LOG.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
 
         // set the date modified
         emailTemplate.setLastModified(new Date());
@@ -1745,7 +1748,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
         // save the template if allowed
         dao.save(emailTemplate);
-        log.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
+        LOG.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
     }
 
     public void removeEmailTemplate(Long emailTemplateId, String userId) {
@@ -1816,20 +1819,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @return true if duplicate found
      */
     protected boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
-        log.debug("assignContext: " + ac.getId());
+        LOG.debug("assignContext: " + ac.getId());
 
         List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, new Search(
                 new Restriction[] {
                         new Restriction("evaluation.id", ac.getEvaluation().getId()),
                         new Restriction("evalGroupId", ac.getEvalGroupId())
                 }) );
-        if ( (ac.getId() == null && l.size() >= 1) || 
-                (ac.getId() != null && l.size() >= 2) ) {
-            // there is an existing AC which does the same mapping
-            //       EvalAssignContext eac = (EvalAssignContext) l.get(0);
-            return true;
-        }
-        return false;
+        return (ac.getId() == null && l.size() >= 1) || 
+               (ac.getId() != null && l.size() >= 2);
     }
 
     /**
@@ -1841,7 +1839,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @return the set with the new assignments
      */
     protected Set<EvalAssignGroup> makeAssignGroups(EvalEvaluation eval, String userId, Set<String> evalGroupIdsSet, String nodeId) {
-        Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
+        Set<EvalAssignGroup> groupAssignments = new HashSet<>();
         for (String evalGroupId : evalGroupIdsSet) {
             String type = EvalConstants.GROUP_TYPE_PROVIDED;
             if (evalGroupId.startsWith(EvalConstants.GROUP_ID_SITE_PREFIX))

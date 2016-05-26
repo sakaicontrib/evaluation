@@ -664,8 +664,7 @@ evalsys.initFacebox = function(options) {
 // Utility function to select/deselect all checkboxes of a given form
 evalsys.toggleCheckboxes = function( formName, checkToggle )
 {
-    var elements = new Array();
-    elements = document[formName].getElementsByTagName( "input" );
+    var elements = document[formName].getElementsByTagName( "input" );
     for( var i = 0; i < elements.length; i++ )
     {
         if( elements[i].type === "checkbox" )
@@ -678,8 +677,7 @@ evalsys.toggleCheckboxes = function( formName, checkToggle )
 // Hack function to toggle new/old report format
 evalsys.toggleReportFormat = function( formName )
 {
-    var elements = new Array();
-    elements = document[formName].getElementsByTagName( "input" );
+    var elements = document[formName].getElementsByTagName( "input" );
     for( var i = 0; i < elements.length; i++ )
     {
         if( elements[i].type === "hidden" && elements[i].name === "el-binding" && elements[i].value.indexOf( "{reportExporterBean.newReportStyle}" ) !== -1 )

@@ -70,7 +70,7 @@ public class TemplateItemUtils {
      * @return a list of {@link EvalTemplateItem} in order by display order
      */
     public static List<EvalTemplateItem> makeTemplateItemsList(Collection<EvalTemplateItem> templateItemsCollection) {
-        List<EvalTemplateItem> templateItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> templateItemsList = new ArrayList<>();
 
         for (EvalTemplateItem templateItem : templateItemsCollection) {
             templateItemsList.add(templateItem);
@@ -86,7 +86,7 @@ public class TemplateItemUtils {
      * @return an array in the order of the collection iterator
      */
     public static Long[] makeTemplateItemsIdsArray(Collection<EvalTemplateItem> templateItemsCollection) {
-        List<Long> templateItemsIds = new ArrayList<Long>();
+        List<Long> templateItemsIds = new ArrayList<>();
 
         for (EvalTemplateItem templateItem : templateItemsCollection) {
             templateItemsIds.add(templateItem.getId());
@@ -119,11 +119,11 @@ public class TemplateItemUtils {
      * guaranteed to return the items in the correct template item order
      * 
      * @param itemTypeConstant and ITEM_CATEGORY constant from {@link EvalConstants}
-     * @param itemList a list of {@link EvalTemplateItem} objects
+     * @param templateItemsList a list of {@link EvalTemplateItem} objects
      * @return a list of {@link EvalTemplateItem} objects which have a specific category
      */
     public static List<EvalTemplateItem> getCategoryTemplateItems(String itemTypeConstant, List<EvalTemplateItem> templateItemsList) {    
-        List<EvalTemplateItem> catItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> catItemsList = new ArrayList<>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
@@ -150,7 +150,7 @@ public class TemplateItemUtils {
      * @return a List of {@link EvalTemplateItem} objects
      */
     public static List<EvalTemplateItem> orderTemplateItems(List<EvalTemplateItem> templateItemsList, boolean fixOrder) {
-        List<EvalTemplateItem> orderedItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> orderedItemsList = new ArrayList<>();
 
         // get the ordered list of all non-children
         List<EvalTemplateItem> nonChildrenItems = getNonChildItems(templateItemsList);
@@ -195,14 +195,9 @@ public class TemplateItemUtils {
      * @return true if the item is answerable, false otherwise
      */
     public static boolean isAnswerable(EvalTemplateItem templateItem) {
-        boolean result = false;
+        boolean result;
         String type = getTemplateItemType(templateItem);
-        if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
-                EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-            result = false;
-        } else {
-            result = true;
-        }
+        result = !(EvalConstants.ITEM_TYPE_HEADER.equals(type) || EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type));
         return result;
     }
 
@@ -215,7 +210,7 @@ public class TemplateItemUtils {
      * @return a List of {@link EvalTemplateItem} objects
      */
     public static List<EvalTemplateItem> getAnswerableTemplateItems(List<EvalTemplateItem> templateItemsList) {		
-        List<EvalTemplateItem> answerableItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> answerableItemsList = new ArrayList<>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
@@ -248,11 +243,7 @@ public class TemplateItemUtils {
         boolean result = false;
         if (isAnswerable(templateItem)) {
             String type = getTemplateItemType(templateItem);
-            if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
-                result = false;
-            } else {
-                result = true;
-            }
+            result = !EvalConstants.ITEM_TYPE_TEXT.equals(type);
         }
         return result;
     }
@@ -268,7 +259,7 @@ public class TemplateItemUtils {
      * @see #isRequireable(EvalTemplateItem)
      */
     public static List<EvalTemplateItem> getRequireableTemplateItems(List<EvalTemplateItem> templateItemsList) {       
-        List<EvalTemplateItem> requireableItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> requireableItemsList = new ArrayList<>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
@@ -315,7 +306,7 @@ public class TemplateItemUtils {
      * @see #isCompulsory(EvalTemplateItem)
      */
     public static List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList) {       
-        List<EvalTemplateItem> compulsoryItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> compulsoryItemsList = new ArrayList<>();
 
         List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
@@ -370,11 +361,11 @@ public class TemplateItemUtils {
      * filter out the Block child items, and only return non-child items, return them
      * in correctly sorted display order
      * 
-     * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
+     * @param templateItemsList a List of {@link EvalTemplateItem} objects in a template
      * @return a List of {@link EvalTemplateItem} objects without any block child objects
      */
     public static List<EvalTemplateItem> getNonChildItems(List<EvalTemplateItem> templateItemsList) {
-        List<EvalTemplateItem> nonChildItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> nonChildItemsList = new ArrayList<>();
 
         for (int i=0; i<templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
@@ -395,12 +386,12 @@ public class TemplateItemUtils {
      * return the child items which are associated with a block parent Id in the correct
      * display order
      * 
-     * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
+     * @param templateItemsList a List of {@link EvalTemplateItem} objects in a template
      * @param blockParentId a unique identifier for an {@link EvalTemplateItem} which is a block parent
      * @return a List of {@link EvalTemplateItem} objects or empty if none found
      */
     public static List<EvalTemplateItem> getChildItems(List<EvalTemplateItem> templateItemsList, Long blockParentId) {
-        List<EvalTemplateItem> childItemsList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> childItemsList = new ArrayList<>();
 
         for (int i=0; i<templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
@@ -426,7 +417,7 @@ public class TemplateItemUtils {
      * @return a List of {@link EvalTemplateItem} objects or empty if none found
      */
     public static List<EvalTemplateItem> getParentItems(List<EvalTemplateItem> templateItemsList) {
-        List<EvalTemplateItem> parentItems = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> parentItems = new ArrayList<>();
 
         for (int i=0; i<templateItemsList.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
@@ -451,7 +442,7 @@ public class TemplateItemUtils {
      * @return a List of {@link EvalTemplateItem} objects or empty if none found
      */
     public static List<EvalTemplateItem> getNodeItems(List<EvalTemplateItem> templateItemsList, String hierarchyNodeId) {
-        List<EvalTemplateItem> nodeItems = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> nodeItems = new ArrayList<>();
 
         for (EvalTemplateItem templateItem : templateItemsList) {
             if (hierarchyNodeId == null) {
@@ -504,7 +495,7 @@ public class TemplateItemUtils {
             throw new IllegalArgumentException("Cannot create template item from null item");
         }
 
-        EvalTemplateItem templateItem = new EvalTemplateItem(item.getOwner(), null, item, new Integer(0),
+        EvalTemplateItem templateItem = new EvalTemplateItem(item.getOwner(), null, item, 0,
                 item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
 
         templateItem.setUsesNA(item.getUsesNA() == null ? Boolean.FALSE : item.getUsesNA());
@@ -526,7 +517,7 @@ public class TemplateItemUtils {
             }         
         } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
             if (item.getDisplayRows() == null) {
-                templateItem.setDisplayRows(new Integer(3));
+                templateItem.setDisplayRows(3);
             } else {
                 templateItem.setDisplayRows(item.getDisplayRows());
             }
@@ -643,7 +634,7 @@ public class TemplateItemUtils {
             }
         } else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
             // this is a block parent item (created just to hold the block parent text)
-            if (templateItem.getBlockParent() == null || !templateItem.getBlockParent().booleanValue() ) {
+            if (templateItem.getBlockParent() == null || !templateItem.getBlockParent() ) {
                 throw new IllegalArgumentException("Template Item block parent must be TRUE for parent block item");
             }
             if (templateItem.getScaleDisplaySetting() == null) {

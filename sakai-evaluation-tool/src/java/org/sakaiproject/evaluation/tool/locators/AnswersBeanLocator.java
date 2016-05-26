@@ -36,7 +36,7 @@ public class AnswersBeanLocator implements BeanLocator {
     public static final String NEW_PREFIX = "new";
     public static String NEW_1 = NEW_PREFIX +"1";
 
-    private Map<String, EvalAnswer> delivered = new HashMap<String, EvalAnswer>();
+    private Map<String, EvalAnswer> delivered = new HashMap<>();
 
     private EvalResponse response;
 

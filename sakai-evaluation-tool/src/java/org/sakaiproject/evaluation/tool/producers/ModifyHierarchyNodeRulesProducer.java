@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -68,13 +67,6 @@ public class ModifyHierarchyNodeRulesProducer extends EvalCommonProducer impleme
     public void setNavBarRenderer( NavBarRenderer navBarRenderer )
     {
         this.navBarRenderer = navBarRenderer;
-    }
-
-    @SuppressWarnings( "unused" )
-    private MessageLocator messageLocator;
-    public void setMessageLocator( MessageLocator messageLocator )
-    {
-        this.messageLocator = messageLocator;
     }
 
     /**
@@ -141,7 +133,7 @@ public class ModifyHierarchyNodeRulesProducer extends EvalCommonProducer impleme
         catch( Exception ex )
         {
             LOG.warn( "Can't fetch hierarchy node ID = " + evalNode.id, ex );
-            existingNodeRules = Collections.EMPTY_LIST;
+            existingNodeRules = Collections.emptyList();
         }
         for( HierarchyNodeRule existingRule : existingNodeRules )
         {

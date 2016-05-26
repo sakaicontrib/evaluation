@@ -87,8 +87,8 @@ public class NavBarRenderer {
         boolean canCreateTemplate = authoringService.canCreateTemplate(currentUserId);
         boolean canBeginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
         UIJointContainer joint = new UIJointContainer(tofill, divID, "evals-navigation:");
-        boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK)).booleanValue();
-        boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK));
+        boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS));
         boolean adminAllowedToSee = isUserAdmin && showMyToplinks;
         
         // set a few local variables
@@ -99,7 +99,7 @@ public class NavBarRenderer {
         }
 
         // Provide logout and my workspace links
-        if( !isUserAdmin && !adminAllowedToSee && (!canCreateTemplate && !canBeginEvaluation) )
+        if( !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation )
         {
             UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
                     UIMessage.make( "summary.myworkspace.link.label" ), 

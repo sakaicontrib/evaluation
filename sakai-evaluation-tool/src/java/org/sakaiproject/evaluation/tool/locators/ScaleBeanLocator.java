@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -38,7 +37,7 @@ public class ScaleBeanLocator implements WriteableBeanLocator {
 		this.localTemplateLogic = localTemplateLogic;
 	}
 
-	private Map<String, EvalScale> delivered = new HashMap<String, EvalScale>();
+	private Map<String, EvalScale> delivered = new HashMap<>();
 
 	public Object locateBean(String name) {
 	   EvalScale togo = delivered.get(name);
@@ -54,8 +53,7 @@ public class ScaleBeanLocator implements WriteableBeanLocator {
 	}
 
 	public void saveAll() {
-		for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-			String key = it.next();
+		for( String key : delivered.keySet() ) {
 			EvalScale scale = delivered.get(key);
 			if (key.startsWith(NEW_PREFIX)) {
 				// could do stuff here

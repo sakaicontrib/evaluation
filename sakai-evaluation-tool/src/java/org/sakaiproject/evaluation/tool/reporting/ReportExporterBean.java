@@ -43,15 +43,15 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 public class ReportExporterBean implements ToolApi {
 
-    private static Log log = LogFactory.getLog(ReportExporterBean.class);
+    private static final Log LOG = LogFactory.getLog(ReportExporterBean.class);
 
     // Section awareness/new report style bindings
-    public String viewID            = null;
-    public Long templateID          = 0L;
-    public String fileName          = null;
-    public Long evalID              = 0L;
-    public String[] groupIDs        = null;
-    public boolean newReportStyle   = false;
+    public String   viewID          = "";
+    public String   fileName        = "";
+    public String[] groupIDs        = new String[]{};
+    public Long     templateID      = 0L;
+    public Long     evalID          = 0L;
+    public boolean  newReportStyle  = false;
 
     private MessageSource messageSource;
     
@@ -75,7 +75,7 @@ public class ReportExporterBean implements ToolApi {
             try {
               return messageSource.getMessage(s, args, Locale.getDefault());
             } catch (Exception e) {
-              // message not found, one presumes
+              LOG.warn( e );
             }
           }
           // if none found, just use the code
@@ -141,8 +141,8 @@ public class ReportExporterBean implements ToolApi {
       if (exporter == null) {
         throw new IllegalArgumentException("No exporter found for ViewID: " + exportType);
       }
-      if (log.isDebugEnabled()) {
-        log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
       }
       if (groupIds == null || groupIds.length==0) {
         //Get the default groupIds
@@ -175,7 +175,7 @@ public class ReportExporterBean implements ToolApi {
         // get evaluation and template from DAO
         EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
 
-        OutputStream resultsOutputStream = null;
+        OutputStream resultsOutputStream;
 
          // Get rid of spaces in the filename
         drvp.filename = drvp.filename.replaceAll( " ", "_" );
@@ -185,8 +185,8 @@ public class ReportExporterBean implements ToolApi {
         if (exporter == null) {
             throw new IllegalArgumentException("No exporter found for ViewID: " + drvp.viewID);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
         }
 
         resultsOutputStream = getOutputStream(response);

@@ -100,8 +100,8 @@ public class ControlExpertItemsProducer extends EvalCommonProducer {
             UIMessage.make(itemListing, "expertitems-items-title", "controlexpertitems.page.items");
             UIMessage.make(itemListing, "expertitems-action-title", "controlexpertitems.page.action");
             UIMessage.make(itemListing, "expertitems-owner-title", "controlexpertitems.page.owner");
-            Long categoryId = null;
-            Long objectiveId = null;
+            Long categoryId;
+            Long objectiveId;
             
             for (int i = 0; i < numItemGroups; i++) {
             	EvalItemGroup eig = (EvalItemGroup) itemGroups.get(i);
@@ -141,13 +141,13 @@ public class ControlExpertItemsProducer extends EvalCommonProducer {
             		UIOutput.make(itemBranch, "bar2", "|");
             	}
                 if ((EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(eig.getType())) &&
-                	(eig.getGroupItems().size() == 0)) {
+                	(eig.getGroupItems().isEmpty())) {
                 	UIInternalLink.make(itemBranch, "expertitem-add-objective-link", UIMessage.make("controlexpertitems.add.objective"), 
                         new ModifyExpertItemParameters(ModifyExpertItemProducer.VIEW_ID, categoryId, null, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, true));
                 	UIOutput.make(itemBranch, "bar3", "|");
                 }
 
-                if (eig.getGroupItems().size() == 0) {
+                if (eig.getGroupItems().isEmpty()) {
                 	if ( EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE.equals(eig.getType())) {
                     UIInternalLink.make(itemBranch, "expertitem-remove-link", UIMessage.make("general.command.delete"), 
                     		new ModifyExpertItemParameters(RemoveExpertItemProducer.VIEW_ID, null, objectiveId, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, false));
@@ -155,7 +155,7 @@ public class ControlExpertItemsProducer extends EvalCommonProducer {
                 	} else {
                 		// make sure no objectives
                 		List<EvalItemGroup> l = authoringService.getItemGroups(categoryId, currentUserId, true, true);
-                	    if (l.size() == 0) {
+                	    if (l.isEmpty()) {
                             UIInternalLink.make(itemBranch, "expertitem-remove-link", UIMessage.make("general.command.delete"), 
                             		new ModifyExpertItemParameters(RemoveExpertItemProducer.VIEW_ID, categoryId, null, EvalConstants.ITEM_GROUP_TYPE_CATEGORY, false));
                             UIOutput.make(itemBranch, "bar4", "|");

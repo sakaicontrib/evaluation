@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -60,7 +59,7 @@ public class EvaluationBeanLocator implements BeanLocator {
 
     public Map<String, String> selectionSettings;
 
-    private Map<String, EvalEvaluation> delivered = new HashMap<String, EvalEvaluation>();
+    private Map<String, EvalEvaluation> delivered = new HashMap<>();
 
     public Object locateBean(String name) {
         EvalEvaluation togo = delivered.get(name);
@@ -79,12 +78,12 @@ public class EvaluationBeanLocator implements BeanLocator {
     }
 
     public void saveAll() {
-        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-            String key = it.next();
+        for( String key : delivered.keySet() )
+        {
             EvalEvaluation evaluation = delivered.get(key);
             if (key.startsWith(NEW_PREFIX)) {
                 // set eval defaults here
-            	evalBeanUtils.setEvaluationDefaults(evaluation, EvalConstants.EVALUATION_TYPE_EVALUATION);
+                evalBeanUtils.setEvaluationDefaults(evaluation, EvalConstants.EVALUATION_TYPE_EVALUATION);
             }
             // validate the eval category before saving, throws exception
             // and returns to page if it contains invalid characters

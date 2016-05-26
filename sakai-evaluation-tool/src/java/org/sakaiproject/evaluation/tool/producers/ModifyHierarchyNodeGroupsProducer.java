@@ -16,9 +16,10 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -46,6 +47,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.beanutil.PathUtil;
 
 public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
+    private static final Log LOG = LogFactory.getLog( ModifyHierarchyNodeGroupsProducer.class );
     public static final String VIEW_ID = "modify_hierarchy_node_groups";
     
     private EvalCommonLogic commonLogic;
@@ -94,9 +96,9 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
         for (String hierarchyEvalGroupId : hierarchyEvalGroupIds) {
             EvalGroup c = null;
             try {
-                c = commonLogic.makeEvalGroupObject(EvalConstants.GROUP_ID_SITE_PREFIX+hierarchyEvalGroupId.substring(6));
+                c = commonLogic.makeEvalGroupObject(EvalConstants.GROUP_ID_SITE_PREFIX+hierarchyEvalGroupId.substring(EvalConstants.GROUP_ID_SITE_PREFIX.length()));
             } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
+                LOG.warn("Exception: " + e.getMessage());
             }
             if (c != null) {
                 int dupe = 0;
@@ -106,21 +108,17 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
                     }
                 }
                 if (dupe == 1) {
-                    //System.out.println(hierarchyEvalGroupId+" is already in the list, so I won't add it.");
+                    LOG.warn(hierarchyEvalGroupId+" is already in the list, so I won't add it.");
                 } else {
                     evalGroups.add(c);
-                    //System.out.println("Have added "+hierarchyEvalGroupId+"to list of evalgroups.");
+                    LOG.warn("Have added "+hierarchyEvalGroupId+"to list of evalgroups.");
                 }
             } else {
-                System.out.println("Could not get an evalgroup for "+hierarchyEvalGroupId);
+                LOG.warn("Could not get an evalgroup for "+hierarchyEvalGroupId);
             }
         }
 
-        Collections.sort(evalGroups, new Comparator<EvalGroup>() {
-            public int compare(final EvalGroup e1, final EvalGroup e2) {
-                return e1.title.compareTo(e2.title);
-            }
-        });
+        Collections.sort(evalGroups, (final EvalGroup e1, final EvalGroup e2) -> e1.title.compareTo(e2.title));
 
         /*
          * Page titles and instructions, top menu links and bread crumbs here

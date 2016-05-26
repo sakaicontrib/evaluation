@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.Set;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -130,11 +129,7 @@ public class ReportChooseGroupsProducer extends EvalCommonProducer implements Vi
                 sortOrder[i] = i;
             }
             // sort and save to index
-            Arrays.sort(sortOrder,new Comparator<Integer>() {
-                public int compare(Integer a, Integer b){
-                	return possibleGroupTitlesToView[a].compareTo(possibleGroupTitlesToView[b]);
-                }
-            });
+            Arrays.sort(sortOrder, (Integer a, Integer b) -> possibleGroupTitlesToView[a].compareTo(possibleGroupTitlesToView[b]));
             for(int i=0;i<sortOrder.length;i++){
                 possibleGroupIdsToViewSorted[i] = possibleGroupIdsToView[sortOrder[i]];
                 possibleGroupTitlesToViewSorted[i] = possibleGroupTitlesToView[sortOrder[i]];

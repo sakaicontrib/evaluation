@@ -282,8 +282,6 @@
         class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="deliveryService"
-            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalResponseAggregatorUtil"
@@ -355,8 +353,6 @@
     <bean id="org.sakaiproject.evaluation.tool.CommonProducerBean"
         class="org.sakaiproject.evaluation.tool.CommonProducerBean"
         init-method="init">
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>

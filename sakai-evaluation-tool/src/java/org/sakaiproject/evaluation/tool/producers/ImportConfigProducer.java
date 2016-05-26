@@ -18,7 +18,6 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class ImportConfigProducer extends EvalCommonProducer implements Navigati
         }
 
         // Clean the uploaded settings out
-        uploadedConfigValues = new HashMap<String, String>();
+        uploadedConfigValues = new HashMap<>();
     }
 
     public static final String VIEW_ID = "import_config";
@@ -77,6 +76,7 @@ public class ImportConfigProducer extends EvalCommonProducer implements Navigati
     }
 
     /**
+     * @return 
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -98,11 +98,7 @@ public class ImportConfigProducer extends EvalCommonProducer implements Navigati
      */
     private void setCurrentSettingsForDisplay(UIContainer tofill) {
         Field[] evalSettingFields = EvalSettings.class.getFields();
-        Arrays.sort(evalSettingFields, new Comparator<Field>() {
-            public int compare(Field o1, Field o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Arrays.sort(evalSettingFields, (Field o1, Field o2) -> o1.getName().compareTo(o2.getName()));
         for (Field field : evalSettingFields) {
             // Ignore the arrays of String and just get the String constants
             if (String.class.equals(field.getType())) {
@@ -111,10 +107,7 @@ public class ImportConfigProducer extends EvalCommonProducer implements Navigati
                 String propertyName = "";
                 try {
                     propertyName = EvalSettings.class.getDeclaredField(field.getName()).get(String.class).toString();
-                } catch (IllegalArgumentException e) {
-                } catch (SecurityException e) {
-                } catch (IllegalAccessException e) {
-                } catch (NoSuchFieldException e) {
+                } catch (IllegalArgumentException | SecurityException | IllegalAccessException | NoSuchFieldException e) {
                 }
                 UIOutput.make(row, "propertyName", propertyName);
                 Object settingValue = evalSettings.get(propertyName);
@@ -135,7 +128,7 @@ public class ImportConfigProducer extends EvalCommonProducer implements Navigati
         this.navBarRenderer = navBarRenderer;
     }
 
-    private static HashMap<String, String> uploadedConfigValues = new HashMap<String, String>();
+    private static HashMap<String, String> uploadedConfigValues = new HashMap<>();
     public void setUploadedConfigValues(HashMap<String, String> hashMap) {
         ImportConfigProducer.uploadedConfigValues = hashMap;
     }

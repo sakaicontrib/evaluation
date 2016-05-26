@@ -49,7 +49,11 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
     {
-        logIfDebugEnabled( "isRuleAlreadyAssignedToNode( " + ruleText + ", " + qualifierSelection + ", " + optionSelection + ", " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "isRuleAlreadyAssignedToNode( " + ruleText + ", " + qualifierSelection + ", " + optionSelection + ", " + nodeID + " )" );
+        }
+
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifierSelection ) || StringUtils.isBlank( optionSelection ) )
         {
             throw new IllegalArgumentException( "Invalid arguments for isRuleAlreadyAssignedToNode(), no arguments can be null or blank: " +
@@ -68,7 +72,11 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
     {
-        logIfDebugEnabled( "assignNodeRule( " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "assignNodeRule( " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+        }
+
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifier ) || StringUtils.isBlank( option ) )
         {
             throw new IllegalArgumentException( "Invalid arguments for assignNodeRule(), no arguments can be null or blank: " +
@@ -88,7 +96,10 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void removeNodeRule( Long ruleID )
     {
-        logIfDebugEnabled( "removeNodeRule( " + ruleID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "removeNodeRule( " + ruleID + " )" );
+        }
 
         EvalHierarchyRule rule = getByID( ruleID );
         if( rule == null )
@@ -105,7 +116,10 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void removeAllRulesForNode( Long nodeID )
     {
-        logIfDebugEnabled( "removeAllRulesForNode( " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "removeAllRulesForNode( " + nodeID + " )" );
+        }
 
         Set<EvalHierarchyRule> rules = new HashSet( getAllByNodeID( nodeID ) );
         if( !rules.isEmpty() )
@@ -120,7 +134,11 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
     {
-        logIfDebugEnabled( "updateNodeRule( " + ruleID + ", " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "updateNodeRule( " + ruleID + ", " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+        }
+
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifier ) || StringUtils.isBlank( option ) )
         {
             throw new IllegalArgumentException( "Invalid arguments for updateNodeRule(), no arguments can be null or blank: " +
@@ -146,7 +164,10 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
     {
-        logIfDebugEnabled( "getRulesByNodeID( " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "getRulesByNodeID( " + nodeID + " )" );
+        }
 
         List<EvalHierarchyRule> rules = getAllByNodeID( nodeID );
         return convertRules( rules );
@@ -158,7 +179,10 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public HierarchyNodeRule getRuleByID( Long ruleID )
     {
-        logIfDebugEnabled( "getRuleByID( " + ruleID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "getRuleByID( " + ruleID + " )" );
+        }
 
         EvalHierarchyRule rule = getByID( ruleID );
         if( rule == null )
@@ -177,23 +201,13 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public List<HierarchyNodeRule> getAllRules()
     {
-        logIfDebugEnabled( "getAllRules()" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "getAllRules()" );
+        }
 
         List<EvalHierarchyRule> rules = dao.findAll( EvalHierarchyRule.class );
         return convertRules( rules );
-    }
-
-    /**
-     * Utility method to log a message at DEBUG level, only if debug logging is enabled.
-     * 
-     * @param message the message to be logged
-     */
-    private void logIfDebugEnabled( String message )
-    {
-        if( LOG.isDebugEnabled() )
-        {
-            LOG.debug( message );
-        }
     }
 
     /**
@@ -204,7 +218,10 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     private EvalHierarchyRule getByID( Long ruleID )
     {
-        logIfDebugEnabled( "getByID( " + ruleID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "getByID( " + ruleID + " )" );
+        }
 
         Search searchObj = new Search();
         searchObj.addRestriction( new Restriction( "id", ruleID ) );
@@ -228,14 +245,17 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     private List<EvalHierarchyRule> getAllByNodeID( Long nodeID )
     {
-        logIfDebugEnabled( "getAllByNodeID( " + nodeID + " )" );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "getAllByNodeID( " + nodeID + " )" );
+        }
 
         Search searchObj = new Search();
         searchObj.addRestriction( new Restriction( "nodeID", nodeID ) );
         List<EvalHierarchyRule> rules = dao.findBySearch( EvalHierarchyRule.class, searchObj );
         if( rules == null )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         else
         {

@@ -112,8 +112,8 @@ public class BeEvaluatedBoxRenderer {
             // re-sort the evals so closed ones are at the end
             evalsForInstructor = EvalUtils.sortClosedEvalsToEnd(evalsForInstructor);
             // split into "in progress" and "closed"
-            List<EvalEvaluation> evalsInProgress = new ArrayList<EvalEvaluation>();
-            List<EvalEvaluation> evalsClosed = new ArrayList<EvalEvaluation>();
+            List<EvalEvaluation> evalsInProgress = new ArrayList<>();
+            List<EvalEvaluation> evalsClosed = new ArrayList<>();
             for (EvalEvaluation eval : evalsForInstructor) {
                 if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, true)) {
                     evalsClosed.add(eval);
@@ -159,7 +159,7 @@ public class BeEvaluatedBoxRenderer {
             // show one link per group assigned to in-queue, active or grace period eval
             List<EvalGroup> groups = eval.getEvalGroups();
             if (groups == null) {
-                groups = new ArrayList<EvalGroup>();
+                groups = new ArrayList<>();
             }
             for (EvalGroup group : groups) {
                 UIBranchContainer evalrow = UIBranchContainer.make(evalResponseTable, "evalResponsesList:");
@@ -174,7 +174,7 @@ public class BeEvaluatedBoxRenderer {
                 int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
                 int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] { group.evalGroupId });
                 int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-                int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+                int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
                 String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
                 // render the response rates depending on permissions

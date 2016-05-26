@@ -72,7 +72,7 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
   
 	public void fill(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
-		String groupTitle = "", evalGroupId = "", selectType = "";  //Hold values passed via URL. selectType refers to what type of role is being show eg. Instructor or Assistant
+		String groupTitle, evalGroupId, selectType;  //Hold values passed via URL. selectType refers to what type of role is being show eg. Instructor or Assistant
 		Long evalId;
 		EvalViewParameters evalParameters;
 		
@@ -100,10 +100,8 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
 			Set<String> users;
 			if(isInstructor){
 				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED, evaluation.getSectionAwareness());
-				actionBeanVariable = actionBeanVariable+"deselectedInstructors";
 			}else if(isAssistant){
 				users = commonLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE, evaluation.getSectionAwareness());
-				actionBeanVariable = actionBeanVariable+"deselectedAssistants";
 			}else{
 				throw new InvalidParameterException("Cannot handle this selection type: "+selectType);
 			}

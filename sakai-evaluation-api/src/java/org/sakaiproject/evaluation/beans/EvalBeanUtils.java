@@ -42,7 +42,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalBeanUtils {
 
-    private static Log log = LogFactory.getLog(EvalBeanUtils.class);
+    private static final Log LOG = LogFactory.getLog(EvalBeanUtils.class);
 
     // Section awareness default setting from sakai.properties
     private static final String SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT = "evalsys.section.aware.default";
@@ -72,11 +72,11 @@ public class EvalBeanUtils {
      * @return number of responses needed before viewing is allowed, 0 indicates viewable now
      */
     public int getResponsesNeededToViewForResponseRate(int responsesCount, int enrollmentsCount) {
-        int responsesNeeded = 1;
+        int responsesNeeded;
         if ( commonLogic.isUserAdmin( commonLogic.getCurrentUserId() ) ) {
             responsesNeeded = 0;
         } else {
-            int minResponses = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+            int minResponses = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
             responsesNeeded = minResponses - responsesCount;
             if (responsesCount >= enrollmentsCount) {
                 // special check to make sure the cases where there is a very small enrollment count is still ok
@@ -116,6 +116,7 @@ public class EvalBeanUtils {
      * similar logic to {@link #getInstructorViewDateForEval(EvalEvaluation)}
      * 
      * @param eval the evaluation
+     * @param evalState
      * @return true if results can be viewed, false otherwise
      */
     public boolean checkInstructorViewResultsForEval(EvalEvaluation eval, String evalState) {
@@ -149,7 +150,7 @@ public class EvalBeanUtils {
                     if (instViewResultsSetting == null) {
                         instViewResultsEval = eval.getInstructorViewResults();
                     } else {
-                        instViewResultsEval = instViewResultsSetting.booleanValue();
+                        instViewResultsEval = instViewResultsSetting;
                     }
                 }
             }
@@ -192,7 +193,7 @@ public class EvalBeanUtils {
                     if (instViewResultsSetting == null) {
                         evalViewable = eval.getInstructorViewResults();
                     } else {
-                        evalViewable = instViewResultsSetting.booleanValue();
+                        evalViewable = instViewResultsSetting;
                     }
                 }
                 if (evalViewable) {
@@ -247,7 +248,7 @@ public class EvalBeanUtils {
         calendar.setTime( now );
         if (eval.getStartDate() == null) {
             eval.setStartDate(now);
-            log.debug("Setting start date to default of: " + eval.getStartDate());
+            LOG.debug("Setting start date to default of: " + eval.getStartDate());
         } else {
             calendar.setTime(eval.getStartDate());
         }
@@ -264,7 +265,7 @@ public class EvalBeanUtils {
                 // default the due date to the end of the start date + 1 day
                 Date endOfDay = EvalUtils.getEndOfDayDate( calendar.getTime() );
                 eval.setDueDate( endOfDay );
-                log.debug("Setting due date to default of: " + eval.getDueDate());
+                LOG.debug("Setting due date to default of: " + eval.getDueDate());
             } else {
                 calendar.setTime(eval.getDueDate());
             }
@@ -279,7 +280,7 @@ public class EvalBeanUtils {
                 // assign stop date to equal due date for now
                 if (eval.getStopDate() == null) {
                     eval.setStopDate(eval.getDueDate());
-                    log.debug("Setting stop date to default of: " + eval.getStopDate());
+                    LOG.debug("Setting stop date to default of: " + eval.getStopDate());
                 }
             } else {
                 eval.setStopDate(null);
@@ -297,7 +298,7 @@ public class EvalBeanUtils {
                 if (eval.getViewDate() == null) {
                     // default the view date to the today + 2
                     eval.setViewDate(calendar.getTime());
-                    log.debug("Setting view date to default of: " + eval.getViewDate());
+                    LOG.debug("Setting view date to default of: " + eval.getViewDate());
                 }
             } else {
                 eval.setViewDate(null);
@@ -315,13 +316,13 @@ public class EvalBeanUtils {
         }
 
         // results viewable settings
-        Date studentsDate = null;
+        Date studentsDate;
         Boolean studentsView = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
         if (studentsView != null) {
             eval.setStudentViewResults( studentsView );
         }
 
-        Date instructorsDate = null;
+        Date instructorsDate;
         Boolean instructorsView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
         if (instructorsView != null) {
             eval.setInstructorViewResults( instructorsView );
@@ -339,14 +340,11 @@ public class EvalBeanUtils {
         		eval.setInstructorViewAllResults( instructorsAllViewSetting );
         	}
         }
-        
+
         // Section awareness default controlled by sakai.property
         if( eval.getSectionAwareness() == null )
         {
-        	if( EVALSYS_SECTION_AWARE_DEFAULT )
-        		eval.setSectionAwareness( Boolean.TRUE );
-        	else
-        		eval.setSectionAwareness( Boolean.FALSE );
+            eval.setSectionAwareness( EVALSYS_SECTION_AWARE_DEFAULT );
         }
 
         // Results sharing default controlled by sakai.property
@@ -510,7 +508,7 @@ public class EvalBeanUtils {
             // force the due date to the end of the day if we are using dates only AND eval is not due yet
             if (eval.getDueDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_GRACEPERIOD, false) ) {
-                    log.info("Forcing date to end of day for non null due date: " + eval.getDueDate());
+                    LOG.info("Forcing date to end of day for non null due date: " + eval.getDueDate());
                     eval.setDueDate( EvalUtils.getEndOfDayDate( eval.getDueDate() ) );
                 }
             }
@@ -525,7 +523,7 @@ public class EvalBeanUtils {
             // force the stop date to the end of the day if we are using dates only AND eval is not closed yet
             if (eval.getStopDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false) ) {
-                    log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
+                    LOG.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
                     eval.setStopDate( EvalUtils.getEndOfDayDate( eval.getStopDate() ) );
                 }
             }
@@ -534,7 +532,7 @@ public class EvalBeanUtils {
         // Getting the system setting that tells what should be the minimum time difference between start date and due date.
         int minHoursDifference = 0;
         if (!ignoreMinTimeDiff) {
-            minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+            minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE));
         }
         // Ensure minimum time difference between start and due/stop dates in eval - check this after the dates are set
         if (eval.getDueDate() != null) {
@@ -552,7 +550,7 @@ public class EvalBeanUtils {
             // force the view date to the end of the day if we are using dates only AND eval is not viewable yet
             if (eval.getViewDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, false) ) {
-                    log.info("Forcing date to end of day for non null stop date: " + eval.getViewDate());
+                    LOG.info("Forcing date to end of day for non null stop date: " + eval.getViewDate());
                     eval.setViewDate( EvalUtils.getEndOfDayDate( eval.getViewDate() ) );
                 }
             }

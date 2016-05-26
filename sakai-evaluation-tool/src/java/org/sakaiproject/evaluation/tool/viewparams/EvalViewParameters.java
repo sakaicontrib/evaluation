@@ -78,6 +78,9 @@ public class EvalViewParameters extends BaseViewParameters {
    
    /**
     * Special constructor used for making the VP when generating a URL for reopening evals
+    * @param viewID
+    * @param evaluationId
+    * @param reOpening
     */
    public EvalViewParameters(String viewID, Long evaluationId, boolean reOpening) {
       this.viewID = viewID;

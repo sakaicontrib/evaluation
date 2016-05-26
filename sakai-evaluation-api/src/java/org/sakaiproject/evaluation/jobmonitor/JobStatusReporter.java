@@ -36,6 +36,7 @@ public interface JobStatusReporter
 	/**
 	 * @param jobId
 	 * @param jobFailed TODO
+	 * @param milestone
 	 * @param detail
 	 */
 	public void reportError(String jobId, boolean jobFailed, String milestone, String detail);
@@ -43,6 +44,7 @@ public interface JobStatusReporter
 	/**
 	 * @param jobId
 	 * @param jobFailed TODO
+	 * @param milestone
 	 * @param detail TODO
 	 */
 	public void reportFinished(String jobId, boolean jobFailed, String milestone, String detail);

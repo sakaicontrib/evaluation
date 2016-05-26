@@ -41,7 +41,7 @@ public class ModelUtilsTest {
         String s = EvalResponse.encodeSelections(m);
         assertNull(s);
         
-        m = new LinkedHashMap<String, String[]>();
+        m = new LinkedHashMap<>();
         m.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, new String[] {"A", "B", "C"});
         s = EvalResponse.encodeSelections(m);
         assertNotNull(s);
@@ -78,7 +78,7 @@ public class ModelUtilsTest {
         assertArrayEquals(new String[] {"becky", "minerva"}, m.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR));
 
         try {
-            m = EvalResponse.decodeSelections("XXXX");
+            EvalResponse.decodeSelections("XXXX");
             fail("should have failed");
         } catch (Exception e) {
             assertNotNull(e.getMessage());
@@ -176,7 +176,7 @@ public class ModelUtilsTest {
         String s = EvalAssignGroup.encodeSelectionSettings(m);
         assertNull(s);
         
-        m = new LinkedHashMap<String, String>();
+        m = new LinkedHashMap<>();
         m.put(EvalAssignGroup.SELECTION_TYPE_ASSISTANT, EvalAssignGroup.SELECTION_OPTION_MULTIPLE);
         s = EvalAssignGroup.encodeSelectionSettings(m);
         assertNotNull(s);
@@ -193,7 +193,7 @@ public class ModelUtilsTest {
      */
     @Test
     public void testDecodeSelectionSettings() {
-        Map<String, String> m = null;
+        Map<String, String> m;
         String s1 = "{"+EvalAssignGroup.SELECTION_TYPE_ASSISTANT+":"+EvalAssignGroup.SELECTION_OPTION_MULTIPLE+"}";
         String s2 = "{"+EvalAssignGroup.SELECTION_TYPE_ASSISTANT+":"+EvalAssignGroup.SELECTION_OPTION_MULTIPLE+"}{"+EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR+":"+EvalAssignGroup.SELECTION_OPTION_ONE+"}";
 
@@ -213,7 +213,7 @@ public class ModelUtilsTest {
         assertEquals(EvalAssignGroup.SELECTION_OPTION_ONE, m.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR));
 
         try {
-            m = EvalAssignGroup.decodeSelectionSettings("XXXX");
+            EvalAssignGroup.decodeSelectionSettings("XXXX");
             fail("should have failed");
         } catch (Exception e) {
             assertNotNull(e.getMessage());
@@ -225,7 +225,7 @@ public class ModelUtilsTest {
      */
     @Test
     public void testGetSelectionOptions() {
-        Map<String, String> m = null;
+        Map<String, String> m;
         EvalAssignGroup eag = new EvalAssignGroup();
         String s1 = "{"+EvalAssignGroup.SELECTION_TYPE_ASSISTANT+":"+EvalAssignGroup.SELECTION_OPTION_MULTIPLE+"}";
         String s2 = "{"+EvalAssignGroup.SELECTION_TYPE_ASSISTANT+":"+EvalAssignGroup.SELECTION_OPTION_MULTIPLE+"}{"+EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR+":"+EvalAssignGroup.SELECTION_OPTION_ONE+"}";
@@ -254,7 +254,7 @@ public class ModelUtilsTest {
      */
     @Test
     public void testSetSelectionOption() {
-        Map<String, String> m = null;
+        Map<String, String> m;
         EvalAssignGroup eag = new EvalAssignGroup();
 
         m = eag.getSelectionOptions();

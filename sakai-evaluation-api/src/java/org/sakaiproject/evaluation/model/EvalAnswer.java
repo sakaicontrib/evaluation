@@ -99,6 +99,9 @@ public class EvalAnswer implements java.io.Serializable {
 
     /**
      * Special constructor (not for general use)
+     * @param response
+     * @param templateItem
+     * @param item
      */
     public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item) {
         this(response, templateItem, item, null, null, null, null, null, null);
@@ -106,6 +109,12 @@ public class EvalAnswer implements java.io.Serializable {
 
     /**
      * minimal constructor - text
+     * @param response
+     * @param templateItem
+     * @param item
+     * @param associatedId
+     * @param text
+     * @param associatedType
      */
     public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item, 
             String associatedId, String associatedType, String text) {
@@ -114,6 +123,12 @@ public class EvalAnswer implements java.io.Serializable {
 
     /**
      * minimal constructor - numeric
+     * @param response
+     * @param templateItem
+     * @param item
+     * @param associatedId
+     * @param associatedType
+     * @param numeric
      */
     public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item, 
             String associatedId, String associatedType, Integer numeric) {
@@ -122,6 +137,15 @@ public class EvalAnswer implements java.io.Serializable {
 
     /** 
      * full constructor 
+     * @param response
+     * @param templateItem
+     * @param item
+     * @param associatedId
+     * @param associatedType
+     * @param text
+     * @param numeric
+     * @param multiAnswerCode
+     * @param comment
      */
     public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem,
             EvalItem item, String associatedId, String associatedType, String text,
@@ -215,6 +239,7 @@ public class EvalAnswer implements java.io.Serializable {
      * Returns the encoded answers for an MA type item,
      * use {@link EvalUtils#decodeMultipleAnswers(String)} to
      * decode these answers into the {@link #multipleAnswers} field
+     * @return 
      */
     public String getMultiAnswerCode() {
         return multiAnswerCode;

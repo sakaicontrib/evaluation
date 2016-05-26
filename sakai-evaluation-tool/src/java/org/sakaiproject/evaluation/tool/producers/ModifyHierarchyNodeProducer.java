@@ -92,7 +92,7 @@ public class ModifyHierarchyNodeProducer extends EvalCommonProducer implements V
         boolean addingChild = params.addingChild;
         EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
 
-        String ELName = "";
+        String ELName;
         if (addingChild) {
             ELName = HierarchyNodeLocator.NEW_PREFIX + node.id;
             UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});

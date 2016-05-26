@@ -44,7 +44,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalImportLogicImpl implements EvalImportLogic {
 	
-	private static final Log log = LogFactory.getLog(EvalImportLogicImpl.class);
+	private static final Log LOG = LogFactory.getLog(EvalImportLogicImpl.class);
 	
 	//Spring injection
 	private EvalCommonLogic commonLogic;
@@ -67,7 +67,7 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalImportLogic#load(java.lang.String)
 	 */
 	public List<String> load(String id) {
-		List<String> messages = new ArrayList<String>();
+		List<String> messages = new ArrayList<>();
 		String currentUserId = commonLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
 		try
 		{
@@ -80,7 +80,9 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		}
 		catch(Exception e)
 		{
-			if(log.isWarnEnabled())	log.warn(e);
+			if(LOG.isWarnEnabled()) {
+				LOG.warn(e);
+			}
 			messages.add("There was a problem loading the data: " + e.toString());
 			
 		}
@@ -95,7 +97,7 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	 */
 	protected void processInQuartz(String id) throws JobExecutionException {
 		
-		Scheduler scheduler = null;
+		Scheduler scheduler;
 		
 		//pass Reference's id in job detail and schedule job to run
 		JobDetail jobDetail = JobBuilder.newJob(evalImportJob.getClass())

@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,7 +68,6 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -90,7 +90,6 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-
 /**
  * This page is for a user with take evaluation permission to fill and submit the evaluation
  * 
@@ -101,7 +100,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
     private static final String SELECT_KEY_ASSISTANT = "assistant";
     private static final String SELECT_KEY_INSTRUCTOR = "instructor";
 
-    private static Log log = LogFactory.getLog(TakeEvalProducer.class);
+    private static final Log LOG = LogFactory.getLog(TakeEvalProducer.class);
 
     public static final String VIEW_ID = "take_eval";
     public String getViewID() {
@@ -177,8 +176,8 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
      * Map of key to Answers for the current response<br/>
      * key = templateItemId + answer.associatedType + answer.associatedId
      */
-    Map<String, EvalAnswer> answerMap = new HashMap<String, EvalAnswer>();
-    Map<String, String[]> savedSelections = new HashMap<String, String[]>();
+    Map<String, EvalAnswer> answerMap = new HashMap<>();
+    Map<String, String[]> savedSelections = new HashMap<>();
     /**
      * If this is a re-opened response this will contain an {@link EvalResponse}
      */
@@ -211,7 +210,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         Long evaluationId = evalTakeViewParams.evaluationId;
         if (evaluationId == null) {
             // redirect over to the main view maybe?? (not sure how to do this in RSF)
-            log.debug("User ("+currentUserId+") cannot take evaluation, eval id is not set");
+            LOG.debug("User ("+currentUserId+") cannot take evaluation, eval id is not set");
             throw new IllegalArgumentException("Invalid evaluationId: id must be set and cannot be null, cannot load evaluation");
         }
         String evalGroupId = evalTakeViewParams.evalGroupId;
@@ -244,19 +243,21 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
             }
             UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
                     new String[] {df.format(eval.getStartDate()), dueDate} );
-            log.info("User ("+currentUserId+") cannot take evaluation yet, not open until: " + eval.getStartDate());
+            LOG.info("User ("+currentUserId+") cannot take evaluation yet, not open until: " + eval.getStartDate());
         } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
             UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.closed",
                     new String[] {df.format(eval.getDueDate())} );
-            log.info("User ("+currentUserId+") cannot take evaluation anymore, closed on: " + eval.getDueDate());
+            LOG.info("User ("+currentUserId+") cannot take evaluation anymore, closed on: " + eval.getDueDate());
         } else {
             // eval state is possible to take eval
             canAccess = true;
         }
 
-        List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
+        List<EvalGroup> validGroups = new ArrayList<>(); // stores EvalGroup objects
         if (canAccess) {
-            if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") can take evalution ("+evaluationId+")");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("User ("+currentUserId+") can take evalution ("+evaluationId+")");
+            }
             // eval is accessible so check user can take it
             if (evalGroupId != null) {
                 // there was an eval group passed in so make sure things are ok
@@ -298,8 +299,8 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(evalGroupIds, commonLogic);
                         evalGroups = EvalUtils.getGroupsInCommon(groups, m.get(evaluationId) );
                     }
-                    for (int i = 0; i < evalGroups.length; i++) {
-                        EvalGroup group = evalGroups[i];
+                    for( EvalGroup group : evalGroups )
+                    {
                         if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
                             if (evalGroupId == null) {
                                 // set the evalGroupId to the first valid group if unset
@@ -308,7 +309,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                             }
                             validGroups.add( commonLogic.makeEvalGroupObject(group.evalGroupId) );
                         }else{
-                        	isUserSitePublished = false;
+                            isUserSitePublished = false;
                         }
                     }
                 }
@@ -317,11 +318,11 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
             if (! isUserSitePublished ){
             	userCanAccess = false;
             	UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.site.notpublished");
-                log.info("User ("+currentUserId+") cannot take evaluation because his site(s) are unpublished.");
+                LOG.info("User ("+currentUserId+") cannot take evaluation because his site(s) are unpublished.");
             }
             else if (userCanAccess) {
                 // check if we had a failure during a previous submit and get the missingKeys out if there are some
-                Set<String> missingKeys = new HashSet<String>();
+                Set<String> missingKeys = new HashSet<>();
                 if (messages.isError() && messages.size() > 0) {
                     for (int i = 0; i < messages.size(); i++) {
                         TargettedMessage message = messages.messageAt(i);
@@ -330,9 +331,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                             ResponseSaveException rse = (ResponseSaveException) e;
                             if (rse.missingItemAnswerKeys != null
                                     && rse.missingItemAnswerKeys.length > 0) {
-                                for (int j = 0; j < rse.missingItemAnswerKeys.length; j++) {
-                                    missingKeys.add(rse.missingItemAnswerKeys[j]);
-                                }
+                                missingKeys.addAll( Arrays.asList( rse.missingItemAnswerKeys ) );
                             }
                             break;
                         }
@@ -344,20 +343,26 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 					response = evaluationService.getResponseForUserAndGroup(
 							evaluationId, currentUserId, evalGroupId);
 					if (response == null) {
-                        if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") has no previous response for eval ("+evaluationId+")");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("User ("+currentUserId+") has no previous response for eval ("+evaluationId+")");
+                        }
 						// create the initial response if there is not one
                         // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
                         //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
                     } else {
 						responseId = response.getId();
-	                    if (log.isDebugEnabled()) log.debug("User ("+currentUserId+") has previous response ("+responseId+") in eval ("+evaluationId+")");
+	                    if (LOG.isDebugEnabled()) {
+                            LOG.debug("User ("+currentUserId+") has previous response ("+responseId+") in eval ("+evaluationId+")");
+                        }
 					}
 				}
 
                 if (responseId != null) {
                     // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
                     answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
-                    if (log.isDebugEnabled()) log.debug("User ("+currentUserId+"), eval ("+evaluationId+"), previous answers map: "+answerMap);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("User ("+currentUserId+"), eval ("+evaluationId+"), previous answers map: "+answerMap);
+                    }
                 }
 
                 // show the switch group selection and form if there are other valid groups for this user
@@ -383,7 +388,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
                 UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
                 UIOutput.make(groupTitle, "group-title", evalGroup.title );
-                if (log.isDebugEnabled()) log.debug("Begin render of eval: "+eval.getTitle()+" ("+evaluationId+"), group: "+groupTitle+" ("+evalGroupId+")");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Begin render of eval: "+eval.getTitle()+" ("+evaluationId+"), group: "+groupTitle+" ("+evalGroupId+")");
+                }
 
                 // show instructions if not null
                 if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
@@ -419,14 +426,18 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
                 Set<String> assistantIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_ASSISTANT);
                 List<String> associatedTypes = tidl.getAssociateTypes();
-                if (log.isDebugEnabled()) log.debug("TIDL: eval="+evaluationId+", group="+evalGroupId+", items="+tidl.getTemplateItemsCount()+" instructorIds: "+instructorIds+", "+" associatedTypes: "+associatedTypes);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("TIDL: eval="+evaluationId+", group="+evalGroupId+", items="+tidl.getTemplateItemsCount()+" instructorIds: "+instructorIds+", "+" associatedTypes: "+associatedTypes);
+                }
                 
                 // SELECTION Code - EVALSYS-618
                 Boolean selectionsEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION);
                 String instructorSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
                 String assistantSelectionOption = EvalAssignGroup.SELECTION_OPTION_ALL;
-                if (log.isDebugEnabled()) log.debug("Selections: enabled="+selectionsEnabled+", inst="+instructorSelectionOption+", asst="+assistantSelectionOption);
-                Map<String, String[]> savedSelections = new HashMap<String, String[]>();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Selections: enabled="+selectionsEnabled+", inst="+instructorSelectionOption+", asst="+assistantSelectionOption);
+                }
+                Map<String, String[]> savedSelections = new HashMap<>();
                 if (response != null) {
 					savedSelections = response.getSelections();
 				}
@@ -434,7 +445,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     // only do the selection calculations if it is enabled
                     EvalAssignGroup assignGroup = evaluationService.getAssignGroupByEvalAndGroupId(
                             evaluationId, evalGroupId);
-                    Map<String, String> selectorType = new HashMap<String, String>();
+                    Map<String, String> selectorType = new HashMap<>();
                     instructorSelectionOption = EvalUtils.getSelectionSetting(
                             EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR, assignGroup, null);
                     selectorType.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructorSelectionOption);
@@ -446,12 +457,12 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     }
                     if (response != null) {
 						// emit currently selected people into hidden element for JS use
-						Set<String> savedIds = new HashSet<String>();
-						for (Iterator<String> selector = savedSelections.keySet().iterator(); selector.hasNext();) {
-							String selectKey = (String) selector.next();
-							String[] usersFound = savedSelections.get(selectKey);
-							savedIds.add(usersFound[0]);
-						}
+						Set<String> savedIds = new HashSet<>();
+                        for( String selectKey : savedSelections.keySet() )
+                        {
+                            String[] usersFound = savedSelections.get(selectKey);
+                            savedIds.add(usersFound[0]);
+                        }
 						UIOutput savedSel = UIOutput.make(formBranch, "selectedPeopleInResponse", savedIds.toString());
 						savedSel.decorators = new DecoratorList(
 								new UIIDStrategyDecorator(
@@ -465,7 +476,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         String selectValue = (String) pairs.getValue();
                         String uiTag = "select-" + selectKeyLowerCaps;
                         String selectionOTP = "#{takeEvalBean.selection" + selectKeyLowerCaps + "Ids}";
-                        Set<String> selectUserIds = new HashSet<String>();
+                        Set<String> selectUserIds = new HashSet<>();
                         if (selectKeyLowerCaps.equals(SELECT_KEY_INSTRUCTOR)) {
                             selectUserIds = instructorIds;
                         } else if (selectKeyLowerCaps.equals(SELECT_KEY_ASSISTANT)) {
@@ -481,8 +492,8 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                                 UIBranchContainer showSwitchGroup = UIBranchContainer.make(
                                         form, uiTag + "-multiple:");
                                // Things for building the UISelect of Assignment Checkboxes
-                                List<String> assLabels = new ArrayList<String>();
-                                List<String> assValues = new ArrayList<String>();
+                                List<String> assLabels = new ArrayList<>();
+                                List<String> assValues = new ArrayList<>();
                                 UISelect assSelect = UISelect.makeMultiple(showSwitchGroup, uiTag + "-multiple-holder", new String[] {}, new String[] {}, selectionOTP, new String[] {});
                                 String assSelectID = assSelect.getFullID();
                                 for (String userId : selectUserIds) {
@@ -496,8 +507,8 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                                 assSelect.optionlist = UIOutputMany.make(assValues.toArray(new String[] {}));
                                 assSelect.optionnames = UIOutputMany.make(assLabels.toArray(new String[] {}));
                             } else if (EvalAssignGroup.SELECTION_OPTION_ONE.equals(selectValue)) {
-                                List<String> value = new ArrayList<String>();
-                                List<String> label = new ArrayList<String>();
+                                List<String> value = new ArrayList<>();
+                                List<String> label = new ArrayList<>();
                                 value.add("default");
                                 label.add(messageLocator.getMessage("takeeval.selection.dropdown"));
                                 List<EvalUser> users = commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]));
@@ -534,9 +545,13 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 
                 // loop through the TIGs and handle each associated category
                 Boolean useCourseCategoryOnly = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
-                if (log.isDebugEnabled()) log.debug("TIGs: useCourseCategoryOnly="+useCourseCategoryOnly);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("TIGs: useCourseCategoryOnly="+useCourseCategoryOnly);
+                }
                 for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-                    if (log.isDebugEnabled()) log.debug("TIGs: tig.associateType="+tig.associateType);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("TIGs: tig.associateType="+tig.associateType);
+                    }
                 	UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
                     // only do headers if we are allowed to use categories
                     if (! useCourseCategoryOnly) {
@@ -551,7 +566,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     }
 
                     // loop through the hierarchy node groups
-                    if (log.isDebugEnabled()) log.debug("TIGs: tig.hierarchyNodeGroups="+tig.hierarchyNodeGroups.size());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("TIGs: tig.hierarchyNodeGroups="+tig.hierarchyNodeGroups.size());
+                    }
                     for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                         // render a node title
                         if (hng.node != null) {
@@ -564,7 +581,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                         }
 
                         List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
-                        if (log.isDebugEnabled()) log.debug("DTIs: count="+dtis.size());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("DTIs: count="+dtis.size());
+                        }
                         for (int i = 0; i < dtis.size(); i++) {
                             DataTemplateItem dti = dtis.get(i);
                             UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
@@ -596,7 +615,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 EvalUser current = commonLogic.getEvalUserById(currentUserId);
                 UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take", 
                         new String[] {current.displayName, current.email, current.username});
-                log.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
+                LOG.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
             }
         }
     }
@@ -626,7 +645,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 						new String[] { user.userId, associateType.toLowerCase() + "Branch" }));
 		if (!EvalAssignGroup.SELECTION_OPTION_ALL.equals(selectionOption)
 				&& associateIds.size() > 1) {
-			Map<String, String> cssHide = new HashMap<String, String>();
+			Map<String, String> cssHide = new HashMap<>();
 			cssHide.put("display", "none");
 			categorySectionBranch.decorators.add(new UICSSDecorator(cssHide));
 		}
@@ -642,7 +661,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
 	 * @param missingKeys the invalid keys, needed for calculating rendering props
      */
     private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti, EvalEvaluation eval, Set<String> missingKeys) {
-        if (log.isDebugEnabled()) log.debug("renderItemPrep: eval="+eval.getId()+", dti="+dti);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("renderItemPrep: eval="+eval.getId()+", dti="+dti);
+        }
         int displayIncrement = 0; // stores the increment in the display number
         String[] currentAnswerOTP = null; // holds array of bindings for items
         EvalTemplateItem templateItem = dti.templateItem;
@@ -675,7 +696,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         // setup the render properties to send along
         Map<String, Object> renderProps = RenderingUtils.makeRenderProps(dti, eval, missingKeys, null);
         // render the item
-        if (log.isDebugEnabled()) log.debug("render item: num="+displayNumber+" (count="+renderedItemCount+"), render="+renderProps+", templateItem="+templateItem);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("render item: num="+displayNumber+" (count="+renderedItemCount+"), render="+renderProps+", templateItem="+templateItem);
+        }
         itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false, renderProps);
 
         /* increment the item counters, if we displayed 1 item, increment by 1,
@@ -704,7 +727,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         // set up OTP paths for answerable items
         String responseAnswersOTP = "responseAnswersBeanLocator.";
         String currAnswerOTP;
-        boolean newAnswer = false;
+        boolean newAnswer;
         if (responseId == null) {
             // it should not be the case that we have no response
             //throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
@@ -776,7 +799,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
      * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
      */
     public List<NavigationCase> reportNavigationCases() {
-        List<NavigationCase> i = new ArrayList<NavigationCase>();
+        List<NavigationCase> i = new ArrayList<>();
         i.add(new NavigationCase("success", new SimpleViewParameters(SummaryProducer.VIEW_ID)));
         return i;
     }

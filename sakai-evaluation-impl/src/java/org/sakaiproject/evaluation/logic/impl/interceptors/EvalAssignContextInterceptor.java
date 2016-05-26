@@ -32,7 +32,7 @@ public class EvalAssignContextInterceptor implements MethodInterceptor {
 		String method = invocation.getMethod().getName();
 		EvalAssignGroup eac = (EvalAssignGroup) invocation.getThis();
 		if (method.equals("equals")) {
-			return Boolean.valueOf(testEquals(eac, (EvalAssignGroup) invocation.getArguments()[0]));
+			return testEquals(eac, (EvalAssignGroup) invocation.getArguments()[0]);
 		}
 		if (eac.getId() != null) {
 			// check if this eac can be modified in this way

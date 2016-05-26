@@ -150,7 +150,6 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                 EvalTemplateItem templateItemInitemList = (EvalTemplateItem) itemList.get(i);
                 if (templateItemInitemList.getId().equals(templateItemId)) {
                 	templateItem = templateItemInitemList;
-                	continue;
                 }
             }
         	if( templateItem != null){
@@ -187,8 +186,8 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
 	        UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
 	
 	        // create the choices for the pulldown
-	        ArrayList<ViewParameters> templateItemVPList = new ArrayList<ViewParameters>();
-	        ArrayList<String> templateItemLabelList = new ArrayList<String>();
+	        ArrayList<ViewParameters> templateItemVPList = new ArrayList<>();
+	        ArrayList<String> templateItemLabelList = new ArrayList<>();
 	        for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
 	            templateItemVPList.add( new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
 	                    EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i], templateId) );
@@ -227,7 +226,7 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
 	        String currentLevel = "Current";
 	        UIMessage.make(tofill, "level-header-level", "modifytemplate.level.header.level", 
 	                new String[] {currentLevel});			
-	        UIOutput.make(tofill, "level-header-number", new Integer(templateItemsList.size()).toString() );			
+	        UIOutput.make(tofill, "level-header-number", Integer.toString(templateItemsList.size()) );			
 	        UIMessage.make(tofill, "level-header-items", "modifytemplate.level.header.items");			
 	
 	        UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header");
@@ -265,8 +264,8 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
 
         if ((templateItemsList != null) && (templateItemsList.size() > 0)) {
 
-            String templateItemOTPBinding = null;
-            String templateItemOTP = null;
+            String templateItemOTPBinding;
+            String templateItemOTP;
 
             String[] itemNumArr = new String[templateItemsList.size()];
             for (int h = 0; h < templateItemsList.size(); h++) {
@@ -336,7 +335,7 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                         new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) )
                         .decorate(new UITooltipDecorator(UIMessage.make("modifytemplate.item.preview")));
 
-                if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
+                if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent() == true)) {
                     // if it is a block item
                     BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
                     UIInternalLink.make(itemBranch, "modify-row-item", target)
@@ -367,14 +366,14 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                 
                 // SECOND LINE
 
-                UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", new Integer(i + 1).toString());
+                UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", Integer.toString(i + 1));
                 orderPulldown.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.select.order.title") ) );
 
                 String formattedText = FormattedText.convertFormattedTextToPlaintext(templateItem.getItem().getItemText());
 
                 UIBranchContainer branchText = UIBranchContainer.make(itemBranch, "item-text:");
                 UIBranchContainer branchTextHidden = UIBranchContainer.make(itemBranch, "item-text-hidden:");
-                UIVerbatim itemText = null;
+                UIVerbatim itemText;
                 if(formattedText.length() < 150){
                     itemText = UIVerbatim.make(branchText, "item-text-short", formattedText);
                 }else{

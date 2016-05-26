@@ -46,7 +46,7 @@ public class EvalResponse implements java.io.Serializable {
 
     private Date endTime;
 
-    private Set<EvalAnswer> answers = new HashSet<EvalAnswer>(0);
+    private Set<EvalAnswer> answers = new HashSet<>(0);
 
     private EvalEvaluation evaluation;
 
@@ -89,12 +89,26 @@ public class EvalResponse implements java.io.Serializable {
     public EvalResponse() {
     }
 
-    /** minimal constructor */
+    /**
+     * minimal constructor
+     * @param owner
+     * @param evalGroupId
+     * @param evaluation
+     * @param startTime 
+     */
     public EvalResponse(String owner, String evalGroupId, EvalEvaluation evaluation, Date startTime) {
         this(owner, evalGroupId, evaluation, startTime, null, null);
     }
 
-    /** full constructor */
+    /**
+     * full constructor
+     * @param owner
+     * @param evalGroupId
+     * @param evaluation
+     * @param startTime
+     * @param endTime
+     * @param answers 
+     */
     public EvalResponse(String owner, String evalGroupId, EvalEvaluation evaluation, Date startTime, Date endTime,
             Set<EvalAnswer> answers) {
         this.lastModified = new Date();
@@ -171,7 +185,7 @@ public class EvalResponse implements java.io.Serializable {
 
     /**
      * Decodes a selections code string into a map of selections
-     * @param encodedSelections the selections code string
+     * @param encoded the selections code string
      * @return a map of selection item category constants -> selection ids (empty map if the input is null)
      */
     public static Map<String, String[]> decodeSelections(String encoded) {
@@ -180,9 +194,9 @@ public class EvalResponse implements java.io.Serializable {
             encoded = encoded.trim();
         }
         if (encoded == null || "".equals(encoded)) {
-            selections = new HashMap<String, String[]>(0);
+            selections = new HashMap<>(0);
         } else {
-            selections = new HashMap<String, String[]>();
+            selections = new HashMap<>();
             try {
                 // remove the outer brackets
                 encoded = encoded.substring(1, encoded.lastIndexOf('}'));
@@ -224,6 +238,7 @@ public class EvalResponse implements java.io.Serializable {
      * <br> Once an evaluation is submitted, it will be included in the metrics reporting.  In the
      * scenario where the user cannot modify responses but can save without submitting, this variable
      * will keep track of whether the evaluation has been submitted yet.
+     * @return 
      * @returns true if this response has been submitted before or false if only saved.
      */
     public boolean isSubmitted() {
@@ -245,11 +260,7 @@ public class EvalResponse implements java.io.Serializable {
     }
 
     public void setEndTime(Date endTime) {
-        if (endTime == null) {
-            complete = false;
-        } else {
-            complete = true;
-        }
+        complete = endTime != null;
         this.endTime = endTime;
     }
 

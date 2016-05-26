@@ -18,6 +18,7 @@ import static org.sakaiproject.evaluation.utils.EvalUtils.safeBool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -365,7 +366,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
 
             UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
                     "modify-scale-points:", scaleOTP + "options",
-                    (scaleId == null ? EvalToolConstants.defaultInitialScaleValues : null) );
+                    (scaleId == null ? EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES : null) );
             boundedDynamicListInputEvolver.evolve(modifypoints);
             // force the scale to bind to adhoc mode
             form.parameters.add( new UIELBinding(scaleOTP + "mode", EvalConstants.SCALE_MODE_ADHOC) );
@@ -403,8 +404,8 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                  */
                 //Boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
                 //if (useExpertItems) {                      
-                ArrayList<String> listExpertCat = new ArrayList<String>();
-                ArrayList<String> listExpertValues = new ArrayList<String>();
+                ArrayList<String> listExpertCat = new ArrayList<>();
+                ArrayList<String> listExpertValues = new ArrayList<>();
                 listExpertCat.add("None");
                 listExpertValues.add("0");
                 for (int i = 0; i < itemGroups.size(); i++) {
@@ -415,7 +416,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
                         for (int j = 0; j < expertItems.size(); j++) {
                             EvalItem expertItem = (EvalItem) expertItems.get(j);
-                            if (expertItem.getId()== itemId) {
+                            if (Objects.equals( expertItem.getId(), itemId )) {
                                 itemGroupId = eig.getId();
                                 foundItemGroup = true;
                             }	
@@ -457,7 +458,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
                         for (int j = 0; j < expertItems.size(); j++) {
                             EvalItem expertItem = (EvalItem) expertItems.get(j);
-                            if (expertItem.getId()== templateItem.getItem().getId()) {
+                            if (Objects.equals( expertItem.getId(), templateItem.getItem().getId() )) {
                                 itemGroupId = eig.getId();
                                 foundItemGroup = true;
                             }	
@@ -557,7 +558,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                 String[] categoryLabels = EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS;
                 // add in the TA category if enabled
                 Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-                if ( enableTA.booleanValue() ) {
+                if ( enableTA ) {
                     categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_ASSISTANT);
                     categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_ASSISTANT_LABEL);
                 }

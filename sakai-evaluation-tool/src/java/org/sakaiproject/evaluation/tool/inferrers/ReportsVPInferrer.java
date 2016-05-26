@@ -36,7 +36,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class ReportsVPInferrer implements EntityViewParamsInferrer {
 
-    private static Log log = LogFactory.getLog(ReportsVPInferrer.class);
+    private static final Log LOG = LogFactory.getLog(ReportsVPInferrer.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -49,7 +49,7 @@ public class ReportsVPInferrer implements EntityViewParamsInferrer {
     }
 
     public void init() {
-        log.info("VP init");
+        LOG.info("VP init");
     }
 
     /* (non-Javadoc)

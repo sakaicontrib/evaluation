@@ -504,6 +504,7 @@ public interface EvalEvaluationService {
      * @param evalGroupIds an array of unique ids for eval groups, 
      * if null or empty then get all responses for all groups,
      * NOTE: these ids are not validated
+     * @param completed
      * @return the count of associated responses
      */
     public int countResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
@@ -558,6 +559,7 @@ public interface EvalEvaluationService {
     /**
      * Get an email template for an eval by type, will always return an email template
      * 
+     * @param evaluationId
      * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
      * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
      * @return the email template of the supplied type for this eval
@@ -653,13 +655,6 @@ public interface EvalEvaluationService {
      * 		id and a date.
      * @param page The zero-based starting page. In other words, return a page of items beginning at index 
      * 		(pageSize * page).
-     * @param availableEmailSent A boolean value indicating whether the summary data should include evals for which 
-     * 		available emails have been sent (if parameter is Boolean.TRUE) or have not been sent (if parameter is 
-     * 		Boolean.FALSE). A null value indicates all Active evals should be included.
-     * @param emailTemplateType The category of email templates to include in the mapping (either 
-     * 		EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE or EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER,
-     * 		but not both)
-     *    
      * @return A mapping from user-id to data about the evals that user can take. The data for each users is 
      * 		a mapping from string values (EvalConstants.KEY_USER_ID, EvalConstants.KEY_USER_EID, 
      * 		EvalConstants.KEY_EMAIL_TEMPLATE_ID and EvalConstants.KEY_EARLIEST_DUE_DATE) to a String 
@@ -699,6 +694,7 @@ public interface EvalEvaluationService {
 
 	/**
 	 * Remove all records from the the email processing queue and report the number of items removed.
+	 * @return 
 	 */
 	public int resetConsolidatedEmailRecipients();
 
@@ -720,13 +716,22 @@ public interface EvalEvaluationService {
 
     /**
      * This is similar to but for the case of EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL {@link #exportReport(EvalEvaluation, String, OutputStream, String)
+     * @param evaluation
+     * @param groupIds
      * @param evaluateeId - evaluatee id to export
+     * @param outputStream
+     * @param exportType
      */
     
     public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType);
     
     /** 
      * This just allows passing groupIds as a direct array
+     * @param evaluation
+     * @param groupIds
+     * @param evaluateeId
+     * @param outputStream
+     * @param exportType
      * @see exportReport
      */
 

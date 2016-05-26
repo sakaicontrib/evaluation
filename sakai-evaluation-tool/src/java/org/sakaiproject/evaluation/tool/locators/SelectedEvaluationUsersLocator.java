@@ -29,7 +29,7 @@ import uk.org.ponder.beanutil.BeanLocator;
 */
 public class SelectedEvaluationUsersLocator implements BeanLocator {
 	
-	private Map<String, EvaluationUserSelection> localStore = new HashMap<String, EvaluationUserSelection>();
+	private Map<String, EvaluationUserSelection> localStore = new HashMap<>();
 	
 	public Object locateBean(String name) {
 		String checkName = EvalConstants.GROUP_ID_SITE_PREFIX + name;

@@ -33,8 +33,10 @@ import uk.org.ponder.dateutil.LocalSDF;
 public class OverwriteSettingHandler {
     private boolean isTernaryBoolean(String path) {
         boolean isTernary = false;
-        for (int i = 0; i < EvalSettings.TERNARY_BOOLEAN_SETTINGS.length; i++) {
-            if (EvalSettings.TERNARY_BOOLEAN_SETTINGS[i].equals(path)) {
+        for( String TERNARY_BOOLEAN_SETTINGS : EvalSettings.TERNARY_BOOLEAN_SETTINGS )
+        {
+            if( TERNARY_BOOLEAN_SETTINGS.equals( path ) )
+            {
                 isTernary = true;
                 break;
             }
@@ -44,6 +46,7 @@ public class OverwriteSettingHandler {
 
     /**
      * Update the settings using the values supplied from a user upload.
+     * @return 
      */
     public String saveOverwriteSettings() {
         // Don't do anything if for some reason there are no settings.
@@ -55,11 +58,11 @@ public class OverwriteSettingHandler {
                     value = translateToTernaryValue(value);
                 }
                 // Make sure "null"s and empties go in as a true null        
-                if (key.indexOf("java.util.Date") > -1) {
+                if (key.contains( "java.util.Date" )) {
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
                     LocalSDF localSDF = new LocalSDF();
                     try {
-                        value = localSDF.format(sdf.parse(value.toString()));
+                        value = localSDF.format(sdf.parse(value));
                     } catch (ParseException ignore) {
                     }
                 }
@@ -68,7 +71,7 @@ public class OverwriteSettingHandler {
             }
         }
         // Reset this now that we are done with it.
-        uploadedConfigValues = new HashMap<String, String>();
+        uploadedConfigValues = new HashMap<>();
         settings.resetConfigCache();
         return "overwriteSuccess";
     }
@@ -78,7 +81,7 @@ public class OverwriteSettingHandler {
         this.settings = settings;
     }
 
-    private static HashMap<String, String> uploadedConfigValues = new HashMap<String, String>();
+    private static HashMap<String, String> uploadedConfigValues = new HashMap<>();
     public void setUploadedConfigValues(HashMap<String, String> newValues) {
         OverwriteSettingHandler.uploadedConfigValues = newValues;
     }

@@ -43,7 +43,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class EvalSecurityChecksImpl {
 
-    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalSecurityChecksImpl.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -79,11 +79,10 @@ public class EvalSecurityChecksImpl {
         // if eval id is invalid then just log it
         boolean allowed = false;
         if (eval == null) {
-            log.warn("Cannot find evaluation to delete");
+            LOG.warn("Cannot find evaluation to delete");
         } else {
             // check locked first
-            if (eval.getId() != null &&
-                    eval.getLocked().booleanValue() == true) {
+            if (eval.getId() != null && eval.getLocked() == true) {
                 // locked evals in the active/graceperiod state cannot be removed, all others can
                 String evalState = EvalUtils.getEvaluationState(eval, false);
                 if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState) 
@@ -112,10 +111,9 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlTemplate(String userId, EvalTemplate template) {
-        log.debug("template: " + template.getTitle() + ", userId: " + userId);
+        LOG.debug("template: " + template.getTitle() + ", userId: " + userId);
         // check locked first
-        if (template.getId() != null &&
-                template.getLocked().booleanValue() == true) {
+        if (template.getId() != null && template.getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify) locked template ("+template.getId()+")");
         }
 
@@ -135,8 +133,7 @@ public class EvalSecurityChecksImpl {
      */
     public boolean checkUserControlScale(String userId, EvalScale scale) {
         // check locked first
-        if (scale.getId() != null &&
-                scale.getLocked().booleanValue() == true) {
+        if (scale.getId() != null && scale.getLocked() == true) {
             throw new IllegalStateException("Cannot control locked scale ("+scale.getId()+")");
         }
 
@@ -155,10 +152,9 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlItem(String userId, EvalItem item) {
-        log.debug("item: " + item.getId() + ", userId: " + userId);
+        LOG.debug("item: " + item.getId() + ", userId: " + userId);
         // check locked first
-        if (item.getId() != null &&
-                item.getLocked().booleanValue() == true) {
+        if (item.getId() != null && item.getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify) locked item ("+item.getId()+")");
         }
 
@@ -177,10 +173,9 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlTemplateItem(String userId, EvalTemplateItem templateItem) {
-        log.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
+        LOG.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
         // check locked first (expensive check)
-        if (templateItem.getId() != null &&
-                templateItem.getTemplate().getLocked().booleanValue() == true) {
+        if (templateItem.getId() != null && templateItem.getTemplate().getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify,remove) template item ("+
                     templateItem.getId()+") in locked template ("+templateItem.getTemplate().getTitle()+")");
         }
@@ -199,7 +194,7 @@ public class EvalSecurityChecksImpl {
      * @throws SecurityException if user not allowed
      */
     public boolean checkUserControlItemGroup(String userId, EvalItemGroup itemGroup) {
-        log.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
+        LOG.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
 
         if (! evalBeanUtils.checkUserPermission(userId, itemGroup.getOwner()) ) {
             throw new SecurityException("User ("+userId+") cannot control itemGroup ("+itemGroup.getId()+") without permissions");
@@ -215,7 +210,7 @@ public class EvalSecurityChecksImpl {
      * @throws SecurityException if user not allowed
      */
     public boolean checkControlAssignGroup(String userId, EvalAssignHierarchy assignGroup) {
-        log.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
+        LOG.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
 
         if (! evalBeanUtils.checkUserPermission(userId, assignGroup.getOwner()) ) {
             throw new SecurityException("User ("+userId+") cannot control assignGroup ("+assignGroup.getId()+") without permissions");
@@ -305,7 +300,7 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalArgumentException} if the eval and response do not link
      */
     public boolean checkUserModifyResponse(String userId, EvalResponse response, EvalEvaluation eval) {
-        log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
+        LOG.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
         // check that eval and EAG line up
         if (! response.getEvaluation().getId().equals(eval.getId())) {
@@ -344,13 +339,7 @@ public class EvalSecurityChecksImpl {
      * @return true if can control, false otherwise
      */
     public boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
-        boolean allowed = false;
-        if (evalBeanUtils.checkUserPermission(userId, emailTemplate.getOwner())) {
-            allowed = true;
-        } else {
-            allowed = false;
-        }
-        return allowed;
+        return evalBeanUtils.checkUserPermission(userId, emailTemplate.getOwner());
     }
 
     /**

@@ -52,8 +52,8 @@ public class HierarchyNodeSelectorRenderer {
    public UIJointContainer renderHierarchyNodeSelector(UIContainer parent, String ID, String elBinding, String nodeId) {
       UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
-      List<String> hierSelectValues = new ArrayList<String>();
-      List<String> hierSelectLabels = new ArrayList<String>();
+      List<String> hierSelectValues = new ArrayList<>();
+      List<String> hierSelectLabels = new ArrayList<>();
 
       // first add in the top level as a choice
       hierSelectValues.add(EvalConstants.HIERARCHY_NODE_ID_NONE);

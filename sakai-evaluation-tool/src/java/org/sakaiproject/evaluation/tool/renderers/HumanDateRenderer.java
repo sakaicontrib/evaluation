@@ -33,7 +33,7 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 
 public class HumanDateRenderer {
-    private long MILLIS_PER_DAY = 24*60*60*1000;
+    private static final long MILLIS_PER_DAY = 24*60*60*1000;
     private DateFormat df;
     private DateFormat tf;
     private boolean useDateTime = false;

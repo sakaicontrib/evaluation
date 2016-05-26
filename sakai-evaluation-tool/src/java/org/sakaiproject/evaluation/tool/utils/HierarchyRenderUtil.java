@@ -14,12 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,6 +90,7 @@ public class HierarchyRenderUtil {
      * @param showCheckboxes if true then the checkboxes are rendered in front of every node
      * @param showGroups if true then all the groups are rendered for each node
      * @param showUsers if true then all users are rendered for each node
+     * @param expanded
      */
     public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers, String[] expanded) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
@@ -175,11 +173,11 @@ public class HierarchyRenderUtil {
         int collapseI = 0;
         if(expandedNodes != null && expandedNodes.length > 0){
         	collapseParamArr = new String[expandedNodes.length];
-        	for(int i = 0; i < expandedNodes.length; i++){
-        		if(expandedNodes[i].equals(node.id)){
+        	for( String expandedNode : expandedNodes ){
+        		if(expandedNode.equals(node.id)){
         			expanded = true;
         		}else{
-        			collapseParamArr[collapseI] = expandedNodes[i];
+        			collapseParamArr[collapseI] = expandedNode;
         			collapseI++;
         		}
         	}
@@ -241,7 +239,7 @@ public class HierarchyRenderUtil {
         }
 
         // Number of assigned users
-        int numAssignedUsers = 0;
+        int numAssignedUsers;
         try { numAssignedUsers = hierarchyLogic.getUsersAndPermsForNodes( node.id ).get( node.id ).size(); }
         catch( Exception ex ) { numAssignedUsers = 0; }
         UIOutput.make( tableRow, "assign-user-count", Integer.toString( numAssignedUsers ) );
@@ -267,7 +265,7 @@ public class HierarchyRenderUtil {
 
         // If there are any assigned groups, render them as their own rows if show is on
         if (showGroups && numberOfAssignedGroups > 0) {
-            Set<String> assignedGroupIDs = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id) : new HashSet<String>();
+            Set<String> assignedGroupIDs = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id) : new HashSet<>();
             for (String assignedGroupID: assignedGroupIDs) {
                 EvalGroup assignedGroup = commonLogic.makeEvalGroupObject(assignedGroupID);
                 UIBranchContainer groupRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");

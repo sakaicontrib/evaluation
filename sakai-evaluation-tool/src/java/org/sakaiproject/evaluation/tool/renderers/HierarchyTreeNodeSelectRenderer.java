@@ -27,15 +27,11 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
 import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -97,6 +93,9 @@ public class HierarchyTreeNodeSelectRenderer {
     * @param evalGroupValues
     * @param hierNodeLabels
     * @param hierNodeValues
+    * @param evalViewParams
+    * @param accessNodeIds
+    * @param parentNodeIds
     */
    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, 
             String groupsSelectID, String hierNodesSelectID,
@@ -131,12 +130,12 @@ public class HierarchyTreeNodeSelectRenderer {
     				   collapseArr = Arrays.copyOf(evalViewParams.expanded, evalViewParams.expanded.length - 1);
     			   }
     			   
-    			   for(int i = 0; i < evalViewParams.expanded.length; i++){
-    				   if(evalViewParams.expanded[i].equals(evalViewParams.nodeClicked)){
+    			   for( String expanded : evalViewParams.expanded ){
+    				   if(expanded.equals(evalViewParams.nodeClicked)){
     					   expand = false;
     				   }else{
     					   if(collapseArr != null && c < collapseArr.length){
-    						   collapseArr[c] = evalViewParams.expanded[i];
+    						   collapseArr[c] = expanded;
     						   c++;
     					   }
     				   }
@@ -160,9 +159,9 @@ public class HierarchyTreeNodeSelectRenderer {
        //Setup a list of the selected nodes and groups.  If we rendered one, it will get removed from the list
 	   //so we will be left with the selected nodes or groups that were "collapsed" and are hidden but still
 	   //selected
-	   List<String> selectedNodes = new ArrayList<String>();
+	   List<String> selectedNodes = new ArrayList<>();
 	   Collections.addAll(selectedNodes, evalViewParams.selectedHierarchyNodeIDs);
-	   List<String> selectedGroups = new ArrayList<String>();
+	   List<String> selectedGroups = new ArrayList<>();
 	   Collections.addAll(selectedGroups, evalViewParams.selectedGroupIDs);
 	   renderSelectHierarchyNode(joint, root, 0, evalViewParams, accessNodeIds, parentNodeIds, selectedNodes, selectedGroups);
 	   //go through the left over selected groups and nodes and render hidden rows in the table so that we won't lose
@@ -170,14 +169,14 @@ public class HierarchyTreeNodeSelectRenderer {
 	   for(String nodeId : selectedNodes){
 		   //this is just a placeholder for the id, so no need to get the real node
 		   EvalHierarchyNode node = new EvalHierarchyNode(nodeId, nodeId, nodeId);
-		   renderRow(joint, "hierarchy-level-row:", 0, node, evalViewParams, accessNodeIds, new HashSet<String>(),true);
+		   renderRow(joint, "hierarchy-level-row:", 0, node, evalViewParams, accessNodeIds, new HashSet<>(),true);
 	   }
 	   for(String groupId : selectedGroups){
 		   //this is just a placeholder for the id, so no need to get the real group
 		   EvalGroup evalGroup = new EvalGroup();
 		   evalGroup.title = groupId;
 		   evalGroup.evalGroupId = groupId;
-		   renderRow(joint, "hierarchy-level-row:", 0, evalGroup, evalViewParams, accessNodeIds, new HashSet<String>(), true);
+		   renderRow(joint, "hierarchy-level-row:", 0, evalGroup, evalViewParams, accessNodeIds, new HashSet<>(), true);
 	   }
 	   
     }
@@ -278,14 +277,14 @@ public class HierarchyTreeNodeSelectRenderer {
 	    UIBranchContainer tableRow = UIBranchContainer.make(parent, "hierarchy-level-row:");
 		
 		if(hideRow){
-			Map<String, String> cssHide = new HashMap<String, String>();
+			Map<String, String> cssHide = new HashMap<>();
 			cssHide.put("display", "none");
 			tableRow.decorate(new UICSSDecorator(cssHide));
 		}
         
         UIOutput.make(tableRow, "node-select-cell");
         
-        String title = "";
+        String title;
         if (toRender instanceof EvalHierarchyNode) {
             EvalHierarchyNode evalHierNode = (EvalHierarchyNode) toRender;
             title = evalHierNode.title;
@@ -301,8 +300,8 @@ public class HierarchyTreeNodeSelectRenderer {
 						checkbox.decorate(new UIStyleDecorator("parentNode" + parentId));
 						//see if any parents are selected, if so, then disable the checkbox
 						if(!disabled && evalViewParams.selectedHierarchyNodeIDs != null){
-							for(int i = 0; i < evalViewParams.selectedHierarchyNodeIDs.length; i++){
-								if(parentId.equals(evalViewParams.selectedHierarchyNodeIDs[i])){
+							for( String selectedHierarchyNodeID : evalViewParams.selectedHierarchyNodeIDs ){
+								if(parentId.equals(selectedHierarchyNodeID)){
 									disabled = true;
 									break;
 								}
@@ -317,8 +316,8 @@ public class HierarchyTreeNodeSelectRenderer {
             }
             
             if(evalViewParams.expanded != null){
-            	for(int i = 0; i < evalViewParams.expanded.length; i++){
-            		if(evalViewParams.expanded[i].equals(evalHierNode.id)){
+            	for( String expanded1 : evalViewParams.expanded ){
+            		if(expanded1.equals(evalHierNode.id)){
             			expanded = true;
             			break;
             		}
@@ -347,8 +346,8 @@ public class HierarchyTreeNodeSelectRenderer {
         		choice.decorate(new UIStyleDecorator("parentNode" + parentId));
         		//see if any parents are selected, if so, then disable the checkbox
         		if(!disabled && evalViewParams.selectedHierarchyNodeIDs != null){
-        			for(int i = 0; i < evalViewParams.selectedHierarchyNodeIDs.length; i++){
-        				if(parentId.equals(evalViewParams.selectedHierarchyNodeIDs[i])){
+        			for( String selectedHierarchyNodeID : evalViewParams.selectedHierarchyNodeIDs ){
+        				if(parentId.equals(selectedHierarchyNodeID)){
         					disabled = true;
         					break;
         				}
@@ -358,11 +357,9 @@ public class HierarchyTreeNodeSelectRenderer {
         	if(disabled){
         		choice.decorate(new UIFreeAttributeDecorator("disabled", "disabled"));
         	}
-            UIOutput name = UIOutput.make(tableRow, "node-name", title);
+            UIOutput.make(tableRow, "node-name", title);
         }
-        else {
-            title = "";
-        }
+
         UIOutput name = UIOutput.make(tableRow, "node-name-indent");
         name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
         

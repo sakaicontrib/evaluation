@@ -32,7 +32,7 @@ import org.sakaiproject.entitybroker.EntityReference;
 public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, EventReceiver {
 
     private EvalSettings settings;
-    private static Log log = LogFactory.getLog(ConfigEntityProviderImpl.class);
+    private static final Log LOG = LogFactory.getLog(ConfigEntityProviderImpl.class);
 
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
@@ -63,15 +63,21 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
         if (id.contains(ENTITY_PREFIX)) {
             id = new EntityReference(id).getId();
         }  
-	if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
-            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") settings.resetCache(" + id + ")");
+        if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("eventName (" + eventName + ") settings.resetCache(" + id + ")");
+            }
             settings.resetCache(id);
         } else if (EvalSettings.EVENT_SET_MANY_CONFIG.equals(eventName)) {
-            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") settings.resetCache(null)");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("eventName (" + eventName + ") settings.resetCache(null)");
+            }
             settings.resetCache(null);
         }
         else {  
-            if (log.isDebugEnabled()) log.debug("eventName (" + eventName + ") EVENT received UNKNOWN!");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("eventName (" + eventName + ") EVENT received UNKNOWN!");
+            }
         }
     }
 

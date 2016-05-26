@@ -37,12 +37,12 @@ public class HierarchyBean {
 	public String userId;
 	public String userEid;
 	public String selectedUserIndex;
-	public Map<String, Boolean> permsMap = new HashMap<String, Boolean>();
+	public Map<String, Boolean> permsMap = new HashMap<>();
 
 	// Hierarchy rule bindings
-	public Map<String, String> existingQualifierSelections = new HashMap<String, String>();
-	public Map<String, String> existingOptionSelections = new HashMap<String, String>();
-	public Map<String, String> existingRuleTexts = new HashMap<String, String>();
+	public Map<String, String> existingQualifierSelections = new HashMap<>();
+	public Map<String, String> existingOptionSelections = new HashMap<>();
+	public Map<String, String> existingRuleTexts = new HashMap<>();
 	public String ruleID;
 	public String newRuleText;
 	public String newQualifierSelection;
@@ -71,7 +71,7 @@ public class HierarchyBean {
 	private void checkRuleParams( boolean checkRuleID )
 	{
 		// Check that the node ID is supplied
-		if( nodeId == null || nodeId.trim().length() == 0 )
+		if( StringUtils.isBlank( nodeId ) )
 		{
 			throw new IllegalArgumentException( "nodeId must be specified" );
 		}
@@ -79,7 +79,7 @@ public class HierarchyBean {
 		// Check that the ruleID is supplied, if desired
 		if( checkRuleID )
 		{
-			if( ruleID == null || ruleID.trim().length() == 0 )
+			if( StringUtils.isBlank( ruleID ) )
 			{
 				throw new IllegalArgumentException( "ruleID must be specified" );
 			}
@@ -254,7 +254,7 @@ public class HierarchyBean {
 		Map<String, Boolean> selectedUserPermsMap = this.getSelectedUserPermsMap();
 		
 		// create a set of the values (will contain at most two elements) and check if at least one perm was selected (i.e. true is in set)
-		Set<Boolean> permValueSet = new HashSet<Boolean>(selectedUserPermsMap.values());
+		Set<Boolean> permValueSet = new HashSet<>(selectedUserPermsMap.values());
 		
 		if (!permValueSet.contains(Boolean.TRUE)) {
 			messages.addMessage(new TargettedMessage("modifynodeperms.error.no.perms.selected", new Object[] {}, TargettedMessage.SEVERITY_ERROR));
@@ -317,7 +317,7 @@ public class HierarchyBean {
 		Map<String, Boolean> selectedUserPermsMap = this.getSelectedUserPermsMap();
 		
 		// create a set of the values (will contain at most two elements) and check if at least one perm was selected (i.e. true is in set)
-		Set<Boolean> permValueSet = new HashSet<Boolean>(selectedUserPermsMap.values());
+		Set<Boolean> permValueSet = new HashSet<>(selectedUserPermsMap.values());
 		
 		if (!permValueSet.contains(Boolean.TRUE)) {
 			messages.addMessage(new TargettedMessage("modifynodeperms.error.no.perms.selected", new Object[] {}, TargettedMessage.SEVERITY_ERROR));
@@ -345,7 +345,7 @@ public class HierarchyBean {
 	
 	private Map<String, Boolean> getSelectedUserPermsMap() {
 		
-		Map<String, Boolean> selectedUserPermsMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> selectedUserPermsMap = new HashMap<>();
 		
 		for (String perm : EvalToolConstants.HIERARCHY_PERM_VALUES) {
 			String permKey = perm + "-" + this.selectedUserIndex;

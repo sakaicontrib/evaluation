@@ -258,7 +258,7 @@ public class EvalToolConstants {
     /**
      * The default number of rows to use when displaying a textarea type input box
      */
-    public static final Integer DEFAULT_ROWS = new Integer(2);
+    public static final Integer DEFAULT_ROWS = 2;
 
     // For main administrative page
     /**
@@ -309,7 +309,7 @@ public class EvalToolConstants {
     /**
      * Ideal scale values radio buttons (scale add/modify)
      */
-    public static final String[] scaleIdealValues = { 
+    public static final String[] SCALE_IDEA_VALUES = { 
         NULL, // EvalConstants.SCALE_IDEAL_NONE, TODO - undo this when RSF 0.7.3
         EvalConstants.SCALE_IDEAL_LOW, 
         EvalConstants.SCALE_IDEAL_HIGH,
@@ -320,7 +320,7 @@ public class EvalToolConstants {
     /**
      * Ideal scale values radio button labels (scale add/modify)
      */
-    public static final String[] scaleIdealLabels = {
+    public static final String[] SCALE_IDEAL_LABELS = {
         "controlscales.ideal.scale.option.label.none", 
         "controlscales.ideal.scale.option.label.low",
         "controlscales.ideal.scale.option.label.high", 
@@ -331,7 +331,7 @@ public class EvalToolConstants {
     /**
      * The initial values for the options of a scale which is being created
      */
-    public static final String[] defaultInitialScaleValues = new String[] {"",""};
+    public static final String[] DEFAULT_INITIAL_SCALE_VALUES = new String[] {"",""};
 
 
     /**

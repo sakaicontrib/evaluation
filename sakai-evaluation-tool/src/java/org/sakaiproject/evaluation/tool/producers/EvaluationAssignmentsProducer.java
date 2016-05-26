@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -141,13 +140,13 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
       Map<Long, List<EvalAssignGroup>> groupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
       List<EvalAssignGroup> assignGroups = groupsMap.get(evalViewParams.evaluationId);
       // get all evaluator user assignments to count the total enrollments
-      HashMap<String, List<EvalAssignUser>> groupIdToEAUList = new HashMap<String, List<EvalAssignUser>>();
+      HashMap<String, List<EvalAssignUser>> groupIdToEAUList = new HashMap<>();
       List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, null, 
               EvalAssignUser.TYPE_EVALUATOR, null, null, null);
       for (EvalAssignUser evalAssignUser : userAssignments) {
           String groupId = evalAssignUser.getEvalGroupId();
           if (! groupIdToEAUList.containsKey(groupId)) {
-              groupIdToEAUList.put(groupId, new ArrayList<EvalAssignUser>());
+              groupIdToEAUList.put(groupId, new ArrayList<>());
           }
           groupIdToEAUList.get(groupId).add(evalAssignUser);
       }
@@ -168,16 +167,14 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
            UIMessage.make(tofill, "title-assistants", "evaluationassignments.groups.assistants.header");
          }
 
-         Collections.sort(assignGroups, new Comparator<Object>() {
-			 @Override
-			 public int compare(Object arg0, Object arg1) {
-			 	EvalAssignGroup ag1 = (EvalAssignGroup) arg0;
-				EvalAssignGroup ag2 = (EvalAssignGroup) arg1;
-				EvalGroup g1 = commonLogic.makeEvalGroupObject(ag1.getEvalGroupId());
-				EvalGroup g2 = commonLogic.makeEvalGroupObject(ag2.getEvalGroupId());
-				return g1.title.compareToIgnoreCase(g2.title);
-			 }
-         	});
+         Collections.sort(assignGroups, (Object arg0, Object arg1) ->
+         {
+             EvalAssignGroup ag1 = (EvalAssignGroup) arg0;
+             EvalAssignGroup ag2 = (EvalAssignGroup) arg1;
+             EvalGroup g1 = commonLogic.makeEvalGroupObject(ag1.getEvalGroupId());
+             EvalGroup g2 = commonLogic.makeEvalGroupObject(ag2.getEvalGroupId());
+             return g1.title.compareToIgnoreCase(g2.title);
+         });
 		 
          UIBranchContainer groupsBranch = UIBranchContainer.make(tofill, "showSelectedGroups:");
          for (EvalAssignGroup assignGroup : assignGroups) {
@@ -198,7 +195,7 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
                      commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroup.getId().toString()));
                
                //Add user selection info as a result of changes in EVALSYS-660
-                 List<EvalAssignUser> selectedUsers = new ArrayList<EvalAssignUser>();
+                 List<EvalAssignUser> selectedUsers = new ArrayList<>();
 
                  if(hasInstructorQuestions){
               
@@ -232,7 +229,7 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
          UIBranchContainer hierarchyBranch = UIBranchContainer.make(tofill, "showHierarchy:");
          List<EvalAssignHierarchy> assignHierarchies = evaluationService.getAssignHierarchyByEval(evaluationId);
          if (assignHierarchies.size() > 0) {
-            List<String> populatedNodes = new ArrayList<String>();
+            List<String> populatedNodes = new ArrayList<>();
             UIBranchContainer nodesBranch = UIBranchContainer.make(tofill, "showSelectedNodes:");
             for (EvalAssignHierarchy assignHierarchy : assignHierarchies) {
                if (!populatedNodes.contains(assignHierarchy.getNodeId())) {
@@ -243,7 +240,7 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
                   UIOutput.make(nodeRow, "nodeAbbr", node.description);
 
                   // now get the list of groups related to this node
-                  List<EvalAssignGroup> nodeAssignGroups = new ArrayList<EvalAssignGroup>();
+                  List<EvalAssignGroup> nodeAssignGroups = new ArrayList<>();
                   for (EvalAssignGroup assignGroup : assignGroups) {
                      if (assignGroup.getNodeId() != null
                         && assignHierarchy.getNodeId().equals(assignGroup.getNodeId()) ) {
@@ -253,7 +250,7 @@ public class EvaluationAssignmentsProducer extends EvalCommonProducer implements
 
                   // now render the list of groups related to this node
                   UIBranchContainer nodeRowGroups = UIBranchContainer.make(nodesBranch, "nodes:groups");
-                  if (nodeAssignGroups.size() == 0) {
+                  if (nodeAssignGroups.isEmpty()) {
                      UIMessage.make(nodeRowGroups, "noGroupsForNode", "evaluationassignments.no.groups");
                   } else {
                      UIBranchContainer groupsTable = UIBranchContainer.make(nodeRowGroups, "nodeGroupTable:");

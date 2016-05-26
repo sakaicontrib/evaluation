@@ -43,6 +43,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class AssignPermissionsProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
    /**
+     * @param tofill
+     * @param viewparams
+     * @param checker
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer,
     *      uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -52,7 +55,7 @@ public class AssignPermissionsProducer implements ViewComponentProducer, ViewPar
       session.setAttribute(PermissionsHelper.PREFIX, "eval.");
 
       ResourceLoader resourceLoader = new ResourceLoader("org.sakaiproject.evaluation.tool.bundle.permissions");
-      HashMap<String, String> permissionsDescriptions = new HashMap<String, String>();
+      HashMap<String, String> permissionsDescriptions = new HashMap<>();
       for (Object key : resourceLoader.keySet()) {
          permissionsDescriptions.put(key.toString(), (String) resourceLoader.get(key));
       }
@@ -72,6 +75,7 @@ public class AssignPermissionsProducer implements ViewComponentProducer, ViewPar
    }
 
    /**
+     * @return 
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
    @SuppressWarnings({ "unchecked", "rawtypes" })

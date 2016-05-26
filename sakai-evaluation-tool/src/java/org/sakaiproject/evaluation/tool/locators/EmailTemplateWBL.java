@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -65,7 +64,7 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
 
 
    // keep track of all items that have been delivered during this request
-   private Map<String, EvalEmailTemplate> delivered = new HashMap<String, EvalEmailTemplate>();
+   private Map<String, EvalEmailTemplate> delivered = new HashMap<>();
 
    /* (non-Javadoc)
     * @see uk.org.ponder.beanutil.BeanLocator#locateBean(java.lang.String)
@@ -108,17 +107,17 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
    }
 
    public void saveAll() {
-      for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-         String key = it.next();
-         EvalEmailTemplate emailTemplate = (EvalEmailTemplate) delivered.get(key);
-         if (key.startsWith(NEW_PREFIX)) {
-            // add in extra logic needed for new items here
-         }
-         evaluationSetupService.saveEmailTemplate(emailTemplate, commonLogic.getCurrentUserId());
-         messages.addMessage( new TargettedMessage("controlemailtemplates.template.saved.message",
-               new Object[] { emailTemplate.getType(), emailTemplate.getSubject() }, 
-               TargettedMessage.SEVERITY_INFO));
-      }
+       for( String key : delivered.keySet() )
+       {
+           EvalEmailTemplate emailTemplate = (EvalEmailTemplate) delivered.get(key);
+           if (key.startsWith(NEW_PREFIX)) {
+               // add in extra logic needed for new items here
+           }
+           evaluationSetupService.saveEmailTemplate(emailTemplate, commonLogic.getCurrentUserId());
+           messages.addMessage( new TargettedMessage("controlemailtemplates.template.saved.message",
+                   new Object[] { emailTemplate.getType(), emailTemplate.getSubject() },
+                   TargettedMessage.SEVERITY_INFO));
+       }
    }
 
    /**

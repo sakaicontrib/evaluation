@@ -30,7 +30,7 @@ import uk.org.ponder.rsf.state.entity.EntityNameInferrer;
  */
 public class EntityNameInferrerImpl implements EntityNameInferrer {
 
-	private String[] ENTITY_CLASSES = new String[] {
+	private static final String[] ENTITY_CLASSES = new String[] {
 			EvalScale.class.getName(),
 			EvalItem.class.getName(),
 			EvalTemplate.class.getName(),
@@ -39,7 +39,7 @@ public class EntityNameInferrerImpl implements EntityNameInferrer {
 			EvalResponse.class.getName()
 		};
 
-	private String[] ENTITY_LOCATORS = new String[] {
+	private static final String[] ENTITY_LOCATORS = new String[] {
 			"scaleBeanLocator",
 			"itemWBL",
 			"templateBeanLocator",

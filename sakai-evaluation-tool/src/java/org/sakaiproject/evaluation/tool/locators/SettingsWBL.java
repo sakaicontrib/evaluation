@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.locators;
 
-import java.lang.Integer;
-
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
@@ -146,7 +144,7 @@ public class SettingsWBL implements WriteableBeanLocator {
             if (toget == null)
                 toget = EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE;
             else if (toget instanceof Boolean) {
-                if ( ((Boolean)toget).booleanValue() ) {
+                if ( ((Boolean)toget) ) {
                     toget = EvalToolConstants.ADMIN_BOOLEAN_YES;
                 } else { 
                     toget = EvalToolConstants.ADMIN_BOOLEAN_NO;
@@ -171,8 +169,10 @@ public class SettingsWBL implements WriteableBeanLocator {
      */
     private boolean isTernaryBoolean(String path) {
         boolean isTernary = false;
-        for (int i = 0; i < EvalSettings.TERNARY_BOOLEAN_SETTINGS.length; i++) {
-            if (EvalSettings.TERNARY_BOOLEAN_SETTINGS[i].equals(path)) {
+        for( String TERNARY_BOOLEAN_SETTINGS : EvalSettings.TERNARY_BOOLEAN_SETTINGS )
+        {
+            if( TERNARY_BOOLEAN_SETTINGS.equals( path ) )
+            {
                 isTernary = true;
                 break;
             }

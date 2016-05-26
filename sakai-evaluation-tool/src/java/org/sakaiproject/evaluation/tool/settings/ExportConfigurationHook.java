@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +36,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
  */
 public class ExportConfigurationHook {
     public static final String VIEW_ID = "export_settings";
-    private static Log log = LogFactory.getLog(ExportConfigurationHook.class);
+    private static final Log LOG = LogFactory.getLog(ExportConfigurationHook.class);
 
     /**
      * This is required in order to avoid runtime reflection error.
@@ -48,7 +47,8 @@ public class ExportConfigurationHook {
     private String getEvalSettingConstValueByFieldName(String propertyFieldName) {
         try {
             return EvalSettings.class.getDeclaredField(propertyFieldName).get(String.class).toString();
-        } catch (Exception e) {
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            LOG.warn( e );
             return "Error getting value";
         }
     }
@@ -57,13 +57,9 @@ public class ExportConfigurationHook {
      * @return The list of Strings that is the names of all the individual properties fields in EvalSettings.java
      */
     private ArrayList<String> getSortedEvalSettingsPropertyFieldNames() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         Field[] evalSettingFields = EvalSettings.class.getFields();
-        Arrays.sort(evalSettingFields, new Comparator<Field>() {
-            public int compare(Field o1, Field o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Arrays.sort(evalSettingFields, (Field o1, Field o2) -> o1.getName().compareTo(o2.getName()));
         for (Field field : evalSettingFields) {
             // Ignore the arrays of String in EvalSettings (they just aggregate the types) and just get the String constants
             if (String.class.equals(field.getType())) {
@@ -77,7 +73,7 @@ public class ExportConfigurationHook {
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=\"evalSettings.properties\"");
         ArrayList<String> propertyFieldNames = getSortedEvalSettingsPropertyFieldNames();
-        ServletOutputStream out = null;
+        ServletOutputStream out;
         try {
             out = response.getOutputStream();
             for (String propertyFieldName : propertyFieldNames) {
@@ -90,7 +86,7 @@ public class ExportConfigurationHook {
                 out.write("\n".getBytes());
             }
         } catch (IOException e) {
-            log.error("Error producing output stream for evalSettings.properties", e);
+            LOG.error("Error producing output stream for evalSettings.properties", e);
             return false;
         }
         return true;

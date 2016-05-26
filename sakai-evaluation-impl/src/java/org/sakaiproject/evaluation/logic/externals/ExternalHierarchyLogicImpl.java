@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +26,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.authz.api.AuthzGroupService;
@@ -57,7 +55,7 @@ import org.sakaiproject.site.api.Site;
  */
 public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
-    private static Log log = LogFactory.getLog(ExternalHierarchyLogicImpl.class);
+    private static final Log LOG = LogFactory.getLog(ExternalHierarchyLogicImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao evaluationDao) {
@@ -105,16 +103,18 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (hierarchyService.getRootNode(HIERARCHY_ID) == null) {
             HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
             hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
-            log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
+            LOG.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
         }
         // get the provider if there is one
         // setup provider
         if (evalHierarchyProvider == null) {
             evalHierarchyProvider = (EvalHierarchyProvider) externalLogic.getBean(EvalHierarchyProvider.class);
             if (evalHierarchyProvider != null)
-                log.info("EvalHierarchyProvider found...");
+            {
+                LOG.info("EvalHierarchyProvider found...");
+            }
         } else {
-            log.debug("No EvalHierarchyProvider found...");
+            LOG.debug("No EvalHierarchyProvider found...");
         }
     }
 
@@ -124,8 +124,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      */
     public List<Section> getSectionsUnderEvalGroup( String evalGroupID )
     {
-        List<Section> sections = new ArrayList<Section>();
-
         if( evalGroupID == null )
         {
             throw new IllegalArgumentException( "evalGroupId cannot be null" );
@@ -137,6 +135,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         }
 
         // Determine if the group ID is pointing to a single section
+        List<Section> sections = new ArrayList<>();
         boolean isSingleSection = false;
         if( evalGroupID.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
         {
@@ -151,7 +150,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             // If the evalGroup is pointing to a single section, get the single session, add it to the list and return
             if( isSingleSection )
             {
-                sections.add( courseManagementService.getSection( evalGroupID.substring( evalGroupID.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) + 9 ) ) );
+                sections.add( courseManagementService.getSection( evalGroupID.substring( evalGroupID.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) 
+                                                                                         + EvalConstants.GROUP_ID_SECTION_PREFIX.length() ) ) );
             }
 
             // Otherwise, the evalGroup is pointing at a site...
@@ -201,22 +201,17 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      */
     public String removeQualifierFromRuleText( String ruleText )
     {
-        if( ruleText.startsWith( "%" ) && ruleText.endsWith( "%" ) )
+        String rule = ruleText;
+        if( rule.startsWith( "%" ) )
         {
-            return ruleText.substring( 1, ruleText.length() - 1 );
+            rule = rule.substring( 1 );
         }
-        else if( ruleText.startsWith( "%" ) )
+        if( rule.endsWith( "%" ) )
         {
-            return ruleText.substring( 1 );
+            rule = rule.substring( 0, rule.length() - 1 );
         }
-        else if( ruleText.endsWith( "%" ) )
-        {
-            return ruleText.substring( 0, ruleText.length() - 1 );
-        }
-        else
-        {
-            return ruleText;
-        }
+
+        return rule;
     }
 
     /*
@@ -314,6 +309,11 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      */
     private void checkNodeExists( Long nodeID )
     {
+        if( nodeID == null )
+        {
+            throw new IllegalArgumentException( "Node ID provided is invalid (null)" );
+        }
+
         EvalHierarchyNode node = getNodeById( nodeID.toString() );
         if( node == null )
         {
@@ -405,7 +405,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      *      boolean)
      */
     public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly) {
-        Set<EvalHierarchyNode> eNodes = new HashSet<EvalHierarchyNode>();
+        Set<EvalHierarchyNode> eNodes = new HashSet<>();
         if (evalHierarchyProvider != null) {
             eNodes = evalHierarchyProvider.getChildNodes(nodeId, directOnly);
         } else {
@@ -424,7 +424,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#getAllChildrenNodes(java.util.Collection, boolean)
      */
     public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds) {
-        Set<String> s = new HashSet<String>();
+        Set<String> s = new HashSet<>();
         for (EvalHierarchyNode node : nodes) {
             if (includeSuppliedNodeIds) {
                 s.add(node.id);
@@ -438,7 +438,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (nodeIds == null) {
             throw new IllegalArgumentException("nodeIds cannot br null");
         }
-        Set<EvalHierarchyNode> s = new HashSet<EvalHierarchyNode>();
+        Set<EvalHierarchyNode> s = new HashSet<>();
         if (evalHierarchyProvider != null) {
             s = evalHierarchyProvider.getNodesByIds(nodeIds);
         } else {
@@ -477,7 +477,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (nodeId == null || nodeId.equals("")) {
             throw new IllegalArgumentException("nodeId cannot be null or blank");
         }
-        Set<String> s = new HashSet<String>();
+        Set<String> s = new HashSet<>();
         if (evalHierarchyProvider != null) {
             s = evalHierarchyProvider.getEvalGroupsForNode(nodeId);
         }
@@ -493,7 +493,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (nodeIds == null) {
             throw new IllegalArgumentException("nodeIds cannot be null");
         }
-        Map<String, Set<String>> m = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> m = new HashMap<>();
         if (nodeIds.length > 0) {
             if (evalHierarchyProvider != null) {
                 m = evalHierarchyProvider.getEvalGroupsForNodes(nodeIds);
@@ -520,7 +520,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         Set<String> groups = new HashSet<>();
         try
         {
-            List<HierarchyNodeRule> rules = this.getRulesByNodeID( Long.parseLong( nodeID ) );
+            List<HierarchyNodeRule> rules = getRulesByNodeID( Long.parseLong( nodeID ) );
             for( HierarchyNodeRule rule : rules )
             {
                 if( EvalConstants.HIERARCHY_RULE_SECTION.equals( rule.getOption() ) )
@@ -533,22 +533,26 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 }
             }
         }
-        catch( NumberFormatException ex ) { log.warn( ex ); }
+        catch( NumberFormatException ex ) { LOG.warn( ex ); }
 
         return groups;
     }
 
     public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds) {
-        Map<String, Integer> m = new HashMap<String, Integer>();
+        Map<String, Integer> nodeGroupSizeMap;
         if (evalHierarchyProvider != null) {
-            m = evalHierarchyProvider.countEvalGroupsForNodes(nodeIds);
+            nodeGroupSizeMap = evalHierarchyProvider.countEvalGroupsForNodes(nodeIds);
+        }
+        else
+        {
+            nodeGroupSizeMap = new HashMap<>();
         }
 
         for( String nodeId : nodeIds )
         {
-            if( !m.containsKey( nodeId ) )
+            if( !nodeGroupSizeMap.containsKey( nodeId ) )
             {
-                m.put( nodeId, 0 );
+                nodeGroupSizeMap.put( nodeId, 0 );
             }
         }
 
@@ -557,16 +561,20 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         Map<String, Set<String>> nodeGroupsMap = getEvalGroupsForNodes( nodeIds );
         for( String nodeID : nodeGroupsMap.keySet() )
         {
-            m.put( nodeID, nodeGroupsMap.get( nodeID ).size() );
+            nodeGroupSizeMap.put( nodeID, nodeGroupsMap.get( nodeID ).size() );
         }
 
-        return m;
+        return nodeGroupSizeMap;
     }
 
     public List<EvalHierarchyNode> getNodesAboveEvalGroup(String evalGroupId) {
-        List<EvalHierarchyNode> l = new ArrayList<EvalHierarchyNode>();
+        List<EvalHierarchyNode> hierarchyNodes;
         if (evalHierarchyProvider != null) {
-            l = evalHierarchyProvider.getNodesAboveEvalGroup(evalGroupId);
+            hierarchyNodes = evalHierarchyProvider.getNodesAboveEvalGroup(evalGroupId);
+        }
+        else
+        {
+            hierarchyNodes = new ArrayList<>();
         }
 
         // Support for resolving eval groups based on hierarchy node rules
@@ -584,6 +592,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         {
             Site site = siteService.getSite( siteID );
             List<HierarchyNodeRule> rules = externalLogic.getAllRules();
+            Map<String, Set<String>> realmSectionIDs = new HashMap<>();
             for( HierarchyNodeRule rule : rules )
             {
                 String rawRuleText = removeQualifierFromRuleText( rule.getRule() );
@@ -592,21 +601,17 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 // If the rule is section based and so is the group ID...
                 if( EvalConstants.HIERARCHY_RULE_SECTION.equals( rule.getOption() ) && isGroupIDSectionBased )
                 {
-                    // Get the sections of the site
+                    // Get the sections of the site, if necessary
                     String realmID = siteService.siteReference( site.getId() );
-                    Set<String> sectionIDs = authzGroupService.getProviderIds( realmID );
-                    for( String sectionID : sectionIDs )
+                    if( !realmSectionIDs.containsKey( realmID ) )
+                    {
+                        realmSectionIDs.put( realmID, authzGroupService.getProviderIds( realmID ) );
+                    }
+
+                    for( String sectionID : realmSectionIDs.get( realmID ) )
                     {
                         Section section = courseManagementService.getSection( sectionID );
-
-                        // If the qualifier is 'contains' and the section title contains the raw rule text, OR
-                        // the qualifier is 'ends with' and the section title ends with the raw rule text, OR
-                        // the qualifier is 'starts with' and the section title starts with the raw rule text, OR
-                        // the qualifier is 'is' and the section title equals the raw rule text, grab the node ID of the rule
-                        if( (EvalConstants.HIERARCHY_QUALIFIER_CONTAINS.equals( qualifier ) && section.getTitle().contains( rawRuleText ))
-                                || (EvalConstants.HIERARCHY_QUALIFIER_ENDS_WITH.equals( qualifier ) && section.getTitle().endsWith( rawRuleText ))
-                                || (EvalConstants.HIERARCHY_QUALIFIER_STARTS_WITH.equals( qualifier) && section.getTitle().startsWith( rawRuleText ))
-                                || (EvalConstants.HIERARCHY_QUALIFIER_IS.equals( qualifier ) && section.getTitle().equals( rawRuleText )) )
+                        if( siteOrSectionTitleSatisfiesRule( section.getTitle(), qualifier, rawRuleText ) )
                         {
                             nodeID = rule.getNodeID().toString();
                         }
@@ -616,21 +621,14 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 // Otherwise it's a site based rule...
                 else
                 {
-                    // If the qualifier is 'contains' and the site title contains the raw rule text, OR
-                    // the qualifier is 'ends with' and the site title ends with the raw rule text, OR
-                    // the qualifier is 'starts with' and the site title starts with the raw rule text, OR
-                    // the qualifier is 'is' and the site title equals the raw rule text, grab the node ID of the rule
-                    if( (EvalConstants.HIERARCHY_QUALIFIER_CONTAINS.equals( qualifier ) && site.getTitle().contains( rawRuleText ))
-                            || (EvalConstants.HIERARCHY_QUALIFIER_ENDS_WITH.equals( qualifier ) && site.getTitle().endsWith( rawRuleText ))
-                            || (EvalConstants.HIERARCHY_QUALIFIER_STARTS_WITH.equals( qualifier) && site.getTitle().startsWith( rawRuleText ))
-                            || (EvalConstants.HIERARCHY_QUALIFIER_IS.equals( qualifier ) && site.getTitle().equals( rawRuleText )) )
+                    if( siteOrSectionTitleSatisfiesRule( site.getTitle(), qualifier, rawRuleText ) )
                     {
                         nodeID = rule.getNodeID().toString();
                     }
                 }
             }
         }
-        catch( IdUnusedException | IdNotFoundException ex ) { log.warn( "Could not find site or section by ID", ex ); }
+        catch( IdUnusedException | IdNotFoundException ex ) { LOG.warn( "Could not find site or section by ID", ex ); }
 
         if (StringUtils.isNotBlank(nodeID)) {
             HierarchyNode currentNode = hierarchyService.getNodeById(nodeID);
@@ -639,26 +637,46 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             List<HierarchyNode> sorted = HierarchyUtils.getSortedNodes(parents);
             // now convert the nodes to eval nodes
             for (HierarchyNode node : sorted) {
-                l.add( makeEvalNode(node) );
+                hierarchyNodes.add( makeEvalNode(node) );
             }
         }
 
-        return l;
+        return hierarchyNodes;
     }
 
+    /**
+     * Utility method to determine if a site or section title satisfies a given rule's
+     * qualifier and rule text.
+     * 
+     * @param siteOrSectionTitle the site or section title to compare
+     * @param ruleQualifier the qualifier of the rule (is, starts with, ends with or contains)
+     * @param ruleText the actual text of the rule to be obeyed
+     * @return true if the site or section title satisfies the rule; false otherwise
+     */
+    private boolean siteOrSectionTitleSatisfiesRule( String siteOrSectionTitle, String ruleQualifier, String ruleText )
+    {
+        // If the qualifier is 'contains' and the title contains the raw rule text, OR
+        // the qualifier is 'ends with' and the title ends with the raw rule text, OR
+        // the qualifier is 'starts with' and the title starts with the raw rule text, OR
+        // the qualifier is 'is' and the title equals the raw rule text, grab the node ID of the rule
+        return (EvalConstants.HIERARCHY_QUALIFIER_CONTAINS.equals( ruleQualifier ) && siteOrSectionTitle.contains( ruleText ))
+                            || (EvalConstants.HIERARCHY_QUALIFIER_ENDS_WITH.equals( ruleQualifier ) && siteOrSectionTitle.endsWith( ruleText ))
+                            || (EvalConstants.HIERARCHY_QUALIFIER_STARTS_WITH.equals( ruleQualifier) && siteOrSectionTitle.startsWith( ruleText ))
+                            || (EvalConstants.HIERARCHY_QUALIFIER_IS.equals( ruleQualifier ) && siteOrSectionTitle.equals( ruleText ));
+    }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#getSortedNodes(java.util.Collection)
      */
     public List<EvalHierarchyNode> getSortedNodes(Collection<EvalHierarchyNode> nodes) {
-        List<HierarchyNode> hNodes = new ArrayList<HierarchyNode>();
+        List<HierarchyNode> hNodes = new ArrayList<>();
         for (EvalHierarchyNode eNode : nodes) {
             hNodes.add(makeHierarchyNode(eNode));
         }
 
         List<HierarchyNode> sortedNodes = HierarchyUtils.getSortedNodes(hNodes);
 
-        List<EvalHierarchyNode> sortedENodes = new ArrayList<EvalHierarchyNode>();
+        List<EvalHierarchyNode> sortedENodes = new ArrayList<>();
         for (HierarchyNode hNode : sortedNodes) {
             sortedENodes.add( makeEvalNode(hNode) );
         }
@@ -684,7 +702,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#checkUserNodePerm(java.lang.String, java.lang.String, java.lang.String)
      */
     public boolean checkUserNodePerm(String userId, String nodeId, String hierarchyPermConstant) {
-        boolean allowed = false;
+        boolean allowed;
         if (evalHierarchyProvider != null) {
             allowed = evalHierarchyProvider.checkUserNodePerm(userId, nodeId, hierarchyPermConstant);
         } else {
@@ -697,7 +715,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodesForUserPerm(java.lang.String, java.lang.String)
      */
     public Set<EvalHierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant) {
-        Set<EvalHierarchyNode> evalNodes = new HashSet<EvalHierarchyNode>();
+        Set<EvalHierarchyNode> evalNodes = new HashSet<>();
         if (evalHierarchyProvider != null) {
             evalNodes = evalHierarchyProvider.getNodesForUserPerm(userId, hierarchyPermConstant);
         } else {
@@ -715,7 +733,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getUserIdsForNodesPerm(java.lang.String[], java.lang.String)
      */
     public Set<String> getUserIdsForNodesPerm(String[] nodeIds, String hierarchyPermConstant) {
-        Set<String> s = null;
+        Set<String> s;
         if (evalHierarchyProvider != null) {
             s = evalHierarchyProvider.getUserIdsForNodesPerm(nodeIds, hierarchyPermConstant);
         } else {

@@ -106,11 +106,11 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
 		if(viewparams instanceof ProviderSyncParams) {
 			fullJobName = ((ProviderSyncParams) viewparams).fullJobName;
 			if(((ProviderSyncParams) viewparams).tab != null) {
-				tab = new Integer(((ProviderSyncParams) viewparams).tab);
+				tab = ((ProviderSyncParams) viewparams).tab;
 			}
 		}
 		if(tab == null) {
-			tab = new Integer(0);
+			tab = 0;
 		}
 		
 		Map<String,Map<String, String>> cronJobs = this.externalLogic.getCronJobs(ProviderSyncBean.JOB_GROUP_NAME);
@@ -130,7 +130,7 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
         Boolean syncUnassignedOnStartup = (Boolean) this.evalSettings.get(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP);
         if(syncUnassignedOnStartup == null) {
         	// if setting is null, use default, true
-        	syncUnassignedOnStartup = new Boolean(true);
+        	syncUnassignedOnStartup = true;
         }        
         UIBoundBoolean.make(byEventForm, "sync-unassigned-on-startup", "#{providerSyncBean.syncUnassignedOnStartup}", syncUnassignedOnStartup);
         UIMessage.make(byEventForm, "sync-unassigned-on-startup-note", "administrate.sync.on_server_startup");
@@ -138,7 +138,7 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
         Boolean syncUserAssignmentsOnStateChange = (Boolean) this.evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE);
         if(syncUserAssignmentsOnStateChange == null) {
         	// if setting is null, use default, false
-        	syncUserAssignmentsOnStateChange = new Boolean(false);
+        	syncUserAssignmentsOnStateChange = false;
         }        
         UIBoundBoolean.make(byEventForm, "sync-on-state-change", "#{providerSyncBean.syncOnStateChange}", syncUserAssignmentsOnStateChange);
         UIMessage.make(byEventForm, "sync-on-state-change-note", "administrate.sync.on_state_change");
@@ -146,7 +146,7 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
         Boolean syncUserAssignmentsOnGroupSave = (Boolean) this.evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE);
         if(syncUserAssignmentsOnGroupSave == null) {
         	// if setting is null, use default, true
-        	syncUserAssignmentsOnGroupSave = new Boolean(true);
+        	syncUserAssignmentsOnGroupSave = true;
         }        
         UIBoundBoolean.make(byEventForm, "sync-on-group-save", "#{providerSyncBean.syncOnGroupSave}", syncUserAssignmentsOnGroupSave);
         UIMessage.make(byEventForm, "sync-on-group-save-note", "administrate.sync.on_group_save");
@@ -154,7 +154,7 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
         Boolean syncUserAssignmentsOnGroupUpdate = (Boolean) this.evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE);
         if(syncUserAssignmentsOnGroupUpdate == null) {
         	// if setting is null, use default, false
-        	syncUserAssignmentsOnGroupUpdate = new Boolean(false);
+        	syncUserAssignmentsOnGroupUpdate = false;
         }        
         UIBoundBoolean.make(byEventForm, "sync-on-group-update", "#{providerSyncBean.syncOnGroupUpdate}", syncUserAssignmentsOnGroupUpdate);
         UIMessage.make(byEventForm, "sync-on-group-update-note", "administrate.sync.on_group_update");
@@ -299,7 +299,7 @@ public class AdministrateProviderSyncProducer extends EvalCommonProducer impleme
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
 	public List reportNavigationCases() {
-		List<NavigationCase> list = new ArrayList<NavigationCase>();
+		List<NavigationCase> list = new ArrayList<>();
 		list.add(new NavigationCase(ProviderSyncBean.RESULT_SUCCESS, new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, null)));
 		list.add(new NavigationCase(ProviderSyncBean.RESULT_FAILURE, new ProviderSyncParams(AdministrateProviderSyncProducer.VIEW_ID, null)));
 		return list;

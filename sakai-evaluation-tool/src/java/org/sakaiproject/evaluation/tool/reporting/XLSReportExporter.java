@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -85,11 +84,6 @@ public class XLSReportExporter implements ReportExporter {
         this.evaluationService = evaluationService;
     }
 
-    private EvalDeliveryService deliveryService;
-    public void setDeliveryService(EvalDeliveryService deliveryService) {
-        this.deliveryService = deliveryService;
-    }
-
     private MessageLocator messageLocator;
     public void setMessageLocator(MessageLocator locator) {
         this.messageLocator = locator;
@@ -118,18 +112,9 @@ public class XLSReportExporter implements ReportExporter {
         String currentUserId = commonLogic.getCurrentUserId();
         String evalOwner = evaluation.getOwner();
 
-        // Allow columns greater than 255 (EVALSYS-775)
         TemplateItemDataList tidl = getEvalTIDL( evaluation, groupIDs );
         List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems( true );
-        Workbook wb;
-        if( dtiList.size() < 256 )
-        {
-            wb = new HSSFWorkbook();
-        }
-        else
-        {
-            wb = new XSSFWorkbook();
-        }
+        Workbook wb = new XSSFWorkbook();
         creationHelper = wb.getCreationHelper();
 
         // Title style
@@ -249,16 +234,13 @@ public class XLSReportExporter implements ReportExporter {
         instructorSheetLastNameHeaderCell.setCellStyle( boldHeaderStyle );
 
         // Generate dynamic question headers
-        List<String> instructorRelatedQuestions = new ArrayList<String>();
+        List<String> instructorRelatedQuestions = new ArrayList<>();
         for( DataTemplateItem dti : dtiList )
         {
-            if( !instructorViewAllResults                                                       // If the eval is so configured,
-                  && !commonLogic.isUserAdmin( currentUserId )                                  // and currentUser is not an admin
-                  && !currentUserId.equals( evalOwner )                                         // and currentUser is not the eval creator
-                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                  && !currentUserId.equals( commonLogic.getEvalUserById( dti.associateId ).userId ) )
+            // Skip items that aren't for the current user
+            if( isItemNotForCurrentUser( instructorViewAllResults, currentUserId, evalOwner, dti ) )
             {
-                continue;                                                                       // skip items that aren't for the current user
+                continue;
             }
 
             // If there's already a header for a specific instructor question, don't list it twice
@@ -296,30 +278,32 @@ public class XLSReportExporter implements ReportExporter {
 
         // Parse out the instructor and course related responeses into separate structures
         List<Long> responseIDs = tidl.getResponseIdsForAnswers();
-        List<List<String>> courseRelatedResponses = new ArrayList<List<String>>();
-        Map<Long, Map<User, List<EvalAnswer>>> answerMap = new HashMap<Long, Map<User, List<EvalAnswer>>>();
+        List<List<String>> courseRelatedResponses = new ArrayList<>();
+        Map<Long, Map<User, List<EvalAnswer>>> answerMap = new HashMap<>();
         for( Long responseID : responseIDs )
         {
             // Dump the (course related) data into a list of strings representing a spreadsheet row (so it can be sorted)
-            List<String> row = new ArrayList<String>();
-            row.add( SECTION_OR_SITE_COLUMN_NUM, responseAggregator.getCommaSeparatedGroupNames(
-                    new String[] { tidl.getAnswersByResponseId( responseID ).get( 0 ).getResponse().getEvalGroupId() } ) );
+            List<String> row = new ArrayList<>();
+            String groupID = "";
+            List<EvalAnswer> answers = tidl.getAnswersByResponseId( responseID );
+            if( answers != null && !answers.isEmpty() )
+            {
+                groupID = answers.get( 0 ).getResponse().getEvalGroupId();
+            }
+            row.add( SECTION_OR_SITE_COLUMN_NUM, responseAggregator.getCommaSeparatedGroupNames( new String[] { groupID } ) );
             row.add( RESPONSE_ID_COLUMN_NUM, responseID.toString() );
 
             // Add the response ID to the answer map
-            answerMap.put( responseID, new HashMap<User, List<EvalAnswer>>() );
+            answerMap.put( responseID, new HashMap<>() );
 
             // Loop through the data template items...
             int questionCounter = 0;
             for( DataTemplateItem dti : dtiList )
             {
-                if( !instructorViewAllResults                                                       // If the eval is so configured,
-                      && !commonLogic.isUserAdmin( currentUserId )                                  // and currentUser is not an admin
-                      && !currentUserId.equals( evalOwner )                                         // and currentUser is not the eval creator
-                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                      && !currentUserId.equals( commonLogic.getEvalUserById( dti.associateId ).userId ) )
+                // Skip items that aren't for the current user
+                if( isItemNotForCurrentUser( instructorViewAllResults, currentUserId, evalOwner, dti ) )
                 {
-                    continue;                                                                       // skip items that aren't for the current user
+                    continue;
                 }
 
                 // If it's an instructor related item... 
@@ -330,23 +314,25 @@ public class XLSReportExporter implements ReportExporter {
                     if( answer != null )
                     {
                         // Get the instructor
-                        User instructor = null;
+                        User instructor;
                         try { instructor = userDirectoryService.getUser( answer.getAssociatedId() ); }
                         catch( UserNotDefinedException ex ) { continue; }
 
                         // If the answer map has a list of answers for this response and this instructor, add the answer to the list
-                        if( answerMap.get( responseID ).containsKey( instructor ) )
+                        Map<User, List<EvalAnswer>> responseAnswers = answerMap.get( responseID );
+                        List<EvalAnswer> instructorAnswers = responseAnswers.get( instructor );
+                        if( instructorAnswers != null )
                         {
-                            answerMap.get( responseID ).get( instructor ).add( answer );
+                            instructorAnswers.add( answer );
                         }
 
                         // Otherwise, the answer map doesn't have a list of answers for this response and this instructor,
                         // create the list and add the answer to it
                         else
                         {
-                            List<EvalAnswer> list = new ArrayList<EvalAnswer>();
-                            list.add( answer );
-                            answerMap.get( responseID ).put( instructor, list );
+                            instructorAnswers = new ArrayList<>();
+                            instructorAnswers.add( answer );
+                            responseAnswers.put( instructor, instructorAnswers );
                         }
                     }
                 }
@@ -361,7 +347,7 @@ public class XLSReportExporter implements ReportExporter {
                     }
                     if( dti.usesComments() )
                     {
-                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_COURSE_SHEET + ++questionCounter, ( answer == null || EvalUtils.isBlank( answer.getComment() ) ) ? "" : answer.getComment() );
+                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_COURSE_SHEET + ++questionCounter, StringUtils.trimToEmpty( answer.getComment() ) );
                     }
                     questionCounter++;
                 }
@@ -372,14 +358,14 @@ public class XLSReportExporter implements ReportExporter {
         }
 
         // Convert the map structure of instructor responses into a List<List<String>>, representing rows of data
-        List<List<String>> instructorRelatedResponses = new ArrayList<List<String>>();
+        List<List<String>> instructorRelatedResponses = new ArrayList<>();
         for( Long responseID : answerMap.keySet() )
         {
             // Loop through the instructors for the current response
             for( User instructor : answerMap.get( responseID ).keySet() )
             {
                 // Dump the data into a list of strings representing a spreadsheet row (so it can be sorted)
-                List<String> row = new ArrayList<String>();
+                List<String> row = new ArrayList<>();
                 row.add( SECTION_OR_SITE_COLUMN_NUM, "" );
                 row.add( RESPONSE_ID_COLUMN_NUM, responseID.toString() );
                 row.add( INSTRUCTOR_ID_COLUMN_NUM, "" );
@@ -397,13 +383,11 @@ public class XLSReportExporter implements ReportExporter {
                 {
                     row.set( SECTION_OR_SITE_COLUMN_NUM, responseAggregator.getCommaSeparatedGroupNames( new String[] { answer.getResponse().getEvalGroupId() } ) );
                     row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_INSTRUCTOR_SHEET + questionCounter, "" );
-                    if( answer != null )
+                    row.set( QUESTION_COMMENTS_COLUMN_START_INDEX_INSTRUCTOR_SHEET + questionCounter, responseAggregator.formatForSpreadSheet( answer.getTemplateItem(), answer ) );
+                    String comment = StringUtils.trimToEmpty( answer.getComment() );
+                    if( !comment.isEmpty() )
                     {
-                        row.set( QUESTION_COMMENTS_COLUMN_START_INDEX_INSTRUCTOR_SHEET + questionCounter, responseAggregator.formatForSpreadSheet( answer.getTemplateItem(), answer ) );
-                    }
-                    if( answer != null && answer.getComment() != null && !EvalUtils.isBlank( answer.getComment() ) )
-                    {
-                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_INSTRUCTOR_SHEET + ++questionCounter, ( answer == null || EvalUtils.isBlank( answer.getComment() ) ) ? "" : answer.getComment() );
+                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_INSTRUCTOR_SHEET + ++questionCounter, ( StringUtils.trimToEmpty( answer.getComment() ) ) );
                     }
                     questionCounter++;
                 }
@@ -486,6 +470,23 @@ public class XLSReportExporter implements ReportExporter {
 
     }
 
+    /**
+     * Determine if the current DataTemplateItem should be included in the report (for the current user)
+     * @param instructorViewAllResults
+     * @param currentUserID
+     * @param evalOwner
+     * @param dti
+     * @return true if the item is for the current user; false otherwise
+     */
+    private boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
+    {
+        return !instructorViewAllResults                                                       // If the eval is so configured,
+                && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
+                && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
+                && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
+                && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId );
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -535,15 +536,7 @@ public class XLSReportExporter implements ReportExporter {
            // 2: get DTIs for this eval from tidl
            List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);
 
-           Workbook wb;
-           if( dtiList.size() < 256 )
-           {
-               wb = new HSSFWorkbook();
-           }
-           else
-           {
-               wb = new XSSFWorkbook();
-           }
+           Workbook wb = new XSSFWorkbook();
            creationHelper = wb.getCreationHelper();
 
            Sheet sheet = wb.createSheet(messageLocator.getMessage("reporting.xls.sheetname"));

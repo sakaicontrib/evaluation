@@ -115,7 +115,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
      */
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        List<EvalGroup> l = new ArrayList<EvalGroup>();
+        List<EvalGroup> l = new ArrayList<>();
         if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
             l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
             l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
@@ -170,9 +170,12 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * USER_ID can take eval, MAINT_USER_ID can admin evals and be evaluated (cannot take)<br/>
      * 2) CONTEXT2/SITE2_ID -
      * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
+     * @param context
+     * @param permission
+     * @return 
      */
     public Set<String> getUserIdsForEvalGroup(String context, String permission) {
-        Set<String> s = new HashSet<String>();
+        Set<String> s = new HashSet<>();
         // Maybe should add the admin user here? -AZ
         if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
             if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
@@ -256,6 +259,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * USER_ID can take eval, MAINT_USER_ID can admin evals and be evaluated (cannot take)<br/>
      * 2) CONTEXT2/SITE2_ID -
      * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
+     * @param context
      */
     public boolean isUserAllowedInEvalGroup(String userId, String permission, String context) {
         if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
@@ -363,7 +367,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     }
 
     public List<EvalUser> getSakaiAdmins() {
-        List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>();
+        List<EvalUser> sakaiAdminList = new ArrayList<>();
         sakaiAdminList.add(this.getEvalUserById(EvalTestDataLoad.ADMIN_USER_ID));
         return sakaiAdminList;
     }
@@ -372,14 +376,11 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
      */
     public boolean isUserAnonymous(String userId) {
-        if (userId.equals(EvalTestDataLoad.USER_ID) 
-                ||	userId.equals(EvalTestDataLoad.MAINT_USER_ID) 
-                ||	userId.equals(EvalTestDataLoad.ADMIN_USER_ID)
-                || userId.equals(EvalTestDataLoad.STUDENT_USER_ID) 
-        		|| userId.equals(EvalTestDataLoad.MAINT_USER_ID_3)) {
-            return false;
-        }
-        return true;
+        return !(userId.equals(EvalTestDataLoad.USER_ID) 
+                 ||	userId.equals(EvalTestDataLoad.MAINT_USER_ID)
+                 ||	userId.equals(EvalTestDataLoad.ADMIN_USER_ID)
+                 || userId.equals(EvalTestDataLoad.STUDENT_USER_ID)
+                 || userId.equals(EvalTestDataLoad.MAINT_USER_ID_3));
     }
 
     public EvalUser getEvalUserById(String userId) {
@@ -440,10 +441,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * only true for ADMIN_USER_ID
      */
     public boolean isUserSakaiAdmin(String userId) {
-        if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
-            return true;
-        }
-        return false;
+        return EvalTestDataLoad.ADMIN_USER_ID.equals(userId);
     }
 
     public Locale getUserLocale(String userId) {
@@ -452,6 +450,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 
     /**
      * Return titles from the data load class
+     * @param evalGroupId
+     * @return 
      */
     public String getDisplayTitle(String evalGroupId) {
         if ( EvalTestDataLoad.SITE1_REF.equals(evalGroupId) ) {
@@ -465,6 +465,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     /**
      * Return Context objects based on data from the data load class
      * CONTEXT1 = Site, CONTEXT2 = Group
+     * @param context
      */
     public EvalGroup makeEvalGroupObject(String context) {
         EvalGroup c = new EvalGroup(context, null, EvalConstants.GROUP_TYPE_UNKNOWN);
@@ -567,6 +568,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
      * TESTING method:
      * Provides a way to determine the number of emails sent via this mock service since the service started up
      * or the counter was reset, reset the counter using {@link #resetEmailsSentCounter()}
+     * @return 
      */
     public int getNumEmailsSent() {
         return emailsSentCounter;
@@ -595,7 +597,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     }
 
     public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
-        Map<String, EvalUser> users = new HashMap<String, EvalUser>();
+        Map<String, EvalUser> users = new HashMap<>();
         for (String userId : userIds) {
             users.put(userId, getEvalUserById(userId) );
         }
@@ -670,7 +672,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 
     public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId )
     {
-        return new ArrayList<EvalGroup>();
+        return new ArrayList<>();
     }
 
     public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
@@ -680,7 +682,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
-        return new HashSet<String>();
+        return new HashSet<>();
     }
 
     @Override

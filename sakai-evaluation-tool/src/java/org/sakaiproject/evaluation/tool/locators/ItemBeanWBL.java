@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -39,7 +38,7 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 	}
 
 	// keep track of all items that have been delivered during this request
-	private Map<String, EvalItem> delivered = new HashMap<String, EvalItem>();
+	private Map<String, EvalItem> delivered = new HashMap<>();
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.beanutil.BeanLocator#locateBean(java.lang.String)
@@ -75,8 +74,7 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 	}
 
 	public void saveAll() {
-		for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-			String key = it.next();
+		for( String key : delivered.keySet() ) {
 			EvalItem item = (EvalItem) delivered.get(key);
 			if (key.startsWith(NEW_PREFIX)) {
 				// add in extra logic needed for new items here

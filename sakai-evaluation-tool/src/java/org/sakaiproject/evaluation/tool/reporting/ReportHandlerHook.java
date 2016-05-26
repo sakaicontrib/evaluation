@@ -30,7 +30,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class ReportHandlerHook {
 
-   private static Log log = LogFactory.getLog(ReportHandlerHook.class);
+   private static final Log LOG = LogFactory.getLog(ReportHandlerHook.class);
 
    private ViewParameters viewparams;
    public void setViewparams(ViewParameters viewparams) {
@@ -53,7 +53,7 @@ public class ReportHandlerHook {
     */
    public boolean handle() {
       if (viewparams instanceof DownloadReportViewParams) {
-          log.debug("Handing viewparams and response off to the reportExporter");
+          LOG.debug("Handing viewparams and response off to the reportExporter");
           return reportExporterBean.export((DownloadReportViewParams) viewparams, response);
       }
       return false;
