@@ -64,18 +64,18 @@
       <p rsf:id="evaluationsNone" class="instructionText indnt2">No evaluations to take</p>
 
       <div rsf:id="evaluationsList:" class="innerPanel">
-        <table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
+        <table id="summary-table">
           <thead>
             <tr>
-              <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
-              <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
-              <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-              <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+              <th rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
+              <th rsf:id="msg=summary.evaluation.status.title">Status</th>
+              <th rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+              <th rsf:id="msg=summary.evaluations.ends.title">Closes</th>
             </tr>
           </thead>
           <tbody>
-            <tr rsf:id="evaluationsCourseList:">
-              <td style="width: 20em">
+            <tr rsf:id="evaluationsCourseList:" class="userPermsRow">
+              <td>
                 <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
                 <span rsf:id="evaluationCourseLink_disabled" />
               </td>

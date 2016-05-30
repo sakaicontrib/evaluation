@@ -42,13 +42,8 @@
         <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
     </ul>
     <h3 rsf:id="assign-groups-title">Assign groups for a hierarchy node</h3>
-    <!-- 
-    <p>
-      <span>Filter</span>
-      <input type="text" value="" id="filterinput" />
-    </p>
-    -->
-    <form rsf:id="assign-groups-form">
+
+    <form rsf:id="assign-groups-form" style="display: inline-block;">
 
         <div class="action" style="margin-bottom: 5px;">
             <span class="cancelButton">
@@ -57,10 +52,10 @@
             </span>
         </div>
 
-        <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+        <table id="groups-table">
             <thead>
                 <tr>
-                    <th width="3%">
+                    <th>
                         <input id="selectAllNone" type="checkbox" />
                         <span rsf:id="select-header">Select</span>
                     </th>

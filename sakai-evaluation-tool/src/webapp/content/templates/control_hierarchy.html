@@ -43,7 +43,7 @@
     <a rsf:id="show-hide-groups" href="">Show/Hide Groups</a> <a rsf:id="show-hide-users" href="">Show/Hide Users</a>
     <div rsf:id="hierarchy-tree:">
         <!-- Everything in here is replaced by the html in /evaluation/tool/src/webapp/component-templates/hierarchy_controls.html -->
-        <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+        <table id="hierarchy-table">
             <thead>
                 <tr>
                     <th rsf:id="hierarchy-header">Hierarchy Level</th>
@@ -52,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr rsf:id="hierarchy-level-row:">
+                <tr rsf:id="hierarchy-level-row:" class="userPermsRow">
                     <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
                     <td>
                         <span rsf:id="number-children">3</span>
