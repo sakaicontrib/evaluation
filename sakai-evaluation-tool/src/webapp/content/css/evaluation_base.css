@@ -2139,3 +2139,9 @@ li.exportIndividual {
 ol.itemListEval span.label {
     color: #000 !important;
 }
+
+.instructionText {
+    color: #555;
+    line-height: 1.3em;
+    margin: 0.5em 0;
+}
