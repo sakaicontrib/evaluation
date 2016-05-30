@@ -1035,6 +1035,13 @@ form {
   padding: .2em;
   color: orange;
   margin-left: 1em;
+  display: inline;
+  width: auto;
+  border: none;
+}
+
+.checkbox input[type="checkbox"] {
+  margin-left: auto;
 }
 
 label.block {
