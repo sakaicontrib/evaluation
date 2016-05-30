@@ -1507,64 +1507,51 @@ a.less {
   margin-left: 1em;
 }
 
-.evalAdminTable {
-  border: 1px solid #eee;
-  margin-top: 20px;
-}
-
-.evalAdminTable thead tr {
-  background: #ccc;
-}
-
-.evalAdminTable td {
-  padding: 0 20px;
-}
-
 .column {
   width: 25%;
 }
 
 /* hierarchy node perms page, target hierarchy rules UI also */
-table#user-perms-table, table#rules-table {
+table#user-perms-table, table#rules-table, table#evalAdmin-table {
   margin: 2em 0;
   border: 1px solid #ccc;
 }
 
-table#user-perms-table thead, table#rules-table thead {
+table#user-perms-table thead, table#rules-table thead, table#evalAdmin-table thead {
   background: #aaa;
 }
 
-table#user-perms-table thead tr th, table#rules-table thead tr th {
+table#user-perms-table thead tr th, table#rules-table thead tr th, table#evalAdmin-table thead tr th {
   text-align: center !important;
 }
 
-table#user-perms-table tr, table#rules-table tr {
+table#user-perms-table tr, table#rules-table tr, table#evalAdmin-table tr {
   padding: 10px 0;
 }
 
-table#user-perms-table tbody tr:nth-child(2n), table#rules-table tbody tr:nth-child(2n) {
+table#user-perms-table tbody tr:nth-child(2n), table#rules-table tbody tr:nth-child(2n), table#evalAdmin-table tbody tr:nth-child(2n) {
   background: #eee;
 }
 
-table#user-perms-table td, table#rules-table td {
+table#user-perms-table td, table#rules-table td, table#evalAdmin-table td {
   padding: 10px;
 }
 
-table#user-perms-table td.userInfo, table#rules-table td.userInfo {
+table#user-perms-table td.userInfo, table#rules-table td.userInfo, table#evalAdmin-table td.userInfo {
   text-align: center;
 }
 
-table#user-perms-table td.actions, table#rules-table td.actions {
+table#user-perms-table td.actions, table#rules-table td.actions, table#evalAdmin-table td.actions {
   text-align: center;
 }
 
-table#user-perms-table td.userPerms > span:nth-child(2n+1), table#rules-table td.userPerms > span:nth-child(2n+1) {
+table#user-perms-table td.userPerms > span:nth-child(2n+1), table#rules-table td.userPerms > span:nth-child(2n+1), table#evalAdmin-table td.userPerms > span:nth-child(2n+1) {
   clear: left;
   float: left;
   width: 140px;
 }
 
-table#user-perms-table td.userPerms > span:nth-child(2n), table#rules-table td.userPerms > span:nth-child(2n) {
+table#user-perms-table td.userPerms > span:nth-child(2n), table#rules-table td.userPerms > span:nth-child(2n), table#evalAdmin-table td.userPerms > span:nth-child(2n) {
   float: left;
 }
 

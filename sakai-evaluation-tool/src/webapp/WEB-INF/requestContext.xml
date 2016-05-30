@@ -467,10 +467,9 @@
         <property name="commonProducerBean" ref="org.sakaiproject.evaluation.tool.CommonProducerBean" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="settings" 
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="navBarRenderer" ref="navBarRenderer" />
     </bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer">
