@@ -347,8 +347,7 @@ ol.summaryEvaluateList {
 .scaleOuterList {
   width: 60%;
   padding: 0;
-  margin: 1em 0;
-  list-style: decimal;
+  list-style: none;
 }
 
 .scaleInnerList {
@@ -364,7 +363,6 @@ ol.summaryEvaluateList {
 }
 
 .scaleTitleLine {
-  height: 1.5em;
   overflow: hidden;
   background: #eee;
   padding: 0.3em;
