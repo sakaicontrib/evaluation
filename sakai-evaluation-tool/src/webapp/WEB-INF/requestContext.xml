@@ -627,7 +627,6 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
 
