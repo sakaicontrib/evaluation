@@ -35,12 +35,13 @@
 
 <div>
 	<ul class="breadCrumb">
-		<li ><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="msg=starteval.page.title">Start Evaluation</li>
+		<li ><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		<li class="lastCrumbNoFloat" rsf:id="msg=starteval.page.title">Start Evaluation</li>
 	</ul>
 </div>
 
 <div rsf:id="message-for:*" class="alertMessage">
-	<ul style="margin:0px;">
+	<ul>
 		<li>Message for user here</li>
 	</ul>
 </div>
@@ -64,7 +65,7 @@
 		  <div rsf:id="chooseTemplate:">
 		  	<h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
 			<p rsf:id="msg=starteval.choose.template.desc" class="instructionText">Select the template to use for this evaluation. Templates define the questions used.</p>
-				<table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+				<table class="evalsysTable" style="width:60%">
 					<tr>
 						<th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
 						<th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>

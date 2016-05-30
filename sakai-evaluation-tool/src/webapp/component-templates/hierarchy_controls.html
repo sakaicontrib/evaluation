@@ -48,7 +48,7 @@
     </script>
 	<div rsf:id="selectColumnCheckboxes"/>
 	<input id="nodeClicked" name="nodeClicked" type="hidden"/>
-    <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+    <table class="evalsysTable">
         <thead>
             <tr>
                 <th rsf:id="node-metadata-header" style="display: none"></th>
@@ -66,7 +66,7 @@
                     <input id="node-id-input" rsf:id="node-id-input" type="hidden" value="TheNodeID" />
                     <input id="parent-id-input" rsf:id="parent-id-input" type="hidden" value="TheParentID" />
                 </td>
-                <td rsf:id="row-data" style="text-indent:0em" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
+                <td rsf:id="row-data" class="noTextIndent" colspan="4"><!-- used for displaying long text data, not rendered for normal nodes --></td>
                 <td rsf:id="node-select-cell" width="10%">
                     <input rsf:id="select-checkbox" class="evalgroupselect" type="checkbox" />
                     <input rsf:id="select-checkbox-hide" class="evalgroupselect" type="checkbox" onchange="clickHierarchyCheckbox(this);" />
@@ -81,27 +81,27 @@
                 <td rsf:id="nodes-cell">
                     <span rsf:id="number-children">3</span>
                     &nbsp;
-                    <a rsf:id="add-child-link" href="" style="font-size: 0.9em;">Add</a>
-                    <a rsf:id="modify-node-link" href="" style="font-size: 0.9em;">Modify</a>
+                    <a rsf:id="add-child-link" href="">Add</a>
+                    <a rsf:id="modify-node-link" href="">Modify</a>
                     <form rsf:id="remove-node-form">
                         <input type="submit" rsf:id="remove-node-button" value="Remove"
-                            style="font-size:0.9em;height:2.1em;margin:0px;padding:0px;" />
+                            style="height:2.1em;margin:0px;padding:0px;" />
                     </form>
                 </td>
                 <td rsf:id="groups-cell">
                     <span rsf:id="assign-group-count">67</span>
                     &nbsp;
-                    <a rsf:id="assign-groups-link" href="" style="font-size: 0.9em;">Assign Groups</a>
+                    <a rsf:id="assign-groups-link" href="">Assign Groups</a>
                 </td>
                 <td rsf:id="users-cell">
                     <span rsf:id="assign-user-count">67</span>
                     &nbsp;
-                    <a rsf:id="assign-users-link" href="" style="font-size: 0.9em;">Assign Users</a>
+                    <a rsf:id="assign-users-link" href="">Assign Users</a>
                 </td>
                 <td rsf:id="rules-cell">
                     <span rsf:id="assign-rule-count">67</span>
                     &nbsp;
-                    <a rsf:id="assign-rules-link" href="" style="font-size: 0.9em;">Assign Rules</a>
+                    <a rsf:id="assign-rules-link" href="">Assign Rules</a>
                 </td>
             </tr>
         </tbody>

@@ -41,16 +41,19 @@
 <body>
 	<div class="portletBody">
 		
-		<div rsf:id="navIntraTool:" class="navIntraTool"/>			
+		<div rsf:id="navIntraTool:" class="navIntraTool"/>
         <div>
             <ul class="breadCrumb">
             <!-- first link in the bcrumb does not seem to be looking in the message.properties for a value -->
-            <li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li><li class="lastCrumb" rsf:id="msg=assigneval.page.title">Assign Evaluation</li>                 
+            <li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li>
+            <li rsf:id="eval-start-text">Add Evaluation</li>
+            <li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+            <li class="lastCrumbNoFloat" rsf:id="msg=assigneval.page.title">Assign Evaluation</li>
             </ul>
         </div>
 		
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -95,7 +98,7 @@
 					This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
 					
 					<div rsf:id="siteCheckboxes"/>
-					<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+					<table style="width:90%" class="evalsysTable" >
 						<thead>
 							<tr>
 								<th class="attach" >
@@ -141,7 +144,7 @@
 				</p>
 				<div rsf:id="adhocgroups-assignment-area" id="adhocgroups-assignment-area">
 					<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group</a>
-					<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+					<table rsf:id="adhoc-groups-table" style="width:90%" class="evalsysTable" >
 						<thead>
 							<tr>
 								<th class="attach" >

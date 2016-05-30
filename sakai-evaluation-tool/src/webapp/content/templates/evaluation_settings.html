@@ -37,11 +37,13 @@
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
 		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li rsf:id="eval-start-text">Add Evaluation</li>
+			<li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
 		</ul>
 
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -72,7 +74,7 @@
               <div rsf:id="chooseTemplate:" class="longtext">
               <h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
               <p rsf:id="msg=starteval.choose.template.desc" class="instructionText">Select the template to use for this evaluation. Templates define the questions used.</p>
-                  <table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+                  <table class="evalsysTable" style="width:60%">
                       <tr>
                           <th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
                           <th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>
@@ -175,7 +177,7 @@
                          Results are not viewable until this date
                      </span>
                 </div>
-				<table class="listHier" border="0" cellspacing="0" cellpadding="0" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
+				<table class="evalsysTable" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
 					<tr rsf:id="showResultsToStudents:" id="showResultsToStudents">
 						<td width="33%" class="checkbox">
 							<input rsf:id="studentViewResults" type="checkbox" name="student_view_results" id="studentViewResults" />

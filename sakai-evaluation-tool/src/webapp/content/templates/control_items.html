@@ -55,12 +55,12 @@
 
 		<ul class="breadCrumb">
 			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li rsf:id="page-title"  class="lastCrumb">My Items</li>
-			<li style="float:right" class="lastCrumb"><a rsf:id="expert-items-link" href="control_expert_items.html"  class="addItem">Expert Items</a></li>
+			<li rsf:id="page-title" class="lastCrumbNoFloat">My Items</li>
+			<li class="lastCrumb"><a rsf:id="expert-items-link" href="control_expert_items.html"  class="addItem">Expert Items</a></li>
 		</ul>
 					
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -104,7 +104,7 @@
 		
 		<!-- This block (list items) is not visible if there are no items visible -->
         <form rsf:id="copyForm">
-  			<table rsf:id="item-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
+  			<table rsf:id="item-listing:" class="evalsysTable">
   				<thead class="skip" style="display:none">
   					<tr>
   						<th id="itemMD">

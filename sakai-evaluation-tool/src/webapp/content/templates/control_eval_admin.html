@@ -37,23 +37,23 @@
 		
 		<div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-		<ul class="breadCrumb" style="clear: both; height: 1.5em">
-			<li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-			<li rsf:id="msg=controlevaladmin.page.title" class="lastCrumb" style="float: left">Control Eval Admin</li>
+		<ul class="breadCrumb">
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+			<li rsf:id="msg=controlevaladmin.page.title" class="lastCrumbNoFloat">Control Eval Admin</li>
 		</ul>
 
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
 
 		<p class="instructionText" rsf:id="control-eval-admin-note">Note about how users cannot remove their own admin rights</p>
 		
-		<form rsf:id="eval-admin-form" style="display: inline-block;">
+		<form rsf:id="eval-admin-form" class="inlineBlockForm">
 			
-			<table id="evalAdmin-table">
+			<table class="evalsysTable">
 				
 				<thead>
 					<tr>
@@ -65,7 +65,7 @@
 				
 				<tbody>
 
-					<tr id="assign-fields" class="userPermsRow">
+					<tr id="assign-fields">
 						
 						<td class="assignEvalAdmin" colspan="2">
 							<label for="user-eid-input" rsf:id="user-eid-label">Assign New Eval Admin: </label>
@@ -76,7 +76,7 @@
 						
 					</tr>
 					
-					<tr rsf:id="eval-admin:" class="userPermsRow">
+					<tr rsf:id="eval-admin:">
 						<td rsf:id="user-info">[display-name] ([user-eid])</td>
 						<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
 						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
@@ -86,7 +86,7 @@
 				
 			</table>
 			
-			<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+			<table class="evalsysTable">
 				
 				<thead>
 					<tr>

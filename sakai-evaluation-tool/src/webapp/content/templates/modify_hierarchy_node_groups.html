@@ -35,24 +35,30 @@
 <div class="portletBody">
      <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-    <ul class="breadCrumb" style="clear: both; height: 1.5em">
-        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-        <li style="float: left"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
-        <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
+    <ul class="breadCrumb">
+        <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+        <li rsf:id="page-title" class="lastCrumbNoFloat" >Add / Modify</li>
     </ul>
     <h3 rsf:id="assign-groups-title">Assign groups for a hierarchy node</h3>
 
-    <form rsf:id="assign-groups-form" style="display: inline-block;">
+    <div rsf:id="message-for:*" class="alertMessage">
+        <ul>
+            <li>Message for user here</li>
+        </ul>
+    </div>
 
-        <div class="action" style="margin-bottom: 5px;">
+    <form rsf:id="assign-groups-form" class="inlineBlockForm">
+
+        <div class="action">
             <span class="cancelButton">
                 <a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
-                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button1" class="active" accesskey="s" style="float: right;" />
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button1" class="active" accesskey="s" />
             </span>
         </div>
 
-        <table id="groups-table">
+        <table class="evalsysTable">
             <thead>
                 <tr>
                     <th>
@@ -66,7 +72,7 @@
             <tbody>
                 <tr rsf:id="group-row:">
                     <td>
-                        <input class=" groupcheckbox "rsf:id="group-checkbox" type="checkbox" />
+                        <input class="groupcheckbox"rsf:id="group-checkbox" type="checkbox" />
                     </td>
                     <td>
                         <label rsf:id="group-title">Group Title</label>
@@ -78,7 +84,7 @@
         <div class="action">
             <span class="cancelButton">
                 <a href="#" rsf:id="return-link2">Return to Control Hierarchy</a>
-                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button2" class="active" accesskey="s" style="float: right;" />
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button2" class="active" accesskey="s" />
             </span>
         </div>
     </form>

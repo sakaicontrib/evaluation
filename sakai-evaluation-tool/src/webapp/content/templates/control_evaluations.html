@@ -14,7 +14,7 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title rsf:id="page-title">My Evaluations</title>
@@ -30,19 +30,19 @@
 <body>
     <div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
-        <ul class="breadCrumb" style="clear:both;height:1.5em">
-            <li style="float:left">
+        <ul class="breadCrumb">
+            <li>
                 <a rsf:id="summary-link" href="summary.html">Summary</a>
             </li>
-            <li style="float:left" rsf:id="page-title" class="lastCrumb">
+            <li rsf:id="page-title" class="lastCrumbNoFloat">
                 My Evaluations
             </li>
-            <li style="float:right" class="lastCrumb">
+            <li class="lastCrumb">
                 <a rsf:id="begin-evaluation-link" href="evaluation_create.html" class="addItem">Start Evaluation</a>
             </li>
         </ul>
         <div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
+            <ul>
                 <li>
                     Message for user here
                 </li>
@@ -59,7 +59,7 @@
                 <span rsf:id="msg=controlevaluations.partial.description">Your Evaluations which you started creating but did not complete</span>
                 <span rsf:id="partial-cleanup-note"></span>
             </p>
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -95,7 +95,7 @@
             Your Evaluations in queue that have not started yet
         </p>
         <div rsf:id="inqueue-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -150,7 +150,7 @@
             Your Evaluations currently active for users to take
         </p>
         <div rsf:id="active-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -223,7 +223,7 @@
             Your Evaluations which have been completed
         </p>
         <div rsf:id="closed-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">

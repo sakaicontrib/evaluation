@@ -38,17 +38,17 @@
         <div class="portletBody">
             <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-            <ul class="breadCrumb" style="clear: both; height: 1.5em">
-                <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-                <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-                <li style="float: left"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
-                <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
+            <ul class="breadCrumb">
+                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+                <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+                <li><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+                <li rsf:id="page-title" class="lastCrumbNoFloat" >Add / Modify</li>
             </ul>
 
             <h3 rsf:id="msg=modifynoderules.page.title">Hierarchy Node Rules</h3>
 
             <div rsf:id="message-for:*" class="alertMessage">
-                <ul style="margin:0px;">
+                <ul>
                     <li>Message for user here</li>
                 </ul>
             </div>
@@ -62,17 +62,17 @@
                 Page Instructions: blurb 2
             </p>
 
-            <form rsf:id="rules-form" method="post" style="display: inline-block;">
+            <form rsf:id="rules-form" method="post" class="inlineBlockForm">
                 <input type="hidden" rsf:id="node-id" />
 
-                <div class="action" style="margin-bottom: 5px;">
+                <div class="action">
                     <span class="cancelButton">
                         <a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
-                        <input type="submit" rsf:id="cancel-changes-button1" style="float: right;" />
+                        <input type="submit" rsf:id="cancel-changes-button1" />
                     </span>
                 </div>
 
-                <table id="rules-table">
+                <table class="evalsysTable">
                     <thead>
                         <tr>
                             <th rsf:id="rules-header">Criteria</th>
@@ -81,8 +81,8 @@
                     </thead>
 
                     <tbody>
-                        <tr rsf:id="new-rule:" class="userPermsRow">
-                            <td class="userInfo">
+                        <tr rsf:id="new-rule:">
+                            <td class="alignCenter">
                                 <select rsf:id="new-rule-option-selection" id="new-rule-option-selection">
                                     <option value="SITE" selected="selected">Site Title</option>
                                     <option value="SECTION">Section Title</option>
@@ -102,8 +102,8 @@
                             </td>
                         </tr>
 
-                        <tr rsf:id="rule:" class="userPermsRow">
-                            <td class="userInfo">
+                        <tr rsf:id="rule:">
+                            <td class="alignCenter">
                                 <select rsf:id="existing-rule-option-selection" id="existing-rule-option-selection">
                                     <option value="SITE" selected="selected">Site Title</option>
                                     <option value="SECTION">Section Title</option>
@@ -131,7 +131,7 @@
                 <div class="action">
                     <span class="cancelButton">
                         <a href="#" rsf:id="return-link2">Return to Control Hierarchy</a>
-                        <input type="submit" rsf:id="cancel-changes-button2" style="float: right;" />
+                        <input type="submit" rsf:id="cancel-changes-button2" />
                     </span>
                 </div>
             </form>

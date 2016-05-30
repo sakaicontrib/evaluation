@@ -31,15 +31,19 @@
 <body>
 <div class="portletBody">
      <div rsf:id="navIntraTool:" class="navIntraTool"/>
-
-    <ul class="breadCrumb" style="clear: both; height: 1.5em">
-        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-        <li style="float: left"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
-        <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
+     <div rsf:id="message-for:*" class="alertMessage">
+        <ul>
+            <li>Message for user here</li>
+        </ul>
+    </div>
+    <ul class="breadCrumb">
+        <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+        <li rsf:id="page-title" class="lastCrumbNoFloat" >Add / Modify</li>
     </ul>
     <h3 rsf:id="modify-location-message">Add/Modify Hierarchy Item under School Science</h3>
-    <form rsf:id="modify-node-form">
+    <form rsf:id="modify-node-form" class="inlineBlockForm">
         <p class="shorttext">
             <label rsf:id="title-label" for="node-title">Title</label>
             <input id="node-title" rsf:id="node-title" type="text"/>
