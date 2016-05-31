@@ -24,6 +24,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -188,7 +189,7 @@
                             <a rsf:id="active-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
                             <a rsf:id="active-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
                             <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm left-separator">
-                                <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" />
+                                <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" onclick="SPNR.disableControlsAndSpin( this, null );" />
                             </form>
                         </td>
                         <td headers="assignedact">

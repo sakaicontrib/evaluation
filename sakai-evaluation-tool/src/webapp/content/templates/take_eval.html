@@ -36,6 +36,7 @@
     <script src="../js/toggleCommentBox.js" type="text/javascript"></script>
     <script src="../js/evalTakeEval.js" type="text/javascript"></script>
     <script src="../js/evalUtils.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -75,7 +76,7 @@
 						<option>Group 2</option>
 						<option>Group 3</option>
 					</select>
-					<input rsf:id="switch-group-button" type="submit" value="Switch" />
+					<input rsf:id="switch-group-button" type="submit" value="Switch" onclick="SPNR.disableControlsAndSpin( this, null );" />
 				</form>
 			</div>	
 		</div>
@@ -102,8 +103,7 @@
 		
 		
 		<div rsf:id="form-branch:" class="content">
-			<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post"
-                    onsubmit="$(':submit').hide;$('submit_process').show();">
+			<form rsf:id="evaluationForm" id="eval_form" name="eval_form" method="post">
 		
 				<div rsf:id="select-instructor-one:" class="navPanel"  rel="evalinstructorSelector">
 				<!-- Selector for ONE instructor -->
@@ -169,13 +169,12 @@
 					</fieldset>
 				</div>
 
-                <div class="alertMessage" rsf:id="saveEvaluationWithoutSubmitWarning">Evaluation has been Saved but not Submitted</div>
+				<div class="alertMessage" rsf:id="saveEvaluationWithoutSubmitWarning">Evaluation has been Saved but not Submitted</div>
 				<div class="act">
 					<input rsf:id="submitEvaluation" id="submit_eval" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
-                    <input rsf:id="msg=general.processing" name="submit_process" type="button" style="display:none;" value="Processing........" disabled="disabled" />
-                    <input rsf:id="saveEvaluationWithoutSubmit" id="save_eval_without_submit" type="submit" value="Save without Submit" />
-					<input rsf:id="cancelEvaluation" class="eval_cancel_button_marker" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />
-                    <a rsf:id="dashboard-link" id="dashboard-link" style="display: none;" href="summary.html" />
+					<input rsf:id="saveEvaluationWithoutSubmit" id="save_eval_without_submit" type="submit" value="Save without Submit" onclick="SPNR.disableControlsAndSpin( this, null );" />
+					<input rsf:id="cancelEvaluation" class="eval_cancel_button_marker" type="submit" value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" accesskey="x" />
+					<a rsf:id="dashboard-link" id="dashboard-link" style="display: none;" href="summary.html" />
 				</div>
 			</form>
 		</div>

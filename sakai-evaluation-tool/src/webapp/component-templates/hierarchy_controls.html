@@ -21,6 +21,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Hierarchy Control Renderer:</title>
     <!-- this JS needed to make the pulldown work correctly - ../content/js/evalUtils.js -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 </head>
 <body>
 
@@ -83,7 +84,7 @@
                     <a rsf:id="add-child-link" href="">Add</a>
                     <a rsf:id="modify-node-link" href="">Modify</a>
                     <form rsf:id="remove-node-form">
-                        <input type="submit" rsf:id="remove-node-button" value="Remove"
+                        <input type="submit" rsf:id="remove-node-button" value="Remove" onclick="SPNR.disableControlsAndSpin( this, null );" 
                             style="height:2.1em;margin:0px;padding:0px;" />
                     </form>
                 </td>

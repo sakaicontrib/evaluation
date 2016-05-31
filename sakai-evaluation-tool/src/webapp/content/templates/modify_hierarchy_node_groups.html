@@ -27,6 +27,7 @@
     <!-- end standard on all pages -->
 
     <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
@@ -54,7 +55,8 @@
         <div class="action">
             <span class="cancelButton">
                 <a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
-                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button1" class="active" accesskey="s" />
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button1" class="active" accesskey="s" 
+                       onclick="SPNR.disableControlsAndSpin( this, null );"/>
             </span>
         </div>
 
@@ -84,7 +86,8 @@
         <div class="action">
             <span class="cancelButton">
                 <a href="#" rsf:id="return-link2">Return to Control Hierarchy</a>
-                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button2" class="active" accesskey="s" />
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button2" class="active" accesskey="s" 
+                       onclick="SPNR.disableControlsAndSpin( this, null );" />
             </span>
         </div>
     </form>
