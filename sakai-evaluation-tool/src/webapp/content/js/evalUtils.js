@@ -35,6 +35,24 @@
  * - Aaron Zeckoski (azeckoski)
  **********************************************************************************/
 
+//Get location of this script and remove the name of this file
+var evalUtilScript = document.currentScript,
+evalUtilSrc = evalUtilScript.getAttribute('src').replace("evalUtils.js","");
+
+if (typeof jQuery == undefined) {
+	var script = document.createElement('script');
+	script.src = evalUtilSrc+'/jquery/jquery-1.4.4.min.js';
+	script.type = 'text/javascript';
+	document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+
+if (typeof RSF == undefined) {
+	var script = document.createElement('script');
+	script.src = evalUtilSrc+'/rsf.js';
+	script.type = 'text/javascript';
+	document.getElementsByTagName('head')[0].appendChild(script);
+}
 /**
  * The EvalSystem set of functions (keeps the namespace clean and tidy) -AZ
  * DEPENDS on jQuery 1.2 to operate
@@ -42,15 +60,6 @@
  * @author Antranig Basman - dropbox methods at end
  */
 var EvalSystem = function() {
-	
-	if (!jQuery) {
-		throw "JQuery undefined";
-	}
-	
-	if (!RSF) {
-		throw "RSF JS undefined";
-	}
-	
 	function $it(elementID) {
 		return document.getElementById(elementID);
 	}
@@ -335,9 +344,9 @@ var EvalSystem = function() {
 		 * reminderId: the id of the form control to set when hide action happens
 		 */
 		toggleAndDisableSetReminder: function (areaId, selectId, selectValue, reminderId) {
-			var area = $("#"+areaId); //document.getElementById(areaId);
-			var select = $("#"+selectId); //document.getElementById(selectId);
-			var reminder = $("#"+reminderId); //document.getElementById(reminderId);
+			var area = $(document.getElementById("#"+areaId)); //document.getElementById(areaId);
+			var select = $(document.getElementById("#"+selectId)); //document.getElementById(selectId);
+			var reminder = $(document.getElementById("#"+reminderId)); //document.getElementById(reminderId);
 	
 			var changeAction = function(event) {
 				var selectedValue = event.target.value;
