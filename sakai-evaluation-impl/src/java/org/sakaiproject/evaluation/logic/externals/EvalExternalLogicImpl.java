@@ -803,7 +803,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
          */
         public ParsedEvalGroupID( String evalGroupID )
         {
-            // Evaluation group IDs will always be in one ofthe following formats:
+            // Evaluation group IDs will always be in one of the following formats:
             // "/site/<siteID>"
             // "/site/<siteID>/section/<sectionID>"
             // "/site/<siteID>/group/<groupID>"
@@ -818,17 +818,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             else
             {
                 pieces = evalGroupID.split( EvalConstants.GROUP_ID_GROUP_PREFIX );
+                siteID = pieces[0];
                 if( pieces.length == 2 )
                 {
-                    siteID = pieces[0];
                     groupID = pieces[1];
                 }
             }
         }
 
         // Getters
-        public boolean  hasSection()        { return StringUtils.isBlank( sectionID); }
-        public boolean  hasGroup()          { return StringUtils.isBlank( groupID ); }
+        public boolean  hasSection()        { return !StringUtils.isBlank( sectionID ); }
+        public boolean  hasGroup()          { return !StringUtils.isBlank( groupID ); }
         public String   getSiteID()         { return siteID; }
         public String   getSectionID()      { return sectionID; }
         public String   getGroupID()        { return groupID; }
