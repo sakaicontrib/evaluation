@@ -66,15 +66,14 @@
 }
 
 #facebox .header {
-	border-bottom: 1px solid #DDDDDD;
-  background: #FFFFEE
+  background: #FFFFEE;
   padding-bottom: 5px;
-	margin-bottom: 10px;
-	text-align: right;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-left: 0px;
-	padding: 5px;
+  margin-bottom: 10px;
+  text-align: right;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  padding: 5px;
 }
 #facebox .titleHeader {
 	float: left;

@@ -37,12 +37,12 @@
             <li>
                 <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
             </li>
-            <li class="lastCrumb" rsf:id="msg=evaluationassignments.page.title">
+            <li class="lastCrumbNoFloat" rsf:id="msg=evaluationassignments.page.title">
                 Display Assignments
             </li>
         </ul>
         <div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
+            <ul>
                 <li>
                     Message for user here
                 </li>
@@ -51,18 +51,18 @@
         <h3 rsf:id="msg=evaluationassignments.page.title">Evaluation Display Assignments</h3>
         <div>
             <a rsf:id="modifyAssignmentsLink" href="evaluation_assign.html">Modify evaluation assignments</a>
-            <p rsf:id="modifyAssignmentsInfoMsg" class="instruction"></p>
+            <p rsf:id="modifyAssignmentsInfoMsg" class="instructionText"></p>
         </div>
-        <p rsf:id="msg=evaluationassignments.info"  class="instruction" >
+        <p rsf:id="msg=evaluationassignments.info"  class="instructionText" >
             This shows the current groups and hierarchy nodes that your evaluation is assigned to
         </p>
-        <p class="elementAlertFront instruction" rsf:id="eval-instructions-group-notpublished">
+        <p class="elementAlertFront instructionText" rsf:id="eval-instructions-group-notpublished">
 			This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
         <h4 rsf:id="msg=evaluationassignments.groups.header">
             Individual Groups
         </h4>
-        <p rsf:id="noGroupsSelected" class="instruction"></p>
-        <table rsf:id="showSelectedGroups:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+        <p rsf:id="noGroupsSelected" class="instructionText"></p>
+        <table rsf:id="showSelectedGroups:" style="width:90%" class="evalsysTable">
             <thead>
                 <tr>
                     <th>
@@ -101,8 +101,8 @@
             <h4 rsf:id="msg=evaluationassignments.nodes.header">
                 Individual Hierarchy Nodes:
             </h4>
-            <p rsf:id="noNodesSelected"  class="instruction"></p>
-            <table rsf:id="showSelectedNodes:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+            <p rsf:id="noNodesSelected"  class="instructionText"></p>
+            <table rsf:id="showSelectedNodes:" style="width:90%" class="evalsysTable">
                 <thead>
                     <tr>
                         <th>
@@ -124,8 +124,8 @@
                 </tr>
                 <tr rsf:id="nodes:groups">
                     <td colspan="2">
-                        <p rsf:id="noGroupsForNode" class="instruction"></p>
-                        <table rsf:id="nodeGroupTable:" border="0" cellspacing="0" cellpadding="0" style="width:90%" align="center" class="listHier lines nolines">
+                        <p rsf:id="noGroupsForNode" class="instructionText"></p>
+                        <table rsf:id="nodeGroupTable:" style="width:90%" align="center" class="evalsysTable">
 						   <thead>
 						        <tr>
 						             <th width="60%">

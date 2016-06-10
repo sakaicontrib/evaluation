@@ -14,7 +14,7 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
    <title rsf:id="page-title">My Templates</title>
@@ -33,25 +33,26 @@
 
        <div rsf:id="navIntraTool:" class="navIntraTool"></div>
 
-		<ul class="breadCrumb"  style="clear:both;height:1.5em">
-			<li  style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"  style="float:left" rsf:id="page-title">My Templates</li>
-			<li style="float:right" class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem">Add Template</a></li>
-			<li style="float:right" class="lastCrumb"><a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem">Start Evaluation</a></li>
+		<ul class="breadCrumb">
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li class="lastCrumbNoFloat" rsf:id="page-title">My Templates</li>
+			<li class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem">Add Template</a></li>
+			<li class="lastCrumb"><a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem">Start Evaluation</a></li>
 		</ul>
 		
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
 
 		<h3 rsf:id="templates-header" style="font-weight:bold;" class="templatesControl">Evaluation Templates</h3>
-		<p class="instruction"  rsf:id="templates-description">Templates store items in a layout and are used to create evaluations</p>
+		<p class="instructionText"  rsf:id="templates-description">Templates store items in a layout and are used to create evaluations</p>
 		
 		<!-- This block (list template) is not visible if there are no templates visible -->
 		<div rsf:id="template-listing:">
             <form rsf:id="copyForm">
-              <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+              <table class="evalsysTable">
                  <thead>
                     <tr>
                        <!-- rsf cannot computer ids when using msg= so had to remove the ids -->
@@ -85,7 +86,7 @@
               </table>
             </form>
 		</div>
-		<p rsf:id="no-templates" class="instruction">No templates available</p>
+		<p rsf:id="no-templates" class="instructionText">No templates available</p>
 	
 	</div>
 </body>

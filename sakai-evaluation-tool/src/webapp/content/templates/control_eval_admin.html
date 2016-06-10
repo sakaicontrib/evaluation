@@ -35,39 +35,25 @@
 <body>
 	<div class="portletBody">
 		
-		<div class="navIntraTool">
-			<a rsf:id="administrate-link" href="administrate.html" class="inactive">Administrate</a>
-			<a rsf:id="summary-link" href="summary.html">Summary</a>
-			<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-			<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-			<a rsf:id="control-items-link" href="control_items.html">My Items</a>
-			<a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
-			<a rsf:id="control-emailtemplates-link" href="control_email_templates.html">My Email Templates</a>
-		</div>
-		
-		<ul class="breadCrumb" style="clear: both; height: 1.5em">
-			<li style="float: left">
-				<a rsf:id="summary-link" href="summary.html">Summary</a>
-			</li>
-			<li style="float: left">
-				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-			</li>
-			<li rsf:id="control-eval-admin-title" class="lastCrumb" style="float: left">
-				Control Eval Admin
-			</li>
+		<div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+		<ul class="breadCrumb">
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+			<li rsf:id="msg=controlevaladmin.page.title" class="lastCrumbNoFloat">Control Eval Admin</li>
 		</ul>
-		
+
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
+
+		<p class="instructionText" rsf:id="control-eval-admin-note">Note about how users cannot remove their own admin rights</p>
 		
-		<p class="instruction" rsf:id="control-eval-admin-note">Note about how users cannot remove their own admin rights</p>
-		
-		<form rsf:id="eval-admin-form">
+		<form rsf:id="eval-admin-form" class="inlineBlockForm">
 			
-			<table class="evalAdminTable">
+			<table class="evalsysTable">
 				
 				<thead>
 					<tr>
@@ -78,17 +64,7 @@
 				</thead>
 				
 				<tbody>
-					
-					<tr rsf:id="eval-admin:">
-						<td rsf:id="user-info">[display-name] ([user-eid])</td>
-						<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
-						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
-					</tr>
-					
-				</tbody>
-				
-				<tfoot>
-					
+
 					<tr id="assign-fields">
 						
 						<td class="assignEvalAdmin" colspan="2">
@@ -100,11 +76,17 @@
 						
 					</tr>
 					
-				</tfoot>
+					<tr rsf:id="eval-admin:">
+						<td rsf:id="user-info">[display-name] ([user-eid])</td>
+						<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
+						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
+					</tr>
+					
+				</tbody>
 				
 			</table>
 			
-			<table class="evalAdminTable">
+			<table class="evalsysTable">
 				
 				<thead>
 					<tr>

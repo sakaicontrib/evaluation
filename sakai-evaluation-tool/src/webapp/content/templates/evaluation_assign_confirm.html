@@ -32,18 +32,22 @@
     <div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
         <ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li><li rsf:id="msg=assigneval.page.title">Assign Groups</li><li class="lastCrumb" rsf:id="msg=evaluationassignconfirm.page.title">Confirm Assignment</li>
+            <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+            <li rsf:id="eval-start-text">Add Evaluation</li>
+            <li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+            <li rsf:id="msg=assigneval.page.title">Assign Groups</li>
+            <li class="lastCrumb" rsf:id="msg=evaluationassignconfirm.page.title">Confirm Assignment</li>
         </ul>
         <div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
+            <ul>
 				<li>Message for user here</li>
             </ul>
         </div>
         <h3 rsf:id="msg=assigneval.page.confirmation.title">Evaluation Assignment Confirmation</h3>
-        <p class="instruction" rsf:id="evalAssignInfo">
+        <p class="instructionText" rsf:id="evalAssignInfo">
             You have chosen to assign the evaluation (eval title) to the following groups.
         </p>
-        <p class="instruction" rsf:id="evalAssignInstructions">
+        <p class="instructionText" rsf:id="evalAssignInstructions">
             You may adjust the groups assigned to this evaluation up to the start date of the evaluation (25 May 2007).
         </p>
         <table class="itemSummary">
@@ -86,8 +90,8 @@
         <h4 rsf:id="msg=evaluationassignconfirm.courses.selected.header" style="font-weight:bold;">
             Individual Groups Selected:
         </h4>
-        <p rsf:id="noGroupsSelected" class="instruction indnt1">No groups selected</p>
-        <table rsf:id="showSelectedGroups:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+        <p rsf:id="noGroupsSelected" class="instructionText indnt1">No groups selected</p>
+        <table rsf:id="showSelectedGroups:" style="width:70%" class="evalsysTable indnt1">
             <tr rsf:id="groups:">
                 <td width="60%">
                     <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
@@ -102,8 +106,8 @@
             <h4 rsf:id="msg=evaluationassignconfirm.hiernodes.selected.header" style="font-weight:bold;">
                 Individual Hierarchy Nodes Selected:
             </h4>
-            <span rsf:id="noNodesSelected" class="instruction indnt1">No nodes selected</span>
-            <table rsf:id="showSelectedNodes:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+            <span rsf:id="noNodesSelected" class="instructionText indnt1">No nodes selected</span>
+            <table rsf:id="showSelectedNodes:" style="width:70%" class="evalsysTable indnt1">
                 <tr rsf:id="nodes:">
                     <td width="60%">
                         <span rsf:id="nodeTitle">Department of Biology</span>
@@ -119,8 +123,8 @@
             <h4 rsf:id="msg=evaluationassignconfirm.adhoc.selected.header" style="font-weight:bold;">
                 Adhoc Groups Selected:
             </h4>
-            <p rsf:id="noAdhocSelected" class="instruction indnt1">No groups selected</p>
-            <table rsf:id="showAdhocGroups:" border="0" cellspacing="0" cellpadding="0" style="width:70%" class="listHier lines nolines indnt1">
+            <p rsf:id="noAdhocSelected" class="instructionText indnt1">No groups selected</p>
+            <table rsf:id="showAdhocGroups:" style="width:70%" class="evalsysTable indnt1">
                 <tr rsf:id="groups:">
                     <td width="60%">
                         <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a>)</span>

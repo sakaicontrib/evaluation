@@ -37,11 +37,13 @@
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
 		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li rsf:id="eval-start-text">Add Evaluation</li>
+			<li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
 		</ul>
 
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -63,7 +65,7 @@
                    <textarea id="instructions-dummy" name="instructions-dummy" rows="4" cols="60"></textarea>
                  </div>
                  <span rsf:id="instructions_disabled"></span>
-                 <p class="instruction textPanelFooter">
+                 <p class="instructionText textPanelFooter">
                      <span rsf:id="msg=evalsettings.instructions.desc">these will appear at the top of the evaluation</span>
                  </p>
               </div> 
@@ -71,8 +73,8 @@
               <!-- This block (choose template) is not visible if user has chosen a template or already assigned -->
               <div rsf:id="chooseTemplate:" class="longtext">
               <h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
-              <p rsf:id="msg=starteval.choose.template.desc" class="instruction">Select the template to use for this evaluation. Templates define the questions used.</p>
-                  <table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+              <p rsf:id="msg=starteval.choose.template.desc" class="instructionText">Select the template to use for this evaluation. Templates define the questions used.</p>
+                  <table class="evalsysTable" style="width:60%">
                       <tr>
                           <th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
                           <th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>
@@ -98,7 +100,7 @@
 			<fieldset class="visibleFS">
 				<legend rsf:id="msg=evalsettings.dates.header">Evaluation Dates:</legend>
                     <div class="shorttext">
-                        <span rsf:id="current_date" class="instruction textPanelFooter">
+                        <span rsf:id="current_date" class="instructionText textPanelFooter">
                             Today is Oct 29, 1975
                         </span>
                     </div>
@@ -106,7 +108,7 @@
 						<label rsf:id="msg=evalsettings.start.date.header" for="startDate">Start Date:</label>
 						<input rsf:id="startDate:" type="hidden" id="dateStart" name="dateStart" value="MM/DD/YYYY" size="15" maxlength="15"/>
                         <span rsf:id="startDate_disabled" />
-						<span rsf:id="msg=evalsettings.start.date.desc"  class="instruction textPanelFooter">
+						<span rsf:id="msg=evalsettings.start.date.desc"  class="instructionText textPanelFooter">
 							Users may begin submitting evaluation responses on this date
 						</span>
 					</div>
@@ -114,7 +116,7 @@
 						<label rsf:id="msg=evalsettings.due.date.header" for="dueDate">Due Date:</label>
 							<input rsf:id="dueDate:" type="hidden" name="dueDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
                         <span rsf:id="dueDate_disabled" />
-						<span rsf:id="msg=evalsettings.due.date.desc" class="instruction textPanelFooter">
+						<span rsf:id="msg=evalsettings.due.date.desc" class="instructionText textPanelFooter">
 							Evaluation ends on this date, no more responses after this date
 						</span>
 					</div>
@@ -124,7 +126,7 @@
 							<input rsf:id="stopDate:" type="hidden" id="stopDate" name="stopDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
 						</span>
                         <span rsf:id="stopDate_disabled" />
-						<span rsf:id="msg=evalsettings.stop.date.desc" class="instruction textPanelFooter">
+						<span rsf:id="msg=evalsettings.stop.date.desc" class="instructionText textPanelFooter">
 							Users may still submit responses up until this date (defines a grace period)
 						</span>
 					</div>
@@ -136,7 +138,7 @@
 				<div rsf:id="sectionAwareness:" class="checkbox">
 					<input rsf:id="sectionAwareness" type="checkbox" name="sectionAwareness" id="sectionAwareness" />
 					<label rsf:id="msg=evalsettings.section.awareness.label" for="sectionAwareness">Should this evaluation be section aware?</label>
-					<p rsf:id="msg=evalsettings.section.awareness.note" class="instruction textPanelFooter indnt2">
+					<p rsf:id="msg=evalsettings.section.awareness.note" class="instructionText textPanelFooter indnt2">
 						By checking this checkbox, evaluators will only be presented with evaluation questions for evaluatee(s) in their
 						official section/roster for the site/group the evaluation is released to. Leaving this checkbox unchecked, the evaluators
 						will have the opportunity to evaluate all evaluatees in the site/group, regardless of what section/roster they
@@ -163,7 +165,7 @@
                       <label rsf:id="radioLabel" for="radioValue3">Public</label>
                   </span>
 
-                  <div rsf:id="resultsviewableadminnote" class="instruction">
+                  <div rsf:id="resultsviewableadminnote" class="instructionText">
                       Note that admins above in the hierarchy can view the results UNLESS results sharing is set to private
                   </div>
                 </div>
@@ -171,11 +173,11 @@
                      <label rsf:id="msg=evalsettings.view.date.header" for="viewDate">View Date:</label>
                      <input rsf:id="viewDate:" type="hidden" id="viewDate" name="viewDate" value="MM/DD/YYYY" size="15" maxlength="15"/>
                      <span rsf:id="viewDate_disabled" />
-                     <span rsf:id="msg=evalsettings.view.date.desc" class="instruction textPanelFooter">
+                     <span rsf:id="msg=evalsettings.view.date.desc" class="instructionText textPanelFooter">
                          Results are not viewable until this date
                      </span>
                 </div>
-				<table class="listHier" border="0" cellspacing="0" cellpadding="0" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
+				<table class="evalsysTable" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
 					<tr rsf:id="showResultsToStudents:" id="showResultsToStudents">
 						<td width="33%" class="checkbox">
 							<input rsf:id="studentViewResults" type="checkbox" name="student_view_results" id="studentViewResults" />
@@ -217,23 +219,23 @@
 				<div rsf:id="showBlankQuestionAllowedToStut:"  class="checkbox">
 					<input rsf:id="blankResponsesAllowed" type="checkbox" name="blankResponsesAllowed" id="blankResponsesAllowed" />
 					<label rsf:id="blankResponsesAllowed_label" for="blankResponsesAllowed">Blank non-text question responses allowed:</label>
-					<p rsf:id="msg=evalsettings.blank.responses.allowed.note" class="instruction textPanelFooter indnt2">Participants are not warned when responses are left blank if unchecked</p>
+					<p rsf:id="msg=evalsettings.blank.responses.allowed.note" class="instructionText textPanelFooter indnt2">Participants are not warned when responses are left blank if unchecked</p>
 				</div>	
 				<div rsf:id="showModifyResponsesAllowedToStu:" class="checkbox">
 					<input rsf:id="modifyResponsesAllowed" type="checkbox" name="modifyResponsesAllowed" id="modifyResponsesAllowed" />
 					<label rsf:id="modifyResponsesAllowed_label" for="modifyResponsesAllowed">Modification of responses allowed:</label>
-					<p rsf:id="msg=evalsettings.modify.responses.allowed.note"  class="instruction textPanelFooter indnt2">Participants may submit responses once only if unchecked</p>
+					<p rsf:id="msg=evalsettings.modify.responses.allowed.note"  class="instructionText textPanelFooter indnt2">Participants may submit responses once only if unchecked</p>
 				</div>
 				<div rsf:id="showAllRolesCanParticipate:" class="checkbox">
 					<input rsf:id="allRolesParticipate" type="checkbox" name="allRolesParticipate" id="allRolesParticipate" />
 					<label rsf:id="allRolesParticipate_label" for="allRolesParticipate">All Roles Can Participate:</label>
-					<p rsf:id="msg=evalsettings.all.roles.participate.note"  class="instruction textPanelFooter indnt2">This setting allows all roles to take the survey</p>
+					<p rsf:id="msg=evalsettings.all.roles.participate.note"  class="instructionText textPanelFooter indnt2">This setting allows all roles to take the survey</p>
 				</div>
 			</fieldset>
 
 			<fieldset class="visibleFS">
 				<legend rsf:id="msg=evalsettings.admin.settings.header">Administrative Settings</legend>
-				<p rsf:id="msg=evalsettings.auth.control.instructions" class="instruction">
+				<p rsf:id="msg=evalsettings.auth.control.instructions" class="instructionText">
 					This setting allows you to choose whether to require authentication to take this evaluation
 				</p>
 				<p class="shorttext">
@@ -244,7 +246,7 @@
 						<option value="NONE">None (anonymous allowed)</option>
 					</select>
 				</p>	
-				<p  rsf:id="instructor-opt-instructions"  class="instruction">
+				<p  rsf:id="instructor-opt-instructions"  class="instructionText">
 					This setting allows you to give the instructor control over whether to use the evaluation (or simply require them to).
 				</p>
 				<p class="shorttext">
@@ -262,7 +264,7 @@
             <fieldset rsf:id="selectInstructorTA:" class="visibleFS">
                 <legend rsf:id="msg=evalsettings.selection.header">Instructor / Teaching Assistant selection:</legend>
                 <div class="shorttext">
-                    <span rsf:id="msg=evalsettings.selection.instruction" class="instruction">
+                    <span rsf:id="msg=evalsettings.selection.instruction" class="instructionText">
                         These options control which Instructor and Teaching Assistant questions are repeated in the evaluation.
                   </span>
                 </div>
@@ -300,7 +302,7 @@
 			<fieldset rsf:id="showEvalExtras:" class="visibleFS">
 				<legend rsf:id="msg=evalsettings.extra.settings.header">Evaluation Extras:</legend>
                 <div rsf:id="showCategory:">
-  					<p  rsf:id="msg=evalsettings.extra.category.instructions" class="instruction">
+  					<p  rsf:id="msg=evalsettings.extra.category.instructions" class="instructionText">
   						The eval category is used to group related evaluations and for the category view
   					</p>
   					<p class="shorttext">
@@ -310,7 +312,7 @@
   					</p>
                  </div>
                  <div rsf:id="showEvalTermId:">
-  					<p  rsf:id="msg=evalsettings.extra.eval.term.id.instructions" class="instruction">
+  					<p  rsf:id="msg=evalsettings.extra.eval.term.id.instructions" class="instructionText">
   						The eval term ID is used to hold extra information for external use.
   					</p>
   					<p class="shorttext">
@@ -322,10 +324,10 @@
 
 			<fieldset class="visibleFS">
 				<legend rsf:id="msg=evalsettings.reminder.settings.header">Evaluation Notifications</legend>
-                <p class="instruction">
+                <p class="instructionText">
                     <span rsf:id="msg=evalsettings.emails.instructions">Extra instructions</span>
                 </p>
-				<p class="instruction">
+				<p class="instructionText">
 					<span rsf:id="msg=evalsettings.available.mail.desc">A notification email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
 					<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>
                     <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
@@ -343,14 +345,14 @@
   							<option value="2">Every Other Day</option>
   						</select>
   					</p>
- 					<p class="instruction" style="clear:both">
+ 					<p class="instructionText" style="clear:both">
   						<span rsf:id="msg=evalsettings.reminder.mail.desc">A reminder email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and edit the email template by clicking the link.</span>
   						<a href="preview_email.html" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">(View/Change this email?)</a>
                         <span rsf:id="msg=evalsettings.emails.appropriate">Note about how the default email templates are made for course evals</span>
   					</p>
                 </div>
                 <div rsf:id="reminderFromAddress:">
-					<p class="instruction" style="clear:both">
+					<p class="instructionText" style="clear:both">
     					<span rsf:id="eval-from-email-note">All emails will be sent from helpdesk@institution.edu unless overridden below.</span>
 					</p>
 					<div class="shorttext">

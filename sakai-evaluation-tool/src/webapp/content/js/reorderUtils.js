@@ -212,7 +212,7 @@ $(document).bind('list.warning', function(e, ui, option, extra, err){
        $("div.itemList").find('.itemOperationsEnabled').remove();
         var error = '<div class="itemOperationsEnabled">\
                         <img src="/library/image/sakai/cancelled.gif"/>\
-                        <span class="instruction">'+ err +'</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
+                        <span class="instructionText">'+ err +'</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
                         ';
         if(extra == 'block')
             item.parents('.itemLine3').prepend(error);

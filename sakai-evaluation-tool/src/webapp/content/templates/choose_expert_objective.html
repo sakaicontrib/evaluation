@@ -52,7 +52,7 @@
    <h2 rsf:id="expert-items" class="titleHeader">Expert Items:</h2>
 
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -79,17 +79,17 @@
 			<span rsf:id="category-current" class="highlight">Current Category</span>
 		</h3>
 
-		<div class="instruction">
+		<div class="instructionText">
 			<div rsf:id="objective-header:">
 				<span rsf:id="objective"  >Objective</span> :
-				<span rsf:id="objective-instructions" class="instruction" >Click on an objective to select items related to it</span>
+				<span rsf:id="objective-instructions" class="instructionText" >Click on an objective to select items related to it</span>
 			</div>
 		</div>
 
 		<!-- //gsilver: need to come up with a min-width for this table -->
 		<!-- //gsilver:if this list has no items - omit, as it will not validate -->
 
-		<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%">
+		<table summary="Column 1 has links to objectives, Column 2 has descriptions of objectives" class="evalsysTable" style="width:100%">
 			<caption rsf:id="objective-list-summary" class="skip">Column 1 has links used to select objectives, Column 2 has information about these objectives</caption>
 			<thead>
 				<tr>
@@ -114,7 +114,7 @@
 					</td>
 					<td>
 						<span rsf:id="objective-description">This is the objective description for the expert objective which I expect will be quite long and involved and will explain to the user what items are in this objective and what it is good for</span>
-						<span rsf:id="objective-no-description" class="instruction"></span>
+						<span rsf:id="objective-no-description" class="instructionText"></span>
 					</td>
 				</tr>
 			</tbody>
@@ -128,7 +128,7 @@
 
 		<div rsf:id="form-branch:">
 			<form rsf:id="insert-items-form" id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
-				<p class="instruction">
+				<p class="instructionText">
 					<span rsf:id="items">Items</span> :
 					<span rsf:id="items-instructions">Check the items you want to use in your template and click the Insert button at the bottom</span>
 				</p>
@@ -136,7 +136,7 @@
 				<!-- //gsilver: need to come up with a min-width for this table -->
 				<!-- //gsilver:if this list has no items - omit, as it will not validate -->
 
-				<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0" class="listHier lines nolines" style="width:100%;">
+				<table summary="Column 1 has checkboxes used to select items, Column 2 has information about items" class="evalsysTable" style="width:100%;">
 					<caption rsf:id="item-list-summary" class="skip">Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 					<thead>
 						<tr rsf:id="expert-item-header-row:">
@@ -157,9 +157,9 @@
 										<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
 									</label>
 								</h5>
-								<div class="instruction">
-									<span rsf:id="item-scale"  class="instruction">Item Scale (the title of the scale and the points in parens)</span>
-									<span rsf:id="item-expert-desc"class="instruction">Expert description (the description of what this item is good for assessing and where it should be used</span>
+								<div class="instructionText">
+									<span rsf:id="item-scale"  class="instructionText">Item Scale (the title of the scale and the points in parens)</span>
+									<span rsf:id="item-expert-desc"class="instructionText">Expert description (the description of what this item is good for assessing and where it should be used</span>
 								</div>
 
 							</td>
