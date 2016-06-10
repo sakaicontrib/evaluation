@@ -42,6 +42,7 @@
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.events.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.myitems.loader.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
@@ -138,7 +139,7 @@
   							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
   							<span rsf:id="item-modify-dummy"></span> | 
   							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
-                            <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+  							<input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</td>
   						<td headers="itemOwner" style="margin:0em 1em;">
   							<span rsf:id="item-owner">owner displayname</span>
@@ -158,7 +159,7 @@
   							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
   							<span rsf:id="item-modify-dummy"></span> |
   							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
-                            <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+  							<input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</td>
   						<td style="margin:0em 1em;">
   							<span rsf:id="item-owner">owner displayname</span>

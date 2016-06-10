@@ -110,8 +110,7 @@ $(document).ready(function() {
                 });
             }
         }
-        $(this).hide();
-        $('input[name=submit_process]').show();
+        SPNR.disableControlsAndSpin( this, null );
     });
 
     function error(type, that) {

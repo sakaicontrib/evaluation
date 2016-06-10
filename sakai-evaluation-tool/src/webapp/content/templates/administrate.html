@@ -29,6 +29,7 @@
     <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
     <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
     <script src="../js/eval.administrate.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -383,15 +384,16 @@
         </p>
     </fieldset>
 
-    <p class="act"><input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" />
-    <input  type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />  
+    <p class="act">
+        <input class="active" rsf:id="saveSettings" type="submit" value="Save Settings" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
+        <input type="submit" value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" accesskey="x" />
     </p>
 </form>
 
 <!-- button for clearing the config cache and forcing an instant reload -->
 <fieldset class="visibleFS">
     <form  rsf:id="cache-reset-form" method="post">
-        <input rsf:id="cache-reset-submit" type="submit" value="Reset Config Cache" />
+        <input rsf:id="cache-reset-submit" type="submit" value="Reset Config Cache" onclick="SPNR.disableControlsAndSpin( this, null );" />
         <span rsf:id="msg=administrate.reset.cache">This will force the configuration cache to clear immediately, use this if you have changed the config settings and they appear to be out of sync, the cache should automatically reset once per hour</span>
     </form>
 </fieldset>

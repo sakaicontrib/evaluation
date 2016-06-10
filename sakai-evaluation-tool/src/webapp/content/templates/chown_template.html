@@ -22,6 +22,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" src="/library/js/spinner.js"></script>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
@@ -56,10 +57,10 @@
 						<label rsf:id="chown-template-newownerlabel" for="title">Change Template Owner</label>
 						<input name="chown" rsf:id="chown-template-newowner"   id="chown"  type="text" value="" size="50" maxlength="255" />
 						</p>
-						<input rsf:id="chown-template-button" type="submit" value="Chown Template" class="active" accesskey="s" />
+						<input rsf:id="chown-template-button" type="submit" value="Chown Template" class="active" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
 					</form>
-					<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x"/>	
-				</div>	
+					<input rsf:id="cancel-command-link" type="submit" value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" accesskey="x"/>
+				</div>
 			</div>
 		
 		</div>

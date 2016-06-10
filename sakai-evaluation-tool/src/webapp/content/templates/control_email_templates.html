@@ -25,6 +25,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -65,7 +66,7 @@
 						<a rsf:id="modify_link" href="modify_email.html">Modify</a><span rsf:id="modify_link_disabled" />
                         &nbsp;
                         <form rsf:id="removeForm" method="post" action="control_email_templates.html" class="inlineForm">
-						   <input rsf:id="removeCommand" type="submit" value="remove" class="makeLink" />
+						   <input rsf:id="removeCommand" type="submit" value="remove" class="makeLink" onclick="SPNR.disableControlsAndSpin( this, null );" />
                         </form>
                         <span rsf:id="remove_link_disabled" />
 					</div>	

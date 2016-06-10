@@ -29,6 +29,7 @@
     <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
     <script src="../js/facebox/facebox.js" type="text/javascript"></script>
     <script src="../js/utils.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
@@ -69,7 +70,7 @@
                           <span rsf:id="remove-dummy"></span>
                           <a rsf:id="remove-link" href="remove_scale.html">Remove</a> |
                           <a rsf:id="preview-link" href="preview_item.html" class="preview_scale">Preview</a> |
-                          <input rsf:id="scale-copy-link" type="submit" class="makeLink" value="Copy" />
+                          <input rsf:id="scale-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</div>
   					</div>	
   					<div class="idealScalePoint"><span rsf:id="ideal-scale-point">Ideal scale point:</span> <span rsf:id="ideal-value"  class="highlight">Ideal value</span></div>

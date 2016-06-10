@@ -27,6 +27,7 @@
     <!-- end standard on all pages -->
 
     <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -35,6 +36,17 @@
 <body>
 	<div class="portletBody">
 		<div rsf:id="navIntraTool:" class="navIntraTool"></div>
+		<ul class="breadCrumb">
+			<li>
+				<a rsf:id="summary-link" href="summary.html">Summary</a>
+			</li>
+			<li>
+				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+			</li>
+			<li class="lastCrumbNoFloat">
+				<span rsf:id="msg=controlemail.title">Search</span>
+			</li>
+		</ul>
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
   				<li>Message for user here</li>
@@ -220,8 +232,8 @@
 			</div>
 
             <p class="act">
-        		<input rsf:id="saveSettings" value="Save Settings" class="active" accesskey="s" type="submit"/>
-        		<input value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" type="button"/>
+        		<input rsf:id="saveSettings" value="Save Settings" class="active" accesskey="s" type="submit" onclick="SPNR.disableControlsAndSpin( this, null );" />
+        		<input value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" accesskey="x" type="submit"/>
             </p>
         </form>
 		
