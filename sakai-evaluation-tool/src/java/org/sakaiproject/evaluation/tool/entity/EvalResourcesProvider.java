@@ -58,7 +58,7 @@ public class EvalResourcesProvider extends AbstractEntityProvider implements Cor
 	@SuppressWarnings("unchecked")
 	@EntityCustomAction(action=CUSTOM_ACTION_BUNDLE,viewKey=EntityView.VIEW_LIST)
 	public Map<String, String> getMessageBundle() {
-		Map<String, String> bundleMap = new HashMap<String, String>();
+		Map<String, String> bundleMap = new HashMap<>();
 		ResourceLoader resourceLoader = getResourceLoader();
     	Iterator<Entry<String, String>> selector = resourceLoader.entrySet().iterator();
 		while ( selector.hasNext() ) {

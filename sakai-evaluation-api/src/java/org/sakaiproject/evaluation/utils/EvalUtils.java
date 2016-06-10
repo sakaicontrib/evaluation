@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,12 +50,12 @@ import org.sakaiproject.evaluation.model.EvalResponse;
  */
 public class EvalUtils {
 
-    private static Log log = LogFactory.getLog(EvalUtils.class);
+    private static final Log LOG = LogFactory.getLog(EvalUtils.class);
 
     private static HashMap<String, Integer> stateNumbers;
 
     static {
-        stateNumbers = new HashMap<String, Integer>();
+        stateNumbers = new HashMap<>();
         for (int i = 0; i < EvalConstants.STATE_ORDER.length; i++) {
             stateNumbers.put(EvalConstants.STATE_ORDER[i], i);
         }
@@ -212,6 +211,7 @@ public class EvalUtils {
      * Checks if a sharing constant is valid or null
      * 
      * @param sharingConstant a sharing constant from EvalConstants.SHARING_*
+     * @return 
      * @throws IllegalArgumentException is the constant is null or does not match the set
      */
     public static boolean validateSharingConstant(String sharingConstant) {
@@ -232,6 +232,7 @@ public class EvalUtils {
      * Checks if an email include constant is valid or null
      * 
      * @param includeConstant an email include constant from EvalConstants.EMAIL_INCLUDE_*
+     * @return 
      * @throws IllegalArgumentException is the constant is null or does not match the set
      */
     public static boolean validateEmailIncludeConstant(String includeConstant) {
@@ -274,7 +275,7 @@ public class EvalUtils {
 
                 // Update due date
                 Date newDueDate = new Date( eval.getStartDate().getTime() + (1000l * 60l * 60l * (long)minHoursLong) );
-                log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
+                LOG.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
                 eval.setDueDate(newDueDate);
 
                 // Update stop date if needed
@@ -289,7 +290,7 @@ public class EvalUtils {
                     if (eval.getViewDate().equals(eval.getStopDate()) ||
                             eval.getViewDate().before(eval.getStopDate()) ) {
                         Date newView = new Date( eval.getStopDate().getTime() + 5000 );
-                        log.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
+                        LOG.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
                         eval.setViewDate(newView);
                     }
                 }
@@ -314,7 +315,7 @@ public class EvalUtils {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         if (!cal.getTime().equals(d)) {
-            log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+            LOG.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
         }
         return cal.getTime();
     }
@@ -329,10 +330,7 @@ public class EvalUtils {
     public static boolean isTimeMidnight(Date d) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(d);
-        if (cal.get(Calendar.HOUR_OF_DAY) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
-            return true;
-        }
-        return false;
+        return cal.get(Calendar.HOUR_OF_DAY) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0;
     }
 
     /**
@@ -352,6 +350,7 @@ public class EvalUtils {
 
     /**
      * Creates a unique title for an adhoc scale
+     * @param maxLength
      * @return a unique scale title
      */
     public static String makeUniqueIdentifier(int maxLength) {
@@ -451,17 +450,17 @@ public class EvalUtils {
      * @return a hashmap of answers, where key = templateItemId + answer.associatedType + answer.associatedId
      */
     public static Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(EvalResponse response) {
-        Map<String, EvalAnswer> map = new HashMap<String, EvalAnswer>();
+        Map<String, EvalAnswer> map = new HashMap<>();
         Set<EvalAnswer> answers = response.getAnswers();
-        for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
-            EvalAnswer answer = it.next();
+        for( EvalAnswer answer : answers )
+        {
             // decode the stored answers into the int array
             answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
             // decode the NA value
             decodeAnswerNA(answer);
             // place the answers into a map which uses the TI, assocType, and assocId as a key
-            String key = TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
-                    answer.getAssociatedType(), answer.getAssociatedId());
+            String key = TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(),
+                                                                     answer.getAssociatedType(), answer.getAssociatedId());
             map.put(key, answer);
         }
         return map;
@@ -483,9 +482,10 @@ public class EvalUtils {
         if (answerKeys != null && answerKeys.length > 0) {
             Arrays.sort(answerKeys); // sort the keys first
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < answerKeys.length; i++) {
+            for( Integer answerKey : answerKeys )
+            {
                 sb.append(SEPARATOR);
-                sb.append(answerKeys[i]);
+                sb.append( answerKey );
             }
             sb.append(SEPARATOR);
             encoded = sb.toString();
@@ -515,7 +515,7 @@ public class EvalUtils {
                         if ("".equals(split[i])) {
                             throw new IllegalArgumentException("This encoded string ("+encodedAnswers+") is invalid, it must have integers in it, example: :0:3:4:");
                         }
-                        decoded[i-1] = Integer.valueOf(split[i]).intValue();
+                        decoded[i-1] = Integer.valueOf(split[i]);
                     }
                     Arrays.sort(decoded); // make sure it is sorted before returning the array
                 }
@@ -564,12 +564,7 @@ public class EvalUtils {
         if (answer == null) {
             throw new IllegalArgumentException("answer cannot be null");
         }
-        boolean notApplicable = false;
-        if (EvalConstants.NA_VALUE.equals(answer.getNumeric()) ) {
-            notApplicable = true;
-        } else {
-            notApplicable = false;
-        }
+        boolean notApplicable = EvalConstants.NA_VALUE.equals(answer.getNumeric());
         answer.NA = notApplicable;
         return notApplicable;
     }
@@ -586,7 +581,7 @@ public class EvalUtils {
      * @return Human readable string with participant response rate.
      */
     public static String makeResponseRateStringFromCounts(int responsesCount, int enrollmentsCount) {
-        String returnString = null;
+        String returnString;
         if (enrollmentsCount > 0) {
             long percentage = Math.round( (((float)responsesCount) / (float)enrollmentsCount) * 100.0 );
             returnString = percentage + "%  ( " + responsesCount + " / " + enrollmentsCount + " )";
@@ -624,10 +619,10 @@ public class EvalUtils {
     public static List<EvalEvaluation> sortClosedEvalsToEnd(Collection<EvalEvaluation> evaluations) {
         List<EvalEvaluation> l;
         if (evaluations == null || evaluations.isEmpty()) {
-            l = new ArrayList<EvalEvaluation>(0);
+            l = new ArrayList<>(0);
         } else {
-            l = new ArrayList<EvalEvaluation>(evaluations.size());
-            ArrayList<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>(evaluations.size());
+            l = new ArrayList<>(evaluations.size());
+            ArrayList<EvalEvaluation> closedEvals = new ArrayList<>(evaluations.size());
             for (EvalEvaluation eval : evaluations) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false)) {
                     l.add(eval);
@@ -650,7 +645,7 @@ public class EvalUtils {
      * @return an array of the groups that are in common between the 2 lists
      */
     public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
-        List<EvalGroup> groups = new ArrayList<EvalGroup>();
+        List<EvalGroup> groups = new ArrayList<>();
         for (int i=0; i<evalGroups.size(); i++) {
             EvalGroup group = (EvalGroup) evalGroups.get(i);
             for (int j=0; j<assignGroups.size(); j++) {
@@ -674,9 +669,9 @@ public class EvalUtils {
     public static Set<String> getUserIdsFromUserAssignments(Collection<EvalAssignUser> userAssignments) {
         Set<String> s;
         if (userAssignments == null) {
-            s = new HashSet<String>(0);
+            s = new HashSet<>(0);
         } else {
-            s = new LinkedHashSet<String>(userAssignments.size()); // maintain order
+            s = new LinkedHashSet<>(userAssignments.size()); // maintain order
             for (EvalAssignUser evalAssignUser : userAssignments) {
                 if (evalAssignUser.getUserId() != null) {
                     s.add(evalAssignUser.getUserId());
@@ -696,9 +691,9 @@ public class EvalUtils {
     public static Set<String> getGroupIdsFromUserAssignments(Collection<EvalAssignUser> userAssignments) {
         Set<String> s;
         if (userAssignments == null) {
-            s = new HashSet<String>(0);
+            s = new HashSet<>(0);
         } else {
-            s = new LinkedHashSet<String>(userAssignments.size()); // maintain order
+            s = new LinkedHashSet<>(userAssignments.size()); // maintain order
             for (EvalAssignUser evalAssignUser : userAssignments) {
                 if (evalAssignUser.getEvalGroupId() != null) {
                     s.add(evalAssignUser.getEvalGroupId());
@@ -716,7 +711,7 @@ public class EvalUtils {
      * @return the list of eval ids
      */
     public static List<Long> getEvalIdsFromEvaluations(Collection<EvalEvaluation> evaluations) {
-        List<Long> l = new ArrayList<Long>();
+        List<Long> l = new ArrayList<>();
         if (evaluations != null) {
             for (EvalEvaluation eval : evaluations) {
                 if (eval.getId() != null) {
@@ -735,7 +730,7 @@ public class EvalUtils {
      * @return the list of evalGroup Ids
      */
     public static List<String> getGroupIdsFromGroups(Collection<EvalGroup> groups) {
-        List<String> l = new ArrayList<String>();
+        List<String> l = new ArrayList<>();
         if (groups != null) {
             for (EvalGroup evalGroup : groups) {
                 l.add(evalGroup.evalGroupId);
@@ -752,7 +747,7 @@ public class EvalUtils {
      * @return the list of EvalGroup objects for the given collection of evalGroupIds
      */
     public static List<EvalGroup> makeGroupsFromGroupsIds(Collection<String> evalGroupIds, EvalCommonLogic commonLogic) {
-        List<EvalGroup> l = new ArrayList<EvalGroup>();
+        List<EvalGroup> l = new ArrayList<>();
         if (evalGroupIds != null && evalGroupIds.size() > 0) {
             for (String evalGroupId : evalGroupIds) {
                 EvalGroup group = commonLogic.makeEvalGroupObject(evalGroupId);
@@ -808,7 +803,7 @@ public class EvalUtils {
     public static boolean safeBool(Boolean bool) {
         boolean result = false;
         if (bool != null) {
-            result = bool.booleanValue();
+            result = bool;
         }
         return result;
     }
@@ -821,7 +816,7 @@ public class EvalUtils {
     public static boolean safeBool(Boolean bool, boolean defaultIfNull) {
         boolean result = defaultIfNull;
         if (bool != null) {
-            result = bool.booleanValue();
+            result = bool;
         }
         return result;
     }

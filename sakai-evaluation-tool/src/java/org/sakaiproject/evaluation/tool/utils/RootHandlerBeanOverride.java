@@ -34,7 +34,7 @@ import uk.org.ponder.rsf.processor.support.RootHandlerBeanBase;
 public class RootHandlerBeanOverride {
   public void handle() throws ParseException {
     String path = request.getRequestURL().toString();
-    if (path.indexOf(ExportConfigurationHook.VIEW_ID) > -1) {
+    if (path.contains( ExportConfigurationHook.VIEW_ID )) {
       exportConfigHook.handle();
     } else {
       if (!reportHandlerHook.handle()) {

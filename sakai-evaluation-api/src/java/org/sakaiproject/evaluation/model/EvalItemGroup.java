@@ -45,7 +45,7 @@ public class EvalItemGroup implements java.io.Serializable {
 
     private EvalItemGroup parent;
 
-    private Set<EvalItem> groupItems = new HashSet<EvalItem>(0);
+    private Set<EvalItem> groupItems = new HashSet<>(0);
 
     // Constructors
 
@@ -53,12 +53,24 @@ public class EvalItemGroup implements java.io.Serializable {
     public EvalItemGroup() {
     }
 
-    /** minimal constructor */
+    /** minimal constructor
+     * @param owner
+     * @param type
+     * @param title */
     public EvalItemGroup(String owner, String type, String title) {
         this(owner, type, title, null, Boolean.FALSE, null, null);
     }
 
-    /** full constructor */
+    /**
+     * full constructor
+     * @param owner
+     * @param type
+     * @param title
+     * @param description
+     * @param expert
+     * @param parent
+     * @param groupItems 
+     */
     public EvalItemGroup(String owner, String type, String title, String description, Boolean expert,
             EvalItemGroup parent, Set<EvalItem> groupItems) {
         this.lastModified = new Date();

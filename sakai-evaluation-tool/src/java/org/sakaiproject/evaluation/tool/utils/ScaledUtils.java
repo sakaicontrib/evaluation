@@ -34,7 +34,7 @@ import uk.org.ponder.stringutil.StringUtil;
  */
 public class ScaledUtils {
 
-   private static Log log = LogFactory.getLog(ScaledUtils.class);
+   private static final Log LOG = LogFactory.getLog(ScaledUtils.class);
 
 	public static String[] idealKeys = {
 		EvalConstants.SCALE_IDEAL_NONE,
@@ -69,7 +69,7 @@ public class ScaledUtils {
       }
       if (index == -1) {
          // Fix for http://www.caret.cam.ac.uk/jira/browse/CTL-562 - added to ensure this will not cause a failure
-         log.info("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
+         LOG.info("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
          index = 0;
       }
       return index;
@@ -94,7 +94,7 @@ public class ScaledUtils {
 	 * @return an array of labels for the passed in scales
 	 */
 	public static String[] getScaleLabels(List<EvalScale> scales) {
-		List<String> scaleLabels = new ArrayList<String>();
+		List<String> scaleLabels = new ArrayList<>();
 		for (EvalScale scale : scales) {
 		    // ensure only real scales are included
             if (scale.getId() != null) {
@@ -111,7 +111,7 @@ public class ScaledUtils {
 	 * @return an array of values for the passed in scales
 	 */
 	public static String[] getScaleValues(List<EvalScale> scales) {
-		List<String> scaleValues = new ArrayList<String>();
+		List<String> scaleValues = new ArrayList<>();
         for (EvalScale scale : scales) {
             // ensure only real scales are included
 			if (scale.getId() != null) {

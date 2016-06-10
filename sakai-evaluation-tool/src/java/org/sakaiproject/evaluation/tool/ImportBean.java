@@ -36,7 +36,7 @@ import org.sakaiproject.tool.api.ToolSession;
  */
 public class ImportBean {
 
-    private static Log log = LogFactory.getLog(ImportBean.class);
+    private static final Log LOG = LogFactory.getLog(ImportBean.class);
 
     // injection
     private SessionManager sessionManager;
@@ -64,7 +64,7 @@ public class ImportBean {
     @SuppressWarnings("unchecked")
     public String process() throws SecurityException {
         ToolSession toolSession = sessionManager.getCurrentToolSession();
-        List<Reference> refs = null;
+        List<Reference> refs;
         String id = null;
         if (toolSession.getAttribute(FilePickerHelper.FILE_PICKER_CANCEL) == null
                 && toolSession.getAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS) != null) {
@@ -99,7 +99,7 @@ public class ImportBean {
      * INITIALIZATION
      */
     public void init() {
-        log.debug("INIT");
+        LOG.debug("INIT");
     }
 
 }

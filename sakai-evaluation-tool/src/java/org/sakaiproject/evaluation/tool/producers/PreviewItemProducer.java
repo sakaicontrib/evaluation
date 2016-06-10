@@ -102,7 +102,7 @@ public class PreviewItemProducer extends EvalCommonProducer implements ViewParam
         }
 
         // use the renderer evolver to show the item
-        List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> templateItems = new ArrayList<>();
         templateItems.add(templateItem);
         if (templateItem.childTemplateItems != null) {
             templateItems.addAll(templateItem.childTemplateItems);

@@ -96,9 +96,9 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      */
     public Set<String> getResultsViewableEvalGroupIdsForCurrentUser(EvalEvaluation evaluation) {
         String currentUserId = commonLogic.getCurrentUserId();
-        Set<String> groupIdsTogo = new HashSet<String>();
+        Set<String> groupIdsTogo = new HashSet<>();
 
-        boolean canViewResponses = false; // is user able to view any results/responses at all
+        boolean canViewResponses; // is user able to view any results/responses at all
         boolean checkBasedOnRole = false; // get the groups based on the current user role
         
         // 1) Is this user an admin or evaluation owner
@@ -151,7 +151,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
             }
         }
 
-        return new HashSet<String>(groupIdsTogo);
+        return new HashSet<>(groupIdsTogo);
     }
 
     /* (non-Javadoc)
@@ -160,7 +160,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
     public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds) {
         String currentUserId = commonLogic.getCurrentUserId();
 
-        boolean canViewResponses = false;
+        boolean canViewResponses;
 
         // 0 groups to view is a special case false (no groups to check)
         if (groupIds != null && groupIds.length == 0) {
@@ -191,13 +191,9 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         else if ( checkGroupsForEvalUserGroups(evaluation, groupIds, currentUserId) ) {
             canViewResponses = true;
         }
-        else if (commonLogic.isUserReadonlyAdmin(currentUserId)) {
-        	//same settings for admin
-        	canViewResponses = true;
-        }
         else {
-            canViewResponses = false;
-        }
+            canViewResponses = commonLogic.isUserReadonlyAdmin(currentUserId);
+        } //same settings for admin
 
         // 6 Is this user a hierarchical admin? 
         // TODO Not all the infrastructure is ready for this yet.
@@ -243,8 +239,6 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * @param userId the user of the user to get the viewable groups
      * @param groupIds (OPTIONAL) evalGroupIds of the groups to check,
      * if null then check all groups for this evaluation
-     * @param isUserInstructor if true this check as if this user were an instructor,
-     * if false check as if they were a student, if null then check for both cases
      * @return the set of evalGroupIds that can be viewed by this user
      */
     protected FlagHashSet<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds) {
@@ -255,16 +249,16 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         // use one central method which returns the groups accessible by the user, then compare the size to the
         // total size of all groups for this case (if it is smaller then return false)
 
-        FlagHashSet<String> viewableGroupIds = new FlagHashSet<String>();
+        FlagHashSet<String> viewableGroupIds = new FlagHashSet<>();
 
         // generate a hashmap of the assign types for this user to the groups for those types
-        HashMap<String, Set<String>> typeToEvalGroupId = new HashMap<String, Set<String>>();
+        HashMap<String, Set<String>> typeToEvalGroupId = new HashMap<>();
         List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, userId, 
                 groupIds, null, null, null, null);
         for (EvalAssignUser eau : userAssignments) {
             String type = eau.getType();
             if (! typeToEvalGroupId.containsKey(type)) {
-                typeToEvalGroupId.put(type, new HashSet<String>());
+                typeToEvalGroupId.put(type, new HashSet<>());
             }
             typeToEvalGroupId.get(type).add(eau.getEvalGroupId());
         }
@@ -344,7 +338,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * @return the set of viewable evalGroupIds
      */
     protected FlagHashSet<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor) {
-        FlagHashSet<String> viewableGroupIds = new FlagHashSet<String>();
+        FlagHashSet<String> viewableGroupIds = new FlagHashSet<>();
         String type = EvalAssignUser.TYPE_EVALUATOR;
         if (isUserInstructor) {
             type = EvalAssignUser.TYPE_EVALUATEE;

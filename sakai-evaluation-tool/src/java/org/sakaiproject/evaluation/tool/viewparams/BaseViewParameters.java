@@ -35,4 +35,9 @@ public class BaseViewParameters extends SimpleViewParameters {
      */
     public String referrer = null;
 
+    /**
+     * New report style toggle
+     */
+    public boolean useNewReportStyle = false;
+
 }

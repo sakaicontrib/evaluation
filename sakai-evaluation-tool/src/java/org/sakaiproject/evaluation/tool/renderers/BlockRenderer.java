@@ -70,7 +70,7 @@ public class BlockRenderer implements ItemRenderer {
         // check to make sure we are only dealing with block parents
         if (templateItem.getBlockParent() == null) {
             throw new IllegalArgumentException("Block renderer can only work for block items, this templateItem ("+templateItem.getId()+") has a null block parent"); 
-        } else if (! templateItem.getBlockParent().booleanValue() ||
+        } else if (! templateItem.getBlockParent() ||
                 templateItem.getBlockId() != null) {
             throw new IllegalArgumentException("Block renderer can only work for block parents, this templateItem ("+templateItem.getId()+") is a block child");
         }
@@ -96,7 +96,7 @@ public class BlockRenderer implements ItemRenderer {
         int optionCount = scaleOptions.length;
 
         // handle NA
-        boolean usesNA = templateItem.getUsesNA().booleanValue();
+        boolean usesNA = templateItem.getUsesNA();
 
         String scaleValues[] = new String[optionCount];
         String scaleLabels[] = new String[optionCount];
@@ -111,7 +111,7 @@ public class BlockRenderer implements ItemRenderer {
         		templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)) {
             
             for (int count = 1; count <= optionCount; count++) {
-                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleValues[optionCount - count] = Integer.toString(optionCount - count);
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
             }
             
@@ -164,7 +164,7 @@ public class BlockRenderer implements ItemRenderer {
 	            }	            
 	            
 	            // display question text
-	            UIOutput.make(matrix, "itemNum", Integer.valueOf(displayNumber + j).toString() ); //$NON-NLS-2$
+	            UIOutput.make(matrix, "itemNum", Integer.toString(displayNumber + j) ); //$NON-NLS-2$
 	            UIVerbatim.make(matrix, "itemText", childItem.getItemText());
             
 	            UIBranchContainer rowBranch = UIBranchContainer.make(matrix, "response-list:");
@@ -298,7 +298,7 @@ public class BlockRenderer implements ItemRenderer {
                 // get mapping props for the child
                 Map<String, Object> childRenderProps = (Map<String, Object>) renderProperties.get("child-"+childTemplateItem.getId());
                 if (childRenderProps == null) {
-                    childRenderProps = new HashMap<String, Object>(0);
+                    childRenderProps = new HashMap<>(0);
                 }
 
                 // For the radio buttons
@@ -313,7 +313,7 @@ public class BlockRenderer implements ItemRenderer {
                 }
 
                 // put in the item information (number and text)
-                UIOutput.make(childRow, "childNum", new Integer(displayNumber + j).toString() );
+                UIOutput.make(childRow, "childNum", Integer.toString(displayNumber + j) );
                 UIVerbatim.make(childRow, "childText", childItem.getItemText());
 
                 // Bind the answers to a list of answers in evaluation bean (if enabled)

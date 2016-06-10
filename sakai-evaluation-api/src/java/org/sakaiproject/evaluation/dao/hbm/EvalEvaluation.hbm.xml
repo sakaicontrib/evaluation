@@ -179,5 +179,8 @@
         <property name="localSelector" type="java.lang.String">
         	<column name="LOCAL_SELECTOR" length="255" />
         </property>
+        <property name="sectionAwareness" type="java.lang.Boolean">
+            <column name="SECTION_AWARE" />
+        </property>
     </class>
 </hibernate-mapping>

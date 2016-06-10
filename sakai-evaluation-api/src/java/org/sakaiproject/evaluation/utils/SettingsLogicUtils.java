@@ -91,7 +91,7 @@ public class SettingsLogicUtils {
 
    /**
 	 * A utility method to get a formatted String from a Date
-	 * @param the Date to be formated
+	 * @param date the Date to be formated
 	 * @return the String representation of the Date
 	 */
 	public static String getStringFromDate(Date date) {

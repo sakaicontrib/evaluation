@@ -138,7 +138,7 @@ public interface EvalAdhocSupport {
     * Check if a user has a specified permission/role within an adhoc group
     * 
     * @param userId the internal user id (not username)
-    * @param permission a permission string PERM constant (from this API),
+    * @param permissionConstant a permission string PERM constant (from this API),
     * <b>Note</b>: only take evaluation and be evaluated are supported
     * @param evalGroupId the unique id of an adhoc eval group (not the persistent id)
     * @return true if allowed, false otherwise

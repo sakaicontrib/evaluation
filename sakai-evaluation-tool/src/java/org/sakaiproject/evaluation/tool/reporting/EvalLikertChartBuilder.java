@@ -80,7 +80,6 @@ public class EvalLikertChartBuilder {
         // Turn off the Top Value Axis
         ValueAxis rangeAxis = plot.getRangeAxis();
         rangeAxis.setVisible(false);
-        // System.out.println("THE UPPER MARGIN IS: " + rangeAxis.getUpperMargin());
         rangeAxis.setUpperMargin(0.35);
         rangeAxis.resizeRange(1.1f);
 

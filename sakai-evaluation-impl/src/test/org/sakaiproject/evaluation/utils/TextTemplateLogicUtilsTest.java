@@ -19,9 +19,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
-
-
 /**
  * Testing the template processing logic
  * 
@@ -29,25 +26,25 @@ import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
  */
 public class TextTemplateLogicUtilsTest extends TestCase {
 
-   private String plainTemplate = "This template has nothing in it that can be replaced and therefore should come out identical \n" +
+   private static final String PLAIN_TEMPALTE = "This template has nothing in it that can be replaced and therefore should come out identical \n" +
       "to the one that was input. If it does not come out the same then this is sadly quite broken";
 
-   private String sample1 = "This sample template has information that can be replaced. For example, this sentence:\n" +
+   private static final String SAMPLE1 = "This sample template has information that can be replaced. For example, this sentence:\n" +
    		"Welcome ${name}, Your email address is very special. It is ${email}. We like it so much we would like to hire the " +
    		"company you are working for (${company}) to do something for us.\n Sincerly, Some guy";
-   private String result1 = "This sample template has information that can be replaced. For example, this sentence:\n" +
+   private static final String RESULT1 = "This sample template has information that can be replaced. For example, this sentence:\n" +
          "Welcome Aaron Zeckoski, Your email address is very special. It is aaronz@vt.edu. We like it so much we would like to hire the " +
          "company you are working for (CARET, University of Cambridge) to do something for us.\n Sincerly, Some guy";
 
-   private String sample2 = "This sample template has information that can be replaced. For example, this sentence:\n" +
+   private static final String SAMPLE2 = "This sample template has information that can be replaced. For example, this sentence:\n" +
          "Welcome ${name}, Your email address is very special. It is ${email}. We like it so much we would like to hire the " +
          "company you are working for (${company}) to do something for us.\n Sincerly, ${author}";
 
    public void runTestingProcessTextTemplate() {
-      Map<String, String> replacementValues = null;
-      String result = null;
+      Map<String, String> replacementValues;
+      String result;
 
-      Map<String, String> rVals = new HashMap<String, String>();
+      Map<String, String> rVals = new HashMap<>();
       rVals.put("name", "Aaron Zeckoski");
       rVals.put("email", "aaronz@vt.edu");
       rVals.put("company", "CARET, University of Cambridge");
@@ -55,31 +52,31 @@ public class TextTemplateLogicUtilsTest extends TestCase {
 
       // make sure that a plain template remains unchanged
       replacementValues = rVals;
-      result = TextTemplateLogicUtils.processTextTemplate(plainTemplate, replacementValues);
+      result = TextTemplateLogicUtils.processTextTemplate(PLAIN_TEMPALTE, replacementValues);
       assertNotNull(result);
-      assertEquals(plainTemplate, result);
+      assertEquals(PLAIN_TEMPALTE, result);
 
       // make sure that a plain template works with null replacement values
       replacementValues = null;
-      result = TextTemplateLogicUtils.processTextTemplate(plainTemplate, replacementValues);
+      result = TextTemplateLogicUtils.processTextTemplate(PLAIN_TEMPALTE, replacementValues);
       assertNotNull(result);
-      assertEquals(plainTemplate, result);
+      assertEquals(PLAIN_TEMPALTE, result);
 
       // make sure a plain template works ok with empty replacement values
-      replacementValues = new HashMap<String, String>();
-      result = TextTemplateLogicUtils.processTextTemplate(plainTemplate, replacementValues);
+      replacementValues = new HashMap<>();
+      result = TextTemplateLogicUtils.processTextTemplate(PLAIN_TEMPALTE, replacementValues);
       assertNotNull(result);
-      assertEquals(plainTemplate, result);
+      assertEquals(PLAIN_TEMPALTE, result);
 
       // make sure a normal replacement works
       replacementValues = rVals;
-      result = TextTemplateLogicUtils.processTextTemplate(sample1, replacementValues);
+      result = TextTemplateLogicUtils.processTextTemplate(SAMPLE1, replacementValues);
       assertNotNull(result);
-      assertEquals(result1, result);
+      assertEquals(RESULT1, result);
 
       // check for expected failures
       try {
-         result = TextTemplateLogicUtils.processTextTemplate(null, replacementValues);
+         TextTemplateLogicUtils.processTextTemplate(null, replacementValues);
          fail("Should not have gotten here");
       } catch (RuntimeException e) {
          assertNotNull(e.getMessage());
@@ -87,7 +84,7 @@ public class TextTemplateLogicUtilsTest extends TestCase {
 
       // processing template with a missing replacement value causes failure
       try {
-         result = TextTemplateLogicUtils.processTextTemplate(sample2, replacementValues);
+         TextTemplateLogicUtils.processTextTemplate(SAMPLE2, replacementValues);
          fail("Should not have gotten here");
       } catch (RuntimeException e) {
          assertNotNull(e.getMessage());
@@ -102,9 +99,9 @@ public class TextTemplateLogicUtilsTest extends TestCase {
       runTestingProcessTextTemplate();
 
       // test freemarker if statements
-      String result = null;
+      String result;
 
-      Map<String, String> replacementValues = new HashMap<String, String>();
+      Map<String, String> replacementValues = new HashMap<>();
       replacementValues.put("name", "Aaron Zeckoski");
       replacementValues.put("ShowSomething", "false");
 
@@ -140,9 +137,9 @@ public class TextTemplateLogicUtilsTest extends TestCase {
       runTestingProcessTextTemplate();
 
       // test velocity if statements
-      String result = null;
+      String result;
 
-      Map<String, String> replacementValues = new HashMap<String, String>();
+      Map<String, String> replacementValues = new HashMap<>();
       replacementValues.put("name", "Aaron Zeckoski");
       replacementValues.put("ShowSomething", "false");
 

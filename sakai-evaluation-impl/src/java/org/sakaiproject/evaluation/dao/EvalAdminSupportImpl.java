@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.dao;
 import java.util.Calendar;
 import java.util.List;
 
-import org.sakaiproject.evaluation.dao.EvalAdminSupport;
 import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
@@ -38,8 +37,10 @@ public class EvalAdminSupportImpl implements EvalAdminSupport {
 		searchObj.addRestriction(new Restriction("userId", userId));
 		List<EvalAdmin> results = dao.findBySearch(EvalAdmin.class, searchObj);
 		
-		if (results.size() == 0)
+		if (results.isEmpty())
+		{
 			return null;
+		}
 		
 		return results.get(0);
 	}

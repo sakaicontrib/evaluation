@@ -52,7 +52,7 @@
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, emailSettingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
-              emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, 
+              emailTemplateWBL, administrateSearchBean, sendEmailsBean, selectedEvaluationUsersLocator, reportExporterBean,
               assignGroupSelectionSettings, evalAdminBean, hierarchyBean, propertiesFileParser, overwriteSettingsHandler, iso8601DateTransit" />
     </bean>
 
@@ -282,13 +282,12 @@
         class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="deliveryService"
-            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="evaluationService"
             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalResponseAggregatorUtil"
             ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
         <property name="messageLocator" ref="messageLocator" />
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
     </bean>
 
     <bean id="PDFReportExporter"
@@ -354,8 +353,6 @@
     <bean id="org.sakaiproject.evaluation.tool.CommonProducerBean"
         class="org.sakaiproject.evaluation.tool.CommonProducerBean"
         init-method="init">
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="evalSettings"
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>

@@ -18,7 +18,6 @@ package org.sakaiproject.evaluation.tool.renderers;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,7 +58,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  */
 public class AdminBoxRenderer {
 
-    private static Log log = LogFactory.getLog(AdminBoxRenderer.class);
+    private static final Log LOG = LogFactory.getLog(AdminBoxRenderer.class);
 
     private DateFormat df;
 
@@ -121,7 +120,9 @@ public class AdminBoxRenderer {
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-        if (log.isDebugEnabled()) log.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", userReadonlyAdmin=" + userReadonlyAdmin + ", beginEvaluation=" + beginEvaluation);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", userReadonlyAdmin=" + userReadonlyAdmin + ", beginEvaluation=" + beginEvaluation);
+        }
 
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, false, false);
 
@@ -136,12 +137,16 @@ public class AdminBoxRenderer {
          */
 
         if (!userAdmin && !userReadonlyAdmin) {
-            List<EvalEvaluation> newEvals = new ArrayList<EvalEvaluation>();
-            if (log.isDebugEnabled()) log.debug("non-admin special case: " + evals.size() + " evals, " + EvalUtils.getEvalIdsFromEvaluations(evals));
+            List<EvalEvaluation> newEvals = new ArrayList<>();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("non-admin special case: " + evals.size() + " evals, " + EvalUtils.getEvalIdsFromEvaluations(evals));
+            }
             for (EvalEvaluation evaluation : evals) {
                 // Add the owned evals ONLY
                 if (currentUserId.equals(evaluation.getOwner())) {
-                    if (log.isDebugEnabled()) log.debug("non-admin special case: OWNER, id=" + evaluation.getId());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("non-admin special case: OWNER, id=" + evaluation.getId());
+                    }
                     newEvals.add(evaluation);
                 }
             }
@@ -154,7 +159,7 @@ public class AdminBoxRenderer {
             evals = EvalUtils.sortClosedEvalsToEnd(evals);
 
             boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
-            int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+            int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
 
             UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBoxContents:");
             // Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583
@@ -177,12 +182,13 @@ public class AdminBoxRenderer {
             // admins
             Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 
-            for (Iterator<EvalEvaluation> iter = evals.iterator(); iter.hasNext();) {
-                EvalEvaluation eval = (EvalEvaluation) iter.next();
-
+            for( EvalEvaluation eval : evals )
+            {
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
                 evalState = commonLogic.calculateViewability(evalState);
-                if (log.isDebugEnabled()) log.debug("eval=" + eval.getId() + ", state=" + evalState + ", title=" + eval.getTitle());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("eval=" + eval.getId() + ", state=" + evalState + ", title=" + eval.getTitle());
+                }
 
                 // 1) if a evaluation is queued, title link go to EditSettings page with populated
                 // data
@@ -191,28 +197,30 @@ public class AdminBoxRenderer {
                 // 3) if a evaluation is closed, title link go to previewEval page with populated
                 // data
                 List<EvalGroup> groups = evalGroups.get(eval.getId());
-                if (log.isDebugEnabled()) log.debug("eval (" + eval.getId() + ") groups (" + groups.size() + "): " + EvalUtils.getGroupIdsFromGroups(groups));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("eval (" + eval.getId() + ") groups (" + groups.size() + "): " + EvalUtils.getGroupIdsFromGroups(groups));
+                }
                 for (EvalGroup group : groups) {
                     UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
 
                     String title = humanDateRenderer.renderEvalTitle(eval, group);
                     
                     if(userReadonlyAdmin) {
-                    	// only ever show the preview
-                    	UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
+                        // only ever show the preview
+                        UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
                                 PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
                         evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
                     } else {
-	                    if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-	                        // only preview after the eval closes
-	                        UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
-	                                PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
-	                        evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
-	                    } else {
-	                        // edit while the eval is open
-	                        UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", title, new EvalViewParameters(
-	                                EvaluationSettingsProducer.VIEW_ID, eval.getId()));
-	                    }
+                        if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+                            // only preview after the eval closes
+                            UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
+                                    PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
+                            evalTitleLink.decorate( new UITooltipDecorator( UIMessage.make("controlevaluations.eval.title.tooltip")) );
+                        } else {
+                            // edit while the eval is open
+                            UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", title, new EvalViewParameters(
+                                    EvaluationSettingsProducer.VIEW_ID, eval.getId()));
+                        }
                     }
 
                     humanDateRenderer.renderDate(evalrow, "evalAdminStartDate", eval.getStartDate());
@@ -223,22 +231,24 @@ public class AdminBoxRenderer {
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), groupIds);
                     int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                     String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-                    if (log.isDebugEnabled()) log.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
+                    }
 
                     boolean allowedViewResponders = true;
                     boolean allowedEmailStudents = true;
                     if(userReadonlyAdmin) {
-                    	allowedViewResponders = false;
-                    	allowedEmailStudents = false;
+                        allowedViewResponders = false;
+                        allowedEmailStudents = false;
                     }
-                    RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded, 
-                            responseString, allowedViewResponders, allowedEmailStudents);
-
+                    RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded,
+                                                                                  responseString, allowedViewResponders, allowedEmailStudents);
+                    
                     // owner can view the results but only early IF the setting is enabled
                     boolean viewResultsEval = viewResultsIgnoreDates ? true : EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
                     // now render the results links depending on what the user is allowed to see
-                    RenderingUtils.renderResultsColumn(evalrow, eval, null, eval.getSafeViewDate(), df, 
-                            responsesNeeded, responsesRequired, viewResultsEval);
+                    RenderingUtils.renderResultsColumn(evalrow, eval, null, eval.getSafeViewDate(), df,
+                                                                                                    responsesNeeded, responsesRequired, viewResultsEval);
                 }
             }
         }

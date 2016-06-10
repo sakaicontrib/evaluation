@@ -16,9 +16,7 @@
 package org.sakaiproject.evaluation.toolaccess;
 
 import java.io.OutputStream;
-import java.util.List;
 
-import org.sakaiproject.entity.api.HttpAccess;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 public interface EvaluationAccessAPI {

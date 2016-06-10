@@ -34,12 +34,12 @@ public class EvaluationModificationRegistry {
     * map of evaluation states to Set of permitted changes, or no entry if all
     * modifications are permitted
     */
-   private static Map<String, Set<String>> permittedChanges = new HashMap<String, Set<String>>();
+   private static Map<String, Set<String>> permittedChanges = new HashMap<>();
 
    private static void addItem(String key, String permittedlist) {
       String[] permitteds = permittedlist.split(",");
       if (permitteds.length == 1 && permitteds[0].equals("*")) return;
-      Set<String> permset = new HashSet<String>();
+      Set<String> permset = new HashSet<>();
       for (int i = 0; i < permitteds.length; ++ i) {
          permset.add(permitteds[i]);
       }

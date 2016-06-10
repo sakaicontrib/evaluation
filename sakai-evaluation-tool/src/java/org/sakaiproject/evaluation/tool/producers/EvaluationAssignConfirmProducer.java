@@ -154,8 +154,8 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
         }
 
         // turn the selected groups into list of normal and adhoc groups
-        List<EvalGroup> normalGroups = new ArrayList<EvalGroup>();
-        List<EvalGroup> adhocGroups = new ArrayList<EvalGroup>();
+        List<EvalGroup> normalGroups = new ArrayList<>();
+        List<EvalGroup> adhocGroups = new ArrayList<>();
         String[] selectedGroupIDs = evalViewParams.selectedGroupIDs;
         if (selectedGroupIDs != null 
                 && selectedGroupIDs.length > 0) {
@@ -171,13 +171,13 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
         }
 
         // get all evaluator user assignments to count the total enrollments
-        HashMap<String, List<EvalAssignUser>> groupIdToEAUList = new HashMap<String, List<EvalAssignUser>>();
+        HashMap<String, List<EvalAssignUser>> groupIdToEAUList = new HashMap<>();
         List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, null, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
         for (EvalAssignUser evalAssignUser : userAssignments) {
             String groupId = evalAssignUser.getEvalGroupId();
             if (! groupIdToEAUList.containsKey(groupId)) {
-                groupIdToEAUList.put(groupId, new ArrayList<EvalAssignUser>());
+                groupIdToEAUList.put(groupId, new ArrayList<>());
             }
             groupIdToEAUList.get(groupId).add(evalAssignUser);
         }
@@ -198,12 +198,12 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
                                 commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                     }
                 }
-                int enrollmentCount = 0;
+                int enrollmentCount;
                 if (groupIdToEAUList.get(evalGroupId) == null) {
                     //enrollmentCount = 0;
                     // Since no users have been added to the eval YET, get the number of members that WILL be added
                     // this number is more intuative for the instructor than 0.
-                    enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+                    enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, evaluation.getSectionAwareness());
                 } else {
                     enrollmentCount = groupIdToEAUList.get(evalGroupId).size();
                 }
@@ -222,9 +222,9 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
             if (selectedNodeIDs != null 
                     && selectedNodeIDs.length > 0) {
                 UIBranchContainer nodesBranch = UIBranchContainer.make(tofill, "showSelectedNodes:");
-                for (int i = 0; i < selectedNodeIDs.length; i++ ) {
-                    EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
-
+                for( String selectedNodeID : selectedNodeIDs )
+                {
+                    EvalHierarchyNode node = hierLogic.getNodeById( selectedNodeID );
                     UIBranchContainer nodeRow = UIBranchContainer.make(nodesBranch, "nodes:");
                     UIOutput.make(nodeRow, "nodeTitle", node.title);
                     UIOutput.make(nodeRow, "nodeAbbr", node.description);

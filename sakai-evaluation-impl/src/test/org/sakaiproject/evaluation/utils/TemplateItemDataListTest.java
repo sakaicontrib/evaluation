@@ -41,9 +41,9 @@ public class TemplateItemDataListTest extends TestCase {
    public void testTemplateItemDataList() {
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
-      List<EvalTemplateItem> testList = new ArrayList<EvalTemplateItem>();
-      List<DataTemplateItem> flatList = null;
-      TemplateItemDataList tidl = null;
+      List<EvalTemplateItem> testList = new ArrayList<>();
+      List<DataTemplateItem> flatList;
+      TemplateItemDataList tidl;
 
       // test empty TI list fails
       try {
@@ -78,8 +78,8 @@ public class TemplateItemDataListTest extends TestCase {
       assertFalse(flatList.get(1).isFirstInAssociated);
 
       // now add in some associates
-      Map<String, List<String>> associates = new HashMap<String, List<String>>();
-      List<String> associateIds = new ArrayList<String>();
+      Map<String, List<String>> associates = new HashMap<>();
+      List<String> associateIds = new ArrayList<>();
       associateIds.add(EvalTestDataLoad.MAINT_USER_ID);
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, associateIds);
 
@@ -143,7 +143,7 @@ public class TemplateItemDataListTest extends TestCase {
       assertTrue(flatList.get(3).isFirstInAssociated);
 
       // now test adding in some hierarchy nodes
-      List<EvalHierarchyNode> nodes = new ArrayList<EvalHierarchyNode>();
+      List<EvalHierarchyNode> nodes = new ArrayList<>();
       nodes.add( new EvalHierarchyNode("node1", "node title", "description") );
 
       associateIds.clear();

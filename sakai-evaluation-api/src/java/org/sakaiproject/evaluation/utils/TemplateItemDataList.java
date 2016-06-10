@@ -233,11 +233,11 @@ public class TemplateItemDataList {
         List<EvalTemplateItem> evalTemplateItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
                 instructorIdsArray, new String[] {evalGroupId});
 
-        Map<String, List<String>> evalAssociates = new HashMap<String, List<String>>();
-        evalAssociates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
+        Map<String, List<String>> evalAssociates = new HashMap<>();
+        evalAssociates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<>(instructorIds));
         // add in the assistants list if there are any
         if (assistantIds.size() > 0) {
-            evalAssociates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(assistantIds));
+            evalAssociates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<>(assistantIds));
         }
 
         List<EvalAnswer> evalAnswers = null;
@@ -291,11 +291,11 @@ public class TemplateItemDataList {
             evalHierarchyNodes = makeEvalNodesList(evalTemplateItems, hierarchyLogic);
         }
 
-        Map<String, List<String>> evalAssociates = new HashMap<String, List<String>>();
-        evalAssociates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
+        Map<String, List<String>> evalAssociates = new HashMap<>();
+        evalAssociates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<>(instructorIds));
         // add in the assistants list if there are any
         if (assistantIds.size() > 0) {
-            evalAssociates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<String>(assistantIds));
+            evalAssociates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, new ArrayList<>(assistantIds));
         }
 
         construct(evalTemplateItems, evalHierarchyNodes, evalAssociates, evalAnswers);
@@ -311,7 +311,7 @@ public class TemplateItemDataList {
     private void construct(List<EvalTemplateItem> allTemplateItems,
             List<EvalHierarchyNode> hierarchyNodes, Map<String, List<String>> associates,
             List<EvalAnswer> answers) {
-        if (allTemplateItems == null || allTemplateItems.size() == 0) {
+        if (allTemplateItems == null || allTemplateItems.isEmpty()) {
             throw new IllegalArgumentException("You must supply a non-null list of at least one template item to use this structure");
         }
 
@@ -320,18 +320,18 @@ public class TemplateItemDataList {
         if (hierarchyNodes != null) {
             this.hierarchyNodes = hierarchyNodes;
         } else {
-            this.hierarchyNodes = new ArrayList<EvalHierarchyNode>();
+            this.hierarchyNodes = new ArrayList<>();
         }
 
         if (associates != null) {
             this.associates = associates;
         } else {
-            this.associates = new HashMap<String, List<String>>();
+            this.associates = new HashMap<>();
         }
 
         // ensure there is at least the default course category
         if (! this.associates.containsKey(EvalConstants.ITEM_CATEGORY_COURSE)) {
-            List<String> courses = new ArrayList<String>();
+            List<String> courses = new ArrayList<>();
             courses.add(null);
             this.associates.put(EvalConstants.ITEM_CATEGORY_COURSE, courses);
         }
@@ -339,7 +339,7 @@ public class TemplateItemDataList {
         if (answers != null) {
             this.answers = answers;
         } else {
-            this.answers = new ArrayList<EvalAnswer>();
+            this.answers = new ArrayList<>();
         }
 
         buildDataStructure();
@@ -359,7 +359,7 @@ public class TemplateItemDataList {
         return nonChildItemsCount;
     }
 
-    private List<String> associateTypes = new ArrayList<String>();
+    private List<String> associateTypes = new ArrayList<>();
     /**
      * @return the correctly ordered list of all associate types for these template items
      */
@@ -384,8 +384,8 @@ public class TemplateItemDataList {
      * @see #associates map for more information about the possible returns
      */
     public Set<String> getAssociateIds(String associateType) {
-    	Set<String> ids = new HashSet<String>();
-    	Set<String> sortedIds = new HashSet<String>();
+    	Set<String> ids = new HashSet<>();
+    	Set<String> sortedIds = new HashSet<>();
         if (this.associates.containsKey(associateType)) {
             ids.addAll( this.associates.get(associateType) );
         }
@@ -408,14 +408,14 @@ public class TemplateItemDataList {
      */
     public Map<String, List<EvalTemplateItem>> getAutoInsertedItems() {
         if (autoInsertMap == null) {
-            autoInsertMap = new HashMap<String, List<EvalTemplateItem>>();
+            autoInsertMap = new HashMap<>();
             for (EvalTemplateItem templateItem : this.allTemplateItems) {
                 String autoUseTag = templateItem.getAutoUseInsertionTag();
                 if (autoUseTag != null) {
                     if (autoInsertMap.containsKey(autoUseTag)) {
                         autoInsertMap.get(autoUseTag).add(templateItem);
                     } else {
-                        List<EvalTemplateItem> autoUseItems = new ArrayList<EvalTemplateItem>();
+                        List<EvalTemplateItem> autoUseItems = new ArrayList<>();
                         autoUseItems.add(templateItem);
                         autoInsertMap.put(autoUseTag, autoUseItems);
                     }
@@ -445,13 +445,14 @@ public class TemplateItemDataList {
      * @param includeHNG if not null, then only return wrapped items from this {@link HierarchyNodeGroup}
      * @param includeBlockChildren if true then block children will be included in the flat list,
      * otherwise they are only included in the {@link DataTemplateItem#blockChildItems} list
+     * @return 
      */
     protected List<DataTemplateItem> buildFlatDataList(TemplateItemGroup includeTIG, HierarchyNodeGroup includeHNG, boolean includeBlockChildren) {
         if (templateItemGroups == null) {
             buildDataStructure();
         }
 
-        List<DataTemplateItem> dataTemplateItems = new ArrayList<DataTemplateItem>();
+        List<DataTemplateItem> dataTemplateItems = new ArrayList<>();
         // loop through and build the flattened list
         for (int i = 0; i < templateItemGroups.size(); i++) {
             TemplateItemGroup tig = templateItemGroups.get(i);
@@ -504,17 +505,19 @@ public class TemplateItemDataList {
 
         buildAnswerMaps();
 
-        templateItemGroups = new ArrayList<TemplateItemGroup>();
+        templateItemGroups = new ArrayList<>();
         if (allTemplateItems.size() > 0) {
             // filter out the block child items, to get a list of non-child items
             List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(this.allTemplateItems);
             nonChildItemsCount = nonChildItemsList.size();
 
             // turn the map keys into a properly sorted list of types
-            this.associateTypes = new ArrayList<String>();
-            for (int i = 0; i < EvalConstants.ITEM_CATEGORY_ORDER.length; i++) {
-                if (associates.containsKey(EvalConstants.ITEM_CATEGORY_ORDER[i])) {
-                    associateTypes.add(EvalConstants.ITEM_CATEGORY_ORDER[i]);
+            this.associateTypes = new ArrayList<>();
+            for( String ITEM_CATEGORY_ORDER : EvalConstants.ITEM_CATEGORY_ORDER )
+            {
+                if( associates.containsKey( ITEM_CATEGORY_ORDER ) )
+                {
+                    associateTypes.add( ITEM_CATEGORY_ORDER );
                 }
             }
 
@@ -525,19 +528,19 @@ public class TemplateItemDataList {
                 List<EvalTemplateItem> categoryNonChildItemsList = TemplateItemUtils.getCategoryTemplateItems(associateType, nonChildItemsList);
                 if (categoryNonChildItemsList.size() > 0) {
         	    	// apply listing ordering
-                	Set<String> sortedAssociateIds = new HashSet<String>();
+                	Set<String> sortedAssociateIds = new HashSet<>();
                 	if( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(associateType) ){
                 		sortedAssociateIds = getSortedUserIdsFromUsers( associateIds, EvalAssignUser.TYPE_EVALUATEE );
                     }else if( EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(associateType) ){
                     	sortedAssociateIds = getSortedUserIdsFromUsers( associateIds, EvalAssignUser.TYPE_ASSISTANT);
                     }else{
-                    	sortedAssociateIds = new HashSet<String>(associateIds);
+                    	sortedAssociateIds = new HashSet<>(associateIds);
                     }
                 	
                 	for (String associateId : sortedAssociateIds) {
                         // handle the data creation for this associateId
                         TemplateItemGroup tig = new TemplateItemGroup(associateType, associateId);
-                        tig.hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
+                        tig.hierarchyNodeGroups = new ArrayList<>();
                         templateItemGroups.add(tig);
 
                         // now handle the hierarchy levels
@@ -579,8 +582,8 @@ public class TemplateItemDataList {
      * the order of the answers inside the lists is effectively random
      */
     protected void buildAnswerMaps() {
-        answersMap = new HashMap<String, List<EvalAnswer>>();
-        responseAnswersMap = new HashMap<Long, Map<String,EvalAnswer>>();
+        answersMap = new HashMap<>();
+        responseAnswersMap = new HashMap<>();
         for (EvalAnswer answer : answers) {
             // decode the stored answers into the int array
             answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
@@ -593,7 +596,7 @@ public class TemplateItemDataList {
             if (answersMap.containsKey(key)) {
                 answersMap.get(key).add(answer);
             } else {
-                List<EvalAnswer> keyAnswers = new ArrayList<EvalAnswer>();
+                List<EvalAnswer> keyAnswers = new ArrayList<>();
                 keyAnswers.add(answer);
                 answersMap.put(key, keyAnswers);
             }
@@ -602,7 +605,7 @@ public class TemplateItemDataList {
             if (responseAnswersMap.containsKey(responseId)) {
                 responseAnswersMap.get(responseId).put(key, answer);
             } else {
-                Map<String,EvalAnswer> keyAnswerMap = new HashMap<String, EvalAnswer>();
+                Map<String,EvalAnswer> keyAnswerMap = new HashMap<>();
                 keyAnswerMap.put(key, answer);
                 responseAnswersMap.put(responseId, keyAnswerMap);
             }
@@ -616,7 +619,7 @@ public class TemplateItemDataList {
      * @return the list of answers for this response id or empty list if none found
      */
     public List<EvalAnswer> getAnswersByResponseId(Long responseId) {
-        List<EvalAnswer> answersList = new ArrayList<EvalAnswer>();
+        List<EvalAnswer> answersList = new ArrayList<>();
         if (responseAnswersMap.containsKey(responseId)) {
             answersList.addAll(responseAnswersMap.get(responseId).values());
         }
@@ -627,7 +630,7 @@ public class TemplateItemDataList {
      * @return the list of all responseIds for the set of answers in this data structure
      */
     public List<Long> getResponseIdsForAnswers() {
-        List<Long> responseIdsList = new ArrayList<Long>();
+        List<Long> responseIdsList = new ArrayList<>();
         responseIdsList.addAll(responseAnswersMap.keySet());
         Collections.sort(responseIdsList);
         return responseIdsList;      
@@ -652,6 +655,7 @@ public class TemplateItemDataList {
         /**
          * The unique key (templateItemAnswerKey) for this DTI,
          * created using {@link TemplateItemUtils#makeTemplateItemAnswerKey(Long, String, String)}
+         * @return 
          */
         public String getKey() {
             if (key == null) {
@@ -714,7 +718,7 @@ public class TemplateItemDataList {
             this.node = node;
             if (TemplateItemUtils.isBlockParent(templateItem)) {
                 this.blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
-                this.templateItem.childTemplateItems = new ArrayList<EvalTemplateItem>(blockChildItems); // for rendering
+                this.templateItem.childTemplateItems = new ArrayList<>(blockChildItems); // for rendering
             } else if (TemplateItemUtils.isBlockChild(templateItem)) {
                 this.blockParentId = templateItem.getBlockId();
             }
@@ -790,7 +794,7 @@ public class TemplateItemDataList {
          * @return the list of all block children in this DTI as DTIs
          */
         public List<DataTemplateItem> getBlockChildren() {
-            ArrayList<DataTemplateItem> children = new ArrayList<DataTemplateItem>();
+            ArrayList<DataTemplateItem> children = new ArrayList<>();
             if (this.blockChildItems != null) {
                 for (EvalTemplateItem eti : this.blockChildItems) {
                     children.add( new DataTemplateItem(eti, this.associateType, this.associateId, this.node) );
@@ -814,7 +818,7 @@ public class TemplateItemDataList {
          * @return the list of all comments for this item
          */
         public List<String> getComments() {
-            List<String> comments = new ArrayList<String>();
+            List<String> comments = new ArrayList<>();
             List<EvalAnswer> answers = getAnswers();
             if (answers != null) {
                 for (EvalAnswer answer : answers) {
@@ -837,7 +841,7 @@ public class TemplateItemDataList {
                 if (answersMap.containsKey(key)) {
                     answers = answersMap.get(key);
                 } else {
-                    answers = new ArrayList<EvalAnswer>();
+                    answers = new ArrayList<>();
                 }
             }
             return answers;
@@ -911,7 +915,7 @@ public class TemplateItemDataList {
          * does not include block children
          */
         public List<EvalTemplateItem> getTemplateItems() {
-            List<EvalTemplateItem> tis = new ArrayList<EvalTemplateItem>();
+            List<EvalTemplateItem> tis = new ArrayList<>();
             for (HierarchyNodeGroup hng : hierarchyNodeGroups) {
                 tis.addAll(hng.templateItems);
             }
@@ -930,7 +934,7 @@ public class TemplateItemDataList {
         public TemplateItemGroup(String associateType, String associateId) {
             this.associateType = associateType;
             this.associateId = associateId;
-            hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
+            hierarchyNodeGroups = new ArrayList<>();
         }
 
         public TemplateItemGroup(String associateType, String associateId, List<HierarchyNodeGroup> hierarchyNodeGroups) {
@@ -976,7 +980,7 @@ public class TemplateItemDataList {
 
         public HierarchyNodeGroup(EvalHierarchyNode node) {
             this.node = node;
-            templateItems = new ArrayList<EvalTemplateItem>();
+            templateItems = new ArrayList<>();
         }
 
         public HierarchyNodeGroup(EvalHierarchyNode node, List<EvalTemplateItem> templateItems) {
@@ -1025,7 +1029,7 @@ public class TemplateItemDataList {
      * @return the set of userIds
      */
     public static Set<String> getInstructorsForAnswers(List<EvalAnswer> answers) {
-        Set<String> userIds = new HashSet<String>();
+        Set<String> userIds = new HashSet<>();
         for (EvalAnswer answer: answers) {
             if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getAssociatedType())) {
                 if (! EvalUtils.isBlank(answer.getAssociatedId())) {
@@ -1045,7 +1049,7 @@ public class TemplateItemDataList {
      * @return the set of userIds
      */
     public static Set<String> getAssistantsForAnswers(List<EvalAnswer> answers) {
-        Set<String> userIds = new HashSet<String>();
+        Set<String> userIds = new HashSet<>();
         for (EvalAnswer answer: answers) {
             if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(answer.getAssociatedType())) {
                 if (! EvalUtils.isBlank(answer.getAssociatedId())) {
@@ -1074,7 +1078,7 @@ public class TemplateItemDataList {
      * e.g. {@link EvalConstants#ITEM_TYPE_MULTIPLECHOICE}
      * @param scaleChoices the number of scale choices (normally this is the size of the {@link EvalScale#getOptions()} array. 
      * The returned integer array will be this big (+1 for NA), each index being a count of answers for that scale choice
-     * @param answers the List of EvalAnswers to work with
+     * @param itemAnswers the List of EvalAnswers to work with
      * @return an integer array which is the same size as the number of choices + 1 (for NA), ignore the last array entry if NA is not used for this item
      * @throws IllegalArgumentException if this is not an itemType that has numeric answers (Scaled/MC/MA/...)
      */
@@ -1098,7 +1102,7 @@ public class TemplateItemDataList {
                         // this multiple answer is not one that should be ignored
                         Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
                         for (Integer decodedAnswer: decoded) {
-                            incrementArraySafely(decodedAnswer.intValue(), togo);
+                            incrementArraySafely(decodedAnswer, togo);
                         }
                     }
                 }
@@ -1106,7 +1110,7 @@ public class TemplateItemDataList {
                     // standard handling for single answer items
                     if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answer.getNumeric()) && answer.getNumeric() != null ) {
                         // this numeric answer is not one that should be ignored
-                        incrementArraySafely(answer.getNumeric().intValue(), togo);
+                        incrementArraySafely(answer.getNumeric(), togo);
                     }
                 }
             }
@@ -1144,13 +1148,13 @@ public class TemplateItemDataList {
         if (templateItems == null || hierarchyLogic == null) {
             throw new IllegalArgumentException("inputs ("+templateItems+","+hierarchyLogic+") must not be null");
         }
-        Set<String> nodeIds = new HashSet<String>();
+        Set<String> nodeIds = new HashSet<>();
         for (EvalTemplateItem templateItem : templateItems) {
             if (EvalConstants.HIERARCHY_LEVEL_NODE.equals(templateItem.getHierarchyLevel())) {
                 nodeIds.add(templateItem.getHierarchyNodeId());
             }
         }
-        List<EvalHierarchyNode> hierarchyNodes = new ArrayList<EvalHierarchyNode>();
+        List<EvalHierarchyNode> hierarchyNodes = new ArrayList<>();
         if (nodeIds.size() > 0) {
             Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(nodeIds.toArray(new String[nodeIds.size()]));
             hierarchyNodes = hierarchyLogic.getSortedNodes(nodes);
@@ -1165,8 +1169,8 @@ public class TemplateItemDataList {
      * @return the sorted set of user ids
      */
 	private Set<String> getSortedUserIdsFromUsers( Collection<String> userIds, String associatedType){
-    	List<EvalAssignUser> usersInList = new ArrayList<EvalAssignUser>();
-    	Set<String> sortedIds = new LinkedHashSet<String>();
+    	List<EvalAssignUser> usersInList = new ArrayList<>();
+    	Set<String> sortedIds = new LinkedHashSet<>();
     	if( userIds != null && associatedType != null && evaluationService != null && evalGroupId != null && evaluationId != null){
             List<EvalAssignUser> userList = evaluationService.getParticipantsForEval(evaluationId, null, new String[] { evalGroupId }, null, EvalEvaluationService.STATUS_ANY, null, null);
 	    	for( EvalAssignUser evalAssignUser : userList ){
@@ -1183,7 +1187,7 @@ public class TemplateItemDataList {
 	    	}
     	}
     	
-    	if(sortedIds.size() == 0){
+    	if(sortedIds.isEmpty()){
     		//No valid users found and userIds are not sorted, return the original userIds collection
     		sortedIds.addAll(userIds);
     	}    	

@@ -12,9 +12,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/**
- * 
- */
 package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.List;
@@ -32,13 +29,9 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
-/**
- * 
- *
- */
 public class GroupMembershipSyncImpl implements GroupMembershipSync {
 	
-	private Log logger = LogFactory.getLog(GroupMembershipSyncImpl.class);
+	private static final Log LOG = LogFactory.getLog(GroupMembershipSyncImpl.class);
 	
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -65,42 +58,42 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
      * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
      */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.debug("GroupMembershipSync.execute()");
+		LOG.debug("GroupMembershipSync.execute()");
 		String syncServerId = (String) this.evalSettings.get(EvalSettings.SYNC_SERVER);
 		String thisServerId = this.externalLogic.getServerId();
 		if(thisServerId != null && thisServerId.equals(syncServerId)) {
 			JobDetail jobDetail = context.getJobDetail();
 			JobDataMap data = jobDetail.getJobDataMap();
 			String statusStr = (String) data.get(GroupMembershipSync.GROUP_MEMBERSHIP_SYNC_PROPNAME_STATE_LIST);
-			logger.info("GroupMembershipSync.execute() starting sync of evals by state: " + statusStr);
+			LOG.info("GroupMembershipSync.execute() starting sync of evals by state: " + statusStr);
 			if(statusStr == null || statusStr.trim().equals("")) {
 				// better throw something?
 			} else {
 				String[] stateList = statusStr.trim().split(" ");
 				
-				logger.info("GroupMembershipSync.execute() syncing " + statusStr);
+				LOG.info("GroupMembershipSync.execute() syncing " + statusStr);
 	
 				for(String state : stateList) {
 					List<EvalEvaluation> evals = evaluationService.getEvaluationsByState(state);
 					int count = evals.size();
-					if(logger.isInfoEnabled()) {
+					if(LOG.isInfoEnabled()) {
 						StringBuilder buf1 = new StringBuilder();
 						buf1.append("GroupMembershipSync.execute() syncing ");
 						buf1.append(count);
 						buf1.append("groups for evals in state: ");
 						buf1.append(state);
-						logger.info(buf1.toString());
+						LOG.info(buf1.toString());
 					}
 					for(EvalEvaluation eval : evals) {
 						if(this.evaluationSetupService instanceof EvalEvaluationSetupServiceImpl) {
-							if(logger.isDebugEnabled()) {
+							if(LOG.isDebugEnabled()) {
 								StringBuilder buf = new StringBuilder();
 								buf.append("====> ");
 								buf.append(state);
 								buf.append("          ==> ");
 								buf.append(eval.getEid());
 								buf.append(" using impl");
-								logger.debug(buf.toString());
+								LOG.debug(buf.toString());
 							}
 							try {
 								((EvalEvaluationSetupServiceImpl) this.evaluationSetupService).synchronizeUserAssignmentsForced(eval, null, true);
@@ -110,31 +103,31 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 								buf.append(eval.getId());
 								buf.append(") due to IllegalStateException: ");
 								buf.append(e.getMessage());
-								logger.warn(buf.toString());
+								LOG.warn(buf.toString());
 								
 								// TODO: should update the state so it is not selected next time ??
 							}
 						} else {
-							if(logger.isDebugEnabled()) {
+							if(LOG.isDebugEnabled()) {
 								StringBuilder buf = new StringBuilder();
 								buf.append("====> ");
 								buf.append(state);
 								buf.append("          ==> ");
 								buf.append(eval.getEid());
 								buf.append(" using api");
-								logger.debug(buf.toString());
+								LOG.debug(buf.toString());
 							}
 							this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
 						}
 					}
 				}
 			}
-			logger.info("GroupMembershipSync.execute() done with sync of evals by state: " + statusStr);
+			LOG.info("GroupMembershipSync.execute() done with sync of evals by state: " + statusStr);
 		}
 	}
 	
 	public void init() {
-		logger.debug("init()");
+		LOG.debug("init()");
 	}
 
 }

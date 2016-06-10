@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 
 import uk.org.ponder.rsf.components.UIContainer;
@@ -32,10 +31,10 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class CommonProducerBean {
 
-    private static Log log = LogFactory.getLog(CommonProducerBean.class);
+    private static final Log LOG = LogFactory.getLog(CommonProducerBean.class);
 
     public void init() {
-        log.info("INIT");
+        LOG.info("INIT");
     }
 
     public void beforeProducer(String viewId, UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -54,12 +53,6 @@ public class CommonProducerBean {
     private EvalSettings settings;
     public void setEvalSettings(EvalSettings settings) {
         this.settings = settings;
-    }
-
-    @SuppressWarnings("unused")
-    private EvalCommonLogic commonLogic;
-    public void setCommonLogic(EvalCommonLogic commonLogic) {
-        this.commonLogic = commonLogic;
     }
 
 }

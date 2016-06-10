@@ -139,13 +139,27 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<!-- Section awareness dependencies -->
+		<dependency>
+			<groupId>org.sakaiproject.edu-services.course-management</groupId>
+			<artifactId>coursemanagement-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-component-manager</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.sakaiproject.entitybroker</groupId>
 			<artifactId>entitybroker-api</artifactId>
 		</dependency>
-
-    </dependencies>
+	 
+	</dependencies>
 
     <build>
         <sourceDirectory>src/java</sourceDirectory>

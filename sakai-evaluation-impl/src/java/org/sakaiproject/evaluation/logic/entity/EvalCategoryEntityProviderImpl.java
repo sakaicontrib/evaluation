@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic.entity;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 
 /**
  * Implementation for the entity provider for evaluation categories
@@ -44,8 +43,8 @@ public class EvalCategoryEntityProviderImpl implements EvalCategoryEntityProvide
 	 */
 	public boolean entityExists(String id) {
 		String[] categories = evaluationsLogic.getEvalCategories(null);
-		for (int i = 0; i < categories.length; i++) {
-			if (categories[i].equals(id)) {
+		for( String categorie : categories ) {
+			if (categorie.equals(id)) {
 				return true;
 			}
 		}

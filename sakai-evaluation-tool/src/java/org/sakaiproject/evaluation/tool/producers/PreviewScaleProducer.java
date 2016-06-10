@@ -76,7 +76,7 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
         // make the map of display type keys and name
-        LinkedHashMap<String, String> scaleDisplayMap = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> scaleDisplayMap = new LinkedHashMap<>();
         for (int i = 0; i < EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES.length; i++) {
             scaleDisplayMap.put(EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES[i], EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS[i]);
         }
@@ -127,7 +127,7 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
             // append the scale display setting to the item text
             templateItem.getItem().setItemText( "Sample question text ("+displaySettingName+")");
             // make a fake TIDL and DTI for rendering consistency
-            List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
+            List<EvalTemplateItem> templateItems = new ArrayList<>();
             templateItems.add(templateItem);
             TemplateItemDataList tidl = new TemplateItemDataList(templateItems, null, null, null);
             DataTemplateItem dti = tidl.getDataTemplateItem(templateItem.getId());

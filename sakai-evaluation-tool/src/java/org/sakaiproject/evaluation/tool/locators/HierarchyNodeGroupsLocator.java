@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +52,7 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
         this.hierarchyLogic = hierarchyLogic;
     }
 
-    public Map<String, Map<String, Boolean>> delivered = new HashMap<String, Map<String, Boolean>>(); 
+    public Map<String, Map<String, Boolean>> delivered = new HashMap<>(); 
 
     public Object locateBean(String name) {
         checkSecurity();
@@ -63,7 +62,7 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
             // FIXME Should this really use the hardcoded "admin" user id?
             List<EvalGroup> evalGroups = commonLogic.getEvalGroupsForUser(commonLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
             Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(name);
-            Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();
+            Map<String, Boolean> assignedGroups = new HashMap<>();
             //for (EvalGroup group: evalGroups) {
             //    if (assignedGroupIds.contains(group.evalGroupId)) {
             //        assignedGroups.put(group.evalGroupId, Boolean.TRUE);
@@ -90,19 +89,19 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
     }
 
     public void saveAll() {
-        for (Iterator<String> i = delivered.keySet().iterator(); i.hasNext();) {
-            String key = (String) i.next();
+        for( String key : delivered.keySet() )
+        {
             Map<String, Boolean> groupbools = delivered.get(key);
             assignGroups(key, groupbools);
         }
     }
 
     private void assignGroups(String nodeid, Map<String, Boolean> groupbools) {
-        Set<String> assignedGroup = new HashSet<String>();
+        Set<String> assignedGroup = new HashSet<>();
         for (Entry<String, Boolean> entry : groupbools.entrySet()) {
             String groupid = entry.getKey();
             Boolean assigned = entry.getValue();
-            if (assigned.booleanValue() == true) {
+            if (assigned == true) {
                 assignedGroup.add(groupid);
             }
         }

@@ -139,6 +139,7 @@ public interface EvalEmailsLogic {
     /**
      * 
      * @param jobStatusReporter TODO
+     * @param jobId
      * @return
      */
 	public String[] sendConsolidatedReminderNotifications(JobStatusReporter jobStatusReporter, String jobId);
@@ -146,6 +147,7 @@ public interface EvalEmailsLogic {
 	/**
 	 * 
 	 * @param jobStatusReporter TODO
+	 * @param jobId
 	 * @return
 	 */
 	public String[] sendConsolidatedAvailableNotifications(JobStatusReporter jobStatusReporter, String jobId);

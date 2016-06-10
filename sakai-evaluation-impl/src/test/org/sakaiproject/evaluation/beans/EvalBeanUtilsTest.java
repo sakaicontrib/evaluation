@@ -61,8 +61,8 @@ public class EvalBeanUtilsTest extends BaseTestEvalLogic {
    @Test
    public void testGetResponsesNeededToViewForResponseRate() {
       int systemResponseRate = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
-      int responsesCount = 0;
-      int enrollmentsCount = 0;
+      int responsesCount;
+      int enrollmentsCount;
 
       responsesCount = systemResponseRate + 2;
       enrollmentsCount = 10;

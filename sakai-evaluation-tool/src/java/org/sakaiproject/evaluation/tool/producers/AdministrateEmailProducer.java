@@ -18,6 +18,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -40,6 +42,8 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class AdministrateEmailProducer extends EvalCommonProducer {
+
+    private static final Log LOG = LogFactory.getLog( AdministrateEmailProducer.class );
 
     /**
      * This is used for navigation within the system.
@@ -91,7 +95,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
 
         Boolean useConsolidatedNotifications = (Boolean) evalSettings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
         if(useConsolidatedNotifications == null) {
-            useConsolidatedNotifications = new Boolean(false);
+            useConsolidatedNotifications = false;
         }
 
 
@@ -127,7 +131,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
 
         String nextReminderStr = (String) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
 
-        Date nextReminder = null;
+        Date nextReminder;
         if(nextReminderStr == null || nextReminderStr.trim().equals("")) {
             nextReminder = new Date();
         } else {
@@ -136,7 +140,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
                 nextReminder = df.parse( nextReminderStr );
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.warn( e );
                 nextReminder = new Date();
             }
         }

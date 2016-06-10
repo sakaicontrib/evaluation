@@ -56,6 +56,10 @@ public class EvalScheduledJob {
 
    /**
     * Basic constructor used when we know what the context (typically evalId + SEPARATOR + jobType) is
+     * @param uuid
+     * @param date
+     * @param componentId
+     * @param contextId
     */
    public EvalScheduledJob(String uuid, Date date, String componentId, String contextId) {
       this.uuid = uuid;
@@ -66,6 +70,11 @@ public class EvalScheduledJob {
 
    /**
     * Constructor to use when we know what the evalId is
+     * @param uuid
+     * @param date
+     * @param componentId
+     * @param evaluationId
+     * @param jobType
     */
    public EvalScheduledJob(String uuid, Date date, String componentId, Long evaluationId,
          String jobType) {

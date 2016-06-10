@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.tool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -25,7 +24,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
 
 public class EvalAdminBean {
 	
-	private static Log log = LogFactory.getLog(EvalAdminBean.class);
+	private static final Log LOG = LogFactory.getLog(EvalAdminBean.class);
 	
 	public String userId;
 	public String userEid;
@@ -33,11 +32,6 @@ public class EvalAdminBean {
 	private EvalCommonLogic commonLogic;
 	public void setCommonLogic(EvalCommonLogic commonLogic) {
 		this.commonLogic = commonLogic;
-	}
-	
-	private EvalEvaluationService evaluationService;
-	public void setEvaluationService(EvalEvaluationService evaluationService) {
-		this.evaluationService = evaluationService;
 	}
 	
 	private EvalSettings settings;
@@ -68,7 +62,7 @@ public class EvalAdminBean {
 			commonLogic.assignEvalAdmin(assigneeUserId, currentUserId);
 		} catch (IllegalArgumentException ex) {
 			messages.addMessage(new TargettedMessage("controlevaladmin.message.error.already.assigned", new Object[] { this.userEid }, TargettedMessage.SEVERITY_ERROR));
-			log.error(ex);
+			LOG.error(ex);
 			return "error";
 		}
 		
@@ -91,7 +85,7 @@ public class EvalAdminBean {
 			commonLogic.unassignEvalAdmin(this.userId);
 		} catch (IllegalArgumentException ex) {
 			messages.addMessage(new TargettedMessage("controlevaladmin.message.error.unassigning", new Object[] { this.userEid }, TargettedMessage.SEVERITY_ERROR));
-			log.error(ex);
+			LOG.error(ex);
 			return "error";
 		}
 		
@@ -110,14 +104,14 @@ public class EvalAdminBean {
 		
 		// if enabled, user is disabling access
 		if ((Boolean) settings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS)) {
-			log.info("sakai admin access to evaluation system is disabled");
+			LOG.info("sakai admin access to evaluation system is disabled");
 			messages.addMessage(new TargettedMessage("controlevaladmin.message.sakai.admin.access.disabled", new Object[] {}, TargettedMessage.SEVERITY_INFO));
 			settings.set(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS, false);
 		}
 		
 		// if disabled, user is enabling access
 		else {
-			log.info("sakai admin access to evaluation system is enabled");
+			LOG.info("sakai admin access to evaluation system is enabled");
 			messages.addMessage(new TargettedMessage("controlevaladmin.message.sakai.admin.access.enabled", new Object[] {}, TargettedMessage.SEVERITY_INFO));
 			settings.set(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS, true);
 		}

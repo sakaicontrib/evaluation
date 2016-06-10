@@ -194,8 +194,8 @@ public class AdministrateSearchProducer extends EvalCommonProducer implements Vi
 				UIMessage.make(searchResults, "item-due-date-title", "administrate.search.list.due.date.title");
 				
 				//loop through the evaluations and get whatever we need for use in retrieving users, groups etc.. later
-				List<Long> evalIds = new ArrayList<Long>();  //keep the eval ids
-				Map<String, EvalUser> evalOwners = new HashMap<String, EvalUser>();  //keep the owner's Id and Sort name
+				List<Long> evalIds = new ArrayList<>();  //keep the eval ids
+				Map<String, EvalUser> evalOwners = new HashMap<>();  //keep the owner's Id and Sort name
 				
 				for(EvalEvaluation eval : evals){
 					evalOwners.put(eval.getOwner(), null);

@@ -174,7 +174,7 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     private EvalTemplate template;
 
-    private Set<EvalResponse> responses = new HashSet<EvalResponse>(0);
+    private Set<EvalResponse> responses = new HashSet<>(0);
 
     /**
      * Defines the sharing setting for the results of this evaluation, Uses the sharing constants:
@@ -204,7 +204,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
     private Boolean unregisteredAllowed;
 
-    private Boolean availableEmailSent = new Boolean(false);
+    private Boolean availableEmailSent = false;
 
     private Boolean locked;
 
@@ -230,6 +230,15 @@ public class EvalEvaluation implements java.io.Serializable {
      * {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
      */
     private String autoUseInsertion;
+
+    /**
+     * Controls whether or not the evaluation will be section aware. If this is set to true,
+     * evaluator's will only evaluate evaluatees that are in their section/roster in the
+     * site/group. Also, when creating the evaluation and releasing to HierarchyNodes, the
+     * creator will see a list of selectable sections that match the node rules, rather than
+     * a list of selectable sites if they elected not to make the evaluation section aware.
+     */
+    private Boolean sectionAwareness;
 
     // NON_PERSISTENT
 
@@ -302,7 +311,9 @@ public class EvalEvaluation implements java.io.Serializable {
     public EvalEvaluation() {
     }
 
-    /** COPY constructor - this MUST be updated if fields are added to this object **/
+    /** COPY constructor - this MUST be updated if fields are added to this object
+     * @param eval 
+     **/
     public EvalEvaluation(EvalEvaluation eval) {
         // construct evaluation from another one
         this.id = eval.id;
@@ -344,6 +355,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.sendAvailableNotifications = eval.sendAvailableNotifications;
         this.autoUseTag = eval.autoUseTag;
         this.autoUseInsertion = eval.autoUseInsertion;
+        this.sectionAwareness = eval.sectionAwareness;
         // NON_PERSISTENT
         this.customStartDate = eval.customStartDate;
         this.useDueDate = eval.useDueDate;
@@ -356,6 +368,14 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /**
      * minimal constructor
+     * @param type
+     * @param owner
+     * @param title
+     * @param startDate
+     * @param state
+     * @param resultsSharing
+     * @param reminderDays
+     * @param template
      */
     public EvalEvaluation(String type, String owner, String title, Date startDate, String state,
             String resultsSharing, Integer reminderDays, EvalTemplate template) {
@@ -364,6 +384,17 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /**
      * general use constructor
+     * @param type
+     * @param owner
+     * @param title
+     * @param dueDate
+     * @param startDate
+     * @param stopDate
+     * @param viewDate
+     * @param state
+     * @param resultsSharing
+     * @param reminderDays
+     * @param template
      */
     public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
             Date stopDate, Date viewDate, String state, String resultsSharing,
@@ -389,6 +420,36 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /**
      * full constructor without email flag
+     * @param type
+     * @param owner
+     * @param title
+     * @param instructions
+     * @param startDate
+     * @param dueDate
+     * @param stopDate
+     * @param viewDate
+     * @param studentViewResults
+     * @param studentsDate
+     * @param instructorViewResults
+     * @param instructorViewAllResults
+     * @param instructorsDate
+     * @param state
+     * @param resultsSharing
+     * @param instructorOpt
+     * @param reminderDays
+     * @param reminderFromEmail
+     * @param termId
+     * @param availableEmailTemplate
+     * @param reminderEmailTemplate
+     * @param template
+     * @param responses
+     * @param blankResponsesAllowed
+     * @param modifyResponsesAllowed
+     * @param unregisteredAllowed
+     * @param locked
+     * @param authControl
+     * @param evalCategory
+     * @param selectionSettings 
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
@@ -408,6 +469,37 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /**
      * full constructor without all rolls can participate
+     * @param type
+     * @param owner
+     * @param title
+     * @param instructions
+     * @param startDate
+     * @param dueDate
+     * @param stopDate
+     * @param viewDate
+     * @param studentViewResults
+     * @param studentsDate
+     * @param instructorViewResults
+     * @param instructorViewAllResults
+     * @param instructorsDate
+     * @param state
+     * @param resultsSharing
+     * @param instructorOpt
+     * @param reminderDays
+     * @param reminderFromEmail
+     * @param termId
+     * @param availableEmailTemplate
+     * @param reminderEmailTemplate
+     * @param template
+     * @param responses
+     * @param blankResponsesAllowed
+     * @param modifyResponsesAllowed
+     * @param unregisteredAllowed
+     * @param locked
+     * @param authControl
+     * @param evalCategory
+     * @param selectionSettings
+     * @param emailOpenNotification 
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
@@ -422,11 +514,95 @@ public class EvalEvaluation implements java.io.Serializable {
         this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
-                evalCategory, selectionSettings, Boolean.TRUE);
+                evalCategory, selectionSettings, Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * full constructor with sectionAware
+     * @param type
+     * @param owner
+     * @param title
+     * @param instructions
+     * @param startDate
+     * @param dueDate
+     * @param stopDate
+     * @param viewDate
+     * @param studentViewResults
+     * @param studentsDate
+     * @param instructorViewResults
+     * @param instructorViewAllResults
+     * @param instructorsDate
+     * @param state
+     * @param resultsSharing
+     * @param instructorOpt
+     * @param reminderDays
+     * @param reminderFromEmail
+     * @param termId
+     * @param availableEmailTemplate
+     * @param reminderEmailTemplate
+     * @param template
+     * @param responses
+     * @param blankResponsesAllowed
+     * @param modifyResponsesAllowed
+     * @param unregisteredAllowed
+     * @param locked
+     * @param authControl
+     * @param evalCategory
+     * @param selectionSettings
+     * @param emailOpenNotification
+     * @param sectionAwareness 
+     */
+    public EvalEvaluation( String type, String owner, String title, String instructions,
+            Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
+            Date studentsDate, Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate, String state,
+            String resultsSharing, String instructorOpt, Integer reminderDays,
+            String reminderFromEmail, String termId, EvalEmailTemplate availableEmailTemplate,
+            EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+            Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
+            Boolean unregisteredAllowed, Boolean locked, String authControl,
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness )
+    {
+        this( type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
+                resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+                responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
+                evalCategory, selectionSettings, Boolean.TRUE, sectionAwareness );
     }
 
     /**
      * full constructor
+     * @param type
+     * @param owner
+     * @param title
+     * @param instructions
+     * @param startDate
+     * @param dueDate
+     * @param stopDate
+     * @param viewDate
+     * @param studentViewResults
+     * @param studentsDate
+     * @param instructorViewResults
+     * @param instructorViewAllResults
+     * @param instructorsDate
+     * @param state
+     * @param resultsSharing
+     * @param instructorOpt
+     * @param reminderDays
+     * @param reminderFromEmail
+     * @param termId
+     * @param availableEmailTemplate
+     * @param reminderEmailTemplate
+     * @param template
+     * @param responses
+     * @param blankResponsesAllowed
+     * @param modifyResponsesAllowed
+     * @param unregisteredAllowed
+     * @param allRolesParticipate
+     * @param locked
+     * @param authControl
+     * @param evalCategory
+     * @param selectionSettings
+     * @param emailOpenNotification
+     * @param sectionAwareness 
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
@@ -436,7 +612,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean allRolesParticipate,  Boolean locked, String authControl,
-            String evalCategory, String selectionSettings, Boolean emailOpenNotification) {
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness) {
 
         this.lastModified = new Date();
         this.type = type;
@@ -471,6 +647,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.evalCategory = evalCategory;
         this.selectionSettings = selectionSettings;
         this.sendAvailableNotifications = emailOpenNotification;
+        this.sectionAwareness = sectionAwareness;
     }
 
     /**
@@ -609,6 +786,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
     /**
      * This will return the current reminder status based on the coded value in the evaluation
+     * @return 
      */
     public EvalReminderStatus getCurrentReminderStatus() {
         EvalReminderStatus rs;
@@ -768,6 +946,7 @@ public class EvalEvaluation implements java.io.Serializable {
     }
 
     /**
+     * @return 
      * @see #reminderDays
      */
     public Integer getReminderDays() {
@@ -775,6 +954,7 @@ public class EvalEvaluation implements java.io.Serializable {
     }
 
     /**
+     * @param reminderDays
      * @see #reminderDays
      */
     public void setReminderDays(Integer reminderDays) {
@@ -1020,5 +1200,19 @@ public class EvalEvaluation implements java.io.Serializable {
         this.localSelector = localSelector;
     }
 
-}
+    /**
+     * @return the sectionAware
+     */
+    public Boolean getSectionAwareness()
+    {
+        return this.sectionAwareness;
+    }
 
+    /**
+     * @param sectionAwareness the sectionAware to set
+     */
+    public void setSectionAwareness( Boolean sectionAwareness )
+    {
+        this.sectionAwareness = sectionAwareness;
+    }
+}

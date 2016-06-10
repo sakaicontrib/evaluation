@@ -660,3 +660,39 @@ evalsys.initFacebox = function(options) {
         }
     }
 };
+
+// Utility function to select/deselect all checkboxes of a given form
+evalsys.toggleCheckboxes = function( formName, checkToggle )
+{
+    var elements = document[formName].getElementsByTagName( "input" );
+    for( var i = 0; i < elements.length; i++ )
+    {
+        if( elements[i].type === "checkbox" )
+        {
+            elements[i].checked = checkToggle;
+        }
+    }
+};
+
+// Hack function to toggle new/old report format
+evalsys.toggleReportFormat = function( formName )
+{
+    var elements = document[formName].getElementsByTagName( "input" );
+    for( var i = 0; i < elements.length; i++ )
+    {
+        if( elements[i].type === "hidden" && elements[i].name === "el-binding" && elements[i].value.indexOf( "{reportExporterBean.newReportStyle}" ) !== -1 )
+        {
+            var newValue = "";
+            var oldValue = elements[i].value.substring( elements[i].value.indexOf( "}" ) + 1 );
+            if( oldValue.toLowerCase() === "true" )
+            {
+                newValue = "false";
+            }
+            else
+            {
+                newValue = "true";
+            }
+            elements[i].value = elements[i].value.substring( 0, elements[i].value.indexOf( "}" ) + 1 ) + newValue;
+        }
+    }
+};

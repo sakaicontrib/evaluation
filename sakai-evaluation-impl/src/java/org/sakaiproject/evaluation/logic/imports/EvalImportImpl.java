@@ -41,7 +41,6 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.imports.EvalImport;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -49,6 +48,11 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.exception.InUseException;
+import org.sakaiproject.exception.PermissionException;
+import org.sakaiproject.exception.ServerOverloadException;
+import org.sakaiproject.exception.TypeException;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 
@@ -61,9 +65,8 @@ import org.sakaiproject.tool.api.SessionManager;
  */
 public class EvalImportImpl implements EvalImport {
 
-    private static final Log log = LogFactory.getLog(EvalImportImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalImportImpl.class);
 
-    private final String SEPARATOR = "/";    // max-32:12345678901234567890123456789012
     private final String EVENT_SCALE_SAVE =           "eval.scale.import";
     private final String EVENT_SCALE_UPDATE =         "eval.scale.import.update";
     private final String EVENT_ITEM_SAVE =            "eval.item.import";
@@ -116,7 +119,7 @@ public class EvalImportImpl implements EvalImport {
 
     // error messages during processing to surface to UI 
     // TODO collecting parameter pattern
-    private List<String> messages = new ArrayList<String>();
+    private List<String> messages = new ArrayList<>();
 
     public void init() {
 
@@ -132,6 +135,7 @@ public class EvalImportImpl implements EvalImport {
      * Parse and save or update evaluation data found in an XML ContentResource
      * 
      * @param id The Reference id of the ContentResource
+     * @param userId
      * @return String error message(s)
      */
     public List<String> process(String id, String userId) {
@@ -140,8 +144,8 @@ public class EvalImportImpl implements EvalImport {
             //TODO add to audit trail
         }
         currentUserId = userId;
-        ContentResource resource = null;
-        Document doc = null;
+        ContentResource resource;
+        Document doc;
         InputStream in = null;
 
         //TODO getTime() of start and add to audit trail
@@ -164,12 +168,12 @@ public class EvalImportImpl implements EvalImport {
             saveOrUpdateAssignGroups(doc);
         }
         catch (JDOMException jde) {
-            log.error("There was a problem parsing the XML data. " + jde);
+            LOG.error("There was a problem parsing the XML data. " + jde);
             messages.add("There was a problem parsing the XML data. " + jde);
             //TODO add to audit trail
 
-        } catch (Exception e) {
-            log.error("There was a problem loading the XML data. " + e);
+        } catch (PermissionException | IdUnusedException | TypeException | ServerOverloadException | IOException e) {
+            LOG.error("There was a problem loading the XML data. " + e);
             messages.add("There was a problem loading the XML data. " + e);
             //TODO add to audit trail
         }
@@ -179,7 +183,7 @@ public class EvalImportImpl implements EvalImport {
                 try {
                     in.close();
                 } catch (IOException ioe) {
-                    log.error("Unable to close input stream. " + id + " " + ioe);
+                    LOG.error("Unable to close input stream. " + id + " " + ioe);
                     messages.add("Unable to close input stream. " + id + " " + ioe);
                     //TODO add to audit trail
                 }
@@ -190,8 +194,8 @@ public class EvalImportImpl implements EvalImport {
                 {
                     contentHostingService.removeResource(id);
                 }
-                catch(Exception e) {
-                    log.warn("There was a problem deleting the FilePickerHelper attachment that was created '" + id + "' " + e);
+                catch(PermissionException | IdUnusedException | TypeException | InUseException e) {
+                    LOG.warn("There was a problem deleting the FilePickerHelper attachment that was created '" + id + "' " + e);
                     messages.add("There was a problem deleting the FilePickerHelper attachment that was created '" + id + "' " + e);
                     //TODO add to audit trail
                 }
@@ -208,14 +212,16 @@ public class EvalImportImpl implements EvalImport {
      */
     protected void saveOrUpdateScales(Document doc) {
         String eid = null;
-        String event = null;
-        EvalScale scale = null;
+        String event;
+        EvalScale scale;
         int scalesSaved = 0;
         try {
             XPath docsPath = XPath.newInstance("/EVAL_DATA/EVAL_SCALES/EVAL_SCALE");
             List scales = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(scales.size() + " scales in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(scales.size() + " scales in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = scales.iterator(); iter.hasNext();) {
@@ -247,23 +253,24 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch(Exception e) {
-                    log.warn("EvalScale with eid '" + eid + "' was not saved/updated in the database " + e);
+                    LOG.warn("EvalScale with eid '" + eid + "' was not saved/updated in the database " + e);
                     messages.add("EvalScale with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
             }
-            if(log.isInfoEnabled())
-                log.info(new String(getTime()) + " " + new Integer(scalesSaved) + " EvalScales saved/updated");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(getTime() + " " + scalesSaved + " EvalScales saved/updated");
+            }
             //TODO add to audit trail
         }
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalScales. " + e);
+            LOG.error("There was a problem loading EvalScales. " + e);
             messages.add("There was a problem loading EvalScales. " + e);
             //TODO add to audit trail
         }
@@ -276,16 +283,18 @@ public class EvalImportImpl implements EvalImport {
      */
     protected void saveOrUpdateItems(Document doc) {
         String eid = null;
-        String event = null;
-        EvalItem item = null;
+        String event;
+        EvalItem item;
         int itemsSaved = 0;
 
         //TODO getTime() of start and add to audit trail
         try {
             XPath docsPath = XPath.newInstance("/EVAL_DATA/EVAL_ITEMS/EVAL_ITEM");
             List items = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(items.size() + " items in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(items.size() + " items in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = items.iterator(); iter.hasNext();) {
@@ -317,23 +326,24 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch(Exception e) {
-                    log.warn("EvalItem with eid '" + eid + "' was not saved/updated in the database " + e);
+                    LOG.warn("EvalItem with eid '" + eid + "' was not saved/updated in the database " + e);
                     messages.add("EvalItem with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
             }
-            if(log.isInfoEnabled())
-                log.info(new String(getTime()) + " " + new Integer(itemsSaved) + " EvalItems saved/updated");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(getTime() + " " + itemsSaved + " EvalItems saved/updated");
+            }
             //TODO add to audit trail
         }
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalItems. " + e);
+            LOG.error("There was a problem loading EvalItems. " + e);
             messages.add("There was a problem loading EvalItems. " + e);
             //TODO add to audit trail
         }
@@ -347,8 +357,8 @@ public class EvalImportImpl implements EvalImport {
      */
     protected void saveOrUpdateTemplates(Document doc) {
         String eid = null;
-        String event = null;
-        EvalTemplate template = null;
+        String event;
+        EvalTemplate template;
         int templatesSaved = 0;
 
         //TODO getTime() of start and add to audit trail
@@ -359,8 +369,10 @@ public class EvalImportImpl implements EvalImport {
              * to check if user can save template and avoid exceptions
              */
             List items = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(items.size() + " templates in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(items.size() + " templates in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = items.iterator(); iter.hasNext();) {
@@ -391,23 +403,24 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch(Exception e) {
-                    log.warn("EvalTemplate with eid '" + eid + "' was not saved/updated in the database " + e);
+                    LOG.warn("EvalTemplate with eid '" + eid + "' was not saved/updated in the database " + e);
                     messages.add("EvalTemplate with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
             }
-            if(log.isInfoEnabled())
-                log.info(new String(getTime()) + " " + new Integer(templatesSaved) + " EvalTemplates saved/updated");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(getTime() + " " + templatesSaved + " EvalTemplates saved/updated");
+            }
             //TODO add to audit trail
         } 
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalTemplates. " + e);
+            LOG.error("There was a problem loading EvalTemplates. " + e);
             messages.add("There was a problem loading EvalTemplates. " + e);
             //TODO add to audit trail
         }
@@ -421,13 +434,15 @@ public class EvalImportImpl implements EvalImport {
      */
     protected void saveOrUpdateTemplateItems(Document doc) {
         String eid = null;
-        String event = null;
+        String event;
         int templateItemsSaved = 0;
         try {
             XPath docsPath = XPath.newInstance("/EVAL_DATA/EVAL_TEMPLATEITEMS/EVAL_TEMPLATEITEM");
             List items = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(items.size() + " template items in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(items.size() + " template items in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = items.iterator(); iter.hasNext();) {
@@ -459,24 +474,27 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch(Exception e) {
-                    log.warn(e);
+                    LOG.warn(e);
                     if(eid != null)
-                        log.warn("EvalTemplateItem with eid '" + eid + "' was not saved/updated in the database " + e);
+                    {
+                        LOG.warn("EvalTemplateItem with eid '" + eid + "' was not saved/updated in the database " + e);
+                    }
                     messages.add("EvalTemplateItem with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
             }
-            if(log.isInfoEnabled())
-                log.info(new String(getTime()) + " " + new Integer(templateItemsSaved) + " EvalTemplateItems saved/updated");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(getTime() + " " + templateItemsSaved + " EvalTemplateItems saved/updated");
+            }
         } 
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalTemplateItems. " + e);
+            LOG.error("There was a problem loading EvalTemplateItems. " + e);
             messages.add("There was a problem loading EvalTemplateItems. " + e);
             //TODO add to audit trail
         }
@@ -489,8 +507,8 @@ public class EvalImportImpl implements EvalImport {
      */
     private void saveOrUpdateEvaluations(Document doc) {
         String eid = null;
-        String event = null;
-        EvalEvaluation evaluation = null;
+        String event;
+        EvalEvaluation evaluation;
         int evaluationsSaved = 0;
 
         //TODO getTime() of start and add to audit trail
@@ -501,8 +519,10 @@ public class EvalImportImpl implements EvalImport {
              * to check if user can save template and avoid exceptions
              */
             List evals = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(evals.size() + " evaluationSetupService in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(evals.size() + " evaluationSetupService in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = evals.iterator(); iter.hasNext();) {
@@ -535,24 +555,23 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch (Exception e) {
-                    log.warn("EvalEvaluation with eid '" + eid + "' was not saved/updated in the database " + e);
+                    LOG.warn("EvalEvaluation with eid '" + eid + "' was not saved/updated in the database " + e);
                     messages.add("EvalEvaluation with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
             }
-            if(log.isInfoEnabled()) {
-                log.info(new String(getTime()) + " " + new Integer(evaluationsSaved) + " EvalEvaluations saved/updated");
+            if(LOG.isInfoEnabled()) {
+                LOG.info(getTime() + " " + evaluationsSaved + " EvalEvaluations saved/updated");
             }
             //TODO add to audit trail
         }
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalEvaluations. " + e);
+            LOG.error("There was a problem loading EvalEvaluations. " + e);
             messages.add("There was a problem loading EvalEvaluations. " + e);
             //TODO add to audit trail
         }
@@ -567,7 +586,7 @@ public class EvalImportImpl implements EvalImport {
         //TODO getTime() of start and add to audit trail
 
         String eid = null;
-        String event = null;
+        String event;
         int assignGroupsSaved = 0;
         EvalAssignGroup evalAssignGroup;
         try {
@@ -577,8 +596,10 @@ public class EvalImportImpl implements EvalImport {
              * to check if user can save template and avoid exceptions
              */
             List evalAssignGroups = docsPath.selectNodes(doc);
-            if(log.isInfoEnabled())
-                log.info(evalAssignGroups .size() + " EvalAssignGroups in XML document");
+            if(LOG.isInfoEnabled())
+            {
+                LOG.info(evalAssignGroups .size() + " EvalAssignGroups in XML document");
+            }
             //TODO add to audit trail
 
             for(Iterator iter = evalAssignGroups .iterator(); iter.hasNext();) {
@@ -618,25 +639,24 @@ public class EvalImportImpl implements EvalImport {
                     }
                 }
                 catch(Exception e) {
-                    log.warn("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database " + e);
+                    LOG.warn("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database " + e);
                     messages.add("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database " + e);
                     //TODO add to audit trail
-                    continue;
                 }
 
             }
-            if(log.isInfoEnabled()) {
-                log.info(new String(getTime()) + " " + new Integer(assignGroupsSaved) + " EvalAssignGroups saved/updated");
+            if(LOG.isInfoEnabled()) {
+                LOG.info(getTime() + " " + assignGroupsSaved + " EvalAssignGroups saved/updated");
             }
             //TODO add to audit trail
         }
         catch (JDOMException jde) {
-            log.error("There was an error parsing the XML data. " + jde);
+            LOG.error("There was an error parsing the XML data. " + jde);
             messages.add("There was an error parsing the XML data. " + jde);
             //TODO add to audit trail
         }
         catch(Exception e) {
-            log.error("There was a problem loading EvalAssignGroups. " + e);
+            LOG.error("There was a problem loading EvalAssignGroups. " + e);
             messages.add("There was a problem loading EvalAssignGroups. " + e);
             //TODO add to audit trail
         }
@@ -652,15 +672,15 @@ public class EvalImportImpl implements EvalImport {
         String eid = null;
         try {
             eid = element.getChildText("EID");
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             String owner = element.getChildText("OWNER");
             String type = element.getChildText("TYPE");
             String title = element.getChildText("TITLE");
             String description = element.getChildText("DESCR");
             String sharing = element.getChildText("SHARING");
             String expertDescription = element.getChildText("EXPERTDESCR");
-            Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
+            Set<EvalTemplateItem> templateItems = new HashSet<>(0);
             EvalTemplate template = new EvalTemplate(owner, type, title, description, sharing,  expert, expertDescription,
                     templateItems, locked, false);
             template.setEid(eid);
@@ -686,9 +706,9 @@ public class EvalImportImpl implements EvalImport {
             template.setTitle(element.getChildText("TITLE"));
             template.setDescription(element.getChildText("DESCR"));
             template.setSharing(element.getChildText("SHARING"));
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             template.setLocked(locked);
-            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             template.setExpert(expert);
         }
         catch(Exception e) {
@@ -717,7 +737,7 @@ public class EvalImportImpl implements EvalImport {
                     displayOrder = Integer.parseInt((String)element.getChildText("DISPLAY_ORDER"));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -733,10 +753,10 @@ public class EvalImportImpl implements EvalImport {
             Long blockId = null;
             if((String)element.getChildText("BLOCK_ID") != null && !((String)element.getChildText("BLOCK_ID")).trim().equals("")){
                 try {
-                    blockId = new Long(Long.parseLong((String)element.getChildText("BLOCK_ID")));
+                    blockId = Long.parseLong((String)element.getChildText("BLOCK_ID"));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -744,7 +764,7 @@ public class EvalImportImpl implements EvalImport {
             Boolean blockParent = null;
             if((String)element.getChildText("BLOCK_PARENT") != null && !((String)element.getChildText("BLOCK_PARENT")).trim().equals("")){
                 if(((String)element.getChildText("BLOCK_PARENT")).trim().equals("1"))
-                    blockParent = new Boolean(Boolean.TRUE);
+                    blockParent = Boolean.TRUE;
             }
             String itemEid = element.getChildText("ITEM_EID");
             EvalItem item = authoringService.getItemByEid(itemEid);
@@ -752,7 +772,7 @@ public class EvalImportImpl implements EvalImport {
             EvalTemplate template = authoringService.getTemplateByEid(templateEid);
 
             Integer displayRows = null;
-            EvalScale scale = null;
+            EvalScale scale;
             String scaleDisplaySetting = null;
             String itemCategory = item.getCategory();
 
@@ -765,13 +785,13 @@ public class EvalImportImpl implements EvalImport {
                 {
                     scale = item.getScale();
                     if(scale == null) {
-                        log.warn("EvalScale is null for EvalTemplateItem with eid '" + eid + "' for EvalTemplate '" + template.getTitle());
+                        LOG.warn("EvalScale is null for EvalTemplateItem with eid '" + eid + "' for EvalTemplate '" + template.getTitle());
                         messages.add("EvalScale is null for EvalTemplateItem with eid '" + eid + "' for EvalTemplate '" + template.getTitle());
                         //TODO add to audit trail
                     }
                 }
                 else {
-                    log.warn("item is null for templateItem with eid '" + eid + "' for template '" + template.getTitle());
+                    LOG.warn("item is null for templateItem with eid '" + eid + "' for template '" + template.getTitle());
                     messages.add("EvalItem is null for EvalTemplateItem with eid '" + eid + "' for EvalTemplate '" + template.getTitle());
                     //TODO add to audit trail
                 }
@@ -781,7 +801,7 @@ public class EvalImportImpl implements EvalImport {
                         displayRows = Integer.parseInt(element.getChildText("DISPLAY_ROWS"));
                     }
                     catch(NumberFormatException e) {
-                        log.warn("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                        LOG.warn("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
                         messages.add("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
                         //TODO add to audit trail
                     }
@@ -811,10 +831,10 @@ public class EvalImportImpl implements EvalImport {
         String eid = null;
         try {
             eid = evalTemplateItem.getEid();
-            evalTemplateItem.setOwner(new String(element.getChildText("OWNER")));
-            evalTemplateItem.setResultsSharing(new String(element.getChildText("RESULTS_SHARING")));
+            evalTemplateItem.setOwner(element.getChildText("OWNER"));
+            evalTemplateItem.setResultsSharing(element.getChildText("RESULTS_SHARING"));
             evalTemplateItem.setHierarchyLevel(element.getChildText("HIERARCHY_LEVEL"));
-            evalTemplateItem.setHierarchyNodeId(new String(element.getChildText("HIERARCHY_NODE_ID")));
+            evalTemplateItem.setHierarchyNodeId(element.getChildText("HIERARCHY_NODE_ID"));
             Integer displayOrder = null;
             String displayOrderString = (String)element.getChildText("DISPLAY_ORDER");
             if(displayOrderString != null && !displayOrderString.trim().equals("")){
@@ -822,7 +842,7 @@ public class EvalImportImpl implements EvalImport {
                     displayOrder = Integer.parseInt((String)element.getChildText("DISPLAY_ORDER"));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -840,10 +860,10 @@ public class EvalImportImpl implements EvalImport {
             Long blockId = null;
             if((String)element.getChildText("BLOCK_ID") != null && !((String)element.getChildText("BLOCK_ID")).trim().equals("")){
                 try {
-                    blockId = new Long(Long.parseLong((String)element.getChildText("BLOCK_ID")));
+                    blockId = Long.parseLong((String)element.getChildText("BLOCK_ID"));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -853,7 +873,7 @@ public class EvalImportImpl implements EvalImport {
             Boolean blockParent = null;
             if((String)element.getChildText("BLOCK_PARENT") != null && !((String)element.getChildText("BLOCK_PARENT")).trim().equals("")){
                 if(((String)element.getChildText("BLOCK_PARENT")).trim().equals("1"))
-                    blockParent = new Boolean(Boolean.TRUE);
+                    blockParent = Boolean.TRUE;
             }
             evalTemplateItem.setBlockParent(blockParent);
 
@@ -868,8 +888,8 @@ public class EvalImportImpl implements EvalImport {
             String itemCategory = item.getCategory();
             evalTemplateItem.setCategory(itemCategory);
 
-            Integer displayRows = null;
-            String scaleDisplaySetting = null;
+            Integer displayRows;
+            String scaleDisplaySetting;
             //if not Essay type question
             if(!item.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
                 scaleDisplaySetting = (String)element.getChildText("SCALE_DISPLAY_SETTING");
@@ -882,7 +902,7 @@ public class EvalImportImpl implements EvalImport {
                         evalTemplateItem.setDisplayRows(displayRows);
                     }
                     catch(NumberFormatException e) {
-                        log.warn("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
+                        LOG.warn("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
                         messages.add("There was a problem with DISPLAY_ROWS involving EvalTemplateItem with eid '" + eid + "'. " + e);
                         //TODO add to audit trail
                     }
@@ -906,11 +926,11 @@ public class EvalImportImpl implements EvalImport {
             eid = element.getChildText("EID");
             String title = element.getChildText("TITLE");
             String [] choices = null;
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
 
             //set options
-            HashMap<Integer, String> order = new HashMap<Integer, String>();
+            HashMap<Integer, String> order = new HashMap<>();
             Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
             List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
             if(options != null && !options.isEmpty()) {
@@ -922,12 +942,14 @@ public class EvalImportImpl implements EvalImport {
                     order.put(key, value);
                 }
                 for (int i = 0; i < choices.length; i++) {
-                    choices[i] = (String)order.get(new Integer(i));
+                    choices[i] = (String)order.get(i);
                 }
             }
             else {
-                if(log.isWarnEnabled())
-                    log.warn("No options were found for EvalScale with eid '" + eid + "' " + title);
+                if(LOG.isWarnEnabled())
+                {
+                    LOG.warn("No options were found for EvalScale with eid '" + eid + "' " + title);
+                }
                 messages.add("No options were found for EvalScale with eid '" + eid + "' " + title);
                 //TODO add to audit trail
             }
@@ -960,17 +982,25 @@ public class EvalImportImpl implements EvalImport {
             scale.setTitle(element.getChildText("TITLE"));
             scale.setSharing(element.getChildText("SHARING"));
             if(element.getChildText("EXPERT").trim().equals("1"))
-                scale.setExpert(new Boolean(Boolean.TRUE));
+            {
+                scale.setExpert(Boolean.TRUE);
+            }
             else
-                scale.setExpert(new Boolean(Boolean.FALSE));
+            {
+                scale.setExpert(Boolean.FALSE);
+            }
             scale.setExpertDescription(element.getChildText("EXPERT_DESCRIPTION"));
             scale.setIdeal(element.getChildText("IDEAL"));
             if(element.getChildText("LOCKED").trim().equals("1"))
-                scale.setLocked(new Boolean(Boolean.TRUE));
+            {
+                scale.setLocked(Boolean.TRUE);
+            }
             else
-                scale.setLocked(new Boolean(Boolean.FALSE));
+            {
+                scale.setLocked(Boolean.FALSE);
+            }
             //set options
-            HashMap<Integer, String> order = new HashMap<Integer, String>();
+            HashMap<Integer, String> order = new HashMap<>();
             Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
             List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
             if(options != null && !options.isEmpty()) {
@@ -982,13 +1012,15 @@ public class EvalImportImpl implements EvalImport {
                     order.put(key, value);
                 }
                 for (int i = 0; i < choices.length; i++) {
-                    choices[i] = (String)order.get(new Integer(i));
+                    choices[i] = (String)order.get(i);
                 }
                 scale.setOptions(choices);
             }
             else {
-                if(log.isWarnEnabled())
-                    log.warn("No options were found for EvalScale with eid '" + scale.getEid() + "' " + scale.getTitle());
+                if(LOG.isWarnEnabled())
+                {
+                    LOG.warn("No options were found for EvalScale with eid '" + scale.getEid() + "' " + scale.getTitle());
+                }
                 messages.add("No options were found for EvalScale with eid '" + scale.getEid() + "' " + scale.getTitle());
                 //TODO add to audit trail
             }
@@ -1011,16 +1043,16 @@ public class EvalImportImpl implements EvalImport {
             EvalScale scale;
             String scaleDisplaySetting;
             Integer displayRows = null;
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean usesNA = element.getChildText("USES_NA").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean usesNA = element.getChildText("USES_NA").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             String displayRowsString = element.getChildText("DISPLAY_ROWS");
             if(displayRowsString != null && !displayRowsString.trim().equals("")){
                 try {
                     displayRows = Integer.parseInt(element.getChildText("DISPLAY_ROWS"));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -1038,13 +1070,13 @@ public class EvalImportImpl implements EvalImport {
                 {
                     scale = authoringService.getScaleByEid(scaleEid);
                     if(scale == null) {
-                        log.warn("EvalScale is null for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
+                        LOG.warn("EvalScale is null for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
                         messages.add("EvalScale is null for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
                         //TODO add to audit trail
                     }
                 }
                 else {
-                    log.warn("Could not get EvalScale by eid for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
+                    LOG.warn("Could not get EvalScale by eid for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
                     messages.add("Could not get EvalScale by eid for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
                     //TODO add to audit trail
                 }
@@ -1055,7 +1087,7 @@ public class EvalImportImpl implements EvalImport {
             String classification = element.getChildText("CLASSIFICATION");
             String expertDescription = element.getChildText("EXPERT_DESCRIPTION");
             String category = element.getChildText("CATEGORY");
-            Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
+            Set<EvalTemplateItem> templateItems = new HashSet<>(0);
 
             //new item
             EvalItem item = new EvalItem(currentUserId, itemText, description, sharing, classification, expert, expertDescription,
@@ -1086,29 +1118,33 @@ public class EvalImportImpl implements EvalImport {
             item.setSharing(element.getChildText("SHARING"));
             item.setClassification(element.getChildText("CLASSIFICATION"));
 
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             item.setLocked(locked);
-            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             item.setExpert(expert);
-            Boolean usesNA = element.getChildText("USES_NA").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean usesNA = element.getChildText("USES_NA").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             item.setUsesNA(usesNA);
 
             String displayRows = element.getChildText("DISPLAY_ROWS");
             if(displayRows != null && !displayRows.trim().equals("")){
                 try {
-                    item.setDisplayRows(new Integer(Integer.parseInt(element.getChildText("DISPLAY_ROWS"))));
+                    item.setDisplayRows(Integer.parseInt(element.getChildText("DISPLAY_ROWS")));
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + item.getEid() + "'. " + e);
+                    LOG.warn("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + item.getEid() + "'. " + e);
                     messages.add("There was a problem with DISPLAY_ROWS involving EvalItem with eid '" + item.getEid() + "'. " + e);
                     //TODO add to audit trail
                 }
             }
             item.setCategory(element.getChildText("CATEGORY"));
             if(element.getChildText("LOCKED").trim().equals("1"))
-                item.setLocked(new Boolean(Boolean.TRUE));
+            {
+                item.setLocked(Boolean.TRUE);
+            }
             else
-                item.setLocked(new Boolean(Boolean.FALSE));
+            {
+                item.setLocked(Boolean.FALSE);
+            }
 
             //if not Essay type question
             if(!item.getCategory().equals(EvalConstants.ITEM_TYPE_TEXT)) {
@@ -1123,13 +1159,13 @@ public class EvalImportImpl implements EvalImport {
                         item.setScale(scale);
                     }
                     else {
-                        log.warn("Could not get EvalScale with eid '" + scaleEid + "' for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
+                        LOG.warn("Could not get EvalScale with eid '" + scaleEid + "' for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
                         messages.add("Could not get EvalScale with eid '" + scaleEid + "' for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
                         //TODO add to audit trail
                     }
                 }
                 else {
-                    log.warn("Could not get EvalScale by eid for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
+                    LOG.warn("Could not get EvalScale by eid for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
                     messages.add("Could not get EvalScale by eid for EvalItem with eid '" + item.getEid() + "' " + item.getItemText());
                     //TODO add to audit trail
                 }
@@ -1151,13 +1187,13 @@ public class EvalImportImpl implements EvalImport {
         try {
             eid = element.getChildText("EID");
             if(eid == null || "".equals(eid)) {
-                log.warn("EvalAssignGroup was not saved/updated in the database, because eid was missing.");
+                LOG.warn("EvalAssignGroup was not saved/updated in the database, because eid was missing.");
                 messages.add("EvalAsignGroup was not saved/updated in the database, because eid was missing.");
                 //TODO add to audit trail
             }
             String providerId = element.getChildText("PROVIDER_ID");
             if(providerId == null || "".equals(providerId)) {
-                log.warn("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database, because provider id was missing.");
+                LOG.warn("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database, because provider id was missing.");
                 messages.add("EvalAssignGroup with eid '" + eid + "' was not saved/updated in the database, because provider id was missing.");
                 //TODO add to audit trail
             }
@@ -1165,9 +1201,9 @@ public class EvalImportImpl implements EvalImport {
             String groupType = element.getChildText("GROUP_TYPE");
             String evalEid = element.getChildText("EVAL_EVALUATION_EID");
             EvalEvaluation evaluation = evaluationService.getEvaluationByEid(evalEid);
-            Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
 
             //new EvalAssignGroup
             EvalAssignGroup evalAssignGroup = new EvalAssignGroup(owner, providerId, groupType,
@@ -1191,17 +1227,17 @@ public class EvalImportImpl implements EvalImport {
         try {
             eid = element.getChildText("EID");
             evalAssignGroup.setEid(eid);
-            Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             EvalEvaluation evaluation = evaluationService.getEvaluationByEid(element.getChildText("EVALUATION_EID"));
             evalAssignGroup.setEvaluation(evaluation);
-            evalAssignGroup.setEvalGroupType(new String(element.getChildText(element.getChildText("GROUP_TYPE"))));
-            evalAssignGroup.setEvalGroupId(new String(element.getChildText(element.getChildText("PROVIDER_ID"))));
+            evalAssignGroup.setEvalGroupType(element.getChildText(element.getChildText("GROUP_TYPE")));
+            evalAssignGroup.setEvalGroupId(element.getChildText(element.getChildText("PROVIDER_ID")));
             evalAssignGroup.setInstructorApproval(instructorApproval);
             evalAssignGroup.setInstructorsViewResults(instructorsViewResults);
             evalAssignGroup.setLastModified(new Date());
-            evalAssignGroup.setOwner(new String(element.getChildText("OWNER")));
+            evalAssignGroup.setOwner(element.getChildText("OWNER"));
             evalAssignGroup.setStudentsViewResults(studentsViewResults);
         }
         catch(Exception e) {
@@ -1218,12 +1254,10 @@ public class EvalImportImpl implements EvalImport {
     private EvalEvaluation newEvaluation(Element element) {
         String eid = null;
         try {
-            eid = element.getChildText("EID");
             String state = null;
-            EvalTemplate addedTemplate = null;
             eid = element.getChildText("EID");
             if(eid == null || "".equals(eid)) {
-                log.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
+                LOG.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
                 messages.add("EvalEvaluation was not saved/updated in the database, because eid was missing.");
                 //TODO add to audit trail
             }
@@ -1261,7 +1295,7 @@ public class EvalImportImpl implements EvalImport {
                     reminderDays = Integer.parseInt(reminderDaysString);
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
@@ -1274,16 +1308,10 @@ public class EvalImportImpl implements EvalImport {
             String authControl = element.getChildText("AUTH_CONTROL");
             String evalCategory = element.getChildText("EVAL_CATEGORY");
 
-            Boolean resultsPrivate = element.getChildText("RESULTS_PRIVATE").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean blankResponsesAllowed = element.getChildText("BLANK_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean modifyResponsesAllowed = element.getChildText("MODIFY_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-
-            String resultsPrivacy = EvalConstants.SHARING_VISIBLE;
-            if (resultsPrivate) {
-                resultsPrivacy = EvalConstants.SHARING_PRIVATE;
-            }
+            Boolean blankResponsesAllowed = element.getChildText("BLANK_RESPONSES_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean modifyResponsesAllowed = element.getChildText("MODIFY_RESPONSES_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
 
             //new evaluation
             EvalEvaluation evaluation = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, owner, title, instructions, startDate, dueDate,
@@ -1310,7 +1338,7 @@ public class EvalImportImpl implements EvalImport {
         try {
             eid = element.getChildText("EID");
             if(eid == null || "".equals(eid)) {
-                log.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
+                LOG.warn("EvalEvaluation was not saved/updated in the database, because eid was missing.");
                 messages.add("EvalEvaluation was not saved/updated in the database, because eid was missing.");
                 throw new IllegalArgumentException("Eid missing for EvalEvaluation");
                 //TODO add to audit trail
@@ -1324,8 +1352,8 @@ public class EvalImportImpl implements EvalImport {
 				//TODO add to audit trail
 			}
              */
-            evaluation.setTitle(new String(element.getChildText("TITLE")));
-            evaluation.setOwner(new String(element.getChildText("OWNER")));
+            evaluation.setTitle(element.getChildText("TITLE"));
+            evaluation.setOwner(element.getChildText("OWNER"));
             evaluation.setStartDate(getDate(element.getChildText("START_DATE")));
             evaluation.setDueDate(getDate(element.getChildText("DUE_DATE")));
             evaluation.setStopDate(getDate(element.getChildText("STOP_DATE")));
@@ -1333,15 +1361,15 @@ public class EvalImportImpl implements EvalImport {
             evaluation.setStudentsDate(getDate(element.getChildText("STUDENTS_DATE")));
             evaluation.setInstructorsDate(getDate(element.getChildText("INSTRUCTORS_DATE")));
 
-            Boolean resultsPrivate = element.getChildText("RESULTS_PRIVATE").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean resultsPrivate = element.getChildText("RESULTS_PRIVATE").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             String resultsPrivacy = EvalConstants.SHARING_VISIBLE;
             if (resultsPrivate) {
                 resultsPrivacy = EvalConstants.SHARING_PRIVATE;
             }
-            Boolean blankResponsesAllowed = element.getChildText("BLANK_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean modifyResponsesAllowed = element.getChildText("MODIFY_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-            Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+            Boolean blankResponsesAllowed = element.getChildText("BLANK_RESPONSES_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean modifyResponsesAllowed = element.getChildText("MODIFY_RESPONSES_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
+            Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             evaluation.setResultsSharing(resultsPrivacy);
             evaluation.setBlankResponsesAllowed(blankResponsesAllowed);
             evaluation.setModifyResponsesAllowed(modifyResponsesAllowed);
@@ -1371,20 +1399,20 @@ public class EvalImportImpl implements EvalImport {
                     reminderDays = Integer.parseInt(reminderDaysString);
                 }
                 catch(NumberFormatException e) {
-                    log.warn("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
+                    LOG.warn("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
                     messages.add("There was a problem with REMINDER_DAYS involving EvalEvaluation with eid '" + eid + "'. " + e);
                     //TODO add to audit trail
                 }
             }
             evaluation.setReminderDays(reminderDays);
-            evaluation.setReminderFromEmail(new String(element.getChildText("REMINDER_FROM_EMAIL")));
+            evaluation.setReminderFromEmail(element.getChildText("REMINDER_FROM_EMAIL"));
             String termId = element.getChildText("TERM_ID");
             if( termId == null || termId.trim().equals("")){
                 termId = null;
             }
             evaluation.setTermId(termId);
-            evaluation.setAuthControl(new String(element.getChildText("AUTH_CONTROL")));
-            evaluation.setEvalCategory(new String(element.getChildText("EVAL_CATEGORY")));
+            evaluation.setAuthControl(element.getChildText("AUTH_CONTROL"));
+            evaluation.setEvalCategory(element.getChildText("EVAL_CATEGORY"));
         }
         catch(Exception e) {
             throw new RuntimeException("setEvaluationProperties() eid '" + eid + "' " + e);
@@ -1406,7 +1434,7 @@ public class EvalImportImpl implements EvalImport {
         try {
             return df.parse(dateString);
         } catch (ParseException pe) {
-            log.warn("Invalid date: " + dateString);
+            LOG.warn("Invalid date: " + dateString);
             return null;
         }
     }
@@ -1418,7 +1446,7 @@ public class EvalImportImpl implements EvalImport {
      */
     protected String getTime()
     {
-        String now = null;
+        String now;
         long millis = System.currentTimeMillis();
         cal.setTimeInMillis(millis);
         now = formatter.format(cal.getTime());

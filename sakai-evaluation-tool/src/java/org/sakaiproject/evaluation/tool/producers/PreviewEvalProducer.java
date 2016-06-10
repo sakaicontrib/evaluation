@@ -46,7 +46,6 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -129,8 +128,8 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
 
         Long evaluationId = previewEvalViewParams.evaluationId;
         Long templateId = previewEvalViewParams.templateId;
-        String evalGroupId = previewEvalViewParams.evalGroupId;
-        EvalEvaluation eval = null;
+        String evalGroupId;
+        EvalEvaluation eval;
 
         if (! previewEvalViewParams.external) {
             UIInternalLink.make(tofill, "summary-link", 
@@ -146,8 +145,7 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
             // create a fake evaluation
             eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId, 
                     messageLocator.getMessage("previeweval.evaluation.title.default"), 
-                    new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE,
-                    Integer.valueOf(1), template);
+                    new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 1, template);
             eval.setInstructions(messageLocator.getMessage("previeweval.instructions.default"));
         } else {
             // previewing an evaluation
@@ -162,35 +160,35 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
         EvalAssignGroup group = null;
         String groupDisplayTitle = null;
         Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
-        if (useGroupSpecificPreview.booleanValue() && evaluationId != null) {
+        if (useGroupSpecificPreview && evaluationId != null) {
         	int groupCount = this.evaluationService.countEvaluationGroups(evaluationId, true);
         	if (groupCount == 0) {
-        		useGroupSpecificPreview = new Boolean(false);
+        		useGroupSpecificPreview = false;
         	} else if(groupCount == 1) {
         		Map<Long, List<EvalAssignGroup>> groupMap = this.evaluationService.getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
         		List<EvalAssignGroup> groups = groupMap.get(evaluationId);
         		if(groups == null || groups.isEmpty()){
-        			useGroupSpecificPreview = new Boolean(false);
+        			useGroupSpecificPreview = false;
         		} else {
         			group = groups.get(0);
         			evalGroupId = group.getEvalGroupId();
         			if(evalGroupId == null) {
         				// the group is unreliable and the default group-title will be used
         				group = null;
-        				useGroupSpecificPreview = new Boolean(false);
+        				useGroupSpecificPreview = false;
         			} else {
         				groupDisplayTitle = commonLogic.getDisplayTitle(evalGroupId);
         				if(groupDisplayTitle == null) {
             				// the group is unreliable, but the group-id can be used in place of a group title
             				group = null;
             				groupDisplayTitle = evalGroupId;
-            				useGroupSpecificPreview = new Boolean(false);
+            				useGroupSpecificPreview = false;
         				}
         			}
         		}
         	} else {
         		// TODO: provide mechanism to select group to preview
-        		useGroupSpecificPreview = new Boolean(false);
+        		useGroupSpecificPreview = false;
         	}
         }
     	
@@ -225,18 +223,18 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
                 List<EvalHierarchyNode> hierarchyNodes = TemplateItemDataList.makeEvalNodesList(allItems, hierarchyLogic);
 
                 // make up 2 fake instructors for this evaluation (to show the instructor added items)
-                List<String> instructors = new ArrayList<String>();
+                List<String> instructors = new ArrayList<>();
                 instructors.add("fake1");
                 instructors.add("fake2");
 
                 // make the TI data structure
-                Map<String, List<String>> associates = new HashMap<String, List<String>>();
+                Map<String, List<String>> associates = new HashMap<>();
                 associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
                 
                 // add in the TA list if it is enabled
                 Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                 if (taEnabled.booleanValue()) {
-                    List<String> teachingAssistants = new ArrayList<String>();
+                    List<String> teachingAssistants = new ArrayList<>();
                     teachingAssistants.add("fake1");
                     teachingAssistants.add("fake2");
                     associates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, teachingAssistants);

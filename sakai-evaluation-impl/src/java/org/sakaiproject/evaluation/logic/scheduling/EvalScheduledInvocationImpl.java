@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob.EvalIdType;
  */
 public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 
-    private static Log log = LogFactory.getLog(EvalScheduledInvocationImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalScheduledInvocationImpl.class);
 
     private EvalJobLogic evalJobLogic;
     public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
@@ -49,7 +49,9 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
             throw new IllegalStateException("Invalid opaqueContext (null or empty), something has failed in the job scheduler");
         }
 
-        if(log.isDebugEnabled()) log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
+        }
 
         // opaqueContext provides evaluation id and job type.
         EvalIdType eit = EvalScheduledJob.decodeContextId(opaqueContext);

@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -57,7 +56,7 @@ public class HierarchyNodeLocator implements WriteableBeanLocator {
         this.hierarchyLogic = hierarchyLogic;
     }
 
-    public Map<String, EvalHierarchyNode> delivered = new HashMap<String, EvalHierarchyNode>();
+    public Map<String, EvalHierarchyNode> delivered = new HashMap<>();
 
     public Object locateBean(String name) {
         checkSecurity();
@@ -77,8 +76,8 @@ public class HierarchyNodeLocator implements WriteableBeanLocator {
     public void saveAll() {
         checkSecurity();
 
-        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-            String key = it.next();
+        for( String key : delivered.keySet() )
+        {
             EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
             if (key.startsWith(HierarchyNodeLocator.NEW_PREFIX)) {
                 String[] parts = key.split("-");

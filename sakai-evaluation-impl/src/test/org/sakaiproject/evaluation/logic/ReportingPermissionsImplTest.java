@@ -95,7 +95,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    // protected methods
    @Test
    public void testGetEvalGroupIdsForUserRole() {
-      Set<String> evalGroupIds = null;
+      Set<String> evalGroupIds;
 
       // check for active eval
       evalGroupIds = reportingPermissions.getEvalGroupIdsForUserRole(etdl.evaluationActive.getId(), 
@@ -132,8 +132,8 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    
    @Test
    public void testGetViewableGroupsForEvalAndUserByRole() {
-      Set<String> evalGroupIds = null;
-      EvalEvaluation eval = null;
+      Set<String> evalGroupIds;
+      EvalEvaluation eval;
 
       settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
@@ -206,8 +206,8 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testGetViewableGroupsForEvalAndUserByRole_activeIgnoreViewDates() {
-	  Set<String> evalGroupIds = null;
-	  EvalEvaluation eval = null;
+	  Set<String> evalGroupIds;
+	  EvalEvaluation eval;
 
 	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
 	  /*
@@ -234,8 +234,8 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testGetViewableGroupsForEvalAndUserByRole_dueIgnoreViewDates() {
-	  Set<String> evalGroupIds = null;
-	  EvalEvaluation eval = null;
+	  Set<String> evalGroupIds;
+	  EvalEvaluation eval;
 
 	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
 	  /*
@@ -263,8 +263,8 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    @Test
    public void testGetViewableGroupsForEvalAndUserByRole_closedIgnoreViewDates() {
 	
-	  Set<String> evalGroupIds = null;
-	  EvalEvaluation eval = null;
+	  Set<String> evalGroupIds;
+	  EvalEvaluation eval;
 
 	  settings.set(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES, true);
 	  /*
@@ -293,7 +293,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testCanViewEvaluationResponses() {
-      boolean allowed = false;
+      boolean allowed;
 
       settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
@@ -332,7 +332,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    }
    @Test
    public void testChooseGroupsPartialCheckEvalEvaluation() {
-      Set<String> evalGroupIds = null;
+      Set<String> evalGroupIds;
 
       settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
       settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);

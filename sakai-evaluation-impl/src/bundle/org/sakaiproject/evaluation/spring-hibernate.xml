@@ -35,6 +35,7 @@
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
+                <value>org/sakaiproject/evaluation/dao/hbm/EvalHierarchyRule.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
                 <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
@@ -68,6 +69,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
                 <value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
                 <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>
+                <value>org.sakaiproject.evaluation.model.EvalHierarchyRule</value>
                 <value>org.sakaiproject.evaluation.model.EvalItem</value>
                 <value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
                 <value>org.sakaiproject.evaluation.model.EvalLock</value>
@@ -101,6 +103,11 @@
 		class="org.sakaiproject.evaluation.dao.EvalAdminSupportImpl">
 		<property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 	</bean>
+
+    <bean id="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport"
+        class="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupportImpl">
+        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+    </bean>
 
     <!-- handles api based retrieval of application settings,
         this is in here because adhoc-dao-support needs it -->
@@ -148,7 +155,8 @@
             <list>
                 <value>org.sakaiproject.evaluation.dao.EvaluationDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
-				<value>org.sakaiproject.evaluation.dao.EvalAdminSupport</value>
+                <value>org.sakaiproject.evaluation.dao.EvalAdminSupport</value>
+                <value>org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport</value>
                 <value>org.sakaiproject.evaluation.logic.Eval*</value>
                 <value>org.sakaiproject.evaluation.beans.Eval*</value>
                 <value>org.sakaiproject.evaluation.logic.import.Eval*</value>

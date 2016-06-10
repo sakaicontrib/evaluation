@@ -49,6 +49,14 @@
     </p>
     -->
     <form rsf:id="assign-groups-form">
+
+        <div class="action" style="margin-bottom: 5px;">
+            <span class="cancelButton">
+                <a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button1" class="active" accesskey="s" style="float: right;" />
+            </span>
+        </div>
+
         <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
             <thead>
                 <tr>
@@ -57,6 +65,7 @@
                         <span rsf:id="select-header">Select</span>
                     </th>
                     <th rsf:id="title-header">Title</th>
+                    <th rsf:id="sections-header">Sections</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,13 +76,16 @@
                     <td>
                         <label rsf:id="group-title">Group Title</label>
                     </td>
+                    <td><label rsf:id="sections">List of sections goes here...</label></td>
                 </tr>
             </tbody>
         </table>
-        <p class="act"> 
-            <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button" class="active" accesskey="s" />
-            <a href="" rsf:id="cancel-link">Cancel</a> 
-        </p>    
+        <div class="action">
+            <span class="cancelButton">
+                <a href="#" rsf:id="return-link2">Return to Control Hierarchy</a>
+                <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button2" class="active" accesskey="s" style="float: right;" />
+            </span>
+        </div>
     </form>
 </div>
 <script>

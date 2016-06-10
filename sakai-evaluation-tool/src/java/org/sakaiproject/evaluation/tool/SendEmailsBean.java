@@ -14,12 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool;
 
-import java.util.HashMap;
-import org.sakaiproject.email.api.EmailMessage;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -60,6 +57,7 @@ public class SendEmailsBean {
 
     /**
      * Handles the email sending action
+     * @return 
      */
     public String sendEmailAction() {
         if (evaluationId == null) {

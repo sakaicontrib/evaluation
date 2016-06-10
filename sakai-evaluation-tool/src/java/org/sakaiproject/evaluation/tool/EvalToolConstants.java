@@ -258,7 +258,7 @@ public class EvalToolConstants {
     /**
      * The default number of rows to use when displaying a textarea type input box
      */
-    public static final Integer DEFAULT_ROWS = new Integer(2);
+    public static final Integer DEFAULT_ROWS = 2;
 
     // For main administrative page
     /**
@@ -309,7 +309,7 @@ public class EvalToolConstants {
     /**
      * Ideal scale values radio buttons (scale add/modify)
      */
-    public static final String[] scaleIdealValues = { 
+    public static final String[] SCALE_IDEA_VALUES = { 
         NULL, // EvalConstants.SCALE_IDEAL_NONE, TODO - undo this when RSF 0.7.3
         EvalConstants.SCALE_IDEAL_LOW, 
         EvalConstants.SCALE_IDEAL_HIGH,
@@ -320,7 +320,7 @@ public class EvalToolConstants {
     /**
      * Ideal scale values radio button labels (scale add/modify)
      */
-    public static final String[] scaleIdealLabels = {
+    public static final String[] SCALE_IDEAL_LABELS = {
         "controlscales.ideal.scale.option.label.none", 
         "controlscales.ideal.scale.option.label.low",
         "controlscales.ideal.scale.option.label.high", 
@@ -331,7 +331,7 @@ public class EvalToolConstants {
     /**
      * The initial values for the options of a scale which is being created
      */
-    public static final String[] defaultInitialScaleValues = new String[] {"",""};
+    public static final String[] DEFAULT_INITIAL_SCALE_VALUES = new String[] {"",""};
 
 
     /**
@@ -451,5 +451,43 @@ public class EvalToolConstants {
     	"modifynodeperms.perm.assign.eval",
     };
 
-}
+    /**
+     * Defines the options for the site/section drop down
+     */
+    public static final String[] HIERARCHY_RULE_OPTION_VALUES =
+    {
+        EvalConstants.HIERARCHY_RULE_SITE,
+        EvalConstants.HIERARCHY_RULE_SECTION
+    };
 
+    /**
+     * Defines the labels for the site/section drop down
+     */
+    public static final String[] HIERARCHY_RULE_OPTION_LABELS =
+    {
+        "modifynoderules.criterion.site.title",
+        "modifynoderules.criterion.section.title"
+    };
+
+    /**
+     * Defines the options for rule qualifier drop down
+     */
+    public static final String[] HIERARCHY_RULE_QUALIFIER_VALUES = 
+    {
+        EvalConstants.HIERARCHY_QUALIFIER_CONTAINS,
+        EvalConstants.HIERARCHY_QUALIFIER_STARTS_WITH,
+        EvalConstants.HIERARCHY_QUALIFIER_ENDS_WITH,
+        EvalConstants.HIERARCHY_QUALIFIER_IS
+    };
+
+    /**
+     * Defines the labels for rule qualifier drop down
+     */
+    public static final String[] HIERARCHY_RULE_QUALIFIER_LABELS = 
+    {
+        "modifynoderules.criterion.options.contains",
+        "modifynoderules.criterion.options.startsWith",
+        "modifynoderules.criterion.options.endsWith",
+        "modifynoderules.criterion.options.is"
+    };
+}

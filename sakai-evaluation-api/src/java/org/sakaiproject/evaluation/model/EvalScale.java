@@ -77,12 +77,30 @@ public class EvalScale implements java.io.Serializable {
     public EvalScale() {
     }
 
-    /** minimal constructor */
+    /** 
+     * minimal constructor
+     * @param owner
+     * @param title
+     * @param mode
+     * @param sharing
+     * @param expert 
+     */
     public EvalScale(String owner, String title, String mode, String sharing, Boolean expert) {
         this(owner, title, mode, sharing, expert, null, null, null, Boolean.FALSE);
     }
 
-    /** full constructor */
+    /** 
+     * full constructor
+     * @param owner
+     * @param title
+     * @param mode
+     * @param sharing
+     * @param expert
+     * @param expertDescription
+     * @param ideal
+     * @param options
+     * @param locked 
+     */
     public EvalScale(String owner, String title, String mode, String sharing, Boolean expert, String expertDescription, 
             String ideal, String[] options, Boolean locked) {
         this.lastModified = new Date();
@@ -194,6 +212,7 @@ public class EvalScale implements java.io.Serializable {
      * Indicates that this is a copy of an item and therefore should be hidden from views and 
      * only revealed when taking/previewing (not as part of item banks, etc.),
      * this will be the id of the persistent object it is a copy of
+     * @param copyOf
      */
     public void setCopyOf(Long copyOf) {
         this.copyOf = copyOf;
@@ -207,6 +226,7 @@ public class EvalScale implements java.io.Serializable {
      * Should match the constants:
      * {@link EvalConstants#SCALE_MODE_ADHOC} for scales used in MA/MC items<br/>
      * {@link EvalConstants#SCALE_MODE_SCALE} for reusable scales for scaled items
+     * @param mode
      */
     public void setMode(String mode) {
         this.mode = mode;

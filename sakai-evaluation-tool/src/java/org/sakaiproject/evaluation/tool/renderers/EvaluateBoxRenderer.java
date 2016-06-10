@@ -16,7 +16,6 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,9 +93,8 @@ public class EvaluateBoxRenderer {
             UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", "hello");
             UIOutput.make(evalrow, "evaluationTitleTitle", "Evaluation");
 
-            for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
-                EvalEvaluation eval = (EvalEvaluation) itEvals.next();
-
+            for( EvalEvaluation eval : evalsToTake )
+            {
                 // make sure state is up to date http://jira.sakaiproject.org/browse/EVALSYS-1013
                 String evalState = evaluationService.returnAndFixEvalState(eval, true); 
                 // skip evaluations that are in a non-active state
@@ -112,15 +110,15 @@ public class EvaluateBoxRenderer {
 
                     String groupId = group.evalGroupId;
                     String title = humanDateRenderer.renderEvalTitle(eval, group);// EvalUtils.makeMaxLengthString(group.title + " " + eval.getTitle() + " ", 50);
-                    String status = "unknown.caps";
+                    String status;
 
                     // find the object in the list matching the evalGroupId and evalId,
                     // leave as null if not found -AZ
                     EvalResponse response = null;
                     for (int k = 0; k < evalResponses.size(); k++) {
                         EvalResponse er = (EvalResponse) evalResponses.get(k);
-                        if (groupId.equals(er.getEvalGroupId()) 
-                                && eval.getId().equals(er.getEvaluation().getId())) {
+                        if (groupId.equals(er.getEvalGroupId())
+                            && eval.getId().equals(er.getEvaluation().getId())) {
                             response = er;
                             break;
                         }
@@ -136,12 +134,12 @@ public class EvaluateBoxRenderer {
                     if (response != null && response.getEndTime() != null) {
                         // there is a response for this eval/group
                         status = "summary.status.completed";
-                        if (eval.getModifyResponsesAllowed().booleanValue()) {
+                        if (eval.getModifyResponsesAllowed()) {
                             // can modify responses so show the link still
                             // take eval link when pending
-                            UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
-                                    new EvalViewParameters(TakeEvalProducer.VIEW_ID,
-                                            eval.getId(), response.getId(), groupId));
+                            UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
+                                                                                       new EvalViewParameters(TakeEvalProducer.VIEW_ID,
+                                                                                               eval.getId(), response.getId(), groupId));
                         } else {
                             // show title only when completed and cannot
                             // modify
@@ -149,16 +147,16 @@ public class EvaluateBoxRenderer {
                         }
                     } else if (response != null && response.getEndTime() == null) {
                         // there is an in progress for this eval/group
-                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
-                                new EvalViewParameters(TakeEvalProducer.VIEW_ID,
-                                        eval.getId(), response.getId(), groupId));
+                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
+                                                                                   new EvalViewParameters(TakeEvalProducer.VIEW_ID,
+                                                                                           eval.getId(), response.getId(), groupId));
                         status = "summary.status.inprogress";
                     } else {
                         // no response yet for this eval/group
                         // take eval link when pending
-                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
-                                new EvalViewParameters(TakeEvalProducer.VIEW_ID, eval.getId(),
-                                        groupId));
+                        UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
+                                                                                   new EvalViewParameters(TakeEvalProducer.VIEW_ID, eval.getId(),
+                                                                                           groupId));
                         status = "summary.status.pending";
                     }
                     UIMessage.make(evalcourserow, "evaluationCourseStatus", status);

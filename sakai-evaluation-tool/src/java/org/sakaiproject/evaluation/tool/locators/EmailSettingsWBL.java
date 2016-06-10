@@ -12,9 +12,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/**
- * 
- */
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.text.DateFormat;
@@ -35,25 +32,19 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob;
 
-/**
- * 
- *
- */
 public class EmailSettingsWBL extends SettingsWBL {
 	
 	public static final String JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.EmailSettingsWBL";
 	public static final String SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
-	
-	private static final String SPACE = " ";
 
-	private Log logger = LogFactory.getLog(EmailSettingsWBL.class);
+	private static final Log LOG = LogFactory.getLog(EmailSettingsWBL.class);
 	
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
 	
-	protected Object lock = new Object();
+	protected final Object LOCK = new Object();
 	protected boolean updateNeeded = false;
 	
     public void set(String beanname, Object toset) {
@@ -61,16 +52,16 @@ public class EmailSettingsWBL extends SettingsWBL {
     	if(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS.equals(beanname) || 
     			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME.equals(beanname) || 
     			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES.equals(beanname)) {
-        	logger.info("set(" + beanname + "," + toset + ") ");
-    		synchronized(lock) {
+        	LOG.info("set(" + beanname + "," + toset + ") ");
+    		synchronized(LOCK) {
     			updateNeeded = true;
     		}
     	} 
     }
     
     public void saveSettings() {
-    	logger.info("saveSettings() -- Saving email settings ");
-    	synchronized (lock) {
+    	LOG.info("saveSettings() -- Saving email settings ");
+    	synchronized (LOCK) {
     		if(this.updateNeeded) {
     			this.scheduleJob();
     			this.updateNeeded = false;
@@ -80,7 +71,7 @@ public class EmailSettingsWBL extends SettingsWBL {
     }
 
 	protected void scheduleJob() {
-		logger.info("scheduleJob() -- Scheduling email job ");
+		LOG.info("scheduleJob() -- Scheduling email job ");
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		for(Map.Entry<String, Map<String,String>> cronJob : cronJobs.entrySet()) {
 			Map<String,String> details = cronJob.getValue();
@@ -88,12 +79,12 @@ public class EmailSettingsWBL extends SettingsWBL {
 			try {
 				this.commonLogic.deleteCronJob(jobName,JOB_GROUP_NAME);
 			} catch (Exception e) {
-				logger.info("Unable to delete cron job with group='" + JOB_GROUP_NAME + "' and name='" + jobName + "'");
+				LOG.info("Unable to delete cron job with group='" + JOB_GROUP_NAME + "' and name='" + jobName + "'");
 			}
 		}
 		
 		// create job
-		Map<String,String> dataMap = new HashMap<String, String>();
+		Map<String,String> dataMap = new HashMap<>();
 		dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, JOB_GROUP_NAME);
 		dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, JOB_GROUP_NAME);
 		dataMap.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, JOB_GROUP_NAME);
@@ -105,7 +96,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 
 		Job jobClass = (Job) ComponentManager.get("org.sakaiproject.api.app.scheduler.JobBeanWrapper.ConsolidatedNotificationsJob");
 
-		String fullJobName = this.commonLogic.scheduleCronJob(jobClass.getClass(), dataMap);
+		this.commonLogic.scheduleCronJob(jobClass.getClass(), dataMap);
 		
 		Date nextReminderDate = this.calculateNextReminderDate();
 		evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, nextReminderDate);
@@ -123,7 +114,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		Integer reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS));
         String nextReminderStr = (String) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
         
-		Date nextReminder = null;
+		Date nextReminder;
 		if(nextReminderStr == null || nextReminderStr.trim().equals("")) {
 			nextReminder = new Date();
 		} else {
@@ -144,7 +135,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 			cal.setTime(nextReminder);
 		}
 		
-		if(reminderInterval != null && reminderInterval.intValue()  > 0) {
+		if(reminderInterval != null && reminderInterval  > 0) {
 			cal.set(Calendar.MILLISECOND, 0);
 			cal.set(Calendar.SECOND, 0);
 			cal.set(Calendar.MINUTE, startMinute);
@@ -152,7 +143,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 			
 			Calendar now = Calendar.getInstance();
 			if(cal.before(now)) {
-				cal.add(Calendar.DAY_OF_MONTH, reminderInterval.intValue());
+				cal.add(Calendar.DAY_OF_MONTH, reminderInterval);
 			}
 			if(cal.before(now)) {
 				cal.set(Calendar.YEAR, now.get(Calendar.YEAR));
@@ -175,7 +166,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		buf.append(" ");
 		buf.append(startTime.toString());
 		buf.append(" ? * * *");
-		logger.debug("emailSettings cronExpression == " + buf.toString());
+		LOG.debug("emailSettings cronExpression == " + buf.toString());
 
 		return buf.toString();
 	}

@@ -12,23 +12,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/**
- * 
- */
 package org.sakaiproject.evaluation.logic.scheduling;
 
-import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalLockManager;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -40,7 +33,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  */
 public class DeleteEvaluationsImpl implements DeleteEvaluations {
 	
-	private Log logger = LogFactory.getLog(DeleteEvaluations.class);
+	private static final Log LOG = LogFactory.getLog(DeleteEvaluations.class);
 	
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -71,19 +64,19 @@ public class DeleteEvaluationsImpl implements DeleteEvaluations {
      * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
      */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.debug("DeleteEvaluations.execute()");
+		LOG.debug("DeleteEvaluations.execute()");
         String termId = context.getMergedJobDataMap().getString("term.id");
         List<EvalEvaluation> evaluations = evaluationService.getEvaluationsByTermId(termId);
-        logger.info("Found "+ evaluations.size() + " evaluations to delete matching " + termId);
+        LOG.info("Found "+ evaluations.size() + " evaluations to delete matching " + termId);
         for (EvalEvaluation evaluation: evaluations) {
         	//Set admin as the id, I don't think there's any way to get this from the job scheduler
-        	logger.info("Deleting evaluation id " + evaluation.getId());
+        	LOG.info("Deleting evaluation id " + evaluation.getId());
         	evaluationSetupService.deleteEvaluation(evaluation.getId(), "admin");
         }
 	}
 	
 	public void init() {
-		logger.debug("init()");
+		LOG.debug("init()");
 	}
 
 }

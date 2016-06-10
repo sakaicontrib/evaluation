@@ -44,7 +44,9 @@ public class EvalLock implements java.io.Serializable {
 	public EvalLock() {
 	}
 
-	/** full constructor */
+	/** full constructor
+	 * @param name
+	 * @param holder */
 	public EvalLock(String name, String holder) {
 		this.lastModified = new Date();
 		this.name = name;

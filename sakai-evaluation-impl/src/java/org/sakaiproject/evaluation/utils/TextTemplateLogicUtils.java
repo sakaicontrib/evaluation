@@ -45,9 +45,9 @@ import freemarker.template.TemplateException;
  */
 public class TextTemplateLogicUtils {
 
-    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
-    public static Object lock = new Object();
+    public static final Object LOCK = new Object();
 
     /**
      * Set this to true to use freemarker (http://freemarker.org/) for template processing,
@@ -59,7 +59,7 @@ public class TextTemplateLogicUtils {
      * freemarker will be used by default
      */
     public static boolean useVelocity = false;
-    public final static int totalResetCount = 500;
+    public final static int TOTAL_RESET_COUNT = 500;
     /**
      * Used to track and reset the processor every totalResetCount runs
      */
@@ -83,7 +83,7 @@ public class TextTemplateLogicUtils {
      * @return the processed template
      */
     public static String processTextTemplate(String textTemplate, Map<String, String> replacementValues) {
-        if (replacementValues == null || replacementValues.size() == 0) {
+        if (replacementValues == null || replacementValues.isEmpty()) {
             return textTemplate;
         }
 
@@ -104,13 +104,13 @@ public class TextTemplateLogicUtils {
     private static Configuration freemarkerConfig = null;
     private static String processFreemarkerTextTemplate(String textTemplate, Map<String, String> replacementValues) {
         // setup freemarker if it is not already done
-        synchronized (lock) {
-            if (freemarkerConfig == null || resetCounter.getAndAdd(1) > totalResetCount) {
+        synchronized (LOCK) {
+            if (freemarkerConfig == null || resetCounter.getAndAdd(1) > TOTAL_RESET_COUNT) {
                 freemarkerConfig = new Configuration();
                 // Specify how templates will see the data-model
                 freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
                 resetCounter.getAndSet(0);
-                log.info("Constructed new velocity engine for template processing");
+                LOG.info("Constructed new velocity engine for template processing");
             }
         }
 
@@ -138,8 +138,8 @@ public class TextTemplateLogicUtils {
     private static String processVelocityTextTemplate(String textTemplate, Map<String, String> replacementValues) {
 
         // setup velocity if not already done
-        synchronized (lock) {
-            if (velocityEngine == null || resetCounter.addAndGet(1) > totalResetCount) {
+        synchronized (LOCK) {
+            if (velocityEngine == null || resetCounter.addAndGet(1) > TOTAL_RESET_COUNT) {
                 // setup the velocity configuration via properties
                 Properties p = new Properties();
                 p.setProperty(RuntimeConstants.INPUT_ENCODING, "UTF-8");
@@ -159,7 +159,7 @@ public class TextTemplateLogicUtils {
                     throw new RuntimeException("Could not initialize velocity", e);
                 }
                 resetCounter.getAndSet(0);
-                log.info("Constructed new velocity engine for template processing");
+                LOG.info("Constructed new velocity engine for template processing");
             }
         }
 

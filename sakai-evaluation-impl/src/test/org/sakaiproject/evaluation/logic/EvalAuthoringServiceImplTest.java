@@ -15,9 +15,10 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,8 @@ import org.sakaiproject.genericdao.api.search.Search;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
+
+    private static final Log LOG = LogFactory.getLog( EvalAuthoringServiceImplTest.class );
 
    protected EvalAuthoringServiceImpl authoringService;
 
@@ -92,7 +95,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    public void testPreloadedItemData() {
       // this test is just making sure that we are actually linking the items
       // to the templates the way we think we are
-      List<Long> ids = null;
+      List<Long> ids;
 
       Assert.assertEquals(46, evaluationDao.countAll(EvalItem.class) );
 
@@ -115,13 +118,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
       Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
       // get the items from the templateItems
-      List<Long> l = new ArrayList<Long>();
-      for (Iterator<EvalTemplateItem> iter = tItems.iterator(); iter.hasNext();) {
-         EvalTemplateItem eti = iter.next();
-         Assert.assertTrue( eti.getItem() instanceof EvalItem );
-         Assert.assertEquals(eti.getTemplate().getId(), template.getId());
-         l.add(eti.getItem().getId());
-      }
+      List<Long> l = new ArrayList<>();
+      for( EvalTemplateItem eti : tItems ) {
+           Assert.assertTrue( eti.getItem() instanceof EvalItem );
+           Assert.assertEquals(eti.getTemplate().getId(), template.getId());
+           l.add(eti.getItem().getId());
+       }
       Assert.assertTrue(l.contains( etdl.item2.getId() ));
       Assert.assertTrue(l.contains( etdl.item3.getId() ));
       Assert.assertTrue(l.contains( etdl.item5.getId() ));
@@ -144,7 +146,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetScaleById() {
-      EvalScale scale = null;
+      EvalScale scale;
 
       scale = authoringService.getScaleById( etdl.scale1.getId() );
       Assert.assertNotNull(scale);
@@ -164,7 +166,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetScaleByEid() {
-      EvalScale scale = null;
+      EvalScale scale;
 
       //test getting scale having eid set
       scale = authoringService.getScaleByEid( etdl.scaleEid.getEid() );
@@ -325,8 +327,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetScalesForUser() {
-      List<EvalScale> l = null;
-      List<Long> ids = null;
+      List<EvalScale> l;
+      List<Long> ids;
       // NOTE: 15 preloaded public scales to take into account currently
       int preloadedCount = 15;
 
@@ -409,7 +411,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test getting invalid constant causes Assert.failure
       try {
-         l = authoringService.getScalesForUser(EvalTestDataLoad.USER_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING);
+         authoringService.getScalesForUser(EvalTestDataLoad.USER_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING);
          Assert.fail("Should have thrown exception");
       } catch (RuntimeException e) {
          Assert.assertNotNull(e);
@@ -504,7 +506,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemById() {
-      EvalItem item = null;
+      EvalItem item;
 
       // test getting valid items by id
       item = authoringService.getItemById( etdl.item1.getId() );
@@ -525,7 +527,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemByEid() {
-      EvalItem item = null;
+      EvalItem item;
 
       // test getting valid items having eid set
       item = authoringService.getItemByEid( etdl.item1Eid.getEid() );
@@ -571,7 +573,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             test_text, test_desc, EvalConstants.SHARING_PRIVATE, 
             EvalConstants.ITEM_TYPE_TEXT, EvalTestDataLoad.NOT_EXPERT, 
             "expert desc", null, null, null,
-            false, false, new Integer(2), 
+            false, false, 2, 
             null, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.LOCKED), 
             EvalTestDataLoad.MAINT_USER_ID);
 
@@ -580,7 +582,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             test_text, test_desc, EvalConstants.SHARING_PRIVATE, 
             EvalConstants.ITEM_TYPE_TEXT, EvalTestDataLoad.NOT_EXPERT, 
             "expert desc", null, null, null,
-            false, false, new Integer(2), 
+            false, false, 2, 
             null, EvalConstants.ITEM_CATEGORY_COURSE, null);
       authoringService.saveItem( eiTest1, 
             EvalTestDataLoad.MAINT_USER_ID);
@@ -606,7 +608,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                test_text, test_desc, EvalConstants.SHARING_PRIVATE, 
                EvalConstants.ITEM_TYPE_SCALED, EvalTestDataLoad.NOT_EXPERT, 
                "expert desc", etdl.scale2, null, Boolean.FALSE,
-               false, false, new Integer(3), 
+               false, false, 3, 
                EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -645,7 +647,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                test_text, test_desc, EvalConstants.SHARING_PRIVATE, 
                EvalConstants.ITEM_TYPE_HEADER, EvalTestDataLoad.NOT_EXPERT, 
                "expert desc", etdl.scale2, null, Boolean.FALSE,
-               false, false, new Integer(3), 
+               false, false, 3, 
                EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -831,8 +833,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemsForUser() {
-      List<EvalItem> l = null;
-      List<Long> ids = null;
+      List<EvalItem> l;
+      List<Long> ids;
       // NOTE: 32 preloaded public expert items to take into account currently
       int preloadedCount = 32;
 
@@ -1051,8 +1053,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemsForTemplate() {
-      List<EvalItem> l = null;
-      List<Long> ids = null;
+      List<EvalItem> l;
+      List<Long> ids;
 
       // test getting all items by valid templates
       l = authoringService.getItemsForTemplate( etdl.templateAdmin.getId(), null );
@@ -1143,7 +1145,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplateItemById() {
-      EvalTemplateItem templateItem = null;
+      EvalTemplateItem templateItem;
 
       // test getting valid templateItems by id
       templateItem = authoringService.getTemplateItemById( etdl.templateItem1P.getId() );
@@ -1164,7 +1166,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplateItemByEid() {
-      EvalTemplateItem templateItem = null;
+      EvalTemplateItem templateItem;
 
       // test getting valid templateItems by eid
       templateItem = authoringService.getTemplateItemByEid( etdl.templateItem1Eid.getEid() );
@@ -1201,7 +1203,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       EvalTemplateItem eiTest1 = new EvalTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
             noItems, etdl.item5, null, 
             EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
-            EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(3),
+            EvalConstants.HIERARCHY_NODE_ID_NONE, 3,
             null, Boolean.FALSE, false, false, null, null, null);
       authoringService.saveTemplateItem( eiTest1, 
             EvalTestDataLoad.ADMIN_USER_ID);
@@ -1225,17 +1227,17 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving a valid templateItem
       etdl.templateUnused.setLocked(false); // why is this needed?
       authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
-            noItems, etdl.item7, new Integer(2), 
+            noItems, etdl.item7, 2, 
             EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
-            EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(3),
+            EvalConstants.HIERARCHY_NODE_ID_NONE, 3,
             null, Boolean.FALSE, false, false, null, null, null),
             EvalTestDataLoad.ADMIN_USER_ID);
 
-      System.out.println("ZZZZZZZZZZZZZZ template: " + etdl.templateUnused.getId() + ":" + etdl.templateUnused.getLocked());
+      LOG.debug("ZZZZZZZZZZZZZZ template: " + etdl.templateUnused.getId() + ":" + etdl.templateUnused.getLocked());
 
       // test saving valid templateItem with locked item
       authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-            etdl.templateUnused, etdl.item2, new Integer(3), 
+            etdl.templateUnused, etdl.item2, 3, 
             EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
             EvalConstants.HIERARCHY_NODE_ID_NONE, null,
             EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
@@ -1243,7 +1245,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test saving valid templateItem with empty required fields (inherit from item)
       EvalTemplateItem eiTest2 = new EvalTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
-            noItems, etdl.item4, new Integer(99), 
+            noItems, etdl.item4, 99, 
             null, EvalConstants.HIERARCHY_LEVEL_TOP, 
             EvalConstants.HIERARCHY_NODE_ID_NONE, null,
             null, null, false, false, null, null, null);
@@ -1265,7 +1267,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving templateItem with no item Assert.fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-               etdl.templateUnused, null, new Integer(3), 
+               etdl.templateUnused, null, 3, 
                EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
                EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
@@ -1278,7 +1280,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving templateItem with no template Assert.fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-               null, etdl.item3, new Integer(3), 
+               null, etdl.item3, 3, 
                EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
                EvalConstants.HIERARCHY_NODE_ID_NONE, null,
                EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
@@ -1291,9 +1293,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving scaled item with text size set Assert.fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-               etdl.templateUnused, etdl.item4, new Integer(3), 
+               etdl.templateUnused, etdl.item4, 3, 
                EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
-               EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(2),
+               EvalConstants.HIERARCHY_NODE_ID_NONE, 2,
                EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -1304,9 +1306,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving text item with scale display setting Assert.fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-               etdl.templateUnused, etdl.item6, new Integer(3), 
+               etdl.templateUnused, etdl.item6, 3, 
                EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
-               EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(4),
+               EvalConstants.HIERARCHY_NODE_ID_NONE, 4,
                EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -1331,9 +1333,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // test saving header type item with scale setting or text size set Assert.fails
       try {
          authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
-               etdl.templateUnused, etdl.item8, new Integer(3), 
+               etdl.templateUnused, etdl.item8, 3, 
                EvalConstants.ITEM_CATEGORY_COURSE, EvalConstants.HIERARCHY_LEVEL_TOP, 
-               EvalConstants.HIERARCHY_NODE_ID_NONE, new Integer(1),
+               EvalConstants.HIERARCHY_NODE_ID_NONE, 1,
                EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -1512,8 +1514,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplateItemsForTemplate() {
-      List<EvalTemplateItem> l = null;
-      List<Long> ids = null;
+      List<EvalTemplateItem> l;
+      List<Long> ids;
 
       // test getting all items by valid templates
       l = authoringService.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null, null, null );
@@ -1603,8 +1605,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetBlockChildTemplateItemsForBlockParent() {
-      List<EvalTemplateItem> l = null;
-      List<Long> ids = null;
+      List<EvalTemplateItem> l;
+      List<Long> ids;
 
       // test getting child block items
       l = authoringService.getBlockChildTemplateItemsForBlockParent( etdl.templateItem9B.getId(), false );
@@ -1776,8 +1778,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemGroups() {
-      List<Long> ids = null;
-      List<EvalItemGroup> eItems = null;
+      List<Long> ids;
+      List<EvalItemGroup> eItems;
 
       // NOTE: preloaded groups to take into account
 
@@ -1835,7 +1837,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test attempting to use invalid item group id
       try {
-         eItems = authoringService.getItemGroups(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID, false, true);
+         authoringService.getItemGroups(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID, false, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -1849,8 +1851,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemsInItemGroup() {
-      List<Long> ids = null;
-      List<EvalItem> eItems = null;
+      List<Long> ids;
+      List<EvalItem> eItems;
 
       // check items from a low level group
       eItems = authoringService.getItemsInItemGroup(etdl.objectiveA1.getId(), true);
@@ -1874,7 +1876,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test attempting to use invalid item group id
       try {
-         eItems = authoringService.getItemsInItemGroup(EvalTestDataLoad.INVALID_LONG_ID, true);
+         authoringService.getItemsInItemGroup(EvalTestDataLoad.INVALID_LONG_ID, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -1888,7 +1890,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetItemGroupById() {
-      EvalItemGroup itemGroup = null;
+      EvalItemGroup itemGroup;
 
       // test getting valid items by id
       itemGroup = authoringService.getItemGroupById( etdl.categoryA.getId() );
@@ -1919,7 +1921,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check that defaults were filled in
       Assert.assertNotNull( newCategory.getLastModified() );
       Assert.assertNotNull( newCategory.getExpert() );
-      Assert.assertEquals( newCategory.getExpert().booleanValue(), false );
+      Assert.assertEquals( newCategory.getExpert(), Boolean.FALSE );
       Assert.assertNull( newCategory.getParent() );
 
       // test that creating subgroup without parent causes Assert.failure
@@ -2074,7 +2076,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplateById() {
-      EvalTemplate template = null;
+      EvalTemplate template;
 
       // test getting valid templates by id
       template = authoringService.getTemplateById( etdl.templateAdmin.getId() );
@@ -2095,7 +2097,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplateByEid() {
-      EvalTemplate template = null;
+      EvalTemplate template;
 
       // test getting template having eid set
       template = authoringService.getTemplateByEid( etdl.templateEid.getEid() );
@@ -2297,8 +2299,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetTemplatesForUser() {
-      List<EvalTemplate> l = null;
-      List<Long> ids = null;
+      List<EvalTemplate> l;
+      List<Long> ids;
       // NOTE: No preloaded public templates to take into account right now
 
       // test getting all templates for admin user (should include all templates)
@@ -2416,7 +2418,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test getting invalid constant causes Assert.failure
       try {
-         l = authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
+         authoringService.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, 
                EvalTestDataLoad.INVALID_CONSTANT_STRING, true);
          Assert.fail("Should have thrown exception");
       } catch (RuntimeException e) {
@@ -2532,8 +2534,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testCopyScales() {
-      Long[] copiedIds = null;
-      Long[] scaleIds = null;
+      Long[] copiedIds;
+      Long[] scaleIds;
 
       // copy a single scale
       EvalScale original = etdl.scale1;
@@ -2578,14 +2580,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyScales(scaleIds, null, EvalTestDataLoad.MAINT_USER_ID, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(scaleIds.length, copiedIds.length);
-      for (int i = 0; i < copiedIds.length; i++) {
-         Assert.assertNotNull(evaluationDao.findById(EvalScale.class, copiedIds[i]));
-      }
+      for( Long copiedId : copiedIds ) {
+         Assert.assertNotNull(evaluationDao.findById(EvalScale.class, copiedId));
+       }
 
       // check that invalid scaleid causes death
       scaleIds = new Long[] {etdl.scale2.getId(), EvalTestDataLoad.INVALID_LONG_ID};
       try {
-         copiedIds = authoringService.copyScales(scaleIds, null, EvalTestDataLoad.MAINT_USER_ID, false);
+         authoringService.copyScales(scaleIds, null, EvalTestDataLoad.MAINT_USER_ID, false);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -2597,8 +2599,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testCopyItems() {
-      Long[] copiedIds = null;
-      Long[] itemIds = null;
+      Long[] copiedIds;
+      Long[] itemIds;
 
       // copy a single item
       EvalItem original = etdl.item1;
@@ -2613,12 +2615,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the things that should differ
       Assert.assertNotSame(copy1.getId(), original.getId());
       Assert.assertEquals(copy1.getCopyOf(), original.getId());
-      Assert.assertEquals(copy1.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy1.getOwner());
       Assert.assertEquals(copy1.isHidden(), true);
       Assert.assertEquals(copy1.getExpert(), Boolean.FALSE);
       Assert.assertEquals(copy1.getExpertDescription(), null);
       Assert.assertEquals(copy1.getLocked(), Boolean.FALSE);
-      Assert.assertEquals(copy1.getSharing(), EvalConstants.SHARING_PRIVATE);
+      Assert.assertEquals(EvalConstants.SHARING_PRIVATE, copy1.getSharing());
 
       // check the things that should match
       Assert.assertEquals(copy1.getCategory(), original.getCategory());
@@ -2650,12 +2652,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the things that should differ
       Assert.assertNotSame(copy2.getId(), original.getId());
       Assert.assertEquals(copy2.getCopyOf(), original.getId());
-      Assert.assertEquals(copy2.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy2.getOwner());
       Assert.assertEquals(copy2.isHidden(), true);
       Assert.assertEquals(copy2.getExpert(), Boolean.FALSE);
       Assert.assertEquals(copy2.getExpertDescription(), null);
       Assert.assertEquals(copy2.getLocked(), Boolean.FALSE);
-      Assert.assertEquals(copy2.getSharing(), EvalConstants.SHARING_PRIVATE);
+      Assert.assertEquals(EvalConstants.SHARING_PRIVATE, copy2.getSharing());
 
       // check the things that should match
       Assert.assertEquals(copy2.getCategory(), original.getCategory());
@@ -2685,12 +2687,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the things that should differ
       Assert.assertNotSame(copy3.getId(), original.getId());
       Assert.assertEquals(copy3.getCopyOf(), original.getId());
-      Assert.assertEquals(copy3.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy3.getOwner());
       Assert.assertEquals(copy3.isHidden(), true);
       Assert.assertEquals(copy3.getExpert(), Boolean.FALSE);
       Assert.assertEquals(copy3.getExpertDescription(), null);
       Assert.assertEquals(copy3.getLocked(), Boolean.FALSE);
-      Assert.assertEquals(copy3.getSharing(), EvalConstants.SHARING_PRIVATE);
+      Assert.assertEquals(EvalConstants.SHARING_PRIVATE, copy3.getSharing());
 
       // check the things that should match
       Assert.assertEquals(copy3.getCategory(), original.getCategory());
@@ -2706,8 +2708,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
-      for (int i = 0; i < copiedIds.length; i++) {
-         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedIds[i]));
+      for( Long copiedId : copiedIds ) {
+         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedId));
       }
 
       // check we can copy a bunch of things (without children)
@@ -2715,14 +2717,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
-      for (int i = 0; i < copiedIds.length; i++) {
-         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedIds[i]));
-      }
+      for( Long copiedId : copiedIds ) {
+         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedId));
+       }
 
       // check that invalid itemId causes exception
       itemIds = new Long[] {etdl.item2.getId(), EvalTestDataLoad.INVALID_LONG_ID};
       try {
-         copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, true);
+         authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -2735,8 +2737,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testCopyTemplateItems() {
-      Long[] copiedIds = null;
-      Long[] templateItemIds = null;
+      Long[] copiedIds;
+      Long[] templateItemIds;
 
       // copy a single templateItem
       EvalTemplateItem original = etdl.templateItem1U;
@@ -2787,7 +2789,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the things that should differ
       Assert.assertNotSame(copy2.getId(), original.getId());
       Assert.assertEquals(copy2.getCopyOf(), original.getId());
-      Assert.assertEquals(copy2.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy2.getOwner());
       Assert.assertEquals(copy2.isHidden(), true);
       Assert.assertTrue(original.getDisplayOrder() < copy2.getDisplayOrder());
 
@@ -2833,7 +2835,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       for (EvalTemplateItem templateItem : templateItems) {
-         Assert.assertEquals(templateItem.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+         Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID, templateItem.getOwner());
          Assert.assertEquals(templateItem.isHidden(), true);
          Assert.assertEquals(copy2.getTemplate().getId(), original.getTemplate().getId());
          if (templateItem.getBlockParent()) {
@@ -2869,9 +2871,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      for (int i = 0; i < copiedIds.length; i++) {
-         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedIds[i]));
-      }
+      for( Long copiedId : copiedIds ) {
+         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedId));
+       }
 
       Assert.assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
 
@@ -2880,8 +2882,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      for (int i = 0; i < copiedIds.length; i++) {
-         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedIds[i]));
+      for( Long copiedId : copiedIds ) {
+         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedId));
       }
 
       Assert.assertEquals( 4, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
@@ -2889,7 +2891,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check that trying to do an inside copy of TIs from multiple templates causes Assert.failure
       templateItemIds = new Long[] {etdl.templateItem1P.getId(), etdl.templateItem2A.getId()};
       try {
-         copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
+         authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -2898,7 +2900,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check that invalid templateItemId causes exception
       templateItemIds = new Long[] {etdl.templateItem2A.getId(), EvalTestDataLoad.INVALID_LONG_ID};
       try {
-         copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
+         authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -2910,7 +2912,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testCopyTemplate() {
-      Long copiedId = null;
+      Long copiedId;
 
       // copy a single template with all children
       // (should create duplicates of all the items and scales)
@@ -2999,7 +3001,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid templateid causes death
       try {
-         copiedId = authoringService.copyTemplate(EvalTestDataLoad.INVALID_LONG_ID, null, EvalTestDataLoad.MAINT_USER_ID, true, true);
+         authoringService.copyTemplate(EvalTestDataLoad.INVALID_LONG_ID, null, EvalTestDataLoad.MAINT_USER_ID, true, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -3009,7 +3011,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testGetItemsUsingScale() {
-      List<EvalItem> items = null;
+      List<EvalItem> items;
 
       items = authoringService.getItemsUsingScale(etdl.scale1.getId());
       Assert.assertNotNull(items);
@@ -3021,7 +3023,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid id causes death
       try {
-         items = authoringService.getItemsUsingScale(EvalTestDataLoad.INVALID_LONG_ID);
+         authoringService.getItemsUsingScale(EvalTestDataLoad.INVALID_LONG_ID);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -3030,7 +3032,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    
    @Test
    public void testGetTemplatesUsingItem() {
-      List<EvalTemplate> templates = null;
+      List<EvalTemplate> templates;
 
       templates = authoringService.getTemplatesUsingItem(etdl.item1.getId());
       Assert.assertNotNull(templates);
@@ -3042,7 +3044,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid id causes death
       try {
-         templates = authoringService.getTemplatesUsingItem(EvalTestDataLoad.INVALID_LONG_ID);
+         authoringService.getTemplatesUsingItem(EvalTestDataLoad.INVALID_LONG_ID);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -3055,8 +3057,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAutoUseTemplateItems() {
-      List<EvalTemplateItem> items = null;
-      List<Long> ids = null;
+      List<EvalTemplateItem> items;
+      List<Long> ids;
 
       // positive tests
       items = authoringService.getAutoUseTemplateItems(EvalTestDataLoad.AUTO_USE_TAG, null, null);
@@ -3109,10 +3111,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    
    @Test
    public void testDoAutoUseInsertion() {
-      List<EvalTemplateItem> items = null;
-      List<EvalTemplateItem> currentItems = null;
-      Long templateId = null;
-      int displayOrder = 0;
+      List<EvalTemplateItem> items;
+      List<EvalTemplateItem> currentItems;
+      Long templateId;
+      int displayOrder;
 
       // check out the template first
       templateId = etdl.templateUser.getId();

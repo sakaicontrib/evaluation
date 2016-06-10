@@ -40,7 +40,7 @@ import org.sakaiproject.evaluation.dao.PreloadDataImpl;
  */
 public class PreloadTestDataImpl {
 
-   private static Log log = LogFactory.getLog(PreloadTestDataImpl.class);
+   private static final Log LOG = LogFactory.getLog(PreloadTestDataImpl.class);
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -62,7 +62,7 @@ public class PreloadTestDataImpl {
    }
 
    public void init() {
-      log.info("INIT");
+      LOG.info("INIT");
       if (preloadData == null) {
          throw new NullPointerException("PreloadDataImpl must be loaded before this class");
       } else {
@@ -76,7 +76,7 @@ public class PreloadTestDataImpl {
     * Preload the data
     */
    public void preloadDB(){
-      log.info("preloading DB...");
+      LOG.info("preloading DB...");
       etdl = new EvalTestDataLoad(dao);
    }
 }

@@ -70,7 +70,7 @@ public class ScaledRenderer implements ItemRenderer {
         String scaleLabels[] = new String[optionCount];
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-        boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA().booleanValue();
+        boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA();
 
         if (EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
@@ -89,7 +89,7 @@ public class ScaledRenderer implements ItemRenderer {
             String compactDisplayEnd = scaleOptions[optionCount - 1];
 
             for (int count = 0; count < optionCount; count++) {
-                scaleValues[count] = new Integer(count).toString();
+                scaleValues[count] = Integer.toString(count);
                 scaleLabels[count] = " ";
             }
 
@@ -166,7 +166,7 @@ public class ScaledRenderer implements ItemRenderer {
             }
 
             for (int count = 0; count < optionCount; count++) {
-                scaleValues[count] = new Integer(count).toString();
+                scaleValues[count] = Integer.toString(count);
                 scaleLabels[count] = scaleOptions[count];
             }
 
@@ -256,7 +256,7 @@ public class ScaledRenderer implements ItemRenderer {
             UIVerbatim.make(matrix, "itemText", templateItem.getItem().getItemText());
             
             for (int count = 1; count <= optionCount; count++) {
-                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleValues[optionCount - count] = Integer.toString(optionCount - count);
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
             }
 
@@ -276,7 +276,6 @@ public class ScaledRenderer implements ItemRenderer {
 
             int scaleLength = scaleValues.length;
             int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
-            UISelectChoice[] choices = new UISelectChoice[limit];
             
             for (int j = 0; j < limit; ++j) {
                     UIBranchContainer radioBranchSecond = UIBranchContainer.make(rowBranch, "scaleOption:", j+"");
@@ -286,7 +285,7 @@ public class ScaledRenderer implements ItemRenderer {
                     } else {
                         radioBranchSecond.decorate( new UIStyleDecorator("matrixRadioItems-"+scaleLength) );
                     }
-                    choices[j] = UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
+                    UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
                     // scaleLabels are in reverse order, indexed from (end - 1) to 0.  If usesNA, 
                     // an empty label is appended; ignore that one too 
                     int labelIndex = scaleLabels.length - j - (usesNA ? 2 : 1);
@@ -324,7 +323,7 @@ public class ScaledRenderer implements ItemRenderer {
             }
 
             for (int count = 1; count <= optionCount; count++) {
-                scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+                scaleValues[optionCount - count] = Integer.toString(optionCount - count);
                 scaleLabels[optionCount - count] = scaleOptions[count-1];
             }
 

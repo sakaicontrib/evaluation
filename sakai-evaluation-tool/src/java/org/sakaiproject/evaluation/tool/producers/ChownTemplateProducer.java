@@ -93,7 +93,7 @@ public class ChownTemplateProducer implements ViewComponentProducer, NavigationC
 
 				UIForm form = UIForm.make(chownDiv, "chown-template-form");
 				UIMessage.make(form, "chown-template-newownerlabel", "chowntemplate.chown.label");
-				UIInput.make(form, "chown-template-newowner", new String(actionBean + "templateOwner"));
+				UIInput.make(form, "chown-template-newowner", (actionBean + "templateOwner"));
 				UICommand chownCmd = UICommand.make(form, "chown-template-button", 
 						UIMessage.make("chowntemplate.chown.button"), actionBean + "chownTemplate");
 				chownCmd.parameters.add(new UIELBinding(actionBean + "templateId", template.getId().toString()));
@@ -110,7 +110,7 @@ public class ChownTemplateProducer implements ViewComponentProducer, NavigationC
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
    public List<NavigationCase> reportNavigationCases() {
-		List<NavigationCase> i = new ArrayList<NavigationCase>();
+		List<NavigationCase> i = new ArrayList<>();
 		i.add(new NavigationCase("success", new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID)));
 		return i;
 	}

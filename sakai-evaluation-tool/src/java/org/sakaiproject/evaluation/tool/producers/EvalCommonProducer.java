@@ -77,6 +77,7 @@ public abstract class EvalCommonProducer implements ViewComponentProducer {
      * @param ID the component's RSF id
      * @param beanId TODO
      * @param adminkey the administrative setting constant in org.sakaiproject.evaluation.logic.EvalSettings
+     * @return 
      */
     public static UIBoundBoolean makeBoolean(UIContainer parent, String ID, String beanId, String adminkey) {
         // Must use "composePath" here since admin keys currently contain periods
@@ -97,6 +98,7 @@ public abstract class EvalCommonProducer implements ViewComponentProducer {
      * @param beanId TODO
      * @param adminkey the administrative setting constant 
      * @param message use message properties if true, do not use message properties if false
+     * @return 
      */
     public static UISelect makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String beanId, String adminkey, boolean message) {
         UISelect selection = UISelect.make(parent, ID); 
@@ -126,6 +128,7 @@ public abstract class EvalCommonProducer implements ViewComponentProducer {
      * @param ID the component's RSF id
      * @param beanId TODO
      * @param adminkey the administrative setting constant
+     * @return 
      */
     public static UIInput makeInput(UIContainer parent, String ID, String beanId, String adminkey) {
         UIInput input = UIInput.make(parent, ID, PathUtil.composePath(beanId, adminkey));

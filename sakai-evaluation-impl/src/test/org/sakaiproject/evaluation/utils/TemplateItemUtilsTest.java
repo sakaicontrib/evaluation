@@ -38,7 +38,7 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetTemplateItemType() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        String itemType = null;
+        String itemType;
 
         itemType = TemplateItemUtils.getTemplateItemType(etdl.templateItem1P);
         assertNotNull(itemType);
@@ -50,8 +50,8 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testMakeTemplateItemsList() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        Set<EvalTemplateItem> collection = new HashSet<EvalTemplateItem>();
-        List<EvalTemplateItem> list = null;
+        Set<EvalTemplateItem> collection = new HashSet<>();
+        List<EvalTemplateItem> list;
 
         list = TemplateItemUtils.makeTemplateItemsList(collection);
         assertNotNull(list);
@@ -74,8 +74,8 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testMakeTemplateItemsIdsArray() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        Set<EvalTemplateItem> collection = new HashSet<EvalTemplateItem>();
-        Long[] array = null;
+        Set<EvalTemplateItem> collection = new HashSet<>();
+        Long[] array;
 
         array = TemplateItemUtils.makeTemplateItemsIdsArray(collection);
         assertNotNull(array);
@@ -96,7 +96,7 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testCheckTemplateItemsCategoryExists() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem2A);
         itemList.add(etdl.templateItem3A);
@@ -112,13 +112,13 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetCategoryTemplateItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem2A);
         itemList.add(etdl.templateItem3A);
         itemList.add(etdl.templateItem5A);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, itemList);
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -140,13 +140,13 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testOrderTemplateItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem2A);
         itemList.add(etdl.templateItem5A);
         itemList.add(etdl.templateItem3A);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.orderTemplateItems(itemList, false);
         assertNotNull(list);
         assertEquals(3, list.size());
@@ -238,7 +238,7 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetAnswerableTemplateItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         // need to trick this into thinking it works
         etdl.templateItem9B.setId( new Long(0) );
@@ -247,7 +247,7 @@ public class TemplateItemUtilsTest extends TestCase {
         itemList.add(etdl.templateItem3B);
         itemList.add(etdl.templateItem9B);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getAnswerableTemplateItems(itemList);
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -274,13 +274,13 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetRequiredTemplateItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem1U);
         itemList.add(etdl.templateItem3U);
         itemList.add(etdl.templateItem5U);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getRequireableTemplateItems(itemList);
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -301,13 +301,13 @@ public class TemplateItemUtilsTest extends TestCase {
 
     public void testGetCompulsoryTemplateItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem1U);
         itemList.add(etdl.templateItem3U);
         itemList.add(etdl.templateItem5U);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getCompulsoryTemplateItems(itemList);
         assertNotNull(list);
         assertEquals(1, list.size());
@@ -349,13 +349,13 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetNonChildItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem2B);
         itemList.add(etdl.templateItem3B);
         itemList.add(etdl.templateItem9B);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getNonChildItems(itemList);
         assertNotNull(list);
         assertEquals(1, list.size());
@@ -367,7 +367,7 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetChildItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         // need to trick this into thinking it works
         etdl.templateItem9B.setId( new Long(0) );
@@ -378,7 +378,7 @@ public class TemplateItemUtilsTest extends TestCase {
         itemList.add(etdl.templateItem3B);
         itemList.add(etdl.templateItem9B);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getChildItems(itemList, new Long(0));
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -391,13 +391,13 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testGetNodeItems() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> itemList = new ArrayList<>();
 
         itemList.add(etdl.templateItem1U);
         itemList.add(etdl.templateItem3U);
         itemList.add(etdl.templateItem5U);
 
-        List<EvalTemplateItem> list = null;
+        List<EvalTemplateItem> list;
         list = TemplateItemUtils.getNodeItems(itemList, null);
         assertNotNull(list);
         assertEquals(3, list.size());
@@ -410,7 +410,7 @@ public class TemplateItemUtilsTest extends TestCase {
      * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#makeTemplateItemAnswerKey(java.lang.Long, java.lang.String, java.lang.String)}.
      */
     public void testMakeTemplateItemAnswerKey() {
-        String key = null;
+        String key;
 
         key = TemplateItemUtils.makeTemplateItemAnswerKey(new Long(10), null, null);
         assertNotNull(key);
@@ -426,7 +426,7 @@ public class TemplateItemUtilsTest extends TestCase {
      */
     public void testMakeTemplateItem() {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        EvalTemplateItem newTI = null;
+        EvalTemplateItem newTI;
 
         newTI = TemplateItemUtils.makeTemplateItem(etdl.item1);
         assertNotNull(newTI);

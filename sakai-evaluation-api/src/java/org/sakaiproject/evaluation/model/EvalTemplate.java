@@ -51,7 +51,7 @@ public class EvalTemplate implements java.io.Serializable {
 
     private String expertDescription;
 
-    private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
+    private Set<EvalTemplateItem> templateItems = new HashSet<>(0);
 
     private Boolean locked;
 
@@ -80,13 +80,31 @@ public class EvalTemplate implements java.io.Serializable {
     public EvalTemplate() {
     }
 
-    /** minimal constructor */
+    /** 
+     * minimal constructor
+     * @param owner
+     * @param type
+     * @param title
+     * @param sharing
+     * @param expert 
+     */
     public EvalTemplate(String owner, String type, String title, String sharing, Boolean expert) {
         this(owner, type, title, title, sharing, expert, null, null, null, false);
     }
 
-    /** full constructor 
-     **/
+    /** 
+     * full constructor
+     * @param owner
+     * @param type
+     * @param title
+     * @param description
+     * @param sharing
+     * @param expert
+     * @param expertDescription
+     * @param templateItems
+     * @param locked
+     * @param hidden 
+     */
     public EvalTemplate(String owner, String type, String title, String description, String sharing,
             Boolean expert, String expertDescription, Set<EvalTemplateItem> templateItems, Boolean locked,
             boolean hidden) {

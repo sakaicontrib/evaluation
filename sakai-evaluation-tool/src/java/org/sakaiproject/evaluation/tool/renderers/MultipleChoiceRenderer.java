@@ -31,7 +31,6 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
@@ -65,7 +64,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
         String scaleLabels[] = new String[optionCount];
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-        boolean usesNA = templateItem.getUsesNA().booleanValue();
+        boolean usesNA = templateItem.getUsesNA();
 
         if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ||
                 EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
@@ -77,7 +76,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
             }
 
             for (int count = 0; count < optionCount; count++) {
-                scaleValues[count] = new Integer(count).toString();
+                scaleValues[count] = Integer.toString(count);
                 scaleLabels[count] = scaleOptions[count];
             }
 

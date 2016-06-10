@@ -30,6 +30,7 @@
     <!-- end standard on all pages -->
     <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery-1.4.4.min.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -42,13 +43,23 @@
          	<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
          	<li style="float:left"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
          	<li rsf:id="view-report-title" style="float:left" class="lastCrumb">View Report</li>
-            <li style="float:right" class="lastCrumb"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
-            <li style="float:right" class="lastCrumb"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
-            <li style="float:right" class="lastCrumb"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
             <li style="float:right" class="lastCrumb"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
-            <li style="float:right" class="lastCrumb"><a rsf:id="exportListOfEvaluationTakers" href="#" target="_blank" class="exportAction">Export csv of evaluation takers</a></li>
-         </ul>
-		 
+        </ul>
+
+        <form rsf:id="evalReportForm" name="eval_report_form" method="post">
+           <input rsf:id="xlsResultsReport" name="xlsResultsReport" type="submit" value="Export xls" />
+           <input rsf:id="csvResultsReport" name="csvResultsReport" type="submit" value="Export csv"/>
+           <input rsf:id="pdfResultsReport" name="pdfResultsReport" type="submit" value="Export pdf"/>
+           <input rsf:id="csvTakersReport" name="csvTakersReport" type="submit" value="Export csv of evaluation takers" />
+
+           <br />
+           <div rsf:id="newReportStyleBranch:" class="checkbox">
+               <input rsf:id="newReportStyle" type="checkbox" name="newReportStyle" id="newReportStyle" onclick="evalsys.toggleReportFormat( 'eval_report_form' );" />
+               <label rsf:id="msg=viewreport.groups.select.newReportStyle.label" for="newReportStyle"></label>
+           </div>
+           <p class="instruction" rsf:id="msg=viewreport.groups.select.newReportStyle.explanation"></p>
+        </form>
+
          <div class="individualExports">
            <ul id="evalIndividualExports">
               <li rsf:id="pdfResultsReportIndividual:" class="exportIndividual"><a href="#" rsf:id="pdfResultsReportIndividualLink" target="_blank" class="exportAction">Export individual pdf</a></li>

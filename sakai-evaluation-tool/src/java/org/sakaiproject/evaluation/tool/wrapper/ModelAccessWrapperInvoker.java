@@ -29,7 +29,7 @@ import uk.org.ponder.util.RunnableInvoker;
  */
 public class ModelAccessWrapperInvoker implements RunnableInvoker {
 
-    private static Log log = LogFactory.getLog(ModelAccessWrapperInvoker.class);
+    private static final Log LOG = LogFactory.getLog(ModelAccessWrapperInvoker.class);
 
     public EvalDaoInvoker daoInvoker;
     public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
@@ -44,7 +44,7 @@ public class ModelAccessWrapperInvoker implements RunnableInvoker {
             daoInvoker.invokeTransactionalAccess(toinvoke);
         } catch (UnexpectedRollbackException e) {
             // this will stop the exceptions from reaching the portal
-            log.info("Eval: Caught transaction rollback exception: " + e.getCause());
+            LOG.info("Eval: Caught transaction rollback exception: " + e.getCause());
         }
     }
 

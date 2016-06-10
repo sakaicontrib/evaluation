@@ -100,7 +100,15 @@ public class ModifyHierarchyNodePermsProducer extends EvalCommonProducer impleme
 		String actionBean = "hierarchyBean.";
 		UIForm permsForm = UIForm.make(tofill, "perms-form");
 		int curUserIndex = 0; // for the purpose of having unique branch ids
-		
+
+		// Rename cancel button; 'cancel' implies going back to previous interface, when in reality it's 'clearing changes'
+		UICommand.make( permsForm, "cancel-changes-button1", UIMessage.make( "modifynodeperms.cancel.changes.button"  ));
+		UICommand.make( permsForm, "cancel-changes-button2", UIMessage.make( "modifynodeperms.cancel.changes.button"  ));
+		UIInternalLink.make( permsForm, "return-link1", UIMessage.make( "controlhierarchy.return.link" ),
+				new HierarchyNodeParameters( ControlHierarchyProducer.VIEW_ID, null, params.expanded ) );
+		UIInternalLink.make(tofill, "return-link2", UIMessage.make( "controlhierarchy.return.link" ),
+				new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
+
 		UIInput.make(permsForm, "node-id", actionBean + "nodeId", evalNode.id);
 		
 		UIMessage.make(permsForm, "user-info-header", "modifynodeperms.user.info.header");
@@ -153,7 +161,6 @@ public class ModifyHierarchyNodePermsProducer extends EvalCommonProducer impleme
 			
 			// render action buttons
 			UICommand saveButton = UICommand.make(userBranch, "save-changes-button", UIMessage.make("modifynodeperms.save.changes.button"), actionBean + "savePermissions");
-			UICommand.make(userBranch, "cancel-changes-button", UIMessage.make("modifynodeperms.cancel.changes.button"));
 			UICommand removeButton = UICommand.make(userBranch, "remove-user-button", UIMessage.make("modifynodeperms.remove.user.button"), actionBean + "removeUser");
 			
 			// add the hardcoded el binding to tell the backing bean which user this button corresponds to
@@ -210,9 +217,7 @@ public class ModifyHierarchyNodePermsProducer extends EvalCommonProducer impleme
 		
 		UICommand addButton = UICommand.make(newUserBranch, "add-user-button", UIMessage.make("modifynodeperms.add.user.button"), actionBean + "addUser");
 		addButton.parameters.add(new UIELBinding(actionBean + "selectedUserIndex", newUserConstant));
-		
-		UIInternalLink.make(tofill, "return-link", new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
-		
+
 		// init js
 		Object[] initParams = new Object[] {
 				newUserEidInput.getFullID(),

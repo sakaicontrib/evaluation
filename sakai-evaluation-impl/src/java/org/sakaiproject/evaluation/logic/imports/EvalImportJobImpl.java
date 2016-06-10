@@ -26,7 +26,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import org.sakaiproject.component.cover.ComponentManager;
-import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.user.api.UserDirectoryService;
 
@@ -39,7 +38,7 @@ import org.sakaiproject.user.api.UserDirectoryService;
  */
 public class EvalImportJobImpl implements EvalImportJob{
 	
-	private static final Log log = LogFactory.getLog(EvalImportJobImpl.class);
+	private static final Log LOG = LogFactory.getLog(EvalImportJobImpl.class);
 	
 	//on demand injection of services - this is bad, use real injection -AZ
 	private org.sakaiproject.evaluation.logic.imports.EvalImport evalImport = 
@@ -59,7 +58,7 @@ public class EvalImportJobImpl implements EvalImportJob{
 	 */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		//TODO lock while executing?
-		String id = null;
+		String id;
 		try
 		{
 			Session s = sessionManager.getCurrentSession();
@@ -86,7 +85,7 @@ public class EvalImportJobImpl implements EvalImportJob{
 		}
 		catch(Exception e) {
 			//TODO add to audit trail
-			log.error("job execution " + e);
+			LOG.error("job execution " + e);
 		}
 	}
 }

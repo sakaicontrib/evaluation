@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Vector;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -56,12 +56,17 @@ import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
+import org.sakaiproject.authz.api.Role;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.cluster.api.ClusterService;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.coursemanagement.api.Section;
+import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
+import org.sakaiproject.coursemanagement.impl.provider.SectionRoleResolver;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.EntityPropertyNotDefinedException;
@@ -79,6 +84,7 @@ import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -105,6 +111,10 @@ import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport;
+import org.sakaiproject.exception.PermissionException;
+import org.sakaiproject.exception.ServerOverloadException;
+import org.sakaiproject.exception.TypeException;
 
 
 /**
@@ -117,11 +127,13 @@ import org.sakaiproject.util.ResourceLoader;
  */
 public class EvalExternalLogicImpl implements EvalExternalLogic {
 
-    private static Log log = LogFactory.getLog(EvalExternalLogicImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalExternalLogicImpl.class);
 
     private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
     private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
     private static final String SAKAI_SITE_TYPE_FULL = SiteService.APPLICATION_ID;
+
+    private static final String SAKAI_SECTION_TYPE = "section";
 
     private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
     private static final String ANON_USER_PREFIX = "Anon_User_";
@@ -217,14 +229,29 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         this.clusterService = clusterService;
     }
 
+    protected CourseManagementService courseManagementService;
+    public void setCourseManagementService( CourseManagementService courseManagementService ) {
+        this.courseManagementService = courseManagementService;
+    }
+    
+    protected SectionRoleResolver sectionRoleResolver;
+    public void setSectionRoleResolver( SectionRoleResolver sectionRoleResolver ) {
+        this.sectionRoleResolver = sectionRoleResolver;
+    }
+
+    private EvalHierarchyRuleSupport evalHierarchyRuleLogic;
+    public void setEvalHierarchyRuleLogic( EvalHierarchyRuleSupport evalHierarchyRuleLogic ) {
+        this.evalHierarchyRuleLogic = evalHierarchyRuleLogic;
+    }
+
     public void init() {
-        log.debug("init, register security perms");
+        LOG.debug("init, register security perms");
 
         // register Sakai permissions for this tool
         registerPermissions();
 
         // email bulk headers - http://bugs.sakaiproject.org/jira/browse/EVALSYS-620
-        emailHeaders = new Vector<String>();
+        emailHeaders = new ArrayList<>();
         emailHeaders.add(EMAIL_BULK_FLAG);
     }
 
@@ -263,12 +290,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
     public List<EvalUser> getSakaiAdmins() {
 
-        List<String> groupsList = new ArrayList<String>(1);
+        List<String> groupsList = new ArrayList<>(1);
         groupsList.add("/site/!admin");
         Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
 
         Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(userIdSet.toArray(new String[userIdSet.size()]));
-        List<EvalUser> sakaiAdminList = new ArrayList<EvalUser>(sakaiAdminMap.values());
+        List<EvalUser> sakaiAdminList = new ArrayList<>(sakaiAdminMap.values());
 
         return sakaiAdminList;
 
@@ -335,7 +362,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         try {
             userId = userDirectoryService.getUserId(username);
         } catch(UserNotDefinedException ex) {
-            log.debug("Could not get userId from username: " + username);
+            LOG.debug("Could not get userId from username: " + username);
         }
         return userId;
     }
@@ -351,7 +378,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             try {
                 username = userDirectoryService.getUserEid(userId);
             } catch(UserNotDefinedException ex) {
-                log.warn("Sakai could not get username from userId: " + userId, ex);
+                LOG.warn("Sakai could not get username from userId: " + userId, ex);
             }
         }
         return username;
@@ -371,7 +398,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
                         sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
             } catch(UserNotDefinedException ex) {
-                log.debug("Sakai could not get user from userId: " + userId, ex);
+                LOG.debug("Sakai could not get user from userId: " + userId, ex);
             }
         }
         return user;
@@ -397,7 +424,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])
      */
     public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
-        Map<String, EvalUser> users = new HashMap<String, EvalUser>();
+        Map<String, EvalUser> users = new HashMap<>();
         boolean foundAll = false;
         if (userIds == null 
                 || userIds.length == 0) {
@@ -433,17 +460,24 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         //    List l = userDirectoryService.getUsers( userIds );
 
         // handling this in a much less efficient way for now (see above comment) -AZ
-        Map<String, User> sakaiUsers = new HashMap<String, User>(); // fill this with users
-        for (int i = 0; i < userIds.length; i++) {
+        Map<String, User> sakaiUsers = new HashMap<>(); // fill this with users
+        for( String userId : userIds )
+        {
             User user = null;
-            try {
-                user = userDirectoryService.getUser( userIds[i] );
-            } catch (UserNotDefinedException e) {
-                log.debug("Cannot find user object by id:" + userIds[i] );
-                try {
-                    user = userDirectoryService.getUserByEid( userIds[i] );
-                } catch (UserNotDefinedException e1) {
-                    log.debug("Cannot find user object by eid:" + userIds[i] );
+            try
+            {
+                user = userDirectoryService.getUser( userId );
+            }
+            catch( UserNotDefinedException e )
+            {
+                LOG.debug( "Cannot find user object by id:" + userId );
+                try
+                {
+                    user = userDirectoryService.getUserByEid( userId );
+                }
+                catch( UserNotDefinedException e1 )
+                {
+                    LOG.debug( "Cannot find user object by eid:" + userId );
                 }
             }
             if (user != null) {
@@ -458,7 +492,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserSakaiAdmin(java.lang.String)
      */
     public boolean isUserSakaiAdmin(String userId) {
-        log.debug("Checking is eval super admin for: " + userId);
+        LOG.debug("Checking is eval super admin for: " + userId);
         return securityService.isSuperUser(userId);
     }
 
@@ -466,11 +500,49 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserLocale(java.lang.String)
      */
     public Locale getUserLocale(String userId) {
-        log.debug("userId: " + userId);
+        LOG.debug("userId: " + userId);
         //log.warn("can only get the locale for the current user right now...");
         // TODO - this sucks because there is no way to get the locale for anything but the
         // current user.... terrible -AZ
         return new ResourceLoader().getLocale();
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#makeEvalGroupObjectsForSectionAwareness(java.lang.String)
+     */
+    public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId )
+    {
+        if( evalGroupId == null )
+        {
+            throw new IllegalArgumentException( "evalGroupId cannot be null" );
+        }
+
+        if( !evalGroupId.startsWith( EvalConstants.GROUP_ID_SITE_PREFIX ) )
+        {
+            throw new IllegalArgumentException( "cannot determine sections of groupId='" + evalGroupId + "' (must be a site)" );
+        }
+
+        List<EvalGroup> groups = new ArrayList<>();
+        try
+        {
+            String realmID = siteService.siteReference( evalGroupId.replace( EvalConstants.GROUP_ID_SITE_PREFIX, "" ) );
+            Set<String> sectionIds = authzGroupService.getProviderIds( realmID );
+            for( String sectionID : sectionIds )
+            {
+                try
+                {
+                    Section section = courseManagementService.getSection( sectionID );
+                    EvalGroup group = new EvalGroup( evalGroupId + EvalConstants.GROUP_ID_SECTION_PREFIX + sectionID, 
+                            section.getTitle(), getContextType( SAKAI_SECTION_TYPE ) );
+                    groups.add( group );
+                }
+                catch( IdNotFoundException ex ) { LOG.debug( "Could not find section with ID = " + sectionID, ex ); }
+            }
+        }
+        catch( Exception ex ) { LOG.debug( ex.getMessage() ); }
+
+
+        return groups;
     }
 
     /* (non-Javadoc)
@@ -488,11 +560,35 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             try {
                 // try to get the site object based on the entity reference (which is the evalGroupId)
                 // first we try to go straight to the siteService which is fastest
-                if (evalGroupId.contains("/group/")) {
+                if (evalGroupId.contains(EvalConstants.GROUP_ID_GROUP_PREFIX)) {
                     Group group = siteService.findGroup(evalGroupId);
                     c = new EvalGroup( evalGroupId, group.getTitle(), 
                             getContextType(SAKAI_GROUP_TYPE) );
-                } else if (evalGroupId.startsWith("/site/")) {
+                }
+                
+                // If the group id starts with '/site/' and contains '/section/', then we need to make a section type EvalGroup object
+                else if( evalGroupId.startsWith( EvalConstants.GROUP_ID_SITE_PREFIX ) && evalGroupId.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
+                {
+                    try
+                    {
+                        // Get the section IDs for the parent site
+                        String siteID = evalGroupId.substring( evalGroupId.indexOf( EvalConstants.GROUP_ID_SITE_PREFIX ) + 6, evalGroupId.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) );
+                        String sectionID = evalGroupId.substring( evalGroupId.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) + 9 );
+                        String realmID = siteService.siteReference( siteID );
+                        Set<String> sectionIds = authzGroupService.getProviderIds( realmID );
+
+                        // Loop through the section IDs, if one matches the section ID contained in the evalGroupID, create an EvalGroup object for it
+                        for( String secID : sectionIds )
+                        {
+                            if( secID.equalsIgnoreCase( sectionID ) )
+                            {
+                                c = new EvalGroup( evalGroupId, courseManagementService.getSection( secID ).getTitle(), getContextType( SAKAI_SECTION_TYPE ) );
+                            }
+                        }
+                    }
+                    catch( Exception ex ) { c = null; }
+                }
+                else if (evalGroupId.startsWith(EvalConstants.GROUP_ID_SITE_PREFIX)) {
                     String siteId = evalGroupId.substring(6);
                     try {
                         Site site = siteService.getSite(siteId);
@@ -517,13 +613,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             } catch (Exception e) {
                 // invalid site reference
-                log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
+                LOG.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
                 c = null;
             }
         }
 
         if (c == null) {
-            log.debug("Could not get group from evalGroupId:" + evalGroupId);
+            LOG.debug("Could not get group from evalGroupId:" + evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
@@ -536,7 +632,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getCurrentEvalGroup()
      */
     public String getCurrentEvalGroup() {
-        String location = null;
+        String location;
         try {
             String context = toolManager.getCurrentPlacement().getContext();
             Site s = siteService.getSite( context );
@@ -552,7 +648,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public int countEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        LOG.debug("userId: " + userId + ", permission: " + permission);
 
         int count = 0;
         Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
@@ -575,7 +671,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        LOG.debug("userId: " + userId + ", permission: " + permission);
 
         return getEvalGroups(userId, permission, false, null);
     }
@@ -584,13 +680,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId) {
-        log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
+        LOG.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
 
         return getEvalGroups(userId, permission, true, currentSiteId);
     }
 
     private List<EvalGroup>getEvalGroups(String userId, String permission, boolean filterSites, String currentSiteId) {
-        List<EvalGroup> l = new ArrayList<EvalGroup>();
+        List<EvalGroup> l = new ArrayList<>();
 
         // get the groups from Sakai
         Set<String> authzGroupIds = 
@@ -610,9 +706,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         if ( currentSite != null && currentSite.getProperties() != null ){
             try {
                 currentSiteTerm = currentSite.getProperties().getLongProperty(SITE_TERM);
-            } catch (EntityPropertyNotDefinedException e) {
-                isCurrentSiteTermDefined = false;
-            } catch (EntityPropertyTypeException e) {
+            } catch (EntityPropertyNotDefinedException | EntityPropertyTypeException e) {
                 isCurrentSiteTermDefined = false;
             }
         }else{
@@ -642,9 +736,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                                         long siteTerm = 0l;
                                         try {
                                             siteTerm = site.getProperties().getLongProperty(SITE_TERM);
-                                        } catch (EntityPropertyNotDefinedException e) {
-                                            // IGNORE
-                                        } catch (EntityPropertyTypeException e) {
+                                        } catch (EntityPropertyNotDefinedException | EntityPropertyTypeException e) {
                                             // IGNORE
                                         }
                                         // add this site to list only if it has the same term as the current site
@@ -671,7 +763,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String groupId = r.getId();
                         Group group = siteService.findGroup(groupId);
                         if (group == null) {
-                            log.info("Could not get Sakai group from group id:" + groupId);
+                            LOG.info("Could not get Sakai group from group id:" + groupId);
                         }
                         else {
                             l.add(new EvalGroup(r.getReference(), group.getTitle(), getContextType(r.getType())));
@@ -681,40 +773,140 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             }
         }
 
-        if (l.isEmpty()) log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+        if (l.isEmpty()) {
+            LOG.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+        }
         return l;
     }
 
     /* (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String, java.lang.Boolean)
      */
-    public int countUserIdsForEvalGroup(String evalGroupId, String permission) {
-        // get the count from the method which retrieves all the groups,
-        // this method might be better to retire
-        return getUserIdsForEvalGroup(evalGroupId, permission).size();
+    public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        return getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ).size();
     }
 
-    /* (non-Javadoc)
-     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String)
+    /**
+     * Utility class to parse out section, site and group IDs into their own separate variables.
      */
-    public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
-        Set<String> userIds = new HashSet<String>();
+    private class ParsedEvalGroupID
+    {
+        // Member variables
+        private String siteID = "";
+        private String sectionID = "";
+        private String groupID = "";
 
-        // only go on to check the Sakai sites/groups if nothing was found
-        if (userIds.size() == 0) {
-            String reference = evalGroupId;
-            List<String> azGroups = new ArrayList<String>();
-            azGroups.add(reference);
-            userIds.addAll( authzGroupService.getUsersIsAllowed(permission, azGroups) );
-            // need to remove the admin user or else they show up in unwanted places
-            if (userIds.contains(ADMIN_USER_ID)) {
-                userIds.remove(ADMIN_USER_ID);
+        /**
+         * Default constructor
+         * @param evalGroupID the group ID to be parsed
+         */
+        public ParsedEvalGroupID( String evalGroupID )
+        {
+            // Evaluation group IDs will always be in one of the following formats:
+            // "/site/<siteID>"
+            // "/site/<siteID>/section/<sectionID>"
+            // "/site/<siteID>/group/<groupID>"
+            evalGroupID = evalGroupID.replace( EvalConstants.GROUP_ID_SITE_PREFIX, "" );
+
+            String[] pieces = evalGroupID.split( EvalConstants.GROUP_ID_SECTION_PREFIX );
+            if( pieces.length == 2 )
+            {
+                siteID = pieces[0];
+                sectionID = pieces[1];
+            }
+            else
+            {
+                pieces = evalGroupID.split( EvalConstants.GROUP_ID_GROUP_PREFIX );
+                siteID = pieces[0];
+                if( pieces.length == 2 )
+                {
+                    groupID = pieces[1];
+                }
             }
         }
 
-        return userIds;
+        // Getters
+        public boolean  hasSection()        { return !StringUtils.isBlank( sectionID ); }
+        public boolean  hasGroup()          { return !StringUtils.isBlank( groupID ); }
+        public String   getSiteID()         { return siteID; }
+        public String   getSectionID()      { return sectionID; }
+        public String   getGroupID()        { return groupID; }
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String, java.lang.Boolean)
+     */
+    public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
+    {
+        // Parse out the section and site IDs from the group ID
+        ParsedEvalGroupID groupID = new ParsedEvalGroupID( evalGroupID );
+
+        // If it's not section aware...
+        Set<String> userIDs = new HashSet<>();
+        if( !sectionAware )
+        {
+            // Get the list normally
+            List<String> azGroups = new ArrayList<>();
+            String azGroup = EvalConstants.GROUP_ID_SITE_PREFIX + groupID.getSiteID();
+            if( groupID.hasGroup() )
+            {
+                azGroup += EvalConstants.GROUP_ID_GROUP_PREFIX + groupID.getGroupID();
+            }
+            azGroups.add( azGroup );
+            userIDs.addAll( authzGroupService.getUsersIsAllowed( permission, azGroups ) );
+            if( userIDs.contains( ADMIN_USER_ID ) )
+            {
+                userIDs.remove( ADMIN_USER_ID );
+            }
+        }
+
+        // Otherwise, it's section aware but we only need to run the following if the sectin prefix is present in the evalGroupID
+        else if( groupID.hasSection() )
+        {
+            try
+            {
+                // Get all roles for the site
+                Site site = siteService.getSite( groupID.getSiteID() );
+                Set<Role> siteRoles = site.getRoles();
+                List<String> siteRolesWithPerm = new ArrayList<>( siteRoles.size() );
+
+                // Determine which roles have the given permission
+                for( Role role : siteRoles )
+                {
+                    if( role.getAllowedFunctions().contains( permission ) )
+                    {
+                        siteRolesWithPerm.add( role.getId() );
+                    }
+                }
+
+                // Get the section and the user role map for the section
+                Section section = courseManagementService.getSection( groupID.getSectionID() );
+                Map<String, String> userRoleMap = sectionRoleResolver.getUserRoles( courseManagementService, section );
+
+                // Loop through the user role map; if the user's section role is in the list of site roles with the permission, add the user to the list
+                for( Entry<String, String> userRoleEntry : userRoleMap.entrySet() )
+                {
+                    if( siteRolesWithPerm.contains( userRoleEntry.getValue() ) )
+                    {
+                        String userEID;
+                        try { userEID = userDirectoryService.getUserId( userRoleEntry.getKey() ); }
+                        catch( UserNotDefinedException e )
+                        { 
+                            LOG.info( "Cant find userID for user = " + userRoleEntry.getKey(), e );
+                            continue;
+                        }
+                        userIDs.add( userEID );
+                    }
+                }
+            }
+            catch( IdUnusedException ex ) { LOG.warn( "Could not find site with ID = " + groupID.getSiteID(), ex ); }
+            catch( IdNotFoundException ex ) { LOG.warn( "Could not find section with ID = " + groupID.getSectionID(), ex ); }
+        }
+
+        // Return the user IDs
+        return userIDs;
+    }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)
@@ -726,19 +918,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         if (evalGroupId == null) {
             // special check for the admin user
-            if (isUserSakaiAdmin(userId)) {
-                return true;
-            }
-            return false;
+            return isUserSakaiAdmin(userId);
         }
 
         // try checking Sakai
         String reference = evalGroupId;
-        if ( securityService.unlock(userId, permission, reference) ) {
-            return true;
-        }
-
-        return false;
+        return securityService.unlock(userId, permission, reference);
     }
 
     /* (non-Javadoc)
@@ -755,13 +940,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             throw new IllegalArgumentException("Invalid from address: " + from, e);
         }
 
-        List<String> toEmails = new ArrayList<String>();
+        List<String> toEmails = new ArrayList<>();
         for (int i = 0; i < to.length; i++) {
             String email = to[i];
             if (email == null || email.equals("")) {
                 if (deferExceptions) {
                     exceptionTracker += "blank or null to address in list ("+i+") :: ";
-                    log.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
+                    LOG.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
                     continue;
                 } else {
                     // die here since we were unable to find this user at all
@@ -787,7 +972,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     private String[] sendEmails(InternetAddress fromAddress, List<String> toEmails, String subject,
             String message, boolean deferExceptions, String exceptionTracker) {
         InternetAddress[] replyTo = new InternetAddress[1];
-        List<InternetAddress> listAddresses = new ArrayList<InternetAddress>();
+        List<InternetAddress> listAddresses = new ArrayList<>();
         for (int i = 0; i < toEmails.size(); i++) {
             String email = toEmails.get(i);
             try {
@@ -796,11 +981,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } catch (AddressException e) {
                 if (deferExceptions) {
                     exceptionTracker += e.getMessage() + " :: ";
-                    log.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
-                    if (log.isDebugEnabled()) {
-                        e.printStackTrace();
+                    LOG.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.warn( e );
                     }
-                    continue;
                 } else {
                     // die here since we were unable to find this user at all
                     throw new IllegalArgumentException("Invalid to address: " + email + ", cannot send emails", e);
@@ -853,7 +1037,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<String> getServers() {
-        List<String> servers = new ArrayList<String>();
+        List<String> servers = new ArrayList<>();
         if(clusterService == null) {
             servers.add(this.getServerId());
         } else {
@@ -897,7 +1081,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
         String ref = getEntityReference(evaluationEntity);
         if (ref != null) {
-            log.debug("Entity event: " + eventName + " for " + ref);
+            LOG.debug("Entity event: " + eventName + " for " + ref);
             entityBroker.fireEvent(eventName, ref);
         }
     }
@@ -905,7 +1089,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void registerEntityEvent(String eventName, Class<? extends Serializable> entityClass, String entityId) {
         String ref = getEntityReference(entityClass, entityId);
         if (ref != null) {
-            log.debug("Entity event: " + eventName + " for " + ref);
+            LOG.debug("Entity event: " + eventName + " for " + ref);
             entityBroker.fireEvent(eventName, ref);
         }
     }
@@ -917,21 +1101,21 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @return an entity reference string or null if none can be found
      */
     protected String getEntityReference(Serializable entity) {
-        String id = null;
+        String id;
         try {
             Class<? extends Serializable> elementClass = entity.getClass();
             Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
             Long realId = (Long) getIdMethod.invoke(entity, (Object[]) null);
             id = realId.toString();
             return getEntityReference(elementClass, id);
-        } catch (Exception e) {
-            log.warn("Failed to get id from entity object", e);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            LOG.warn("Failed to get id from entity object", e);
             return null;
         }
     }
 
     protected String getEntityReference(Class<? extends Serializable> entityClass, String entityId) {
-        String prefix = null;
+        String prefix;
         // make sure this class is supported and get the prefix
         if (entityClass == EvalEvaluation.class) {
             prefix = EvaluationEntityProvider.ENTITY_PREFIX;
@@ -983,6 +1167,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             return EvalConstants.GROUP_TYPE_SITE;
         } else if (SAKAI_GROUP_TYPE.equals(sakaiType)) {
             return EvalConstants.GROUP_TYPE_GROUP;
+        }
+        else if( sakaiType.equals( SAKAI_SECTION_TYPE ) )
+        {
+            return EvalConstants.GROUP_TYPE_SECTION;
         }
         return EvalConstants.GROUP_TYPE_UNKNOWN;
     }
@@ -1070,7 +1258,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                     int value = serverConfigurationService.getInt(settingName, num);
                     returnValue = (T) new Integer(value);
                 } else if (defaultValue instanceof Boolean) {
-                    boolean bool = ((Boolean) defaultValue).booleanValue();
+                    boolean bool = ((Boolean) defaultValue);
                     boolean value = serverConfigurationService.getBoolean(settingName, bool);
                     returnValue = (T) new Boolean(value);
                 } else if (defaultValue instanceof String) {
@@ -1090,12 +1278,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         		ContentResource contentResource = contentHostingService.getResource(abspath);
         		return contentResource.getContent();
         	}
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-            	log.debug("Cannot byte array for Content Hosting File " + abspath,e);
+        } catch (PermissionException | IdUnusedException | TypeException | ServerOverloadException e) {
+            if (LOG.isDebugEnabled()) {
+            	LOG.debug("Cannot byte array for Content Hosting File " + abspath,e);
             }
             else {
-            	log.info("Cannot byte array for Content Hosting File " + abspath);
+            	LOG.info("Cannot byte array for Content Hosting File " + abspath);
             }
             return null;
         }
@@ -1165,7 +1353,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         String jobFullName = null;
         SchedulerManager scheduleManager = getBean(SchedulerManager.class);
-        CronTrigger trigger = null;
+        CronTrigger trigger;
 
         String triggerName = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME);
         String triggerGroup = (String) dataMap.remove(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP);
@@ -1179,17 +1367,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				.forJob(jobName, jobGroup)
 				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
 				.build();
-		if(log.isDebugEnabled()) {
-		    log.debug("Created trigger: " + trigger.getCronExpression());
+		if(LOG.isDebugEnabled()) {
+		    LOG.debug("Created trigger: " + trigger.getCronExpression());
 		}
 
         if(trigger != null) {
             // create job
             JobDataMap jobDataMap = new JobDataMap();
-            if(dataMap != null) {
-                for(String key : dataMap.keySet()) {
-                    jobDataMap.put(key, dataMap.get(key));
-                }
+            for(String key : dataMap.keySet()) {
+                jobDataMap.put(key, dataMap.get(key));
             }
 
             JobDetail jobDetail = JobBuilder.newJob(jobClass)
@@ -1198,16 +1384,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             		.build();
             Scheduler scheduler = scheduleManager.getScheduler();
             if(scheduler == null) {
-                log.warn("Unable to access scheduler", new Throwable());
+                LOG.warn("Unable to access scheduler", new Throwable());
             } else {
                 try {
                     Date date = scheduler.scheduleJob(jobDetail, trigger);
-                    if(log.isDebugEnabled()) {
-                        log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
+                    if(LOG.isDebugEnabled()) {
+                        LOG.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
                     }
                     jobFullName =  jobDetail.getKey().toString();
                 } catch(SchedulerException e) {
-                    log.warn("SchedulerException in scheduleCronJob()", e);
+                    LOG.warn("SchedulerException in scheduleCronJob()", e);
                 }
             }
         }
@@ -1236,11 +1422,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     @SuppressWarnings("unchecked")
     public Map<String,Map<String, String>> getCronJobs(String jobGroup) {
-        Map<String,Map<String, String>> cronJobs = new HashMap<String,Map<String, String>>();
+        Map<String,Map<String, String>> cronJobs = new HashMap<>();
         SchedulerManager schedulerManager = getBean(SchedulerManager.class);
         Scheduler scheduler = schedulerManager.getScheduler();
         if (scheduler == null) {
-            log.warn("Unable to access scheduler", new Throwable());
+            LOG.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
                 Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroup));
@@ -1251,7 +1437,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
                         for(Trigger trigger : triggers) {
                         	TriggerKey triggerKey = trigger.getKey();
-                            Map<String, String> map = new HashMap<String, String>();
+                            Map<String, String> map = new HashMap<>();
                             map.put(EvalConstants.CRON_SCHEDULER_JOB_NAME, jobKey.getName());
                             map.put(EvalConstants.CRON_SCHEDULER_JOB_GROUP, jobKey.getGroup());
 
@@ -1270,11 +1456,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                             cronJobs.put(triggerKey.toString(), map);
                         }
                     } catch(SchedulerException e) {
-                        log.warn("SchedulerException processing one trigger in getCronJobs", e);					
+                        LOG.warn("SchedulerException processing one trigger in getCronJobs", e);					
                     }
                 }
             } catch(SchedulerException e) {
-                log.warn("SchedulerException processing one job in getCronJobs", e);
+                LOG.warn("SchedulerException processing one job in getCronJobs", e);
             }
         }
         return cronJobs;
@@ -1290,12 +1476,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         SchedulerManager scheduleManager = getBean(SchedulerManager.class);
         Scheduler scheduler = scheduleManager.getScheduler();
         if(scheduler == null) {
-            log.warn("Unable to access scheduler", new Throwable());
+            LOG.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
                 success = scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
             } catch(SchedulerException e) {
-                log.warn("SchedulerException in scheduleCronJob()", e);
+                LOG.warn("SchedulerException in scheduleCronJob()", e);
             }
         }
         return success;
@@ -1317,10 +1503,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         boolean isEvalGroupPublished = true; 
         if( evalGroupId != null){
             try{
-                Site site = siteService.getSite(evalGroupId.replaceAll("/site/", ""));
+                Site site = siteService.getSite(evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, ""));
                 isEvalGroupPublished = site.isPublished();
             }catch(IdUnusedException e){
-                log.debug(e);
+                LOG.debug(e);
             } 
         }
         return isEvalGroupPublished;
@@ -1336,7 +1522,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             String toolPage = null;
             //userId is Sakai id
             if(userId == null || userId.length() == 0) {
-                log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+                LOG.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
             } else {
                 String myWorkspaceId = siteService.getUserSiteId(userId);
                 if(myWorkspaceId != null && ! myWorkspaceId.trim().equals("")) {
@@ -1344,11 +1530,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                     if(myWorkspace != null) {
                         // find page with eval tool
                         List<SitePage> pages = myWorkspace.getPages();
-                        for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
-                            SitePage page = i.next();
+                        for( SitePage page : pages )
+                        {
                             List<ToolConfiguration> tools = page.getTools();
-                            for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
-                                ToolConfiguration tc = j.next();
+                            for( ToolConfiguration tc : tools )
+                            {
                                 if (tc.getToolId().equals("sakai.rsf.evaluation")) {
                                     toolPage = page.getId();
                                     break;
@@ -1359,11 +1545,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
                 if(toolPage != null && ! toolPage.trim().equals("")) {
                     // e.g., https://testctools.ds.itd.umich.edu/portal/site/~37d8035e-54b3-425c-bcb5-961e881d2afe/page/866dd4e6-0323-43a1-807c-9522bb3167b7
-                    url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+                    url = getServerUrl() + EvalConstants.GROUP_ID_SITE_PREFIX + myWorkspaceId + "/page/" + toolPage;
                 }
             }
         } catch (Exception e) {
-            log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+            LOG.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
         }
         if(url == null) {
             url = getServerUrl();
@@ -1384,10 +1570,79 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalSecurity#isUserReadonlyAdmin(java.lang.String)
      */
     public boolean isUserReadonlyAdmin(String userId) {
-    	if (securityService.unlock(userId, EvalConstants.PERM_ADMIN_READONLY, this.getCurrentEvalGroup())) {
-            return true;
-        }
-    	return false;
+    	return securityService.unlock(userId, EvalConstants.PERM_ADMIN_READONLY, this.getCurrentEvalGroup());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#isRuleAlreadyAssignedToNode(java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
+     */
+    public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
+    {
+        return evalHierarchyRuleLogic.isRuleAlreadyAssignedToNode( ruleText, qualifierSelection, optionSelection, nodeID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#assignNodeRule(java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
+     */
+    public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
+    {
+        evalHierarchyRuleLogic.assignNodeRule( ruleText, qualifier, option, nodeID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#removeNodeRule(java.lang.Long)
+     */
+    public void removeNodeRule( Long ruleID )
+    {
+        evalHierarchyRuleLogic.removeNodeRule( ruleID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#removeAllRulesForNode(java.lang.Long)
+     */
+    public void removeAllRulesForNode( Long nodeID )
+    {
+        evalHierarchyRuleLogic.removeAllRulesForNode( nodeID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#updateNodeRule(java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
+     */
+    public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
+    {
+        evalHierarchyRuleLogic.updateNodeRule( ruleID, ruleText, qualifier, option, nodeID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#getRulesByNodeID(java.lang.Long)
+     */
+    public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
+    {
+        return evalHierarchyRuleLogic.getRulesByNodeID( nodeID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#getRuleByID(java.lang.Long)
+     */
+    public HierarchyNodeRule getRuleByID( Long ruleID )
+    {
+        return evalHierarchyRuleLogic.getRuleByID( ruleID );
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.external.ExternalHierarchyRules#getAllRules()
+     */
+    public List<HierarchyNodeRule> getAllRules()
+    {
+        return evalHierarchyRuleLogic.getAllRules();
     }
 
 }

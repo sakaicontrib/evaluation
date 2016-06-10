@@ -29,8 +29,6 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.utils.EvalUtils;
-
 
 /**
  * Testing out the {@link EvalUtils} utilities
@@ -43,7 +41,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation, boolean)}.
     */
    public void testGetEvaluationState() {
-      String state = null;
+      String state;
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // positive
@@ -257,7 +255,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#updateDueStopDates(org.sakaiproject.evaluation.model.EvalEvaluation, int)}.
     */
    public void testUpdateDueStopDates() {
-      Date dueDate = null;
+      Date dueDate;
 
       Date now = new Date();
       long nowTime = new Date().getTime();
@@ -315,8 +313,8 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEndOfDayDate(java.util.Date)}.
     */
    public void testGetEndOfDayDate() {
-      Date endOfDay = null;
-      Date testDay = null;
+      Date endOfDay;
+      Date testDay;
       Calendar cal = new GregorianCalendar();
 
       // test that time moves to the end of the day
@@ -348,7 +346,7 @@ public class EvalUtilsTest extends TestCase {
    public void testGetHoursDifference() {
       Date startTime = new Date();
       Date endTime = new Date();
-      int difference = 0;
+      int difference;
 
       // test same dates
       difference = EvalUtils.getHoursDifference(startTime, endTime);
@@ -389,22 +387,22 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getGroupsInCommon(java.util.List, java.util.List)}.
     */
    public void testGetGroupsInCommon() {
-      EvalGroup[] groups = null;
-      List<EvalGroup> evalGroups = null;
-      List<EvalAssignGroup> assignGroups = null;
+      EvalGroup[] groups;
+      List<EvalGroup> evalGroups;
+      List<EvalAssignGroup> assignGroups;
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // test all empty stuff
-      evalGroups = new ArrayList<EvalGroup>();
-      assignGroups = new ArrayList<EvalAssignGroup>();
+      evalGroups = new ArrayList<>();
+      assignGroups = new ArrayList<>();
       groups = EvalUtils.getGroupsInCommon(evalGroups, assignGroups);
       assertNotNull(groups);
       assertEquals(0, groups.length);
 
       // test all unique
-      evalGroups = new ArrayList<EvalGroup>();
+      evalGroups = new ArrayList<>();
       evalGroups.add( new EvalGroup("az", "AZ group", EvalConstants.GROUP_TYPE_PROVIDED) );
-      assignGroups = new ArrayList<EvalAssignGroup>();
+      assignGroups = new ArrayList<>();
       assignGroups.add(etdl.assign1);
       assignGroups.add(etdl.assign4);
       groups = EvalUtils.getGroupsInCommon(evalGroups, assignGroups);
@@ -412,9 +410,9 @@ public class EvalUtilsTest extends TestCase {
       assertEquals(0, groups.length);
 
       // test all the same
-      evalGroups = new ArrayList<EvalGroup>();
+      evalGroups = new ArrayList<>();
       evalGroups.add( new EvalGroup(EvalTestDataLoad.SITE1_REF, "AZ group", EvalConstants.GROUP_TYPE_PROVIDED) );
-      assignGroups = new ArrayList<EvalAssignGroup>();
+      assignGroups = new ArrayList<>();
       assignGroups.add(etdl.assign1);
       assignGroups.add(etdl.assign2);
       groups = EvalUtils.getGroupsInCommon(evalGroups, assignGroups);
@@ -422,10 +420,10 @@ public class EvalUtilsTest extends TestCase {
       assertEquals(1, groups.length);
 
       // test 2 groups of 2 the same
-      evalGroups = new ArrayList<EvalGroup>();
+      evalGroups = new ArrayList<>();
       evalGroups.add( new EvalGroup(EvalTestDataLoad.SITE1_REF, "AZ group", EvalConstants.GROUP_TYPE_PROVIDED) );
       evalGroups.add( new EvalGroup(EvalTestDataLoad.SITE2_REF, "AZ group", EvalConstants.GROUP_TYPE_PROVIDED) );
-      assignGroups = new ArrayList<EvalAssignGroup>();
+      assignGroups = new ArrayList<>();
       assignGroups.add(etdl.assign1);
       assignGroups.add(etdl.assign4);
       groups = EvalUtils.getGroupsInCommon(evalGroups, assignGroups);
@@ -438,8 +436,8 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#makeUniqueIdentifier(int)}.
     */
    public void testMakeUniqueIdentifier() {
-      String id = null;
-      HashSet<String> uniqueIds = new HashSet<String>(); 
+      String id;
+      HashSet<String> uniqueIds = new HashSet<>(); 
 
       id = EvalUtils.makeUniqueIdentifier(5);
       assertNotNull(id);
@@ -477,7 +475,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#encodeMultipleAnswers(Integer[])}.
     */
    public void testEncodeMultipleAnswers() {
-      String encoded = null;
+      String encoded;
       String S = EvalUtils.SEPARATOR;
 
       // positive
@@ -504,7 +502,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#decodeMultipleAnswers(java.lang.String)}.
     */
    public void testDecodeMultipleAnswers() {
-      Integer[] decoded = null;
+      Integer[] decoded;
       String S = EvalUtils.SEPARATOR;
 
       // positive
@@ -546,7 +544,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#encodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
     */
    public void testEncodeAnswerNA() {
-      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", new Integer(3), null, null);
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", 3, null, null);
       EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
       naAnswer.setMultiAnswerCode("multiCode");
 
@@ -576,7 +574,7 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#decodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
     */
    public void testDecodeAnswerNA() {
-      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", new Integer(3), null, null);
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", 3, null, null);
       EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
       naAnswer.setMultiAnswerCode("multiCode");
 
@@ -610,7 +608,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    public void testMakeMaxLengthString() {
-      String result = null;
+      String result;
       String test = "this is a string";
 
       result = EvalUtils.makeMaxLengthString(test, 100);
@@ -644,8 +642,8 @@ public class EvalUtilsTest extends TestCase {
    }
 
    public void testCleanupHtmlPtags() {
-      String original = null;
-      String cleanup = null;
+      String original;
+      String cleanup;
 
       // check the trim ends cases
       original = "test with one return\n <p>&nbsp;</p> ";

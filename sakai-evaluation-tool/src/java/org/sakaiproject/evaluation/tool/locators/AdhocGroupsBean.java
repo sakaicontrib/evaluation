@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -39,7 +40,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
 public class AdhocGroupsBean {
-   private static Log log = LogFactory.getLog(AdhocGroupsBean.class);
+   private static final Log LOG = LogFactory.getLog(AdhocGroupsBean.class);
 
    public static final String SAVED_NEW_ADHOCGROUP = "added-adhoc-group";
    public static final String UPDATED_ADHOCGROUP = "updated-adhoc-group";
@@ -52,9 +53,9 @@ public class AdhocGroupsBean {
 
    // These are for keeping track of users. They may not all be used at the moment
    // but would be needed if we want more detailed error/confirm dialogs.
-   public List<String> acceptedUsers = new ArrayList<String>();
-   public List<String> rejectedUsers = new ArrayList<String>();
-   public List<String> alreadyInGroupUsers = new ArrayList<String>();
+   public List<String> acceptedUsers = new ArrayList<>();
+   public List<String> rejectedUsers = new ArrayList<>();
+   public List<String> alreadyInGroupUsers = new ArrayList<>();
 
    /**
     * Adds more users to an existing adhocgroup using the data entered with
@@ -148,18 +149,14 @@ public class AdhocGroupsBean {
          existingParticipants = new String[] {};
       }
 
-      List<String> existingParticipantsList = new ArrayList<String>();
-      for (String particpant: existingParticipants) {
-         existingParticipantsList.add(particpant);
-      }
+      List<String> existingParticipantsList = new ArrayList<>();
+      existingParticipantsList.addAll( Arrays.asList( existingParticipants ) );
 
-      List<String> participants = new ArrayList<String>();
+      List<String> participants = new ArrayList<>();
       checkAndAddToParticipantsList(newAdhocGroupUsers, participants, existingParticipantsList);
 
-      List<String> allParticipants = new ArrayList<String>();
-      for (String particpant: existingParticipants) {
-         allParticipants.add(particpant);
-      }
+      List<String> allParticipants = new ArrayList<>();
+      allParticipants.addAll( Arrays.asList( existingParticipants ) );
 
       allParticipants.addAll(participants);
 
@@ -194,7 +191,7 @@ public class AdhocGroupsBean {
                new Object[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
       }
       else {
-         log.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
+         LOG.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
       }
 
       // Message for any users already in the group

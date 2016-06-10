@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.renderers;
 
+import org.sakaiproject.component.api.ServerConfigurationService;
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -32,6 +34,7 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -58,7 +61,20 @@ public class NavBarRenderer {
         this.settings = settings;
     }
 
-    
+    private DeveloperHelperService developerHelperService;
+    public void setDeveloperHelperService( DeveloperHelperService developerHelperService )
+    {
+        this.developerHelperService = developerHelperService;
+    }
+
+    private static final String SAK_PROP_UI_SERVICE = "ui.service";
+    private static final String UI_SERVICE_DEFAULT = "Sakai";
+    private ServerConfigurationService serverConfigurationService;
+    public void setServerConfigurationService( ServerConfigurationService serverConfigurationService )
+    {
+        this.serverConfigurationService = serverConfigurationService;
+    }
+
     private String currentViewID;
     
     public static String NAV_ELEMENT = "navIntraTool:";
@@ -71,8 +87,8 @@ public class NavBarRenderer {
         boolean canCreateTemplate = authoringService.canCreateTemplate(currentUserId);
         boolean canBeginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
         UIJointContainer joint = new UIJointContainer(tofill, divID, "evals-navigation:");
-        boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK)).booleanValue();
-        boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS)).booleanValue();
+        boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK));
+        boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS));
         boolean adminAllowedToSee = isUserAdmin && showMyToplinks;
         
         // set a few local variables
@@ -81,7 +97,19 @@ public class NavBarRenderer {
         if (isUserAdmin) {
             renderLink(joint, AdministrateProducer.VIEW_ID, "administrate.page.title");
         }
-        
+
+        // Provide logout and my workspace links
+        if( !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation )
+        {
+            UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
+                    UIMessage.make( "summary.myworkspace.link.label" ), 
+                    developerHelperService.getUserHomeLocationURL( developerHelperService.getCurrentUserReference() ) );
+
+            UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
+                    UIMessage.make( "summary.logout.link.label", new Object[] { serverConfigurationService.getString( SAK_PROP_UI_SERVICE, UI_SERVICE_DEFAULT ) } ), 
+                    developerHelperService.getPortalURL() + "/logout" );
+        }
+
         renderLink(joint, SummaryProducer.VIEW_ID, "summary.page.title");
         
         if(adminAllowedToSee || showMyToplinks) {

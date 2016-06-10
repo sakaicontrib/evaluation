@@ -26,7 +26,6 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 /*
  * This producer renders GUI for viewing the Eval Hierarchy as well as 

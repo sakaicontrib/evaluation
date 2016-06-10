@@ -23,7 +23,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -44,7 +43,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	public static final String LOCK_CONSOLIDATED_EMAIL_JOB = "LOCK_CONSOLIDATED_EMAIL_JOB";
 	private static final long TWO_HOURS = 2L * 60L * 60L * 1000L;
 
-	Log log = LogFactory.getLog(ConsolidatedNotificationsJobImpl.class);
+	private static final Log LOG = LogFactory.getLog(ConsolidatedNotificationsJobImpl.class);
 	
 	protected EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -68,18 +67,18 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	
     protected JobStatusReporter jobStatusReporter;
     public void setJobStatusReporter(JobStatusReporter jobStatusReporter) {
-    	log.info("setJobStatusReporter() jobStatusReporter == " + jobStatusReporter);
+    	LOG.info("setJobStatusReporter() jobStatusReporter == " + jobStatusReporter);
     	this.jobStatusReporter = jobStatusReporter;
     }
     
     protected String jobStatusReporterName;
     public void setJobStatusReporterName(String jobStatusReporterName) {
-    	log.info("setJobStatusReporterName() jobStatusReporterName == " + jobStatusReporterName);
+    	LOG.info("setJobStatusReporterName() jobStatusReporterName == " + jobStatusReporterName);
     	this.jobStatusReporterName = jobStatusReporterName;
     }
 	
 	public void init() {
-		log.info("init()");
+		LOG.info("init()");
 		
         if(jobStatusReporter == null) {
         	if(jobStatusReporterName != null) {
@@ -98,12 +97,12 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	 */
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		log.info("execute()");
+		LOG.info("execute()");
 		
 		// this server must get lock to do this job
 		String serverId = this.externalLogic.getServerId();
 		Boolean gotLock = lockManager.obtainLock(LOCK_CONSOLIDATED_EMAIL_JOB, serverId, TWO_HOURS);
-		if(gotLock != null && gotLock.booleanValue()) {
+		if(gotLock != null && gotLock) {
 			try {
 				
 				Date beginTime = new Date();
@@ -113,22 +112,22 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				
 				Boolean sendAvailableEmails = (Boolean) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE);
 				if(sendAvailableEmails == null) {
-					sendAvailableEmails = new Boolean(true);
+					sendAvailableEmails = true;
 				}
 				
-				if(sendAvailableEmails.booleanValue()) {
+				if(sendAvailableEmails) {
 					String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
 					if(recipients == null) {
-						log.debug("announcements sent: 0");
+						LOG.debug("announcements sent: 0");
 					} else {
-						log.debug("announcements sent: " + recipients.length);
+						LOG.debug("announcements sent: " + recipients.length);
 					}
 				}
 		
-				int reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS)).intValue();
+				int reminderInterval = ((Integer) evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS));
 				// check if reminders are to be sent
 				if(reminderInterval > 0) {
-					Date nextReminder = null;
+					Date nextReminder;
 					String nextReminderStr = (String) evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
 					if(nextReminderStr == null || nextReminderStr.trim().equals("")) {
 						nextReminder = new Date();
@@ -141,8 +140,8 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 							nextReminder = new Date();
 						}
 					}
-					if (log.isInfoEnabled()) {
-						log.info("Next reminder date is " + nextReminder + ".");
+					if (LOG.isInfoEnabled()) {
+						LOG.info("Next reminder date is " + nextReminder + ".");
 					}
 					//reminder interval unit is a day
 					long one_hour = 1000L * 60L * 60L;
@@ -155,9 +154,9 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		
 						String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
 						if(recipients == null) {
-							log.debug("reminders sent: 0");
+							LOG.debug("reminders sent: 0");
 						} else {
-							log.debug("reminders sent: " + recipients.length);
+							LOG.debug("reminders sent: " + recipients.length);
 						}
 						Calendar cal = Calendar.getInstance();
 						cal.setTimeInMillis(tdate + reminderInterval * one_day);
@@ -165,8 +164,8 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 						Integer startMinute = (Integer) this.evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES);
 		
 						if(startTime != null) {
-							cal.set(Calendar.HOUR_OF_DAY, startTime.intValue());
-							cal.set(Calendar.MINUTE, startMinute.intValue());
+							cal.set(Calendar.HOUR_OF_DAY, startTime);
+							cal.set(Calendar.MINUTE, startMinute);
 							cal.set(Calendar.SECOND, 0);
 						}
 						this.evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, cal.getTime());
@@ -200,7 +199,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					}
 				}
 			} catch(Exception e) {
-				log.warn("Error processing email job",e);
+				LOG.warn("Error processing email job",e);
 			} finally {
 				// this server must release lock
 				lockManager.releaseLock(LOCK_CONSOLIDATED_EMAIL_JOB, serverId);

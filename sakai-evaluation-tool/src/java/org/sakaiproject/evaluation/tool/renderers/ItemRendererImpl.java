@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +36,10 @@ import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
  */
 public class ItemRendererImpl implements ItemRenderer {
 	
-    private Map<String, ItemRenderer> renderImpls = new HashMap<String, ItemRenderer>();
+    private Map<String, ItemRenderer> renderImpls = new HashMap<>();
     public void setRenderTypes(List<ItemRenderer> types) {
-        for (Iterator<ItemRenderer> iter = types.iterator(); iter.hasNext();) {
-            ItemRenderer ir = iter.next();
+        for( ItemRenderer ir : types )
+        {
             renderImpls.put(ir.getRenderType(), ir);
         }
     }
@@ -64,13 +63,12 @@ public class ItemRendererImpl implements ItemRenderer {
             throw new IllegalArgumentException("item (from templateItem.getItem()) cannot be null");
         }
 
-        if (bindings == null || 
-                (bindings != null && bindings.length == 0) ) {
+        if (bindings == null || bindings.length == 0) {
             bindings = new String[] {null};
         }
 
         if (renderProperties == null) {
-            renderProperties = new HashMap<String, Object>(0);
+            renderProperties = new HashMap<>(0);
         }
 
         // figure out the type of item and then call the appropriate renderer
@@ -99,7 +97,7 @@ public class ItemRendererImpl implements ItemRenderer {
      */
     public static void renderCommentBlock(UIContainer parent, EvalTemplateItem templateItem, String[] bindings) {
         // render the item comment if enabled
-        boolean usesComment = templateItem.getUsesComment() == null ? false : templateItem.getUsesComment().booleanValue();
+        boolean usesComment = templateItem.getUsesComment() == null ? false : templateItem.getUsesComment();
         if (usesComment) {
             String commentBinding = null;
             if (bindings.length >= 3) {

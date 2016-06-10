@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.tool;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +47,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class TemplateBBean {
 
-    private static Log log = LogFactory.getLog(TemplateBBean.class);
+    private static final Log LOG = LogFactory.getLog(TemplateBBean.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -114,9 +115,10 @@ public class TemplateBBean {
      * If the template is already stored, button will show text "Save" method
      * binding to the "Save" button on template_title_description.html replaces
      * TemplateBean.saveTemplate()
+     * @return 
      */
     public String updateTemplateTitleDesc() {
-        log.debug("update template title/desc");
+        LOG.debug("update template title/desc");
         try {
             templateBeanLocator.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -132,9 +134,10 @@ public class TemplateBBean {
     /**
      * Make a copy of a template at the users request,
      * templateId must be set
+     * @return 
      */
     public String copyTemplate() {
-        log.debug("make a copy of a template ("+templateId+") at the users request");
+        LOG.debug("make a copy of a template ("+templateId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, true);
         messages.addMessage( new TargettedMessage("controltemplates.copy.user.message", 
@@ -145,6 +148,7 @@ public class TemplateBBean {
     /**
      * Remove a template and create a user message,
      * templateId must be set
+     * @return 
      */
     public String removeTemplate() {
         String ownerId = commonLogic.getCurrentUserId();
@@ -158,6 +162,7 @@ public class TemplateBBean {
     /**
      * Chown a template and create a user message,
      * templateId must be set
+     * @return 
      */
     public String chownTemplate() {
         String ownerId = commonLogic.getCurrentUserId();
@@ -187,7 +192,7 @@ public class TemplateBBean {
     // ITEMS
 
     public String saveItemAction() {
-        log.info("save item");
+        LOG.info("save item");
         try {
             itemBeanWBL.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -201,9 +206,10 @@ public class TemplateBBean {
     /**
      * Make a copy of an item at the users request,
      * itemId must be set
+     * @return 
      */
     public String copyItem() {
-        log.debug("make a copy of an item ("+itemId+") at the users request");
+        LOG.debug("make a copy of an item ("+itemId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyItems(new Long[] {itemId}, ownerId, false, false);
         messages.addMessage( new TargettedMessage("controlitems.copy.user.message", 
@@ -215,22 +221,24 @@ public class TemplateBBean {
     /**
      * Make a copy of a template item at the users request,
      * itemId must be set
+     * @return 
      */
     public String copyTemplateItems() {
-        log.debug("make a copy of a template item ("+itemIds+") at the users request");
+        LOG.debug("make a copy of a template item ("+itemIds+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyTemplateItems(itemIds, ownerId, false, templateId, true);
         messages.addMessage( new TargettedMessage("modifytemplate.copy.user.message", 
                 new Object[] {}, TargettedMessage.SEVERITY_INFO) );
-        log.debug("Copied: " + copiedIds[0].toString());
+        LOG.debug("Copied: " + copiedIds[0].toString());
         return "success";
     }
 
     /**
      * hide the item (instead of removing it)
+     * @return 
      */
     public String hideItemAction() {
-        log.debug("hide item");
+        LOG.debug("hide item");
         localTemplateLogic.hideItem(itemId);
         messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
                 new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
@@ -239,9 +247,10 @@ public class TemplateBBean {
 
     /**
      * remove the item (does perm check)
+     * @return 
      */
     public String deleteItemAction() {
-        log.debug("delete item");
+        LOG.debug("delete item");
         localTemplateLogic.deleteItem(itemId);
         messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
                 new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
@@ -252,7 +261,7 @@ public class TemplateBBean {
     // TEMPLATE ITEMS
 
     public String saveTemplateItemAction() {
-        log.debug("save template item");
+        LOG.debug("save template item");
         try {
             templateItemWBL.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -265,7 +274,7 @@ public class TemplateBBean {
 
 
     public String saveBothAction() {
-        log.info("save template item and item");
+        LOG.info("save template item and item");
         try {
             return templateItemWBL.saveBoth();  //returns the item's Id
         } catch (BlankRequiredFieldException e) {
@@ -280,9 +289,10 @@ public class TemplateBBean {
 
     /**
      * Saves a scale (does a check of perms)
+     * @return 
      */
     public String saveScaleAction() {
-        log.debug("save scale");
+        LOG.debug("save scale");
         try {
             scaleBeanLocator.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -295,9 +305,10 @@ public class TemplateBBean {
 
     /**
      * Deletes a scale (does a check of perms)
+     * @return 
      */
     public String deleteScaleAction() {
-        log.debug("delete scale");
+        LOG.debug("delete scale");
         scaleBeanLocator.deleteScale(scaleId);
         messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
                 new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
@@ -306,9 +317,10 @@ public class TemplateBBean {
 
     /**
      * Hides a scale instead of removing it (does a check of perms)
+     * @return 
      */
     public String hideScaleAction() {
-        log.debug("hide scale");
+        LOG.debug("hide scale");
         localTemplateLogic.hideScale(scaleId);
         messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
                 new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
@@ -318,9 +330,10 @@ public class TemplateBBean {
     /**
      * Make a copy of a scale at the users request,
      * scaleId must be set
+     * @return 
      */
     public String copyScale() {
-        log.debug("make a copy of a scale ("+scaleId+") at the users request");
+        LOG.debug("make a copy of a scale ("+scaleId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyScales(new Long[] {scaleId}, null, ownerId, false);
         messages.addMessage( new TargettedMessage("controlscales.copy.user.message", 
@@ -342,16 +355,16 @@ public class TemplateBBean {
     // Current Jquery implementation is only working as a result of auto-commit
     // bug in DAO wrapper implementation.
     public void saveReorder() { 
-        log.info("save items reordering");
+        LOG.info("save items reordering");
         Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
         List<EvalTemplateItem> l = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
         List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
         for (int i = 1; i <= ordered.size();) {
             EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
-            int itnum = item.getDisplayOrder().intValue();
+            int itnum = item.getDisplayOrder();
             if (i < ordered.size()) {
                 EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
-                int nextnum = next.getDisplayOrder().intValue();
+                int nextnum = next.getDisplayOrder();
                 // only make a write or adjustment if we would be about to commit two
                 // items with the same index. 
                 if (itnum == nextnum) {
@@ -377,8 +390,8 @@ public class TemplateBBean {
     }
 
     private void emit(EvalTemplateItem toemit, int outindex) {
-        log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
-        toemit.setDisplayOrder(new Integer(outindex));
+        LOG.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
+        toemit.setDisplayOrder(outindex);
         localTemplateLogic.saveTemplateItem(toemit);
     }
 
@@ -392,7 +405,7 @@ public class TemplateBBean {
      * @return 'success' if all is ok
      */
     public String saveBlockItemAction() {
-        log.debug("Save Block items");
+        LOG.debug("Save Block items");
 
         Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
         
@@ -408,22 +421,22 @@ public class TemplateBBean {
         int adminCt=0;
    	 	int studentCt=0;
 
-        for (String itemId : templateItemIdList) {
-            EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemId));        	
+        for (String itemID : templateItemIdList) {
+            EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemID));        	
         	 if (templateItem.getResultsSharing().equals(EvalConstants.SHARING_ADMIN)) {
         		 adminCt++;
         	 } else if (templateItem.getResultsSharing().equals(EvalConstants.SHARING_STUDENT)) {
         		 studentCt++;
         	 }
         }
-        log.info("admin cnt: " + adminCt);
-        log.info("student cnt: " + studentCt);
+        LOG.info("admin cnt: " + adminCt);
+        LOG.info("student cnt: " + studentCt);
          
         
         if (blockId.equals(TemplateItemWBL.NEW_1)) { // create new block
             EvalTemplateItem parent = (EvalTemplateItem) delivered.get(TemplateItemWBL.NEW_1);
             if (parent != null) {
-                EvalTemplateItem templateItem = null;
+                EvalTemplateItem templateItem;
                 if (blockTextChoice != null && 
                         (! blockTextChoice.equals(TemplateItemWBL.NEW_1)) ) {
                     templateItem = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
@@ -472,7 +485,7 @@ public class TemplateBBean {
 
             List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
             Long parentId = parent.getId();
-            List<EvalTemplateItem> blockChildren = null;
+            List<EvalTemplateItem> blockChildren;
 
             // if parent is in templateItemIdList (i.e. it is not a newly created item), then put it at the front of the list
             // so that it doesn't have to iterate through all the children that will be added to it (assuming it is late in the late in the list)
@@ -483,14 +496,14 @@ public class TemplateBBean {
             }
 
             // iterate through templateItemIdList and add all non-block items (including the children of block items in templateItemIdList) 
-            for (String itemId : templateItemIdList) {
-                EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemId));
+            for (String itemID : templateItemIdList) {
+                EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemID));
                 if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
                     // this is a block (the parent) being combined into the new block
                     blockChildren = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
                     for (EvalTemplateItem child : blockChildren) {
                         child.setBlockId(parentId);
-                        child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
+                        child.setDisplayOrder(orderedChildIdList.indexOf(child.getId().toString()) + 1);
                         localTemplateLogic.saveTemplateItem(child);
                     }
 
@@ -503,7 +516,7 @@ public class TemplateBBean {
                     // this is a child item in the new block
                     templateItem.setBlockParent(Boolean.FALSE);
                     templateItem.setBlockId(parentId);
-                    templateItem.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
+                    templateItem.setDisplayOrder(orderedChildIdList.indexOf(itemID) + 1);
                     templateItem.setCategory(parent.getCategory()); // set the child category to the parent category EVALSYS-441
                     templateItem.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
                     // children have to inherit the parent hierarchy settings
@@ -518,16 +531,16 @@ public class TemplateBBean {
             allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
             List<EvalTemplateItem> nonChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 
-            if ((originalDisplayOrder.intValue() < nonChildList.size()) && 
-                    (nonChildList.get(originalDisplayOrder.intValue()).getId() == parentId)) {
+            if ((originalDisplayOrder < nonChildList.size()) && 
+                    (Objects.equals( nonChildList.get(originalDisplayOrder).getId(), parentId ))) {
                 nonChildList.remove(originalDisplayOrder.intValue());
                 nonChildList.add(originalDisplayOrder - 1, parent);
             }
 
-            for (int i = originalDisplayOrder.intValue(); i < nonChildList.size(); i++) {
+            for (int i = originalDisplayOrder; i < nonChildList.size(); i++) {
                 EvalTemplateItem templateItem = nonChildList.get(i);
-                if (templateItem.getDisplayOrder().intValue() != (i + 1)) {
-                    templateItem.setDisplayOrder(new Integer(i + 1));
+                if (templateItem.getDisplayOrder() != (i + 1)) {
+                    templateItem.setDisplayOrder(i + 1);
                     localTemplateLogic.saveTemplateItem(templateItem);
                 }
             }
@@ -548,7 +561,7 @@ public class TemplateBBean {
             // update the children
             List<EvalTemplateItem> blockChildren = authoringService.getBlockChildTemplateItemsForBlockParent(parent.getId(), false);
             for (EvalTemplateItem child : blockChildren) {
-                child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
+                child.setDisplayOrder(orderedChildIdList.indexOf(child.getId().toString()) + 1);
                 child.setCategory(parent.getCategory()); // EVALSYS-441
                 child.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
                 // children have to inherit the parent hierarchy settings
@@ -562,7 +575,7 @@ public class TemplateBBean {
     }
     
     public String saveTemplateItemToGroupAction(){
-    	log.debug("save template item to group");
+    	LOG.debug("save template item to group");
     	if(groupItemId != null){
 	        try {
 	            templateItemWBL.saveToGroup(groupItemId);

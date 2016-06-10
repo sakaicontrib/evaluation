@@ -65,6 +65,17 @@
 
     <dependencies>
 
+        <!-- Section awareness dependencies -->
+        <dependency>
+            <groupId>org.sakaiproject.edu-services.course-management</groupId>
+            <artifactId>coursemanagement-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject</groupId>
+            <artifactId>sakai-coursemanagement-authz-provider-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Evaluation dependencies -->
         <dependency>
             <groupId>org.sakaiproject.evaluation</groupId>
@@ -93,7 +104,6 @@
         <dependency>
             <groupId>antlr</groupId>
             <artifactId>antlr</artifactId>
-            <version>2.7.6</version>
         </dependency>
 
         <!-- email dependencies -->
@@ -106,7 +116,6 @@
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <!-- processing text templates -->

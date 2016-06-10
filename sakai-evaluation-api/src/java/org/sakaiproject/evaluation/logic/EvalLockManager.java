@@ -28,7 +28,7 @@ public interface EvalLockManager {
      * control the failure so instead we return null as a marker
      * 
      * @param lockId the name of the lock which we are seeking
-     * @param holderId a unique id for the holder of this lock (normally a server id)
+     * @param executerId a unique id for the executer of this lock (normally a server id)
      * @param timePeriod the length of time (in milliseconds) that the lock should be valid for,
      * set this very low for non-repeating processes (the length of time the process should take to run)
      * and the length of the repeat period plus the time to run the process for repeating jobs
@@ -44,7 +44,7 @@ public interface EvalLockManager {
      * control the failure so instead we return null as a marker
      * 
      * @param lockId the name of the lock which we are seeking
-     * @param holderId a unique id for the holder of this lock (normally a server id)
+     * @param executerId a unique id for the executer of this lock (normally a server id)
      * @return true if a lock was released, false if not, null if failure
      */
     public Boolean releaseLock(String lockId, String executerId);

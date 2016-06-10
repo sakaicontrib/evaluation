@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,11 +37,11 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.DefaultFontMapper;
-import com.lowagie.text.pdf.MultiColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.ColumnText;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +78,7 @@ public class EvalPDFReportBuilder {
     
     float pagefooter = 16.0f;
     
-    private static Log log = LogFactory.getLog(EvalPDFReportBuilder.class);
+    private static final Log LOG = LogFactory.getLog(EvalPDFReportBuilder.class);
 
     public EvalPDFReportBuilder(OutputStream outputStream) {
         document = new Document();
@@ -178,7 +177,7 @@ public class EvalPDFReportBuilder {
             responseArea = new ColumnText(cb);
             responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
             responseArea.go();
-        } catch (Exception de) {
+        } catch (DocumentException | IOException de) {
             throw UniversalRuntimeException.accumulate(de, "Unable to create title page");
         }
     }
@@ -190,7 +189,7 @@ public class EvalPDFReportBuilder {
 
     public void addSectionHeader(String headerText,boolean lastElementIsHeader, float theSize)
     {
-    	log.debug("Added a header with text: "+headerText+" and size: "+theSize+". Previous element was another header: "+lastElementIsHeader);
+    	LOG.debug("Added a header with text: "+headerText+" and size: "+theSize+". Previous element was another header: "+lastElementIsHeader);
     	if (!lastElementIsHeader)
     	{
     		Paragraph emptyPara = new Paragraph(" ");
@@ -206,7 +205,7 @@ public class EvalPDFReportBuilder {
     
     public void addCommentList(String header, List<String> textItems, String none, String textNumberOfComments)
     {
-    	ArrayList<Element> myElements = new ArrayList<Element>();
+    	ArrayList<Element> myElements = new ArrayList<>();
     	
         com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
     	
@@ -217,7 +216,7 @@ public class EvalPDFReportBuilder {
     	para.setSpacingAfter(SPACING_AFTER_COMMENT_TITLE);
         myElements.add(para);
 
-        if (textItems == null || textItems.size() == 0)
+        if (textItems == null || textItems.isEmpty())
         {
             Paragraph p = new Paragraph(none, paragraphFont);
             myElements.add(p);
@@ -236,21 +235,25 @@ public class EvalPDFReportBuilder {
                 }
             }
             myElements.add(list);
-            log.debug("Current comment list has "+textItems.size()+" comments.");
+            LOG.debug("Current comment list has "+textItems.size()+" comments.");
             myElements.add(new Paragraph(textNumberOfComments + " : " + textItems.size(), paragraphFont));
         }
         
         //With more than 30 answers, we do not try to calculate the space.
         if (list.size()<=30)
-        	this.addElementArrayWithJump(myElements);
+        {
+            this.addElementArrayWithJump(myElements);
+        }
         else
-        	this.addBigElementArray(myElements);
+        {
+            this.addBigElementArray(myElements);
+        }
     }
 
     public void addTextItemsList(String header, List<String> textItems, boolean comment, String textNumberOfAnswers)
     {
     	
-    	ArrayList<Element> myElements = new ArrayList<Element>();
+    	ArrayList<Element> myElements = new ArrayList<>();
     	
         com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
         list.setListSymbol("\u2022   ");
@@ -294,9 +297,13 @@ public class EvalPDFReportBuilder {
         myElements.add(new Paragraph(textNumberOfAnswers + " : " + textItems.size(), paragraphFont));
         //With more than 30 answers, we do not try to calculate the space.
         if (list.size()<=30)
-        	this.addElementArrayWithJump(myElements);
+        {
+            this.addElementArrayWithJump(myElements);
+        }
         else
-        	this.addBigElementArray(myElements);
+        {
+            this.addBigElementArray(myElements);
+        }
     }
 
 	/**
@@ -306,7 +313,7 @@ public class EvalPDFReportBuilder {
      *            the text for the choices
      * @param values
      *            the count of answers for each choice (same order as choices)
-     * @param reponseCount
+     * @param responseCount
      *            the number of responses to the question
      * @param showPercentages
      *            if true then show the percentages
@@ -319,7 +326,7 @@ public class EvalPDFReportBuilder {
     public void addLikertResponse(String question, String[] choices, int[] values,
             int responseCount, boolean showPercentages, String answersAndMean, boolean lastElementIsHeader)
     {
-    	ArrayList <Element> myElements = new ArrayList<Element>();
+    	ArrayList <Element> myElements = new ArrayList<>();
     	
         try
         {
@@ -364,7 +371,7 @@ public class EvalPDFReportBuilder {
 			this.addElementArrayWithJump(myElements);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.warn( e );
 		}
     }
 
@@ -374,13 +381,6 @@ public class EvalPDFReportBuilder {
         para.setSpacingAfter(SPACING_AFTER_HEADER);
     	//this.addElementWithJump(para, false);
         this.addLittleElementWithJump(para);
-    }
-
-    private void addQuestionText(String question)
-    {
-        Paragraph para = new Paragraph(question, questionTextFont);
-    	//this.addElementWithJump(para, false);
-    	this.addLittleElementWithJump(para);
     }
     
     public void addTitleText(String title)
@@ -401,7 +401,7 @@ public class EvalPDFReportBuilder {
     {
     	HeaderFooter footer = new HeaderFooter((new Phrase(text+" - Pag. ",paragraphFont)),true);;
     	footer.setAlignment(HeaderFooter.ALIGN_RIGHT);
-    	footer.disableBorderSide(footer.BOTTOM);
+    	footer.disableBorderSide(HeaderFooter.BOTTOM);
     	
     	document.setFooter(footer);
     }
@@ -411,7 +411,7 @@ public class EvalPDFReportBuilder {
     	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
     	//Adds a big size element (a header or a graphic) and jumps to another page/column if it detects that is below the last third of the document.
     	float y = responseArea.getYLine();
-    	log.debug("Vertical position Y: "+y);
+    	LOG.debug("Vertical position Y: "+y);
     	try
     	{
     		if ((jumpIfLittleSpace) && (y<(document.top()/3)))
@@ -453,7 +453,7 @@ public class EvalPDFReportBuilder {
     	{
     		//First test. Do the elements fit in current column?
     		float y = responseArea.getYLine();
-    		log.debug("Vertical position Y: "+y);
+    		LOG.debug("Vertical position Y: "+y);
     		
 			for (Element element:arrayElements)
 			{
@@ -462,7 +462,7 @@ public class EvalPDFReportBuilder {
 
 			status = responseArea.go(true); //Add elements in simulation mode to see if there is a column jump or not.
 			
-			if (status==responseArea.NO_MORE_COLUMN)
+			if (status==ColumnText.NO_MORE_COLUMN)
 			{
 				//Element has not fit in the column, a new column is needed.
 				column = Math.abs(column - 1);
@@ -489,7 +489,7 @@ public class EvalPDFReportBuilder {
 				}
 				status = responseArea.go(true);
 				
-				if (status==responseArea.NO_MORE_COLUMN)
+				if (status==ColumnText.NO_MORE_COLUMN)
 				{
 					responseArea.setYLine(y);
 					addBigElementArray(arrayElements);
@@ -534,16 +534,16 @@ public class EvalPDFReportBuilder {
     	//Adds an array of elements that does not fit in a column, one by one.
     	//Current lowagie library does not allow to copy a List if it exceeds a whole page. It is truncated.
     	//So we add Lists always one element at a time.
-    	log.debug("Entering in AddBigElementArray with: "+myElements.toString()+". Curent column is: "+column);
+    	LOG.debug("Entering in AddBigElementArray with: "+myElements.toString()+". Curent column is: "+column);
 
 		responseArea.setText(null);
-		log.debug("Initial vertical position: "+responseArea.getYLine());
+		LOG.debug("Initial vertical position: "+responseArea.getYLine());
 		
 		for (Element element:myElements)
 		{
 			if (element.getClass().equals(com.lowagie.text.List.class))
 			{
-				log.debug("We have a List element to add.");
+				LOG.debug("We have a List element to add.");
 				com.lowagie.text.List myList=(com.lowagie.text.List)element;
 				for (int i=0;i<myList.size();i++)
 				{
@@ -572,7 +572,7 @@ public class EvalPDFReportBuilder {
 	    	responseArea.addElement(littleElement);
 	    	
 	    	status=responseArea.go();
-			if (status==responseArea.NO_MORE_COLUMN)
+			if (status==ColumnText.NO_MORE_COLUMN)
 			{
 				column = Math.abs(column - 1);
 			
