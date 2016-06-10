@@ -308,7 +308,7 @@ public interface EvalEvaluationSetupService {
      * {@link #canControlEmailTemplate(String, Long, String)} to check
      * if user can update this template and avoid possible exceptions
      * 
-     * @param EmailTemplate emailTemplate object to be saved
+     * @param emailTemplate emailTemplate object to be saved
      * @param userId the acting user, normally the current user, internal user id (not username)
      */
     public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId);

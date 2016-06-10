@@ -105,7 +105,7 @@ public class RemoveItemProducer extends EvalCommonProducer implements ViewParams
         String actionBinding = "deleteItemAction";
 
         int displayNum = 1;
-        String itemOTPBinding = null;
+        String itemOTPBinding;
         if (item == null) {
             // we are removing a template item
             itemOTPBinding = "templateItemWBL."+templateItem.getId();

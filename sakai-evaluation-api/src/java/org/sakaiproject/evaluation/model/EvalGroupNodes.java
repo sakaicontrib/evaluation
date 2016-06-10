@@ -41,13 +41,18 @@ public class EvalGroupNodes implements java.io.Serializable {
     public EvalGroupNodes() {
     }
 
-    /** minimal constructor */
+    /** minimal constructor
+     * @param lastModified
+     * @param nodeId */
     public EvalGroupNodes(Date lastModified, String nodeId) {
         this.lastModified = lastModified;
         this.nodeId = nodeId;
     }
 
-    /** full constructor */
+    /** full constructor
+     * @param lastModified
+     * @param nodeId
+     * @param evalGroups */
     public EvalGroupNodes(Date lastModified, String nodeId, String[] evalGroups) {
         super();
         this.lastModified = lastModified;

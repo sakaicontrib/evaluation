@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic.entity;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 
 
 /**

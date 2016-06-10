@@ -182,6 +182,7 @@
         BLANK_RESPONSES_ALLOWED bit,
         MODIFY_RESPONSES_ALLOWED bit,
         ALL_ROLES_PARTICIPATE bit,
+        SECTION_AWARE bit,
         UNREGISTERED_ALLOWED bit,
         LOCKED bit,
         AUTH_CONTROL varchar(255),
@@ -207,6 +208,14 @@
         GROUPS varchar(255) not null,
         GROUPS_INDEX integer not null,
         primary key (ID, GROUPS_INDEX)
+    ) ENGINE=InnoDB;
+
+    create table EVAL_HIERARCHY_RULE (
+        ID bigint not null auto_increment,
+        NODE_ID bigint not null,
+        RULE varchar(255) not null,
+        OPT varchar(10) not null,
+        primary key (ID)
     ) ENGINE=InnoDB;
 
     create table EVAL_ITEM (

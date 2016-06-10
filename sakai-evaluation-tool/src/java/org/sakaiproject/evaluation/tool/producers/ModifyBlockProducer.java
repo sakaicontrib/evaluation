@@ -116,18 +116,18 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
         boolean validChildsNo = true; // this is to enforce settings of maximun Number of child text
         // in a block
 
-        EvalTemplateItem firstTemplateItem = null;
+        EvalTemplateItem firstTemplateItem;
 
         // the first items's original displayOrder
-        Integer originalDisplayOrder = null;
+        Integer originalDisplayOrder;
 
         //      boolean createFromBlock = false;
 
         // analyze the string of templateItemIds
         String[] templateItemIds = evParameters.templateItemIds.split(",");
-        List<EvalTemplateItem> templateItemList = new ArrayList<EvalTemplateItem>(
+        List<EvalTemplateItem> templateItemList = new ArrayList<>(
                 templateItemIds.length);
-        List<EvalTemplateItem> blockItemList = new ArrayList<EvalTemplateItem>();
+        List<EvalTemplateItem> blockItemList = new ArrayList<>();
 
         for (int i = 0; i < templateItemIds.length; i++) {
 
@@ -151,7 +151,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
         // check if each templateItem has the same scale, otherwise show warning text
         // enforce system settings of maximum number of child items for new Block creation
         if (! modify) {
-            int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
+            int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK));
             // get actual total number of no-parent item(block childs + normal scaled type)
             int actualChildsNo = 0;
             for (int i = 0; i < templateItemIds.length; i++) {
@@ -166,7 +166,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
                     actualChildsNo++;
                 }
             } // end of for loop
-            // System.out.println("total number of childsin a block=" + actualChildsNo + ", maximum
             // number of childs allowed in block=" + maxChildsNo);
             if (actualChildsNo > maxChildsNo) {
                 validChildsNo = false;
@@ -225,7 +224,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
              */
             Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
-            String itemPath = null, blockId = null;
+            String itemPath, blockId;
 
             if (modify) { // modify existing block
                 blockId = firstTemplateItem.getId().toString();
@@ -240,7 +239,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
              * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to show the
              * item_NA checkbox.
              */
-            if (((Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE)).booleanValue()) {
+            if (((Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE))) {
                 UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
                 UIMessage.make(showNA, "add-na-header", "modifyitem.item.na.header");
                 UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);
@@ -250,7 +249,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             Boolean useCourseCategoryOnly = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
             if (useCourseCategoryOnly) {
                 form.parameters.add(new UIELBinding(itemPath + ".category",
-                        EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
+                        EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse ? 0 : 1]));
             } else {
                 // show all category choices so the user can choose, default is course category
                 UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
@@ -259,7 +258,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
                 String[] categoryLabels = EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS;
                 // add in the TA category if enabled
                 Boolean enableTA = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
-                if ( enableTA.booleanValue() ) {
+                if ( enableTA ) {
                     categoryValues = ArrayUtils.appendArray(categoryValues, EvalToolConstants.ITEM_CATEGORY_ASSISTANT);
                     categoryLabels = ArrayUtils.appendArray(categoryLabels, EvalToolConstants.ITEM_CATEGORY_ASSISTANT_LABEL);
                 }
@@ -346,7 +345,7 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             }
 
             // render the scale select
-            String commonDisplayOTP = "templateItemWBL." + (modify ? evParameters.templateItemIds.toString() : TemplateItemWBL.NEW_1) + ".";
+            String commonDisplayOTP = "templateItemWBL." + (modify ? evParameters.templateItemIds : TemplateItemWBL.NEW_1) + ".";
             String scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;  
             if (modify && blockItemList.size() == 1) {
             	scaleDisplaySetting = blockItemList.get(0).getScaleDisplaySetting();

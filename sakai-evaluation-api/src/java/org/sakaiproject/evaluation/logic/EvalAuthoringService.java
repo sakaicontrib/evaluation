@@ -66,7 +66,6 @@ public interface EvalAuthoringService {
     * 
     * @param scale a scale object to be saved
     * @param userId the internal user id (not username)
-    * @throws UniqueFieldException is this scale title is already in use and this is not an adhoc scale
     */
    public void saveScale(EvalScale scale, String userId);
 
@@ -459,7 +458,6 @@ public interface EvalAuthoringService {
     * 
     * @param template the object to be saved
     * @param userId the internal user id (not username)
-    * @throws UniqueFieldException is this template title is already in use
     */
    public void saveTemplate(EvalTemplate template, String userId);
 
@@ -473,7 +471,7 @@ public interface EvalAuthoringService {
     * template is detected to be a hidden copy (indicating no one can see or use
     * it other than the associated evaluation which would have locked it)
     * 
-    * @param template the object to be removed
+    * @param templateId the object to be removed
     * @param userId the internal user id (not username)
     */
    public void deleteTemplate(Long templateId, String userId);

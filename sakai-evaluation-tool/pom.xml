@@ -90,6 +90,9 @@
 			<activation> 
 				<activeByDefault>true</activeByDefault>
 			</activation>
+            <properties>
+                <evalsys.poi.version>3.9</evalsys.poi.version>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.sakaiproject.kernel</groupId>
@@ -190,6 +193,12 @@
 	      <artifactId>entitybroker-utils</artifactId>
 	    </dependency>
 
+        <!-- Section awareness dependencies -->
+        <dependency>
+            <groupId>org.sakaiproject.edu-services.course-management</groupId>
+            <artifactId>coursemanagement-api</artifactId>
+        </dependency>
+
         <!-- Servlet dependency -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -234,13 +243,13 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${sakai.poi.version}</version>
+            <version>${evalsys.poi.version}</version>
             <type>jar</type>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-		    <version>${sakai.poi.version}</version>
+            <version>${evalsys.poi.version}</version>
             <type>jar</type>
         </dependency>
 

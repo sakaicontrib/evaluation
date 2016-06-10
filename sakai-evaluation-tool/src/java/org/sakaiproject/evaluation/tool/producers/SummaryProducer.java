@@ -136,7 +136,7 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
         evaluateBoxRenderer.renderBox(tofill, currentUserId);
 
         // show evaluations that the user is being evaluated in
-        boolean showEvaluateeBox = ((Boolean) settings.get(EvalSettings.ENABLE_EVALUATEE_BOX)).booleanValue();
+        boolean showEvaluateeBox = ((Boolean) settings.get(EvalSettings.ENABLE_EVALUATEE_BOX));
         if(showEvaluateeBox) {
             beEvaluatedBoxRenderer.renderBox(tofill, currentUserId);
         }
@@ -164,8 +164,8 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
             if (evaluatedGroups.size() > 0) {
                 for (int i = 0; i < evaluatedGroups.size(); i++) {
                     if (i > maxGroupsToDisplay) {
-                        UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluatedGroups.size()
-                                - maxGroupsToDisplay) });
+                        UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", new Object[] { evaluatedGroups.size()
+                                                                                                                       - maxGroupsToDisplay});
                         break;
                     }
                     UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i + "");
@@ -182,8 +182,7 @@ public class SummaryProducer extends EvalCommonProducer implements DefaultView, 
             if (evaluateGroups.size() > 0) {
                 for (int i = 0; i < evaluateGroups.size(); i++) {
                     if (i > maxGroupsToDisplay) {
-                        UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", new Object[] { new Integer(evaluateGroups.size()
-                                - maxGroupsToDisplay) });
+                        UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", new Object[] { evaluateGroups.size() - maxGroupsToDisplay});
                         break;
                     }
                     UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i + "");

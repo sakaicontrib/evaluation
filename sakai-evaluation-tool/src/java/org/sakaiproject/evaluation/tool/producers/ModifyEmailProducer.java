@@ -52,7 +52,7 @@ public class ModifyEmailProducer extends EvalCommonProducer implements ViewParam
       this.evaluationService = evaluationService;
    }
 
-   private String emailTemplateLocator = "emailTemplateWBL.";
+   private static final String EMAIL_TEMPLATE_LOCATOR = "emailTemplateWBL.";
    
    private NavBarRenderer navBarRenderer;
    public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
@@ -90,7 +90,7 @@ public class ModifyEmailProducer extends EvalCommonProducer implements ViewParam
          emailTemplateId = emailViewParams.templateId.toString();
          newEmailTemplate = false;
       }
-      String emailTemplateOTP = emailTemplateLocator + emailTemplateId + ".";
+      String emailTemplateOTP = EMAIL_TEMPLATE_LOCATOR + emailTemplateId + ".";
 
       if (emailViewParams.evaluationId == null) {
          /*
@@ -106,7 +106,7 @@ public class ModifyEmailProducer extends EvalCommonProducer implements ViewParam
 
       UIForm form = UIForm.make(tofill, "emailTemplateForm");
 
-      String actionBinding = null;
+      String actionBinding;
       if (emailViewParams.evaluationId != null) {
          // bind in the evaluationId
          form.parameters.add(new UIELBinding(actionBean + "evaluationId", emailViewParams.evaluationId));
@@ -132,7 +132,7 @@ public class ModifyEmailProducer extends EvalCommonProducer implements ViewParam
          }
       } else {
          // not part of an evaluation so use the WBL
-         actionBinding = emailTemplateLocator + "saveAll";
+         actionBinding = EMAIL_TEMPLATE_LOCATOR + "saveAll";
          // add in a cancel button
          UIMessage.make(form, "cancel-button", "general.cancel.button");
       }

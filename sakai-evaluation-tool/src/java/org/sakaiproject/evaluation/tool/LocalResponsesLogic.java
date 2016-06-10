@@ -71,14 +71,14 @@ public class LocalResponsesLogic {
      * access a given response answer is the unique set of templateItemId and
      * the associated field/id (instructor id, environment key, etc.)
      * 
-     * @param response the response we want to get the answers for
+     * @param responseId the response we want to get the answers for
      * @return a hashmap of answers, where an answer's key is created using {@link TemplateItemUtils#makeTemplateItemAnswerKey(Long, String, String)}
      */	
     public Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(Long responseId) {
         EvalResponse response = responsesLogic.getResponseById(responseId);
         Map<String, EvalAnswer> map;
         if (response.getAnswers() == null || response.getAnswers().isEmpty()) {
-            map = new HashMap<String, EvalAnswer>();
+            map = new HashMap<>();
         } else {
             map = EvalUtils.getAnswersMapByTempItemAndAssociated(response);
         }

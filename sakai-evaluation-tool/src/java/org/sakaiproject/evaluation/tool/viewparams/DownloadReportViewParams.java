@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool.viewparams;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This is meant to serve as a base for ViewParameters of different download
  * types that may require their own custom parameters. Ex. CSV, Excel, PDF etc.
@@ -24,6 +27,7 @@ package org.sakaiproject.evaluation.tool.viewparams;
  */
 public class DownloadReportViewParams extends BaseViewParameters {
 
+	private static final Log LOG = LogFactory.getLog( DownloadReportViewParams.class) ;
 	public Long templateId; 
 	public Long evalId;
 	public String filename;
@@ -34,22 +38,28 @@ public class DownloadReportViewParams extends BaseViewParameters {
 
 	public DownloadReportViewParams() {}
 
-	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename) {
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, boolean useNewReportStyle) {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.evalId = evalId;
 		this.groupIds = groupIds;
 		this.filename = filename;
+		this.useNewReportStyle = useNewReportStyle;
 	}
 	
-	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId) {
-		System.out.println("DownloadReportViewParams called with "+evaluateeId);
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId, boolean useNewReportStyle) {
+		if( LOG.isDebugEnabled() )
+		{
+			LOG.debug( "DownloadReportViewParams called with " + evaluateeId );
+		}
+
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.evalId = evalId;
 		this.groupIds = groupIds;
 		this.filename = filename;
 		this.evaluateeId = evaluateeId;
+		this.useNewReportStyle = useNewReportStyle;
 	}
 
 	public String getParseSpec() {

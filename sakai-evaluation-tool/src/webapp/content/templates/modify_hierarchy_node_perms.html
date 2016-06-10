@@ -59,10 +59,18 @@
 			Page Instructions: Enter usernames or emails in the box and then select the permissions to apply to the users
 		</p>
 		
-		<form rsf:id="perms-form" method="post">
+		<form rsf:id="perms-form" method="post" style="display: inline-block;">
 			
 			<input type="hidden" rsf:id="node-id" />
-			
+
+			<!-- Clear changes and return to hierarchy UI buttons at the top of the form -->
+			<div class="action" style="margin-bottom: 5px;">
+				<span class="cancelButton">
+					<a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
+					<input type="submit" rsf:id="cancel-changes-button1" style="float: right;" />
+				</span>
+			</div>
+
 			<table id="user-perms-table">
 				
 				<thead>
@@ -74,29 +82,6 @@
 				</thead>
 				
 				<tbody>
-					
-					<tr rsf:id="user:" class="userPermsRow">
-						
-						<td class="userInfo">
-							<span rsf:id="user-info">Display Name (username)</span>
-							<input type="hidden" rsf:id="user-id" />
-						</td>
-						
-						<td class="userPerms">
-							<span rsf:id="perms-select"></span>
-							<span rsf:id="perm:">
-								<input type="checkbox" rsf:id="perm-checkbox" />
-								<label for="perm-checkbox" rsf:id="perm-label">Perm Label</label>
-							</span>
-						</td>
-						
-						<td class="actions">
-							<span class="saveButton"><input type="submit" rsf:id="save-changes-button" /></span>
-							<span class="cancelButton"><input type="submit" rsf:id="cancel-changes-button" /></span>
-							<span class="removeUserButton"><input type="submit" rsf:id="remove-user-button" /></span>
-						</td>
-						
-					</tr>
 					
 					<tr rsf:id="new-user:" class="userPermsRow">
 						
@@ -118,14 +103,42 @@
 						
 					</tr>
 					
+					<tr rsf:id="user:" class="userPermsRow">
+						
+						<td class="userInfo">
+							<span rsf:id="user-info">Display Name (username)</span>
+							<input type="hidden" rsf:id="user-id" />
+						</td>
+						
+						<td class="userPerms">
+							<span rsf:id="perms-select"></span>
+							<span rsf:id="perm:">
+								<input type="checkbox" rsf:id="perm-checkbox" />
+								<label for="perm-checkbox" rsf:id="perm-label">Perm Label</label>
+							</span>
+						</td>
+						
+						<td class="actions">
+							<span class="saveButton"><input type="submit" rsf:id="save-changes-button" /></span>
+							<span class="removeUserButton"><input type="submit" rsf:id="remove-user-button" /></span>
+						</td>
+						
+					</tr>
+					
 				</tbody>
 				
 			</table>
-			
+
+			<!-- Clear changes and return to hierarchy UI buttons at the bottom of the form -->
+			<div class="action">
+				<span class="cancelButton">
+					<a href="#" rsf:id="return-link1">Return to Control Hierarchy</a>
+					<input type="submit" rsf:id="cancel-changes-button2" style="float: right;" />
+				</span>
+			</div>
+
 		</form>
-		
-		<a href="#" rsf:id="return-link">Return to Control Hierarchy</a>
-		
+
 		<script rsf:id="init-js" type="text/javascript" language="JavaScript">
 			EvalSystem.initModifyHierarchyNodePerms(userEidInputId, addUserButtonId, noUserEidErrorMsg, noPermsErrorMsg);
 		</script>

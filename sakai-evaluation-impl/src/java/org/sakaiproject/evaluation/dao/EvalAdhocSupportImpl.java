@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
@@ -45,7 +44,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
-   private static Log log = LogFactory.getLog(EvalAdhocSupportImpl.class);
+   private static final Log LOG = LogFactory.getLog(EvalAdhocSupportImpl.class);
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -119,16 +118,17 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @return a map of userId -> {@link EvalAdhocUser}
     */
    public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(String[] userIds) {
-      Map<String, EvalAdhocUser> m = new HashMap<String, EvalAdhocUser>();
+      Map<String, EvalAdhocUser> m = new HashMap<>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (userIds.length > 0) {
-            List<Long> adhocIds = new ArrayList<Long>();
-            for (int i = 0; i < userIds.length; i++) {
-               Long id = EvalAdhocUser.getIdFromAdhocUserId(userIds[i]);
-               if (id != null) {
-                  adhocIds.add(id);
-               }
-            }
+            List<Long> adhocIds = new ArrayList<>();
+             for( String userId : userIds )
+             {
+                 Long id = EvalAdhocUser.getIdFromAdhocUserId( userId );
+                 if (id != null) {
+                     adhocIds.add(id);
+                 }
+             }
             if (adhocIds.size() > 0) {
                Long[] ids = adhocIds.toArray(new Long[adhocIds.size()]);
                List<EvalAdhocUser> adhocUsers = getAdhocUsersByIds(ids);
@@ -149,7 +149,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @return a list of adhoc users which match the ids
     */
    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids) {
-      List<EvalAdhocUser> users = new ArrayList<EvalAdhocUser>();
+      List<EvalAdhocUser> users = new ArrayList<>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (ids == null) {
             users = dao.findAll(EvalAdhocUser.class);
@@ -229,7 +229,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
          copyAdhocUser(existing, user);
       } else {
          dao.save(user);
-         log.info("Saved adhoc user: " + user.getEmail());
+         LOG.info("Saved adhoc user: " + user.getEmail());
       }
    }
 
@@ -292,7 +292,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       }
 
       dao.save(group);
-      log.info("Saved adhoc group: " + group.getEvalGroupId());
+      LOG.info("Saved adhoc group: " + group.getEvalGroupId());
    }
 
    /**
@@ -303,7 +303,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @return the list of all adhoc groups that this user owns
     */
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
-      List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
+      List<EvalAdhocGroup> groups = new ArrayList<>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          groups = dao.findBySearch(EvalAdhocGroup.class, new Search(
                  new Restriction("owner", userId), 
@@ -324,7 +324,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @return a list of adhoc groups for which this user has this permission
     */
    public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
-      List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
+      List<EvalAdhocGroup> groups = new ArrayList<>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          // passthrough to the dao method
          groups = dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
@@ -336,7 +336,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * Check if a user has a specified permission/role within an adhoc group
     * 
     * @param userId the internal user id (not username)
-    * @param permission a permission string PERM constant (from this API),
+    * @param permissionConstant a permission string PERM constant (from this API),
     * <b>Note</b>: only take evaluation and be evaluated are supported
     * @param evalGroupId the unique id of an adhoc eval group (not the persistent id)
     * @return true if allowed, false otherwise

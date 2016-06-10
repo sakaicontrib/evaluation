@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
@@ -43,6 +44,7 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
  */
 public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
+    private static final Log LOG = LogFactory.getLog( EvalEvaluationServiceImplTest.class );
     protected EvalEvaluationServiceImpl evaluationService;
     protected EvalSettings settings;
 
@@ -106,8 +108,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testCacheRetrievalOfEvals() {
-        System.out.println("CACHE: Testing lots of retrievals in a row");
-        EvalEvaluation eval = null;
+        LOG.debug("CACHE: Testing lots of retrievals in a row");
+        EvalEvaluation eval;
 
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
         Assert.assertNotNull(eval);
@@ -130,7 +132,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
         Assert.assertNotNull(eval);
 
-        System.out.println("CACHE: Should have been 3 showSQL log lines");
+        LOG.debug("CACHE: Should have been 3 showSQL log lines");
     }
 
     /**
@@ -172,7 +174,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // test invalid template id
         try {
-            count = evaluationService.countEvaluationsByTemplateId( EvalTestDataLoad.INVALID_LONG_ID );
+            evaluationService.countEvaluationsByTemplateId( EvalTestDataLoad.INVALID_LONG_ID );
             Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
             Assert.assertNotNull(e);
@@ -184,7 +186,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetEvaluationByEid() {
-        EvalEvaluation evaluation = null;
+        EvalEvaluation evaluation;
 
         // test getting evaluation having eid set
         evaluation = evaluationService.getEvaluationByEid( etdl.evaluationProvided.getEid() );
@@ -205,8 +207,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetEvaluationsByTemplateId() {
-        List<EvalEvaluation> l = null;
-        List<Long> ids = null;
+        List<EvalEvaluation> l;
+        List<Long> ids;
 
         // test valid template ids
         l = evaluationService.getEvaluationsByTemplateId( etdl.templatePublic.getId() );
@@ -231,7 +233,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // test invalid template id
         try {
-            l = evaluationService.getEvaluationsByTemplateId( EvalTestDataLoad.INVALID_LONG_ID );
+            evaluationService.getEvaluationsByTemplateId( EvalTestDataLoad.INVALID_LONG_ID );
             Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
             Assert.assertNotNull(e);
@@ -243,10 +245,10 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testUpdateEvaluationStateLong() {
-        Assert.assertEquals( evaluationService.updateEvaluationState( etdl.evaluationNew.getId() ), EvalConstants.EVALUATION_STATE_INQUEUE );
-        Assert.assertEquals( evaluationService.updateEvaluationState( etdl.evaluationActive.getId() ), EvalConstants.EVALUATION_STATE_ACTIVE );
-        Assert.assertEquals( evaluationService.updateEvaluationState( etdl.evaluationClosed.getId() ), EvalConstants.EVALUATION_STATE_CLOSED );
-        Assert.assertEquals( evaluationService.updateEvaluationState( etdl.evaluationViewable.getId() ), EvalConstants.EVALUATION_STATE_VIEWABLE );
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, evaluationService.updateEvaluationState( etdl.evaluationNew.getId() ) );
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, evaluationService.updateEvaluationState( etdl.evaluationActive.getId() ) );
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, evaluationService.updateEvaluationState( etdl.evaluationClosed.getId() ) );
+        Assert.assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, evaluationService.updateEvaluationState( etdl.evaluationViewable.getId() ) );
 
         try {
             evaluationService.updateEvaluationState( EvalTestDataLoad.INVALID_LONG_ID );
@@ -261,7 +263,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     @SuppressWarnings("deprecation")
     @Test
     public void testGetUserIdsTakingEvalInGroup() {
-        Set<String> userIds = null;
+        Set<String> userIds;
 
         // get all users
         userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
@@ -322,7 +324,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testGetParticipants() {
-        List<EvalAssignUser> l = null;
+        List<EvalAssignUser> l;
 
         // do the typical use cases first
         
@@ -364,7 +366,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         Assert.assertEquals(3, l.size());
 
         try {
-            l = evaluationService.getParticipantsForEval(null, null, null, null, null, null, null);
+            evaluationService.getParticipantsForEval(null, null, null, null, null, null, null);
             Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             Assert.assertNotNull(e);
@@ -472,7 +474,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testCountParticipantsForEval() {
-        int count = 0;
+        int count;
 
         // check active returns all enrollments count
         count = evaluationService.countParticipantsForEval(etdl.evaluationClosed.getId(), null);
@@ -514,7 +516,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetAssignGroupById() {
-        EvalAssignGroup assignGroup = null;
+        EvalAssignGroup assignGroup;
 
         // test getting valid items by id
         assignGroup = evaluationService.getAssignGroupById( etdl.assign1.getId() );
@@ -535,7 +537,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetAssignGroupByEid() {
-        EvalAssignGroup assignGroupProvided = null;
+        EvalAssignGroup assignGroupProvided;
 
         // test getting assignGroup having eid set
         assignGroupProvided = evaluationService.getAssignGroupByEid( etdl.assignGroupProvided.getEid() );
@@ -556,8 +558,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetAssignGroupId() {
-        Long assignGroupId = null;
-        EvalAssignGroup eag = null;
+        Long assignGroupId;
+        EvalAssignGroup eag;
 
         // test getting valid items by id
         assignGroupId = evaluationService.getAssignGroupByEvalAndGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF ).getId();
@@ -586,7 +588,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetAssignHierarchyById() {
-        EvalAssignHierarchy eah = null;
+        EvalAssignHierarchy eah;
 
         eah = evaluationService.getAssignHierarchyById(etdl.assignHier1.getId());
         Assert.assertNotNull(eah);
@@ -608,7 +610,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetAssignHierarchyByEval() {
-        List<EvalAssignHierarchy> eahs = null;
+        List<EvalAssignHierarchy> eahs;
 
         eahs = evaluationService.getAssignHierarchyByEval(etdl.evaluationActive.getId());
         Assert.assertNotNull(eahs);
@@ -772,7 +774,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetResponseById() {
-        EvalResponse response = null;
+        EvalResponse response;
 
         response = evaluationService.getResponseById( etdl.response1.getId() );
         Assert.assertNotNull(response);
@@ -792,7 +794,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetEvaluationResponseForUserAndGroup() {
-        EvalResponse response = null;
+        EvalResponse response;
 
         // check retrieving an existing responses
         response = evaluationService.getResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
@@ -814,7 +816,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testGetEvalResponseIds() {
-        List<Long> l = null;
+        List<Long> l;
 
         // retrieve all response Ids for an evaluation
         l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), null, true);
@@ -882,7 +884,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // check that invalid eval ids cause Assert.failure
         try {
-            l = evaluationService.getResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
+            evaluationService.getResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
             Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             Assert.assertNotNull(e);
@@ -895,8 +897,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
      */
     @Test
     public void testGetEvaluationResponses() {
-        List<EvalResponse> l = null;
-        List<Long> ids = null;
+        List<EvalResponse> l;
+        List<Long> ids;
 
         // retrieve response objects for all fields known
         l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
@@ -1012,7 +1014,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // check that empty array causes Assert.failure
         try {
-            l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+            evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                     new Long[] {}, null, true );
             Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -1021,7 +1023,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // check that null evalids cause Assert.failure
         try {
-            l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+            evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                     null, null, true );
             Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -1134,7 +1136,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testGetEmailTemplatesForUser() {
-        List<EvalEmailTemplate> l = null;
+        List<EvalEmailTemplate> l;
 
         // get all templates
         l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
@@ -1206,7 +1208,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testGetDefaultEmailTemplate() {
-        EvalEmailTemplate emailTemplate = null;
+        EvalEmailTemplate emailTemplate;
 
         // test getting the templates
         emailTemplate = evaluationService.getDefaultEmailTemplate( 
@@ -1227,7 +1229,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // test invalid constant causes Assert.failure
         try {
-            emailTemplate = evaluationService.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
+            evaluationService.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
             Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
             Assert.assertNotNull(e);
@@ -1237,7 +1239,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testGetEmailTemplate() {
-        EvalEmailTemplate emailTemplate = null;
+        EvalEmailTemplate emailTemplate;
 
         // test getting the templates
         emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
@@ -1253,7 +1255,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // test invalid constant causes Assert.failure
         try {
-            emailTemplate = evaluationService.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+            evaluationService.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
             Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
             Assert.assertNotNull(e);
@@ -1264,13 +1266,13 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     // http://jira.sakaiproject.org/browse/EVALSYS-851
     @Test
     public void testGetEmailTemplateByEid() {
-    	List<EvalEmailTemplate> templates = new ArrayList<EvalEmailTemplate>();
+    	List<EvalEmailTemplate> templates = new ArrayList<>();
     	templates.add(etdl.emailTemplate1);
     	templates.add(etdl.emailTemplate2);
     	templates.add(etdl.emailTemplate3);
     	
     	for(EvalEmailTemplate template : templates) {
-        	EvalEmailTemplate emailTemplate = null;
+        	EvalEmailTemplate emailTemplate;
     		try {
     			emailTemplate = this.evaluationService.getEmailTemplateByEid(template.getEid());
     		} catch(Exception e) {
@@ -1278,10 +1280,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     			Assert.fail("Should not have thrown exception");
     		}
         	Assert.assertNotNull(emailTemplate);
-        	if(emailTemplate != null) {
-        		Assert.assertEquals(template.getId(), emailTemplate.getId());
-        		Assert.assertEquals(template.getEid(), emailTemplate.getEid());
-        	}
+        	Assert.assertEquals(template.getId(), emailTemplate.getId());
+        	Assert.assertEquals(template.getEid(), emailTemplate.getEid());
     	}
     }
     
@@ -1442,7 +1442,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     @Test
 	public void testCountEvaluations()
 	{
-		//System.out.println("\n\n\n=========================\n\n testCountEvaluations \n\n=========================\n\n\n");
 		String searchString01 = "Eval";
 		int count01 = this.evaluationService.countEvaluations(searchString01);
 		Assert.assertEquals(11,count01);
@@ -1464,7 +1463,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
     @Test
 	public void testGetEvaluations()
 	{
-		//System.out.println("\n\n\n=========================\n\n testGetEvaluations \n\n=========================\n\n\n");
 		String searchString = "Eval";
 		String order = "title";
 		

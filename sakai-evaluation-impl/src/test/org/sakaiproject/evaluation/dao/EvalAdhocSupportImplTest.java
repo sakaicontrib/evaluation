@@ -77,7 +77,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAdhocUserById() {
-      EvalAdhocUser user = null;
+      EvalAdhocUser user;
 
       user = adhocSupportLogic.getAdhocUserById(etdl.user1.getId());
       Assert.assertNotNull(user);
@@ -92,7 +92,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testGetAdhocUserByEmail() {
-      EvalAdhocUser user = null;
+      EvalAdhocUser user;
 
       user = adhocSupportLogic.getAdhocUserByEmail(etdl.user1.getEmail());
       Assert.assertNotNull(user);
@@ -108,8 +108,8 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAdhocUsersByIds() {
-      List<EvalAdhocUser> l = null;
-      List<Long> ids = null;
+      List<EvalAdhocUser> l;
+      List<Long> ids;
 
       l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {etdl.user1.getId(), etdl.user2.getId()});
       Assert.assertNotNull(l);
@@ -141,9 +141,9 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAdhocUsersByUserIds() {
-      Map<String, EvalAdhocUser> m = null;
-      List<Long> ids = null;
-      Set<String> userIds = null;
+      Map<String, EvalAdhocUser> m;
+      List<Long> ids;
+      Set<String> userIds;
 
       // first try with 2 internal users
       m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), etdl.user3.getUserId()} );
@@ -234,7 +234,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAdhocGroupById() {
-      EvalAdhocGroup group = null;
+      EvalAdhocGroup group;
 
       group = adhocSupportLogic.getAdhocGroupById(etdl.group1.getId());
       Assert.assertNotNull(group);
@@ -252,8 +252,8 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testGetAdhocGroupsForOwner() {
-      List<EvalAdhocGroup> l = null;
-      EvalAdhocGroup group = null;
+      List<EvalAdhocGroup> l;
+      EvalAdhocGroup group;
 
       l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.MAINT_USER_ID);
       Assert.assertNotNull(l);
@@ -317,8 +317,8 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testGetEvalAdhocGroupsByUserAndPerm() {
-      List<EvalAdhocGroup> l = null;
-      List<Long> ids = null;
+      List<EvalAdhocGroup> l;
+      List<Long> ids;
 
       l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
       Assert.assertNotNull(l);
@@ -345,7 +345,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
    @Test
    public void testIsUserAllowedInAdhocGroup() {
-      boolean allowed = false;
+      boolean allowed;
 
       allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION, etdl.group2.getEvalGroupId());
       Assert.assertTrue(allowed);

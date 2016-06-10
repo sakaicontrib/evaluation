@@ -69,6 +69,10 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     /**
      * BELOW minimal constructor, need to run this through a default setter method (setDefaults) to
      * set the Booleans before saving, setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah)
+     * @param owner
+     * @param evalGroupId
+     * @param evalGroupType
+     * @param evaluation
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation) {
@@ -77,6 +81,13 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
     /**
      * REQUIRED constructor
+     * @param owner
+     * @param evalGroupId
+     * @param evalGroupType
+     * @param evaluation
+     * @param instructorApproval
+     * @param instructorsViewResults
+     * @param studentsViewResults
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation, Boolean instructorApproval,
@@ -86,6 +97,15 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
     /**
      * full constructor
+     * @param owner
+     * @param evalGroupId
+     * @param evalGroupType
+     * @param evaluation
+     * @param instructorApproval
+     * @param instructorsViewResults
+     * @param studentsViewResults
+     * @param nodeId
+     * @param selectionSettings
      */
     public EvalAssignGroup(String owner, String evalGroupId, String evalGroupType,
             EvalEvaluation evaluation, Boolean instructorApproval,
@@ -171,6 +191,9 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
      * Reduce code duplication
      * Sets the given selection type and option into the given map,
      * all params must not be null
+     * @param selectionType
+     * @param selectionOption
+     * @param selections
      */
     public static void handleSelectionOption(String selectionType, String selectionOption,
             Map<String, String> selections) {
@@ -208,7 +231,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
 
     /**
      * Decodes a selectionSettings code string into a map of selections
-     * @param encodedSelections the selectionSettings code string
+     * @param encoded the selectionSettings code string
      * @return a map of selection setting constants -> selection option constants (empty map if the input is null)
      */
     public static Map<String, String> decodeSelectionSettings(String encoded) {
@@ -217,9 +240,9 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
             encoded = encoded.trim();
         }
         if (encoded == null || "".equals(encoded)) {
-            selections = new HashMap<String, String>(0);
+            selections = new HashMap<>(0);
         } else {
-            selections = new HashMap<String, String>();
+            selections = new HashMap<>();
             try {
                 // remove the outer brackets
                 encoded = encoded.substring(1, encoded.lastIndexOf('}'));

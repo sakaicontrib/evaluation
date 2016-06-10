@@ -41,7 +41,7 @@ public class ResponseAnswersBeanLocator implements BeanLocator {
       this.responseBeanLocator = responseBeanLocator;
    }
 
-   private Map<String, BeanLocator> delivered = new HashMap<String, BeanLocator>();
+   private Map<String, BeanLocator> delivered = new HashMap<>();
 
    public Object locateBean(String path) {
       BeanLocator togo = delivered.get(path);

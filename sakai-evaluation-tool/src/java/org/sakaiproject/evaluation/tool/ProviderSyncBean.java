@@ -24,7 +24,6 @@ import org.quartz.CronExpression;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalScheduler;
 import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -46,7 +45,7 @@ public class ProviderSyncBean {
 	public static final long MILLISECONDS_PER_MINUTE = 60L * 1000L;
 	public static final long DELAY_IN_MINUTES = 2L;
 
-	private Log logger = LogFactory.getLog(ProviderSyncBean.class);
+	private static final Log LOG = LogFactory.getLog(ProviderSyncBean.class);
 	
 	private static final String SPACE = " ";
 
@@ -84,11 +83,11 @@ public class ProviderSyncBean {
 	public String syncServerId;
 	
 	public void init() {
-		logger.info("init()");
+		LOG.info("init()");
 	}
 	
 	public String scheduleSync() {
-		logger.info("scheduleSync() ");
+		LOG.info("scheduleSync() ");
 		
 		
 		boolean error = scheduleCronJob();
@@ -97,7 +96,7 @@ public class ProviderSyncBean {
 			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
 		}
 		
-		logger.info("scheduleSync() error == " + error);
+		LOG.info("scheduleSync() error == " + error);
 		return (error ? RESULT_FAILURE : RESULT_SUCCESS);
 	}
 
@@ -130,7 +129,7 @@ public class ProviderSyncBean {
 		}
 
 		if(! error){
-			Map<String,String> dataMap = new HashMap<String, String>();
+			Map<String,String> dataMap = new HashMap<>();
 			String uniqueId = EvalUtils.makeUniqueIdentifier(99);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_NAME, uniqueId);
 			dataMap.put(EvalConstants.CRON_SCHEDULER_TRIGGER_GROUP, JOB_GROUP_NAME);
@@ -155,23 +154,23 @@ public class ProviderSyncBean {
 	protected String getStateValues() {
 		String states;
 		StringBuilder stateList = new StringBuilder();
-		if(partial != null && partial.booleanValue()) {
+		if(partial != null && partial) {
 			stateList.append(EvalConstants.EVALUATION_STATE_PARTIAL);
 			stateList.append(" ");
 		}
-		if(inqueue != null && inqueue.booleanValue()) {
+		if(inqueue != null && inqueue) {
 			stateList.append(EvalConstants.EVALUATION_STATE_INQUEUE);
 			stateList.append(" ");
 		}
-		if(active != null && active.booleanValue()) {
+		if(active != null && active) {
 			stateList.append(EvalConstants.EVALUATION_STATE_ACTIVE);
 			stateList.append(" ");
 		}
-		if(graceperiod != null && graceperiod.booleanValue()) {
+		if(graceperiod != null && graceperiod) {
 			stateList.append(EvalConstants.EVALUATION_STATE_GRACEPERIOD);
 			stateList.append(" ");
 		}
-		if(closed != null && closed.booleanValue()) {
+		if(closed != null && closed) {
 			stateList.append(EvalConstants.EVALUATION_STATE_CLOSED);
 			stateList.append(" ");
 		}
@@ -218,7 +217,7 @@ public class ProviderSyncBean {
 			
 			return RESULT_SUCCESS;
 		} catch (Exception e) {
-			logger.warn("error in updateSyncEvents() " + e);
+			LOG.warn("error in updateSyncEvents() " + e);
 		}
 		
 		// send error message
@@ -228,7 +227,7 @@ public class ProviderSyncBean {
 	}
 	
 	public String updateSync() {
-		logger.info("updateSync(" + this.fullJobName + ") ");
+		LOG.info("updateSync(" + this.fullJobName + ") ");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
@@ -262,7 +261,7 @@ public class ProviderSyncBean {
 	}
 	
 	public String deleteSync() {
-		logger.info("deleteSync(" + this.fullJobName + ")");
+		LOG.info("deleteSync(" + this.fullJobName + ")");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
@@ -297,8 +296,8 @@ public class ProviderSyncBean {
 	 * @return
 	 */
 	public String quickSync() {
-		logger.info("quickSync() ");
-		boolean success = false;
+		LOG.info("quickSync() ");
+		boolean success;
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(System.currentTimeMillis() + DELAY_IN_MINUTES * MILLISECONDS_PER_MINUTE);
@@ -317,7 +316,7 @@ public class ProviderSyncBean {
 		buf.append(SPACE);
 		buf.append(cal.get(Calendar.YEAR));
 		this.cronExpression = buf.toString();
-		logger.info("quickSync() cronExpression == " + cronExpression);
+		LOG.info("quickSync() cronExpression == " + cronExpression);
 		
 		if(this.syncServerId != null) {
 			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);

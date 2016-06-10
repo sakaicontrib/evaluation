@@ -45,7 +45,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class PreloadDataImpl {
 
-    private static Log log = LogFactory.getLog(PreloadDataImpl.class);
+    private static final Log LOG = LogFactory.getLog(PreloadDataImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao evaluationDao) {
@@ -60,12 +60,12 @@ public class PreloadDataImpl {
 	/*
 	 * List to hold the default email templates. Gets populated with default templates in method {@link #populateEmailTemplates()}
 	 */
-    List<EvalEmailTemplate> defaultEmailTempates = new ArrayList<EvalEmailTemplate>();
+    List<EvalEmailTemplate> defaultEmailTempates = new ArrayList<>();
     
 	/*
 	 * List to hold the default configuration settings. Gets populated with default templates in method {@link #populateEvalConfig()}
 	 */
-    Map<String, Object> evalConfigMap = new HashMap<String, Object>();
+    Map<String, Object> evalConfigMap = new HashMap<>();
 
     public void preload() {
         // run the methods that will preload the data
@@ -114,7 +114,7 @@ public class PreloadDataImpl {
     }
 
     // a few things we will need in the various other parts
-    private String ADMIN_OWNER = "admin";
+    private static final String ADMIN_OWNER = "admin";
     private EvalScale agreeDisagree;
 
     /**
@@ -125,13 +125,13 @@ public class PreloadDataImpl {
      */
 	public void preloadEvalConfig() {
         // check if there are any EvalConfig items present in the defaults map
-    	if( evalConfigMap.size() == 0){
+    	if( evalConfigMap.isEmpty()){
     		populateEvalConfig();
     	}
         List<EvalConfig> configInDB = dao.findAll(EvalConfig.class);
         
         //convert DB configurations into maps with the Config Name as key
-        Map<String, String> configInDBMap = new HashMap<String, String>();
+        Map<String, String> configInDBMap = new HashMap<>();
         for ( EvalConfig config : configInDB){
         	configInDBMap.put(config.getName(), config.getValue());
         }
@@ -158,7 +158,7 @@ public class PreloadDataImpl {
         }
 
         if( countNewConfigs > 0){
-        	log.info("Preloaded " + countNewConfigs + " evaluation system EvalConfig items");
+        	LOG.info("Preloaded " + countNewConfigs + " evaluation system EvalConfig items");
         }
     }
 
@@ -170,7 +170,7 @@ public class PreloadDataImpl {
      * Preload the default email template
      */
     public void preloadEmailTemplate() {
-    	if ( defaultEmailTempates.size() == 0){
+    	if ( defaultEmailTempates.isEmpty()){
     		populateEmailTemplates();
     	}
         // check if there are any emailTemplates present in the DB
@@ -178,7 +178,7 @@ public class PreloadDataImpl {
                 new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
     	
         // convert to map with defaultType as key
-    	Map<String, EvalEmailTemplate> currentDefaultsMap = new HashMap<String, EvalEmailTemplate>();
+    	Map<String, EvalEmailTemplate> currentDefaultsMap = new HashMap<>();
     	for(EvalEmailTemplate emailTemplate : currentDefaultsList){
     		currentDefaultsMap.put(emailTemplate.getDefaultType(), emailTemplate);
     	}
@@ -194,7 +194,7 @@ public class PreloadDataImpl {
         		}
         	}
   
-            log.info("Preloaded " + count + " evaluation EmailTemplates");
+            LOG.info("Preloaded " + count + " evaluation EmailTemplates");
         }
     }
 
@@ -258,7 +258,7 @@ public class PreloadDataImpl {
             //       new String[] { "Req. in Major", "Req. out of Major",
             //       "Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
 
-            log.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
+            LOG.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
         }
     }
 
@@ -294,25 +294,25 @@ public class PreloadDataImpl {
             // student development
             EvalItemGroup newCategory = saveCategoryGroup("Student Development", "Determine how student development is perceived", null);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("I learned a good deal of factual material in this course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I gained a good understanding of principals and concepts in this field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I developed the a working knowledge of this field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             saveObjectiveGroup("Knowledge", "", itemSet, newCategory);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("I participated actively in group discussions", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I developed leadership skills within this group", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I developed new friendships within this group", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             saveObjectiveGroup("Participation", "", itemSet, newCategory);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("I gained a better understanding of myself through this course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I developed a greater sense of personal responsibility", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("I increased my awareness of my own interests and talents", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             saveObjectiveGroup("Self-concept", "", itemSet, newCategory);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("Group activities contributed significantly to my learning", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Collaborative group activities helped me learn the materials", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Working with others in the group helpded me learn more effectively", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
@@ -322,27 +322,27 @@ public class PreloadDataImpl {
             // instructor effectiveness
             newCategory = saveCategoryGroup("Instructor Effectiveness", "Determine the perceived effectiveness of the instructor", null);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("The instructor explained material clearly and understandably", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor handled questions well", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor appeared to have a thorough knowledge of the subject and field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor taught in a manner that served my needs", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             saveObjectiveGroup("Skill", "", itemSet, newCategory);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("The instructor was friendly", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor was permissive and flexible", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor treated students with respect", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             saveObjectiveGroup("Climate", "", itemSet, newCategory);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("The instructor suggested specific ways students could improve", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor gave positive feedback when students did especially well", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             itemSet.add( saveScaledExpertItem("The instructor kept students informed of their progress", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
             saveObjectiveGroup("Feedback", "", itemSet, newCategory);
 
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("Examinations covered the important aspects of the course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Exams were creative and required original thought", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Exams were reasonable in length and difficulty", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
@@ -351,7 +351,7 @@ public class PreloadDataImpl {
 
             saveCategoryGroup("Exams", "Measure the perception of examinations", itemSet);
 
-            itemSet = new HashSet<EvalItem>();
+            itemSet = new HashSet<>();
             itemSet.add( saveScaledExpertItem("Assignments were interesting and stimulating", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Assignments made students think", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
             itemSet.add( saveScaledExpertItem("Assignments required a reasonable amount of time and effort", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
@@ -363,8 +363,8 @@ public class PreloadDataImpl {
             // general catch all
             saveCategoryGroup(EvalConstants.EXPERT_ITEM_CATEGORY_TITLE, "General use items", null);
             
-            log.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
-            log.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
+            LOG.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
+            LOG.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
         }
 
     }
@@ -542,8 +542,8 @@ public class PreloadDataImpl {
      * Gets the number of configurations in the database that are defined as preloadable configs
      */
     private long countDefaultEvalConfigInDB(){
-    	long defaultConfigCount = 0;
-    	if (evalConfigMap.size() == 0){
+    	long defaultConfigCount;
+    	if (evalConfigMap.isEmpty()){
     		populateEvalConfig();
     	}
     	

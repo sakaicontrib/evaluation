@@ -35,7 +35,7 @@ public class ComparatorsUtils {
     public static class EvaluationDueDateComparator implements Comparator<EvalEvaluation>, Serializable {
         static private final long serialVersionUID = 31L;
         public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
-            int comparison = 0;
+            int comparison;
             if (eval0.getDueDate() != null && eval1.getDueDate() != null) {
                 comparison = eval0.getDueDate().compareTo(eval1.getDueDate());
             } else {
@@ -54,7 +54,7 @@ public class ComparatorsUtils {
     public static class EvaluationDateTitleIdComparator implements Comparator<EvalEvaluation>, Serializable {
         static private final long serialVersionUID = 31L;
         public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
-            int comparison = 0;
+            int comparison;
             if (eval0.getDueDate() != null && eval1.getDueDate() != null) {
                 comparison = eval0.getDueDate().compareTo(eval1.getDueDate());
             } else {
@@ -76,7 +76,7 @@ public class ComparatorsUtils {
     public static class TemplateItemComparatorByOrder implements Comparator<EvalTemplateItem>, Serializable {
         static private final long serialVersionUID = 31L;
         public int compare(EvalTemplateItem eti0, EvalTemplateItem eti1) {
-            int comparison = 0;
+            int comparison;
             comparison = eti0.getDisplayOrder().compareTo( eti1.getDisplayOrder() );
             if (comparison == 0
                     && eti0.getId() != null && eti1.getId() != null) {
@@ -112,7 +112,7 @@ public class ComparatorsUtils {
     public static class ItemGroupComparatorByTitle implements Comparator<EvalItemGroup>, Serializable {
         static private final long serialVersionUID = 31L;
         public int compare(EvalItemGroup ig0, EvalItemGroup ig1) {
-            int comparison = 0;
+            int comparison;
             comparison = ig0.getTitle().compareTo( ig1.getTitle() );
             if (comparison == 0) {
                 comparison = ig0.getId().compareTo(ig1.getId());

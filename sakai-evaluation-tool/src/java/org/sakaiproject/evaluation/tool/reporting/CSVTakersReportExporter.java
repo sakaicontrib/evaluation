@@ -43,7 +43,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class CSVTakersReportExporter implements ReportExporter {
 
-    private static Log log = LogFactory.getLog(ReportExporterBean.class);
+    private static final Log LOG = LogFactory.getLog(ReportExporterBean.class);
 
     private static final char DELIMITER = ',';
 
@@ -57,11 +57,11 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.messageLocator = locator;
     }
 
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
-        buildReport(evaluation, groupIds, null, outputStream);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
+        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
     }
 	
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
         OutputStreamWriter osw = new OutputStreamWriter(outputStream);
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try {
@@ -77,12 +77,17 @@ public class CSVTakersReportExporter implements ReportExporter {
         CSVWriter writer = new CSVWriter(osw, DELIMITER);
 
         Set<EvalResponse> responses = evaluation.getResponses();
-        Set<String> groupIdSet = new HashSet<String>(Arrays.asList(groupIds));
+        Set<String> groupIdSet = new HashSet<>(Arrays.asList(groupIds));
         String[] userIds = ownersOfResponses(responses, groupIdSet);
         List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
         Collections.sort(users, new EvalUser.SortNameComparator());
-        log.debug("users.size(): " + users.size());
+        LOG.debug("users.size(): " + users.size());
         String[] row = new String[3];
+
+        // Headers
+        row[0] = messageLocator.getMessage( "viewreport.takers.csv.email.header" );
+        row[1] = messageLocator.getMessage( "viewreport.takers.csv.name.header" );
+        writer.writeNext( row );
 
         try {
 
@@ -100,7 +105,7 @@ public class CSVTakersReportExporter implements ReportExporter {
     }
 
     private String[] ownersOfResponses(Set<EvalResponse> responses, Set<String> groupIdSet) {
-        ArrayList<String> owners = new ArrayList<String>(responses.size());
+        ArrayList<String> owners = new ArrayList<>(responses.size());
         for (EvalResponse response : responses) {
             if (response.getEvalGroupId() != null && groupIdSet.contains(response.getEvalGroupId())) {
                 owners.add(response.getOwner());

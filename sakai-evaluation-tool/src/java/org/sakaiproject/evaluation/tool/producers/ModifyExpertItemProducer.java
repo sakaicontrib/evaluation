@@ -88,7 +88,7 @@ public class ModifyExpertItemProducer extends EvalCommonProducer implements View
 
         //EvalItemGroup toEdit 
         ModifyExpertItemParameters params = (ModifyExpertItemParameters) viewparams;
-        Boolean bIsNew = new Boolean(params.isNew);
+        Boolean bIsNew = params.isNew;
         
         UIForm form = UIForm.make(tofill, "modify-expertitem-form");
         

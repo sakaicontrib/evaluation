@@ -15,9 +15,6 @@
 package org.sakaiproject.evaluation.logic.entity;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.sakaiproject.entitybroker.EntityView;
@@ -29,7 +26,6 @@ import org.sakaiproject.entitybroker.entityprovider.capabilities.Describeable;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.Outputable;
 import org.sakaiproject.entitybroker.entityprovider.extension.Formats;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
@@ -63,7 +59,6 @@ public class EvalReportsEntityProviderImpl implements EvalReportsEntityProvider,
 
 	@EntityCustomAction(action = "CSVReport", viewKey = EntityView.VIEW_LIST) 
     public String exportCSVReport(EntityView view, Map<String,Object> params) {
-		Map<String, Object> exportData = new HashMap<String, Object>();
 		Long evaluationId = null;
 		try {
 			evaluationId = Long.parseLong(view.getPathSegment(2));

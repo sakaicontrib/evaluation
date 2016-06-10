@@ -61,7 +61,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class RenderingUtils {
 
-    private static Log log = LogFactory.getLog(RenderingUtils.class);
+    private static final Log LOG = LogFactory.getLog(RenderingUtils.class);
 
     private EvalAuthoringService authoringService;
     public void setAuthoringService(EvalAuthoringService authoringService) {
@@ -112,9 +112,8 @@ public class RenderingUtils {
         }
         int responseCount = responseArray.length - 1; // remove the NA count from the end
         int totalAnswers = 0;
-        int totalAnswersWithNA = 0;
+        int totalAnswersWithNA;
         int totalValue = 0;
-        int totalWeight = 0;
         
         int [] realValues = new int[responseCount];
         boolean numerico=true; //If there is a non-numeric value, mean of indexes is made.
@@ -124,7 +123,7 @@ public class RenderingUtils {
         {
         	try
         	{
-	        	realValues[i]=new Integer(answersArray[i]).intValue();
+	        	realValues[i]=new Integer(answersArray[i]);
         	}
         	catch (Exception e)
         	{
@@ -139,14 +138,12 @@ public class RenderingUtils {
             {
             	//Not numeric values. Mean of answers indexes.
             	int weight = i+1;
-            	totalWeight += weight;
             	totalAnswers += responseArray[i];
             	totalValue += (weight * responseArray[i]);
             }
             else
             {
             	//Numeric values. Mean of answers.
-            	totalWeight += realValues[i];
             	totalAnswers += responseArray[i];
             	totalValue += (realValues[i] * responseArray[i]);
             }
@@ -162,7 +159,7 @@ public class RenderingUtils {
     }
 
     public static class AnswersMean {
-        private DecimalFormat df = new DecimalFormat("#0.00");
+        private static final DecimalFormat DF = new DecimalFormat("#0.00");
 
         public String meanText;
         /**
@@ -189,7 +186,7 @@ public class RenderingUtils {
         AnswersMean(int answers, double mean) {
             this.answersCount = answers;
             this.mean = mean;
-            this.meanText = df.format(mean);
+            this.meanText = DF.format(mean);
         }
 
     }
@@ -215,7 +212,7 @@ public class RenderingUtils {
      * @return List (see method comment)
      */
     public static List<String> getMatrixLabels(String[] scaleOptions) {
-    	List<String> list = new ArrayList<String>();
+    	List<String> list = new ArrayList<>();
         if (scaleOptions != null && scaleOptions.length > 0) {
         	list.add(scaleOptions[0]);
         	list.add(scaleOptions[scaleOptions.length - 1]);
@@ -250,7 +247,9 @@ public class RenderingUtils {
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType) // since BLOCK_CHILD is always a scaled item
         ) {
             // only do something here if this item type can handle a scale
-            if (log.isDebugEnabled()) log.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
+            }
             if (scaleOptions == null || scaleOptions.length == 0) {
                 // if scale options are missing then try to get them from the item
                 // NOTE: this could throw a NPE - not much we can do about that if it happens
@@ -263,11 +262,13 @@ public class RenderingUtils {
             }
             if (scaleDisplaySetting == null) {
                 // this should not happen but just in case it does, we want to trap and warn about it
-                log.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
+                LOG.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
             } else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
                     || scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
             ) {
-                if (log.isDebugEnabled()) log.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
+                }
                 /* MATRIX - special labels for the matrix items
                  * Show numbers in front (e.g. "blah" becomes "1 - blah")
                  * and only show text if the label was display in take evals (e.g. "1 - blah, 2, 3, 4 - blah, ...)
@@ -476,7 +477,7 @@ public class RenderingUtils {
         }
 
         if (renderProperties == null) {
-            renderProperties = new HashMap<String, Object>();
+            renderProperties = new HashMap<>();
         }
 
         boolean evalRequiresItems = false;
@@ -501,7 +502,7 @@ public class RenderingUtils {
         if (dti.isBlockParent()) {
             List<DataTemplateItem> children = dti.getBlockChildren();
             for (DataTemplateItem childDTI : children) {
-                HashMap<String,Object> childRenderProps = new HashMap<String, Object>();
+                HashMap<String,Object> childRenderProps = new HashMap<>();
                 RenderingUtils.makeRenderProps(childDTI, eval, missingKeys, childRenderProps);
                 String key = "child-"+childDTI.templateItem.getId();
                 renderProperties.put(key, childRenderProps);
@@ -530,7 +531,7 @@ public class RenderingUtils {
 
     /**
      * Set the no-cache headers for this response
-     * @param httpServletResponse the servlet response
+     * @param res the servlet response
      */
     public static void setNoCacheHeaders(HttpServletResponse res) {
         long currentTime = System.currentTimeMillis();
@@ -552,14 +553,14 @@ public class RenderingUtils {
      * @return
      */
     public List<String> extractCategoriesInTemplate(long templateId){
-      List<String> categories = new ArrayList<String>();
+      List<String> categories = new ArrayList<>();
       //Fetch all templateItems to find out what categories we have
       List<EvalTemplateItem> templateItems = authoringService.getTemplateItemsForTemplate(templateId, new String[]{}, new String[]{}, new String[]{});
       // make the TI data structure
-      Map<String, List<String>> assiciates = new HashMap<String, List<String>>();
-      List<String> fakeInstructor = new ArrayList<String>();
+      Map<String, List<String>> assiciates = new HashMap<>();
+      List<String> fakeInstructor = new ArrayList<>();
       fakeInstructor.add("fakeinstructor");
-      List<String> fakeAssistant = new ArrayList<String>();
+      List<String> fakeAssistant = new ArrayList<>();
       fakeAssistant.add("fakeAssistant");
       assiciates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, fakeInstructor);
       assiciates.put(EvalConstants.ITEM_CATEGORY_ASSISTANT, fakeAssistant);

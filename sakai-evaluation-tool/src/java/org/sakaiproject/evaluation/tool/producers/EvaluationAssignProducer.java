@@ -41,15 +41,12 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -91,7 +88,7 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 @SuppressWarnings("deprecation")
 public class EvaluationAssignProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
 	
-    private static Log log = LogFactory.getLog(EvaluationAssignProducer.class);
+    private static final Log LOG = LogFactory.getLog(EvaluationAssignProducer.class);
 
     public static final String VIEW_ID = "evaluation_assign";
     public String getViewID() {
@@ -174,10 +171,10 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
         
         //Are we using the selection options (UCT)? YES
-        boolean useSelectionOptions = ((Boolean)settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)).booleanValue();
+        boolean useSelectionOptions = ((Boolean)settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION));
 
         //find out is this evaluation will contain any Instructor/TA questions based in it's template
-        List<String> validItemCategories = new ArrayList<String>();
+        List<String> validItemCategories;
         boolean hasInstructorQuestions = true;
         boolean hasAssistantQuestions = true;
         if(useSelectionOptions){
@@ -186,7 +183,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             hasAssistantQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_ASSISTANT);
         }
         
-	log.debug("Template id: " + evaluation.getTemplate().getId() + " useSelectionOptions: " + useSelectionOptions + 
+	LOG.debug("Template id: " + evaluation.getTemplate().getId() + " useSelectionOptions: " + useSelectionOptions + 
 	          " hasInstructorQuestions: " + hasInstructorQuestions + " hasAssistantQuestions: " + hasAssistantQuestions);
 
         String actionBean = "setupEvalBean.";
@@ -246,15 +243,15 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         UIForm form = UIForm.make(tofill, "eval-assign-form");
 
         // Things for building the UISelect of Hierarchy Node Checkboxes
-        List<String> hierNodesLabels = new ArrayList<String>();
-        List<String> hierNodesValues = new ArrayList<String>();
+        List<String> hierNodesLabels = new ArrayList<>();
+        List<String> hierNodesValues = new ArrayList<>();
         UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder",
                 new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedHierarchyNodeIDs", evalViewParams.selectedHierarchyNodeIDs);
         String hierNodesSelectID = hierarchyNodesSelect.getFullID();
 
         // Things for building the UISelect of Eval Group Checkboxes
-        List<String> evalGroupsLabels = new ArrayList<String>();
-        List<String> evalGroupsValues = new ArrayList<String>();
+        List<String> evalGroupsLabels = new ArrayList<>();
+        List<String> evalGroupsValues = new ArrayList<>();
         UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder",
                 new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedGroupIDs",evalViewParams.selectedGroupIDs == null ? new String[]{} : evalViewParams.selectedGroupIDs);
         String evalGroupsSelectID = evalGroupsSelect.getFullID();
@@ -279,9 +276,9 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         String currentSiteId = EntityReference.getIdFromRef(currentEvalGroupId);
 
         // get the groups that this user is allowed to assign evals to
-        List<EvalGroup> assignEvalGroups = new ArrayList<EvalGroup>();
+        List<EvalGroup> assignEvalGroups;
         // for backwards compatibility we will pull the list of groups the user is being evaluated in as well and merge it in
-        List<EvalGroup> beEvalGroups = new ArrayList<EvalGroup>();
+        List<EvalGroup> beEvalGroups;
         
         Boolean isGroupFilterEnabled = (Boolean) settings.get(EvalSettings.ENABLE_FILTER_ASSIGNABLE_GROUPS);
 
@@ -298,7 +295,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
          * remove ad hoc groups from view as they are handled already in another 
          * section in the same view. 
          */
-        List<EvalGroup> evalGroups = new ArrayList<EvalGroup>();
+        List<EvalGroup> evalGroups = new ArrayList<>();
         for (EvalGroup evalGroup : assignEvalGroups) {
         	if (! evalGroups.contains(evalGroup)
         		&& !EvalConstants.GROUP_TYPE_ADHOC.equals(evalGroup.type)) {
@@ -314,7 +311,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         }
 
         if (evalGroups.size() > 0) {
-            Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
+            Map<String, EvalGroup> groupsMap = new HashMap<>();
             for (int i=0; i < evalGroups.size(); i++) {
                 EvalGroup c = (EvalGroup) evalGroups.get(i);
                 groupsMap.put(c.evalGroupId, c);
@@ -329,8 +326,8 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             	Set<String> parentNodes = null;
             	Set<String> accessNodes = null;
             	if(!commonLogic.isUserAdmin(currentUserId)){
-            		parentNodes = new HashSet<String>();
-            		accessNodes = new HashSet<String>();
+            		parentNodes = new HashSet<>();
+            		accessNodes = new HashSet<>();
             		Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesForUserPerm(currentUserId, EvalConstants.HIERARCHY_PERM_ASSIGN_EVALUATION);
             		for(EvalHierarchyNode node : nodes){
             			accessNodes.add(node.id);
@@ -345,7 +342,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 
                 hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:",
                         evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
-                        hierNodesLabels, hierNodesValues, evalViewParams, accessNodes, parentNodes);
+                        hierNodesLabels, hierNodesValues, evalViewParams, accessNodes, parentNodes, evaluation.getSectionAwareness());
                 
                 addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
                         "hierarchy-assignment-area", "hide-button", "show-button", evalViewParams.expanded == null);
@@ -371,9 +368,10 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             
             String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
             
-            List<EvalGroup> unassignedEvalGroups = new ArrayList<EvalGroup>();
-            for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
-                unassignedEvalGroups.add(groupsMap.get(nonAssignedEvalGroupIDs[i]));
+            List<EvalGroup> unassignedEvalGroups = new ArrayList<>();
+            for( String nonAssignedEvalGroupID : nonAssignedEvalGroupIDs )
+            {
+                unassignedEvalGroups.add( groupsMap.get( nonAssignedEvalGroupID ) );
             }
             
             if (!unassignedEvalGroups.isEmpty()) {
@@ -393,7 +391,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            }
 	            
 				
-	            List<String> assignGroupsIds = new ArrayList<String>();
+	            List<String> assignGroupsIds = new ArrayList<>();
 	            String groupSelectionOTP = "assignGroupSelectionSettings.";
 	            if(! newEval){
 	            	Map<Long, List<EvalAssignGroup>> selectedGroupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evalViewParams.evaluationId}, true, null);
@@ -404,8 +402,10 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            		//Add group selection settings to form to support EVALSYS-778
 	            		if (useSelectionOptions){
 		            		Map<String, String> selectionOptions = assGroup.getSelectionOptions();
-		                    form.parameters.add(new UIELBinding(groupSelectionOTP + assGroup.getEvalGroupId().replaceAll("/site/", "") + ".instructor", selectionOptions.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR)));
-		                    form.parameters.add(new UIELBinding(groupSelectionOTP + assGroup.getEvalGroupId().replaceAll("/site/", "") + ".assistant", selectionOptions.get(EvalAssignGroup.SELECTION_TYPE_ASSISTANT)));
+		                    form.parameters.add(new UIELBinding(groupSelectionOTP + assGroup.getEvalGroupId().replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") 
+		                    		+ ".instructor", selectionOptions.get(EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR)));
+		                    form.parameters.add(new UIELBinding(groupSelectionOTP + assGroup.getEvalGroupId().replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") 
+		                    		+ ".assistant", selectionOptions.get(EvalAssignGroup.SELECTION_TYPE_ASSISTANT)));
 	            		}
 	            	}
 	            }
@@ -420,7 +420,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            	boolean hasEvaluators = true;
 	            	
 	            	if (! EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())){
-	                	int numEvaluatorsInSite = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+	                	int numEvaluatorsInSite = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, evaluation.getSectionAwareness());
 	                	hasEvaluators = numEvaluatorsInSite > 0;
 	            	}
 	            	
@@ -433,8 +433,8 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	                checkboxRow.decorate(new UIFreeAttributeDecorator("rel", count+"")); // table row counter for JS use in EVALSYS-618
 	                
 	                //keep deselected user info as a result of changes in EVALSYS-660
-	                Set<String> deselectedInsructorIds = new HashSet<String>();
-	                Set<String> deselectedAssistantIds = new HashSet<String>();
+	                Set<String> deselectedInsructorIds = new HashSet<>();
+	                Set<String> deselectedAssistantIds = new HashSet<>();
 
 	                //Assign attribute to row to help JS set checkbox selection to true
 	                if(assignGroupsIds.contains(evalGroupId)){
@@ -458,8 +458,8 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 		               
 		                }else{
 		                	//add blank selection options for this group for use by evalAssign.js
-		                	form.parameters.add(new UIELBinding(groupSelectionOTP + evalGroupId.replaceAll("/site/", "") + ".instructor", ""));
-		                    form.parameters.add(new UIELBinding(groupSelectionOTP + evalGroupId.replaceAll("/site/", "") + ".assistant", ""));	
+		                	form.parameters.add(new UIELBinding(groupSelectionOTP + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") + ".instructor", ""));
+		                	form.parameters.add(new UIELBinding(groupSelectionOTP + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") + ".assistant", ""));
 		                }
 	                }
 	                
@@ -475,12 +475,14 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	                }
 	                
 	                if (useSelectionOptions){
-		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll("/site/", "")+".deselectedInstructors", deselectedInsructorIds!=null?deselectedInsructorIds.toArray(new String[deselectedInsructorIds.size()]):new String[]{}));
-		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll("/site/", "")+".deselectedAssistants", deselectedAssistantIds!=null?deselectedAssistantIds.toArray(new String[deselectedAssistantIds.size()]):new String[]{}));
+		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "")
+		                		+".deselectedInstructors", deselectedInsructorIds.toArray(new String[deselectedInsructorIds.size()])));
+		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "")
+		                		+".deselectedAssistants", deselectedAssistantIds.toArray(new String[deselectedAssistantIds.size()])));
 		                
 		                //add ordering bindings
-		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll("/site/", "") + ".orderingInstructors", new String[]{} ));
-		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll("/site/", "") + ".orderingAssistants", new String[]{} ));
+		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") + ".orderingInstructors", new String[]{} ));
+		                form.parameters.add(new UIELBinding(evalUsersLocator + evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, "") + ".orderingAssistants", new String[]{} ));
 	                }
 	                
 	                // get title from the map since it is faster
@@ -493,7 +495,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 		            
 		            if (useSelectionOptions){
 			            if( hasEvaluators ){
-			                int totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+			                int totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED, evaluation.getSectionAwareness());
 			                if(totalUsers > 0 && hasInstructorQuestions){
 			                	int currentUsers = deselectedInsructorIds.size() >= 0 ? ( totalUsers-deselectedInsructorIds.size() ) : totalUsers;
 			                	UIInternalLink link = UIInternalLink.make(checkboxRow, "select-instructors", UIMessage.make("assignselect.instructors.select", 
@@ -502,7 +504,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 			                	link.decorate(new UIStyleDecorator("addItem total:"+totalUsers));
 			                	link.decorate(new UITooltipDecorator(messageLocator.getMessage("assignselect.instructors.page.title")));
 			                }
-			                totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroup.evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE);
+			                totalUsers = commonLogic.countUserIdsForEvalGroup(evalGroup.evalGroupId, EvalConstants.PERM_ASSISTANT_ROLE, evaluation.getSectionAwareness());
 			                if(totalUsers > 0 && hasAssistantQuestions){
 			                	int currentUsers = deselectedAssistantIds.size() >= 0 ? ( totalUsers-deselectedAssistantIds.size() ) : totalUsers;
 			                	UIInternalLink link = UIInternalLink.make(checkboxRow, "select-tas", UIMessage.make("assignselect.tas.select", 
@@ -549,7 +551,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             if (myAdhocGroups.size() > 0) {
                 UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
 
-                ArrayList<String> adhocGroupRowIdsArray = new ArrayList<String>(myAdhocGroups.size());
+                ArrayList<String> adhocGroupRowIdsArray = new ArrayList<>(myAdhocGroups.size());
                 int count = 0;
                 for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
                     UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
@@ -643,7 +645,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         // TODO - we probably need a method to simply get all assigned groupIds in the hierarchy to make this a bit faster
 
         // 1. All the Evaluation Group IDs in a set
-        Set<String> evalGroupIDs = new HashSet<String>();
+        Set<String> evalGroupIDs = new HashSet<>();
         for (EvalGroup evalGroup: evalGroups) {
             evalGroupIDs.add(evalGroup.evalGroupId);
         }

@@ -65,6 +65,9 @@ public class EvalHierarchyNode implements Comparable<EvalHierarchyNode> {
 
     /**
      * Convenience constructor for testing
+     * @param id
+     * @param title
+     * @param description
      */
     public EvalHierarchyNode(String id, String title, String description) {
         this.id = id;

@@ -106,15 +106,15 @@ public class AdhocGroupEntityProviderImpl implements AdhocGroupEntityProvider, C
 
     // Added for compatibility with 1.3.3
     public String createEntity(EntityReference ref, Object entity) {
-        return createEntity(ref, entity, new HashMap<String, Object>(0));
+        return createEntity(ref, entity, new HashMap<>(0));
     }
 
     public void updateEntity(EntityReference ref, Object entity) {
-        updateEntity(ref, entity, new HashMap<String, Object>(0));
+        updateEntity(ref, entity, new HashMap<>(0));
     }
 
     public void deleteEntity(EntityReference ref) {
-        deleteEntity(ref, new HashMap<String, Object>(0));
+        deleteEntity(ref, new HashMap<>(0));
     }
 
     /**

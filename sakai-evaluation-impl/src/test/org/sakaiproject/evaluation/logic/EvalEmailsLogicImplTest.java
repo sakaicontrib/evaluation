@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -72,7 +73,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
     */
 	@Test
    public void testGetFromEmailOrFail() {
-      String fromEmail = null;
+      String fromEmail;
 
       fromEmail = emailsLogic.getFromEmailOrFail(etdl.evaluationActive);
       Assert.assertNotNull(fromEmail);
@@ -101,7 +102,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
     */
 	@Test
    public void testGetEmailTemplateOrFail() {
-      EvalEmailTemplate template = null;
+      EvalEmailTemplate template;
 
       // test getting templates from evals
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, etdl.evaluationNew.getId());
@@ -144,9 +145,10 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
     */
+	@Ignore
 	@Test
    public void testSendEvalCreatedNotifications() {
-      String[] sentEmails = null;
+      String[] sentEmails;
 
       // test send to just the evaluatees
       externalLogicMock.resetEmailsSentCounter();
@@ -175,9 +177,10 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    /**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
+	@Ignore
 	@Test
 	public void testSendEvalAvailableNotifications() {
-      String[] sentEmails = null;
+      String[] sentEmails;
 
       // test send to just the evaluators
       externalLogicMock.resetEmailsSentCounter();

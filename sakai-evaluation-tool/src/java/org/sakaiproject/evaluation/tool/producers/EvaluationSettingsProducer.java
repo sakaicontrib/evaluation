@@ -168,7 +168,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         if(evalViewParams.returnToSearchResults) {
       	  form.parameters.add(new UIELBinding(actionBean + "returnToSearchResults", Boolean.TRUE));
       	  form.parameters.add(new UIELBinding(actionBean + "adminSearchString", evalViewParams.adminSearchString));
-      	  form.parameters.add(new UIELBinding(actionBean + "adminSearchPage", new Integer(evalViewParams.adminSearchPage)));
+      	  form.parameters.add(new UIELBinding(actionBean + "adminSearchPage", evalViewParams.adminSearchPage));
       	  //RSFUtil.addResultingViewBinding(form, "returnToSearchResults", "#{" + actionBean + "returnToSearchResults}");
       	  RSFUtil.addResultingViewBinding(form, "searchString", "#{" + actionBean + "adminSearchString}");
       	  RSFUtil.addResultingViewBinding(form, "page", "#{" + actionBean + "adminSearchPage}");
@@ -274,7 +274,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             UIInternalLink.make(showTemplateBranch, "eval_template_preview_link", 
                     UIMessage.make("evalsettings.template.preview.link"), 
                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, template.getId()) );         
-            if ( ! template.getLocked().booleanValue() &&
+            if ( ! template.getLocked() &&
                     authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 UIInternalLink.make(showTemplateBranch, "eval_template_modify_link", UIMessage.make("general.command.edit"), 
                         new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
@@ -308,6 +308,10 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                     reOpenStopDate, currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
         }
 
+        // Evaluation section awareness checkbox
+        UIBranchContainer enableSectionAware = UIBranchContainer.make( form, "sectionAwareness:" );
+        UIBoundBoolean.make( enableSectionAware, "sectionAwareness", evaluationOTP + "sectionAwareness" );
+
         // EVALUATION RESULTS VIEWING/SHARING
 
         // radio buttons for the results sharing options
@@ -323,12 +327,12 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         }
 
         //EVALSYS-1117 
-        if (((Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS)).booleanValue()) {
+        if (((Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS))) {
         	UIMessage.make(form, "resultsviewableadminnote", "evalsettings.results.viewable.admin.note");
         }
 
         // show the view date only if allowed by system settings
-        if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
+        if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE))) {
             UIBranchContainer showViewDate = UIBranchContainer.make(form, "showViewDate:");
             generateDateSelector(showViewDate, "viewDate", evaluationOTP + "viewDate", 
                     null, currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
@@ -357,11 +361,9 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
                 evaluationOTP + "instructorViewResults", instructorViewResults, form, 
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
-        //System.out.println("System setting: "+instructorViewResults+", binding: "+evaluationOTP + "instructorViewResults");
         generateSettingsControlledCheckbox(showResultsToInst, "instructorViewAllResults",
                 evaluationOTP + "instructorViewAllResults", instructorViewAllResults, form,
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
-        //System.out.println("System setting: "+instructorViewAllResults+", binding: "+evaluationOTP + "instructorViewAllResults");
         generateViewDateControl(showResultsToInst, "instructorsViewDate", 
                 evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
         
@@ -459,13 +461,13 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
         //Boolean consolidatedEmailsEnabled = (Boolean) this.settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE); // This checks the wrong property -- EVALSYS-1191
         if(consolidatedEmailsEnabled == null) {
-        	consolidatedEmailsEnabled = new Boolean(false);
+        	consolidatedEmailsEnabled = false;
         } 
         
         String availableTemplate = EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
         String reminderTemplate = EvalConstants.EMAIL_TEMPLATE_REMINDER;
         
-        if(consolidatedEmailsEnabled.booleanValue()) {
+        if(consolidatedEmailsEnabled) {
             availableTemplate = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE;
             reminderTemplate = EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER;
             
@@ -488,7 +490,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 
         // render this only if *NOT* using consolidated emails
         UISelect reminderDaysSelect = null;
-        if (!consolidatedEmailsEnabled.booleanValue()) {
+        if (!consolidatedEmailsEnabled) {
             UIBranchContainer evaluation_reminder_area = UIBranchContainer.make(form, "evaluation_reminder_days:");
             // email reminder control
             String[] reminderValues = EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES;
@@ -524,7 +526,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         //      }
         
         // render this only if *NOT* using consolidated emails 
-        if(! consolidatedEmailsEnabled.booleanValue()) {
+        if(! consolidatedEmailsEnabled) {
         	UIBranchContainer reminderFromAddress = UIBranchContainer.make(form, "reminderFromAddress:");
 	        UIMessage.make(reminderFromAddress, "eval-from-email-note", "evalsettings.email.sent.from", 
 	                new Object[] {new ELReference(evaluationOTP + "reminderFromEmail")});

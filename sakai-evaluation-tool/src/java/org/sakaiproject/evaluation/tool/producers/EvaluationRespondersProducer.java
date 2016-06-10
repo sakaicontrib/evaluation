@@ -116,7 +116,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
 
         boolean allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
         boolean allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
-        int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+        int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
         boolean currentUserViewResponses = controlEval || allowViewResponders;
 
         // get the lists of participants and responses
@@ -125,14 +125,14 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             evalGroupIds = new String[] {evalGroupId};
         }
 
-        HashMap<String, List<EvalUser>> usersByGroupId = new HashMap<String, List<EvalUser>>();
+        HashMap<String, List<EvalUser>> usersByGroupId = new HashMap<>();
         List<EvalResponse> responses = deliveryService.getEvaluationResponses(evaluationId, 
                 evalGroupIds, null);
-        HashMap<String, Map<String, EvalResponse>> groupToUserResponses = new HashMap<String, Map<String,EvalResponse>>();
+        HashMap<String, Map<String, EvalResponse>> groupToUserResponses = new HashMap<>();
         for (EvalResponse response : responses) {
             String groupId = response.getEvalGroupId();
             if (! groupToUserResponses.containsKey(groupId)) {
-                HashMap<String, EvalResponse> userResponses = new HashMap<String, EvalResponse>();
+                HashMap<String, EvalResponse> userResponses = new HashMap<>();
                 groupToUserResponses.put(groupId, userResponses);
             }
             String userId = response.getOwner();
@@ -144,7 +144,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         if (evalAnonymous) {
             // SPECIAL CASE: no group separation for anonymous evals so we list the users who have responded only
             statsAssigned = "--";
-            ArrayList<EvalUser> users = new ArrayList<EvalUser>();
+            ArrayList<EvalUser> users = new ArrayList<>();
             for (EvalResponse response : responses) {
                 String userId = response.getOwner();
                 EvalUser user = commonLogic.getEvalUserById(userId);
@@ -159,7 +159,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                 String userId = assignUser.getUserId();
                 String groupId = assignUser.getEvalGroupId();
                 if (! usersByGroupId.containsKey(groupId)) {
-                    ArrayList<EvalUser> users = new ArrayList<EvalUser>();
+                    ArrayList<EvalUser> users = new ArrayList<>();
                     usersByGroupId.put(groupId, users);
                 }
                 EvalUser user = commonLogic.getEvalUserById(userId);
@@ -193,7 +193,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             String groupId = entry.getKey();
             Map<String, EvalResponse> userResponses = groupToUserResponses.get(groupId);
             if (userResponses == null) {
-                userResponses = new HashMap<String, EvalResponse>(0);
+                userResponses = new HashMap<>(0);
             }
             List<EvalUser> users = entry.getValue();
             if (! evalAnonymous) {

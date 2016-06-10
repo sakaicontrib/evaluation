@@ -140,7 +140,7 @@ public class EvalEmailProcessingData implements Serializable {
 		return processingStatus;
 	}
 	/**
-	 * @param availableEmailStatus the availableEmailStatus to set
+	 * @param processingStatus
 	 */
 	public void setProcessingStatus(Byte processingStatus) {
 		this.processingStatus = processingStatus;

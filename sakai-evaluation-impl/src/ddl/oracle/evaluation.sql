@@ -182,6 +182,7 @@
         BLANK_RESPONSES_ALLOWED number(1,0),
         MODIFY_RESPONSES_ALLOWED number(1,0),
         ALL_ROLES_PARTICIPATE number(1,0),
+        SECTION_AWARE number(1,0),
         UNREGISTERED_ALLOWED number(1,0),
         LOCKED number(1,0),
         AUTH_CONTROL varchar2(255 char),
@@ -207,6 +208,14 @@
         GROUPS varchar2(255 char) not null,
         GROUPS_INDEX number(10,0) not null,
         primary key (ID, GROUPS_INDEX)
+    );
+
+    create table EVAL_HIERARCHY_RULE (
+        ID number(19,0) not null,
+        NODE_ID number(19,0) not null,
+        RULE varchar(255) not null,
+        OPT varchar(10) not null,
+        primary key (ID)
     );
 
     create table EVAL_ITEM (

@@ -88,24 +88,6 @@ public class ControlScalesProducer extends EvalCommonProducer {
         for (int i = 0; i < scaleList.size(); ++i) {
             EvalScale scale = scaleList.get(i);
 
-            //       NOTE - thise code was here to vet the new scales code, it passed this test -AZ
-            //       if (i == 0) {
-            //       System.out.println("Changing scale: " + scale.getTitle() + ":" + scale.getOptions().length);
-            //       long random = Math.round( Math.random() * 10 );
-            //       long random2 = Math.round( Math.random() * 3 );
-            //       String[] options;
-            //       if (random2 <= 1) {
-            //       options = new String[] {"az1"+random, "az2"+random, "az3"+random};
-            //       } else if (random2 <= 2) {
-            //       options = new String[] {"az1"+random, "az2"+random, "az3"+random, "az4"+random, "az5"+random};
-            //       } else {
-            //       options = new String[] {"az1"+random, "az2"+random, "az3"+random, "az4"+random, "az5"+random, "az6"+random, "az7"+random};
-            //       }
-            //       scale.setOptions(options);
-            //       scalesLogic.saveScale(scale, currentUserId);
-            //       System.out.println("Changed scale: " + scale.getTitle() + ":" + scale.getOptions().length);
-            //       }
-
             UIBranchContainer scaleBranch = UIBranchContainer.make(form, "verticalDisplay:", i+"");
             UIOutput.make(scaleBranch, "scale-no", (i + 1)+"");
             UIOutput.make(scaleBranch, "scale-title", scale.getTitle());
@@ -114,7 +96,7 @@ public class ControlScalesProducer extends EvalCommonProducer {
              * Note that although canControlScale does a locked check,
              * it is more efficient to avoid a cycle by checking the local data first (i.e. getLocked() call)
              */
-            if (! scale.getLocked().booleanValue() &&
+            if (! scale.getLocked() &&
                     authoringService.canModifyScale(currentUserId, scale.getId()) ) {
                 UIInternalLink.make(scaleBranch, "modify-link", 
                         UIMessage.make("general.command.edit"), 
@@ -123,7 +105,7 @@ public class ControlScalesProducer extends EvalCommonProducer {
                 UIMessage.make(scaleBranch, "modify-dummy", "general.command.edit");
             }
 
-            if (! scale.getLocked().booleanValue() &&
+            if (! scale.getLocked() &&
                     authoringService.canRemoveScale(currentUserId, scale.getId()) ) {
                 UIInternalLink.make(scaleBranch, "remove-link", 
                         UIMessage.make("general.command.delete"), 

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -143,7 +144,7 @@ public class ControlItemsProducer extends EvalCommonProducer {
                 UIOutput.make(itemBranch, "item-owner", owner.displayName );
                 
                 EvalItemGroup evalItemGroup = new EvalItemGroup();
-                if (item.getExpert().booleanValue() == true) {
+                if (item.getExpert() == true) {
                     // label expert items
                     UIMessage.make(itemBranch, "item-expert", "controlitems.expert.label");
                     for (int j = 0; j < itemGroups.size(); j++) {
@@ -154,7 +155,7 @@ public class ControlItemsProducer extends EvalCommonProducer {
                 			List<EvalItem> expertItems = authoringService.getItemsInItemGroup(eig.getId(), true);
                 			for (int k = 0; k < expertItems.size(); k++) {
                 				EvalItem expertItem = (EvalItem) expertItems.get(k);
-                				if (expertItem.getId()== item.getId()) {
+                				if (Objects.equals( expertItem.getId(), item.getId() )) {
                 					evalItemGroup = eig;
                 					foundItemGroup = true;
                 				}	
@@ -178,7 +179,7 @@ public class ControlItemsProducer extends EvalCommonProducer {
                         new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
 
                 // local locked check is more efficient so do that first
-                if ( !item.getLocked().booleanValue() && 
+                if ( !item.getLocked() && 
                         authoringService.canModifyItem(currentUserId, item.getId()) ) {
                     UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("general.command.edit"), 
                             new ItemViewParameters(ModifyItemProducer.VIEW_ID, item.getId(), null));
@@ -187,7 +188,7 @@ public class ControlItemsProducer extends EvalCommonProducer {
                 }
 
                 // local locked check is more efficient so do that first
-                if ( !item.getLocked().booleanValue() && 
+                if ( !item.getLocked() && 
                         authoringService.canRemoveItem(currentUserId, item.getId()) ) {
                     UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("general.command.delete"), 
                             new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));

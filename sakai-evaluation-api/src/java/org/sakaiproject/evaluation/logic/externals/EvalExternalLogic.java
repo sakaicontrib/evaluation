@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalEmail, ExternalSecurity, 
-      ExternalContent, ExternalScheduler, ExternalTextUtils, ExternalComponents, ExternalEntities {
+      ExternalContent, ExternalScheduler, ExternalTextUtils, ExternalComponents, ExternalEntities, ExternalHierarchyRules {
 
    // EVAL USER retrieval
 

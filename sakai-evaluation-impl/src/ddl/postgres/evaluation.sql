@@ -182,6 +182,7 @@
         BLANK_RESPONSES_ALLOWED bool,
         MODIFY_RESPONSES_ALLOWED bool,
         ALL_ROLES_PARTICIPATE bool,
+        SECTION_AWARE bool,
         UNREGISTERED_ALLOWED bool,
         LOCKED bool,
         AUTH_CONTROL varchar(255),
@@ -207,6 +208,14 @@
         GROUPS varchar(255) not null,
         GROUPS_INDEX int4 not null,
         primary key (ID, GROUPS_INDEX)
+    );
+
+    create table EVAL_HIERARCHY_RULE (
+        ID int8 not null,
+        NODE_ID int8 not null,
+        RULE varchar(255) not null,
+        OPT varchar(10) not null,
+        primary key (ID)
     );
 
     create table EVAL_ITEM (

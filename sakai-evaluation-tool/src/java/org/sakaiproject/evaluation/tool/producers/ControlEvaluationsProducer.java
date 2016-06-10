@@ -135,7 +135,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
       boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
       boolean reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
       boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
-      int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
+      int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
 
       String currentUserId = commonLogic.getCurrentUserId();
 
@@ -145,13 +145,13 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
       navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
       // get all the visible evaluations for the current user
-      List<EvalEvaluation> partialEvals = new ArrayList<EvalEvaluation>();
-      List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
-      List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
-      List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
+      List<EvalEvaluation> partialEvals = new ArrayList<>();
+      List<EvalEvaluation> inqueueEvals = new ArrayList<>();
+      List<EvalEvaluation> activeEvals = new ArrayList<>();
+      List<EvalEvaluation> closedEvals = new ArrayList<>();
 
       // UM specific code for checking unpublished groups - collect evaluation Ids for evaluations that are pending and active ONLY
-      List<Long> takableEvaluationIds = new ArrayList<Long>();
+      List<Long> takableEvaluationIds = new ArrayList<>();
 
       List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(commonLogic.getCurrentUserId(), false, false, true, maxAgeToDisplay);
       for (int j = 0; j < evals.size(); j++) {
@@ -177,7 +177,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
 
       // UM specific code for checking unpublished groups
       int countUnpublishedGroups = 0;
-      Map<Long, List<EvalAssignGroup>> takableAssignGroups = new HashMap<Long, List<EvalAssignGroup>>();
+      Map<Long, List<EvalAssignGroup>> takableAssignGroups = new HashMap<>();
       if ((Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK)) {
           // get evalGroups for pending and active evals only. Later we will check if any of them are unpublished
           takableAssignGroups = evaluationService.getAssignGroupsForEvals(takableEvaluationIds.toArray(new Long[takableEvaluationIds.size()]), true, null);
@@ -257,7 +257,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
             // do the locked check first since it is more efficient
-            if ( ! evaluation.getLocked().booleanValue() &&
+            if ( ! evaluation.getLocked() &&
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
@@ -274,7 +274,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
@@ -337,7 +337,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
@@ -355,7 +355,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                     responseString, true, true);
 
             // owner can view the results but only early IF the setting is enabled
-            boolean viewResultsEval = viewResultsIgnoreDates ? true : false;
+            boolean viewResultsEval = viewResultsIgnoreDates;
             // now render the results links depending on what the user is allowed to see
             RenderingUtils.renderResultsColumn(evaluationRow, evaluation, null, evaluation.getSafeViewDate(), df, 
                     responsesNeeded, responsesRequired, viewResultsEval);
@@ -411,7 +411,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 

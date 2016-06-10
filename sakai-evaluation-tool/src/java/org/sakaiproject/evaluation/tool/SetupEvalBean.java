@@ -125,7 +125,7 @@ public class SetupEvalBean {
 	 * the selected option (eg. for TAs and Instructors) in this evaluation. see
 	 * {@link EvalEvaluation.selectionSettings}
 	 */
-	public Map<String, String> selectionOptions = new HashMap<String, String>();
+	public Map<String, String> selectionOptions = new HashMap<>();
 	/**
 	 * selection value to populate {@link SetupEvalBean.selectionOptions}
 	 */
@@ -212,6 +212,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Handles removal action from the remove eval view
+	 * @return 
 	 */
 	public String removeEvalAction() {
 		if (evaluationId == null) {
@@ -228,6 +229,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Handles close eval action from control evaluations view
+	 * @return 
 	 */
 	public String closeEvalAction() {
 		if (evaluationId == null) {
@@ -243,6 +245,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Handles reopening evaluation action (from eval settings view)
+	 * @return 
 	 */
 	public String reopenEvalAction() {
 		if (evaluationId == null) {
@@ -262,13 +265,14 @@ public class SetupEvalBean {
 	 * Handles saving and assigning email templates to an evaluation, can just
 	 * assign the email template if the emailTemplateId is set or will save and
 	 * assign the one in the locator
+	 * @return 
 	 */
     public String saveAndAssignEmailTemplate() {
         if (evaluationId == null) {
             throw new IllegalArgumentException("evaluationId and emailTemplateId cannot be null");
         }
 
-        EvalEmailTemplate emailTemplate = null;
+        EvalEmailTemplate emailTemplate;
         if (emailTemplateId == null) {
             // get it from the locator
             emailTemplateWBL.saveAll();
@@ -293,6 +297,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Handles resetting the evaluation to use the default template
+	 * @return 
 	 */
 	public String resetToDefaultEmailTemplate() {
 		if (evaluationId == null || emailTemplateType == null) {
@@ -313,6 +318,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Completed the initial creation page where the template is chosen
+	 * @return 
 	 */
 	public String completeCreateAction() {
 		// set the template on the evaluation in the bean locator
@@ -343,6 +349,7 @@ public class SetupEvalBean {
 
 	/**
 	 * Updated or initially set the evaluation settings
+	 * @return 
 	 */
 	public String completeSettingsAction() {
 		// set the template on the evaluation in the bean locator if not null
@@ -406,6 +413,7 @@ public class SetupEvalBean {
 	 * node/group assignments that were submitted and reconcile this list with
 	 * the previous set of nodes/groups and remove any that are now missing
 	 * before adding the new ones
+	 * @return 
 	 */
 	public String completeConfirmAction() {
 		
@@ -416,7 +424,7 @@ public class SetupEvalBean {
 
 		// make sure that the submitted nodes are valid and populate the nodes
 		// list
-		Set<EvalHierarchyNode> nodes = null;
+		Set<EvalHierarchyNode> nodes;
 		if (selectedHierarchyNodeIDs.length > 0) {
 			nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIDs);
 			if (nodes.size() != selectedHierarchyNodeIDs.length) {
@@ -426,7 +434,7 @@ public class SetupEvalBean {
 								+ ArrayUtils.arrayToString(selectedHierarchyNodeIDs));
 			}
 		} else {
-			nodes = new HashSet<EvalHierarchyNode>();
+			nodes = new HashSet<>();
 		}
 
 		EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
@@ -445,7 +453,7 @@ public class SetupEvalBean {
 			String [] evalGroupIDs = 
 				new String[selectedHierarchyNodeIDs.length + selectedGroupIDs.length];
 		 
-			int i = 0;
+			int i;
 			for(i =0;i<selectedHierarchyNodeIDs.length;i++) {
 				evalGroupIDs[i] = selectedHierarchyNodeIDs[i]; 
 			}
@@ -456,9 +464,9 @@ public class SetupEvalBean {
 
 			Set<String> userIdsForEvalGroup = null;
 			for(i = 0;i<evalGroupIDs.length;i++) {
-				userIdsForEvalGroup = commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_BE_EVALUATED);
-				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE));
-				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION));
+				userIdsForEvalGroup = commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_BE_EVALUATED, eval.getSectionAwareness());
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_ASSISTANT_ROLE, eval.getSectionAwareness()));
+				userIdsForEvalGroup.addAll(commonLogic.getUserIdsForEvalGroup(evalGroupIDs[i], EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness()));
 			}
 
 			if (userIdsForEvalGroup != null) {
@@ -531,7 +539,7 @@ public class SetupEvalBean {
 		}
 		
 		//Work with selection options
-		if( ((Boolean)settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)).booleanValue() ){
+		if( ((Boolean)settings.get(EvalSettings.ENABLE_INSTRUCTOR_ASSISTANT_SELECTION)) ){
 			Map<Long, List<EvalAssignGroup>> evalAssignGroupMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, false);
 			List<EvalAssignGroup> evalAssignGroups = evalAssignGroupMap.get(evaluationId);
 			
@@ -593,7 +601,7 @@ public class SetupEvalBean {
 	 * @return an array of the keys where boolean is true
 	 */
 	public static String[] makeArrayFromBooleanMap(Map<String, Boolean> booleanSelectionMap) {
-        List<String> hierNodeIdList = new ArrayList<String>();
+        List<String> hierNodeIdList = new ArrayList<>();
         for (Entry<String, Boolean> entry: booleanSelectionMap.entrySet()) {
             if ( EvalUtils.safeBool(entry.getValue()) ) {
                 hierNodeIdList.add(entry.getKey());
@@ -636,7 +644,7 @@ public class SetupEvalBean {
 			for (EvalAssignUser user : evalUsers) {
 				// only update users for this group with this permission type
 				String userId = user.getUserId();
-				if(currentGroupId.equals( user.getEvalGroupId().toString() ) && type.equals( user.getType()) ){
+				if(currentGroupId.equals(user.getEvalGroupId() ) && type.equals( user.getType()) ){
                                         if (deselectedList.isEmpty() && addAll != null && Boolean.TRUE.equals(addAll)) {
                                                 //lets unlink every evalUser passed to us
 						user.setStatus(EvalAssignUser.STATUS_REMOVED);

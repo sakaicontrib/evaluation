@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
@@ -36,7 +36,7 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class EvalSettingsImpl implements EvalSettings {
 
-    private static Log log = LogFactory.getLog(EvalSettingsImpl.class);
+    private static final Log LOG = LogFactory.getLog(EvalSettingsImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao dao) {
@@ -49,8 +49,8 @@ public class EvalSettingsImpl implements EvalSettings {
     }
 
 
-    private ConcurrentHashMap<String, EvalConfig> configCache = new ConcurrentHashMap<String, EvalConfig>();
-    private HashSet<String> booleanSettings = new HashSet<String>();
+    private ConcurrentHashMap<String, EvalConfig> configCache = new ConcurrentHashMap<>();
+    private HashSet<String> booleanSettings = new HashSet<>();
 
     private static final String NULL_VALUE = "NULL";
 
@@ -58,20 +58,17 @@ public class EvalSettingsImpl implements EvalSettings {
      * spring init
      */
     public void init() {
-        log.debug("init");
+        LOG.debug("init");
 
-        log.debug("BOOLEAN_SETTINGS " + BOOLEAN_SETTINGS);
+        LOG.debug("BOOLEAN_SETTINGS " + BOOLEAN_SETTINGS);
 
         // convert the array into a Set to make it easier to work with
-        for (int i = 0; i < BOOLEAN_SETTINGS.length; i++) {
-            booleanSettings.add(BOOLEAN_SETTINGS[i]);
-        }
-
+        booleanSettings.addAll( Arrays.asList( BOOLEAN_SETTINGS ) );
 
         // count the current config settings
         int count = dao.countAll(EvalConfig.class);
         if (count > 0) {
-            log.info("Updating boolean only evaluation system settings to ensure they are not null...");
+            LOG.info("Updating boolean only evaluation system settings to ensure they are not null...");
             // check the existing boolean settings for null values and fix them if they are null
             for (String setting : booleanSettings) {
                 if (get(setting) == null) {
@@ -88,7 +85,7 @@ public class EvalSettingsImpl implements EvalSettings {
      * @see org.sakaiproject.evaluation.logic.EvaluationSettings#get(java.lang.Object)
      */
     public Object get(String settingConstant) {
-        log.debug("Getting admin setting for: " + settingConstant);
+        LOG.debug("Getting admin setting for: " + settingConstant);
         String name = SettingsLogicUtils.getName(settingConstant);
         String type = SettingsLogicUtils.getType(settingConstant);
 
@@ -101,7 +98,7 @@ public class EvalSettingsImpl implements EvalSettings {
             }
         } else if (! NULL_VALUE.equals(c.getValue())){
             if (type.equals("java.lang.Boolean")) {
-            	setting = new Boolean( c.getValue() );
+            	setting = Boolean.valueOf( c.getValue() );
             } else if (type.equals("java.lang.Integer")) {
                 setting = new Integer( c.getValue() );
             } else if (type.equals("java.lang.Float")) {
@@ -117,7 +114,7 @@ public class EvalSettingsImpl implements EvalSettings {
      * @see org.sakaiproject.evaluation.logic.EvaluationSettings#set(java.lang.Object, java.lang.Object)
      */
     public boolean set(String settingConstant, Object settingValue) {
-        log.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
+        LOG.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
         String name = SettingsLogicUtils.getName(settingConstant);
         String type = SettingsLogicUtils.getType(settingConstant);
 
@@ -138,7 +135,7 @@ public class EvalSettingsImpl implements EvalSettings {
         }
 
         // create a new setting if needed or update an existing one
-        String value = "";
+        String value;
         if(settingValue == null || "".equals(settingValue)){
         	value = NULL_VALUE;
         }else{
@@ -157,7 +154,7 @@ public class EvalSettingsImpl implements EvalSettings {
             externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
             configCache.put(name, c); // update the cache
         } catch (Exception e) {
-            log.error("Could not save system setting:" + name + ":" + value, e);
+            LOG.error("Could not save system setting:" + name + ":" + value, e);
             return false;
         }
         return true;
@@ -188,7 +185,7 @@ public class EvalSettingsImpl implements EvalSettings {
             if (l.size() > 0) {
                 config = (EvalConfig) l.get(0);
             } else {
-                log.debug("No admin setting for this constant:" + name);
+                LOG.debug("No admin setting for this constant:" + name);
             }
             if (useCache) {
                 if (config == null) {
@@ -221,11 +218,11 @@ public class EvalSettingsImpl implements EvalSettings {
                 config = new EvalConfig(config.getName(), config.getValue());
                 configCache.put(config.getName(), config);
             }
-            log.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
+            LOG.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
         } else {
             String name = SettingsLogicUtils.getName(settingConstant);
             if (configCache.containsKey(name)) {
-                log.info("Resetting config settings cache: cleared single value: " + name);
+                LOG.info("Resetting config settings cache: cleared single value: " + name);
                 configCache.remove(name);
             }
         }

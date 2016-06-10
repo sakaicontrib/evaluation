@@ -72,7 +72,7 @@ public class TextRenderer implements ItemRenderer {
         UIOutput.make(container, "itemNum", displayNumber+"" );
         UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText());
 
-        if ( templateItem.getUsesNA().booleanValue() ) {
+        if ( templateItem.getUsesNA() ) {
             UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
             branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") ); // must match the existing CSS class
             UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
@@ -81,7 +81,7 @@ public class TextRenderer implements ItemRenderer {
 
         UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-2$
 
-        Map<String, String> attrmap = new HashMap<String, String>();
+        Map<String, String> attrmap = new HashMap<>();
         attrmap.put("rows", templateItem.getDisplayRows().toString());
         // disabling the textbox is undesireable -AZ
         //		if (disabled) {

@@ -62,14 +62,14 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
         return ENTITY_PREFIX;
     }
     
-    private final static String key_ordered_Ids = "orderedIds";
+    private final static String KEY_ORDERED_IDS = "orderedIds";
 
   //parameter name keys for {@link modifyBlockItems} method
-    private final static String key_block_id = "blockid";
-    private final static String key_items_to_add = "additems";
+    private final static String KEY_BLOCK_ID = "blockid";
+    private final static String KEY_ITEMS_TO_ADD = "additems";
 
   //parameter name key for {@link unblock} method
-    private final static String key_item_id = "itemid";
+    private final static String KEY_ITEM_ID = "itemid";
 
     public boolean entityExists(String id) {
         boolean exists = false;
@@ -137,12 +137,12 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
     //Custom action to handle /eval-templateitem/template-items-reorder
     @EntityCustomAction(action = CUSTOM_TEMPLATE_ITEMS_REORDER, viewKey = EntityView.VIEW_NEW)
     public void saveTemplateItemsOrdering(EntityView view, Map<String, Object> params) {
-        Object ids = params.get(key_ordered_Ids);
+        Object ids = params.get(KEY_ORDERED_IDS);
         if (ids != null && !"".equals(ids)) {
             String orderedChildIds = ids.toString().trim();
             if (!"".equals(orderedChildIds)) {
                 String currentUserId = commonLogic.getCurrentUserId();
-                Map<Long, Integer> orderedMap = new HashMap<Long, Integer>();
+                Map<Long, Integer> orderedMap = new HashMap<>();
                 List<String> orderedChildIdList = Arrays.asList(orderedChildIds.split(","));
                 for (String itemId : orderedChildIdList) {
                     int itemPosition = orderedChildIdList.indexOf(itemId) + 1;
@@ -160,9 +160,9 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 	//Custom method to handle /eval-templateitem/modify-block-items
 	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_BLOCK,viewKey=EntityView.VIEW_NEW)
 	public void modifyBlockItems(EntityView view, Map<String, Object> params) {
-		Long blockId = Long.parseLong( params.get(key_block_id).toString() );
+		Long blockId = Long.parseLong( params.get(KEY_BLOCK_ID).toString() );
 		String currentUserId = commonLogic.getCurrentUserId();
-		String itemsToAddParams = params.get(key_items_to_add).toString();
+		String itemsToAddParams = params.get(KEY_ITEMS_TO_ADD).toString();
 		List<String> itemsToAdd = Arrays.asList(itemsToAddParams.split(","));
 		
 		EvalTemplateItem parent = authoringService.getTemplateItemById(blockId);
@@ -182,7 +182,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 			EvalTemplateItem child = authoringService.getTemplateItemById(itemId);
 			child.setBlockParent(Boolean.FALSE);
 			child.setBlockId(blockId);
-			child.setDisplayOrder( new Integer(orderedChildren.size() + orderNewChildren));
+			child.setDisplayOrder(orderedChildren.size() + orderNewChildren);
             child.setCategory(parent.getCategory()); // EVALSYS-441
             child.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
             // children have to inherit the parent hierarchy settings
@@ -196,7 +196,7 @@ public class TemplateItemEntityProviderImpl implements TemplateItemEntityProvide
 	//Custom method to handle /eval-templateitem/unblock
 	@EntityCustomAction(action=CUSTOM_TEMPLATE_ITEMS_UNBLOCK,viewKey=EntityView.VIEW_NEW)
 	public void unblock(EntityView view, Map<String, Object> params) {
-		Object rawId = params.get(key_item_id);
+		Object rawId = params.get(KEY_ITEM_ID);
 		if( rawId !=null ){
 			Long itemId = Long.parseLong( rawId.toString() );
 			String currentUserId = commonLogic.getCurrentUserId();

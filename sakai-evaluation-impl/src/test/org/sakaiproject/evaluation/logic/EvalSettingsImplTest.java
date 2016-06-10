@@ -90,21 +90,20 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 		// get the test value
 		s = (String) evalSettings.get(TEST_CONSTANT1);
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE1);
+		Assert.assertEquals(TEST_VALUE1, s);
 
 		s = (String) evalSettings.get(TEST_CONSTANT3);
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE3);
+		Assert.assertEquals(TEST_VALUE3, s);
 
 		// get the test value (optional String only method)
 		s = (String) evalSettings.get(TEST_NAME1);
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE1);
+		Assert.assertEquals(TEST_VALUE1, s);
 
 		// attempt to get the wrong object
 		try {
 			Boolean b = (Boolean) evalSettings.get(TEST_CONSTANT1);
-			b.booleanValue();
 			Assert.fail("Should have thrown a cast exception");
 		} catch (ClassCastException e) {
 			Assert.assertNotNull(e);
@@ -141,19 +140,19 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 		Assert.assertEquals(true, evalSettings.set(EvalSettings.FROM_EMAIL_ADDRESS, TEST_VALUE1));
 		String s = (String) evalSettings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE1);
+		Assert.assertEquals(TEST_VALUE1, s);
 
 		// set the test value to a new value
 		Assert.assertEquals(true, evalSettings.set(TEST_CONSTANT1, TEST_VALUE2));
 		s = (String) evalSettings.get(TEST_CONSTANT1);
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE2);
+		Assert.assertEquals(TEST_VALUE2, s);
 
 		// set test value using optional string method
 		Assert.assertEquals(true, evalSettings.set(TEST_NAME2, TEST_VALUE1));
 		s = (String) evalSettings.get(TEST_NAME2); // use optional string method to retrieve
 		Assert.assertNotNull(s);
-		Assert.assertEquals(s, TEST_VALUE1);		
+		Assert.assertEquals(TEST_VALUE1, s);
 
 		// test clearing the test value
 		Assert.assertEquals(true, evalSettings.set(TEST_CONSTANT3, null));

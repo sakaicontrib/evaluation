@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.utils;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -35,7 +36,7 @@ public class ArrayUtils {
      * @return the original list with the duplicate objects removed
      */
     public static <T> List<T> removeDuplicates(List<T> list) {
-        Set<T> s = new HashSet<T>();
+        Set<T> s = new HashSet<>();
         for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = (T) iter.next();
             if (! s.add(element)) {
@@ -57,12 +58,9 @@ public class ArrayUtils {
         if (array == null || array.length == 0) {
             return array;
         }
-        LinkedHashSet<T> s = new LinkedHashSet<T>(array.length);
+        LinkedHashSet<T> s = new LinkedHashSet<>(array.length);
         Class<?> type = array.getClass().getComponentType();
-        for (int i = 0; i < array.length; i++) {
-            T element = array[i];
-            s.add(element);
-        }
+        s.addAll( Arrays.asList( array ) );
         T[] newArray;
         if (s.size() == array.length) {
             newArray = array;
@@ -103,8 +101,10 @@ public class ArrayUtils {
     public static <T> boolean contains(T[] array, T value) {
         boolean foundValue = false;
         if (value != null) {
-            for (int i = 0; i < array.length; i++) {
-                if (value.equals(array[i])) {
+            for( T array1 : array )
+            {
+                if( value.equals( array1 ) )
+                {
                     foundValue = true;
                     break;
                 }

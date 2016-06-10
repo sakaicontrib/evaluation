@@ -40,6 +40,13 @@
          ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
       <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
       <property name="clusterService" ref="org.sakaiproject.cluster.api.ClusterService" />
+      <property name="courseManagementService" ref="org.sakaiproject.coursemanagement.api.CourseManagementService" />
+      <property name="sectionRoleResolver">
+        <bean class="org.sakaiproject.coursemanagement.impl.provider.SectionRoleResolver" init-method="init">
+          <property name="configuration" ref="org.sakaiproject.coursemanagement.GroupProviderConfiguration" />
+        </bean>
+      </property>
+      <property name="evalHierarchyRuleLogic" ref="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
@@ -48,6 +55,9 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="courseManagementService" ref="org.sakaiproject.coursemanagement.api.CourseManagementService" />
+      <property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+      <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
    </bean>
 
 </beans>

@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -42,7 +41,7 @@ public class ResponseBeanLocator implements BeanLocator {
         this.localResponsesLogic = localResponsesLogic;
     }
 
-    private Map<String, EvalResponse> delivered = new HashMap<String, EvalResponse>();
+    private Map<String, EvalResponse> delivered = new HashMap<>();
 
     public Object locateBean(String path) {
         EvalResponse togo = delivered.get(path);
@@ -69,18 +68,18 @@ public class ResponseBeanLocator implements BeanLocator {
     }
 
     public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate, Map<String, String[]> selectionOptions, boolean isEvalComplete) {
-        for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
-            String key = it.next();
+        for( String key : delivered.keySet() )
+        {
             EvalResponse response = (EvalResponse) delivered.get(key);
             if (response.getId() == null) {
                 // response is new
                 response.setEvaluation(eval);
                 response.setEvalGroupId(evalGroupId);
             }
-	         // fix selection options
+            // fix selection options
             if (selectionOptions != null) {
-            	for (Entry<String, String[]> selection : selectionOptions.entrySet()) {
-            		response.setSelections(selection.getKey(), selection.getValue());
+                for (Entry<String, String[]> selection : selectionOptions.entrySet()) {
+                    response.setSelections(selection.getKey(), selection.getValue());
                 }
             }
             if (startDate != null) {

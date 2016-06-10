@@ -98,7 +98,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
             templateBranch.decorate(new UIFreeAttributeDecorator("rowId", template.getId().toString()));
 
             // local locked check is more efficient so do that first
-            if ( ! template.getLocked().booleanValue() &&
+            if ( ! template.getLocked() &&
                     authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 // template controllable
             } else {
@@ -107,7 +107,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
             UIOutput.make(templateBranch, "template-title", template.getTitle());
 
             // local locked check is more efficient so do that first
-            if ( ! template.getLocked().booleanValue() &&
+            if ( ! template.getLocked() &&
                     authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 UIInternalLink.make(templateBranch, "template-modify-link", UIMessage.make("general.command.edit"), 
                         new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
@@ -115,7 +115,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                 UIMessage.make(templateBranch, "template-modify-dummy", "general.command.edit")
                 .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
             }
-            if ( ! template.getLocked().booleanValue() &&
+            if ( ! template.getLocked() &&
                     authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
                 UIInternalLink.make(templateBranch, "template-delete-link", UIMessage.make("general.command.delete"),
                         new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
@@ -141,7 +141,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
             copy.parameters.add(new UIELBinding("templateBBean.templateId", template.getId()));
             
             // WL-1369 change owner
-            if ( ! template.getLocked().booleanValue() &&
+            if ( ! template.getLocked() &&
                     authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 UIInternalLink.make(templateBranch, "template-chown-link", UIMessage.make("general.command.chown"),
                         new TemplateViewParameters( ChownTemplateProducer.VIEW_ID, template.getId() ));
@@ -179,7 +179,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                     templateBranch.decorate(new UIFreeAttributeDecorator("rowId", template.getId().toString()));
 
                     // local locked check is more efficient so do that first
-                    if ( ! template.getLocked().booleanValue() &&
+                    if ( ! template.getLocked() &&
                             authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                         // template controllable
                     } else {
@@ -188,7 +188,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                     UIOutput.make(templateBranch, "template-title", template.getTitle());
 
                     // local locked check is more efficient so do that first
-                    if ( ! template.getLocked().booleanValue() &&
+                    if ( ! template.getLocked() &&
                             authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                         UIInternalLink.make(templateBranch, "template-modify-link", UIMessage.make("general.command.edit"), 
                                 new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
@@ -196,7 +196,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                         UIMessage.make(templateBranch, "template-modify-dummy", "general.command.edit")
                         .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
                     }
-                    if ( ! template.getLocked().booleanValue() &&
+                    if ( ! template.getLocked() &&
                             authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
                         UIInternalLink.make(templateBranch, "template-delete-link", UIMessage.make("general.command.delete"),
                                 new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
@@ -222,7 +222,7 @@ public class ControlTemplatesProducer extends EvalCommonProducer implements View
                     copy.parameters.add(new UIELBinding("templateBBean.templateId", template.getId()));
 
                  // WL-1369 change owner
-                    if ( ! template.getLocked().booleanValue() &&
+                    if ( ! template.getLocked() &&
                             authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                         UIInternalLink.make(templateBranch, "template-chown-link", UIMessage.make("general.command.chown"), 
                                 new TemplateViewParameters( ChownTemplateProducer.VIEW_ID, template.getId() ));

@@ -20,7 +20,6 @@ import java.util.List;
 import org.junit.Test;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils.AnswersMean;
 
-
 /**
  * Testing for the render utils
  * 
@@ -33,7 +32,7 @@ public class RenderingUtilsTest {
      */
     @Test
     public void testCalculateMean() {
-        AnswersMean am = null;
+        AnswersMean am;
 
         am = RenderingUtils.calculateMean(new int[] {1,1,1,1,1,0});
         assertNotNull(am);
@@ -54,7 +53,7 @@ public class RenderingUtilsTest {
         assertNotNull(am.meanText);
 
         try {
-            am = RenderingUtils.calculateMean(null);
+            RenderingUtils.calculateMean(null);
             fail("should have died");
         } catch (IllegalArgumentException e) {
             assertNotNull(e.getMessage());

@@ -92,7 +92,7 @@ public class ModifyHierarchyNodeProducer extends EvalCommonProducer implements V
         boolean addingChild = params.addingChild;
         EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
 
-        String ELName = "";
+        String ELName;
         if (addingChild) {
             ELName = HierarchyNodeLocator.NEW_PREFIX + node.id;
             UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});
@@ -114,7 +114,8 @@ public class ModifyHierarchyNodeProducer extends EvalCommonProducer implements V
         UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
 
         UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocator.saveAll");
-        UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new HierarchyNodeParameters(ControlHierarchyProducer.VIEW_ID, null, params.expanded));
+        UIInternalLink.make( form, "return-link", UIMessage.make( "controlhierarchy.return.link" ),
+                new HierarchyNodeParameters( ControlHierarchyProducer.VIEW_ID, null, params.expanded ) );
     }
 
     public ViewParameters getViewParameters() {

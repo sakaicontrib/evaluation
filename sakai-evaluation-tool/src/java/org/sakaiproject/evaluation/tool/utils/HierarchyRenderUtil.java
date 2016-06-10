@@ -14,12 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +29,7 @@ import org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodePermsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeRulesProducer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
@@ -92,10 +90,10 @@ public class HierarchyRenderUtil {
      * @param showCheckboxes if true then the checkboxes are rendered in front of every node
      * @param showGroups if true then all the groups are rendered for each node
      * @param showUsers if true then all users are rendered for each node
+     * @param expanded
      */
     public void renderModifyHierarchyTree(UIContainer parent, String clientID, boolean showCheckboxes, boolean showGroups, boolean showUsers, String[] expanded) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
-        
         translateTableHeaders(joint);
         
         //Hidden header for column with metadata information.
@@ -105,7 +103,7 @@ public class HierarchyRenderUtil {
         EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
         
         //showGroups = true;
-        renderHierarchyNode(joint, root, 0, new HashMap<String, Set<String>>(), new HashMap<String, EvalHierarchyNode>(), showGroups, showUsers, expanded);
+        renderHierarchyNode(joint, root, 0, new HashMap<>(), new HashMap<>(), showGroups, showUsers, expanded);
     }
 
     //   private void renderSelectHierarchyGroup(UIContainer tofill, String groupID, int level, Set<String> evalGroupIDs, String clientID) {
@@ -175,11 +173,11 @@ public class HierarchyRenderUtil {
         int collapseI = 0;
         if(expandedNodes != null && expandedNodes.length > 0){
         	collapseParamArr = new String[expandedNodes.length];
-        	for(int i = 0; i < expandedNodes.length; i++){
-        		if(expandedNodes[i].equals(node.id)){
+        	for( String expandedNode : expandedNodes ){
+        		if(expandedNode.equals(node.id)){
         			expanded = true;
         		}else{
-        			collapseParamArr[collapseI] = expandedNodes[i];
+        			collapseParamArr[collapseI] = expandedNode;
         			collapseI++;
         		}
         	}
@@ -205,6 +203,9 @@ public class HierarchyRenderUtil {
         UIOutput.make(tableRow, "nodes-cell");
         UIOutput.make(tableRow, "groups-cell");
         UIOutput.make(tableRow, "users-cell");
+
+        // Render hierarchy rules column
+        UIOutput.make( tableRow, "rules-cell" );
 
         // If this node has groups assigned to it, we should not be able to add sub-nodes.
         int numberOfAssignedGroups = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id).size() : 0;
@@ -237,9 +238,25 @@ public class HierarchyRenderUtil {
             UIOutput.make(tableRow, "assign-group-count", numberOfAssignedGroups+"");
         }
 
+        // Number of assigned users
+        int numAssignedUsers;
+        try { numAssignedUsers = hierarchyLogic.getUsersAndPermsForNodes( node.id ).get( node.id ).size(); }
+        catch( Exception ex ) { numAssignedUsers = 0; }
+        UIOutput.make( tableRow, "assign-user-count", Integer.toString( numAssignedUsers ) );
+
         // assigned users (permissions)
         UIInternalLink.make(tableRow, "assign-users-link", UIMessage.make("controlhierarchy.assignusers"), 
                 new HierarchyNodeParameters(ModifyHierarchyNodePermsProducer.VIEW_ID, node.id, expandedNodes));
+
+        // Number of assigned rules
+        int numAssignedRules;
+        try { numAssignedRules = hierarchyLogic.getRulesByNodeID( Long.parseLong( node.id ) ).size(); }
+        catch( Exception ex ) { numAssignedRules = 0; }
+        UIOutput.make( tableRow, "assign-rule-count", Integer.toString( numAssignedRules ) );
+
+        // Assign rules link (if hierarchy provider present)
+        UIInternalLink.make( tableRow, "assign-rules-link", UIMessage.make( "controlhierarchy.assignrules" ), 
+                new HierarchyNodeParameters( ModifyHierarchyNodeRulesProducer.VIEW_ID, node.id, expandedNodes ) );
 
         // if show users is on then we show the full list of all users with perms in this node
         if (showUsers && numberOfAssignedGroups > 0) {
@@ -248,7 +265,7 @@ public class HierarchyRenderUtil {
 
         // If there are any assigned groups, render them as their own rows if show is on
         if (showGroups && numberOfAssignedGroups > 0) {
-            Set<String> assignedGroupIDs = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id) : new HashSet<String>();
+            Set<String> assignedGroupIDs = groupsNodesMap.get(node.id) != null ? groupsNodesMap.get(node.id) : new HashSet<>();
             for (String assignedGroupID: assignedGroupIDs) {
                 EvalGroup assignedGroup = commonLogic.makeEvalGroupObject(assignedGroupID);
                 UIBranchContainer groupRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
@@ -282,7 +299,9 @@ public class HierarchyRenderUtil {
        UIMessage.make(tofill, "hierarchy-users", "controlhierarchy.table.users.header");
  //      UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
  //      UIMessage.make(tofill, "assigned-group-count-header", "controlhierarchy.table.groupcount.header");
-       
+
+       // Hierarchy rules header
+       UIMessage.make( tofill, "hierarchy-rules", "controlhierarchy.table.rules.header" );
     }
 
 }

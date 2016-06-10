@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,6 +56,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"/hibernate-test.xml",
 		"classpath:org/sakaiproject/evaluation/spring-hibernate.xml"})
 public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+    private static final Log LOG = LogFactory.getLog( EvaluationDaoImplTest.class );
 
     protected EvaluationDao evaluationDao;
 
@@ -112,7 +116,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
                 etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, false, null,
                 false, null, 
-                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+                EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 1, null, null, null, null,
                 etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
@@ -140,8 +144,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetParticipants() {
-        List<EvalAssignUser> l = null;
-        long start = 0l;
+        List<EvalAssignUser> l;
+        long start;
 
         // more testing at the higher level
 
@@ -149,7 +153,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
                 null, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
 
@@ -157,7 +161,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, new String[] {EvalTestDataLoad.SITE1_REF}, 
                 null, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
 
@@ -170,7 +174,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(1, l.size());
 
@@ -178,7 +182,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        System.out.println("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(11, l.size());
 
@@ -238,7 +242,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
         // add in a saved response
         EvalResponse r1 = new EvalResponse(EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, new Date(), null, null);
-        r1.setAnswers( new HashSet<EvalAnswer>() );
+        r1.setAnswers( new HashSet<>() );
         evaluationDao.save(r1);
 
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
@@ -263,7 +267,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
         // add in a completed response
         EvalResponse r2 = new EvalResponse(EvalTestDataLoad.USER_ID_4, EvalTestDataLoad.SITE2_REF, etdl.evaluationActiveUntaken, etdl.yesterday, new Date(), null);
-        r2.setAnswers( new HashSet<EvalAnswer>() );
+        r2.setAnswers( new HashSet<>() );
         evaluationDao.save(r2);
 
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActiveUntaken.getId(), null, null, 
@@ -355,8 +359,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetSharedEntitiesForUser() {
-        List<EvalTemplate> l = null;
-        List<Long> ids = null;
+        List<EvalTemplate> l;
+        List<Long> ids;
 
         // test using templates
         String[] props = new String[] { "type" };
@@ -458,7 +462,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
         // no templates (no one should do this, it throws an exception)
         try {
-            l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
                     null, new String[] {}, 
                     props, values, comparisons, order, notEmptyOptions, 0, 0);
             Assert.fail("Should have thrown an exception");
@@ -469,7 +473,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testCountSharedEntitiesForUser() {
-        int count = 0;
+        int count;
 
         // test using templates
         String[] props = new String[] { "type" };
@@ -530,8 +534,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetEvaluationsByEvalGroups() {
-        List<EvalEvaluation> l = null;
-        List<Long> ids = null;
+        List<EvalEvaluation> l;
+        List<Long> ids;
 
         // testing instructor approval false
         EvalAssignGroup eag = (EvalAssignGroup) evaluationDao.findById(EvalAssignGroup.class, etdl.assign5.getId());
@@ -736,8 +740,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetEvaluationsForOwnerAndGroups() {
-        List<EvalEvaluation> l = null;
-        List<Long> ids = null;
+        List<EvalEvaluation> l;
+        List<Long> ids;
 
         // test getting all evals
         l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 0, false);
@@ -801,7 +805,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.USER_ID, null, null, 0, 0, false);
         Assert.assertNotNull(l);
         Assert.assertEquals(0, l.size());
-        ids = EvalTestDataLoad.makeIdList(l);
+        EvalTestDataLoad.makeIdList(l);
 
         // test filtering by groups
         l = evaluationDao.getEvaluationsForOwnerAndGroups(null, 
@@ -838,9 +842,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
      */
     @Test
     public void testGetAnswers() {
-        Set<EvalAnswer> s = null;
-        List<EvalAnswer> l = null;
-        List<Long> ids = null;
+        Set<EvalAnswer> s;
+        List<EvalAnswer> l;
+        List<Long> ids;
 
         s = etdl.response2.getAnswers();
         Assert.assertNotNull(s);
@@ -1012,8 +1016,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
      */
     @Test
     public void testGetTemplateItemsByTemplate() {
-        List<EvalTemplateItem> l = null;
-        List<Long> ids = null;
+        List<EvalTemplateItem> l;
+        List<Long> ids;
 
         // test the basic return of items in the template
         l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdmin.getId(), 
@@ -1077,7 +1081,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetResponseIds() {
-        List<Long> l = null;
+        List<Long> l;
 
         l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), null, null, null);
         Assert.assertNotNull(l);
@@ -1127,7 +1131,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
      */
     @Test
     public void testGetEvalCategories() {
-        List<String> l = null;
+        List<String> l;
 
         // test the basic return of categories
         l = evaluationDao.getEvalCategories(null);
@@ -1149,7 +1153,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
      */
     @Test
     public void testGetNodeIdForEvalGroup() {
-        String nodeId = null; 
+        String nodeId; 
 
         nodeId = evaluationDao.getNodeIdForEvalGroup(EvalTestDataLoad.SITE1_REF);
         Assert.assertNotNull(nodeId);
@@ -1169,7 +1173,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetTemplateItemsByEvaluation() {
-        List<EvalTemplateItem> templateItems = null;
+        List<EvalTemplateItem> templateItems;
 
         templateItems = evaluationDao.getTemplateItemsByEvaluation(etdl.evaluationActive.getId(), null, null, null);
         Assert.assertNotNull(templateItems);
@@ -1180,7 +1184,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         Assert.assertEquals(3, templateItems.size());
 
         try {
-            templateItems = evaluationDao.getTemplateItemsByEvaluation(EvalTestDataLoad.INVALID_LONG_ID, null, null, null);
+            evaluationDao.getTemplateItemsByEvaluation(EvalTestDataLoad.INVALID_LONG_ID, null, null, null);
             Assert.fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
             Assert.assertNotNull(e);
@@ -1208,7 +1212,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetResponseUserIds() {
-        Set<String> userIds = null;
+        Set<String> userIds;
 
         // check getting responders from complete evaluation
         userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null, true);
@@ -1249,7 +1253,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetViewableEvalGroupIds() {
-        Set<String> evalGroupIds = null;
+        Set<String> evalGroupIds;
 
         // check for groups that are fully enabled
         evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalAssignUser.TYPE_EVALUATEE, null);
@@ -1319,8 +1323,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testGetEvalAdhocGroupsByUserAndPerm() {
-        List<EvalAdhocGroup> l = null;
-        List<Long> ids = null;
+        List<EvalAdhocGroup> l;
+        List<Long> ids;
 
         // make sure the group has the user
         EvalAdhocGroup checkGroup = (EvalAdhocGroup) evaluationDao.findById(EvalAdhocGroup.class, etdl.group2.getId());
@@ -1351,7 +1355,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
     @Test
     public void testIsUserAllowedInAdhocGroup() {
-        boolean allowed = false;
+        boolean allowed;
 
         allowed = evaluationDao.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION, etdl.group2.getEvalGroupId());
         Assert.assertTrue(allowed);
@@ -1384,17 +1388,17 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
     public void testLockScale() {
 
         // check that locked scale gets unlocked (no locking item)
-        Assert.assertTrue( scaleLocked.getLocked().booleanValue() );
+        Assert.assertTrue(scaleLocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockScale( scaleLocked, Boolean.FALSE ) );
-        Assert.assertFalse( scaleLocked.getLocked().booleanValue() );
+        Assert.assertFalse(scaleLocked.getLocked() );
         // check that unlocking an unlocked scale is not a problem
         Assert.assertFalse( evaluationDao.lockScale( scaleLocked, Boolean.FALSE ) );
 
         // check that locked scale that is locked by an item cannot be unlocked
         EvalScale scale1 = (EvalScale) evaluationDao.findById(EvalScale.class, etdl.scale1.getId());
-        Assert.assertTrue( scale1.getLocked().booleanValue() );
+        Assert.assertTrue(scale1.getLocked() );
         Assert.assertFalse( evaluationDao.lockScale( scale1, Boolean.FALSE ) );
-        Assert.assertTrue( scale1.getLocked().booleanValue() );
+        Assert.assertTrue(scale1.getLocked() );
         // check that locking a locked scale is not a problem
         Assert.assertFalse( evaluationDao.lockScale( scale1, Boolean.TRUE ) );
 
@@ -1420,59 +1424,59 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
     public void testLockItem() {
 
         // check that unlocked item gets locked (no scale)
-        Assert.assertFalse( etdl.item7.getLocked().booleanValue() );
+        Assert.assertFalse(etdl.item7.getLocked() );
         Assert.assertTrue( evaluationDao.lockItem( etdl.item7, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.item7.getLocked().booleanValue() );
+        Assert.assertTrue(etdl.item7.getLocked() );
 
         // check that locked item does nothing bad if locked again (no scale, not used)
-        Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+        Assert.assertTrue(itemLocked.getLocked() );
         Assert.assertFalse( evaluationDao.lockItem( itemLocked, Boolean.TRUE ) );
-        Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+        Assert.assertTrue(itemLocked.getLocked() );
 
         // check that locked item gets unlocked (no scale, not used)
-        Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+        Assert.assertTrue(itemLocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockItem( itemLocked, Boolean.FALSE ) );
-        Assert.assertFalse( itemLocked.getLocked().booleanValue() );
+        Assert.assertFalse( itemLocked.getLocked() );
 
         // check that locked item that is locked by a template cannot be unlocked
-        Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item1.getLocked() );
         Assert.assertFalse( evaluationDao.lockItem( etdl.item1, Boolean.FALSE ) );
-        Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item1.getLocked() );
 
         // check that locked item that is locked by a template can be locked without exception
-        Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item1.getLocked() );
         Assert.assertFalse( evaluationDao.lockItem( etdl.item1, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item1.getLocked() );
 
         // verify that associated scale is unlocked
-        Assert.assertFalse( itemUnlocked.getScale().getLocked().booleanValue() );
+        Assert.assertFalse( itemUnlocked.getScale().getLocked() );
 
         // check that unlocked item gets locked (scale)
-        Assert.assertFalse( itemUnlocked.getLocked().booleanValue() );
+        Assert.assertFalse( itemUnlocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockItem( itemUnlocked, Boolean.TRUE ) );
-        Assert.assertTrue( itemUnlocked.getLocked().booleanValue() );
+        Assert.assertTrue( itemUnlocked.getLocked() );
 
         // verify that associated scale gets locked
-        Assert.assertTrue( itemUnlocked.getScale().getLocked().booleanValue() );
+        Assert.assertTrue( itemUnlocked.getScale().getLocked() );
 
         // check that locked item gets unlocked (scale)
-        Assert.assertTrue( itemUnlocked.getLocked().booleanValue() );
+        Assert.assertTrue( itemUnlocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockItem( itemUnlocked, Boolean.FALSE ) );
-        Assert.assertFalse( itemUnlocked.getLocked().booleanValue() );
+        Assert.assertFalse( itemUnlocked.getLocked() );
 
         // verify that associated scale gets unlocked
-        Assert.assertFalse( itemUnlocked.getScale().getLocked().booleanValue() );
+        Assert.assertFalse( itemUnlocked.getScale().getLocked() );
 
         // check that locked item gets unlocked (scale locked by another item)
-        Assert.assertTrue( etdl.item4.getScale().getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item4.getScale().getLocked() );
         Assert.assertTrue( evaluationDao.lockItem( etdl.item4, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.item4.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item4.getLocked() );
 
         Assert.assertTrue( evaluationDao.lockItem( etdl.item4, Boolean.FALSE ) );
-        Assert.assertFalse( etdl.item4.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.item4.getLocked() );
 
         // verify that associated scale does not get unlocked
-        Assert.assertTrue( etdl.item4.getScale().getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item4.getScale().getLocked() );
 
         // check that new item cannot be locked/unlocked
         try {
@@ -1495,62 +1499,62 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
     public void testLockTemplate() {
 
         // check that unlocked template gets locked (no items)
-        Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templateAdminNoItems.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateAdminNoItems.getLocked() );
 
         // check that locked template is ok with getting locked again (no problems)
-        Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateAdminNoItems.getLocked() );
         Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateAdminNoItems.getLocked() );
 
         // check that locked template gets unlocked (no items)
-        Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateAdminNoItems.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.FALSE ) );
-        Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templateAdminNoItems.getLocked() );
 
         // check that locked template that is locked by an evaluation cannot be unlocked
-        Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUser.getLocked() );
         Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateUser, Boolean.FALSE ) );
-        Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUser.getLocked() );
 
         // check that locked template that is locked by an evaluation can be locked without exception
-        Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUser.getLocked() );
         Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateUser, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUser.getLocked() );
 
         // check that unlocked template gets locked (items)
-        Assert.assertFalse( etdl.item6.getLocked().booleanValue() );
-        Assert.assertFalse( etdl.templateUserUnused.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.item6.getLocked() );
+        Assert.assertFalse( etdl.templateUserUnused.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUserUnused, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.templateUserUnused.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUserUnused.getLocked() );
 
         // verify that related items are locked also
-        Assert.assertTrue( etdl.item6.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item6.getLocked() );
 
         // check that locked template gets unlocked (items)
-        Assert.assertTrue( etdl.templateUserUnused.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUserUnused.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUserUnused, Boolean.FALSE ) );
-        Assert.assertFalse( etdl.templateUserUnused.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templateUserUnused.getLocked() );
 
         // verify that related items are unlocked also
-        Assert.assertFalse( etdl.item6.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.item6.getLocked() );
 
         // check unlocked template with locked items can be locked
-        Assert.assertFalse( etdl.templateUnused.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templateUnused.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUnused, Boolean.TRUE ) );
-        Assert.assertTrue( etdl.templateUnused.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templateUnused.getLocked() );
 
         // check that locked template gets unlocked (items locked by another template)
-        Assert.assertTrue( etdl.item3.getLocked().booleanValue() );
-        Assert.assertTrue( etdl.item5.getLocked().booleanValue() );
-        Assert.assertTrue( etdl.templateUnused.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item3.getLocked() );
+        Assert.assertTrue( etdl.item5.getLocked() );
+        Assert.assertTrue( etdl.templateUnused.getLocked() );
         Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUnused, Boolean.FALSE ) );
-        Assert.assertFalse( etdl.templateUnused.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templateUnused.getLocked() );
 
         // verify that associated items locked by other template do not get unlocked
-        Assert.assertTrue( etdl.item3.getLocked().booleanValue() );
-        Assert.assertTrue( etdl.item5.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.item3.getLocked() );
+        Assert.assertTrue( etdl.item5.getLocked() );
 
         // check that new template cannot be locked/unlocked
         try {
@@ -1574,21 +1578,21 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
     public void testLockEvaluation() {
 
         // check that unlocked evaluation gets locked
-        Assert.assertFalse( etdl.templatePublicUnused.getLocked().booleanValue() );
-        Assert.assertFalse( evalUnLocked.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templatePublicUnused.getLocked() );
+        Assert.assertFalse( evalUnLocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockEvaluation( evalUnLocked, true ) );
-        Assert.assertTrue( evalUnLocked.getLocked().booleanValue() );
+        Assert.assertTrue( evalUnLocked.getLocked() );
 
         // verify that associated template gets locked
-        Assert.assertTrue( etdl.templatePublicUnused.getLocked().booleanValue() );
+        Assert.assertTrue( etdl.templatePublicUnused.getLocked() );
 
         // now unlock the evaluation
-        Assert.assertTrue( evalUnLocked.getLocked().booleanValue() );
+        Assert.assertTrue( evalUnLocked.getLocked() );
         Assert.assertTrue( evaluationDao.lockEvaluation( evalUnLocked, false ) );
-        Assert.assertFalse( evalUnLocked.getLocked().booleanValue() );
+        Assert.assertFalse( evalUnLocked.getLocked() );
 
         // verify that associated template gets unlocked
-        Assert.assertFalse( etdl.templatePublicUnused.getLocked().booleanValue() );
+        Assert.assertFalse( etdl.templatePublicUnused.getLocked() );
 
         // check that new evaluation cannot be locked
         try {
@@ -1596,7 +1600,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
                     new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
                             etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, false, null,
                             false, null, 
-                            EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+                            EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 1, null, null, null, null,
                             etdl.templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                             EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null),
                             true
@@ -1820,15 +1824,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         Assert.assertNotNull(eaus);
         EvalAssignUser eau = evaluationDao.findOneBySearch(EvalAssignUser.class, new Search(properties, values));
         Assert.assertNotNull(eau);
-        if (eau != null) {
-            Long eauId = eau.getId();
-            Assert.assertNotNull(eauId);
-            eau.setCompletedDate(new Date());
-            evaluationDao.update(eau);
-            EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
-            Assert.assertNotNull(eau0);
-            Assert.assertNotNull(eau0.getCompletedDate());
-        }
+        Long eauId = eau.getId();
+        Assert.assertNotNull(eauId);
+        eau.setCompletedDate(new Date());
+        evaluationDao.update(eau);
+        EvalAssignUser eau0 = evaluationDao.findById(EvalAssignUser.class, eau.getId());
+        Assert.assertNotNull(eau0);
+        Assert.assertNotNull(eau0.getCompletedDate());
         int count9 = this.evaluationDao.selectConsolidatedEmailRecipients(false, (Date) null, true, new Date(System.currentTimeMillis() + MILLISECONDS_PER_DAY), EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
         Assert.assertEquals(0,count9);
         List<Map<String,Object>> mapping9 = this.evaluationDao.getConsolidatedEmailMapping(false, 100, 0);

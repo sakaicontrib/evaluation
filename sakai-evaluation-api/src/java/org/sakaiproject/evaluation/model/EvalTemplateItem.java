@@ -115,7 +115,16 @@ public class EvalTemplateItem implements java.io.Serializable {
     public EvalTemplateItem() {
     }
 
-    /** minimal constructor */
+    /** 
+     * minimal constructor
+     * @param owner
+     * @param template
+     * @param item
+     * @param displayOrder
+     * @param category
+     * @param hierarchyLevel
+     * @param hierarchyNodeId 
+     */
     public EvalTemplateItem(String owner, EvalTemplate template, EvalItem item, Integer displayOrder, 
             String category, String hierarchyLevel,
             String hierarchyNodeId) {
@@ -123,7 +132,24 @@ public class EvalTemplateItem implements java.io.Serializable {
                 null, null, null, null, null, null, null);
     }
 
-    /** full constructor */
+    /** 
+     * full constructor
+     * @param owner
+     * @param template
+     * @param item
+     * @param displayOrder
+     * @param category
+     * @param hierarchyLevel
+     * @param hierarchyNodeId
+     * @param displayRows
+     * @param scaleDisplaySetting
+     * @param usesNA
+     * @param usesComment
+     * @param compulsory
+     * @param blockParent
+     * @param blockId
+     * @param resultsSharing 
+     */
     public EvalTemplateItem(String owner, EvalTemplate template, EvalItem item, Integer displayOrder, 
             String category, String hierarchyLevel,
             String hierarchyNodeId, Integer displayRows, String scaleDisplaySetting, Boolean usesNA, Boolean usesComment, 

@@ -30,7 +30,6 @@ import org.sakaiproject.entitybroker.entityprovider.search.Search;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 
 /**
@@ -115,7 +114,7 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
         }
         Long evaluationId = ReflectUtils.getInstance().convert(r.getStringValue(), Long.class);
         List<EvalAssignGroup> assignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, true).get(evaluationId);
-        List<EvalAssignGroup> groups = new ArrayList<EvalAssignGroup>(assignGroups.size());
+        List<EvalAssignGroup> groups = new ArrayList<>(assignGroups.size());
         for (EvalAssignGroup evalAssignGroup : assignGroups) {
             EvalAssignGroup clone = cloneEAG(evalAssignGroup);
             groups.add(clone);
@@ -133,15 +132,15 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
 
     // Added for compatibility with 1.3.3
     public String createEntity(EntityReference ref, Object entity) {
-        return createEntity(ref, entity, new HashMap<String, Object>(0));
+        return createEntity(ref, entity, new HashMap<>(0));
     }
 
     public void updateEntity(EntityReference ref, Object entity) {
-        updateEntity(ref, entity, new HashMap<String, Object>(0));
+        updateEntity(ref, entity, new HashMap<>(0));
     }
 
     public void deleteEntity(EntityReference ref) {
-        deleteEntity(ref, new HashMap<String, Object>(0));
+        deleteEntity(ref, new HashMap<>(0));
     }
 
     /**

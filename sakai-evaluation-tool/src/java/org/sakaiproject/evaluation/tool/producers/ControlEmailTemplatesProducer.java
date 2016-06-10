@@ -61,10 +61,10 @@ public class ControlEmailTemplatesProducer extends EvalCommonProducer implements
         this.evaluationService = evaluationService;
     }
 
-    private String emailTemplateLocator = "emailTemplateWBL.";
-    private String DEFAULTS = "defaults";
-    private String OTHERS = "others";
-    private UIDecorator classDecorator = new UIStyleDecorator("inactive");
+    private static final String EMAIL_TEMPLATE_LOCATOR = "emailTemplateWBL.";
+    private static final String DEFAULTS = "defaults";
+    private static final String OTHERS = "others";
+    private static final UIDecorator CLASS_DECORATOR = new UIStyleDecorator("inactive");
     
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
@@ -100,16 +100,16 @@ public class ControlEmailTemplatesProducer extends EvalCommonProducer implements
                     new SwitchViewParams(ControlEmailTemplatesProducer.VIEW_ID, OTHERS));
             if (svp.switcher.equals(DEFAULTS)) {
                 showDefaults = true;
-                defaultLink.decorate(classDecorator);
+                defaultLink.decorate(CLASS_DECORATOR);
             } else {
                 showDefaults = false;
-                otherLink.decorate(classDecorator);
+                otherLink.decorate(CLASS_DECORATOR);
             }
         }
 
         // Get all the email templates for the user
         List<EvalEmailTemplate> templatesList = evaluationService.getEmailTemplatesForUser(currentUserId, null, showDefaults);
-        if (templatesList.size() == 0) {
+        if (templatesList.isEmpty()) {
             UIMessage.make(tofill, "templatesList_none", "controlemailtemplates.no.templates");
         }
         for (int i = 0; i < templatesList.size(); i++) {
@@ -136,7 +136,7 @@ public class ControlEmailTemplatesProducer extends EvalCommonProducer implements
                     emailTemplate.getDefaultType() == null ) {
                 UIForm form = UIForm.make(templatesBranch, "removeForm");
                 UICommand command = UICommand.make(form, "removeCommand");
-                command.addParameter( new UIDeletionBinding(emailTemplateLocator + emailTemplate.getId()) );
+                command.addParameter( new UIDeletionBinding(EMAIL_TEMPLATE_LOCATOR + emailTemplate.getId()) );
             } else {
                 UIMessage.make(templatesBranch, "remove_link_disabled", "general.command.delete");
             }

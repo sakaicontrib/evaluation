@@ -79,7 +79,7 @@ public class EvalJobLogicImplTest extends BaseTestEvalLogic {
 		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS));
 		//invalid or "" type returns false
 		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(EvalTestDataLoad.INVALID_CONSTANT_STRING));
-		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(new String("")));
+		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(""));
 		//null type retuns false
 		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(null));
 	}

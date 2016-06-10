@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 
@@ -38,24 +40,24 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
 
     public EvalHierarchyNode root = new EvalHierarchyNode("1", "root", "root");
     public EvalHierarchyNode child = new EvalHierarchyNode("2", "child", "child");
-    public HashMap<String, Set<String>> evalGroupNodes = new HashMap<String, Set<String>>();
+    public HashMap<String, Set<String>> evalGroupNodes = new HashMap<>();
 
     public MockExternalHierarchyLogic() {
-        root.childNodeIds = new HashSet<String>();
+        root.childNodeIds = new HashSet<>();
         root.childNodeIds.add(child.id);
         root.directChildNodeIds = root.childNodeIds;
 
-        root.parentNodeIds = new HashSet<String>();
+        root.parentNodeIds = new HashSet<>();
         root.directParentNodeIds = root.parentNodeIds;
-        evalGroupNodes.put(root.id, new HashSet<String>());
+        evalGroupNodes.put(root.id, new HashSet<>());
 
-        child.childNodeIds = new HashSet<String>();
+        child.childNodeIds = new HashSet<>();
         child.directChildNodeIds = child.childNodeIds;
 
-        child.parentNodeIds = new HashSet<String>();
+        child.parentNodeIds = new HashSet<>();
         child.childNodeIds.add(root.id);
         child.directParentNodeIds = child.parentNodeIds;
-        evalGroupNodes.put(child.id, new HashSet<String>());
+        evalGroupNodes.put(child.id, new HashSet<>());
     }
 
     /* (non-Javadoc)
@@ -64,7 +66,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
     public EvalHierarchyNode addNode(String parentNodeId) {
         // ensure a non-null return
         EvalHierarchyNode node = new EvalHierarchyNode( EvalUtils.makeUniqueIdentifier(5), "fake", "fake");
-        node.directParentNodeIds = new HashSet<String>();
+        node.directParentNodeIds = new HashSet<>();
         node.directParentNodeIds.add(parentNodeId);
         node.childNodeIds = node.directParentNodeIds;
         return node;
@@ -74,7 +76,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#getAllChildrenNodes(java.util.Collection, boolean)
      */
     public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds) {
-        Set<String> children = new HashSet<String>();
+        Set<String> children = new HashSet<>();
         for (EvalHierarchyNode node : nodes) {
             if (includeSuppliedNodeIds) {
                 children.add(node.id);
@@ -140,7 +142,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#countEvalGroupsForNodes(java.lang.String[])
      */
     public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds) {
-        Map<String, Integer> counts = new HashMap<String, Integer>();
+        Map<String, Integer> counts = new HashMap<>();
         for (String nodeId : nodeIds) {
             Integer count = 0;
             if (evalGroupNodes.containsKey(nodeId)) {
@@ -155,7 +157,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getChildNodes(java.lang.String, boolean)
      */
     public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly) {
-        Set<EvalHierarchyNode> nodes = new HashSet<EvalHierarchyNode>();
+        Set<EvalHierarchyNode> nodes = new HashSet<>();
         if (root.id.equals(nodeId)) {
             nodes.add(child);
         }
@@ -166,7 +168,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getEvalGroupsForNode(java.lang.String)
      */
     public Set<String> getEvalGroupsForNode(String nodeId) {
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
         if (evalGroupNodes.containsKey(nodeId)) {
             groups = evalGroupNodes.get(nodeId);
         }
@@ -177,9 +179,10 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getEvalGroupsForNodes(java.lang.String[])
      */
     public Map<String, Set<String>> getEvalGroupsForNodes(String[] nodeIds) {
-        Map<String, Set<String>> m = new HashMap<String, Set<String>>();
-        for (int i = 0; i < nodeIds.length; i++) {
-            m.put(nodeIds[i], getEvalGroupsForNode(nodeIds[i]));
+        Map<String, Set<String>> m = new HashMap<>();
+        for( String nodeId : nodeIds )
+        {
+            m.put( nodeId, getEvalGroupsForNode( nodeId ) );
         }
         return m;
     }
@@ -195,7 +198,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodesAboveEvalGroup(java.lang.String)
      */
     public List<EvalHierarchyNode> getNodesAboveEvalGroup(String evalGroupId) {
-        List<EvalHierarchyNode> l = new ArrayList<EvalHierarchyNode>();
+        List<EvalHierarchyNode> l = new ArrayList<>();
         for (String nodeId : evalGroupNodes.keySet()) {
             if (evalGroupNodes.get(nodeId).contains(evalGroupId)) {
                 l.add(root);
@@ -211,9 +214,10 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodesByIds(java.lang.String[])
      */
     public Set<EvalHierarchyNode> getNodesByIds(String[] nodeIds) {
-        Set<EvalHierarchyNode> nodes = new HashSet<EvalHierarchyNode>();
-        for (int i = 0; i < nodeIds.length; i++) {
-            EvalHierarchyNode node = getNodeFromId(nodeIds[i]);
+        Set<EvalHierarchyNode> nodes = new HashSet<>();
+        for( String nodeId : nodeIds )
+        {
+            EvalHierarchyNode node = getNodeFromId( nodeId );
             if (node != null) {
                 nodes.add( node );
             }
@@ -231,7 +235,7 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
 
     public List<EvalHierarchyNode> getSortedNodes(Collection<EvalHierarchyNode> nodes) {
         // doesn't really sort anything
-        return new ArrayList<EvalHierarchyNode>(nodes);
+        return new ArrayList<>(nodes);
     }
 
 
@@ -288,4 +292,65 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
         return null;
     }
 
+    @Override
+    public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<HierarchyNodeRule> getAllRules()
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public HierarchyNodeRule getRuleByID( Long ruleID )
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
+    {
+        return false;
+    }
+
+    @Override
+    public List<Section> getSectionsUnderEvalGroup( String evalGroupID )
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String determineQualifierFromRuleText( String ruleText )
+    {
+        return null;
+    }
+
+    @Override
+    public String removeQualifierFromRuleText( String ruleText )
+    {
+        return null;
+    }
+
+    @Override
+    public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
+    {
+    }
+
+    @Override
+    public void removeAllRulesForNode( Long nodeID )
+    {
+    }
+
+    @Override
+    public void removeNodeRule( Long ruleID )
+    {
+    }
 }

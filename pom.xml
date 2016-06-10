@@ -120,7 +120,6 @@
             <dependency>
               <groupId>org.quartz-scheduler</groupId>
               <artifactId>quartz</artifactId>
-              <version>${sakai.quartz.version}</version>
             </dependency>
           </dependencies>
         </profile>
@@ -167,7 +166,6 @@
             <dependency>
               <groupId>org.quartz-scheduler</groupId>
               <artifactId>quartz</artifactId>
-              <version>${sakai.quartz.version}</version>
             </dependency>
           </dependencies>
         </profile>

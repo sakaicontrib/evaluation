@@ -55,7 +55,7 @@ public class AdhocGroupMemberRemovalBean {
    public void removeUser() { 
       EvalAdhocGroup adhocGroup = commonLogic.getAdhocGroupById(adhocGroupId);
 
-      List<String> participants = new ArrayList<String>();
+      List<String> participants = new ArrayList<>();
       for (String partId: adhocGroup.getParticipantIds()) {
          if (!partId.equals(adhocUserId)) {
             participants.add(partId);
