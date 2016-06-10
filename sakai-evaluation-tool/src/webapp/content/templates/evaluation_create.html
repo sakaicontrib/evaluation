@@ -25,6 +25,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -88,8 +89,8 @@
             </div>
 
 			<p class="act">
-				<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" class="active"  accesskey="s" />
-				<input rsf:id="cancel-button" name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />				
+				<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" class="active" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
+				<input rsf:id="cancel-button" name="cancel" type="submit" value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" accesskey="x" />
 			</p>	
 	</form>
 	

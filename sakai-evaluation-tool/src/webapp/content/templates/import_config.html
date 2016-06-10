@@ -31,6 +31,17 @@
   <body>
     <div class="portletBody">
       <div rsf:id="navIntraTool:" class="navIntraTool"/>
+      <ul class="breadCrumb">
+        <li>
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+        </li>
+        <li>
+            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+        </li>
+            <li class="lastCrumbNoFloat">
+            <span rsf:id="msg=importconfig.page.title">Search</span>
+        </li>
+      </ul>
       <div class='uploadDiv' style="margin: 20px;">
         <form rsf:id="upload-form" method="post" enctype="multipart/form-data">
           <span rsf:id="msg=importconfig.upload.instructions">Select Eval configuration file to upload</span><br/>

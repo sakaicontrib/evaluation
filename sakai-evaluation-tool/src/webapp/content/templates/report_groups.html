@@ -28,6 +28,8 @@
     <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
     <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
     <script type="text/javascript" language="JavaScript" src="../js/utils.js"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
+
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
@@ -76,9 +78,9 @@
 				</li>
 			</ol>
 			<p class="act">
-				<input name="view_report" rsf:id="viewReport" type="submit" value="View Report" class="active" accesskey="s" />
-				<input name="cancel_report" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
-			</p>	
+				<input name="view_report" rsf:id="viewReport" type="submit" value="View Report" class="active" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
+				<input name="cancel_report" type="submit" value="Cancel" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" rsf:id="cancel-button"/>
+			</p>
 		</form>
 		
 	</div>

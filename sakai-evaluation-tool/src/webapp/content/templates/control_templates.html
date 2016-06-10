@@ -24,6 +24,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -77,7 +78,7 @@
                           <a rsf:id="template-delete-link" href="remove_template.html">Delete</a>
                           <span rsf:id="template-delete-dummy"></span> | 
                           <a rsf:id="template-preview-link" href="preview_eval.html">Preview</a> |
-                          <input rsf:id="template-copy-link" type="submit" class="makeLink" value="Copy" />
+                          <input rsf:id="template-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
                               <span rsf:id="template-chown-dummy"></span> | 
                               <a rsf:id="template-chown-link" href="chown_template.html">Change Owner</a>
                        </td>

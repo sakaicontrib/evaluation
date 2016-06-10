@@ -28,6 +28,7 @@
 	<script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript" language="JavaScript"></script>
     <script src="../js/rsf.js" type="text/javascript" language="JavaScript"></script>
     <script src="../js/evalUtils.js" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
@@ -72,14 +73,14 @@
 							<input type="text" rsf:id="user-eid-input" class="userEidInput" />
 						</td>
 						
-						<td><input type="submit" rsf:id="assign-button" class="assignButton" value="Assign" /></td>
+						<td><input type="submit" rsf:id="assign-button" class="assignButton" value="Assign" onclick="SPNR.disableControlsAndSpin( this, null );" /></td>
 						
 					</tr>
 					
 					<tr rsf:id="eval-admin:">
 						<td rsf:id="user-info">[display-name] ([user-eid])</td>
 						<td rsf:id="assignor-info">Assigned by [assignor-user-eid] on [assign-date]</td>
-						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" /></td>
+						<td><input type="submit" rsf:id="unassign-button" class="unassignButton" value="Unassign" onclick="SPNR.disableControlsAndSpin( this, null );" /></td>
 					</tr>
 					
 				</tbody>
@@ -95,7 +96,7 @@
 					<tr>
 						<th>
 							<span rsf:id="sakai-admin-access-status">Sakai admin access is enabled/disabled.</span>
-							<input type="submit" rsf:id="toggle-sakai-admin-access-button" value="Enable/Disable" />
+							<input type="submit" rsf:id="toggle-sakai-admin-access-button" value="Enable/Disable" onclick="SPNR.disableControlsAndSpin( this, null );" />
 						</th>
 					</tr>
 				</thead>

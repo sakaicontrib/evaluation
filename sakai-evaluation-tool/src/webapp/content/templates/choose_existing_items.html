@@ -25,6 +25,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
@@ -58,7 +59,7 @@
 				<span rsf:id="search-current-value" class="instructionText">Search Text</span>
 				<form rsf:id="search-form" action="choose_existing_items.html" method="get">
 					<input rsf:id="search-box" type="text" size="25" maxlength="100" />
-					<input rsf:id="search-command" type="submit" value="Search" />
+					<input rsf:id="search-command" type="submit" value="Search" onclick="SPNR.disableControlsAndSpin( this, null );" />
 				</form>
 		</div>
 	</div>
@@ -67,7 +68,7 @@
 
         <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->			
         <p>
-            <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
+            <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
             <a rsf:id="cancel-items" href="template_modify.html" class="makeButton" id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
         </p>
 
@@ -110,8 +111,8 @@
 		</table>
 		
 		<p>
-			<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
-            <span rsf:id="no-items"></span>
+			<input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" onclick="SPNR.disableControlsAndSpin( this, null );" />
+			<span rsf:id="no-items"></span>
 			<a rsf:id="cancel-items-bottom" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
 		</p>
 		

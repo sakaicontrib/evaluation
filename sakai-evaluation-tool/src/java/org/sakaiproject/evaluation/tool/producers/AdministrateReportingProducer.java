@@ -55,14 +55,6 @@ public class AdministrateReportingProducer extends EvalCommonProducer {
 
         navBarRenderer.makeNavBar(tofill, NavBarRenderer.NAV_ELEMENT, this.getViewID());
 
-        // Breadcrumbs
-        UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"),
-                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-
-        UIMessage.make(tofill, "page-title", "controlreporting.breadcrumb.title");
-        
         UIForm form = UIForm.make(tofill, "settings-form");
         
         // Allow CSV Export

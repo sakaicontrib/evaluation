@@ -42,6 +42,7 @@
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.loader.events.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.myitems.loader.js"></script>
     <script type="text/javascript" language="JavaScript" src="../js/eval.template.data.js"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -76,7 +77,7 @@
 							<option value="modify_essay.html">Short Answer/Essay</option>
 							<option value="modify_header.html">Text Header</option>
 						</select -->
-						<input rsf:id="add-category-button" type="submit" value="Add Category" />
+						<input rsf:id="add-category-button" type="submit" value="Add Category" onclick="SPNR.disableControlsAndSpin( this, null );" />
 					</form>
 				</div>
 		</div>
@@ -132,7 +133,7 @@
   							<a rsf:id="expertitem-remove-link" href="remove_expert_item.html" rel="facebox">Remove</a>
   							<span rsf:id="item-remove-dummy"></span> 
   							<span rsf:id="bar4" > | </span>  
-                            <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+  							<input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</td>
   						<td headers="itemOwner" style="margin:0em 1em;">
   							<span rsf:id="expertitem-owner">owner displayname</span>

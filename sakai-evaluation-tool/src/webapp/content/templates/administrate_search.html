@@ -28,6 +28,7 @@
 
     <script src="../js/jquery/jquery-1.4.4.min.js" type="text/javascript"></script>
     <script src="../js/jquery/jquery-ui-1.8.all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="../css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
@@ -62,7 +63,7 @@
                         <!--note: default is blank for first search, previous search strings for subsequent searches-->
 						<input rsf:id="search-input" size="45" type="text" />
 						<!-- string for input in bundle as administrate.search.submit.title-->
-						<input rsf:id="search-text" type="submit" value="Search" />
+						<input rsf:id="search-text" type="submit" value="Search" onclick="SPNR.disableControlsAndSpin( this, null );" />
                     </form>
                 </div>
                 <div class="listNav listPager">
