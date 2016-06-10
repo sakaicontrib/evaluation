@@ -37,24 +37,24 @@
         <div class="portletBody">
             <div rsf:id="navIntraTool:" class="navIntraTool"/>
             <ul class="breadCrumb">
-                <li style="float: left">
+                <li>
                     <a rsf:id="summary-link" href="summary.html">Summary</a>
                 </li>
-				<li style="float: left">
+				<li>
 					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
 				</li>
-                <li class="lastCrumb">
+                <li class="lastCrumbNoFloat">
                     <span rsf:id="msg=administrate.search.breadcrumb.title">Search</span>
                 </li>
             </ul>
             <div rsf:id="message-for:*" class="alertMessage">
-                <ul style="margin:0px;">
+                <ul>
                     <li>
                         Message for user here
                     </li>
                 </ul>
             </div>
-            <div rsf:id="msg=administrate.search.instruction" class="instruction">
+            <div rsf:id="msg=administrate.search.instruction" class="instructionText">
             </div>
             <div class="navPanel"> 
                 <div class="viewNav">
@@ -77,8 +77,7 @@
             </div>
             <!--note: form does not display if there is no results returned from the search-->
             <div rsf:id="searchResults:">
-				<table class="listHier lines nolines" border="0" cellpadding="0"
-					cellspacing="0" summary="placeholder summary">
+				<table class="evalsysTable">
 					<thead>
 						<tr>
 							<th id="item-title">
@@ -183,7 +182,7 @@
 				</table>
 			</div>
             <!--note: block displays if there is no results returned from the search-->
-            <div rsf:id="no-items:" class="instruction">
+            <div rsf:id="no-items:" class="instructionText">
                 <span rsf:id="msg=administrate.search.list.empty.note">No items found</span>
             </div>
         </div>

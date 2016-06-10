@@ -39,43 +39,43 @@
   <div class="portletBody dashboard">
     <div rsf:id="navIntraTool:" class="navIntraTool" />
 
-    <ul class="breadCrumb" rsf:id="toolsBox:" style="clear: both; height: 1.5em">
-      <li class="lastCrumb" style="float: right">
+    <ul class="breadCrumb" rsf:id="toolsBox:">
+      <li class="lastCrumb">
         <a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="addItem">New Evaluation</a>
       </li>
-      <li class="lastCrumb" style="float: right">
+      <li class="lastCrumb">
         <a href="template_title_desc.html" rsf:id="createTemplateLink" class="addItem">New Template</a>
       </li>
     </ul>
 
     <div rsf:id="message-for:*" class="alertMessage">
-      <ul style="margin: 0px;">
+      <ul>
         <li>Message for user here</li>
       </ul>
     </div>
 
     <h3 rsf:id="msg=summary.page.title">Evaluations dashboard</h3>
-    <p rsf:id="msg=summary.page.instruction" class="instruction">Quick links to evaluation items</p>
-    <p rsf:id="instructor-instructions" class="instruction"></p>
+    <p rsf:id="msg=summary.page.instruction" class="instructionText">Quick links to evaluation items</p>
+    <p rsf:id="instructor-instructions" class="instructionText"></p>
 
     <div rsf:id="evaluationsBox:" class="summaryBox">
       <h4 rsf:id="msg=summary.evaluations.title">Current evaluations I need to take</h4>
 
-      <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
+      <p rsf:id="evaluationsNone" class="instructionText indnt2">No evaluations to take</p>
 
       <div rsf:id="evaluationsList:" class="innerPanel">
-        <table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
+        <table class="evalsysTable">
           <thead>
             <tr>
-              <th class="column" rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
-              <th class="column" rsf:id="msg=summary.evaluation.status.title">Status</th>
-              <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-              <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+              <th rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
+              <th rsf:id="msg=summary.evaluation.status.title">Status</th>
+              <th rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+              <th rsf:id="msg=summary.evaluations.ends.title">Closes</th>
             </tr>
           </thead>
           <tbody>
             <tr rsf:id="evaluationsCourseList:">
-              <td style="width: 20em">
+              <td>
                 <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
                 <span rsf:id="evaluationCourseLink_disabled" />
               </td>
@@ -99,17 +99,17 @@
       <div class="innerPanel">
         <div rsf:id="summary-be-evaluated-progress-header:" class="inProgressEvals">
             <span rsf:id="msg=summary.evaluated.inprogress" class="sub-heading">In Progress</span>
-            <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instruction"></span>
+            <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instructionText"></span>
         </div>
         <div rsf:id="evaluatedInProgress:" class="evaluated_in_progress">
-          <table rsf:id="evalResponseTable:" class="beEvaluatedInProgressTable tablesorter listHier lines nolines" cellspacing="0" cellpadding="0" width="99%" border="0">
+          <table rsf:id="evalResponseTable:" class="beEvaluatedInProgressTable tablesorter evalsysTable">
             <thead>
               <tr>
-                <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
-                <th class="column" rsf:id="msg=summary.evaluations.starts.title">Open</th>
-                <th class="column" rsf:id="msg=summary.evaluations.ends.title">Close</th>
-                <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
-                <th class="column" rsf:id="msg=summary.responses.results">Results</th>
+                <th rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                <th rsf:id="msg=summary.evaluations.starts.title">Open</th>
+                <th rsf:id="msg=summary.evaluations.ends.title">Close</th>
+                <th rsf:id="msg=summary.responses.responses">Responses</th>
+                <th rsf:id="msg=summary.responses.results">Results</th>
               </tr>
             </thead>
             <tbody>
@@ -140,17 +140,17 @@
 
         <div rsf:id="summary-be-evaluated-closed-header:" class="closedEvals">
             <span rsf:id="msg=summary.evaluated.closed" class="sub-heading">Closed</span>
-            <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instruction"></span>
+            <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instructionText"></span>
         </div>
         <div rsf:id="evaluatedClosed:" class="evaluated_closed">
-          <table rsf:id="evalResponseTable:" class="beEvaluatedClosedTable tablesorter listHier lines nolines" cellspacing="0" cellpadding="0" width="99%" border="0">
+          <table rsf:id="evalResponseTable:" class="beEvaluatedClosedTable tablesorter evalsysTable">
             <thead>
               <tr>
-                <th class="column" rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
-                <th class="column" rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-                <th class="column" rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-                <th class="column" rsf:id="msg=summary.responses.responses">Responses</th>
-                <th class="column" rsf:id="msg=summary.responses.results">Results</th>
+                <th rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
+                <th rsf:id="msg=summary.evaluations.starts.title">Opens</th>
+                <th rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+                <th rsf:id="msg=summary.responses.responses">Responses</th>
+                <th rsf:id="msg=summary.responses.results">Results</th>
               </tr>
             </thead>
             <tbody>
@@ -193,25 +193,25 @@
             <span rsf:id="evaluatedListTitle">Site/Group Title</span>
           </li>
         </ol>
-        <p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
+        <p rsf:id="evaluatedListNone" class="instructionText indnt2">No items to list</p>
         <h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
         <ol class="summaryEvaluateList">
           <li rsf:id="evaluateList:">
             <span rsf:id="evaluateListTitle">Site/Group Title</span>
           </li>
         </ol>
-        <p rsf:id="evaluateListNone" class="instruction indnt2">No items to list</p>
+        <p rsf:id="evaluateListNone" class="instructionText indnt2">No items to list</p>
       </div>
     </div>
     <div rsf:id="notificationsBox:" class="summaryBox">
       <h4 rsf:id="notifications-title">Notifications</h4>
       <div class="innerPanel">
-        <p rsf:id="notifications-higher-level" class="instruction">An evaluation has been assigned from a higher level:</p>
+        <p rsf:id="notifications-higher-level" class="instructionText">An evaluation has been assigned from a higher level:</p>
         <!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things
              - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
                 a user would need to know what the link does without clicking on it...
         -->
-        <table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier lines nolines">
+        <table class="evalsysTable">
           <tr>
             <th rsf:id="notification-title-title">Title</th>
             <th rsf:id="notification-from-title">From</th>

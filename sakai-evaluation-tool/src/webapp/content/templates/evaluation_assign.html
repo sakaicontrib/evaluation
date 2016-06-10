@@ -41,16 +41,19 @@
 <body>
 	<div class="portletBody">
 		
-		<div rsf:id="navIntraTool:" class="navIntraTool"/>			
+		<div rsf:id="navIntraTool:" class="navIntraTool"/>
         <div>
             <ul class="breadCrumb">
             <!-- first link in the bcrumb does not seem to be looking in the message.properties for a value -->
-            <li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li><li rsf:id="eval-start-text">Add Evaluation</li><li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li><li class="lastCrumb" rsf:id="msg=assigneval.page.title">Assign Evaluation</li>                 
+            <li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li>
+            <li rsf:id="eval-start-text">Add Evaluation</li>
+            <li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+            <li class="lastCrumbNoFloat" rsf:id="msg=assigneval.page.title">Assign Evaluation</li>
             </ul>
         </div>
 		
 		<div rsf:id="message-for:*" class="alertMessage">
-			<ul style="margin:0px;">
+			<ul>
 				<li>Message for user here</li>
 			</ul>
 		</div>
@@ -90,12 +93,12 @@
 					<span rsf:id="msg=assigneval.page.groups.title">Assign to Evaluation Groups</span>
 				</p>
 				<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
-					<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
-					<p class="elementAlertFront instruction" rsf:id="assign-eval-instructions-group-notpublished">
+					<p class="instructionText"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+					<p class="elementAlertFront instructionText" rsf:id="assign-eval-instructions-group-notpublished">
 					This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
 					
 					<div rsf:id="siteCheckboxes"/>
-					<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+					<table style="width:90%" class="evalsysTable" >
 						<thead>
 							<tr>
 								<th class="attach" >
@@ -118,7 +121,7 @@
 									<label rsf:id="groupTitle" for="evalGroupId">group title</label>
 								</td>
 								<td>
-		                        	<span rsf:id="select-no" class="instruction">You cannot assign to this site, it has no member to take the evaluation.</span>
+		                        	<span rsf:id="select-no" class="instructionText">You cannot assign to this site, it has no member to take the evaluation.</span>
 		                        	<a rsf:id="select-instructors" href="#" title="Select Instructors"  rel="assignInstructorSelector">Select Instructors (5/5)</a>
 		                            <a rsf:id="select-tas" href="#" title="Select TAs" rel="assignTaSelector" style="margin-left:30px">Select TAs (5/12)</a>
 		                        </td>
@@ -141,7 +144,7 @@
 				</p>
 				<div rsf:id="adhocgroups-assignment-area" id="adhocgroups-assignment-area">
 					<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group</a>
-					<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+					<table rsf:id="adhoc-groups-table" style="width:90%" class="evalsysTable" >
 						<thead>
 							<tr>
 								<th class="attach" >

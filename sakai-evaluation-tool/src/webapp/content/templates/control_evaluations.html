@@ -14,7 +14,7 @@
     permissions and limitations under the License.
 
 -->
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title rsf:id="page-title">My Evaluations</title>
@@ -30,36 +30,36 @@
 <body>
     <div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
-        <ul class="breadCrumb" style="clear:both;height:1.5em">
-            <li style="float:left">
+        <ul class="breadCrumb">
+            <li>
                 <a rsf:id="summary-link" href="summary.html">Summary</a>
             </li>
-            <li style="float:left" rsf:id="page-title" class="lastCrumb">
+            <li rsf:id="page-title" class="lastCrumbNoFloat">
                 My Evaluations
             </li>
-            <li style="float:right" class="lastCrumb">
+            <li class="lastCrumb">
                 <a rsf:id="begin-evaluation-link" href="evaluation_create.html" class="addItem">Start Evaluation</a>
             </li>
         </ul>
         <div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
+            <ul>
                 <li>
                     Message for user here
                 </li>
             </ul>
         </div>
 
-        <p class="elementAlertFront instruction" rsf:id="eval-instructions-group-notpublished">
+        <p class="elementAlertFront instructionText" rsf:id="eval-instructions-group-notpublished">
             This evaluation is assigned to at least one currently unpublished site. Publish these sites for students to be notified via email and given access to complete this evaluation.
         </p>
 
         <div rsf:id="partial-eval-listing:">
             <h3 rsf:id="msg=controlevaluations.partial.header">Partial Evaluations</h3>
-            <p class="instruction">
+            <p class="instructionText">
                 <span rsf:id="msg=controlevaluations.partial.description">Your Evaluations which you started creating but did not complete</span>
                 <span rsf:id="partial-cleanup-note"></span>
             </p>
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -91,11 +91,11 @@
         </div>
 
         <h3 rsf:id="msg=controlevaluations.inqueue.header">In-Queue Evaluations</h3>
-        <p rsf:id="msg=controlevaluations.inqueue.description" class="instruction">
+        <p rsf:id="msg=controlevaluations.inqueue.description" class="instructionText">
             Your Evaluations in queue that have not started yet
         </p>
         <div rsf:id="inqueue-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -141,16 +141,16 @@
                 </tbody>
             </table>
         </div>
-        <p rsf:id="no-inqueue-evals" class="instruction highlightPanel">
+        <p rsf:id="no-inqueue-evals" class="instructionText highlightPanel">
             No evaluations in-queue
         </p>
 
         <h3 rsf:id="msg=controlevaluations.active.header" style="font-weight:bold;">Active Evaluations</h3>
-        <p rsf:id="msg=controlevaluations.active.description" class="instruction">
+        <p rsf:id="msg=controlevaluations.active.description" class="instructionText">
             Your Evaluations currently active for users to take
         </p>
         <div rsf:id="active-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -214,16 +214,16 @@
                 </tbody>
             </table>
         </div>
-        <p rsf:id="no-active-evals" class="instruction highlightPanel">
+        <p rsf:id="no-active-evals" class="instructionText highlightPanel">
             No active evaluations
         </p>
 
         <h3 rsf:id="msg=controlevaluations.closed.header">Closed Evaluations</h3>
-        <p rsf:id="msg=controlevaluations.closed.description" class="instruction">
+        <p rsf:id="msg=controlevaluations.closed.description" class="instructionText">
             Your Evaluations which have been completed
         </p>
         <div rsf:id="closed-eval-listing:">
-            <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+            <table class="evalsysTable">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -286,7 +286,7 @@
             </table>
             <br/>
         </div>
-        <p rsf:id="no-closed-evals" class="instruction highlightPanel">
+        <p rsf:id="no-closed-evals" class="instructionText highlightPanel">
             No closed evaluations
         </p>
         <hr />

@@ -39,12 +39,12 @@
 			<li><a rsf:id="modify-template-link" href="template_modify.html">Template</a></li>
 			<!--// gsilver: this link goes to the dashboard -->
 			<li><a rsf:id="modify-items-link" href="modify_items.html">Items</a></li>
-			<li rsf:id="msg=items.choose.items" class="lastCrumb">Choose Items</li>
+			<li rsf:id="msg=items.choose.items" class="lastCrumbNoFloat">Choose Items</li>
 		</ul>
 	</div>
 	
 	<div rsf:id="message-for:*" class="alertMessage">
-		<ul style="margin:0px;">
+		<ul>
 			<li>Message for user here</li>
 		</ul>
 	</div>
@@ -55,7 +55,7 @@
 		</div>	
 		<div class="searchNav">
 				<span rsf:id="search-current" class="highlight">Current Search:</span>
-				<span rsf:id="search-current-value" class="instruction">Search Text</span>
+				<span rsf:id="search-current-value" class="instructionText">Search Text</span>
 				<form rsf:id="search-form" action="choose_existing_items.html" method="get">
 					<input rsf:id="search-box" type="text" size="25" maxlength="100" />
 					<input rsf:id="search-command" type="submit" value="Search" />
@@ -71,7 +71,7 @@
             <a rsf:id="cancel-items" href="template_modify.html" class="makeButton" id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
         </p>
 
-		<table class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
+		<table class="evalsysTable" summary="Column 1 has checkboxes used to select items, Column 2 has information about items">
 			<caption rsf:id="msg=item.list.summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 			<thead class="skip">
 				<tr>
@@ -89,7 +89,7 @@
 							<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
 						</label>
 						</h5>
-						<div rsf:id="item-scale" class="instruction">Item Scale (the title of the scale and the points in parens)</div>
+						<div rsf:id="item-scale" class="instructionText">Item Scale (the title of the scale and the points in parens)</div>
 
 					</td>
 				</tr>
@@ -103,7 +103,7 @@
 								<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
 							</label>
 						</h5>
-						<div rsf:id="item-scale" class="instruction">Item Scale (the title of the scale and the points in parens)</div>
+						<div rsf:id="item-scale" class="instructionText">Item Scale (the title of the scale and the points in parens)</div>
 					</td>
 				</tr>
 			</tbody>

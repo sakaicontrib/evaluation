@@ -213,6 +213,8 @@ div.scaleDesc {
   padding: .5em 0;
   background: #ffe;
   margin: 1em 0;
+  clear: both;
+  height: 1.5em;
 }
 
 .navIntraTool .breadCrumb {
@@ -225,6 +227,7 @@ div.scaleDesc {
   background: #ffffee url(../images/breadSep.gif) center right no-repeat;
   padding: 0 1.2em 0  .5em;
   margin: 0;
+  float: left;
 }
 
 .breadCrumb li:first-child {
@@ -234,6 +237,16 @@ div.scaleDesc {
 .breadCrumb li.lastCrumb {
   display: inline;
   background-image: none;
+  float: right;
+}
+
+.breadCrumb li.lastCrumbNoFloat {
+  display: inline;
+  background-image: none;
+}
+
+.inlineBlockForm {
+    display: inline-block;
 }
 
 /*sub-breadcrumb for wizards deep inside of a workflow*/
@@ -361,8 +374,7 @@ ol.summaryEvaluateList {
 .scaleOuterList {
   width: 60%;
   padding: 0;
-  margin: 1em 0;
-  list-style: decimal;
+  list-style: none;
 }
 
 .scaleInnerList {
@@ -378,7 +390,6 @@ ol.summaryEvaluateList {
 }
 
 .scaleTitleLine {
-  height: 1.5em;
   overflow: hidden;
   background: #eee;
   padding: 0.3em;
@@ -1011,7 +1022,6 @@ form {
   font-family: verdana,arial;
   font-size: 100%;
   color: #27d;
-  padding: .2em .3em 1px 0;
   white-space: nowrap;
 }
 
@@ -1042,6 +1052,13 @@ form {
   padding: .2em;
   color: orange;
   margin-left: 1em;
+  display: inline;
+  width: auto;
+  border: none;
+}
+
+.checkbox input[type="checkbox"] {
+  margin-left: auto;
 }
 
 label.block {
@@ -1507,73 +1524,80 @@ a.less {
   margin-left: 1em;
 }
 
-.evalAdminTable {
-  border: 1px solid #eee;
-  margin-top: 20px;
-}
-
-.evalAdminTable thead tr {
-  background: #ccc;
-}
-
-.evalAdminTable td {
-  padding: 0 20px;
-}
-
 .column {
   width: 25%;
 }
 
-/* hierarchy node perms page, target hierarchy rules UI also */
-table#user-perms-table, table#rules-table {
+/* hierarchy */
+table.evalsysTable {
   margin: 2em 0;
   border: 1px solid #ccc;
 }
 
-table#user-perms-table thead, table#rules-table thead {
+table.evalsysTable thead {
   background: #aaa;
 }
 
-table#user-perms-table thead tr th, table#rules-table thead tr th {
+table.evalsysTable thead tr th {
   text-align: center !important;
 }
 
-table#user-perms-table tr, table#rules-table tr {
+table.evalsysTable tr {
   padding: 10px 0;
 }
 
-table#user-perms-table tbody tr:nth-child(2n), table#rules-table tbody tr:nth-child(2n) {
+table.evalsysTable tbody tr:nth-child(2n) {
   background: #eee;
 }
 
-table#user-perms-table td, table#rules-table td {
+table.evalsysTable tbody tr td.noTextIndent {
+    text-indent: 0em;
+}
+
+table.evalsysTable tbody tr td a.inlineLink {
+    font-size: 0.9em;
+}
+
+table.evalsysTable td {
   padding: 10px;
 }
 
-table#user-perms-table td.userInfo, table#rules-table td.userInfo {
+table.evalsysTable td.alignCenter, table.evalsysTable td.actions {
   text-align: center;
 }
 
-table#user-perms-table td.actions, table#rules-table td.actions {
-  text-align: center;
-}
-
-table#user-perms-table td.userPerms > span:nth-child(2n+1), table#rules-table td.userPerms > span:nth-child(2n+1) {
+table.evalsysTable td.checkboxes > span:nth-child(2n+1) {
   clear: left;
   float: left;
   width: 140px;
 }
 
-table#user-perms-table td.userPerms > span:nth-child(2n), table#rules-table td.userPerms > span:nth-child(2n) {
+table.evalsysTable td.checkboxes > span:nth-child(2n) {
   float: left;
 }
 
-table#rules-table .actions .saveButton {
+table.evalsysTable .actions .saveButton {
   margin-right: 5px;
 }
 
-table#rules-table .userInfo select {
+table.evalsysTable .alignCenter select {
   margin: 0 5px 0 0;
+}
+
+div.action {
+  margin-bottom: 5px;
+}
+
+div.action span.cancelButton input[type="submit"], div.action span.cancelButton input[type="button"]{
+  float:right;
+}
+
+div.alertMessage ul {
+  margin:0px;
+}
+
+p.alertMessage ul {
+  margin:0px;
 }
 
 table tr.node td.node-1 {
@@ -2138,4 +2162,10 @@ li.exportIndividual {
 
 ol.itemListEval span.label {
     color: #000 !important;
+}
+
+.instructionText {
+    color: #555;
+    line-height: 1.3em;
+    margin: 0.5em 0;
 }

@@ -39,18 +39,18 @@
         <!-- administrate_provider_sync.html -->
         <div rsf:id="navIntraTool:" class="navIntraTool"></div>
         <ul class="breadCrumb">
-            <li style="float: left">
+            <li>
                 <a rsf:id="summary-link" href="summary.html">Summary</a>
             </li>
-            <li style="float: left">
+            <li>
                 <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
             </li>
-            <li class="lastCrumb">
+            <li class="lastCrumbNoFloat">
                 <span rsf:id="msg=administrate.sync.breadcrumb.title">Sync Group Members</span>
             </li>
         </ul>
         <div rsf:id="message-for:*" class="alertMessage">
-            <ul style="margin:0px;">
+            <ul>
                 <li>Message for user here</li>
             </ul>
         </div>
@@ -76,7 +76,7 @@
                     style="border:1px solid #ccc;background:#fff; display:block;">
                     <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
                     <div style="padding:1em;">
-                        <p class="instruction"
+                        <p class="instructionText"
                             rsf:id="msg=administrate.sync.by_event.instruction"> Sync
                             memberships when the following happens </p>
                         <p class="longtext indnt1">
@@ -238,7 +238,7 @@
                     style="border:1px solid #ccc;background:#fff; display:block;">
                     <input type="hidden" rsf:id="currentTab" id="currentTab" class="currentTab" value="0" />
                     <div style="padding:1em;">
-                        <p rsf:id="msg=administrate.sync.quick_sync.states" class="instruction">
+                        <p rsf:id="msg=administrate.sync.quick_sync.states" class="instructionText">
                             Run quick sync on evaluations that are: </p>
                         <p class="checkbox">
                             <input rsf:id="quick_sync-state-partial"

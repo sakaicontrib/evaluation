@@ -41,53 +41,53 @@
 
 <!--//gsilver: all in the same line, avoid wspace -->
 <div>
-	<ul class="breadCrumb"  style="clear:both;height:1.5em">
-		<li  style="float:left">
+	<ul class="breadCrumb">
+		<li>
 			<a rsf:id="summary-link" href="summary.html">Summary</a>
 		</li>
-		<li style="float:left" class="lastCrumb" rsf:id="administrate-title">Administrate</li>
-		<li style="float:right" class=" lastCrumb addItem">
+		<li rsf:id="administrate-title" class="lastCrumbNoFloat">Administrate</li>
+		<li class=" lastCrumb addItem">
 			<a rsf:id="test-evalgroupprovider-toplink" href="admin_test_evalgroup_provider.html" class="goToList">Test EvalGroupProvider</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-eval-admin-toplink" href="control_eval_admin.html" class="goToList">Control Eval Admin</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-email-toplink" href="control_email.html" class="goToList">Control Email</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-import-toplink" href="control_import.html" class="goToList">Control Importing</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-hierarchy-toplink" href="control_hierarchy.html" class="goToList">Control Hierarchy</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-reporting-toplink" href="control_reporting.html" class="goToList">Control Reporting</a>
 		</li>
-        <li style="float:right" class="lastCrumb">
+        <li class="lastCrumb">
           <a rsf:id="control-import-settings-toplink" href="import_config.html" class="goToList">Import Configuration</a>
         </li>
-        <li style="float:right" class="lastCrumb">
+        <li class="lastCrumb">
           <a rsf:id="control-export-settings-toplink" href="administrate.html" class="goToList">Export Configuration</a>
         </li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<!-- string added to bundle as administrate.top.control.search -->
 			<a rsf:id="control-administrate-search"  href="administrate_search.html" class="goToList">Search</a>
 		</li>
-		<li style="float:right" class="lastCrumb">
+		<li class="lastCrumb">
 			<a rsf:id="control-administrate-sync"  href="administrate_provider_sync.html" class="goToList">Sync Group Members</a>
 		</li>
 	</ul>
 </div>
 
 <div rsf:id="message-for:*" class="alertMessage">
-   <ul style="margin:0px;">
+   <ul>
       <li>Message for user here</li>
    </ul>
 </div>
 
 <p rsf:id="email-delivery" class="alertMessage">
-    <ul style="margin:0px;">
+    <ul>
         <li>Message re current email delivery setting here</li>
     </ul>
 </p>
@@ -95,7 +95,7 @@
 <form rsf:id="basic-form" class="administrate-form" method="post">
 
     <h3 rsf:id="system-settings-header">System Settings</h3>
-    <p class="instruction" rsf:id="system-settings-instructions">
+    <p class="instructionText" rsf:id="system-settings-instructions">
         Note that the system settings mostly control whether something can happen at all.
         <br /><br />
         Settings in the evaluation can still be controlled on a per evaluation basis unless

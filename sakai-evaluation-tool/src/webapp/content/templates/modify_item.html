@@ -25,7 +25,7 @@
 <body>
   <div class="portletBody">
     <div rsf:id="message-for:*" class="alertMessage">
-      <ul style="margin: 0px;">
+      <ul>
         <li>Message for user here</li>
       </ul>
     </div>
@@ -34,7 +34,7 @@
       <div class="viewNav">
         <span rsf:id="item-header">Item:</span>
         <!--//gsilver: this always seems to return "Scaled" -->
-        <span rsf:id="item-classification" class="highlight">classification</span> (<span rsf:id="added-by-item-owner" class="instruction">added
+        <span rsf:id="item-classification" class="highlight">classification</span> (<span rsf:id="added-by-item-owner" class="instructionText">added
           by username</span>)
       </div>
       <div class="listNav itemAction">
@@ -47,7 +47,7 @@
     <form rsf:id="item-form" method="post" id="item-form">
 
       <p>
-        <span rsf:id="item-text-header">Item Text:</span> <span rsf:id="item-text-instruction" class="instruction">(this is the question or
+        <span rsf:id="item-text-header">Item Text:</span> <span rsf:id="item-text-instruction" class="instructionText">(this is the question or
           statement that the evaluator will respond to)</span>
       </p>
       <div class="longtext evalEditorSmall">
@@ -117,11 +117,11 @@
         <div class="checkbox">
           <input rsf:id="item-expert" type="checkbox" id="item-expert" />
           <label rsf:id="item-expert-header" for="item-expert">Expert Item:</label>
-          <span rsf:id="item-expert-instruction" class="instruction">indicates that this item was authored by an expert</span>
+          <span rsf:id="item-expert-instruction" class="instructionText">indicates that this item was authored by an expert</span>
         </div>
         <p>
           <span rsf:id="expert-desc-header">Expert Description:</span>
-          <span rsf:id="expert-desc-instruction" class="instruction">this text describes the appropriate usage of this item for template authors</span>
+          <span rsf:id="expert-desc-instruction" class="instructionText">this text describes the appropriate usage of this item for template authors</span>
         </p>
         <div class="evalEditorSmall">
           <div>
@@ -163,7 +163,7 @@
       <fieldset rsf:id="showItemDisplayHints:" class="visibleFS evalEditorSmall">
         <legend rsf:id="item-display-hint-header">Display Setting Hints</legend>
         <div id="nonBlockSettings">
-          <div rsf:id="item-display-hint-instruction" class="instruction">these optional settings allow the item author to provide hints as to
+          <div rsf:id="item-display-hint-instruction" class="instructionText">these optional settings allow the item author to provide hints as to
             how this item should be displayed</div>
 
           <p rsf:id="show-scale-display:" class="longtext">
@@ -224,7 +224,7 @@
       </fieldset>
       <div class="act">
         <input rsf:id="save-item-action" type="submit" value="Save item" class="active submit" accesskey="s" />
-        <input rsf:id="cancel-button" type="button" value="Cancel" class="close" accesskey="x" />
+        <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
       </div>
     </form>
   </div>

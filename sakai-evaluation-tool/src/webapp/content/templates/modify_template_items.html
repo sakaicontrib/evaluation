@@ -59,7 +59,7 @@
 	<ul class="breadCrumb">
     <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
     <li><a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li>
-    <li class="lastCrumb" rsf:id="modify-template-title">Edit Template</li>
+    <li class="lastCrumbNoFloat" rsf:id="modify-template-title">Edit Template</li>
   </ul>
   <div rsf:id="message-for:*" class="alertMessage" id="messageInformation">
     <ul style="margin:0px;">
@@ -77,7 +77,7 @@
     <div class="navPanel">
     <div rsf:id="template-owner" style="display:none;" class="templateOwner">Owner</div>
       <div class="listNav">
-        <div class="instruction">
+        <div class="instructionText">
 		<span rsf:id="level-header-level">Current Level - </span> <span rsf:id="level-header-number" id="level-header-number">#</span> <span rsf:id="level-header-items"> existing items</span>
 		</div>
         <label rsf:id="add-item-note">Add Item:</label>
@@ -103,7 +103,7 @@
         <div class="itemOperations" id="orderInputs">
           <input rsf:id="revertOrderButton" type="button" disabled="disabled" value="Revert Order" id="revertOrderButton" />
           <input rsf:id="saveReorderButton" type="submit" disabled="disabled" value="Save Order" id="saveReorderButton" />
-          <span rsf:id="orderingInstructions" class="instruction" > Drag the items to reorder them and click save to set the new order or use the pulldowns to reorder a single item </span> </div>
+          <span rsf:id="orderingInstructions" class="instructionText" > Drag the items to reorder them and click save to set the new order or use the pulldowns to reorder a single item </span> </div>
         <div id="itemTable">
           <div id="itemList" class="itemList">
             <div rsf:id="item-row:" class="itemRow" id="item-row::0:">
@@ -145,7 +145,7 @@
                	<div id="itemTableBlock" class="itemTableBlock">
              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
                        <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
-					 <span  rsf:id="modifyblock-items-list-instructions" class="instruction">Drag and drop to rearrange the blocked items</span>
+					 <span  rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRowBlock::1:hidden-item-id" />
 							 <span rsf:id="item-block-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
@@ -195,7 +195,7 @@
                <div id="itemTableBlock" class="itemTableBlock">
              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
                    <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
-					 <span rsf:id="modifyblock-items-list-instructions" class="instruction">Drag and drop to rearrange the blocked items</span>
+					 <span rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
 							<span rsf:id="item-block-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
@@ -257,7 +257,7 @@
             <input type="hidden" name="templateItemIds"/>
             <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="button" value="Create Group" disabled="disabled" />
           </form>
-          <span rsf:id="blockInstructions"class="instruction"> Check the boxes next to a set of items and click Create Block to make a block with the chosen items </span> </div>
+          <span rsf:id="blockInstructions"class="instructionText"> Check the boxes next to a set of items and click Create Block to make a block with the chosen items </span> </div>
         <div class="cleaner">&nbsp;</div>
       </div>
     </div>

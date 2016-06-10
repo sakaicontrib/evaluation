@@ -33,17 +33,17 @@
 
      <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-    <ul class="breadCrumb" style="clear: both; height: 1.5em">
-        <li style="float: left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-        <li style="float: left"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-        <li rsf:id="msg=controlhierarchy.page.title" class="lastCrumb" style="float: left">Hierarchy</li>
+    <ul class="breadCrumb">
+        <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+        <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+        <li rsf:id="msg=controlhierarchy.page.title" class="lastCrumbNoFloat">Hierarchy</li>
     </ul>
 
     <h3 rsf:id="msg=controlhierarchy.table.hierarchy.header">Control Hierarchy</h3> 
     <a rsf:id="show-hide-groups" href="">Show/Hide Groups</a> <a rsf:id="show-hide-users" href="">Show/Hide Users</a>
     <div rsf:id="hierarchy-tree:">
         <!-- Everything in here is replaced by the html in /evaluation/tool/src/webapp/component-templates/hierarchy_controls.html -->
-        <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+        <table class="evalsysTable">
             <thead>
                 <tr>
                     <th rsf:id="hierarchy-header">Hierarchy Level</th>
@@ -53,11 +53,11 @@
             </thead>
             <tbody>
                 <tr rsf:id="hierarchy-level-row:">
-                    <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
+                    <td rsf:id="node-name" class="noTextIndent"> - Institution Level</td>
                     <td>
                         <span rsf:id="number-children">3</span>
-                        <a rsf:id="add-child-link" style="font-size:0.9em;" href="">Add</a>
-                        <a rsf:id="modify-node-link" style="font-size:0.9em;" href="">Modify</a>
+                        <a rsf:id="add-child-link" class="inlineLink" href="">Add</a>
+                        <a rsf:id="modify-node-link" class="inlineLink" href="">Modify</a>
                         <form rsf:id="remove-node-form">
                             <input type="submit" rsf:id="remove-node-button" value="Remove"/>
                         </form>
