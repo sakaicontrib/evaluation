@@ -15,6 +15,8 @@
 
 -- MySQL conversion script - 1.4 to 11
 
+alter table EVAL_EVALUATION add (SECTION_AWARE bit not null default 0);
+
 create table EVAL_HIERARCHY_RULE (
     ID bigint not null auto_increment,
     NODE_ID bigint not null,
