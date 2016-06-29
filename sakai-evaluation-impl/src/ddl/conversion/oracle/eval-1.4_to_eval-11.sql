@@ -15,6 +15,8 @@
 
 -- Oracle conversion script - 1.4 to 11
 
+alter table EVAL_EVALUATION add (SECTION_AWARE number(1,0) default 0 not null);
+
 create table EVAL_HIERARCHY_RULE (
     ID number(19,0) not null,
     NODE_ID number(19,0) not null,
