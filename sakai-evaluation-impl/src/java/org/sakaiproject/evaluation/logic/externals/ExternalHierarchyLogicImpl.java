@@ -520,6 +520,14 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         Set<String> groups = new HashSet<>();
         try
         {
+            EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeID);
+            if (egn != null) {
+                String[] evalGroups = egn.getEvalGroups();
+                for (int i = 0; i < evalGroups.length; i++) {
+                    groups.add(evalGroups[i]);
+                }
+            }
+
             List<HierarchyNodeRule> rules = getRulesByNodeID( Long.parseLong( nodeID ) );
             for( HierarchyNodeRule rule : rules )
             {
