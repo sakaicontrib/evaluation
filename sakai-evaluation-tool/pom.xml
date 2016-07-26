@@ -29,7 +29,7 @@
       <activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>                
-                <sakai.poi.version>3.12</sakai.poi.version>
+                <sakai.poi.version>3.14</sakai.poi.version>
 		    </properties>
             <dependencies>
                 <dependency>
@@ -91,7 +91,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
             <properties>
-                <evalsys.poi.version>3.9</evalsys.poi.version>
+                <evalsys.poi.version>3.14</evalsys.poi.version>
             </properties>
             <dependencies>
                 <dependency>
