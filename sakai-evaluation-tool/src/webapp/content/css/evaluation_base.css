@@ -2169,3 +2169,53 @@ ol.itemListEval span.label {
     line-height: 1.3em;
     margin: 0.5em 0;
 }
+
+@media only screen and (max-width: 810px) {
+#facebox {
+    left: 0px !important;
+    width: 100%;
+}
+
+#facebox table {
+    width: 100%;
+}
+
+.portletBody {
+  padding: 5px;
+}
+
+.evalEditorSmall {
+    width: 100% !important;
+}
+
+#show-item-scale\:\: {
+  margin-top: 10px;
+}
+
+#show-item-scale\:\: select {
+  width: 100% !important;
+  margin-bottom: 10px;
+}
+
+#show-item-sharing\:\:item-sharing-list-selection, #show-item-expert\:\:item-expert-list-selection, #show-scale-display\:\:scale-display-list-selection {
+  width: 100% !important;
+  margin-bottom: 10px;
+}
+
+[name="show-item-expert::expert-desc"] {
+  width: 100% !important;
+  margin-bottom: 10px;
+}
+
+.visibleFS legend {
+  padding: initial !important;
+  margin-left: 0 !important;
+}
+
+.cke_toolbar_break {
+  clear: initial !important;
+}
+
+.cke_chrome {
+    min-width: 100% !important;
+}
