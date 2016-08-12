@@ -78,56 +78,10 @@
             </modules>
         </profile>
         <profile>
-          <id>sakai-10</id>
-          <activation>
-            <activeByDefault>false</activeByDefault>
-            <property><name>sakai-10</name></property>
-          </activation>
-            <modules>
-                <module>sakai-evaluation-api</module>
-                <module>sakai-evaluation-impl</module>
-                <module>sakai-evaluation-pack</module>
-                <module>sakai-evaluation-tool</module>
-            </modules>
-          
-          <!-- Spring & Hibernate -->
-          <dependencies>
-            <dependency>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-core</artifactId>
-            </dependency>
-            <!-- needed by hibernate unit tests -->
-            <dependency>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-ehcache</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.springframework</groupId>
-              <artifactId>spring-core</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.springframework</groupId>
-              <artifactId>spring-beans</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.springframework</groupId>
-              <artifactId>spring-orm</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.springframework</groupId>
-              <artifactId>spring-context</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.quartz-scheduler</groupId>
-              <artifactId>quartz</artifactId>
-            </dependency>
-          </dependencies>
-        </profile>
-        <profile>
-          <id>sakai-11</id>
+          <id>sakai-12</id>
           <activation>
             <activeByDefault>true</activeByDefault>
-            <property><name>sakai-10</name></property>
+            <property><name>sakai-12</name></property>
           </activation>
             <modules>
                 <module>sakai-evaluation-api</module>

@@ -24,75 +24,10 @@
 
     <profiles>
         <profile>
-            <id>sakai-10</id>
-			<activation> 
-      <activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>                
-                <sakai.poi.version>3.14</sakai.poi.version>
-		    </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-util</artifactId>
-                </dependency>
-                <dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-component-manager</artifactId>
-                </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject.scheduler</groupId>
-					<artifactId>scheduler-api</artifactId>
-				</dependency>
-		        <!-- RSF dependencies -->
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>sakairsf</artifactId>
-		            <version>${sakairsf.version}</version>
-		            <type>jar</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>SakaiRSFComponents-evolvers</artifactId>
-		            <version>${sakairsf.version}</version>
-		            <type>jar</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>uk.org.ponder.sakairsf</groupId>
-		            <artifactId>SakaiRSFComponents-templates</artifactId>
-		            <version>${sakairsf.version}</version>
-		            <type>war</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>uk.org.ponder.rsfutil</groupId>
-		            <artifactId>RSFComponents-templates</artifactId>
-		            <version>${rsfutil.version}</version>
-		            <type>war</type>
-		        </dependency>
-            	<dependency>
-            		<groupId>org.springframework</groupId>
-            		<artifactId>spring-webmvc</artifactId>
-        			<scope>compile</scope>
-            	</dependency>
-               <!-- Spring dependency -->
-               <dependency>
-                 <groupId>org.springframework</groupId>
-                 <artifactId>spring-core</artifactId>
-               </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>sakai-11</id>
+            <id>sakai-12</id>
 			<activation> 
 				<activeByDefault>true</activeByDefault>
 			</activation>
-            <properties>
-                <evalsys.poi.version>3.14</evalsys.poi.version>
-            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.sakaiproject.kernel</groupId>
@@ -234,8 +169,6 @@
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>2.3</version>
-            <type>jar</type>
             <!--properties:  war.bundle: true -->
         </dependency>
 
@@ -243,13 +176,13 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${evalsys.poi.version}</version>
+            <version>${sakai.poi.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>${evalsys.poi.version}</version>
+            <version>${sakai.poi.version}</version>
             <type>jar</type>
         </dependency>
 
