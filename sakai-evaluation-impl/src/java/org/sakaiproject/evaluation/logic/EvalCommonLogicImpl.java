@@ -687,7 +687,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             }
         }
 
-        if (!l.isEmpty()) {
+        if (toEmails.isEmpty()) {
             LOG.warn("No users with email addresses found in the provided userIds ("+ArrayUtils.arrayToString(toUserIds)+"), cannot send email so exiting");
             return new String[] {};
         }
