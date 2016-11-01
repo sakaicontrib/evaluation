@@ -245,8 +245,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public List<EvalUser> getEvalUsersByIds(String[] userIds) {
         List<EvalUser> users = new ArrayList<>();
         boolean foundAll = false;
-        if (userIds == null 
-                || userIds.length == 0) {
+        if (userIds == null || userIds.length == 0) {
             foundAll = true;
         }
 
@@ -254,7 +253,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (! foundAll) {
             // get users from external
             externalUsers = externalLogic.getEvalUsersByIds(userIds);
-            if (users.size() == userIds.length) {
+            if (externalUsers.size() == userIds.length) {
                 foundAll = true;
             }
         }
@@ -268,9 +267,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         /* now put the users into the list in the original order of the array 
          * with INVALID EvalUser objects in place of not-found users
          */
-        if (! foundAll) {
-            for( String userId : userIds )
-            {
+        if (userIds != null && userIds.length > 0) {
+            for( String userId : userIds ) {
                 EvalUser user;
                 if (adhocUsers.containsKey(userId)) {
                     EvalAdhocUser adhocUser = adhocUsers.get(userId);
@@ -689,7 +687,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             }
         }
 
-        if (!l.isEmpty()) {
+        if (toEmails.isEmpty()) {
             LOG.warn("No users with email addresses found in the provided userIds ("+ArrayUtils.arrayToString(toUserIds)+"), cannot send email so exiting");
             return new String[] {};
         }
