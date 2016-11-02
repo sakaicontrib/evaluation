@@ -999,8 +999,10 @@ public class EvalEvaluation implements java.io.Serializable {
 
     public void setStartDate(Date startDate) {
         if (startDate != null && !EvalUtils.safeBool(this.useDateTimes, true)) {
-        	this.startDate = startDate;
+            // force the date to the end of the day when times use is disabled
+            startDate = EvalUtils.getEndOfDayDate(viewDate);
         }
+        this.startDate = startDate;
     }
 
     public Date getDueDate() {
@@ -1041,8 +1043,10 @@ public class EvalEvaluation implements java.io.Serializable {
 
     public void setViewDate(Date viewDate) {
         if (viewDate != null && !EvalUtils.safeBool(this.useDateTimes, true)) {
-        	this.viewDate = viewDate;
+            // force the date to the end of the day when times use is disabled
+            viewDate = EvalUtils.getEndOfDayDate(viewDate);
         }
+        this.viewDate = viewDate;
     }
 
     public Date getStudentsDate() {
