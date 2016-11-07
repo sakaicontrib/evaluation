@@ -1000,7 +1000,7 @@ public class EvalEvaluation implements java.io.Serializable {
     public void setStartDate(Date startDate) {
         if (startDate != null && !EvalUtils.safeBool(this.useDateTimes, true)) {
             // force the date to the end of the day when times use is disabled
-            startDate = EvalUtils.getEndOfDayDate(viewDate);
+            startDate = EvalUtils.getEndOfDayDate(startDate);
         }
         this.startDate = startDate;
     }
