@@ -1193,7 +1193,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         EvalEmailTemplate emailTemplate = null;
         if (evaluationId != null &&
                 ( EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(typeConstant) ||
-                        EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(typeConstant) || EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE.equals(typeConstant) ) ) {
+                        EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(typeConstant) || 
+                        EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE.equals(typeConstant) ||
+                        EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(typeConstant) ) ) {
             // get the template from the evaluation itself
             EvalEmailTemplate evalEmailTemplate = evaluationService.getEmailTemplate(evaluationId, typeConstant);
             if (evalEmailTemplate != null) {

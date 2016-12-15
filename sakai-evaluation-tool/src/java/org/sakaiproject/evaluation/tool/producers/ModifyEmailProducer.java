@@ -117,7 +117,8 @@ public class ModifyEmailProducer extends EvalCommonProducer implements ViewParam
             throw new IllegalArgumentException("emailType must be set when working with an evaluation");            
          } else {
             if ( ! (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailViewParams.emailType)
-                 || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailViewParams.emailType)) ) {
+            		|| EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailViewParams.emailType)
+            		|| EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailViewParams.emailType)) ) {
                throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailViewParams.emailType);
             }
          }
