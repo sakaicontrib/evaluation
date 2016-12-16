@@ -113,6 +113,10 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(template);
       Assert.assertEquals(etdl.emailTemplate3.getId(), template.getId());
 
+      template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, etdl.evaluationActive.getId());
+      Assert.assertNotNull(template);
+      Assert.assertEquals(etdl.emailTemplate6.getId(), template.getId());
+
       // test getting templates without evals
       template = emailsLogic.getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, null);
       Assert.assertNotNull(template);

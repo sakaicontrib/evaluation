@@ -444,6 +444,10 @@ public class EvalTestDataLoad {
      * Email Template: type Consolidated Reminder , owned by maint user, used in {@link #evaluationActive} as reminder
      */
     public EvalEmailTemplate emailTemplate5;
+    /**
+     * Email Template: type Submitted , owned by maint user, used in {@link #evaluationActive} as submission confirmation
+     */
+    public EvalEmailTemplate emailTemplate6;
 
     // ASSIGNMENTS
     /**
@@ -1345,6 +1349,8 @@ public class EvalTestDataLoad {
         evaluationActive.setReminderEmailTemplate(emailTemplate3);
         emailTemplate4 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, "Email Subject 4", "Email Template 4"); 
         emailTemplate5 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, "Email Subject 5", "Email Template 5"); 
+        emailTemplate6 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_SUBMITTED, "Email Subject 6", "Email Template 6"); 
+        evaluationActive.setSubmissionConfirmationEmailTemplate(emailTemplate6);
 
         // adding EID's to test EvalEvaluationService.getEmailTemplateByEid()
         // http://jira.sakaiproject.org/browse/EVALSYS-851
@@ -1357,6 +1363,7 @@ public class EvalTestDataLoad {
         dao.save(emailTemplate3);
         dao.save(emailTemplate4);
         dao.save(emailTemplate5);
+        dao.save(emailTemplate6);
 
         evaluationActiveUntaken.setAvailableEmailTemplate(emailTemplate4);
         evaluationActiveUntaken.setReminderEmailTemplate(emailTemplate5);
