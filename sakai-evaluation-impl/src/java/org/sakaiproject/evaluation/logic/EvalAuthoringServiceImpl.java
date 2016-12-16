@@ -28,12 +28,12 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -2167,5 +2167,44 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 			
         }
 	}
+
+	public List<EvalTemplateItem> getCompulsoryTemplateItems(List<EvalTemplateItem> templateItemsList, EvalEvaluation evaluation) {  
+        List<EvalTemplateItem> compulsoryItemsList = new ArrayList<EvalTemplateItem>();
+
+        List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(templateItemsList, false);
+
+        for (int i=0; i<orderedItems.size(); i++) {
+            EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
+            if (! isCompulsory(templateItem, null)) {
+                continue;
+            }
+            compulsoryItemsList.add(templateItem);
+        }
+        return compulsoryItemsList;
+    }
+
+
+
+	public boolean isCompulsory(EvalTemplateItem templateItem, EvalEvaluation evaluation) {
+        boolean result = false;
+        if (TemplateItemUtils.isAnswerable(templateItem)) {
+            String type = TemplateItemUtils.getTemplateItemType(templateItem);
+            if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+            	//check global setting w.r.t should we enforce compulsory text items
+            	Boolean textItemsCanBeRequired = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
+            	if (textItemsCanBeRequired == null && evaluation != null){
+            		//Global setting is CONFIGURABLE so consider eval-specific settings
+            		result = EvalUtils.safeBool(evaluation.getCompulsoryTextItemsAllowed(), false) && EvalUtils.safeBool(templateItem.isCompulsory());
+            	}else if(textItemsCanBeRequired != null && textItemsCanBeRequired && EvalUtils.safeBool(templateItem.isCompulsory())){
+            		result = true;
+            	}else if(textItemsCanBeRequired == null && evaluation == null){
+            		result = true;
+            	}
+            } else if ( EvalUtils.safeBool(templateItem.isCompulsory()) ) {
+                result = true;
+            }
+        }
+        return result;
+    }
 
 }

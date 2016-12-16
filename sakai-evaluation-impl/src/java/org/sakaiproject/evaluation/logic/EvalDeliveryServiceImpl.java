@@ -34,6 +34,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
@@ -529,7 +530,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                     required = dti.isRequireable();
                 } else {
                     // only items marked as compulsory must be answered
-                    required = dti.isCompulsory();
+                    required = authoringService.isCompulsory(dti.templateItem, eval);
                 }
                 // if the item is required then add it to the required keys listing
                 if (required) {
@@ -574,6 +575,15 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
             // decode NA value
             EvalUtils.decodeAnswerNA(answer);
+            
+            EvalTemplateItem templateItem = answer.getTemplateItem();
+            String type =TemplateItemUtils.getTemplateItemType(templateItem);
+            if (EvalConstants.ITEM_TYPE_TEXT.equals(type) &&
+                   EvalConstants.NO_TEXT_ANSWER.equals(answer.getText()) && !answer.NA &&
+                   authoringService.isCompulsory(templateItem, eval)) {
+                // this answer is for a required text question but has been left blank, so do not consider this answer valid by skipping it.
+                continue;
+       	    }
 
             // verify the base state of new answers
             if (answer.getId() == null) {

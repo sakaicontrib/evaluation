@@ -145,6 +145,10 @@
         <property name="allRolesParticipate" type="java.lang.Boolean">
             <column name="ALL_ROLES_PARTICIPATE" />
         </property>
+        <!-- if any compulsory text items exist in the template, eval takers will be required to answer them. -->
+        <property name="compulsoryTextItemsAllowed" type="java.lang.Boolean">
+            <column name="COMPULSORY_TEXT_ITEMS_ALLOWED" />
+        </property>
         <!-- can unregistered students take this evaluation or only official students -->
         <property name="unregisteredAllowed" type="java.lang.Boolean">
             <column name="UNREGISTERED_ALLOWED" />

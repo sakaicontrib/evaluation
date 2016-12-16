@@ -107,6 +107,11 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
     public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
         this.httpServletResponse = httpServletResponse;
     }
+    
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+		this.renderingUtils = renderingUtils;
+	}
 
     int displayNumber = 1; //  determines the number to display next to each item
 
@@ -345,7 +350,7 @@ public class PreviewEvalProducer extends EvalCommonProducer implements ViewParam
 
         // render the item
         itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true, 
-                RenderingUtils.makeRenderProps(dti, eval, null, null) );
+                renderingUtils.makeRenderProps(dti, eval, null, null) );
 
         // increment the display number
         displayNumber += displayIncrement;

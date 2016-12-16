@@ -288,32 +288,6 @@ public class TemplateItemUtilsTest extends TestCase {
         assertEquals(etdl.templateItem3U, list.get(1));
     }
 
-    public void testIsCompulsory() {
-        EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-
-        assertTrue( TemplateItemUtils.isCompulsory(etdl.templateItem1U) );
-        assertFalse( TemplateItemUtils.isCompulsory(etdl.templateItem2B) );
-        assertFalse( TemplateItemUtils.isCompulsory(etdl.templateItem3A) );
-        assertFalse( TemplateItemUtils.isCompulsory(etdl.templateItem5U) );
-        assertFalse( TemplateItemUtils.isCompulsory(etdl.templateItem6UU) );
-        assertFalse( TemplateItemUtils.isCompulsory(etdl.templateItem9B) );
-    }
-
-    public void testGetCompulsoryTemplateItems() {
-        EvalTestDataLoad etdl = new EvalTestDataLoad(null);
-        List<EvalTemplateItem> itemList = new ArrayList<>();
-
-        itemList.add(etdl.templateItem1U);
-        itemList.add(etdl.templateItem3U);
-        itemList.add(etdl.templateItem5U);
-
-        List<EvalTemplateItem> list;
-        list = TemplateItemUtils.getCompulsoryTemplateItems(itemList);
-        assertNotNull(list);
-        assertEquals(1, list.size());
-        assertEquals(etdl.templateItem1U, list.get(0));
-    }
-
     /**
      * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isBlockParent(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
      */

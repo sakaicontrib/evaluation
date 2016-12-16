@@ -52,10 +52,12 @@ public class TextRenderer implements ItemRenderer {
     public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled, Map<String, Object> renderProperties) {
 
         UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
+
+        UIBranchContainer textoptions = UIBranchContainer.make(container, "textDisplay:");
         if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_RENDER_INVALID) ) {
-            container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            textoptions.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
         } else if ( renderProperties.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
-            container.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
+            textoptions.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
         }
 
         if (displayNumber <= 0) displayNumber = 0;

@@ -236,6 +236,11 @@ public class EvalEvaluation implements java.io.Serializable {
      * {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
      */
     private String autoUseInsertion;
+    
+    /**
+     * A flag to see if compulsory text items in the evaluation must be answered by takers
+     */
+    private Boolean compulsoryTextItemsAllowed;
 
     /**
      * Controls whether or not the evaluation will be section aware. If this is set to true,
@@ -287,7 +292,6 @@ public class EvalEvaluation implements java.io.Serializable {
      * <b>NOTE:</b> This is ignored if it is null<br/>
      */
     public Boolean useDateTimes;
-
     /**
      * Optional field never used by EVALSYS code. May be used to mark records for bulk actions. 
      * For example, an import operation might set a value that will be persisted and can be used 
@@ -363,6 +367,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this.autoUseTag = eval.autoUseTag;
         this.autoUseInsertion = eval.autoUseInsertion;
         this.sectionAwareness = eval.sectionAwareness;
+        this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
         // NON_PERSISTENT
         this.customStartDate = eval.customStartDate;
         this.useDueDate = eval.useDueDate;
@@ -422,7 +427,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, Boolean.TRUE, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, null, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked,
-                authControl, evalCategory, selectionSettings, Boolean.TRUE);
+                authControl, evalCategory, selectionSettings, Boolean.TRUE, null);
     }
 
     /**
@@ -466,12 +471,12 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalEmailTemplate submissionConfirmationEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed,
             Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked, 
-            String authControl, String evalCategory, String selectionSettings) {
+            String authControl, String evalCategory, String selectionSettings, Boolean compulsoryTextItemsAllowed) {
 
         this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, submissionConfirmationEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, locked, authControl,
-                evalCategory, selectionSettings, Boolean.TRUE);
+                evalCategory, selectionSettings, Boolean.TRUE, compulsoryTextItemsAllowed);
     }
 
     /**
@@ -516,12 +521,12 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalEmailTemplate submissionConfirmationEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean locked, String authControl,
-            String evalCategory, String selectionSettings, Boolean emailOpenNotification){
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean compulsoryTextItemsAllowed){
 
         this(type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, submissionConfirmationEmailTemplate, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
-                evalCategory, selectionSettings, Boolean.TRUE, Boolean.FALSE);
+                evalCategory, selectionSettings, Boolean.TRUE, Boolean.FALSE, compulsoryTextItemsAllowed);
     }
 
     /**
@@ -572,7 +577,7 @@ public class EvalEvaluation implements java.io.Serializable {
         this( type, owner, title, instructions, startDate, dueDate, stopDate, viewDate, studentViewResults, studentsDate, instructorViewResults, instructorViewAllResults, instructorsDate, state,
                 resultsSharing, instructorOpt, reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, null, template,
                 responses, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed, Boolean.FALSE ,locked, authControl,
-                evalCategory, selectionSettings, Boolean.TRUE, sectionAwareness );
+                evalCategory, selectionSettings, Boolean.TRUE, sectionAwareness, null);
     }
 
     /**
@@ -611,6 +616,8 @@ public class EvalEvaluation implements java.io.Serializable {
      * @param selectionSettings
      * @param emailOpenNotification
      * @param sectionAwareness 
+     * @param compulsoryTextItemsAllowed
+     *
      */
     public EvalEvaluation(String type, String owner, String title, String instructions,
             Date startDate, Date dueDate, Date stopDate, Date viewDate, Boolean studentViewResults,
@@ -620,7 +627,7 @@ public class EvalEvaluation implements java.io.Serializable {
             EvalEmailTemplate reminderEmailTemplate, EvalEmailTemplate submissionConfirmationEmailTemplate, EvalTemplate template,
             Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, 
             Boolean unregisteredAllowed, Boolean allRolesParticipate,  Boolean locked, String authControl,
-            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness) {
+            String evalCategory, String selectionSettings, Boolean emailOpenNotification, Boolean sectionAwareness, Boolean compulsoryTextItemsAllowed) {
 
         this.lastModified = new Date();
         this.type = type;
@@ -657,6 +664,8 @@ public class EvalEvaluation implements java.io.Serializable {
         this.selectionSettings = selectionSettings;
         this.sendAvailableNotifications = emailOpenNotification;
         this.sectionAwareness = sectionAwareness;
+        this.sendAvailableNotifications = emailOpenNotification;
+        this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
     }
 
     /**
@@ -805,6 +814,14 @@ public class EvalEvaluation implements java.io.Serializable {
             rs = null;
         }
         return rs;
+    }
+    
+    public Boolean getCompulsoryTextItemsAllowed() {
+        return compulsoryTextItemsAllowed;
+    }
+
+    public void setCompulsoryTextItemsAllowed(Boolean compulsoryTextItemsAllowed) {
+        this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
     }
 
     /**
