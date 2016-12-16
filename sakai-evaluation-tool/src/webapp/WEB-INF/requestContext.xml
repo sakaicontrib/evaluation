@@ -356,7 +356,7 @@
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>
-
+ 
     <bean id="renderingUtils" 
         class="org.sakaiproject.evaluation.tool.utils.RenderingUtils">
         <property name="authoringService"
@@ -618,6 +618,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="itemRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+        <property name="renderingUtils" ref="renderingUtils" />   
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
@@ -730,6 +731,7 @@
         <property name="itemRenderer"
             ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
         <property name="messageLocator" ref="messageLocator" />
+        <property name="renderingUtils" ref="renderingUtils" />   
     </bean>
 
 
@@ -918,6 +920,7 @@
         <property name="httpServletResponse" ref="httpServletResponse" />
         <property name="messageLocator" ref="messageLocator" />
         <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"/>
+        <property name="renderingUtils" ref="renderingUtils" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
@@ -936,6 +939,7 @@
             ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="messageLocator" ref="messageLocator" />
         <property name="httpServletResponse" ref="httpServletResponse" />
+        <property name="renderingUtils" ref="renderingUtils" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">

@@ -70,6 +70,11 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
         this.messageLocator = messageLocator;
     }
 
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+        this.renderingUtils = renderingUtils;
+   }
+
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
      */
@@ -138,7 +143,7 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
 
             // use the renderer evolver to show the item
             itemRenderer.renderItem(tofill, "previewed:item", null, templateItem, templateItem.getDisplayOrder(), true, 
-                    RenderingUtils.makeRenderProps(dti, null, null, null) );
+                    renderingUtils.makeRenderProps(dti, null, null, null) );
 
         }
     }

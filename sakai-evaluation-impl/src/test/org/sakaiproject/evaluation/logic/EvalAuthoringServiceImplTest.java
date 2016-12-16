@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -3181,6 +3182,32 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       items = authoringService.doAutoUseInsertion("FAKE", templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, false);
       Assert.assertNull(items);
 
+   }
+   
+   public void testIsCompulsory() {
+       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
+
+       Assert.assertTrue( authoringService.isCompulsory(etdl.templateItem1U, etdl.evaluationActive) );
+       Assert.assertFalse( authoringService.isCompulsory(etdl.templateItem2B, null) );
+       Assert.assertFalse( authoringService.isCompulsory(etdl.templateItem3A, etdl.evaluationActiveUntaken) );
+       Assert.assertFalse( authoringService.isCompulsory(etdl.templateItem5U, etdl.evaluationPartial) );
+       Assert.assertFalse( authoringService.isCompulsory(etdl.templateItem6UU, etdl.evaluationViewable) );
+       Assert.assertFalse( authoringService.isCompulsory(etdl.templateItem9B, null) );
+   }
+
+   public void testGetCompulsoryTemplateItems() {
+       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
+       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
+
+       itemList.add(etdl.templateItem1U);
+       itemList.add(etdl.templateItem3U);
+       itemList.add(etdl.templateItem5U);
+
+       List<EvalTemplateItem> list = null;
+       list = authoringService.getCompulsoryTemplateItems(itemList, null);
+       Assert.assertNotNull(list);
+       Assert.assertEquals(1, list.size());
+       Assert.assertEquals(etdl.templateItem1U, list.get(0));
    }
 
 }

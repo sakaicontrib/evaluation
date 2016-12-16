@@ -419,6 +419,17 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         	}
         }
 
+        //compulsory text items
+        Boolean compulsoryTextItemsAllowed = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
+        if( compulsoryTextItemsAllowed == null){
+            Boolean compulsoryTextItemsEval = evaluation.getCompulsoryTextItemsAllowed() == null ? Boolean.FALSE : evaluation.getCompulsoryTextItemsAllowed() ;
+	        UIBranchContainer compulsoryTextItemsAllowedBranch = UIBranchContainer.make(form, "compulsoryTextItemsAllowed_branch:");
+
+       		generateSettingsControlledCheckbox(compulsoryTextItemsAllowedBranch, 
+     			"compulsoryTextItemsAllowed", evaluationOTP + "compulsoryTextItemsAllowed", compulsoryTextItemsAllowed, form,
+       			EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        }
+
         // ADMIN SETTINGS SECTION
 
         UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 

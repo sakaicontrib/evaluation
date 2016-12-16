@@ -1708,6 +1708,9 @@ table.tablesorter th.header.headerSortDown {
   display: inline-block;
   left: 0;
 }
+.evaluation .item .validFail .title .required {
+  display: inline-block;
+}
 .evaluation .item .numberWrapper {
   text-align: right;
   display: -moz-inline-box;

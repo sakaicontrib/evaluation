@@ -160,6 +160,11 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
     public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
         this.httpServletResponse = httpServletResponse;
     }
+    
+    private RenderingUtils renderingUtils;
+    public void setRenderingUtils(RenderingUtils renderingUtils) {
+		this.renderingUtils = renderingUtils;
+	}
 
     
     private EvalExternalLogic evalExternalLogic;
@@ -694,7 +699,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
         }
 
         // setup the render properties to send along
-        Map<String, Object> renderProps = RenderingUtils.makeRenderProps(dti, eval, missingKeys, null);
+        Map<String, Object> renderProps = renderingUtils.makeRenderProps(dti, eval, missingKeys, null);
         // render the item
         if (LOG.isDebugEnabled()) {
             LOG.debug("render item: num="+displayNumber+" (count="+renderedItemCount+"), render="+renderProps+", templateItem="+templateItem);
