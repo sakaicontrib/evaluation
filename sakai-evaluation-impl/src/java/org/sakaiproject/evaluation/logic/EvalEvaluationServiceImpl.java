@@ -1003,6 +1003,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             if (eval.getReminderEmailTemplate() != null) {
                 emailTemplateId = eval.getReminderEmailTemplate().getId();
             }
+        } else if (EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplateTypeConstant)) {
+            if (eval.getSubmissionConfirmationEmailTemplate() != null) {
+                emailTemplateId = eval.getSubmissionConfirmationEmailTemplate().getId();
+            }
         } else {
             throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
         }
