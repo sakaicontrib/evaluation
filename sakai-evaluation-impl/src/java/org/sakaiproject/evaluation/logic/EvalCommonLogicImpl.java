@@ -45,6 +45,8 @@ import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SiteService.SortType;
 
 /**
  * This is the implementation for the base service
@@ -949,6 +951,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 		}
 		
 		return externalLogic.isUserReadonlyAdmin(userId);
+	}
+
+    public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults) {
+		return externalLogic.searchForEvalGroupIds(searchString, order, startResult, maxResults);
 	}
 
 }

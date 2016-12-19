@@ -28,4 +28,9 @@ public class AdministrateSearchBean
 	{
 		return "administrateSearchBean.processSearch";
 	}
+	
+	public String processSearchForGroups()
+	{
+		return "administrateSearchBean.processSearchForGroups";
+	}
 }

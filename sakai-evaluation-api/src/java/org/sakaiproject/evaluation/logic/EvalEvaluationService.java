@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -737,4 +738,12 @@ public interface EvalEvaluationService {
 
     public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType);
 
+	
+ 	/**
+ 	 * Retrieve a list of evaluations with matching eval group Ids.
+ 	 * @param startResult Results set will start at this minimum count
+ 	 * @param maxResults Results set will end at this limit count
+ 	 * @param searchString Text to match. If empty no results are sent back
+ 	 */
+ 	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, int startResult, int maxResults);
 }

@@ -664,6 +664,18 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         // TODO Auto-generated method stub
     }
 
+    @SuppressWarnings("unchecked")
+    public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults) {
+        List<String> sitesIds = (List<String>) EvalTestDataLoad.EMPTY_LIST;
+        if (EvalTestDataLoad.SITE1_TITLE.contains(searchString)){
+            sitesIds.add(EvalTestDataLoad.SITE1_REF);
+        }
+        if (EvalTestDataLoad.SITE2_TITLE.contains(searchString)){
+            sitesIds.add(EvalTestDataLoad.SITE2_REF);
+        }
+        return sitesIds;
+    }
+
     @Override
     public boolean isUserReadonlyAdmin(String userId) {
         // TODO Auto-generated method stub

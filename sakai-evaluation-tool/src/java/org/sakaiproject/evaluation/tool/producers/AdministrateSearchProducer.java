@@ -44,6 +44,7 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -54,6 +55,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class AdministrateSearchProducer extends EvalCommonProducer implements ViewParamsReporter {
 	public static int PAGE_SIZE = 20;
+	public static int MAX_GROUP_SIZE = 200;
 
 	/**
 	 * This is used for navigation within the system.
@@ -104,12 +106,14 @@ public class AdministrateSearchProducer extends EvalCommonProducer implements Vi
 	 */
 	public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String searchString = "";
+		boolean searchForGroups = false;
 		int page = 0;
 		if(viewparams instanceof AdminSearchViewParameters)
 		{
 			AdminSearchViewParameters asvp = (AdminSearchViewParameters) viewparams;
 			searchString = asvp.searchString;
 			page = asvp.page;
+			searchForGroups = asvp.searchGroups;
 		}
 
 		String currentUserId = commonLogic.getCurrentUserId();
@@ -137,6 +141,10 @@ public class AdministrateSearchProducer extends EvalCommonProducer implements Vi
 		UICommand.make(searchForm, "search-text", 
 				UIMessage.make("administrate.search.submit.title"), 
 				"administrateSearchBean.processSearch");
+		UICommand.make(searchForm, "search-text-group", 
+				UIMessage.make("administrate.search.submit.title.group"), 
+				"administrateSearchBean.processSearchForGroups");
+		RSFUtil.addBasicFormParameter(searchForm, new UIParameter("searchForGroups", "0"));
 		searchForm.parameters.add(new UIELBinding("administrateSearchBean.page", 0));
 		RSFUtil.addResultingViewBinding(searchForm, "page", "#{administrateSearchBean.page}");
 
@@ -146,43 +154,62 @@ public class AdministrateSearchProducer extends EvalCommonProducer implements Vi
 
 		if(searchString != null && ! searchString.trim().equals(""))
 		{
+			
+			
 			int startResult = page * PAGE_SIZE;
 			int maxResults = PAGE_SIZE;
 			String order = "title";
+			List<EvalEvaluation> evals = new ArrayList<EvalEvaluation>();
+			int count = 0;
 
-			int count = this.evaluationService.countEvaluations(searchString);
+			if (searchForGroups){
+				// do the search for groups and get the results
+				List<String> assignGroups = commonLogic.searchForEvalGroupIds(searchString, order, startResult, MAX_GROUP_SIZE);
+				evals = evaluationService.getEvaluationsForEvalGroups(assignGroups.toArray(new String[assignGroups.size()]), 0, 0); //get all evaluations
+				
+				if (assignGroups.size() >= MAX_GROUP_SIZE){
+					//show 'too many results' messages
+					UIMessage.make(tofill, "results-max", "administrate.search.results.max", new String[]{String.valueOf(assignGroups.size())});
+				}
+				count = evals.size();
+			}else{
+				count = evaluationService.countEvaluations(searchString);
+			}
+						
 			if(count > 0)
 			{
-				// do the search and get the results
-				List<EvalEvaluation> evals = this.evaluationService.getEvaluations(searchString, order, startResult, maxResults);
+				if (!searchForGroups){
+					// do the search for evaluation titles and get the results
+					evals = this.evaluationService.getEvaluations(searchString, order, startResult, maxResults);
 
-				int actualStart = startResult + 1;
-				int actualEnd = startResult + evals.size();
-				if(count > PAGE_SIZE)
-				{
-					// show count and pager
-					// show x - y of z message
-					UIMessage.make(tofill, "pager-count-message", "administrate.search.pager.label", new String[]{ nf.format(actualStart), nf.format(actualEnd), nf.format(count) });
-					// show pager
-					if(page > 0)
+					int actualStart = startResult + 1;
+					int actualEnd = startResult + evals.size();
+					if(count > PAGE_SIZE)
 					{
-						// show "previous" pager
-						UIInternalLink.make(tofill, "previous", new AdminSearchViewParameters(VIEW_ID, searchString, page - 1));
-					}
-					else
-					{
-						// show disabled "previous" pager
-						UIOutput.make(tofill, "no-previous");
-					}
-					if(count > startResult + maxResults)
-					{
-						// show "next" pager
-						UIInternalLink.make(tofill, "next", new AdminSearchViewParameters(VIEW_ID, searchString, page + 1));
-					}
-					else
-					{
-						//show disabled "next" pager
-						UIOutput.make(tofill, "no-next");
+						// show count and pager
+						// show x - y of z message
+						UIMessage.make(tofill, "pager-count-message", "administrate.search.pager.label", new String[]{ nf.format(actualStart), nf.format(actualEnd), nf.format(count) });
+						// show pager
+						if(page > 0)
+						{
+							// show "previous" pager
+							UIInternalLink.make(tofill, "previous", new AdminSearchViewParameters(VIEW_ID, searchString, page - 1, searchForGroups));
+						}
+						else
+						{
+							// show disabled "previous" pager
+							UIOutput.make(tofill, "no-previous");
+						}
+						if(count > startResult + maxResults)
+						{
+							// show "next" pager
+							UIInternalLink.make(tofill, "next", new AdminSearchViewParameters(VIEW_ID, searchString, page + 1, searchForGroups));
+						}
+						else
+						{
+							//show disabled "next" pager
+							UIOutput.make(tofill, "no-next");
+						}
 					}
 				}
 
