@@ -339,6 +339,9 @@ public class RenderingUtils {
      */
     public static void renderResultsColumn(UIBranchContainer container, EvalEvaluation eval, EvalGroup group, 
             Date viewDate, DateFormat df, int responsesNeeded, int responsesRequired, boolean evalResultsViewable) {
+
+        Date now = new Date();
+
         if (container == null) { throw new IllegalArgumentException("container must be set"); }
         if (eval == null) { throw new IllegalArgumentException("eval must be set"); }
         String evalState = EvalUtils.getEvaluationState(eval, true);
@@ -376,7 +379,7 @@ public class RenderingUtils {
             // indicate the viewable date as well
             resultOutput.decorate(new UITooltipDecorator(
                     UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-        } else if (!evalResultsViewable) {
+        } else if (now.before(viewDate) || !evalResultsViewable) {
             // not viewable yet because of the view date
             UIOutput resultOutput = UIOutput.make(container, "evalReportDisplay", viewableDate );
             if ( responsesNeeded == 0 ) {
