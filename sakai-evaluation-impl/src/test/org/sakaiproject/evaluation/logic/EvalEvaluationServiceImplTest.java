@@ -1458,6 +1458,17 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 		
 		
 	}
+	
+	public void testGetEvaluationsForEvalGroups(){
+		//first get the eval group Ids
+		String searchString = "Site1";
+		String order = "title";
+		int MAX_SEARCH = 1;
+		List<String> sitesIds = externalLogic.searchForEvalGroupIds(searchString, "", 0, MAX_SEARCH);
+		Assert.assertEquals(1, sitesIds.size());
+		List<EvalEvaluation> evaluations = evaluationService.getEvaluationsForEvalGroups(sitesIds.toArray(new String[sitesIds.size()]), 0, 0);
+		Assert.assertEquals(7, evaluations.size());
+	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluations(java.lang.String, java.lang.String, int, int)}.

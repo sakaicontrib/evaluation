@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,9 @@ import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
 import org.sakaiproject.evaluation.toolaccess.ToolApi;
+import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.site.api.SiteService.SortType;
 
 /**
  * Implementation of the evals service,
@@ -102,6 +106,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             String evaluateeId, OutputStream outputStream, String exportType) {
         toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
     }
+
+    private SiteService siteService;
+    public void setSiteService(SiteService siteService) {
+        this.siteService = siteService;
+    }
+
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationById(java.lang.Long)
      */
@@ -1220,4 +1230,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     
+	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, int startResult, int maxResults){
+		if( evalGroupIds.length > 0){
+			return  dao.getEvaluationsForOwnerAndGroups("", evalGroupIds, null, startResult, maxResults, Boolean.TRUE);
+		}else{
+			return new ArrayList<EvalEvaluation>();
+		}
+	}
+
 }

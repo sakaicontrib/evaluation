@@ -74,6 +74,9 @@ import org.sakaiproject.entity.api.EntityPropertyTypeException;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.EntityReference;
+import org.sakaiproject.entitybroker.entityprovider.search.Order;
+import org.sakaiproject.entitybroker.entityprovider.search.Restriction;
+import org.sakaiproject.entitybroker.entityprovider.search.Search;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider;
@@ -97,6 +100,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.javax.PagingPosition;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
@@ -1308,6 +1312,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         return FormattedText.convertFormattedTextToPlaintext(html);
     }
 
+	public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults) {
+		//for now support sakai sites only TODO:// support hierarchy and adhoc groups. Ordering?
+		List<String> sakaiSites = new ArrayList<String>(); //keep site ref 
+		List<Site> searchResults = siteService.getSites(SiteService.SelectionType.ANY, null, searchString, null, SiteService.SortType.TITLE_ASC, new PagingPosition(1, maxResults));
+		for ( Object rawSite : searchResults){
+			Site site = (Site) rawSite;
+			sakaiSites.add(site.getReference());
+		}
+		return sakaiSites;
+	}
 
     // JOBS related pass-through methods
 

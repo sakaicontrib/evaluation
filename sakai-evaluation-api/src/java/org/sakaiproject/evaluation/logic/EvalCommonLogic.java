@@ -24,11 +24,13 @@ import org.sakaiproject.evaluation.logic.externals.ExternalScheduler;
 import org.sakaiproject.evaluation.logic.externals.ExternalSecurity;
 import org.sakaiproject.evaluation.logic.externals.ExternalTextUtils;
 import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 
 
 /**
@@ -243,6 +245,24 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
 	 * @return true if the user is an eval admin, false otherwise
 	 */
 	public boolean isUserEvalAdmin(String userId);
+    
+    /**
+     * Get a list of evaluation groups that contain the search term.
+     * SUPPORTED: Search assign groups of type Sakai Site
+     * <br><br><i>
+     * NOT YET SUPPORTED: This will search all supported group types by attribute: 
+     * <ul><li>{@link EvalAdhocGroup#getTitle()}</li> 
+     * <li>{@link EvalAssignGroup} searched by corresponding title (eg: sakai site title)</li>
+     * <li>{@link EvalHierarchyNode#title}</li></ul></i>
+     * 
+     * @param searchString Text to match. If empty no results are sent back
+     * @param order Field to order the groups
+     * @param startResult Results set will start at this minimum count
+     * @param maxResults Results set will end at this limit count
+     * 
+     * @return An ordered list of eval group ids
+     */
+    public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults);
 
 
     // PROVIDERS
