@@ -36,12 +36,13 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 public class NavBarRenderer {
 
-	private EvalCommonLogic commonLogic;
+    private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
         this.commonLogic = commonLogic;
     }
@@ -67,6 +68,7 @@ public class NavBarRenderer {
         this.developerHelperService = developerHelperService;
     }
 
+    private static final String SAK_PROP_ENABLE_EXTRA_STUDENT_LINKS = "evalsys.enable.extra.student.links";
     private static final String SAK_PROP_UI_SERVICE = "ui.service";
     private static final String UI_SERVICE_DEFAULT = "Sakai";
     private ServerConfigurationService serverConfigurationService;
@@ -79,8 +81,8 @@ public class NavBarRenderer {
     
     public static String NAV_ELEMENT = "navIntraTool:";
     
-	public void makeNavBar(UIContainer tofill, String divID, String currentViewID) {
-		
+    public void makeNavBar(UIContainer tofill, String divID, String currentViewID) {
+
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
         boolean isUserAdmin = commonLogic.isUserAdmin(currentUserId);
@@ -90,51 +92,55 @@ public class NavBarRenderer {
         boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK));
         boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS));
         boolean adminAllowedToSee = isUserAdmin && showMyToplinks;
-        
+
         // set a few local variables
         this.currentViewID = currentViewID;
-        
+
         if (isUserAdmin) {
             renderLink(joint, AdministrateProducer.VIEW_ID, "administrate.page.title");
         }
 
         // Provide logout and my workspace links
-        if( !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation )
+        boolean enableExtraStudentLinks = serverConfigurationService.getBoolean( SAK_PROP_ENABLE_EXTRA_STUDENT_LINKS, true );
+        if( !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation && enableExtraStudentLinks )
         {
-            UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
+            UIFreeAttributeDecorator targetDecorator = new UIFreeAttributeDecorator( "target", "_parent" );
+            UILink workspaceLink = UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
                     UIMessage.make( "summary.myworkspace.link.label" ), 
                     developerHelperService.getUserHomeLocationURL( developerHelperService.getCurrentUserReference() ) );
+            workspaceLink.decorate( targetDecorator );
 
-            UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
+            UILink logoutLink = UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
                     UIMessage.make( "summary.logout.link.label", new Object[] { serverConfigurationService.getString( SAK_PROP_UI_SERVICE, UI_SERVICE_DEFAULT ) } ), 
                     developerHelperService.getPortalURL() + "/logout" );
+            logoutLink.decorate( targetDecorator );
         }
 
         renderLink(joint, SummaryProducer.VIEW_ID, "summary.page.title");
         
         if(adminAllowedToSee || showMyToplinks) {
-        	
-        	if (adminAllowedToSee || canBeginEvaluation) {
-        		renderLinkForMyEvals(joint, ControlEvaluationsProducer.VIEW_ID, "controlevaluations.page.title");
-        	}
-        	
-        	if (adminAllowedToSee || canCreateTemplate) {
-        		renderLink(joint, ControlTemplatesProducer.VIEW_ID, "controltemplates.page.title");
-        		if (adminAllowedToSee || ! hideQuestionBank) {
-        			renderLink(joint, ControlItemsProducer.VIEW_ID, "controlitems.page.title");
-        		}
-        		renderLink(joint, ControlScalesProducer.VIEW_ID, "controlscales.page.title");
-        	}
 
-        	if (adminAllowedToSee || canBeginEvaluation) {
-        		renderLink(joint, ControlEmailTemplatesProducer.VIEW_ID, "controlemailtemplates.page.title"); 
-        	}
+            if (adminAllowedToSee || canBeginEvaluation) {
+                renderLinkForMyEvals(joint, ControlEvaluationsProducer.VIEW_ID, "controlevaluations.page.title");
+            }
+
+            if (adminAllowedToSee || canCreateTemplate) {
+                renderLink(joint, ControlTemplatesProducer.VIEW_ID, "controltemplates.page.title");
+                if (adminAllowedToSee || ! hideQuestionBank) {
+                    renderLink(joint, ControlItemsProducer.VIEW_ID, "controlitems.page.title");
+                }
+                renderLink(joint, ControlScalesProducer.VIEW_ID, "controlscales.page.title");
+            }
+
+            if (adminAllowedToSee || canBeginEvaluation) {
+                renderLink(joint, ControlEmailTemplatesProducer.VIEW_ID, "controlemailtemplates.page.title"); 
+            }
 
          if (adminAllowedToSee) {
             renderLink(joint, AssignPermissionsProducer.VIEW_ID, "assignPermissions.link.display");
          }
         }
-        
+
         //handle breadcrumb rendering here. TODO: Review
         UIInternalLink.make(tofill, "summary-link", 
                 UIMessage.make("summary.page.title"), 
@@ -149,37 +155,36 @@ public class NavBarRenderer {
                 UIMessage.make("controlevaluations.page.title"),
                 new EvalListParameters(ControlEvaluationsProducer.VIEW_ID,6));
         if(isUserAdmin || canCreateTemplate){
-        	UIInternalLink.make(tofill, "control-templates-link",
-    				UIMessage.make("controltemplates.page.title"), 
-    				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-        	if(isUserAdmin || ! hideQuestionBank){
-            	UIInternalLink.make(tofill, "control-scales-link",
+            UIInternalLink.make(tofill, "control-templates-link",
+                    UIMessage.make("controltemplates.page.title"), 
+                    new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+            if(isUserAdmin || ! hideQuestionBank){
+                UIInternalLink.make(tofill, "control-scales-link",
                         UIMessage.make("controlscales.page.title"),
                         new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
             }
         }
-	
-	}
-	
-	private void renderLink(UIJointContainer joint, String linkViewID, String messageKey) {
+    }
 
-		UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
-		UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
-				new SimpleViewParameters(linkViewID));
+    private void renderLink(UIJointContainer joint, String linkViewID, String messageKey) {
 
-		if (currentViewID != null && currentViewID.equals(linkViewID)) {
-			link.decorate( new UIStyleDecorator("inactive"));
-		}
-	}
-	
-	private void renderLinkForMyEvals(UIJointContainer joint, String linkViewID, String messageKey) {
+        UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
+        UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
+                new SimpleViewParameters(linkViewID));
 
-		UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
-		UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
-				new EvalListParameters(linkViewID,6));
+        if (currentViewID != null && currentViewID.equals(linkViewID)) {
+            link.decorate( new UIStyleDecorator("inactive"));
+        }
+    }
 
-		if (currentViewID != null && currentViewID.equals(linkViewID)) {
-			link.decorate( new UIStyleDecorator("inactive"));
-		}
-	}
+    private void renderLinkForMyEvals(UIJointContainer joint, String linkViewID, String messageKey) {
+
+        UIBranchContainer cell = UIBranchContainer.make(joint, "navigation-cell:");
+        UIInternalLink link = UIInternalLink.make(cell, "item-link", UIMessage.make(messageKey),
+                new EvalListParameters(linkViewID,6));
+
+        if (currentViewID != null && currentViewID.equals(linkViewID)) {
+            link.decorate( new UIStyleDecorator("inactive"));
+        }
+    }
 }
