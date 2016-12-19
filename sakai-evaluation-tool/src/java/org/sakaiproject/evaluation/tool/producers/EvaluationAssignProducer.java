@@ -544,7 +544,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 
             UIMessage.make(adhocGroupsArea, "adhoc-groups-deleted", "modifyadhocgroup.group.deleted");
             addCollapseControl(tofill, adhocGroupsArea, "initJSAdhocToggle",
-                    "adhocgroups-assignment-area", "hide-button", "show-button", true);
+                    "adhocgroups-assignment-area", "hide-button", "show-button", false);
 
             // Table of Existing adhoc groups for selection
             List<EvalAdhocGroup> myAdhocGroups = commonLogic.getAdhocGroupsForOwner(currentUserId);
