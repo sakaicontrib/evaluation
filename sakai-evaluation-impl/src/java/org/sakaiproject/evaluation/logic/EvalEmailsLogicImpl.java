@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -41,6 +42,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
+import org.sakaiproject.util.ResourceLoader;
 
 /**
  * EvalEmailsLogic implementation,
@@ -85,6 +87,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         
     }
 
+    protected static ResourceLoader rb = new ResourceLoader("eval-emailMessage");
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
@@ -1279,27 +1282,39 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalSubmissionConfirmationEmail(java.lang.Long)
      */
-	public String sendEvalSubmissionConfirmationEmail(String userId, Long evaluationId) {
-	    String to = null;
-	    Boolean sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+    public String sendEvalSubmissionConfirmationEmail(String userId, Long evaluationId) {
+        String to = null;
+        Boolean sendConfirmation = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
 
-	    if (sendConfirmation) {
-	        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-	        String from = getFromEmailOrFail(eval);
-	        //get the template
-	        EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, evaluationId);
-	        if (emailTemplate != null) {
-	            //make email and do the variable substitutions
-	            EvalEmailMessage em = makeEmailMessage(emailTemplate.getMessage(), emailTemplate.getSubject(), eval, null);
-	            // send the actual email for this user
-	            String[] emailAddresses = sendUsersEmails(from, new String[]{userId}, em.subject, em.message);
-	            if (emailAddresses.length > 0){
-	                LOG.info("Sent Submission Confirmation email to " + userId + ". (attempted to send to "+emailAddresses.length+")");	                
-	                commonLogic.registerEntityEvent(EVENT_EMAIL_SUBMISSION, EvalEvaluation.class, eval.getId().toString());
-	            }
-	        }
-	    }
-	    return to;
-	}
+        if (sendConfirmation) {
+            EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+            String from = getFromEmailOrFail(eval);
+            //get the template
+            EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_SUBMITTED, evaluationId);
+            if (emailTemplate != null) {
+
+                // Subject and message should never be empty or null - EVALSYS-1441
+                String subject = emailTemplate.getSubject();
+                if (StringUtils.isBlank(subject)) {
+                    subject = rb.getString("submission.confirmation.email.title");
+                }
+
+                String message = emailTemplate.getMessage();
+                if (StringUtils.isBlank(message)) {
+                    message = rb.getString("submission.confirmation.email.message");
+                }
+
+                //make email and do the variable substitutions
+                EvalEmailMessage em = makeEmailMessage(message, subject, eval, null);
+                // send the actual email for this user
+                String[] emailAddresses = sendUsersEmails(from, new String[]{userId}, em.subject, em.message);
+                if (emailAddresses.length > 0){
+                    LOG.info("Sent Submission Confirmation email to " + userId + ". (attempted to send to "+emailAddresses.length+")");	                
+                    commonLogic.registerEntityEvent(EVENT_EMAIL_SUBMISSION, EvalEvaluation.class, eval.getId().toString());
+                }
+            }
+        }
+        return to;
+    }
 
 }

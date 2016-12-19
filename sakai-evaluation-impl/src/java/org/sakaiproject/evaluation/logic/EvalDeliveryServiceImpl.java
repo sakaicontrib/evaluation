@@ -213,7 +213,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
                   }
             }catch(Exception e){
-            	LOG.debug("Unable to send the confirmation email to user: " + userId);
+            	LOG.warn("Unable to send the confirmation email to user: " + userId, e);
             }
             
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
