@@ -14,45 +14,29 @@
  */
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.*;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HumanDateRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalListParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-
-import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UICommand;
-import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIELBinding;
-import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UILink;
-import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.*;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+
+import java.text.DateFormat;
+import java.util.*;
 
 /**
  * This lists evaluations for users so they can add, modify, remove them
@@ -202,10 +186,16 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "partial-eval-row:", evaluation.getId().toString());
 
             UIOutput.make(evaluationRow, "partial-eval-title", evaluation.getTitle() );
+            UIOutput.make(evaluationRow, "partial-eval-created", df.format(evaluation.getLastModified()));
+            EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
+            UIOutput.make(evaluationRow, "partial-eval-owner", owner.displayName);
 
             UIInternalLink.make(evaluationRow, "partial-eval-edit-link", UIMessage.make("controlevaluations.partial.continue"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
-            UIInternalLink.make(evaluationRow, "partial-eval-delete-link", UIMessage.make("general.command.delete"), 
+
+            UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
+                  new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
+            UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"),
                   new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
 
             humanDateRenderer.renderDate(evaluationRow, "partial-eval-created", evaluation.getLastModified());
@@ -256,6 +246,9 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
+            UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
+                  new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
+
             // do the locked check first since it is more efficient
             if ( ! evaluation.getLocked() &&
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
@@ -281,6 +274,8 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-startdate", evaluation.getStartDate());
 
             // TODO add support for evals that do not close - summary.label.nevercloses
+            EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
+            UIOutput.make(evaluationRow, "inqueue-eval-owner", owner.displayName);
             humanDateRenderer.renderDate(evaluationRow, "inqueue-eval-duedate", evaluation.getSafeDueDate());
 
          }
@@ -343,6 +338,8 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
 
             humanDateRenderer.renderDate(evaluationRow, "active-eval-startdate", evaluation.getStartDate());
             // TODO add support for evals that do not close - summary.label.nevercloses
+            EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
+            UIOutput.make(evaluationRow, "active-eval-owner", owner.displayName);
             humanDateRenderer.renderDate(evaluationRow, "active-eval-duedate", evaluation.getSafeDueDate());
 
             // calculate the response rate
@@ -397,7 +394,10 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
 
             UIInternalLink.make(evaluationRow, "closed-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
                     new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
-
+            EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
+            UIOutput.make(evaluationRow, "closed-eval-owner", owner.displayName);
+            UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
+                    new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
             if (reopeningAllowed) {
                // add in link to settings page with reopen option
                UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),

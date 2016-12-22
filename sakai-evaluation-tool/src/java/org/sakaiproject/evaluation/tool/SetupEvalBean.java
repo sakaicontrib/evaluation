@@ -92,7 +92,11 @@ public class SetupEvalBean {
 	 */
 	public boolean reOpening = false;
 
-    /** 
+    /**
+     * Set to the owner of this evaluation
+     */
+    public String evaluationOwner;
+    /**
      * Whether to navigate to administrate_search view after saving settings
      */
     public boolean returnToSearchResults = false;
@@ -226,6 +230,58 @@ public class SetupEvalBean {
 						.getTitle() }, TargettedMessage.SEVERITY_INFO));
 		return "success";
 	}
+
+    /**
+     * Chown a evaluation and create a user message,
+     * evaluationId must be set
+     */
+    public String chownEvalAction() {
+        String ownerId = commonLogic.getCurrentUserId();
+
+        // check if this is a valid username for an existing user
+        String userId = null;
+        String internalUserId = commonLogic.getUserId(evaluationOwner);
+        if (internalUserId == null) {
+            internalUserId = evaluationOwner;
+        }
+        // look up the username by their internal id
+        EvalUser user = commonLogic.getEvalUserById(internalUserId);
+        if (EvalConstants.USER_TYPE_EXTERNAL.equals(user.type)
+                || EvalConstants.USER_TYPE_INTERNAL.equals(user.type)) {
+            userId = user.userId;
+            evaluationOwner = user.displayName;
+        } else {
+            // check if this is an email belonging to an existing user
+            user = commonLogic.getEvalUserByEmail(evaluationOwner);
+            if (EvalConstants.USER_TYPE_EXTERNAL.equals(user.type)
+                    || EvalConstants.USER_TYPE_INTERNAL.equals(user.type)) {
+                userId = user.userId;
+                evaluationOwner = user.displayName;
+            }
+        }
+
+        EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
+
+        if (null == userId) {
+            messages.addMessage( new TargettedMessage("controltemplates.chown.nouser.message",
+                    new Object[] {evaluation.getTitle(), evaluationOwner}, TargettedMessage.SEVERITY_ERROR) );
+            return "failed";
+        }
+
+        if (!evaluationService.canControlEvaluation(ownerId, evaluationId) ||
+                !evaluationService.canBeginEvaluation(userId)) {
+            messages.addMessage( new TargettedMessage("controlevaluations.chown.permission.message",
+                    new Object[] {evaluation.getTitle(), evaluationOwner}, TargettedMessage.SEVERITY_ERROR) );
+            return "failed";
+        }
+
+        evaluationService.updateEvaluationOwner(evaluationId, userId );
+
+        messages.addMessage(new TargettedMessage("controlevaluations.chown.user.message",
+                new Object[]{evaluation.getTitle(), evaluationOwner}, TargettedMessage.SEVERITY_INFO));
+        return "success";
+    }
+
 
 	/**
 	 * Handles close eval action from control evaluations view

@@ -544,6 +544,12 @@
 		<property name="navBarRenderer" ref="navBarRenderer" />	
     </bean>
 
+    <bean class="org.sakaiproject.evaluation.tool.producers.ChownEvaluationProducer">
+        <property name="evaluationService"
+             ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="navBarRenderer" ref="navBarRenderer" />
+    </bean>
+
 
     <!-- TEMPLATE ITEMS -->
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">

@@ -72,6 +72,9 @@
                         <th rsf:id="msg=controlevaluations.partial.created.date.header" width="10%">
                             Created On
                         </th>
+                        <th rsf:id="msg=controlevaluations.partial.owner.header" width="10%">
+                            Owner
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,9 +85,13 @@
                         <td class="itemAction screenOnly">
                             <a rsf:id="partial-eval-edit-link" href="evaluation_settings.html">Continue</a>
                             <a rsf:id="partial-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
+                            <a rsf:id="evaluation-chown-link" href="chown_evaluation.html">Change Owner</a>
                         </td>
                         <td rsf:id="partial-eval-created" nowrap="nowrap">
                             20/03/2007
+                        </td>
+                        <td rsf:id="partial-eval-owner" nowrap="nowrap">
+                            Owner
                         </td>
                     </tr>
                 </tbody>
@@ -114,6 +121,9 @@
                         <th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">
                             Due Date
                         </th>
+                        <th rsf:id="msg=controlevaluations.eval.owner.header" width="10%">
+                            Owner
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,6 +137,7 @@
                             <a rsf:id="inqueue-eval-edit-link" href="evaluation_settings.html">Edit</a>
                             <a rsf:id="inqueue-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
                             <a rsf:id="inqueue-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
+                            <a rsf:id="evaluation-chown-link" href="chown_evaluation.html">Change Owner</a>
                         </td>
                         <td headers="assignedinqueue">
                             <a rsf:id="inqueue-eval-assigned-link" href="evaluation_assign_confirm.html">Course 1010</a>
@@ -137,6 +148,9 @@
                         </td>
                         <td rsf:id="inqueue-eval-duedate" nowrap="nowrap" headers="dueinqueue">
                             20/03/2007
+                        </td>
+                        <td rsf:id="inqueue-eval-owner" nowrap="nowrap" headers="ownerinqueue">
+                            Owner
                         </td>
                     </tr>
                 </tbody>
@@ -175,6 +189,9 @@
                         <th rsf:id="msg=controlevaluations.eval.report.header" width="15%" class="screenOnly">
                             Report
                         </th>
+                        <th rsf:id="msg=controlevaluations.eval.owner.header" width="10%">
+                            Owner
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,6 +208,7 @@
                             <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm left-separator">
                                 <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" onclick="SPNR.disableControlsAndSpin( this, null );" />
                             </form>
+                            <a rsf:id="evaluation-chown-link" href="chown_evaluation.html">Change Owner</a>
                         </td>
                         <td headers="assignedact">
                             <a rsf:id="active-eval-assigned-link" href="evaluation_assign_confirm.html">12</a>
@@ -210,6 +228,9 @@
                           <span rsf:id="evalReportDisplay"></span>
                           <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
                           <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                        </td>
+                        <td headers="owneract" nowrap="nowrap">
+                            <span rsf:id="active-eval-owner"> Owner</span>
                         </td>
                     </tr>
                 </tbody>
@@ -248,6 +269,9 @@
                         <th rsf:id="msg=controlevaluations.eval.report.header" width="15%" class="screenOnly">
                             Report
                         </th>
+                        <th rsf:id="msg=controlevaluations.eval.owner.header" width="10%">
+                            Owner
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -281,6 +305,9 @@
                           <span rsf:id="evalReportDisplay"></span>
                           <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
                           <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+                        </td>
+                        <td rsf:id="closed-eval-owner" headers="ownerclosed" nowrap="nowrap">
+                            Owner
                         </td>
                     </tr>
                 </tbody>
