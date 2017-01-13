@@ -115,7 +115,7 @@
             <column name="REMINDER_EMAIL_TEMPLATE_FK" />
         </many-to-one>
         <!-- email template used to send the "eval submission confirmation" notification message -->
-        <many-to-one name="submissionConfirmationEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_SUBMISSION_EMAIL_TEMP" lazy="proxy" fetch="select">
+        <many-to-one name="submissionConfirmationEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_SUBMISSION_EMAIL_TP" lazy="proxy" fetch="select">
             <column name="SUBMISSION_EMAIL_TEMPLATE_FK" />
         </many-to-one>        
         <!-- the template which contains the main set of items for this evaluation -->
