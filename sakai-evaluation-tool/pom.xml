@@ -24,60 +24,6 @@
 
     <profiles>
         <profile>
-            <id>sakai-12</id>
-			<activation> 
-				<activeByDefault>true</activeByDefault>
-			</activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.sakaiproject.kernel</groupId>
-                    <artifactId>sakai-kernel-util</artifactId>
-                </dependency>
-                <dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-component-manager</artifactId>
-                </dependency>
-                <dependency>
-                	<groupId>org.sakaiproject.scheduler</groupId>
-					<artifactId>scheduler-api</artifactId>
-				</dependency>
-		        <!-- RSF dependencies -->
-		        <dependency>
-		            <groupId>org.sakaiproject.rsf</groupId>
-		            <artifactId>sakai-rsf-core</artifactId>
-		            <version>${project.version}</version>
-		            <type>jar</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.sakaiproject.rsf</groupId>
-		            <artifactId>sakai-rsf-web-evolvers</artifactId>
-		            <version>${project.version}</version>
-		            <type>jar</type>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.sakaiproject.rsf</groupId>
-		            <artifactId>sakai-rsf-web-templates</artifactId>
-		            <version>${project.version}</version>
-		            <type>war</type>
-		        </dependency>
-            	<dependency>
-            		<groupId>org.springframework</groupId>
-            		<artifactId>spring-webmvc</artifactId>
-        			<scope>compile</scope>
-            	</dependency>
-               <!-- Spring dependency -->
-               <dependency>
-                 <groupId>org.springframework</groupId>
-                 <artifactId>spring-core</artifactId>
-               </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <!-- profile to compress the JS files on demand: use -PcompressJS to run this -->
             <id>compressJS</id>
             <build>
@@ -109,10 +55,53 @@
         </profile>
     </profiles>
 
-
-
     <dependencies>
-        <!-- Evaluation dependencies -->
+        <dependency>
+            <groupId>org.sakaiproject.kernel</groupId>
+            <artifactId>sakai-kernel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.kernel</groupId>
+            <artifactId>sakai-kernel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.kernel</groupId>
+            <artifactId>sakai-component-manager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.scheduler</groupId>
+            <artifactId>scheduler-api</artifactId>
+        </dependency>
+        <!-- RSF dependencies -->
+        <dependency>
+            <groupId>org.sakaiproject.rsf</groupId>
+            <artifactId>sakai-rsf-core</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.rsf</groupId>
+            <artifactId>sakai-rsf-web-evolvers</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.rsf</groupId>
+            <artifactId>sakai-rsf-web-templates</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Spring dependency -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+       <!-- Evaluation dependencies -->
         <dependency>
             <groupId>org.sakaiproject.evaluation</groupId>
             <artifactId>sakai-evaluation-api</artifactId>
