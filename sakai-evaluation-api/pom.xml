@@ -25,31 +25,19 @@
         <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
     </properties>
 
-	<profiles>
-	<profile>
-		<id>sakai-12</id>
-		
-		<activation>
-			<property><name>sakai-12</name></property>
-			<activeByDefault>true</activeByDefault>
-		</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-kernel-api</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>org.sakaiproject.kernel</groupId>
-					<artifactId>sakai-kernel-util</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>org.sakaiproject.scheduler</groupId>
-					<artifactId>scheduler-api</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 	<dependencies>
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sakaiproject.scheduler</groupId>
+			<artifactId>scheduler-api</artifactId>
+		</dependency>
 
 		<!-- Apache commons dependencies -->
 		<dependency>
