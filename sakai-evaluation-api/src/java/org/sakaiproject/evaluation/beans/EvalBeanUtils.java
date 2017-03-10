@@ -245,6 +245,18 @@ public class EvalBeanUtils {
         // make sure the dates are set
         Calendar calendar = new GregorianCalendar();
         Date now =  new Date();
+
+        // if default start hour is set, use it for start time (must be tomorrow as eval cannot start in the past).
+        Integer hour = (Integer) settings.get(EvalSettings.EVAL_DEFAULT_START_HOUR);
+        if (hour != null) {
+            // add 1 day to make it tomorrow
+            now.setTime(now.getTime() + 86400000L);
+            // set desired hour
+            now.setHours(hour);
+            now.setMinutes(0);
+            now.setSeconds(0);
+        }
+
         calendar.setTime( now );
         if (eval.getStartDate() == null) {
             eval.setStartDate(now);

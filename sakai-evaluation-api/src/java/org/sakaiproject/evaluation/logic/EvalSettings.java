@@ -228,6 +228,11 @@ public interface EvalSettings {
     public static final String EVAL_USE_DATE_TIME = "EVAL_USE_DATE_TIME:java.lang.Boolean";
 
     /**
+     * CONSTANT: Define default start hour for new evaluation - {@link Integer}, default current time<br/>
+     */
+    public static final String EVAL_DEFAULT_START_HOUR = "EVAL_DEFAULT_START_HOUR:java.lang.Integer";
+
+    /**
      * CONSTANT: Should we display Hierarchy Options and Information in the User Interface - {@link Boolean}, default False
      */
     public static final String DISPLAY_HIERARCHY_OPTIONS = "DISPLAY_HIERARCHY_OPTIONS:java.lang.Boolean";
