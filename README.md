@@ -2,6 +2,8 @@ Sakai Evaluation System (EVALSYS)
 
 This version of Evaluation is only compatible with Sakai 11 and Java 8
 
+When upgrading, refer to [conversion scripts for your database](https://github.com/sakaicontrib/evaluation/tree/master/sakai-evaluation-impl/src/ddl/conversion) for any required conversion scripts!
+
 Please see [branches in subversion](https://source.sakaiproject.org/contrib/evaluation/branches/) for older versions 
 
 To see a demo of this please go to [nightly experimental](https://experimental.nightly.sakaiproject.org/)
