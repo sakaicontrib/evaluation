@@ -38,7 +38,7 @@
             <column name="RESPONSE_FK" not-null="true" />
         </many-to-one>
         <!-- the textual answer if the associated item requires a text response -->
-        <property name="text" type="text">
+        <property name="text" type="materialized_clob">
             <column name="TEXT_ANSWER" />
         </property>
         <!-- the numeric answer if the associated item requires a number response -->
@@ -59,7 +59,7 @@
         <property name="associatedType" type="java.lang.String">
             <column name="ASSOCIATED_TYPE" />
         </property>
-        <property name="comment" type="text">
+        <property name="comment" type="materialized_clob">
             <column name="COMMENT_ANSWER" />
         </property>
     </class>

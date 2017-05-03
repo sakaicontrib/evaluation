@@ -36,11 +36,11 @@
             <column name="OWNER" not-null="true" length="255" />
         </property>
         <!-- the item text which is displayed to users -->
-        <property name="itemText" type="text">
+        <property name="itemText" type="materialized_clob">
             <column name="ITEM_TEXT" not-null="true" />
         </property>
         <!-- the description which is used for item editors only -->
-        <property name="description" type="text">
+        <property name="description" type="materialized_clob">
             <column name="DESCRIPTION" />
         </property>
         <!-- sharing setting for this item (private, public, etc...) -->
@@ -56,7 +56,7 @@
             <column name="EXPERT" not-null="true" index="eval_item_expert" />
         </property>
         <!-- the expert description of usage for this item -->
-        <property name="expertDescription" type="text">
+        <property name="expertDescription" type="materialized_clob">
             <column name="EXPERT_DESCRIPTION" />
         </property>
 		<!-- the scale for this item (if uses a scale) -->
