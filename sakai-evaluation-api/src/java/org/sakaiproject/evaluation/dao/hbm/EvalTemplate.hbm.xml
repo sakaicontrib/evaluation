@@ -44,7 +44,7 @@
             <column name="TITLE" not-null="true" length="255" />
         </property>
         <!-- the description that is displayed only when editing or selecting this template -->
-        <property name="description" type="text">
+        <property name="description" type="materialized_clob">
             <column name="DESCRIPTION" />
         </property>
         <!-- sharing setting for this template (private, public, etc...) -->
@@ -56,7 +56,7 @@
             <column name="EXPERT" not-null="true" />
         </property>
         <!-- the expert description for use of this template -->
-        <property name="expertDescription" type="text" />
+        <property name="expertDescription" type="materialized_clob" />
 		<!-- maps from templates to items via the itemtemplate joining table -->
         <set name="templateItems" inverse="true">
             <key column="template_id" not-null="true" />

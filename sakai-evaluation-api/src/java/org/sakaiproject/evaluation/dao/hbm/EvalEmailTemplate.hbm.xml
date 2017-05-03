@@ -37,11 +37,11 @@
             <column name="TEMPLATE_TYPE" not-null="true" length="255" />
         </property>
         <!-- the email template subject -->
-        <property name="subject" type="text">
+        <property name="subject" type="materialized_clob">
             <column name="SUBJECT" not-null="true" />
         </property>
         <!-- the email template message -->
-        <property name="message" type="text">
+        <property name="message" type="materialized_clob">
             <column name="MESSAGE" not-null="true" />
         </property>
         <!-- identifies this email template as a default template and indicates the type (reminder, available, etc.), use constants -->
