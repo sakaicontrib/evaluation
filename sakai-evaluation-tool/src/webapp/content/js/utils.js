@@ -429,10 +429,7 @@ evalsys.instrumentMatrixItem = function() {
 };
 
 evalsys.instrumentEssayText = function() {
-    if (typeof jQuery.elastic !== "undefined") {
-        alert("programming error: jquery elastic plugin is not loaded!");
-    }
-    jQuery(".item.text .content textarea").elastic();
+    autosize(document.querySelectorAll('textarea'));
 };
 
 evalsys.instrumentItems = function($container) {
