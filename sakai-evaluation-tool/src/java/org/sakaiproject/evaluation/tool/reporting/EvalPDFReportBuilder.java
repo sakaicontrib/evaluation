@@ -202,6 +202,9 @@ public class EvalPDFReportBuilder {
     	headerPara.setSpacingAfter(SPACING_AFTER_HEADER);
     	this.addElementWithJump(headerPara, true);
     }
+    public void addSectionHeader(String headerText,boolean lastElementIsHeader) {
+        this.addSectionHeader(headerText, lastElementIsHeader, 12.0f);
+    }
     
     public void addCommentList(String header, List<String> textItems, String none, String textNumberOfComments)
     {
