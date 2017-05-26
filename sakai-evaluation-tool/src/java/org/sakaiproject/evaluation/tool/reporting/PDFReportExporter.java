@@ -36,6 +36,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -186,7 +187,7 @@ public class PDFReportExporter implements ReportExporter {
             }
             
             // Print the type of the next group we're doing
-            /*if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+            if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
                 evalPDFReportBuilder.addSectionHeader(messageLocator
                         .getMessage("viewreport.itemlist.course"), false);
             } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
@@ -201,7 +202,7 @@ public class PDFReportExporter implements ReportExporter {
                 evalPDFReportBuilder.addSectionHeader( assistantMsg, false);
             } else {
                 evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("unknown.caps"), false);
-            }*/
+            }
 
             for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                 // Render the Node title if it's enabled in the admin settings.
