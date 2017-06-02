@@ -23,3 +23,5 @@ Most of the properties are defined in the Administrate UI except for a few used 
 To configure that feature you have to set up the property
 
 `evaluation.exportjob.outputlocation={location on disk that's writable by the process Sakai is running as}`
+
+*Important note* If you are upgrading for earlier versions and not running auto.ddl you need to run the [conversion scripts for your database](https://github.com/sakaicontrib/evaluation/tree/e4a1a448b812fbdff3ee823cce9e8fccb560259c/sakai-evaluation-impl/src/ddl/conversion).
