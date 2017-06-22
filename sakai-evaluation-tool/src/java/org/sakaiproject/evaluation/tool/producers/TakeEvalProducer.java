@@ -275,7 +275,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 // select the first eval group the current user can take evaluation in,
                 // also store the total number so we can give the user a list to choose from if there are more than one
                 Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
-                if ( commonLogic.isUserAdmin(currentUserId) ) {
+                if ( !commonLogic.isUserAnonymous(currentUserId) && commonLogic.isUserAdmin(currentUserId) ) {
                     // special case, the super admin can always access
                     userCanAccess = true;
                     List<EvalAssignGroup> assignGroups = m.get(evaluationId);

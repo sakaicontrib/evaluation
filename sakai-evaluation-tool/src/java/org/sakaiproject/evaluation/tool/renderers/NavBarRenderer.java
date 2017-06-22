@@ -14,7 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.renderers;
 
-import org.apache.commons.lang.StringUtils;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -93,6 +92,7 @@ public class NavBarRenderer {
         boolean hideQuestionBank = ((Boolean)settings.get(EvalSettings.DISABLE_ITEM_BANK));
         boolean showMyToplinks = ((Boolean)settings.get(EvalSettings.ENABLE_MY_TOPLINKS));
         boolean adminAllowedToSee = isUserAdmin && showMyToplinks;
+        boolean isUserAnon = commonLogic.isUserAnonymous(currentUserId);
 
         // set a few local variables
         this.currentViewID = currentViewID;
@@ -103,7 +103,7 @@ public class NavBarRenderer {
 
         // Provide logout and my workspace links
         boolean enableExtraStudentLinks = serverConfigurationService.getBoolean( SAK_PROP_ENABLE_EXTRA_STUDENT_LINKS, true );
-        if( StringUtils.isNotBlank( currentUserId ) && !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation && enableExtraStudentLinks )
+        if( !isUserAnon && !isUserAdmin && !adminAllowedToSee && !canCreateTemplate && !canBeginEvaluation && enableExtraStudentLinks )
         {
             UIFreeAttributeDecorator targetDecorator = new UIFreeAttributeDecorator( "target", "_parent" );
             UILink workspaceLink = UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
