@@ -636,7 +636,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 }
             }
         }
-        catch( IdUnusedException | IdNotFoundException ex ) { LOG.warn( "Could not find site or section by ID", ex ); }
+        catch ( IdUnusedException ex ) { LOG.debug("IdUnusedException looking up site ID", ex); }
+        catch ( IdNotFoundException ex ) { LOG.warn( "Could not find site or section by ID", ex ); }
 
         if (StringUtils.isNotBlank(nodeID)) {
             HierarchyNode currentNode = hierarchyService.getNodeById(nodeID);
