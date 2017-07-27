@@ -261,13 +261,15 @@
     }
     
     .compact {
+      overflow: hidden;
+      
       .title {
         float: left;
         width: auto !important;
         margin-top: 6px;
       }
       .content {
-        overflow: hidden;
+        overflow: visible;
       }
       .content table {
         float: right;
