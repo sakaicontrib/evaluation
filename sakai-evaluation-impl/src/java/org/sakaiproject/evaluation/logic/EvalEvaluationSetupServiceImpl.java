@@ -54,6 +54,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
@@ -1695,6 +1696,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
     public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId) {
         LOG.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
+        
+        if (! TextTemplateLogicUtils.checkTextTemplate(emailTemplate.getSubject()))
+        {
+        	throw new IllegalArgumentException("Template processing error in email subject when saving template.");
+        }
+        
+        if (! TextTemplateLogicUtils.checkTextTemplate(emailTemplate.getMessage()))
+        {
+        	throw new IllegalArgumentException("Template processing error in email text when saving template");
+        }
 
         // set the date modified
         emailTemplate.setLastModified(new Date());
@@ -2027,6 +2038,5 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
         }
     }
-
 
 }
