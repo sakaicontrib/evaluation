@@ -2165,6 +2165,7 @@ li.exportIndividual {
 
 ol.itemListEval span.label {
     color: #000 !important;
+    white-space: inherit !important;
 }
 
 .instructionText {
