@@ -123,6 +123,7 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
         	   messages.addMessage( new TargettedMessage("controlemailtemplate.template.error.save.message",
                    new Object[] { emailTemplate.getType(), emailTemplate.getSubject() },
        			   TargettedMessage.SEVERITY_ERROR));
+        	   throw (e);
            }
       }
    }
