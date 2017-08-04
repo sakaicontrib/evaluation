@@ -1,0 +1,50 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title rsf:id="chown-evaluation-title">Change evaluation Owner</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+
+<body>
+<div class="portletBody">
+
+	<div rsf:id="navIntraTool:" class="navIntraTool"/>
+
+	<ul class="breadCrumb">
+		<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		<li><a rsf:id="control-evaluations-link" href="evaluations.html">My Evaluations</a></li>
+		<li class="lastCrumb" rsf:id="chown-evaluation-title">Change evaluation Owner</li>
+	</ul>
+
+	<div rsf:id="message-for:*" class="alertMessage">
+		<ul style="margin:0px;">
+			<li>Message for user here</li>
+		</ul>
+	</div>
+
+	<h3 rsf:id="chown-evaluation-title"></h3>
+	<div rsf:id="cannot-chown-message" class="alertMessage"></div>
+	<div rsf:id="chownDiv:">
+		<div class="alertMessage">
+			<span rsf:id="chown-evaluation-confirm-text">Are you sure you want to remove evaluation NAME? The removal is permanant.</span>
+		</div>
+		<div class="act">
+			<form rsf:id="chown-evaluation-form" method="post" class="inlineForm">
+				<p rsf:id="chown-evaluation-newownertext"></p>
+				<p>
+					<label rsf:id="chown-evaluation-newownerlabel" for="title">Change evaluation Owner</label>
+					<input name="chown" rsf:id="chown-evaluation-newowner"   id="chown"  type="text" value="" size="50" maxlength="255" />
+				</p>
+				<input rsf:id="chown-evaluation-button" type="submit" value="Chown Evaluation" class="active" accesskey="s" />
+			</form>
+			<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x"/>
+		</div>
+	</div>
+</div>
+</body>
+</html>

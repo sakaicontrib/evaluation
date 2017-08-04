@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,13 +32,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
-import org.sakaiproject.evaluation.model.EvalAssignUser;
-import org.sakaiproject.evaluation.model.EvalEmailTemplate;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.*;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Order;
@@ -463,6 +456,16 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             //log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
         }
         return valid;
+    }
+
+    @Override
+    public EvalEvaluation updateEvaluationOwner(Long evaluationId, String userId) {
+        log.debug("evalId: " + evaluationId);
+        EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+        eval.setOwner(userId);
+        dao.update(eval);
+        dao.forceCommit();
+        return eval;
     }
 
     /**
