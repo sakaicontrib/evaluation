@@ -224,7 +224,7 @@
       </fieldset>
       <div class="act">
         <input rsf:id="save-item-action" type="submit" value="Save item" class="active submit" accesskey="s" />
-        <input rsf:id="cancel-button" type="submit" value="Cancel" class="cancelButton" accesskey="x" onclick="$(document).trigger('close.facebox')" />
+        <input rsf:id="cancel-button" type="button" value="Cancel" class="cancelButton" accesskey="x" onclick="$(document).trigger('close.facebox');return false;" />
       </div>
     </form>
   </div>

@@ -76,8 +76,7 @@
 
         <p class="act">
             <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active" onclick="SPNR.disableControlsAndSpin( this, null );" />
-            <input type="submit" value="Cancel" class="cancelButton" rsf:id="cancel-button" accesskey="x" onclick="SPNR.disableControlsAndSpin( this, null );history.go(-1);return false;" />
-            <input type="submit" value="Cancel" class="cancelButtonLightbox close" rsf:id="cancel-button-lightbox" accesskey="x" onclick="SPNR.disableControlsAndSpin( this, null );" />
+            <input rsf:id="cancel-button-lightbox" type="button" value="Cancel" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
         </p>
     </form>
 
