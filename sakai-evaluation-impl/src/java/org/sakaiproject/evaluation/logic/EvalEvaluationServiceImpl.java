@@ -460,7 +460,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     @Override
     public EvalEvaluation updateEvaluationOwner(Long evaluationId, String userId) {
-        log.debug("evalId: " + evaluationId);
+        LOG.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setOwner(userId);
         dao.update(eval);
