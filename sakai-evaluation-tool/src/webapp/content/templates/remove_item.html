@@ -43,7 +43,7 @@
   <div class="act">
     <form rsf:id="remove-item-form" action="modify_template_items.html" method="post" class="inlineForm act" id="delete-form">
       <input rsf:id="remove-item-command-link" type="submit" value="Yes" class="active submit" accesskey="s" />
-      <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
+      <input rsf:id="cancel-button" type="button" value="No" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox');return false;" />
       &nbsp;
     </form>
   </div>
