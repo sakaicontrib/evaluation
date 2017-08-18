@@ -38,11 +38,11 @@
         </property>
         <!-- the email template subject -->
         <property name="subject" type="materialized_clob">
-            <column name="SUBJECT" not-null="true" />
+            <column name="SUBJECT" not-null="true" length="1000000" />
         </property>
         <!-- the email template message -->
         <property name="message" type="materialized_clob">
-            <column name="MESSAGE" not-null="true" />
+            <column name="MESSAGE" not-null="true" length="1000000" />
         </property>
         <!-- identifies this email template as a default template and indicates the type (reminder, available, etc.), use constants -->
         <property name="defaultType" type="java.lang.String" unique="false" length="255" />
