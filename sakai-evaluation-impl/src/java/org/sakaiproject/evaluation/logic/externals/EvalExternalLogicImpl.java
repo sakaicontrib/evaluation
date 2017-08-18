@@ -38,6 +38,8 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -848,7 +850,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         // If it's not section aware...
         Set<String> userIDs = new HashSet<>();
-        if( !sectionAware )
+        if( BooleanUtils.isFalse(sectionAware) )
         {
             // Get the list normally
             List<String> azGroups = new ArrayList<>();

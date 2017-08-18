@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.BooleanUtils;
+
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -69,7 +71,7 @@ public class HierarchyTreeNodeSelectRenderer {
     List<String> evalGroupValues;
     List<String> hierNodeLabels; 
     List<String> hierNodeValues;
-    private boolean sectionAware;
+    private Boolean sectionAware;
 
    /**
     * This is the main entry point for rendering the hierarchy with selectable
@@ -210,7 +212,7 @@ public class HierarchyTreeNodeSelectRenderer {
      */
     public void renderSelectHierarchyNodesTree( UIContainer parent, String clientID, String groupsSelectID, String hierNodesSelectID,
              List<String> evalGroupLabels, List<String> evalGroupValues, List<String> hierNodeLabels, List<String> hierNodeValues, 
-             EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds, boolean sectionAware )
+             EvalViewParameters evalViewParams, Set<String> accessNodeIds, Set<String> parentNodeIds, Boolean sectionAware )
     {
         this.sectionAware = sectionAware;
         renderSelectHierarchyNodesTree( parent, clientID, groupsSelectID, hierNodesSelectID, evalGroupLabels, evalGroupValues, hierNodeLabels,
@@ -239,7 +241,7 @@ public class HierarchyTreeNodeSelectRenderer {
                     currentNodeParents.add( node.id );
                     selectedGroups.remove( groupID );
 
-                    if( !sectionAware )
+                    if( BooleanUtils.isFalse(sectionAware) )
                     {
                         EvalGroup evalGroup = commonLogic.makeEvalGroupObject( groupID );
                         renderRow( tofill, "hierarchy-level-row:", level + 1, evalGroup, evalViewParams, accessNodeIds, currentNodeParents, false );

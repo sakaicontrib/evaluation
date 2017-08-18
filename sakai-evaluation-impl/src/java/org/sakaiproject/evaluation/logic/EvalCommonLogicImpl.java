@@ -30,6 +30,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.BooleanUtils;
+
 import org.quartz.Job;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
@@ -513,16 +515,16 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
         Set<String> userIDs = new HashSet<>();
-        if( sectionAware )
+        if( BooleanUtils.isTrue(sectionAware) )
         {
             userIDs.addAll( externalLogic.getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) );
         }
 
         // If it's not section aware, or if we didn't find anything from external logic, do the normal lookup call
-        if( !sectionAware || userIDs.isEmpty() )
+        if( BooleanUtils.isFalse(sectionAware) || userIDs.isEmpty() )
         {
             // Strip out the '/section/<section_id>' part of the evalGroupID if its there
-            if( !sectionAware && evalGroupID.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
+            if( BooleanUtils.isFalse(sectionAware) && evalGroupID.contains( EvalConstants.GROUP_ID_SECTION_PREFIX ) )
             {
                 evalGroupID = evalGroupID.substring( 0, evalGroupID.indexOf( EvalConstants.GROUP_ID_SECTION_PREFIX ) );
             }
