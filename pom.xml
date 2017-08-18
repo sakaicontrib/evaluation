@@ -39,7 +39,6 @@
         <groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
         <version>12-SNAPSHOT</version>
-        <relativePath>../master/pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -57,6 +56,28 @@
     </modules>
 
     <profiles>
+        <profile>
+          <id>snapshots</id>
+          <activation>
+            <activeByDefault>false</activeByDefault>
+            <property>
+              <name>snapshots</name>
+            </property>
+          </activation>
+          <repositories>
+            <repository>
+              <id>sonatype-nexus-snapshots</id>
+              <name>Sonatype Nexus Snapshots</name>
+              <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+              <releases>
+                <enabled>false</enabled>
+              </releases>
+              <snapshots>
+                <enabled>true</enabled>
+              </snapshots>
+            </repository>
+          </repositories>
+        </profile>
         <profile>
             <id>tool</id>
             <activation>

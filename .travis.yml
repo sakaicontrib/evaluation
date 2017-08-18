@@ -12,10 +12,6 @@ language: java
 jdk:
   - oraclejdk8
 sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
 cache:
  directories:
  - $HOME/.m2
@@ -25,8 +21,5 @@ cache:
 before_cache:
  - find $HOME/.m2/repository/org/sakaiproject -name \*-SNAPSHOT.\*  -delete
 
-# We only need master directory from upstream project
-install:
-  - wget https://github.com/sakaiproject/sakai/archive/master.zip -O /tmp/sakai.zip
-  - unzip -q /tmp/sakai.zip
-  - cd sakai-master/master;mvn install;cd ..;mvn install -Dmaven.test.skip=true;cd ..
+script:
+ - mvn clean install -Psnapshots test -B
