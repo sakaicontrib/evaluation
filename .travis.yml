@@ -28,3 +28,4 @@ before_cache:
 # We only need master directory from upstream project
 install:
   - svn checkout https://github.com/sakaiproject/sakai/trunk/master
+  - cd master;mvn clean install;cd ../
