@@ -24,3 +24,7 @@ cache:
 # This makes the cache smaller and helps highlight problems with a clean build
 before_cache:
  - find $HOME/.m2/repository/org/sakaiproject -name \*-SNAPSHOT.\*  -delete
+
+# We only need master directory from upstream project
+install:
+  - svn checkout https://github.com/sakaiproject/sakai/trunk/master
