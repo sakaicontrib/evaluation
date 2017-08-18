@@ -27,5 +27,6 @@ before_cache:
 
 # We only need master directory from upstream project
 install:
-  - git clone https://github.com/sakaiproject/sakai.git
-  - cd sakai/master;mvn install;cd ../;mvn install -Dmaven.test.skip=true
+  - wget https://github.com/sakaiproject/sakai/archive/master.zip -O /tmp/sakai.zip
+  - unzip /tmp/sakai.zip
+  - cd sakai-master/master;mvn install;cd ..;mvn install -Dmaven.test.skip=true;cd ..
