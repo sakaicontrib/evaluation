@@ -154,7 +154,7 @@ public class RemoveItemProducer extends EvalCommonProducer implements ViewParams
             deleteCommand.parameters.add(new UIELBinding(beanBinding + "itemId", item.getId()));
         }
 
-        UICommand.make( form, "cancel-button", UIMessage.make( "general.cancel.button" ) );
+        UIMessage.make(form, "cancel-button", "general.cancel.button");
     }
 
     /* (non-Javadoc)
