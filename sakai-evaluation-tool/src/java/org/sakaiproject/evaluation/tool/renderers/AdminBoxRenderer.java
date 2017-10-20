@@ -205,7 +205,7 @@ public class AdminBoxRenderer {
 
                     String title = humanDateRenderer.renderEvalTitle(eval, group);
                     
-                    if(userReadonlyAdmin) {
+                    if(userReadonlyAdmin && !currentUserId.equals(eval.getOwner()) ) {
                         // only ever show the preview
                         UIInternalLink evalTitleLink = UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", title, new EvalViewParameters(
                                 PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
@@ -237,7 +237,7 @@ public class AdminBoxRenderer {
 
                     boolean allowedViewResponders = true;
                     boolean allowedEmailStudents = true;
-                    if(userReadonlyAdmin) {
+                    if(userReadonlyAdmin && !currentUserId.equals(eval.getOwner())) {
                         allowedViewResponders = false;
                         allowedEmailStudents = false;
                     }

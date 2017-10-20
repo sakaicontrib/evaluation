@@ -122,6 +122,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
       int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
 
       String currentUserId = commonLogic.getCurrentUserId();
+      boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
 
       /*
        * top links here
@@ -243,30 +244,37 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
 
-            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+            if(!userReadonlyAdmin || currentUserId.equals(evaluation.getOwner())){
+                UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
+                      new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
-            UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
-                  new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
+                UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
+                      new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
 
-            // do the locked check first since it is more efficient
-            if ( ! evaluation.getLocked() &&
-                  evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
-               // evaluation removable
-               UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
-                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+                // do the locked check first since it is more efficient
+                if ( ! evaluation.getLocked() &&
+                      evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+                   // evaluation removable
+                   UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
+                         new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+                }
+                
+
+                UIInternalLink.make(evaluationRow, "inqueue-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"), 
+                        new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
             }
-
-            UIInternalLink.make(evaluationRow, "inqueue-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"), 
-                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
 
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
+            String groupComponentId = "inqueue-eval-assigned-link";
+            if(userReadonlyAdmin && !currentUserId.equals(evaluation.getOwner())) {
+                groupComponentId = "inqueue-eval-assigned";
+            }
             if (groupsCount == 1) {
-               UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+               UIInternalLink.make(evaluationRow, groupComponentId, getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", 
+               UIInternalLink.make(evaluationRow, groupComponentId, 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
@@ -306,32 +314,38 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                      new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
             }
 
-            UIInternalLink.make(evaluationRow, "active-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
-                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+            if(!userReadonlyAdmin || currentUserId.equals(evaluation.getOwner())){
+                UIInternalLink.make(evaluationRow, "active-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
+                        new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
 
-            UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+                UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
+                      new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
-            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
-               // evaluation removable
-               UIInternalLink.make(evaluationRow, "active-eval-delete-link", UIMessage.make("general.command.delete"), 
-                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
-            }
+                if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+                   // evaluation removable
+                   UIInternalLink.make(evaluationRow, "active-eval-delete-link", UIMessage.make("general.command.delete"), 
+                         new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+                }
 
-            if (earlyCloseAllowed) {
-               UIForm form = UIForm.make(evaluationRow, "evalCloseForm");
-               form.addParameter( new UIELBinding(actionBean + "evaluationId", evaluation.getId()) );
-               UICommand.make(form, "evalCloseCommand", UIMessage.make("controlevaluations.active.close.now"), 
-                     actionBean + "closeEvalAction");
+                if (earlyCloseAllowed) {
+                   UIForm form = UIForm.make(evaluationRow, "evalCloseForm");
+                   form.addParameter( new UIELBinding(actionBean + "evaluationId", evaluation.getId()) );
+                   UICommand.make(form, "evalCloseCommand", UIMessage.make("controlevaluations.active.close.now"), 
+                         actionBean + "closeEvalAction");
+                }
             }
 
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
+            String groupComponentId = "active-eval-assigned-link";
+            if(userReadonlyAdmin && !currentUserId.equals(evaluation.getOwner())) {
+                groupComponentId = "active-eval-assigned";
+            }
             if (groupsCount == 1) {
-               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+               UIInternalLink.make(evaluationRow, groupComponentId, getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
+               UIInternalLink.make(evaluationRow, groupComponentId, 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
@@ -348,8 +362,15 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
+            boolean allowedViewResponders = true;
+            boolean allowedEmailStudents = true;
+            if(userReadonlyAdmin && !currentUserId.equals(evaluation.getOwner())) {
+                allowedViewResponders = false;
+                allowedEmailStudents = false;
+            }
+
             RenderingUtils.renderReponseRateColumn(evaluationRow, evaluation.getId(), responsesNeeded, 
-                    responseString, true, true);
+                    responseString, allowedViewResponders, allowedEmailStudents);
 
             // owner can view the results but only early IF the setting is enabled
             boolean viewResultsEval = viewResultsIgnoreDates;
@@ -383,34 +404,43 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                category.decorators = new DecoratorList( new UITooltipDecorator( evaluation.getEvalCategory() ) );
             }
 
-            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+            if(!userReadonlyAdmin || currentUserId.equals(evaluation.getOwner())){
+                UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
+                      new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
-            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
-               // evaluation removable
-               UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
-                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+                if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+                   // evaluation removable
+                   UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
+                         new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+                }
+
+                UIInternalLink.make(evaluationRow, "closed-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
+                        new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
+                
+                if (reopeningAllowed) {
+                   // add in link to settings page with reopen option
+                   UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
+                         new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId(), true) );
+                }
             }
 
-            UIInternalLink.make(evaluationRow, "closed-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"),
-                    new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
             EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
             UIOutput.make(evaluationRow, "closed-eval-owner", owner.displayName);
             UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
                     new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
-            if (reopeningAllowed) {
-               // add in link to settings page with reopen option
-               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
-                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId(), true) );
-            }
+            
 
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
+            String groupComponentId = "closed-eval-assigned-link";
+            if(userReadonlyAdmin && !currentUserId.equals(evaluation.getOwner())) {
+                groupComponentId = "closed-eval-assigned";
+            }
             if (groupsCount == 1) {
-               UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+               UIInternalLink.make(evaluationRow, groupComponentId, getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", 
+               UIInternalLink.make(evaluationRow, groupComponentId, 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { groupsCount}), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
@@ -426,8 +456,14 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
             String evalState = EvalUtils.getEvaluationState(evaluation, false);
 
+            boolean allowedViewResponders = true;
+            boolean allowedEmailStudents = true;
+            if(userReadonlyAdmin && !currentUserId.equals(evaluation.getOwner())) {
+                allowedViewResponders = false;
+                allowedEmailStudents = false;
+            }
             RenderingUtils.renderReponseRateColumn(evaluationRow, evaluation.getId(), responsesNeeded, 
-                    responseString, true, true);
+                    responseString, allowedViewResponders, allowedEmailStudents);
 
             // owner can view the results but only early IF the setting is enabled
             boolean viewResultsEval = viewResultsIgnoreDates ? true : EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
