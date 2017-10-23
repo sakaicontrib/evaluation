@@ -16,19 +16,29 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -69,6 +79,16 @@ public class EvaluateBoxRenderer {
         this.humanDateRenderer = humanDateRenderer;
     }
 
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+       this.settings = settings;
+    }
+
+    private EvalBeanUtils evalBeanUtils;
+    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+       this.evalBeanUtils = evalBeanUtils;
+    }
+
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);        
     }
@@ -76,6 +96,7 @@ public class EvaluateBoxRenderer {
     public void renderBox(UIContainer tofill, String currentUserId) {
         List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
         String currentGroup = commonLogic.getCurrentEvalGroup();
+        boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
         if (evalsToTake.size() > 0) {
 
@@ -85,6 +106,13 @@ public class EvaluateBoxRenderer {
                 evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
             }
 
+            boolean renderedReportsAvailableColumn = false;
+
+            Boolean instructorAllowedViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);    
+            Boolean studentAllowedViewResults = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
+            int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
+            boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+
             List<EvalResponse> evalResponses = deliveryService.getEvaluationResponsesForUser(currentUserId, evalIds, null);
 
             // This container may want a rework.  "hello" is not required, just need a unique value
@@ -92,6 +120,9 @@ public class EvaluateBoxRenderer {
             // some old code.
             UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", "hello");
             UIOutput.make(evalrow, "evaluationTitleTitle", "Evaluation");
+
+            List<UIBranchContainer> removeReportsRow = new ArrayList<>();
+            List<UIBranchContainer> removeReportsRowColumn = new ArrayList<>();
 
             for( EvalEvaluation eval : evalsToTake )
             {
@@ -106,6 +137,63 @@ public class EvaluateBoxRenderer {
                     EvalGroup group = commonLogic.makeEvalGroupObject(eag.getEvalGroupId());
                     if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
                         continue; // skip processing for invalid groups
+                    }
+
+                    Date resultsAvailableDate = eval.getSafeViewDate();
+                    Date instructorOrStudentDate = null;
+
+                    boolean allowedInstructor = false;
+                    boolean instructorViewResults = false;
+                    if (instructorAllowedViewResults == null) {
+                        instructorViewResults = true;
+                    } else if (instructorAllowedViewResults) {
+                        instructorViewResults = true;
+                    }
+
+                    boolean allowedStudent = false;
+                    boolean studentViewResults = false;
+                    if (studentAllowedViewResults == null) {
+                        studentViewResults = true;
+                    } else if (studentAllowedViewResults) {
+                        studentViewResults = true;
+                    }
+
+                    if (instructorViewResults || studentViewResults) {
+                        // generate a hashmap of the assign types for this user to the groups for those types
+                        HashMap<String, Set<String>> typeToEvalGroupId = new HashMap<>();
+
+                        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(eval.getId(), currentUserId, new String[] {eag.getEvalGroupId()}, null, null, null, null);
+                        for (EvalAssignUser eau : userAssignments) {
+                            String type = eau.getType();
+                            if (! typeToEvalGroupId.containsKey(type)) {
+                                typeToEvalGroupId.put(type, new HashSet<>());
+                            }
+                            typeToEvalGroupId.get(type).add(eau.getEvalGroupId());
+                        }
+                        
+                        if (typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATEE) || userAdmin) {
+                            if ((eval.getInstructorViewResults() && (eval.getOwner().equals(currentUserId) || userAdmin)) || eval.getInstructorViewAllResults()) {
+                                allowedInstructor = true;
+                                Date instructorsDate = eval.getInstructorsDate();
+                                if (instructorsDate != null) {
+                                    instructorOrStudentDate = instructorsDate;   
+                                }
+                            }
+                        }
+                        if (typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATOR)) {
+                            Date studentsDate = eval.getStudentsDate();
+                            if (eval.getStudentViewResults() && (instructorOrStudentDate == null || (instructorOrStudentDate != null && studentsDate != null && instructorOrStudentDate.after(studentsDate)))) {
+                                allowedStudent = true;
+                                if (studentsDate != null) {
+                                    instructorOrStudentDate = studentsDate;
+                                }
+                            }
+                        }
+                    }
+
+                    if ((allowedInstructor || allowedStudent || eval.getOwner().equals(currentUserId)) && !renderedReportsAvailableColumn) {
+                        renderedReportsAvailableColumn = true;
+                        UIMessage.make(evalrow, "reportsAvailableColumn", "summary.responses.results");
                     }
 
                     String groupId = group.evalGroupId;
@@ -163,6 +251,31 @@ public class EvaluateBoxRenderer {
                     // moved down here as requested by UI design
                     UIOutput.make(evalcourserow, "evaluationStartDate", df.format(eval.getStartDate()));
                     humanDateRenderer.renderDate(evalcourserow, "evaluationDueDate", eval.getDueDate());
+
+                    if (allowedInstructor || allowedStudent || eval.getOwner().equals(currentUserId)) {
+                        if (allowedInstructor || allowedStudent) {
+                            resultsAvailableDate = instructorOrStudentDate;
+                        }
+
+                        int responsesCount = deliveryService.countResponses(eval.getId(), group.evalGroupId, true);
+                        int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), new String[] {groupId});
+                        int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+
+                        UIBranchContainer evalReportCont = UIBranchContainer.make(evalcourserow, "evalReport:", groupId);
+                        RenderingUtils.renderResultsColumn(evalReportCont, eval, null, resultsAvailableDate, df, responsesNeeded, responsesRequired, true);
+                    } else {
+                        UIBranchContainer evalReportUnavailable = UIBranchContainer.make(evalcourserow, "evalReportUnavailable:", groupId);
+                        removeReportsRow.add(evalcourserow);
+                        removeReportsRowColumn.add(evalReportUnavailable);
+                    }
+                }
+            }
+            
+            if (!renderedReportsAvailableColumn) {
+                int index = 0;
+                for (UIBranchContainer row : removeReportsRow) {
+                    row.remove(removeReportsRowColumn.get(index));
+                    index++;
                 }
             }
 

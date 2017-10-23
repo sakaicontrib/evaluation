@@ -71,6 +71,7 @@
               <th rsf:id="msg=summary.evaluation.status.title">Status</th>
               <th rsf:id="msg=summary.evaluations.starts.title">Opens</th>
               <th rsf:id="msg=summary.evaluations.ends.title">Closes</th>
+              <th rsf:id="reportsAvailableColumn">Reports</th>
             </tr>
           </thead>
           <tbody>
@@ -87,6 +88,14 @@
               </td>
               <td rsf:id="evaluationDueDate" nowrap="nowrap">
                 09/27/2005
+              </td>
+              <td rsf:id="evalReport:" nowrap="nowrap">
+                <span rsf:id="evalReportDisplay"></span>
+                <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+                <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+              </td>
+              <td rsf:id="evalReportUnavailable:" nowrap="nowrap">
+                <span rsf:id="msg=controlevaluations.eval.report.not.permissions"></span>
               </td>
             </tr>
           </tbody>
