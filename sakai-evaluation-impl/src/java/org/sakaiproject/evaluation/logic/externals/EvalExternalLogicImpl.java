@@ -1153,6 +1153,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         functionManager.registerFunction(EvalConstants.PERM_ASSIGN_EVALUATION);
         functionManager.registerFunction(EvalConstants.PERM_BE_EVALUATED);
         functionManager.registerFunction(EvalConstants.PERM_TAKE_EVALUATION);
+        functionManager.registerFunction(EvalConstants.PERM_VIEW_RESPONDERS);
         functionManager.registerFunction(EvalConstants.PERM_ADMIN_READONLY);
     }
 
@@ -1188,6 +1189,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             return EvalGroupsProvider.PERM_BE_EVALUATED;
         } else if (EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)) {
             return EvalGroupsProvider.PERM_ASSIGN_EVALUATION;
+        } else if (EvalConstants.PERM_VIEW_RESPONDERS.equals(permission)) {
+            return EvalGroupsProvider.PERM_VIEW_RESPONDERS;
         } else if (EvalConstants.PERM_ADMIN_READONLY.equals(permission)) {
             return EvalGroupsProvider.PERM_ADMIN_READONLY;
         } else if (EvalConstants.PERM_ASSISTANT_ROLE.equals(permission)) {

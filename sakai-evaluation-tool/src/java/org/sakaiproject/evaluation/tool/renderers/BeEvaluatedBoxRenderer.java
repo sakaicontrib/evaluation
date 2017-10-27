@@ -51,7 +51,6 @@ public class BeEvaluatedBoxRenderer {
 
     private DateFormat df;
     private boolean allowEmailStudents = false;
-    private boolean allowViewResponders = false;
 
     private Locale locale;
     public void setLocale(Locale locale) {
@@ -96,7 +95,6 @@ public class BeEvaluatedBoxRenderer {
     public void init() {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
-        allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
     }
 
     public void renderBox(UIContainer tofill, String currentUserId) {
@@ -130,7 +128,7 @@ public class BeEvaluatedBoxRenderer {
             } else {
                 inProgressBC.decorate( new UIStyleDecorator("triangle-open") ); // must match the existing CSS class
                 UIBranchContainer evaluatedInProgressBC = UIBranchContainer.make(evalResponsesBC, "evaluatedInProgress:");
-                makeEvalsListTable(evalsInProgress, evaluatedInProgressBC);
+                makeEvalsListTable(currentUserId, evalsInProgress, evaluatedInProgressBC);
             }
 
             // show a list of evals with 5 columns
@@ -141,13 +139,13 @@ public class BeEvaluatedBoxRenderer {
             } else {
                 closedBC.decorate( new UIStyleDecorator("triangle-open") ); // must match the existing CSS class
                 UIBranchContainer evaluatedClosedBC = UIBranchContainer.make(evalResponsesBC, "evaluatedClosed:");
-                makeEvalsListTable(evalsClosed, evaluatedClosedBC);
+                makeEvalsListTable(currentUserId, evalsClosed, evaluatedClosedBC);
             }
 
         }// there are evals for instructor
     }
 
-    private void makeEvalsListTable(List<EvalEvaluation> evals, UIBranchContainer container) {
+    private void makeEvalsListTable(String currentUserId, List<EvalEvaluation> evals, UIBranchContainer container) {
         // add in the table heading
         UIBranchContainer evalResponseTable = UIBranchContainer.make(container, "evalResponseTable:");
         for (EvalEvaluation eval : evals) {
@@ -176,6 +174,16 @@ public class BeEvaluatedBoxRenderer {
                 int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                 int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
                 String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+                boolean allowViewResponders = false;
+
+                List<EvalGroup> allowedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
+                List<String> allowedGroupIds = new ArrayList<>();
+                for (EvalGroup allowedGroup : allowedGroups) {
+                    allowedGroupIds.add(allowedGroup.evalGroupId);
+                }
+                if (!allowedGroupIds.isEmpty() && allowedGroupIds.contains(group.evalGroupId)) {
+                    allowViewResponders = true;    
+                }
 
                 // render the response rates depending on permissions
                 RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded, 

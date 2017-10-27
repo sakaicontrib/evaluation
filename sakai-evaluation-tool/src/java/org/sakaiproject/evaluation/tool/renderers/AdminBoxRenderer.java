@@ -182,6 +182,12 @@ public class AdminBoxRenderer {
             // admins
             Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 
+            List<EvalGroup> viewRespondersGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
+            List<String> viewRespondersGroupIds = new ArrayList<>();
+            for (EvalGroup allowedGroup : viewRespondersGroups) {
+                viewRespondersGroupIds.add(allowedGroup.evalGroupId);
+            }
+
             for( EvalEvaluation eval : evals )
             {
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
@@ -235,10 +241,12 @@ public class AdminBoxRenderer {
                         LOG.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
                     }
 
-                    boolean allowedViewResponders = true;
+                    boolean allowedViewResponders = false;
+                    if (!viewRespondersGroupIds.isEmpty() && viewRespondersGroupIds.contains(group.evalGroupId)) {
+                        allowedViewResponders = true;    
+                    }
                     boolean allowedEmailStudents = true;
                     if(userReadonlyAdmin && !currentUserId.equals(eval.getOwner())) {
-                        allowedViewResponders = false;
                         allowedEmailStudents = false;
                     }
                     RenderingUtils.renderReponseRateColumn(evalrow, eval.getId(), responsesNeeded,

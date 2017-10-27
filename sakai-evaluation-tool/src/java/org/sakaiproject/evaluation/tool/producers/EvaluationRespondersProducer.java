@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -115,9 +116,13 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
 
         boolean allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
-        boolean allowViewResponders = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS);
+        List<EvalGroup> allowedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
+        List<String> allowedGroupIds = new ArrayList<>();
+        for (EvalGroup allowedGroup : allowedGroups) {
+            allowedGroupIds.add(allowedGroup.evalGroupId);
+        }
         int responsesRequired = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS));
-        boolean currentUserViewResponses = controlEval || allowViewResponders;
+        boolean currentUserViewResponses = controlEval;
 
         // get the lists of participants and responses
         String[] evalGroupIds = null;
@@ -191,6 +196,10 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         for (Entry<String, List<EvalUser>> entry : usersByGroupId.entrySet()) {
             UIBranchContainer groupBranch = UIBranchContainer.make(tofill, "responseGroups:");
             String groupId = entry.getKey();
+            boolean showEntryStatus = false;
+            if (!allowedGroupIds.isEmpty() && allowedGroupIds.contains(groupId)) {
+                showEntryStatus = true;    
+            }
             Map<String, EvalResponse> userResponses = groupToUserResponses.get(groupId);
             if (userResponses == null) {
                 userResponses = new HashMap<>(0);
@@ -215,7 +224,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             for (EvalUser evalUser : users) {
                 UIBranchContainer userResponseBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
                 UIOutput.make(userResponseBranch, "responseUser", evalUser.displayName + "(" + evalUser.username + ")");
-                if (showStatus) {
+                if ((showStatus && showEntryStatus) || userAdmin) {
                     String messagekey = "evalresponders.status.untaken"; // untaken (no response)
                     EvalResponse response = userResponses.get(evalUser.userId);
                     if (response != null) {
@@ -226,7 +235,7 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                         }
                     }
                     UIMessage.make(userResponseBranch, "responseStatus", messagekey);
-                } else if (currentUserViewResponses) {
+                } else if (showEntryStatus && currentUserViewResponses && (userResponses != null && userResponses.size() < responsesRequired)) {
                     // user can view but not enough responses yet
                     UIMessage.make(userResponseBranch, "responseStatus", "controlevaluations.eval.report.after.responses", 
                             new Object[] {responsesRequired});

@@ -292,6 +292,10 @@ public class EvalConstants {
      * Permission: User can take an evaluation for any group they have this permission in
      */
     public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
+    /**
+     * Permission: User can view responders status of an evaluation
+     */
+    public final static String PERM_VIEW_RESPONDERS = "eval.view.responders";
     
     /**
      * Permission: admin read only. Assign just theis role to a user to grant them admin access to view evaluation and evaluation reports but not modify anything
