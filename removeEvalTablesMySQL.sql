@@ -44,4 +44,7 @@ drop table if exists  EVAL_SCALE_OPTIONS;
 drop table if exists  EVAL_GROUPNODES;
 drop table if exists  EVAL_GROUPNODES_GROUPS;
 drop table if exists  EVAL_ASSIGN_HIERARCHY;
+drop table if exists  EVAL_HIERARCHY_RULE;
+drop table if exists  EVAL_EMAIL_PROCESSING_QUEUE;
+drop table if exists  EVAL_ADMIN;
 set FOREIGN_KEY_CHECKS=1;
