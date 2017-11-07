@@ -98,6 +98,10 @@
         <property name="deliveryService"
             ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="humanDateRenderer" ref="humanDateRenderer" />
+        <property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="evalBeanUtils"
+            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
     </bean>

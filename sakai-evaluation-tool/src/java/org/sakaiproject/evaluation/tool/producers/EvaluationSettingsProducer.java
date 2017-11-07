@@ -350,6 +350,9 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
         generateViewDateControl(showResultsToStudents, "studentsViewDate", 
                 evaluationOTP + "studentsDate", studentViewResults, useDateTime, sameViewDateForAll);
+        if ((studentViewResults == null || studentViewResults) && !sameViewDateForAll) {
+            UIMessage.make(showResultsToStudents, "studentsViewDate_label", "evalsettings.view.results.students.date.after.label");   
+        }
 
         // Instructor view date
         Boolean instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
@@ -366,6 +369,9 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
         generateViewDateControl(showResultsToInst, "instructorsViewDate", 
                 evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
+        if ((instructorViewResults == null || instructorViewResults) && !sameViewDateForAll) {
+            UIMessage.make(showResultsToInst, "instructorsViewDate_label", "evalsettings.view.results.instructors.date.after.label");   
+        }
         
 
 

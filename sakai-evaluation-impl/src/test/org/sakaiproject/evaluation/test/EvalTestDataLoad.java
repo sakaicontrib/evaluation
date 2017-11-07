@@ -1211,9 +1211,9 @@ public class EvalTestDataLoad {
                 EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_REQUIRED, 0, null, null, null, null,
                 templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        // evaluation complete (20 days ago) and viewable (15 ago), also viewable to instructors but not students (til tomorrow)
+        // evaluation complete (20 days ago) and viewable (15 ago), also viewable to instructors (no date specified) and students (yesterday)
         evaluationViewable = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval viewable", null, 
-                twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, true, tomorrow, true, null, 
+                twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, true, yesterday, true, null, 
                 EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 templateUser, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);

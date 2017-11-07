@@ -245,6 +245,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         if (eval == null || userId == null || "".equals(userId)) {
             throw new IllegalArgumentException("eval and userId must be set");
         }
+        boolean isUserAdmin = commonLogic.isUserAdmin(userId);
         Long evaluationId = eval.getId();
         // use one central method which returns the groups accessible by the user, then compare the size to the
         // total size of all groups for this case (if it is smaller then return false)
@@ -268,18 +269,18 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         boolean allowedInstructor = false;
         if ( typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATEE) ) {
             Boolean instructorAllowedViewResults = (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-            if (instructorAllowedViewResults == null) {
-                if (eval.getInstructorViewResults()) {
+            if (instructorAllowedViewResults == null || instructorAllowedViewResults) {
+                boolean instructorViewResults = eval.getInstructorViewResults();
+                boolean instructorViewAllResults = eval.getInstructorViewAllResults();
+                if ((instructorViewResults && (userId.equals(eval.getOwner()) || isUserAdmin)) || instructorViewAllResults) {
                     Date checkDate = eval.getInstructorsDate();
                     if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
-                            || (checkDate != null && checkDate.after( new Date() )) 
+                            || (checkDate != null && (new Date()).after(checkDate)) 
                             || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
                         // user is allowed to view based on state and settings so check the groups below
                         allowedInstructor = true;
                     }
                 }
-            } else {
-                allowedInstructor = instructorAllowedViewResults;
             }
 
             if (allowedInstructor) {
@@ -293,18 +294,16 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         boolean allowedStudent = false;
         if ( typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATOR) ) {
             Boolean studentAllowedViewResults = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
-            if (studentAllowedViewResults == null) {
+            if (studentAllowedViewResults == null || studentAllowedViewResults) {
                 if (eval.getStudentViewResults()) {
                     Date checkDate = eval.getStudentsDate();
                     if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
-                            || (checkDate != null && checkDate.after( new Date() )) 
+                            || (checkDate != null && (new Date()).after(checkDate)) 
                             || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
                         // user is allowed to view based on state and settings so check the groups below
                         allowedStudent = true;
                     }
                 }
-            } else {
-                allowedStudent = studentAllowedViewResults;
             }
 
             if (allowedStudent) {

@@ -165,6 +165,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
       // set so it cannot be viewed
       eval.setInstructorViewResults(false);
+      eval.setInstructorViewAllResults(false);
       eval.setStudentViewResults(false);
 
       evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(eval, EvalTestDataLoad.MAINT_USER_ID, null);
@@ -177,6 +178,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
       // set so it can be viewed
       eval.setInstructorViewResults(true);
+      eval.setInstructorViewAllResults(true);
       eval.setStudentViewResults(true);
 
       // so getViewableGroupsForEvalAndUserByRole seems pretty clear - if instructorAllowedViewResults == true, then the user is 
