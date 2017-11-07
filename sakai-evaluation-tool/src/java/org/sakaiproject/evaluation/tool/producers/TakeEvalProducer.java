@@ -271,51 +271,51 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                 }else{
                 	isUserSitePublished = false;
                 }
+            }
+
+            // select the first eval group the current user can take evaluation in,
+            // also store the total number so we can give the user a list to choose from if there are more than one
+            Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
+            if ( !commonLogic.isUserAnonymous(currentUserId) && commonLogic.isUserAdmin(currentUserId) ) {
+                // special case, the super admin can always access
+                userCanAccess = true;
+                List<EvalAssignGroup> assignGroups = m.get(evaluationId);
+                for (int i = 0; i < assignGroups.size(); i++) {
+                    EvalAssignGroup assignGroup = assignGroups.get(i);
+                    if (evalGroupId == null) {
+                        // set the evalGroupId to the first valid group if unset
+                        evalGroupId = assignGroup.getEvalGroupId();
+                    }
+                    validGroups.add( commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
+                }
             } else {
-                // select the first eval group the current user can take evaluation in,
-                // also store the total number so we can give the user a list to choose from if there are more than one
-                Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
-                if ( !commonLogic.isUserAnonymous(currentUserId) && commonLogic.isUserAdmin(currentUserId) ) {
-                    // special case, the super admin can always access
-                    userCanAccess = true;
+                EvalGroup[] evalGroups;
+                if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl()) ) {
+                    // anonymous eval allows any group to be evaluated
                     List<EvalAssignGroup> assignGroups = m.get(evaluationId);
+                    evalGroups = new EvalGroup[assignGroups.size()];
                     for (int i = 0; i < assignGroups.size(); i++) {
                         EvalAssignGroup assignGroup = assignGroups.get(i);
-                        if (evalGroupId == null) {
-                            // set the evalGroupId to the first valid group if unset
-                            evalGroupId = assignGroup.getEvalGroupId();
-                        }
-                        validGroups.add( commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
+                        evalGroups[i] = commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
                     }
                 } else {
-                    EvalGroup[] evalGroups;
-                    if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl()) ) {
-                        // anonymous eval allows any group to be evaluated
-                        List<EvalAssignGroup> assignGroups = m.get(evaluationId);
-                        evalGroups = new EvalGroup[assignGroups.size()];
-                        for (int i = 0; i < assignGroups.size(); i++) {
-                            EvalAssignGroup assignGroup = assignGroups.get(i);
-                            evalGroups[i] = commonLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
+                    List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, currentUserId, null, 
+                            EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+                    Set<String> evalGroupIds = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
+                    List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(evalGroupIds, commonLogic);
+                    evalGroups = EvalUtils.getGroupsInCommon(groups, m.get(evaluationId) );
+                }
+                for( EvalGroup group : evalGroups )
+                {
+                    if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
+                        if (evalGroupId == null) {
+                            // set the evalGroupId to the first valid group if unset
+                            evalGroupId = group.evalGroupId;
+                            userCanAccess = true;
                         }
-                    } else {
-                        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(evaluationId, currentUserId, null, 
-                                EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-                        Set<String> evalGroupIds = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
-                        List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(evalGroupIds, commonLogic);
-                        evalGroups = EvalUtils.getGroupsInCommon(groups, m.get(evaluationId) );
-                    }
-                    for( EvalGroup group : evalGroups )
-                    {
-                        if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
-                            if (evalGroupId == null) {
-                                // set the evalGroupId to the first valid group if unset
-                                evalGroupId = group.evalGroupId;
-                                userCanAccess = true;
-                            }
-                            validGroups.add( commonLogic.makeEvalGroupObject(group.evalGroupId) );
-                        }else{
-                            isUserSitePublished = false;
-                        }
+                        validGroups.add( commonLogic.makeEvalGroupObject(group.evalGroupId) );
+                    }else{
+                        isUserSitePublished = false;
                     }
                 }
             }
@@ -385,7 +385,6 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                     UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
                             new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
                     UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
-                    UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
                 }
 
                 // fill in group title

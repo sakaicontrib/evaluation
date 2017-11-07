@@ -72,12 +72,11 @@
 			<div class="viewNav">
 				<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
 				<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
-					<select rsf:id="switch-group-list">
+					<select rsf:id="switch-group-list" onchange="this.form.submit()">
 						<option selected="selected">Group 1</option>
 						<option>Group 2</option>
 						<option>Group 3</option>
 					</select>
-					<input rsf:id="switch-group-button" type="submit" value="Switch" onclick="SPNR.disableControlsAndSpin( this, null );" />
 				</form>
 			</div>	
 		</div>
