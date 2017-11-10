@@ -186,7 +186,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "partial-eval-row:", evaluation.getId().toString());
 
             UIOutput.make(evaluationRow, "partial-eval-title", evaluation.getTitle() );
-            UIOutput.make(evaluationRow, "partial-eval-created", df.format(evaluation.getLastModified()));
             EvalUser owner = commonLogic.getEvalUserById( evaluation.getOwner() );
             UIOutput.make(evaluationRow, "partial-eval-owner", owner.displayName);
 
@@ -198,7 +197,7 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"),
                   new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
 
-            humanDateRenderer.renderDate(evaluationRow, "partial-eval-created", evaluation.getLastModified());
+            humanDateRenderer.renderDate(evaluationRow, "partial-eval-modified", evaluation.getLastModified());
          }
       }
 
