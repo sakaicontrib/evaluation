@@ -503,7 +503,10 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             // Hierarchy rules should be obeyed regardless of if an external provider is present or not (supplemental)
             for( String nodeID : nodeIds )
             {
-                m.put( nodeID, getEvalGroupsForNodeSectionAware( nodeID ) );
+                Set<String> evalGroupsForNodeSectionAware = getEvalGroupsForNodeSectionAware(nodeID);
+                if (!evalGroupsForNodeSectionAware.isEmpty()) {
+                    m.put(nodeID, evalGroupsForNodeSectionAware);
+                }
             }
         }
         return m;
