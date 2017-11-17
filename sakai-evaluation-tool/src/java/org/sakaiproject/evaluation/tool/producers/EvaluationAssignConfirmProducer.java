@@ -198,16 +198,7 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
                                 commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                     }
                 }
-                int enrollmentCount;
-                if (groupIdToEAUList.get(evalGroupId) == null) {
-                    //enrollmentCount = 0;
-                    // Since no users have been added to the eval YET, get the number of members that WILL be added
-                    // this number is more intuative for the instructor than 0.
-                    enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, evaluation.getSectionAwareness());
-                } else {
-                    enrollmentCount = groupIdToEAUList.get(evalGroupId).size();
-                }
-
+                int enrollmentCount = getEnrollmentCount(groupIdToEAUList, evalGroupId, evaluation);
                 UIOutput.make(groupRow, "enrollment", enrollmentCount + "");
             }
         } else {
@@ -253,7 +244,7 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
                                     commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                         }
                     }
-                    int enrollmentCount = groupIdToEAUList.get(evalGroupId) == null ? 0 : groupIdToEAUList.get(evalGroupId).size();
+                    int enrollmentCount = getEnrollmentCount(groupIdToEAUList, evalGroupId, evaluation);
                     UIOutput.make(groupRow, "enrollment", enrollmentCount + "");
                 }
             } else {
@@ -308,4 +299,16 @@ public class EvaluationAssignConfirmProducer extends EvalCommonProducer implemen
         return new EvalViewParameters();
     }
 
+    private int getEnrollmentCount(HashMap<String, List<EvalAssignUser>> groupIdToEAUList, String evalGroupId, EvalEvaluation evaluation) {
+        int enrollmentCount;
+        if (groupIdToEAUList.get(evalGroupId) == null) {
+            //enrollmentCount = 0;
+            // Since no users have been added to the eval YET, get the number of members that WILL be added
+            // this number is more intuative for the instructor than 0.
+            enrollmentCount = commonLogic.countUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, evaluation.getSectionAwareness());
+        } else {
+            enrollmentCount = groupIdToEAUList.get(evalGroupId).size();
+        }
+        return enrollmentCount;
+    }
 }
