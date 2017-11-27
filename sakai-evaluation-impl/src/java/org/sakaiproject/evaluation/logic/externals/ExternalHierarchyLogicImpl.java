@@ -44,6 +44,8 @@ import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 import org.sakaiproject.hierarchy.utils.HierarchyUtils;
+import org.sakaiproject.memory.api.Cache;
+import org.sakaiproject.memory.api.MemoryService;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.Site;
 
@@ -94,6 +96,18 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
     public static final String HIERARCHY_ID = "evaluationHierarchyId";
     public static final String HIERARCHY_ROOT_TITLE = "Root";
+    
+    private MemoryService memoryService;
+    public void setMemoryService(MemoryService memoryService){
+    	this.memoryService = memoryService;
+    }
+    
+    private Cache cache;
+    public void setCache(Cache cache) {
+		this.cache = cache;
+	}
+    private final String CACHE_NAME = "org.sakaiproject.hierarchy.nodes";
+
 
     /**
      * Place any code that should run when this class is initialized by spring here
@@ -116,6 +130,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         } else {
             LOG.debug("No EvalHierarchyProvider found...");
         }
+        
+        cache = memoryService.getCache(CACHE_NAME);
     }
 
     /*
@@ -342,6 +358,12 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodeById(java.lang.String)
      */
     public EvalHierarchyNode getNodeById(String nodeId) {
+    	EvalHierarchyNode ret = (EvalHierarchyNode)cache.get(nodeId);
+    	if(ret != null) {
+            LOG.debug("--- Fetching (External)getNodeById record from cache for: " + nodeId);
+            return ret;
+        }
+      
         EvalHierarchyNode node = null;
         if (evalHierarchyProvider != null) {
             node = evalHierarchyProvider.getNodeById(nodeId);
@@ -350,6 +372,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             HierarchyNode hNode = hierarchyService.getNodeById(nodeId);
             node = makeEvalNode(hNode);
         }
+        LOG.debug("+++ Adding (External)getNodeById record to cache for: " + nodeId);
+        cache.put(nodeId, node);
         return node;
     }
 
