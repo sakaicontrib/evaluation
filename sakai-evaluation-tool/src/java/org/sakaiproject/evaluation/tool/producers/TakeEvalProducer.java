@@ -314,10 +314,9 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                             userCanAccess = true;
                         }
                         validGroups.add( commonLogic.makeEvalGroupObject(group.evalGroupId) );
-                    }else{
-                        isUserSitePublished = false;
                     }
                 }
+                isUserSitePublished = userCanAccess;
             }
             
             if (! isUserSitePublished ){
