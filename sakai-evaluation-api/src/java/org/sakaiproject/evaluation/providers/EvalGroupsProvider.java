@@ -66,6 +66,11 @@ public interface EvalGroupsProvider {
      */
     public final static String PERM_ASSIGN_EVALUATION = "provider.assign.eval";
 	
+    /**
+     * Permission: User can view responders status of an evaluation
+     */
+    public final static String PERM_VIEW_RESPONDERS = "provider.view.responders";
+
     public final static String PERM_ADMIN_READONLY = "provider.admin.readonly";
     
     /**

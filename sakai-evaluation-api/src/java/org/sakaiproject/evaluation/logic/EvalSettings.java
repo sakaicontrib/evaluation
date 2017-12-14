@@ -67,10 +67,6 @@ public interface EvalSettings {
      * CONSTANT: How many items is the instructor allowed to add to an evaluation from above in the hierarchy - {@link Integer}, default 5
      */
     public static final String INSTRUCTOR_ADD_ITEMS_NUMBER = "INSTRUCTOR_ADD_ITEMS_NUMBER:java.lang.Integer";
-    /**
-     * CONSTANT: Control whether instructor users have access to the list of responders for an evaluation - {@link Boolean}, default False
-     */
-    public static final String INSTRUCTOR_ALLOWED_VIEW_RESPONDERS = "INSTRUCTOR_ALLOWED_VIEW_RESPONDERS:java.lang.Boolean";
 
     /**
      * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
@@ -566,7 +562,6 @@ public interface EvalSettings {
         EVAL_USE_STOP_DATE,
         EVAL_USE_VIEW_DATE,
         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
-        INSTRUCTOR_ALLOWED_VIEW_RESPONDERS,
         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
         ITEM_USE_RESULTS_SHARING,
         ITEM_USE_COURSE_CATEGORY_ONLY,
