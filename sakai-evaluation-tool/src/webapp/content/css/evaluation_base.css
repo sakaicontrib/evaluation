@@ -2180,6 +2180,10 @@ ol.itemListEval span.label {
     margin: 0.5em 0;
 }
 
+#institution-specific-settings {
+    display: none;
+}
+
 @media only screen and (max-width: 800px) {
   #facebox {
       left: 0px !important;
