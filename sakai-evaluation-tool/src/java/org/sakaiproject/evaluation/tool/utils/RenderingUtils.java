@@ -414,7 +414,7 @@ public class RenderingUtils {
      *      normally should be the output from EvalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount)
      * @param responseString the string representing the response rate output
      * @param allowedViewResponders if true, this user can view the responders listing,
-     *      normally only if EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESPONDERS is true or is admin user
+     *      normally only if user have view responders permission or is admin user
      * @param allowedEmailStudents if true, this user can send emails to evaluators,
      *      normally only if EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS is true or is admin/owner of eval
      * 
@@ -434,7 +434,7 @@ public class RenderingUtils {
         if (evaluationId == null) { throw new IllegalArgumentException("evaluationId must be set"); }
         if (responseString == null || "".equals(responseString)) { throw new IllegalArgumentException("responseString must be set"); }
         /* Responses column:
-         * - if min responses reached and INSTRUCTOR_ALLOWED_VIEW_RESPONDERS: link to the responders view 
+         * - if min responses reached and user have view responders permission: link to the responders view 
          * - else if INSTRUCTOR_ALLOWED_EMAIL_STUDENTS: link to notifications (send emails) view 
          * - else no options enabled and not admin ONLY show the text of the responses info (and tooltip if min responses not reached)
          */
