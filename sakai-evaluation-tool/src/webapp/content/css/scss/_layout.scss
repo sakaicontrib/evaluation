@@ -91,8 +91,22 @@
 /////////////////////////
 
 .item.blockItemGroup {
-	font-size: 13px;
-	
+	margin-left: 20px;
+	width: calc(100% - 20px);
+
+  .steppedRowContainer {
+    > tbody > tr {
+      &:nth-child(even) {
+        background: #fff;
+      }
+      &:nth-child(odd) {
+        background: #eee;
+      }
+      &::hover {
+        background: #fdffcc;
+      }
+    }
+  }
   .groupHeader {
     padding-left: 42px;
     padding-bottom: 24px;
@@ -104,12 +118,14 @@
     font-weight: normal;
   }
   .questionCell {
-    padding: 0.2em;
+    padding: 7px 0.2em;
     height: 24px;
-    padding-bottom: 14px;
   }
-  .answerCell table {
-    margin-right: 2px;
+  .answerCell {
+    padding-top: 6px;
+    table {
+      margin-right: 2px;
+    }
   }
 	.blockItemLabel {
 		margin-left: 0;
@@ -118,6 +134,11 @@
 	.actualHeader {
 		@include inline-block;
 		padding-top: 4px;
+	}
+	.blockRowBranch {
+		padding-right: 4px;
+		clear: both;
+		margin-top: -1px;
 	}
 }
 /////////////////////////
@@ -368,6 +389,11 @@
   .steppedItemGroup {
 		font-size: 13px;
 	
+    .blockRowBranch {
+      padding-right: 5px;
+      clear: both;
+      margin-top: -1px;
+    }
     .choiceGroup {
       padding-right: 0.2em;
     }

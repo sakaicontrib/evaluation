@@ -1739,7 +1739,17 @@ table.tablesorter th.header.headerSortDown {
   *display: inline;
 }
 .evaluation .item.blockItemGroup {
-  font-size: 13px;
+  margin-left: 20px;
+  width: calc(100% - 20px);
+}
+.steppedRowContainer > tbody > tr:nth-child(even) {
+  background: #fff;
+}
+.steppedRowContainer > tbody > tr:nth-child(odd) {
+  background: #eee;
+}
+.steppedRowContainer > tbody > tr:hover  {
+  background: #fdffcc;
 }
 .evaluation .item.blockItemGroup .groupHeader {
   padding-left: 42px;
@@ -1752,9 +1762,11 @@ table.tablesorter th.header.headerSortDown {
   font-weight: normal;
 }
 .evaluation .item.blockItemGroup .questionCell {
-  padding: 0.2em;
+  padding: 7px 0.2em;
   height: 24px;
-  padding-bottom: 14px;
+}
+.evaluation .item.blockItemGroup .answerCell{
+  padding-top: 6px;
 }
 .evaluation .item.blockItemGroup .answerCell table {
   margin-right: 2px;
@@ -1773,6 +1785,11 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .item.blockItemGroup .actualHeader {
   *display: inline;
+}
+.evaluation .item.blockItemGroup .blockRowBranch {
+  padding-right: 4px;
+  clear: both;
+  margin-top: -1px;
 }
 .evaluation .item.text .content {
   position: relative;
@@ -2026,6 +2043,11 @@ table.tablesorter th.header.headerSortDown {
 }
 .evaluation .steppedItemGroup {
   font-size: 13px;
+}
+.evaluation .steppedItemGroup .blockRowBranch {
+  padding-right: 5px;
+  clear: both;
+  margin-top: -1px;
 }
 .evaluation .steppedItemGroup .choiceGroup {
   padding-right: 0.2em;
