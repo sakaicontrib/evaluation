@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -188,22 +189,22 @@ public class PDFReportExporterIndividual implements ReportExporter {
 			}
             
             // Print the type of the next group we're doing
-            /*if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+            if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
                 evalPDFReportBuilder.addSectionHeader(messageLocator
-                        .getMessage("viewreport.itemlist.course"));
+                        .getMessage("viewreport.itemlist.course"), false);
             } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                 EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                 String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
                         new Object[] {user.displayName});
-                evalPDFReportBuilder.addSectionHeader( instructorMsg );
+                evalPDFReportBuilder.addSectionHeader( instructorMsg, false);
             } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                 EvalUser user = commonLogic.getEvalUserById( tig.associateId );
                 String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
                         new Object[] {user.displayName});
-                evalPDFReportBuilder.addSectionHeader( assistantMsg );
+                evalPDFReportBuilder.addSectionHeader( assistantMsg, false);
             } else {
-                evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("unknown.caps"));
-            }*/
+                evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("unknown.caps"), false);
+            }
 
             for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                 // Render the Node title if it's enabled in the admin settings.
