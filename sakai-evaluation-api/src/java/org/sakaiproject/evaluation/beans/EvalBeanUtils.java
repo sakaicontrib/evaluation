@@ -354,7 +354,7 @@ public class EvalBeanUtils {
         }
 
         // Section awareness default controlled by sakai.property
-        if( eval.getSectionAwareness() == null )
+        if( eval.getSectionAwareness() == null || !eval.getSectionAwareness() )
         {
             eval.setSectionAwareness( EVALSYS_SECTION_AWARE_DEFAULT );
         }
