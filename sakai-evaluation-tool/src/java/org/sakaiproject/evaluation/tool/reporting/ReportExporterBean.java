@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
 import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.springframework.context.MessageSource;
 
-import au.com.bytecode.opencsv.CSVParser;
+import com.opencsv.CSVParser;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
