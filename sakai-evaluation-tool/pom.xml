@@ -156,7 +156,7 @@
 
         <!-- needed for generating CSVs for export -->
         <dependency>
-            <groupId>net.sf.opencsv</groupId>
+            <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <!--properties:  war.bundle: true -->
         </dependency>
