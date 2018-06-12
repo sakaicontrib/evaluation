@@ -102,6 +102,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         this.evaluationService = evaluationService;
     }
 
+    private EvalExternalLogic externalLogic;
+    public void setExternalLogic(EvalExternalLogic externalLogic) {
+        this.externalLogic = externalLogic;
+    }
+
     private EvalSecurityChecksImpl securityChecks;
     public void setSecurityChecks(EvalSecurityChecksImpl securityChecks) {
         this.securityChecks = securityChecks;
@@ -1455,7 +1460,34 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // expand the actual new set of nodes into a complete list of nodes including children
             Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
             allNodeIds.addAll(currentNodeIds);
-            Map<String, Set<String>> allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes( allNodeIds.toArray(new String[] {}) );
+
+            Map<String, Set<String>> allEvalGroupIds = new HashMap<>();
+            Set<String> evalGroups;
+            Set<String> sectionAwareEvalGroups;
+
+            //For an evaluation section-aware, once all the nodes are retrieved
+            //transform the site related evalGroups into section related evalGroups
+            //whether the node is rule based or external hierarchy based
+            if (eval.getSectionAwareness())
+            {
+                for (String nodeid : allNodeIds)
+                {
+                    evalGroups =  hierarchyLogic.getEvalGroupsForNode(nodeid);
+
+                    sectionAwareEvalGroups = new HashSet<>();
+                    for (String evalGroupId : evalGroups) {
+                        for (EvalGroup evalGroup : externalLogic.makeEvalGroupObjectsForSectionAwareness(evalGroupId)) {
+                            sectionAwareEvalGroups.add(evalGroup.evalGroupId);
+                        }
+                    }
+                    allEvalGroupIds.put(nodeid, sectionAwareEvalGroups);
+                }
+            } else {
+                //Otherwise just get the evalGroups of the nodes
+                allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes(allNodeIds.toArray(new String[]{}));
+            }
+            
+
 
             // now eliminate the evalgroupids from the evalGroupIds array which happen to be contained in the nodes,
             // this leaves us with only the group ids which are not contained in the nodes which are already assigned
