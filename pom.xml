@@ -32,17 +32,17 @@
     </description>
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
-    <version>13-SNAPSHOT</version><!--eval.version-->
+    <version>19-SNAPSHOT</version><!--eval.version-->
     <inceptionYear>2005</inceptionYear>
     
     <parent>
         <groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
-        <version>13-SNAPSHOT</version>
+        <version>19-SNAPSHOT</version>
     </parent>
 
     <properties>
-        <hierarchy.version>13-SNAPSHOT</hierarchy.version>
+        <hierarchy.version>19-SNAPSHOT</hierarchy.version>
         <evalsys.pom.basedir>${project.basedir}</evalsys.pom.basedir>
         <evalsys.project.name>${project.name}</evalsys.project.name>
         <evalsys.project.year>${project.inceptionYear}</evalsys.project.year>
