@@ -16,7 +16,9 @@ package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -155,7 +157,7 @@ public class AdhocGroupsBean {
       List<String> participants = new ArrayList<>();
       checkAndAddToParticipantsList(newAdhocGroupUsers, participants, existingParticipantsList);
 
-      List<String> allParticipants = new ArrayList<>();
+      Set<String> allParticipants = new HashSet<>();
       allParticipants.addAll( Arrays.asList( existingParticipants ) );
 
       allParticipants.addAll(participants);
