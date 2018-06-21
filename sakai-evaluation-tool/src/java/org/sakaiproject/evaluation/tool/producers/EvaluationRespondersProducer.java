@@ -114,7 +114,9 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
         String evalGroupId = evalViewParameters.evalGroupId;
         boolean evalAnonymous = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
         boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
-
+        if(!controlEval){
+            throw new SecurityException("User ("+currentUserId+") not allowed to access this view for evaluation: " + evaluationId);
+        }
         boolean allowEmailStudents = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
         List<EvalGroup> allowedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
         List<String> allowedGroupIds = new ArrayList<>();
@@ -171,7 +173,6 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
                 usersByGroupId.get(groupId).add(user);
             }
         }
-
         
         // begin page render
         UIInternalLink.make(tofill, "evalSettingsLink", UIMessage.make("evalsettings.page.title"),
@@ -246,7 +247,6 @@ public class EvaluationRespondersProducer extends EvalCommonProducer implements 
             }
         }
     }
-
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)

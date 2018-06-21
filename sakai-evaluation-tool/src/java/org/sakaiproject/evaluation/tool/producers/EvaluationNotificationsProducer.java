@@ -92,6 +92,11 @@ public class EvaluationNotificationsProducer extends EvalCommonProducer implemen
         Long evaluationId = evalViewParameters.evaluationId;
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         String evalGroupId = evalViewParameters.evalGroupId;
+        String currentUserId = commonLogic.getCurrentUserId();
+        boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
+        if(!controlEval){
+            throw new SecurityException("User ("+currentUserId+") not allowed to access this view for evaluation: " + evaluationId);
+        }
 
         String actionBean = "sendEmailsBean.";
 
@@ -130,9 +135,7 @@ public class EvaluationNotificationsProducer extends EvalCommonProducer implemen
 
         UICommand.make(form, "emailSubmit", UIMessage.make("evalnotify.send.emails"), 
                 actionBean + "sendEmailAction");
-
     }
-
 
     /* (non-Javadoc)
      * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
