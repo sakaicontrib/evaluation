@@ -60,6 +60,8 @@ public class AssignPermissionsProducer implements ViewComponentProducer, ViewPar
          permissionsDescriptions.put(key.toString(), (String) resourceLoader.get(key));
       }
       session.setAttribute("permissionDescriptions", permissionsDescriptions);
+      resourceLoader = new ResourceLoader("org.sakaiproject.evaluation.tool.bundle.messages");
+      session.setAttribute(PermissionsHelper.DESCRIPTION, resourceLoader.getString("permission.message") + site.getTitle());
 
       UIOutput.make(tofill, HelperViewParameters.HELPER_ID, "sakai.permissions.helper");
       UICommand.make(tofill, HelperViewParameters.POST_HELPER_BINDING, "", null);
