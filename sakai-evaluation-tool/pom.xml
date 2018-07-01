@@ -6,7 +6,7 @@
     <parent>
         <artifactId>evaluation</artifactId>
         <groupId>org.sakaiproject</groupId>
-        <version>13-SNAPSHOT</version>
+        <version>19-SNAPSHOT</version>
         <!--eval.version-->
     </parent>
     <name>Sakai Evaluation Tool</name>
@@ -156,7 +156,7 @@
 
         <!-- needed for generating CSVs for export -->
         <dependency>
-            <groupId>net.sf.opencsv</groupId>
+            <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <!--properties:  war.bundle: true -->
         </dependency>

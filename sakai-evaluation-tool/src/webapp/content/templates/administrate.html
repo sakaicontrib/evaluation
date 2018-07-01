@@ -162,24 +162,24 @@
 	            <select rsf:id="students-view-results" id="students-view-results-id"></select>
             </label>
         </p>
-        <p class=   "checkbox indnt1">
+        <div class="form-group">
             <label for="students-save-without-submit" class="block">
 	            <input type="checkbox" rsf:id="students-save-without-submit" id="students-save-without-submit-id" />
 	            <span rsf:id="students-save-without-submit-note">Students may save their survey without submitting</span>
             </label>
-        </p>
-        <p class=   "checkbox indnt1">
+        </div>
+        <div class="form-group">
             <label for="students-cancel-allowed" class="block">
                 <input type="checkbox" rsf:id="students-cancel-allowed" id="students-cancel-allowed" />
                 <span rsf:id="students-cancel-allowed-note">Students may cancel while filling out their survey</span>
             </label>
-        </p>
-        <p class=   "longtext indnt1">
-	    <label for="students-answer-text-required-items" class="block">
+        </div>
+        <div class="form-group">
+            <label for="students-answer-text-required-items" class="block">
                     <span rsf:id="students-answer-text-required-items-note">Students must answer text items that are required</span>
 	            <select rsf:id="students-answer-text-required-items" id="students-answer-text-required-items-id"></select>
             </label>
-        </p> 
+        </div> 
     </fieldset>
 
     <fieldset  class="visibleFS"><legend><span rsf:id="administrator-settings-header">Administrator Settings:</span></legend>
@@ -352,7 +352,8 @@
         </p>        
     </fieldset>
 
-    <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.institution.specific.settings.header" style="padding:3px">Institution Specific Settings:</span></legend>
+    <fieldset id="institution-specific-settings" class="visibleFS">
+        <legend><span rsf:id="msg=administrate.institution.specific.settings.header" style="padding:3px">Institution Specific Settings:</span></legend>
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-item-results-sharing" id="general-item-results-sharing" />
             <label rsf:id="msg=administrate.general.item.sharing.note" for="general-item-results-sharing">Enable option to flag specific items in evaluations for database export and sharing (UMD)</label>

@@ -159,8 +159,12 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 				} catch (IOException e) {
 					LOG.warn("Error writing to file " + outputStream + ". Job aborting");
 					return;
-				} catch (Exception e) {
-					LOG.warn("Unknown exception " + e.getMessage() + " found. Job aborting");;
+				} 
+				catch (SecurityException e) {
+					LOG.info("Security exception thrown for evaluation (" + evaluation.getId() + ") skipping");
+				}
+				catch (Exception e) {
+					LOG.warn("Unknown exception " + e.getMessage() + " found. Job aborting");
 					return;
 				}
 

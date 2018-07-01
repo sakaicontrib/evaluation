@@ -50,6 +50,8 @@
     <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
         class="org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl"
         init-method="init">
+        <property name="externalLogic"
+                  ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
         <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />

@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
 import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.springframework.context.MessageSource;
 
-import au.com.bytecode.opencsv.CSVParser;
+import com.opencsv.CSVParser;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -225,7 +225,8 @@ public class ReportExporterBean implements ToolApi {
     // Utility methods
     private boolean isCSVTakers ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_TAKERS_REPORT ); }
     private boolean isCSV       ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_RESULTS_REPORT ); }
-    private boolean isPDF       ( String viewID ) { return viewID.equals( EvalEvaluationService.PDF_RESULTS_REPORT ); }
+    private boolean isPDF       ( String viewID ) { return (viewID.equals( EvalEvaluationService.PDF_RESULTS_REPORT ) || 
+                                                           (viewID.equals( EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL ))); }
 
     private OutputStream getOutputStream(HttpServletResponse response){
     	try {
