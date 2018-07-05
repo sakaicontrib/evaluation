@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -176,9 +177,7 @@ public class LocalTemplateLogic {
       return newItem;
    }
 
-
    // SCALES
-
    public EvalScale fetchScale(Long scaleId) {
       EvalScale scale = authoringService.getScaleById(scaleId);
       // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
@@ -216,14 +215,12 @@ public class LocalTemplateLogic {
       EvalScale currScale = new EvalScale(commonLogic.getCurrentUserId(), 
             null, EvalConstants.SCALE_MODE_SCALE, 
             EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
-      currScale.setOptions((String[]) arrayCopy(EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES));
+      currScale.setOptions(new ArrayList<String> (Arrays.asList(EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES)));
       currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }
 
-
    // UTILITY METHODS
-
    /**
     * This will connect an item to a scale and save the scale if it is new (not persistent yet),
     * the default values for the new adhoc scale will be set,
@@ -277,34 +274,5 @@ public class LocalTemplateLogic {
          }
       }
    }
-
-     
-   private Object[] arrayCopy(Object[] original) {
-	   Class arrayType = original.getClass().getComponentType();
-	   Object[] copy = (Object[])java.lang.reflect.Array.newInstance(arrayType, original.length);
-	   System.arraycopy(original, 0, copy, 0, original.length);
-	   return copy;
-   }
-
-
-   /**
-    * TODO - this should use the defunneler -AZ (so says antranig)
-    * This is here to fix up a templateItem which is not actually correctly connected via the foreign key,
-    * it is not ideal but it works
-    * @param tosave
-    */
-// private void connectTemplateToTI(EvalTemplateItem tosave) {
-// if (tosave.getTemplate() != null) {
-// Long templateId = tosave.getTemplate().getId();
-// if (templateId != null) {
-// // this lookup is needed so hibernate can make the connection
-// tosave.setTemplate(authoringService.getTemplateById(templateId));
-// } else {
-// // the template was not set correctly so we have to die
-// throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
-// "), all templateItems must be associated with an existing template");
-// }
-// }
-// }
 
 }

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -212,40 +213,39 @@ public class PreloadDataImpl {
 
             // initial expert scales
             agreeDisagree = saveScale("Agree disagree scale", EvalConstants.SCALE_IDEAL_HIGH,
-                    new String[] { "Strongly disagree", "Disagree", "Uncertain", "Agree", "Strongly agree" });
+                    new ArrayList<String>( Arrays.asList( "Strongly disagree", "Disagree", "Uncertain", "Agree", "Strongly agree" )));
             saveScale("Disagree agree scale", EvalConstants.SCALE_IDEAL_HIGH,
-                    new String[] { "Strongly agree", "Agree", "Uncertain", "Disagree", "Strongly disagree" });
+                    new ArrayList<String>( Arrays.asList( "Strongly agree", "Agree", "Uncertain", "Disagree", "Strongly disagree" )));
             saveScale("Frequency scale", EvalConstants.SCALE_IDEAL_NONE,
-                    new String[] { "Hardly ever", "Occasionally", "Sometimes", "Frequently", "Always" });
+                    new ArrayList<String>( Arrays.asList( "Hardly ever", "Occasionally", "Sometimes", "Frequently", "Always" )));
             saveScale("Relative rating scale", EvalConstants.SCALE_IDEAL_HIGH, 
-                    new String[] { "Poor", "Fair", "Good", "Excellent" });
+                    new ArrayList<String>( Arrays.asList( "Poor", "Fair", "Good", "Excellent" )));
             saveScale("Averages scale", EvalConstants.SCALE_IDEAL_NONE,
-                    new String[] { "Less than Average", "Average", "More than Average" });
+                    new ArrayList<String>( Arrays.asList( "Less than Average", "Average", "More than Average" )));
             saveScale("Effectiveness scale", EvalConstants.SCALE_IDEAL_HIGH,
-                    new String[] { "Not effective", "Somewhat effective", 
-                    "Moderately effective", "Effective", "Very effective" });
+                    new ArrayList<String>( Arrays.asList( "Not effective", "Somewhat effective", "Moderately effective", "Effective", "Very effective" )));
             saveScale("Adequacy scale", EvalConstants.SCALE_IDEAL_HIGH,
-                    new String[] { "Unsatisfactory", "Inadequate", "Adequate", "Good", "Excellent" });
+                    new ArrayList<String>( Arrays.asList( "Unsatisfactory", "Inadequate", "Adequate", "Good", "Excellent" )));
             saveScale("Relationships scale", EvalConstants.SCALE_IDEAL_NONE,
-                    new String[] { "Much less", "Less", "Some", "More", "Much more" });
+                    new ArrayList<String>( Arrays.asList( "Much less", "Less", "Some", "More", "Much more" )));
             saveScale("Low high scale", EvalConstants.SCALE_IDEAL_NONE,
-                    new String[] { "Very low", "High", "Moderately high", "High", "Very high" });
+                    new ArrayList<String>( Arrays.asList( "Very low", "High", "Moderately high", "High", "Very high" )));
             saveScale("Correctness scale", EvalConstants.SCALE_IDEAL_HIGH,
-                    new String[] { "No", "Somewhat", "Mostly", "Yes" });
+                    new ArrayList<String>( Arrays.asList( "No", "Somewhat", "Mostly", "Yes" )));
 
             // measurement scales
             saveScale("Speed scale", EvalConstants.SCALE_IDEAL_MID,
-                    new String[] { "Too slow", "Okay", "Too fast" });
+                    new ArrayList<String>( Arrays.asList( "Too slow", "Okay", "Too fast" )));
             saveScale("Size scale", EvalConstants.SCALE_IDEAL_MID,
-                    new String[] { "Too small", "Okay", "Too large" });
+                    new ArrayList<String>( Arrays.asList( "Too small", "Okay", "Too large" )));
             saveScale("Length scale", EvalConstants.SCALE_IDEAL_MID,
-                    new String[] { "Too short", "Okay", "Too long" });
+                    new ArrayList<String>( Arrays.asList( "Too short", "Okay", "Too long" )));
 
             // initial demographic scales
             saveScale("Gender scale", EvalConstants.SCALE_IDEAL_NONE, 
-                    new String[] { "Female", "Male" });
+                    new ArrayList<String>( Arrays.asList( "Female", "Male" )));
             saveScale("Grade (A-F) scale", EvalConstants.SCALE_IDEAL_NONE, 
-                    new String[] { "F", "D", "C", "B", "A", "Pass" });
+                    new ArrayList<String>( Arrays.asList( "F", "D", "C", "B", "A", "Pass" )));
 
             // Commented out VT specific scales -AZ
             //       saveScale("Student year scale", EvalConstants.SCALE_IDEAL_NONE, 
@@ -268,14 +268,13 @@ public class PreloadDataImpl {
      * @param options
      * @return a persisted {@link EvalScale}
      */
-    private EvalScale saveScale(String title, String ideal, String[] options) {
+    private EvalScale saveScale(String title, String ideal, List<String> options) {
         EvalScale scale = new EvalScale(ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, 
                 Boolean.TRUE, "",
                 ideal, options, Boolean.FALSE);
         dao.save(scale);
         return scale;
     }
-
 
     /**
      * Preload the default expert built items into the database

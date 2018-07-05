@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public class PreviewScaleProducer extends EvalCommonProducer implements ViewPara
                 scale = new EvalScale("admin", "Sample scale", EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, false);
                 scale.setId(12345l); // need a fake id
                 scale.setIdeal(scaleViewParams.findIdeal());
-                scale.setOptions(scaleViewParams.findPoints());
+                scale.setOptions(Arrays.asList(scaleViewParams.findPoints()));
             }
             // make a fake item and template item
             EvalItem item = new EvalItem("admin", "Sample question text", EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, false);

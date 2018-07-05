@@ -596,7 +596,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return null;
     }
 
-    public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
+    public Map<String, EvalUser> getEvalUsersByIds(List<String> userIds) {
         Map<String, EvalUser> users = new HashMap<>();
         for (String userId : userIds) {
             users.put(userId, getEvalUserById(userId) );

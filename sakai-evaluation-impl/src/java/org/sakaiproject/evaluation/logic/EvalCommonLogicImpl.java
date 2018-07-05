@@ -241,10 +241,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     @SuppressWarnings("null")
-    public List<EvalUser> getEvalUsersByIds(String[] userIds) {
+    public List<EvalUser> getEvalUsersByIds(List<String> userIds) {
         List<EvalUser> users = new ArrayList<>();
         boolean foundAll = false;
-        if (userIds == null || userIds.length == 0) {
+        if (userIds == null || userIds.size() == 0) {
             foundAll = true;
         }
 
@@ -252,7 +252,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if (! foundAll) {
             // get users from external
             externalUsers = externalLogic.getEvalUsersByIds(userIds);
-            if (externalUsers.size() == userIds.length) {
+            if (externalUsers.size() == userIds.size()) {
                 foundAll = true;
             }
         }
@@ -266,7 +266,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         /* now put the users into the list in the original order of the array 
          * with INVALID EvalUser objects in place of not-found users
          */
-        if (userIds != null && userIds.length > 0) {
+        if (userIds != null && userIds.size() > 0) {
             for( String userId : userIds ) {
                 EvalUser user;
                 if (adhocUsers.containsKey(userId)) {
@@ -545,7 +545,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                         EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(id);
                         if( adhocGroup != null )
                         {
-                            String[] ids = null;
+                            List<String> ids = null;
                             if( EvalConstants.PERM_BE_EVALUATED.equals( permission ) )
                             {
                                 ids = adhocGroup.getEvaluateeIds();
@@ -556,7 +556,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                             }
                             if( ids != null )
                             {
-                                userIDs.addAll( Arrays.asList( ids ) );
+                                userIDs.addAll( ids );
                             }
                         }
                     }
@@ -668,7 +668,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     // EMAILS 
     public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String deliveryOption) {
         // handle the list of TO addresses
-        List<EvalUser> l = getEvalUsersByIds(toUserIds);
+        List<EvalUser> l = getEvalUsersByIds(Arrays.asList(toUserIds));
         List<String> toEmails = new ArrayList<>();
         // email address validity is checked at entry but value should not be null
         for (Iterator<EvalUser> iterator = l.iterator(); iterator.hasNext();) {

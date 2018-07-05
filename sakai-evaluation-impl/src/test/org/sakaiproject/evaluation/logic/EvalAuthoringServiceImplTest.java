@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.logging.Log;
@@ -34,7 +35,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.genericdao.api.search.Search;
-
 
 /**
  * Testing the authoring service
@@ -74,7 +74,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.setSecurityChecks(securityChecks);
 
    }
-
 
    /**
     * ADD unit tests below here, use testMethod as the name of the unit test,
@@ -188,9 +187,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     */
    @Test
    public void testSaveScale() {
-      String[] options1 = {"Bad", "Average", "Good"};
-      String[] options2 = {"Bad", "Average", "Good"};
-      String[] options3 = {"Bad", "Average", "Good"};
+      List<String> options1 = new ArrayList<String>( Arrays.asList("Bad", "Average", "Good"));
+      List<String> options2 = new ArrayList<String>( Arrays.asList("Bad", "Average", "Good"));
+      List<String> options3 = new ArrayList<String>( Arrays.asList("Bad", "Average", "Good"));
       String test_title = "test scale title";
 
       // test saving a new valid scale
@@ -214,10 +213,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       testScale2.setSharing(EvalConstants.SHARING_SHARED);
       authoringService.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
 
-      Assert.assertEquals(4, testScale2.getOptions().length);
+      Assert.assertEquals(4, testScale2.getOptions().size());
       testScale2.setOptions(options2);
       authoringService.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
-      Assert.assertEquals(3, testScale2.getOptions().length);
+      Assert.assertEquals(3, testScale2.getOptions().size());
 
       // test admin can edit any scale
       testScale2.setIdeal(EvalConstants.SCALE_IDEAL_MID);
@@ -805,7 +804,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    @Test
    public void testDeleteItemAndScale() {
       // create a test MC item
-      String[] options1 = {"one", "two", "three"};
+      List<String> options1 = new ArrayList<String>( Arrays.asList("one", "two", "three"));
       EvalScale scale1 = new EvalScale(EvalTestDataLoad.ADMIN_USER_ID, "Scale MC", EvalConstants.SCALE_MODE_ADHOC, 
             EvalConstants.SHARING_PRIVATE, false, "description", 
             null, options1, false);
@@ -2562,10 +2561,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check the things that should match
       Assert.assertEquals(original.getIdeal(), copy1.getIdeal());
       Assert.assertEquals(original.getMode(), copy1.getMode());
-      for (int i = 0; i < copy1.getOptions().length; i++) {
-         Assert.assertEquals(original.getOptions()[i], copy1.getOptions()[i]);
-      }
-
+	  Assert.assertEquals(original.getOptions(),copy1.getOptions());
 
       // make sure title generation works
       scaleIds = new Long[] {etdl.scale1.getId()};
@@ -2636,9 +2632,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(original.getScale());
       Assert.assertNotNull(copy1.getScale());
       Assert.assertNotSame(copy1.getScale().getId(), original.getScale().getId());
-      for (int i = 0; i < copy1.getScale().getOptions().length; i++) {
-         Assert.assertEquals(copy1.getScale().getOptions()[i], original.getScale().getOptions()[i]);
-      }
+	  Assert.assertEquals(copy1.getScale().getOptions(), original.getScale().getOptions());
 
       // now do a copy without children
       original = etdl.item1;

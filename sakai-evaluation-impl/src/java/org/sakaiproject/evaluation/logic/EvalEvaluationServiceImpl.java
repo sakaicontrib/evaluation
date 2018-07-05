@@ -85,7 +85,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         toolApi = t;
     }
     
-
     public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
         toolApi.exportReport(evaluation, groupIds, outputStream, exportType);
     }
@@ -289,7 +288,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         }
         return trueState;
     }
-
 
     // USER ASSIGNMENTS
 
@@ -515,7 +513,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         }
         return valid;
     }
-
 
     // PERMISSIONS
 

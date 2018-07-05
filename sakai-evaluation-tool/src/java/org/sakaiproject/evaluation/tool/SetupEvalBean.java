@@ -529,12 +529,12 @@ public class SetupEvalBean {
     			for (String userId : userIdsForEvalGroup) {
     	
     				//ignore invalid users
-                    if(EvalUser.USER_TYPE_INVALID.equals(commonLogic.getEvalUsersByIds(new String[] {userId}).get(0).type)) {
+                    if(EvalUser.USER_TYPE_INVALID.equals(commonLogic.getEvalUsersByIds(new ArrayList<String> (Arrays.asList(userId))).get(0).type)) {
                         continue;
                     }
     				
     				if(commonLogic.isUserAnonymous(userId)) {
-    					EvalUser user = commonLogic.getEvalUsersByIds(new String[] {userId}).get(0);
+    					EvalUser user = commonLogic.getEvalUsersByIds(new ArrayList<String> (Arrays.asList(userId))).get(0);
     					messages.addMessage(new TargettedMessage(
     							"assigneval.invalid.user", new Object[] {user.username},
     							TargettedMessage.SEVERITY_ERROR));

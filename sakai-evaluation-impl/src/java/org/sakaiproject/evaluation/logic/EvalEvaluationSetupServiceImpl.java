@@ -1365,7 +1365,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         	String adhocGroupTitle = "Public ad-hoc group for " + eval.getTitle();
 			EvalAdhocGroup group = new EvalAdhocGroup(commonLogic.getCurrentUserId(), adhocGroupTitle);
         	commonLogic.saveAdhocGroup(group);
-            group.setEvaluateeIds(new String[] {commonLogic.getCurrentUserId()});
+            group.setEvaluateeIds(new ArrayList<String> (Arrays.asList(commonLogic.getCurrentUserId())));
             commonLogic.saveAdhocGroup(group);
             evalGroupIds = new String[] {group.getEvalGroupId()};
         }

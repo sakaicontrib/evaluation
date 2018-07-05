@@ -61,7 +61,7 @@ public class AdhocGroupMemberRemovalBean {
             participants.add(partId);
          }
       }
-      adhocGroup.setParticipantIds(participants.toArray(new String[] {}));
+      adhocGroup.setParticipantIds(participants);
       commonLogic.saveAdhocGroup(adhocGroup);
 
       EvalUser user = commonLogic.getEvalUserById(adhocUserId);

@@ -294,7 +294,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         groupsList.add("/site/!admin");
         Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
 
-        Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(userIdSet.toArray(new String[userIdSet.size()]));
+        Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(new ArrayList(userIdSet));
         List<EvalUser> sakaiAdminList = new ArrayList<>(sakaiAdminMap.values());
 
         return sakaiAdminList;
@@ -423,11 +423,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])
      */
-    public Map<String, EvalUser> getEvalUsersByIds(String[] userIds) {
+    public Map<String, EvalUser> getEvalUsersByIds(List<String> userIds) {
         Map<String, EvalUser> users = new HashMap<>();
         boolean foundAll = false;
-        if (userIds == null 
-                || userIds.length == 0) {
+        if (userIds == null || userIds.size() == 0) {
             foundAll = true;
         }
 
@@ -452,7 +451,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @param userIds an array of internal user ids
      * @return a map of userId -> {@link User}
      */
-    public Map<String, User> getSakaiUsers(String[] userIds) {
+    public Map<String, User> getSakaiUsers(List<String> userIds) {
         // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
         // the user already exists in Sakai -AZ
         //    // get the list of users efficiently

@@ -19,6 +19,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -107,7 +108,7 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
 			}
 			
 			//Get users
-			List<EvalUser> evalUsers = commonLogic.getEvalUsersByIds(users.toArray(new String[users.size()]));
+			List<EvalUser> evalUsers = commonLogic.getEvalUsersByIds(new ArrayList(users));
 			//Sort the users list by displayName
 			Collections.sort(evalUsers, new EvalUser.SortNameComparator());
 			

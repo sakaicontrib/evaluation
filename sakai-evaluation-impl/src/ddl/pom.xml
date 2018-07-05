@@ -45,7 +45,7 @@
             <plugin>
                 <!-- hibernate ddl generation -->
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>hibernate3-maven-plugin</artifactId>
+                <artifactId>hibernate4-maven-plugin</artifactId>
                 <version>2.1</version>
                 <configuration>
                     <components>

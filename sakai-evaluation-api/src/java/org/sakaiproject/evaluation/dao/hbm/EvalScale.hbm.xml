@@ -66,13 +66,13 @@
 			<column name="IDEAL" />
 		</property>
 		<!-- this holds the scale options for this scale, this must not be null (enforced in code) -->
-		<array name="options" table="EVAL_SCALE_OPTIONS" cascade="all">
+		<list name="options" table="EVAL_SCALE_OPTIONS" cascade="all">
                 <!-- all-delete-orphan -->
 			<key column="ID" not-null="true" />
-			<list-index column="SCALE_OPTION_INDEX" />
+			<index column="SCALE_OPTION_INDEX" />
 			<element type="string" column="SCALE_OPTION"
 				not-null="true" />
-		</array>
+		</list>
 		<!-- locked scales cannot be edited or removed, any scale used in a locked item must be locked also -->
 		<property name="locked" type="java.lang.Boolean">
 			<column name="LOCKED" />

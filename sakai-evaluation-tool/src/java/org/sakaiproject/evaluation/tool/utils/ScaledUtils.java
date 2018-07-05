@@ -132,16 +132,16 @@ public class ScaledUtils {
    public static String makeScaleText(EvalScale scale, int maxLength) {
       StringBuilder scaleText = new StringBuilder();
       if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
-         scaleText.append( scale.getOptions().length );
+         scaleText.append( scale.getOptions().size() );
          scaleText.append( " pt - " ); // I18n?
          scaleText.append( scale.getTitle() );
          scaleText.append( " (" );
       } else {
          scaleText.append( "Options: " ); // I18n?
       }
-      for (int j = 0; j < scale.getOptions().length; j++) {
+      for (int j = 0; j < scale.getOptions().size(); j++) {
          scaleText.append( (j==0 ? "" : ",") );
-         scaleText.append( scale.getOptions()[j] );
+         scaleText.append( scale.getOptions().get(j) );
       }
       if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
          scaleText.append( ")" );

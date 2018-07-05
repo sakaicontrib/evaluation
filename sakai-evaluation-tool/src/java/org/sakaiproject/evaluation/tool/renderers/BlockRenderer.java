@@ -92,8 +92,8 @@ public class BlockRenderer implements ItemRenderer {
         if (bindings[0] == null) initValue = "";
 
         EvalScale scale = templateItem.getItem().getScale();
-        String[] scaleOptions = scale.getOptions();
-        int optionCount = scaleOptions.length;
+        List<String> scaleOptions = scale.getOptions();
+        int optionCount = scaleOptions.size();
 
         // handle NA
         boolean usesNA = templateItem.getUsesNA();
@@ -102,7 +102,6 @@ public class BlockRenderer implements ItemRenderer {
         String scaleLabels[] = new String[optionCount];
 
         String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-
         
         ///////////////
         // matrix block
@@ -112,7 +111,7 @@ public class BlockRenderer implements ItemRenderer {
             
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = Integer.toString(optionCount - count);
-                scaleLabels[optionCount - count] = scaleOptions[count-1];
+                scaleLabels[optionCount - count] = scaleOptions.get(count-1);
             }
             
             if (usesNA) {
@@ -217,7 +216,7 @@ public class BlockRenderer implements ItemRenderer {
 
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = Integer.toString(optionCount - count);
-                scaleLabels[optionCount - count] = scaleOptions[count-1];
+                scaleLabels[optionCount - count] = scaleOptions.get(count-1);
             }
 
             // handle ideal coloring

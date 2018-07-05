@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -86,8 +87,8 @@ public class ControlEvalAdminProducer extends EvalCommonProducer {
 			assignorIds[i] = evalAdmin.getAssignorUserId();
 		}
 
-		List<EvalUser> evalUserList = commonLogic.getEvalUsersByIds(evalAdminIds);
-		List<EvalUser> assignorList = commonLogic.getEvalUsersByIds(assignorIds);
+		List<EvalUser> evalUserList = commonLogic.getEvalUsersByIds(Arrays.asList(evalAdminIds));
+		List<EvalUser> assignorList = commonLogic.getEvalUsersByIds(Arrays.asList(assignorIds));
 
 		// render table headers
 		UIMessage.make(evalAdminForm, "user-info-header", "controlevaladmin.user.info.header");

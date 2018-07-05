@@ -146,23 +146,19 @@ public class AdhocGroupsBean {
 
       Boolean useAdhocusers = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS);
 
-      String[] existingParticipants = group.getParticipantIds();
-      if (existingParticipants == null) {
-         existingParticipants = new String[] {};
+      List<String> existingParticipantsList = group.getParticipantIds();
+      if (existingParticipantsList == null) {
+          existingParticipantsList = new ArrayList<>();
       }
-
-      List<String> existingParticipantsList = new ArrayList<>();
-      existingParticipantsList.addAll( Arrays.asList( existingParticipants ) );
 
       List<String> participants = new ArrayList<>();
       checkAndAddToParticipantsList(newAdhocGroupUsers, participants, existingParticipantsList);
 
       Set<String> allParticipants = new HashSet<>();
-      allParticipants.addAll( Arrays.asList( existingParticipants ) );
+      allParticipants.addAll( existingParticipantsList );
 
       allParticipants.addAll(participants);
-
-      group.setParticipantIds(allParticipants.toArray(new String[] {}));
+      group.setParticipantIds(new ArrayList(allParticipants));
 
       commonLogic.saveAdhocGroup(group);
       adhocGroupId = group.getId();
@@ -283,7 +279,7 @@ public class AdhocGroupsBean {
             // invalid entry
             rejectedUsers.add(potentialId);
          } else {
-            if (existingParticipants.contains(userId)) {
+            if (existingParticipants != null && existingParticipants.contains(userId)) {
                // check if user is already in the group
                alreadyInGroupUsers.add(potentialId);
             } else {

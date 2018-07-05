@@ -160,8 +160,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         scale.setLastModified( new Date() );
 
         // check for null or length 0 or 1 options
-        if (scale.getOptions() == null ||
-                scale.getOptions().length <= 1) {
+        if(scale.getOptions() == null || scale.getOptions().isEmpty()) {
             throw new IllegalArgumentException("Scale options cannot be null and must have at least 2 items");
         }
 
@@ -340,10 +339,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         return scale;
     }
 
-
-
     // ITEMS
-
 
     public EvalItem getItemById(Long itemId) {
         LOG.debug("itemId:" + itemId);
@@ -1600,8 +1596,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                     newTitle = original.getTitle() + " (copy)";
                 }
                 EvalScale copy = new EvalScale(ownerId, newTitle, original.getMode(), EvalConstants.SHARING_PRIVATE, 
-                        false, null, original.getIdeal(), ArrayUtils.copy(original.getOptions()), 
-                        false);
+                        false, null, original.getIdeal(), new ArrayList<String>(original.getOptions()), false);
                 copy.setCopyOf(original.getId());
                 copy.setHidden(hidden);
                 copiedScales.add(copy);

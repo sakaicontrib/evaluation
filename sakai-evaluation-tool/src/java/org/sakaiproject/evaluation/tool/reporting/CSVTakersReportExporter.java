@@ -78,7 +78,7 @@ public class CSVTakersReportExporter implements ReportExporter {
 
         Set<EvalResponse> responses = evaluation.getResponses();
         Set<String> groupIdSet = new HashSet<>(Arrays.asList(groupIds));
-        String[] userIds = ownersOfResponses(responses, groupIdSet);
+        List<String> userIds = ownersOfResponses(responses, groupIdSet);
         List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
         Collections.sort(users, new EvalUser.SortNameComparator());
         LOG.debug("users.size(): " + users.size());
@@ -104,14 +104,14 @@ public class CSVTakersReportExporter implements ReportExporter {
         }
     }
 
-    private String[] ownersOfResponses(Set<EvalResponse> responses, Set<String> groupIdSet) {
+    private List<String> ownersOfResponses(Set<EvalResponse> responses, Set<String> groupIdSet) {
         ArrayList<String> owners = new ArrayList<>(responses.size());
         for (EvalResponse response : responses) {
             if (response.getEvalGroupId() != null && groupIdSet.contains(response.getEvalGroupId())) {
                 owners.add(response.getOwner());
             }
         }
-        return (String[]) owners.toArray(new String[owners.size()]);
+        return owners;
     }
 
     public String getContentType() {

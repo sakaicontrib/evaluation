@@ -123,11 +123,11 @@ public class ControlScalesProducer extends EvalCommonProducer {
             // ASCII value of 'a' = 97 so initial value is 96.
             // This is kinda weird, not sure it is really needed -AZ
             char[] startOptionsNo = { 96 };
-            for (int j = 0; j < scale.getOptions().length; ++j) {
+            for (int j = 0; j < scale.getOptions().size(); ++j) {
                 UIBranchContainer scaleOptions = UIBranchContainer.make(scaleBranch, "scaleOptions:", j+"");
                 startOptionsNo[0]++;
                 UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo));
-                UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]);
+                UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions().get(j)));
             }
 
             UIMessage.make(scaleBranch, "ideal-scale-point", "controlscales.ideal.scale.title");

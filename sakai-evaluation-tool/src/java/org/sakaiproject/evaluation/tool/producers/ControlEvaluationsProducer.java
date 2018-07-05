@@ -101,7 +101,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
        this.humanDateRenderer = humanDateRenderer;
    }
 
-
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -109,7 +108,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
 
       EvalListParameters evalListParams = (EvalListParameters) viewparams;
       int maxAgeToDisplay = evalListParams.maxAgeToDisplay; // max age in months to display closed evals
-      
       
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -176,7 +174,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
       UIInternalLink.make(tofill, "begin-evaluation-link", UIMessage.make("starteval.page.title"), 
             new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null) );
 
-
       // create partial evaluations header and listing
       if (partialEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "partial-eval-listing:");
@@ -205,7 +202,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             humanDateRenderer.renderDate(evaluationRow, "partial-eval-modified", evaluation.getLastModified());
          }
       }
-
 
       // create inqueue evaluations header
       if (inqueueEvals.size() > 0) {
@@ -261,7 +257,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
                    UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
                          new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
                 }
-                
 
                 UIInternalLink.make(evaluationRow, "inqueue-eval-notifications-link", UIMessage.make("controlevaluations.eval.email.link"), 
                         new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluation.getId() ) );
@@ -293,7 +288,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
       } else {
          UIMessage.make(tofill, "no-inqueue-evals", "controlevaluations.inqueue.none");
       }
-
 
       // create active evaluations header and link
       if (activeEvals.size() > 0) {
@@ -438,7 +432,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
           UIMessage.make(tofill, "eval-instructions-group-notpublished", "controlevaluations.instructions.site.unpublished");
       }
 
-
       // create closed evaluations header and link
       if (closedEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "closed-eval-listing:");
@@ -480,7 +473,6 @@ public class ControlEvaluationsProducer extends EvalCommonProducer implements Vi
             UIOutput.make(evaluationRow, "closed-eval-owner", owner.displayName);
             UIInternalLink.make(evaluationRow, "evaluation-chown-link", UIMessage.make("general.command.chown"),
                     new EvalViewParameters( ChownEvaluationProducer.VIEW_ID, evaluation.getId() ));
-            
 
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);

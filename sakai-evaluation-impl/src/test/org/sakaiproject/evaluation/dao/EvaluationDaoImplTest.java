@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -94,7 +96,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         etdl = ptd.getEtdl();
 
         // preload additional data if desired
-        String[] optionsA = {"Male", "Female", "Unknown"};
+        List<String> optionsA = new ArrayList<String>( Arrays.asList("Male", "Female", "Unknown"));
         scaleLocked = new EvalScale(EvalTestDataLoad.ADMIN_USER_ID, "Scale Alpha", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, "description", 
                 EvalConstants.SCALE_IDEAL_NONE, optionsA, EvalTestDataLoad.LOCKED);
@@ -1328,7 +1330,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
 
         // make sure the group has the user
         EvalAdhocGroup checkGroup = (EvalAdhocGroup) evaluationDao.findById(EvalAdhocGroup.class, etdl.group2.getId());
-        Assert.assertTrue( ArrayUtils.contains(checkGroup.getParticipantIds(), etdl.user3.getUserId()) );
+        Assert.assertTrue( checkGroup.getParticipantIds().contains( etdl.user3.getUserId()) );
 
         l = evaluationDao.getEvalAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
         Assert.assertNotNull(l);

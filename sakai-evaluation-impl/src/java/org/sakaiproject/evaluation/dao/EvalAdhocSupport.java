@@ -75,7 +75,7 @@ public interface EvalAdhocSupport {
     * @param userIds an array of internal user ids
     * @return a map of userId -> {@link EvalAdhocUser}
     */
-   public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(String[] userIds);
+   public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(List<String> userIds);
 
    /**
     * Find a set of users based on the input array of ids

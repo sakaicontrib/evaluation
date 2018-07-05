@@ -34,10 +34,10 @@
          <column name="NODE_ID" not-null="true" length="255" />
       </property>
       <!-- this holds the associated list of eval groups for this node -->
-      <array name="evalGroups" table="EVAL_GROUPNODES_GROUPS" cascade="all"><!-- all-delete-orphan -->
+      <list name="evalGroups" table="EVAL_GROUPNODES_GROUPS" cascade="all"><!-- all-delete-orphan -->
          <key column="ID" not-null="true" />
-         <list-index column="GROUPS_INDEX" />
+         <index column="GROUPS_INDEX" />
          <element type="string" column="GROUPS" not-null="true" />
-      </array>
+      </list>
    </class>
 </hibernate-mapping>

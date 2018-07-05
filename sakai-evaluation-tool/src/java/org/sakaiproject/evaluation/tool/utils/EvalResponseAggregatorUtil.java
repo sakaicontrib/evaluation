@@ -77,7 +77,7 @@ public class EvalResponseAggregatorUtil {
             togo = commonLogic.makePlainTextFromHTML( answer.getText() );
         } 
         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-            String labels[] = templateItem.getItem().getScale().getOptions();
+            List<String> labels = templateItem.getItem().getScale().getOptions();
             StringBuilder sb = new StringBuilder();
             Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
             for (int k = 0; k < decoded.length; k++) {
@@ -85,8 +85,8 @@ public class EvalResponseAggregatorUtil {
                     sb.append(",");
                 }
                 int decode = decoded[k];
-                if (decode >= 0 && decode < labels.length) {
-                    sb.append( labels[decoded[k]] );
+                if (decode >= 0 && decode < labels.size()) {
+                    sb.append( labels.get(decoded[k]) );
                 } else {
                     sb.append(decode);
                 }
@@ -96,10 +96,10 @@ public class EvalResponseAggregatorUtil {
         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
                 || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
-            String labels[] = RenderingUtils.makeReportingScaleLabels(templateItem, templateItem.getItem().getScale().getOptions());
+            List<String> labels = RenderingUtils.makeReportingScaleLabels(templateItem, templateItem.getItem().getScale().getOptions());
             int value = answer.getNumeric();
-            if (value >= 0 && value < labels.length) {
-                togo = labels[value];
+            if (value >= 0 && value < labels.size()) {
+                togo = labels.get(value);
             } else {
                 togo = value + "";
             }

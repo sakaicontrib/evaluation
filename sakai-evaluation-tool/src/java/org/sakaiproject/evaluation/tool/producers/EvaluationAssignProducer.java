@@ -337,7 +337,6 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             		}
             	}
             	
-            	
                 UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
 
                 hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:",
@@ -389,7 +388,6 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            	}
 	            	count2 ++;
 	            }
-	            
 				
 	            List<String> assignGroupsIds = new ArrayList<>();
 	            String groupSelectionOTP = "assignGroupSelectionSettings.";
@@ -409,7 +407,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            		}
 	            	}
 	            }
-	                           
+
 	            int count = 0;
 	            int countUnpublishedGroups = 0;
 	            for (EvalGroup evalGroup : unassignedEvalGroups) {
@@ -425,7 +423,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	            	}
 	            	
 	            	boolean isPublished = commonLogic.isEvalGroupPublished(evalGroupId);
-	            	            	
+
 	                UIBranchContainer checkboxRow = UIBranchContainer.make(evalgroupArea, "groups:", count+"");
 	                if (count % 2 == 0) {
 	                    checkboxRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
@@ -440,7 +438,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 	                if(assignGroupsIds.contains(evalGroupId)){
 	                	checkboxRow.decorate(new UIStyleDecorator("selectedGroup"));
 	                }
-		                 
+
 	                if (useSelectionOptions){
 		                
 		                if (! newEval) {
@@ -520,8 +518,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 		            }
 		            
 	                UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
-		                
-	                
+
 	                count++;
 	            }
 	            }

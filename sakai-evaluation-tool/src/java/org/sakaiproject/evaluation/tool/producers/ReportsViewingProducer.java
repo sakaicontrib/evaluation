@@ -355,14 +355,14 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             if (! VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
                 // if we are in essay view mode then do not show the scale or the answers counts
                 EvalScale scale = templateItem.getItem().getScale();
-                String[] scaleOptions = scale.getOptions();
-                String scaleLabels[] = RenderingUtils.makeReportingScaleLabels(templateItem, scaleOptions);
+                List<String> scaleOptions = scale.getOptions();
+                List<String> scaleLabels = RenderingUtils.makeReportingScaleLabels(templateItem, scaleOptions);
 
-                int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
+                int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.size(), itemAnswers);
 
-                for (int x = 0; x < scaleLabels.length; x++) {
+                for (int x = 0; x < scaleLabels.size(); x++) {
                     UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
-                    UIOutput.make(choicesBranch, "choiceText", scaleLabels[x]);
+                    UIOutput.make(choicesBranch, "choiceText", scaleLabels.get(x));
                     UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                             new String[] { choicesCounts[x]+"", makePercentage(choicesCounts[x], responsesCount) });
                 }

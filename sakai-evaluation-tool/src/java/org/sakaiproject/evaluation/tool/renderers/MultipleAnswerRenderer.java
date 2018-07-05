@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -65,8 +66,8 @@ public class MultipleAnswerRenderer implements ItemRenderer {
       if (naBinding == null) naInit = Boolean.FALSE;
 
       EvalScale scale = templateItem.getItem().getScale();
-      String[] scaleOptions = scale.getOptions();
-      int optionCount = scaleOptions.length;
+      List<String> scaleOptions = scale.getOptions();
+      int optionCount = scaleOptions.size();
       String scaleValues[] = new String[optionCount];
       String scaleLabels[] = new String[optionCount];
 
@@ -83,10 +84,9 @@ public class MultipleAnswerRenderer implements ItemRenderer {
         	 fullFirst.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
          }
 
-
          for (int count = 0; count < optionCount; count++) {
             scaleValues[count] = Integer.toString(count);
-            scaleLabels[count] = scaleOptions[count];
+            scaleLabels[count] = scaleOptions.get(count);
          }
 
          UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
