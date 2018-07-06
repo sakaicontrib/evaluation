@@ -96,9 +96,7 @@ public class RenderingUtils {
         }
         return new AnswersMean(totalAnswers, weightedAverage);
     }
-    
-    
-    
+
     public static AnswersMean calculateAnswersMean(int[] responseArray, String[] answersArray, boolean usaNA)
     {
     	/* 20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
