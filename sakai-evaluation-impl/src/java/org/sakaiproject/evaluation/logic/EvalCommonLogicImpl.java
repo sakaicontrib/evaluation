@@ -82,21 +82,18 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
     
     // INTERNAL for adhoc user/group lookups
-
     private EvalAdhocSupport adhocSupportLogic;
     public void setAdhocSupportLogic(EvalAdhocSupport adhocSupportLogic) {
         this.adhocSupportLogic = adhocSupportLogic;
     }
     
     // support for specifying eval admins
-    
     private EvalAdminSupport evalAdminSupportLogic;
     public void setEvalAdminSupportLogic(EvalAdminSupport evalAdminSupportLogic) {
     	this.evalAdminSupportLogic = evalAdminSupportLogic;
     }
     
     // PROVIDERS
-
     private EvalGroupsProvider evalGroupsProvider;
     public void setEvalGroupsProvider(EvalGroupsProvider evalGroupsProvider) {
         this.evalGroupsProvider = evalGroupsProvider;
@@ -119,7 +116,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             LOG.debug("No EvalGroupsProvider found...");
         }
     }
-
 
     public String getCurrentUserId() {
         return externalLogic.getCurrentUserId();
@@ -213,7 +209,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return username;
     }
 
-
     public EvalUser getEvalUserById(String userId) {
         EvalUser user = null;
         if (userId != null) {
@@ -298,17 +293,18 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     // sakai and eval admin logic
     
     public boolean isUserAdmin(String userId) {
-    	
     	// check if user is a sakai admin and that sakai admins are granted admin rights in the evaluation system
     	if (((Boolean) evalSettings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS)) && (this.isUserSakaiAdmin(userId)))
     		return true;
         // check if user is an eval admin
         // otherwise, user does not have admin rights
-            	
     	return this.isUserEvalAdmin(userId);
     }
     
     public boolean isUserSakaiAdmin(String userId) {
+        if(userId == null){
+    		return false;
+        }
         LOG.debug("Checking is sakai admin for: " + userId);
         return externalLogic.isUserSakaiAdmin(userId);
     }
@@ -372,7 +368,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
 
         EvalGroup c = null;
-
         if (c == null) {
             // check external
             c = externalLogic.makeEvalGroupObject(evalGroupId);
@@ -639,7 +634,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return false;
     }
 
-
     // CURRENTLY BROKEN METHODS
 
     // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups -AZ
@@ -647,7 +641,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         // TODO Auto-generated method stub
         return externalLogic.getContentCollectionId(siteId);
     }
-
 
     // FIXME: this is not implemented correctly, needs to be fixed so it works with adhoc and provided groups -AZ
     public List<EvalGroup> getFilteredEvalGroupsForUser(String userId,
@@ -672,10 +665,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return true; // default to true (all groups published)
     }
 
-
-
     // EMAILS 
-
     public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions, String deliveryOption) {
         // handle the list of TO addresses
         List<EvalUser> l = getEvalUsersByIds(toUserIds);
@@ -720,9 +710,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return emails;
     }
 
-
     // ENTITIES
-
     public String getServerUrl() {
         return externalLogic.getServerUrl();
     }
@@ -789,9 +777,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         return externalLogic.makePlainTextFromHTML(html).trim();
     }
 
-
     // JOBS related pass-through methods
-
     public String createScheduledJob(Date executionDate, Long evaluationId, String jobType) {
         return externalLogic.createScheduledJob(executionDate, evaluationId, jobType);
     }
@@ -805,7 +791,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     // ADHOC
-
     public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId) {
         return adhocSupportLogic.getAdhocGroupById(adhocGroupId);
     }
@@ -853,7 +838,6 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             adhocSupportLogic.deleteAdhocGroup(adhocGroupId);
         }
     }
-
 
     // protected internal
 

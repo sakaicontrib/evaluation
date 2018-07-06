@@ -145,6 +145,10 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
 
         // local variables used in the render logic
         String currentUserId = commonLogic.getCurrentUserId();
+        boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evalViewParams.evaluationId);
+        if(!controlEval){
+            throw new SecurityException("User ("+currentUserId+") not allowed to access this view for evaluation: " + evalViewParams.evaluationId);
+        }
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
@@ -205,9 +209,7 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             }
         }
 
-
         // EVALUATION TITLE/INSTRUCTIONS
-
         if ( EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
             UIInput.make(form, "title", evaluationOTP + "title");
         } else {
@@ -282,7 +284,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         }
 
         // EVALUATION DATES
-
         Date today = new Date();
         UIMessage.make(tofill, "current_date", "evalsettings.dates.current", 
                 new Object[] { dateFormat.format(today), timeFormat.format(today) });
@@ -338,7 +339,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                     null, currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
         }
 
-
         // all types of users view results on the same date or we can configure the results viewing separately
         boolean sameViewDateForAll = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
@@ -367,8 +367,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         generateViewDateControl(showResultsToInst, "instructorsViewDate", 
                 evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
         
-
-
         // RESPONDENT SETTINGS
 
         // Student Allowed Leave Unanswered
@@ -377,7 +375,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
                 "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form, 
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
-
 
         // Student Modify Responses
         Boolean studentModifyReponses = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
@@ -463,7 +460,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
                 form.parameters.add(new UIELBinding(evaluationOTP + "instructorOpt", instUseFromAboveValue));
             }
         }
-
 
         // EVALUATION NOTIFICATIONS SECTION
         // if Consolidated Emails are being used, use the default ConsolidatedAvailable template for available emails 
@@ -567,14 +563,11 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             }
             
             if (evalTermIdsEnabled) {
-            	
             	UIBranchContainer evalTermIdBranch = UIBranchContainer.make(extrasBranch, "showEvalTermId:");
                 
             	UIInput evalTermIdInput = UIInput.make(evalTermIdBranch, "eval-term-id", evaluationOTP + "termId");
             	evalTermIdInput.mustapply = true;
-            	
             }
-            
         }
 
         // EVAL SETTINGS SAVING CONTROLS
@@ -626,8 +619,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
         return new EvalViewParameters();
     }
 
-
-
     /**
      * Generate a checkbox which is controlled by a system boolean setting,
      * if setting is configurable (null) then show the checkbox, else disable the checkbox<br/>
@@ -660,7 +651,6 @@ public class EvaluationSettingsProducer extends EvalCommonProducer implements Vi
             }
         }
     }
-
 
     /**
      * Generates the date picker control for the standard evaluation dates
