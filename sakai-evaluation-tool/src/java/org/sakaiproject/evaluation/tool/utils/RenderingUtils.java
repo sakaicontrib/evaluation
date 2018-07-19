@@ -97,7 +97,7 @@ public class RenderingUtils {
         return new AnswersMean(totalAnswers, weightedAverage);
     }
 
-    public static AnswersMean calculateAnswersMean(int[] responseArray, String[] answersArray, boolean usaNA)
+    public static AnswersMean calculateAnswersMean(int[] responseArray, List<String> answersArray, boolean usaNA)
     {
     	/* 20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
     	 * Calculate weighted mean of answers or of answer numbers depending if values are numeric.
@@ -121,7 +121,7 @@ public class RenderingUtils {
         {
         	try
         	{
-	        	realValues[i]=new Integer(answersArray[i]);
+	        	realValues[i]=new Integer(answersArray.get(i));
         	}
         	catch (Exception e)
         	{
@@ -209,15 +209,15 @@ public class RenderingUtils {
      * @param scaleOptions the array of scale options for a matrix templateItem
      * @return List (see method comment)
      */
-    public static List<String> getMatrixLabels(String[] scaleOptions) {
-    	List<String> list = new ArrayList<>();
-        if (scaleOptions != null && scaleOptions.length > 0) {
-        	list.add(scaleOptions[0]);
-        	list.add(scaleOptions[scaleOptions.length - 1]);
-        	if (scaleOptions.length > 4) {
-        		int middleIndex = (scaleOptions.length - 1) / 2;
-        		list.add(scaleOptions[middleIndex]);
-        	}
+    public static List<String> getMatrixLabels(List<String> scaleOptions) {
+        List<String> list = new ArrayList<>();
+        if (scaleOptions != null && scaleOptions.size() > 0) {
+            list.add(scaleOptions.get(0));
+            list.add(scaleOptions.get(scaleOptions.size() - 1));
+            if (scaleOptions.size() > 4) {
+                int middleIndex = (scaleOptions.size() - 1) / 2;
+                list.add(scaleOptions.get(middleIndex));
+            }
         }
     	return list;
     }
@@ -230,11 +230,11 @@ public class RenderingUtils {
      * @param scaleOptions the array of scale options for this templateItem
      * @return the array of scale labels (or null if this is not scaled/MC/MA/block child)
      */
-    public static String[] makeReportingScaleLabels(EvalTemplateItem templateItem, String[] scaleOptions) {
+    public static List<String> makeReportingScaleLabels(EvalTemplateItem templateItem, List<String> scaleOptions) {
         if (templateItem == null) {
             throw new IllegalArgumentException("templateItem must be set");
         }
-        String scaleLabels[] = null;
+        List<String> scaleLabels = new ArrayList<>();
         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
         if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType)
                 || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)
@@ -248,12 +248,12 @@ public class RenderingUtils {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
             }
-            if (scaleOptions == null || scaleOptions.length == 0) {
+            if (scaleOptions == null || scaleOptions.isEmpty()) {
                 // if scale options are missing then try to get them from the item
                 // NOTE: this could throw a NPE - not much we can do about that if it happens
                 scaleOptions = templateItem.getItem().getScale().getOptions();
             }
-            scaleLabels = scaleOptions.clone(); // default to just using the options array (use a copy)
+            scaleLabels = ((List) ( (ArrayList) scaleOptions).clone()); // default to just using the options array (use a copy)
             String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
             if (scaleDisplaySetting == null && templateItem.getItem() != null) {
                 scaleDisplaySetting = templateItem.getItem().getScaleDisplaySetting();
@@ -272,12 +272,12 @@ public class RenderingUtils {
                  * and only show text if the label was display in take evals (e.g. "1 - blah, 2, 3, 4 - blah, ...)
                  */
                 List<String> matrixLabels = RenderingUtils.getMatrixLabels(scaleOptions);
-                for (int i = 0; i < scaleLabels.length; i++) {
-                    String label = scaleLabels[i];
+                for (int i = 0; i < scaleLabels.size(); i++) {
+                    String label = scaleLabels.get(i);
                     if (matrixLabels.contains(label)) {
-                        scaleLabels[i] = (i+1) + " - " + scaleLabels[i];
+                        scaleLabels.add(i, (i+1) + " - " + scaleLabels.get(i));
                     } else {
-                        scaleLabels[i] = String.valueOf(i+1);
+                        scaleLabels.add(i, String.valueOf(i+1));
                     }
                 }
             }

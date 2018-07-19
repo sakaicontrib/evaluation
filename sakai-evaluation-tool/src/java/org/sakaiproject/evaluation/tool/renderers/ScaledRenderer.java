@@ -64,8 +64,8 @@ public class ScaledRenderer implements ItemRenderer {
         if (bindings[0] == null) initValue = "";
 
         EvalScale scale = templateItem.getItem().getScale();
-        String[] scaleOptions = scale.getOptions();
-        int optionCount = scaleOptions.length;
+        List<String> scaleOptions = scale.getOptions();
+        int optionCount = scaleOptions.size();
         String scaleValues[] = new String[optionCount];
         String scaleLabels[] = new String[optionCount];
 
@@ -85,8 +85,8 @@ public class ScaledRenderer implements ItemRenderer {
             // setup simple variables to make code more clear
             boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting);
 
-            String compactDisplayStart = scaleOptions[0];
-            String compactDisplayEnd = scaleOptions[optionCount - 1];
+            String compactDisplayStart = scaleOptions.get(0);
+            String compactDisplayEnd = scaleOptions.get(optionCount - 1);
 
             for (int count = 0; count < optionCount; count++) {
                 scaleValues[count] = Integer.toString(count);
@@ -167,7 +167,7 @@ public class ScaledRenderer implements ItemRenderer {
 
             for (int count = 0; count < optionCount; count++) {
                 scaleValues[count] = Integer.toString(count);
-                scaleLabels[count] = scaleOptions[count];
+                scaleLabels[count] = scaleOptions.get(count);
             }
 
             UIOutput.make(fullFirst, "itemNum", displayNumber+"" ); //$NON-NLS-2$
@@ -257,7 +257,7 @@ public class ScaledRenderer implements ItemRenderer {
             
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = Integer.toString(optionCount - count);
-                scaleLabels[optionCount - count] = scaleOptions[count-1];
+                scaleLabels[optionCount - count] = scaleOptions.get(count-1);
             }
 
             if (usesNA) {
@@ -324,7 +324,7 @@ public class ScaledRenderer implements ItemRenderer {
 
             for (int count = 1; count <= optionCount; count++) {
                 scaleValues[optionCount - count] = Integer.toString(optionCount - count);
-                scaleLabels[optionCount - count] = scaleOptions[count-1];
+                scaleLabels[optionCount - count] = scaleOptions.get(count-1);
             }
 
             if (usesNA) {

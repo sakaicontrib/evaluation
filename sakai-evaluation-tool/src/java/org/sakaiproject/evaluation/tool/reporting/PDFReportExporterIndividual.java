@@ -320,15 +320,15 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
             int responseNo = itemAnswers.size();
             displayNumber++;
-            String[] itemScaleOptions = item.getScale().getOptions();
+            List<String> itemScaleOptions = item.getScale().getOptions();
             int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType,
-                    itemScaleOptions.length, itemAnswers);
+                    itemScaleOptions.size(), itemAnswers);
 
-            String[] optionLabels = RenderingUtils.makeReportingScaleLabels(templateItem, itemScaleOptions);
+            List<String> optionLabels = RenderingUtils.makeReportingScaleLabels(templateItem, itemScaleOptions);
             if (templateItem.getUsesNA()) {
                 // add in the N/A label to the end
-                optionLabels = Arrays.copyOf(optionLabels, optionLabels.length+1);
-                optionLabels[optionLabels.length - 1] = messageLocator.getMessage("reporting.notapplicable.longlabel");
+                //optionLabels = Arrays.copyOf(optionLabels, optionLabels.length+1);
+                optionLabels.add(optionLabels.size()-1, messageLocator.getMessage("reporting.notapplicable.longlabel"));
             }
 
             // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
@@ -353,7 +353,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
              else answersAndMean = answersAndMean + " ";
 
              evalPDFReportBuilder.addLikertResponse(displayNumber + ". " + questionText,
-                     optionLabels, responseArray, responseNo, showPercentages, answersAndMean,lastElementIsHeader);
+                     optionLabels.toArray(new String[optionLabels.size()]), responseArray, responseNo, showPercentages, answersAndMean,lastElementIsHeader);
 
             // handle comments
             if (dti.usesComments()) {
@@ -413,7 +413,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
         return temporal;
     }
 
-    private double weightedMean(String [] options, int [] values, boolean usaNA)
+    private double weightedMean(List<String> options, int [] values, boolean usaNA)
     {
     	/*
     	 * 20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
@@ -423,14 +423,14 @@ public class PDFReportExporterIndividual implements ReportExporter {
     	 */
         Integer myNumber;
         int totalValues=0, totalNumbers=0;
-        int responseCount = (usaNA) ? options.length -1 : options.length; // remove the NA count from the end
+        int responseCount = (usaNA) ? options.size() -1 : options.size(); // remove the NA count from the end
         boolean numerico=true;
 
         for (int i=0;i<responseCount;i++)
         {
             try
             {
-                myNumber=new Integer(options[i]);
+                myNumber=new Integer(options.get(i));
                 totalNumbers=totalNumbers+(myNumber*values[i]);
                 totalValues=totalValues+values[i];
             }
@@ -455,7 +455,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
         return ((double)totalNumbers / (double)totalValues);
     }
 
-    public double calculateBlockWeightedMean(ArrayList<Integer> collectedValues, String[] answers)
+    public double calculateBlockWeightedMean(ArrayList<Integer> collectedValues, List<String> answers)
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
         int accumulator=0, numeroValores=0, answer;
@@ -464,7 +464,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             numeroValores=numeroValores+collectedValues.get(n);
             try
             {
-            	answer=new Integer(answers[n]);
+            	answer=new Integer(answers.get(n));
             }
             catch (NumberFormatException e)
             {
@@ -495,7 +495,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
         boolean processingBlock=false;
         int numberOfChildren=0;
 
-        String[] optionLabels = null; //Answers of each item.
+        List<String> optionLabels = null; //Answers of each item.
 
         for (int i = 0; i < dtis.size(); i++)
         {
@@ -536,14 +536,14 @@ public class PDFReportExporterIndividual implements ReportExporter {
                 {
                     if (numberOfChildren>0) numberOfChildren--;
 
-                    int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
+                    int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().size(), itemAnswers);
                     int temporal;
 
                     optionLabels = item.getScale().getOptions();
 
                     try
                     {
-                        for (int n=0;n<optionLabels.length;n++)
+                        for (int n=0;n<optionLabels.size();n++)
                         {
                             if (n>=collectedValues.size())
                             {

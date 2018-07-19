@@ -151,7 +151,6 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         Long scaleId = null; // this holds the current scale id if there is one
         Long itemGroupId = null; // this holds the current eval item group id if there is one - EVALSYS-1026
 
-
         Boolean isGrouped = (groupItemId != null && groupItemId == -1l ); //We are working with an existing child item
         Boolean isGroupable = ( ! isGrouped && groupItemId != null);
 
@@ -180,7 +179,6 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
                         new UIELBinding(templateItemOTP + "template", ELReference.make(templateOTP + templateId)) );
             }
 
-            //>>>
             if ( isGroupable ){         	
                 // New child item
                 List<EvalTemplateItem> groupedItemList = authoringService.getBlockChildTemplateItemsForBlockParent(groupItemId, false);
@@ -289,7 +287,6 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             form.parameters.add(
                     new UIELBinding(itemOTP + "displayRows", templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null ) );
 
-
         }
 
         // now we begin with the rendering logic
@@ -364,8 +361,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
             boundedDynamicListInputEvolver.setMinimumLength(2);
             boundedDynamicListInputEvolver.setMaximumLength(40);
 
-            UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
-                    "modify-scale-points:", scaleOTP + "options",
+            UIInputMany modifypoints = UIInputMany.make(showItemChoices, "modify-scale-points:", scaleOTP + "optionsArray",
                     (scaleId == null ? EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES : null) );
             boundedDynamicListInputEvolver.evolve(modifypoints);
             // force the scale to bind to adhoc mode
@@ -623,8 +619,6 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
 
         }
 
-
-
         String saveBinding = null;
         if (templateId == null) {
             // only saving an item
@@ -676,7 +670,7 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         if (ivp.templateId == null) {
             // go to the Items view if we are not working with a template currently
             result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);
-        }else{        
+        }else{
             if(actionReturn != null){
                 try{
                     Long itemId = Long.parseLong(actionReturn.toString());

@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,8 +29,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-
-
 
 
 /**
@@ -146,7 +146,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       Set<String> userIds;
 
       // first try with 2 internal users
-      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), etdl.user3.getUserId()} );
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new ArrayList<String>( Arrays.asList( etdl.user1.getUserId(), etdl.user3.getUserId())) );
       Assert.assertNotNull(m);
       Assert.assertEquals(2, m.size());
       ids = EvalTestDataLoad.makeIdList(m.values());
@@ -158,19 +158,19 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       Assert.assertTrue(userIds.contains(etdl.user3.getUserId()));
 
       // mix of internal and external
-      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), EvalTestDataLoad.USER_ID} );
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new ArrayList<String>( Arrays.asList( etdl.user1.getUserId(), EvalTestDataLoad.USER_ID)) );
       Assert.assertNotNull(m);
       Assert.assertEquals(1, m.size());
       ids = EvalTestDataLoad.makeIdList(m.values());
       Assert.assertTrue(ids.contains(etdl.user1.getId()));
 
       // only external
-      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {EvalTestDataLoad.USER_ID, EvalTestDataLoad.STUDENT_USER_ID} );
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new ArrayList<String>( Arrays.asList( EvalTestDataLoad.USER_ID, EvalTestDataLoad.STUDENT_USER_ID)) );
       Assert.assertNotNull(m);
       Assert.assertEquals(0, m.size());
 
       // empty array
-      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {} );
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new ArrayList<String>( Arrays.asList())  );
       Assert.assertNotNull(m);
       Assert.assertEquals(0, m.size());
 
@@ -288,7 +288,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull( group1.getLastModified() );
 
       EvalAdhocGroup group2 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, "another new group", 
-            new String[] { EvalTestDataLoad.STUDENT_USER_ID, EvalTestDataLoad.USER_ID }, null);
+            new ArrayList<String>( Arrays.asList( EvalTestDataLoad.STUDENT_USER_ID, EvalTestDataLoad.USER_ID )), null);
       adhocSupportLogic.saveAdhocGroup(group2);
       Assert.assertNotNull( group2.getId() );
       Assert.assertNotNull( group2.getOwner() );

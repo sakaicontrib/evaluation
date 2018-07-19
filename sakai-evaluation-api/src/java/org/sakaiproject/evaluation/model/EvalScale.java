@@ -16,7 +16,9 @@ package org.sakaiproject.evaluation.model;
 
 //Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 
@@ -48,7 +50,7 @@ public class EvalScale implements java.io.Serializable {
 
     private String ideal;
 
-    private String[] options;
+    private List<String> options;
 
     private Boolean locked;
 
@@ -102,7 +104,7 @@ public class EvalScale implements java.io.Serializable {
      * @param locked 
      */
     public EvalScale(String owner, String title, String mode, String sharing, Boolean expert, String expertDescription, 
-            String ideal, String[] options, Boolean locked) {
+            String ideal, List<String> options, Boolean locked) {
         this.lastModified = new Date();
         this.owner = owner;
         this.title = title;
@@ -188,11 +190,11 @@ public class EvalScale implements java.io.Serializable {
         this.ideal = ideal;
     }
 
-    public String[] getOptions() {
+    public List<String> getOptions() {
         return this.options;
     }
 
-    public void setOptions(String[] options) {
+    public void setOptions(List<String> options) {
         this.options = options;
     }
 
@@ -242,4 +244,10 @@ public class EvalScale implements java.io.Serializable {
         this.hidden = hidden;
     }
 
+	public void setOptionsArray(String[] optionsArr){
+		this.options = Arrays.asList(optionsArr);		
+	}
+	public String[] getOptionsArray() {
+		return options.toArray(new String[options.size()]);
+    }
 }

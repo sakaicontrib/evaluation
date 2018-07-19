@@ -153,14 +153,14 @@ public class Evaluation {
                        int responsesCount = itemAnswers.size();
                        
                        EvalScale scale = templateItem.getItem().getScale();
-                       String[] scaleOptions = scale.getOptions();
-                       String scaleLabels[] = new String[scaleOptions.length];
+                       List<String> scaleOptions = scale.getOptions();
+                       String scaleLabels[] = new String[scaleOptions.size()];
 
-                       int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
+                       int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.size(), itemAnswers);
 
                        for (int x = 0; x < scaleLabels.length; x++) {
                     	   responseList = responseList + choicesCounts[x] + ",";
-                    	   // evalExternalLogic.makePlainTextFromHTML(scaleOptions[x]) + 
+                    	   // evalExternalLogic.makePlainTextFromHTML(scaleOptions.get(x)) + 
                         }
 
                         if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
@@ -187,10 +187,10 @@ public class Evaluation {
     }
 
     /* Create a scale with mostly default settings */
-    public String addScale(String sessionid, String ownerEid, String title, String[] choices) throws AxisFault {
+    public String addScale(String sessionid, String ownerEid, String title, List<String> choices) throws AxisFault {
         checkSecurity(sessionid);
         String ownerId = getOwnerId(ownerEid);
-        EvalScale scale = new EvalScale(new Date(), ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        EvalScale scale = new EvalScale(ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
         scale.setOptions(choices);
         // We may need to add an option for the scale type
         scale.setIdeal(EvalConstants.SCALE_IDEAL_HIGH);
@@ -198,10 +198,10 @@ public class Evaluation {
         return scale.getId()+"";
     }
 
-    public String addScale(String sessionid, String ownerEid, String title, String[] choices, String scaletype) throws AxisFault {
+    public String addScale(String sessionid, String ownerEid, String title, List<String> choices, String scaletype) throws AxisFault {
         checkSecurity(sessionid);
         String ownerId = getOwnerId(ownerEid);
-        EvalScale scale = new EvalScale(new Date(), ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        EvalScale scale = new EvalScale(ownerId, title, EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
         scale.setOptions(choices);
         // We may need to add an option for the scale type
         scale.setIdeal(scaletype);
@@ -213,10 +213,10 @@ public class Evaluation {
      * This addScale method takes an EID and Scale Mode
      *
      */
-    public String addScale(String sessionid, String ownerEid, String[] choices, String idealscaletype, String scaleEid, String scaleMode) throws AxisFault {
+    public String addScale(String sessionid, String ownerEid, List<String> choices, String idealscaletype, String scaleEid, String scaleMode) throws AxisFault {
         checkSecurity(sessionid);
         String ownerId = getOwnerId(ownerEid);
-        EvalScale scale = new EvalScale(new Date(), ownerId, EvalUtils.makeUniqueIdentifier(36), scaleMode, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        EvalScale scale = new EvalScale(ownerId, EvalUtils.makeUniqueIdentifier(36), scaleMode, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
         
         scale.setOptions(choices);
         // We may need to add an option for the scale type
@@ -241,7 +241,7 @@ public class Evaluation {
         boolean expert, String templateType) throws AxisFault {
         checkSecurity(sessionid);
         String ownerId = getOwnerId(ownerEid);
-        EvalTemplate template = new EvalTemplate(new Date(), ownerId, templateType,title,sharing,new Boolean(expert));
+        EvalTemplate template = new EvalTemplate(ownerId, templateType,title,sharing,new Boolean(expert));
         template.setDescription(desc);
         template.setExpertDescription("");
         evalAuthoringService.saveTemplate(template,ownerId);
@@ -275,7 +275,7 @@ public class Evaluation {
         EvalItem evalItem = new EvalItem(new Date(),ownerId,itemText,sharing,classification,expert);
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             category, hierLevel, hierNodeId);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";
@@ -300,7 +300,7 @@ public class Evaluation {
         evalItem.setDisplayRows(new Integer(numberOfResponseLines));
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             category, hierLevel, hierNodeId);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";  
@@ -326,27 +326,27 @@ public class Evaluation {
 
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             DEFAULT_CATEGORY, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";
     }
     
     public String addScaledItemToTemplate(String sessionid, int templateId, String ownerEid,
-        String itemText, String[] choices, String scaleDisplayType) throws AxisFault {
+        String itemText, List<String> choices, String scaleDisplayType) throws AxisFault {
         checkSecurity(sessionid);
         return addScaledItemToTemplate(sessionid, templateId, ownerEid, itemText, choices, scaleDisplayType,
             DEFAULT_SHARING, DEFAULT_CATEGORY, DEFAULT_IS_EXPERT, EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
     }
     
     public String addScaledItemToTemplate(String sessionid, int templateId, String ownerEid,
-        String itemText, String[] choices, String scaleDisplayType, String sharing, String category, boolean expert, String hierLevel,
+        String itemText, List<String> choices, String scaleDisplayType, String sharing, String category, boolean expert, String hierLevel,
         String hierNodeId) throws AxisFault {
         checkSecurity(sessionid);
         String ownerId = getOwnerId(ownerEid);
 
         //Make the Scale
-        EvalScale scale = new EvalScale(new Date(), ownerId, EvalUtils.makeUniqueIdentifier(36), EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
+        EvalScale scale = new EvalScale(ownerId, EvalUtils.makeUniqueIdentifier(36), EvalConstants.SCALE_MODE_SCALE, DEFAULT_SHARING, DEFAULT_IS_EXPERT);
         scale.setOptions(choices);
         // We may need to add an option for the scale type
         scale.setIdeal(EvalConstants.SCALE_IDEAL_HIGH);
@@ -363,7 +363,7 @@ public class Evaluation {
 
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             category, hierLevel, hierNodeId);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";
@@ -395,7 +395,7 @@ public class Evaluation {
 
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             category, hierLevel, hierNodeId);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";  
@@ -427,7 +427,7 @@ public class Evaluation {
 
         evalAuthoringService.saveItem(evalItem,ownerId);
         int displayOrder = evalTemplate.getTemplateItems().size()+1;
-        EvalTemplateItem templateItem = new EvalTemplateItem(new Date(), ownerId, evalTemplate, evalItem, displayOrder,
+        EvalTemplateItem templateItem = new EvalTemplateItem(ownerId, evalTemplate, evalItem, displayOrder,
             category, hierLevel, hierNodeId);
         evalAuthoringService.saveTemplateItem(templateItem,ownerId);
         return templateItem.getId()+"";  
@@ -456,7 +456,7 @@ public class Evaluation {
         
         EvalTemplate template = evalAuthoringService.getTemplateById(new Long(templateId));
         
-        //EvalEvaluation eval = new EvalEvaluation(new Date(), ownerId, title, startDate, dueDate,
+        //EvalEvaluation eval = new EvalEvaluation(ownerId, title, startDate, dueDate,
         //    stopDate, viewDate, DEFAULT_EVAL_STATE, new Integer(0), template);
         
         String authtype = EvalConstants.EVALUATION_AUTHCONTROL_NONE;

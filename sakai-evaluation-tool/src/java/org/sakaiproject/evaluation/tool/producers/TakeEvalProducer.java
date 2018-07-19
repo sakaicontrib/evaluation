@@ -514,7 +514,7 @@ public class TakeEvalProducer extends EvalCommonProducer implements ViewParamsRe
                                 List<String> label = new ArrayList<>();
                                 value.add("default");
                                 label.add(messageLocator.getMessage("takeeval.selection.dropdown"));
-                                List<EvalUser> users = commonLogic.getEvalUsersByIds(selectUserIds.toArray(new String[selectUserIds.size()]));
+                                List<EvalUser> users = commonLogic.getEvalUsersByIds(new ArrayList(selectUserIds));
                                 
                                 for (EvalUser user : users) {
                                     value.add(user.userId);

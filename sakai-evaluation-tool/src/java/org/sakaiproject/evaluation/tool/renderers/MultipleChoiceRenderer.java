@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -58,8 +59,8 @@ public class MultipleChoiceRenderer implements ItemRenderer {
         if (bindings[0] == null) initValue = "";
 
         EvalScale scale = templateItem.getItem().getScale();
-        String[] scaleOptions = scale.getOptions();
-        int optionCount = scaleOptions.length;
+        List<String> scaleOptions = scale.getOptions();
+        int optionCount = scaleOptions.size();
         String scaleValues[] = new String[optionCount];
         String scaleLabels[] = new String[optionCount];
 
@@ -77,7 +78,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
 
             for (int count = 0; count < optionCount; count++) {
                 scaleValues[count] = Integer.toString(count);
-                scaleLabels[count] = scaleOptions[count];
+                scaleLabels[count] = scaleOptions.get(count);
             }
 
             UIOutput.make(fullFirst, "itemNum", displayNumber+"" );

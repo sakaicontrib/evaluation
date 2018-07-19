@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -648,9 +649,9 @@ public class EvalTestDataLoad {
     public static final String NODE_ID1 = "node1111111";
     public static final String NODE_ID2 = "node1111111";
     public EvalGroupNodes egn1 = new EvalGroupNodes(new Date(), NODE_ID1,
-            new String[] {SITE1_REF, SITE2_REF});
+            new ArrayList<String>( Arrays.asList(SITE1_REF, SITE2_REF)));
     public EvalGroupNodes egn2 = new EvalGroupNodes(new Date(), NODE_ID2,
-            new String[] {SITE3_REF});
+            new ArrayList<String>( Arrays.asList(SITE3_REF)));
 
     /**
      * For testing permissions
@@ -680,19 +681,19 @@ public class EvalTestDataLoad {
      * @param dao
      */
     public void initializeAndSave(GenericDao dao) {
-        String[] options1 = {"Bad", "Average", "Good"};
+        List<String> options1 = new ArrayList<String>( Arrays.asList("Bad", "Average", "Good"));
         scale1 = new EvalScale(ADMIN_USER_ID, "Scale 1", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PUBLIC, NOT_EXPERT, "description", 
                 EvalConstants.SCALE_IDEAL_HIGH, 
                 options1, LOCKED);
 
-        String[] options2 = {"Poor", "Average", "Good", "Excellent"};
+        List<String> options2 = new ArrayList<String>( Arrays.asList("Poor", "Average", "Good", "Excellent"));
         scale2 = new EvalScale(MAINT_USER_ID, "Scale 2", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "description", 
                 EvalConstants.SCALE_IDEAL_HIGH, 
                 options2, UNLOCKED);
 
-        String[] options3 = {"Male", "Female", "Unknown"};
+        List<String> options3 = new ArrayList<String>( Arrays.asList("Male", "Female", "Unknown"));
         scale3 = new EvalScale(MAINT_USER_ID, "Scale 3", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PRIVATE, NOT_EXPERT, "description", 
                 EvalConstants.SCALE_IDEAL_NONE, 
@@ -703,7 +704,7 @@ public class EvalTestDataLoad {
                 EvalConstants.SCALE_IDEAL_NONE, 
                 options3, UNLOCKED);
 
-        String[] optionsEid = {"Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"};
+        List<String> optionsEid = new ArrayList<String>( Arrays.asList("Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"));
         scaleEid = new EvalScale(ADMIN_USER_ID, "Scale Eid", EvalConstants.SCALE_MODE_SCALE,
                 EvalConstants.SHARING_PUBLIC, NOT_EXPERT, "description",
                 EvalConstants.SCALE_IDEAL_LOW,
@@ -1622,12 +1623,12 @@ public class EvalTestDataLoad {
         dao.save(user2);
         dao.save(user3);
 
-        group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new String[] { STUDENT_USER_ID, user1.getUserId() }, null);
-        group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
+        group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new ArrayList<String>( Arrays.asList( STUDENT_USER_ID, user1.getUserId() )), null);
+        group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new ArrayList<String>( Arrays.asList( USER_ID, user1.getUserId(), user3.getUserId() )), null);
 
         // need to do this because the ids are null still otherwise
-        group1.setParticipantIds( new String[] { STUDENT_USER_ID, user1.getUserId() } );
-        group2.setParticipantIds( new String[] { USER_ID, user1.getUserId(), user3.getUserId() } );
+        group1.setParticipantIds( new ArrayList<String>( Arrays.asList( STUDENT_USER_ID, user1.getUserId() )) );
+        group2.setParticipantIds( new ArrayList<String>( Arrays.asList( USER_ID, user1.getUserId(), user3.getUserId() )) );
 
         dao.save(group1);
         dao.save(group2);

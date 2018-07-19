@@ -230,7 +230,7 @@ public class AdministrateSearchProducer extends EvalCommonProducer implements Vi
 				}
 				
 				//in one DB query, get the eval owners sort names
-				List<EvalUser> evalOwnersFull = commonLogic.getEvalUsersByIds(evalOwners.keySet().toArray(new String[evalOwners.size()]));
+				List<EvalUser> evalOwnersFull = commonLogic.getEvalUsersByIds(new ArrayList(evalOwners.keySet()));
 				for(EvalUser evalUser : evalOwnersFull){
 					evalOwners.put(evalUser.userId, evalUser);
 				}

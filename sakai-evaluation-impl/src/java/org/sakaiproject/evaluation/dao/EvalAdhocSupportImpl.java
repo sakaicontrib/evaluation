@@ -117,10 +117,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @param userIds an array of internal user ids
     * @return a map of userId -> {@link EvalAdhocUser}
     */
-   public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(String[] userIds) {
+   public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(List<String> userIds) {
       Map<String, EvalAdhocUser> m = new HashMap<>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
-         if (userIds.length > 0) {
+         if (userIds.size() > 0) {
             List<Long> adhocIds = new ArrayList<>();
              for( String userId : userIds )
              {

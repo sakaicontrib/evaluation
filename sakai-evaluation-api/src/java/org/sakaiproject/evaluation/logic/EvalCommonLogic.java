@@ -75,7 +75,7 @@ public interface EvalCommonLogic extends ExternalUsers, ExternalEvalGroups, Exte
      * @param userIds an array of the internal user ids (not usernames) for users
      * @return a list of {@link EvalUser} objects which match with the input userIds and are in the same order
      */
-    public List<EvalUser> getEvalUsersByIds(String[] userIds);
+    public List<EvalUser> getEvalUsersByIds(List<String> userIds);
 
     // GROUPS
 

@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -59,7 +60,7 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     * @param userIds an array of the internal user ids (not usernames) for users
     * @return a map of userId to {@link EvalUser} objects which match with the input ids
     */
-   public Map<String, EvalUser> getEvalUsersByIds(String[] userIds);
+   public Map<String, EvalUser> getEvalUsersByIds(List<String> userIds);
 
    // SERVER
 

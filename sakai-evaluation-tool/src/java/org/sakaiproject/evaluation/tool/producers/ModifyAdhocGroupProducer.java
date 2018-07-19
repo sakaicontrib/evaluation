@@ -103,8 +103,8 @@ public class ModifyAdhocGroupProducer extends EvalCommonProducer implements View
          * members, along with a button on each row to remove that particular member.
          */
         if (evalAdhocGroup != null) {
-            String[] participants = evalAdhocGroup.getParticipantIds();
-            if (participants.length > 0) {
+            List<String> participants = evalAdhocGroup.getParticipantIds();
+            if (participants.size() > 0) {
                 List<EvalUser> evalUsers = commonLogic.getEvalUsersByIds(participants);
                 UIOutput.make(form, "existing-members");
                 for (EvalUser evalUser : evalUsers) {

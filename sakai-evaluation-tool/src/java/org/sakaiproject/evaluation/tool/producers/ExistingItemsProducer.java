@@ -125,8 +125,8 @@ public class ExistingItemsProducer extends EvalCommonProducer implements Navigat
                 UIVerbatim.make(items, "item-text", item.getItemText());
                 if (item.getScale() != null) {
                     String scaleText = item.getScale().getTitle() + " (";
-                    for (int j = 0; j < item.getScale().getOptions().length; j++) {
-                        scaleText += (j==0?"":",") + item.getScale().getOptions()[j];
+                    for (int j = 0; j < item.getScale().getOptions().size(); j++) {
+                        scaleText += (j==0?"":",") + item.getScale().getOptions().get(j);
                     }
                     scaleText += ")";
                     UIOutput.make(items, "item-scale", scaleText);

@@ -925,7 +925,7 @@ public class EvalImportImpl implements EvalImport {
         try {
             eid = element.getChildText("EID");
             String title = element.getChildText("TITLE");
-            String [] choices = null;
+            List<String> choices = new ArrayList<>();
             Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
             Boolean expert = element.getChildText("EXPERT").trim().equals("1") ? Boolean.TRUE : Boolean.FALSE;
 
@@ -934,15 +934,14 @@ public class EvalImportImpl implements EvalImport {
             Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
             List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
             if(options != null && !options.isEmpty()) {
-                choices = new String[options.size()];
-                for(Iterator i = options.iterator(); i.hasNext();) {
-                    Element e = (Element)i.next();
+                for(Iterator it = options.iterator(); it.hasNext();) {
+                    Element e = (Element)it.next();
                     Integer key = Integer.parseInt(e.getChildText("SCALE_OPTION_INDEX"));
                     String value = e.getChildText("SCALE_OPTION");
                     order.put(key, value);
                 }
-                for (int i = 0; i < choices.length; i++) {
-                    choices[i] = (String)order.get(i);
+                for (int i = 0; i < options.size(); i++) {
+                    choices.add((String)order.get(i));
                 }
             }
             else {
@@ -1004,15 +1003,15 @@ public class EvalImportImpl implements EvalImport {
             Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
             List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
             if(options != null && !options.isEmpty()) {
-                String [] choices = new String[options.size()];
+                List<String> choices = new ArrayList<>();
                 for(Iterator iter = options.iterator(); iter.hasNext();) {
                     Element e = (Element)iter.next();
                     Integer key = Integer.parseInt(e.getChildText("SCALE_OPTION_INDEX"));
                     String value = e.getChildText("SCALE_OPTION");
                     order.put(key, value);
                 }
-                for (int i = 0; i < choices.length; i++) {
-                    choices[i] = (String)order.get(i);
+                for (int i = 0; i < options.size(); i++) {
+                    choices.add((String)order.get(i));
                 }
                 scale.setOptions(choices);
             }

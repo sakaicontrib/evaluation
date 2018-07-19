@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * This represents an adhoc group of users
@@ -73,12 +74,12 @@ public class EvalAdhocGroup implements java.io.Serializable {
     /**
      * The internal userIds of the participants in this group
      */
-    protected String[] participantIds;
+    protected List<String> participantIds;
 
     /**
      * The internal userIds of the evaluatees in this group
      */
-    protected String[] evaluateeIds;
+    protected List<String> evaluateeIds;
 
     // Constructors
 
@@ -104,7 +105,7 @@ public class EvalAdhocGroup implements java.io.Serializable {
      * @param participantIds
      * @param evaluateeIds
      */
-    public EvalAdhocGroup(String owner, String title, String[] participantIds, String[] evaluateeIds) {
+    public EvalAdhocGroup(String owner, String title, List<String> participantIds, List<String> evaluateeIds) {
         this.lastModified = new Date();
         this.owner = owner;
         this.title = title;
@@ -146,19 +147,19 @@ public class EvalAdhocGroup implements java.io.Serializable {
         this.title = title;
     }
 
-    public String[] getParticipantIds() {
+    public List<String> getParticipantIds() {
         return participantIds;
     }
 
-    public void setParticipantIds(String[] participantIds) {
+    public void setParticipantIds(List<String> participantIds) {
         this.participantIds = participantIds;
     }
 
-    public String[] getEvaluateeIds() {
+    public List<String> getEvaluateeIds() {
         return evaluateeIds;
     }
 
-    public void setEvaluateeIds(String[] evaluateeIds) {
+    public void setEvaluateeIds(List<String> evaluateeIds) {
         this.evaluateeIds = evaluateeIds;
     }
 

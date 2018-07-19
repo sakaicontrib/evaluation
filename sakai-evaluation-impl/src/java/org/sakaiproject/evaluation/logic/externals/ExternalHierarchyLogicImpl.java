@@ -491,8 +491,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             if (egn == null) {
                 egn = new EvalGroupNodes(new Date(), nodeId);
             }
-            String[] evalGroups = evalGroupIds.toArray(new String[] {});
-            egn.setEvalGroups(evalGroups);
+            egn.setEvalGroups(new ArrayList<String>(evalGroupIds));
             dao.save(egn);         
         }
     }
@@ -549,10 +548,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         {
             EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeID);
             if (egn != null) {
-                String[] evalGroups = egn.getEvalGroups();
-                for (int i = 0; i < evalGroups.length; i++) {
-                    groups.add(evalGroups[i]);
-                }
+                groups = new HashSet<>(egn.getEvalGroups());
             }
 
             List<HierarchyNodeRule> rules = getRulesByNodeID( Long.parseLong( nodeID ) );
@@ -792,7 +788,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     public Map<String, Map<String, Set<String>>> getUsersAndPermsForNodes(String... nodeIds) {
         return hierarchyService.getUsersAndPermsForNodes(nodeIds);
     }
-
 
     /**
      * Create an eval node from a basic hierarchy node

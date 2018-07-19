@@ -172,7 +172,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
             }
         }
 
-
         UIMessage.make(tofill, "modify-block-title", "modifyblock.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
         UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -282,7 +281,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
                         "hierarchyNodeSelector:", itemPath + ".hierarchyNodeId", null); */
             }
 
-
             // render the child items
 
             int blockItemListSize = blockItemList.size();
@@ -313,7 +311,6 @@ public class ModifyBlockProducer extends EvalCommonProducer implements ViewParam
                 }
 
             }
-
 
             UIInput itemtext = UIInput.make(form, "item-text:", itemPath + ".item.itemText", null);
             richTextEvolver.evolveTextInput(itemtext);

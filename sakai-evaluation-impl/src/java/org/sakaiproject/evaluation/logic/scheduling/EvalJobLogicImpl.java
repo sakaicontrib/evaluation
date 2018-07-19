@@ -73,8 +73,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         this.emails = emails;
     }
 
-
-
     /**
      * Check whether the job type is valid
      * 
@@ -120,7 +118,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             throw new IllegalArgumentException("Invalid actionState constant, must be one of the EvalJobLogic.ACTION* ones instead of: " + actionState);
         }
     }
-
 
     /* 
      * FIXME - this method needs to be able to correctly recover from unexpected state changes,
@@ -245,12 +242,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
     }
 
-
-
-
-
     // PRIVATE METHODS
-
 
 	/**
      * @param evaluationId
@@ -263,7 +255,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         }
         return eval;
     }
-
 
     /**
      * Handles the processing of new evaluation only if not in partial state
@@ -304,7 +295,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
     }
 
-
     /**
      * Remove all scheduled jobs related to this evaluation
      * @param evaluationId
@@ -325,7 +315,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             deleteInvocation( evaluationId, JOB_TYPES1 );
         }
     }
-
 
     /**
      * Handle a change in the evaluation which may effect scheduled events
@@ -501,7 +490,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             }
         }
     }
-
 
     /**
      * Will get rid of any extra jobs that were returned for a single search,
@@ -706,7 +694,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         }
         return reminderTime;
     }
-
 
     // TODO recommend removing these send email methods and calling the methods in emailsLogic directly
 
