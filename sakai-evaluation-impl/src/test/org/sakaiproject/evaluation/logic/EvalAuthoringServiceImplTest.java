@@ -18,15 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -36,14 +33,15 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.genericdao.api.search.Search;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Testing the authoring service
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
-
-    private static final Log LOG = LogFactory.getLog( EvalAuthoringServiceImplTest.class );
 
    protected EvalAuthoringServiceImpl authoringService;
 
@@ -1233,7 +1231,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             null, Boolean.FALSE, false, false, null, null, null),
             EvalTestDataLoad.ADMIN_USER_ID);
 
-      LOG.debug("ZZZZZZZZZZZZZZ template: " + etdl.templateUnused.getId() + ":" + etdl.templateUnused.getLocked());
+      log.debug("ZZZZZZZZZZZZZZ template: " + etdl.templateUnused.getId() + ":" + etdl.templateUnused.getLocked());
 
       // test saving valid templateItem with locked item
       authoringService.saveTemplateItem( new EvalTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 

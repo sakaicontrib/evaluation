@@ -16,8 +16,6 @@ package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -27,13 +25,15 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Job to delete evaluations for a term
  *
  */
+@Slf4j
 public class DeleteEvaluationsImpl implements DeleteEvaluations {
-	
-	private static final Log LOG = LogFactory.getLog(DeleteEvaluations.class);
+
 	
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -64,19 +64,19 @@ public class DeleteEvaluationsImpl implements DeleteEvaluations {
      * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
      */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		LOG.debug("DeleteEvaluations.execute()");
+		log.debug("DeleteEvaluations.execute()");
         String termId = context.getMergedJobDataMap().getString("term.id");
         List<EvalEvaluation> evaluations = evaluationService.getEvaluationsByTermId(termId);
-        LOG.info("Found "+ evaluations.size() + " evaluations to delete matching " + termId);
+        log.info("Found "+ evaluations.size() + " evaluations to delete matching " + termId);
         for (EvalEvaluation evaluation: evaluations) {
         	//Set admin as the id, I don't think there's any way to get this from the job scheduler
-        	LOG.info("Deleting evaluation id " + evaluation.getId());
+        	log.info("Deleting evaluation id " + evaluation.getId());
         	evaluationSetupService.deleteEvaluation(evaluation.getId(), "admin");
         }
 	}
 	
 	public void init() {
-		LOG.debug("init()");
+		log.debug("init()");
 	}
 
 }

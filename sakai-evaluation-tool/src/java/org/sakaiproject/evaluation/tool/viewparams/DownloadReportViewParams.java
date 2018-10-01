@@ -14,8 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is meant to serve as a base for ViewParameters of different download
@@ -25,9 +24,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Steven Githens
  */
+@Slf4j
 public class DownloadReportViewParams extends BaseViewParameters {
-
-	private static final Log LOG = LogFactory.getLog( DownloadReportViewParams.class) ;
 	public Long templateId; 
 	public Long evalId;
 	public String filename;
@@ -48,9 +46,9 @@ public class DownloadReportViewParams extends BaseViewParameters {
 	}
 	
 	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename, String evaluateeId, boolean useNewReportStyle) {
-		if( LOG.isDebugEnabled() )
+		if( log.isDebugEnabled() )
 		{
-			LOG.debug( "DownloadReportViewParams called with " + evaluateeId );
+			log.debug( "DownloadReportViewParams called with " + evaluateeId );
 		}
 
 		this.viewID = viewID;

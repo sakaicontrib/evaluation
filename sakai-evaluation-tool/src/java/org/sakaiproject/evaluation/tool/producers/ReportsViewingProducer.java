@@ -14,12 +14,10 @@
  */
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -50,6 +48,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.Validator;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -75,9 +74,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
  */
+@Slf4j
 public class ReportsViewingProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
-
-    private static final Log LOG = LogFactory.getLog(ReportsViewingProducer.class);
 
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
     private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
@@ -458,7 +456,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
             UIVerbatim.make(textual, "itemText", templateItem.getItem().getItemText());
 
         } else {
-            LOG.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
+            log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
         }
     }
 
@@ -494,7 +492,7 @@ public class ReportsViewingProducer extends EvalCommonProducer implements ViewPa
     private boolean renderAnyBasedOnOptions(List<EvalTemplateItem> templateItems, EvalUser associatedUser, String owner, Boolean instructorViewAllResults) {
         //TODO check for course item types.
         String currentUserId = commonLogic.getCurrentUserId();
-        LOG.debug("ViewAll: "+instructorViewAllResults+", Current user: "+currentUserId+", Item user: "+associatedUser.userId+", Owner: "+owner);
+        log.debug("ViewAll: "+instructorViewAllResults+", Current user: "+currentUserId+", Item user: "+associatedUser.userId+", Owner: "+owner);
                 
         if (!"invalid:null".equals(associatedUser.userId)   // if this is a instructor question
           && !commonLogic.isUserAdmin(currentUserId)   // and currentUser is not admin

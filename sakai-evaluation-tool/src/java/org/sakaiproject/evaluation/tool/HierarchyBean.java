@@ -18,20 +18,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
+@Slf4j
 public class HierarchyBean {
 
-	private static final Log LOG = LogFactory.getLog( HierarchyBean.class );
 
 	public String nodeId;
 	public String userId;
@@ -144,7 +143,7 @@ public class HierarchyBean {
 		catch( Exception ex )
 		{
 			messages.addMessage( new TargettedMessage( "modifynoderules.fail.rule.removed", new Object[] { existingRuleText }, TargettedMessage.SEVERITY_INFO ) );
-			LOG.warn( ex );
+			log.warn(ex.getLocalizedMessage(), ex );
 		}
 
 		messages.addMessage( new TargettedMessage( "modifynoderules.success.rule.removed", new Object[] { existingRuleText }, TargettedMessage.SEVERITY_INFO ) );
@@ -175,7 +174,7 @@ public class HierarchyBean {
 		catch( Exception ex )
 		{
 			messages.addMessage( new TargettedMessage( "modifynoderules.fail.rule.updated", new Object[] { existingRuleText }, TargettedMessage.SEVERITY_INFO ) );
-			LOG.warn( ex );
+			log.warn(ex.getLocalizedMessage(), ex );
 		}
 
 		messages.addMessage( new TargettedMessage( "modifynoderules.success.rule.updated", new Object[] { existingRuleText }, TargettedMessage.SEVERITY_INFO ) );
@@ -207,7 +206,7 @@ public class HierarchyBean {
 			catch( Exception ex )
 			{
 				messages.addMessage( new TargettedMessage( "modifynoderules.fail.rule.added", new Object[] { newRuleText }, TargettedMessage.SEVERITY_INFO ) );
-				LOG.warn( ex );
+				log.warn(ex.getLocalizedMessage(), ex );
 			}
 
 			messages.addMessage( new TargettedMessage( "modifynoderules.success.rule.added", new Object[] { newRuleText }, TargettedMessage.SEVERITY_INFO ) );

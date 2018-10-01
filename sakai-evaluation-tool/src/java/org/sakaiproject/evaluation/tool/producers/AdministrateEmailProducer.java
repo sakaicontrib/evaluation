@@ -18,14 +18,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -41,9 +40,8 @@ import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
+@Slf4j
 public class AdministrateEmailProducer extends EvalCommonProducer {
-
-    private static final Log LOG = LogFactory.getLog( AdministrateEmailProducer.class );
 
     /**
      * This is used for navigation within the system.
@@ -140,7 +138,7 @@ public class AdministrateEmailProducer extends EvalCommonProducer {
                 nextReminder = df.parse( nextReminderStr );
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
-                LOG.warn( e );
+                log.warn(e.getLocalizedMessage(), e );
                 nextReminder = new Date();
             }
         }

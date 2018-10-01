@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic.externals;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -33,6 +31,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Special class and bean for handling security checks within the logic layer,
@@ -41,9 +41,10 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalSecurityChecksImpl {
 
-    private static final Log LOG = LogFactory.getLog(EvalSecurityChecksImpl.class);
+
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -79,7 +80,7 @@ public class EvalSecurityChecksImpl {
         // if eval id is invalid then just log it
         boolean allowed = false;
         if (eval == null) {
-            LOG.warn("Cannot find evaluation to delete");
+            log.warn("Cannot find evaluation to delete");
         } else {
             // check locked first
             if (eval.getId() != null && eval.getLocked() == true) {
@@ -111,7 +112,7 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlTemplate(String userId, EvalTemplate template) {
-        LOG.debug("template: " + template.getTitle() + ", userId: " + userId);
+        log.debug("template: " + template.getTitle() + ", userId: " + userId);
         // check locked first
         if (template.getId() != null && template.getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify) locked template ("+template.getId()+")");
@@ -152,7 +153,7 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlItem(String userId, EvalItem item) {
-        LOG.debug("item: " + item.getId() + ", userId: " + userId);
+        log.debug("item: " + item.getId() + ", userId: " + userId);
         // check locked first
         if (item.getId() != null && item.getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify) locked item ("+item.getId()+")");
@@ -173,7 +174,7 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalStateException} if this is locked
      */
     public boolean checkUserControlTemplateItem(String userId, EvalTemplateItem templateItem) {
-        LOG.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
+        log.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
         // check locked first (expensive check)
         if (templateItem.getId() != null && templateItem.getTemplate().getLocked() == true) {
             throw new IllegalStateException("Cannot control (modify,remove) template item ("+
@@ -194,7 +195,7 @@ public class EvalSecurityChecksImpl {
      * @throws SecurityException if user not allowed
      */
     public boolean checkUserControlItemGroup(String userId, EvalItemGroup itemGroup) {
-        LOG.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
+        log.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
 
         if (! evalBeanUtils.checkUserPermission(userId, itemGroup.getOwner()) ) {
             throw new SecurityException("User ("+userId+") cannot control itemGroup ("+itemGroup.getId()+") without permissions");
@@ -210,7 +211,7 @@ public class EvalSecurityChecksImpl {
      * @throws SecurityException if user not allowed
      */
     public boolean checkControlAssignGroup(String userId, EvalAssignHierarchy assignGroup) {
-        LOG.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
+        log.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
 
         if (! evalBeanUtils.checkUserPermission(userId, assignGroup.getOwner()) ) {
             throw new SecurityException("User ("+userId+") cannot control assignGroup ("+assignGroup.getId()+") without permissions");
@@ -300,7 +301,7 @@ public class EvalSecurityChecksImpl {
      * {@link IllegalArgumentException} if the eval and response do not link
      */
     public boolean checkUserModifyResponse(String userId, EvalResponse response, EvalEvaluation eval) {
-        LOG.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
+        log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
         // check that eval and EAG line up
         if (! response.getEvaluation().getId().equals(eval.getId())) {

@@ -21,8 +21,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
@@ -33,6 +31,8 @@ import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.springframework.context.MessageSource;
 
 import com.opencsv.CSVParser;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -41,9 +41,8 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class ReportExporterBean implements ToolApi {
-
-    private static final Log LOG = LogFactory.getLog(ReportExporterBean.class);
 
     // Section awareness/new report style bindings
     public String   viewID          = "";
@@ -75,7 +74,7 @@ public class ReportExporterBean implements ToolApi {
             try {
               return messageSource.getMessage(s, args, Locale.getDefault());
             } catch (Exception e) {
-              LOG.warn( e );
+              log.warn(e.getLocalizedMessage(), e );
             }
           }
           // if none found, just use the code
@@ -141,8 +140,8 @@ public class ReportExporterBean implements ToolApi {
       if (exporter == null) {
         throw new IllegalArgumentException("No exporter found for ViewID: " + exportType);
       }
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
+      if (log.isDebugEnabled()) {
+        log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + exportType);
       }
       if (groupIds == null || groupIds.length==0) {
         //Get the default groupIds
@@ -185,8 +184,8 @@ public class ReportExporterBean implements ToolApi {
         if (exporter == null) {
             throw new IllegalArgumentException("No exporter found for ViewID: " + drvp.viewID);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
+        if (log.isDebugEnabled()) {
+            log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
         }
 
         resultsOutputStream = getOutputStream(response);

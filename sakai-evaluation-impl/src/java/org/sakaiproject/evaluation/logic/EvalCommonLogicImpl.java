@@ -28,10 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang3.BooleanUtils;
-
 import org.quartz.Job;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
@@ -47,8 +44,8 @@ import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.site.api.Site;
-import org.sakaiproject.site.api.SiteService.SortType;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is the implementation for the base service
@@ -60,9 +57,8 @@ import org.sakaiproject.site.api.SiteService.SortType;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalCommonLogicImpl implements EvalCommonLogic {
-
-    private static final Log LOG = LogFactory.getLog(EvalCommonLogicImpl.class);
 
     /**
      * default admin user id
@@ -103,17 +99,17 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     public void init() {
-        LOG.debug("init, register security perms");
+        log.debug("init, register security perms");
 
         // auto setup provider
         if (evalGroupsProvider == null) {
             evalGroupsProvider = (EvalGroupsProvider) externalLogic.getBean(EvalGroupsProvider.class);
             if (evalGroupsProvider != null)
             {
-                LOG.debug("EvalGroupsProvider found...");
+                log.debug("EvalGroupsProvider found...");
             }
         } else {
-            LOG.debug("No EvalGroupsProvider found...");
+            log.debug("No EvalGroupsProvider found...");
         }
     }
 
@@ -305,12 +301,12 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         if(userId == null){
     		return false;
         }
-        LOG.debug("Checking is sakai admin for: " + userId);
+        log.debug("Checking is sakai admin for: " + userId);
         return externalLogic.isUserSakaiAdmin(userId);
     }
     
     public boolean isUserEvalAdmin(String userId) {
-        LOG.debug("Checking is eval admin for: " + userId);
+        log.debug("Checking is eval admin for: " + userId);
         return evalAdminSupportLogic.isUserEvalAdmin(userId);
     }
     
@@ -331,7 +327,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 	}
 
     public Locale getUserLocale(String userId) {
-        LOG.debug("userId: " + userId);
+        log.debug("userId: " + userId);
         return externalLogic.getUserLocale(userId);
     }
 
@@ -400,7 +396,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
 
         if (c == null) {
-            LOG.debug("Could not get group from evalGroupId:" + evalGroupId);
+            log.debug("Could not get group from evalGroupId:" + evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
@@ -413,7 +409,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         String location = externalLogic.getCurrentEvalGroup();
         if (location == null) {
             location = NO_LOCATION;
-            LOG.debug("Could not get the current location (we are probably outside the portal), returning the NON-location one: " + location);
+            log.debug("Could not get the current location (we are probably outside the portal), returning the NON-location one: " + location);
         }
         return location;
     }
@@ -428,8 +424,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
     }
 
     public int countEvalGroupsForUser(String userId, String permission) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) {
+            log.debug("userId: " + userId + ", permission: " + permission);
         }
 
         int count = externalLogic.countEvalGroupsForUser(userId, permission);
@@ -444,21 +440,21 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
-                LOG.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
+                log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
                 count += evalGroupsProvider.countEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("userId: " + userId + ", permission: " + permission + ", count: " + count);
+        if (log.isDebugEnabled()) {
+            log.debug("userId: " + userId + ", permission: " + permission + ", count: " + count);
         }
         return count;
     }
 
     @SuppressWarnings("rawtypes")
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("userId: " + userId + ", permission: " + permission);
+        if (log.isDebugEnabled()) {
+            log.debug("userId: " + userId + ", permission: " + permission);
         }
 
         List<EvalGroup> l = new ArrayList<>();
@@ -478,7 +474,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission)
                     || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
-                LOG.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
+                log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
                 List eg = evalGroupsProvider.getEvalGroupsForUser(userId, EvalExternalLogicImpl.translatePermission(permission));
                 for (Iterator iter = eg.iterator(); iter.hasNext();) {
                     EvalGroup c = (EvalGroup) iter.next();
@@ -489,7 +485,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
 
         if (l.isEmpty()) {
-            LOG.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+            log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
         }
         return l;
     }
@@ -573,7 +569,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
                         || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                         || EvalConstants.PERM_ASSISTANT_ROLE.equals( permission ) )
                     {
-                        LOG.debug( "Using eval groups provider: evalGroupId: " + evalGroupID + ", permission: " + permission );
+                        log.debug( "Using eval groups provider: evalGroupId: " + evalGroupID + ", permission: " + permission );
                         userIDs.addAll( evalGroupsProvider.getUserIdsForEvalGroups( new String[] { evalGroupID }, 
                             EvalExternalLogicImpl.translatePermission(permission)) );
                     }
@@ -624,7 +620,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             if (EvalConstants.PERM_BE_EVALUATED.equals(permission) 
                     || EvalConstants.PERM_TAKE_EVALUATION.equals(permission)
                     || EvalConstants.PERM_ASSISTANT_ROLE.equals(permission) ) {
-                LOG.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", evalGroupId: " + evalGroupId);
+                log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", evalGroupId: " + evalGroupId);
                 if ( evalGroupsProvider.isUserAllowedInGroup(userId, EvalExternalLogicImpl.translatePermission(permission), evalGroupId) ) {
                     return true;
                 }
@@ -651,7 +647,7 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         l.addAll( externalLogic.getFilteredEvalGroupsForUser(userId, permission, currentSiteId) );
 
         if (l.isEmpty()) {
-            LOG.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+            log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
         }
         return l;
     }
@@ -675,14 +671,14 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             EvalUser user = iterator.next();
             if ( user.email == null || "".equals(user.email) ) {
                 iterator.remove();
-                LOG.warn("sendEmails: Could not get an email address for " + user.displayName + " ("+user.userId+")");
+                log.warn("sendEmails: Could not get an email address for " + user.displayName + " ("+user.userId+")");
             } else {
                 toEmails.add(user.email);
             }
         }
 
         if (toEmails.isEmpty()) {
-            LOG.warn("No users with email addresses found in the provided userIds ("+ArrayUtils.arrayToString(toUserIds)+"), cannot send email so exiting");
+            log.warn("No users with email addresses found in the provided userIds ("+ArrayUtils.arrayToString(toUserIds)+"), cannot send email so exiting");
             return new String[] {};
         }
 
@@ -702,10 +698,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
             emails = externalLogic.sendEmailsToAddresses(from, to, subject, message, deferExceptions);
         } else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(deliveryOption)) {
             for (String email : emails) {
-                LOG.debug("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
+                log.debug("Delivery LOG: from ("+from+") to ("+email+") subject ("+subject+"):\n"+message);
             }
         } else {
-            LOG.warn("Delivery NONE: No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
+            log.warn("Delivery NONE: No emails sent or logged: from ("+from+") to ("+ArrayUtils.arrayToString(to)+") subject ("+subject+")");
         }
         return emails;
     }
@@ -917,10 +913,10 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
      */
     public void registerEvalGroupsProvider(EvalGroupsProvider provider) {
         if (provider != null) {
-            LOG.info("Registered EvalGroupProvider: "+provider.getClass().getName());
+            log.info("Registered EvalGroupProvider: "+provider.getClass().getName());
             this.evalGroupsProvider = provider;
         } else {
-            LOG.info("Unregistered EvalGroupProvider");
+            log.info("Unregistered EvalGroupProvider");
             this.evalGroupsProvider = null;
         }
     }

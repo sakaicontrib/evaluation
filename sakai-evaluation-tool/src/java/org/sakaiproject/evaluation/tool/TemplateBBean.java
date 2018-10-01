@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -33,6 +31,7 @@ import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
@@ -45,9 +44,8 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class TemplateBBean {
-
-    private static final Log LOG = LogFactory.getLog(TemplateBBean.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -118,7 +116,7 @@ public class TemplateBBean {
      * @return 
      */
     public String updateTemplateTitleDesc() {
-        LOG.debug("update template title/desc");
+        log.debug("update template title/desc");
         try {
             templateBeanLocator.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -137,7 +135,7 @@ public class TemplateBBean {
      * @return 
      */
     public String copyTemplate() {
-        LOG.debug("make a copy of a template ("+templateId+") at the users request");
+        log.debug("make a copy of a template ("+templateId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, true);
         messages.addMessage( new TargettedMessage("controltemplates.copy.user.message", 
@@ -192,7 +190,7 @@ public class TemplateBBean {
     // ITEMS
 
     public String saveItemAction() {
-        LOG.info("save item");
+        log.info("save item");
         try {
             itemBeanWBL.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -209,7 +207,7 @@ public class TemplateBBean {
      * @return 
      */
     public String copyItem() {
-        LOG.debug("make a copy of an item ("+itemId+") at the users request");
+        log.debug("make a copy of an item ("+itemId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyItems(new Long[] {itemId}, ownerId, false, false);
         messages.addMessage( new TargettedMessage("controlitems.copy.user.message", 
@@ -224,12 +222,12 @@ public class TemplateBBean {
      * @return 
      */
     public String copyTemplateItems() {
-        LOG.debug("make a copy of a template item ("+itemIds+") at the users request");
+        log.debug("make a copy of a template item ("+itemIds+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyTemplateItems(itemIds, ownerId, false, templateId, true);
         messages.addMessage( new TargettedMessage("modifytemplate.copy.user.message", 
                 new Object[] {}, TargettedMessage.SEVERITY_INFO) );
-        LOG.debug("Copied: " + copiedIds[0].toString());
+        log.debug("Copied: " + copiedIds[0].toString());
         return "success";
     }
 
@@ -238,7 +236,7 @@ public class TemplateBBean {
      * @return 
      */
     public String hideItemAction() {
-        LOG.debug("hide item");
+        log.debug("hide item");
         localTemplateLogic.hideItem(itemId);
         messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
                 new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
@@ -250,7 +248,7 @@ public class TemplateBBean {
      * @return 
      */
     public String deleteItemAction() {
-        LOG.debug("delete item");
+        log.debug("delete item");
         localTemplateLogic.deleteItem(itemId);
         messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
                 new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
@@ -261,7 +259,7 @@ public class TemplateBBean {
     // TEMPLATE ITEMS
 
     public String saveTemplateItemAction() {
-        LOG.debug("save template item");
+        log.debug("save template item");
         try {
             templateItemWBL.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -274,7 +272,7 @@ public class TemplateBBean {
 
 
     public String saveBothAction() {
-        LOG.info("save template item and item");
+        log.info("save template item and item");
         try {
             return templateItemWBL.saveBoth();  //returns the item's Id
         } catch (BlankRequiredFieldException e) {
@@ -292,7 +290,7 @@ public class TemplateBBean {
      * @return 
      */
     public String saveScaleAction() {
-        LOG.debug("save scale");
+        log.debug("save scale");
         try {
             scaleBeanLocator.saveAll();
         } catch (BlankRequiredFieldException e) {
@@ -308,7 +306,7 @@ public class TemplateBBean {
      * @return 
      */
     public String deleteScaleAction() {
-        LOG.debug("delete scale");
+        log.debug("delete scale");
         scaleBeanLocator.deleteScale(scaleId);
         messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
                 new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
@@ -320,7 +318,7 @@ public class TemplateBBean {
      * @return 
      */
     public String hideScaleAction() {
-        LOG.debug("hide scale");
+        log.debug("hide scale");
         localTemplateLogic.hideScale(scaleId);
         messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
                 new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
@@ -333,7 +331,7 @@ public class TemplateBBean {
      * @return 
      */
     public String copyScale() {
-        LOG.debug("make a copy of a scale ("+scaleId+") at the users request");
+        log.debug("make a copy of a scale ("+scaleId+") at the users request");
         String ownerId = commonLogic.getCurrentUserId();
         Long[] copiedIds = authoringService.copyScales(new Long[] {scaleId}, null, ownerId, false);
         messages.addMessage( new TargettedMessage("controlscales.copy.user.message", 
@@ -355,7 +353,7 @@ public class TemplateBBean {
     // Current Jquery implementation is only working as a result of auto-commit
     // bug in DAO wrapper implementation.
     public void saveReorder() { 
-        LOG.info("save items reordering");
+        log.info("save items reordering");
         Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
         List<EvalTemplateItem> l = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
         List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
@@ -390,7 +388,7 @@ public class TemplateBBean {
     }
 
     private void emit(EvalTemplateItem toemit, int outindex) {
-        LOG.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
+        log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
         toemit.setDisplayOrder(outindex);
         localTemplateLogic.saveTemplateItem(toemit);
     }
@@ -405,7 +403,7 @@ public class TemplateBBean {
      * @return 'success' if all is ok
      */
     public String saveBlockItemAction() {
-        LOG.debug("Save Block items");
+        log.debug("Save Block items");
 
         Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
         
@@ -429,8 +427,8 @@ public class TemplateBBean {
         		 studentCt++;
         	 }
         }
-        LOG.info("admin cnt: " + adminCt);
-        LOG.info("student cnt: " + studentCt);
+        log.info("admin cnt: " + adminCt);
+        log.info("student cnt: " + studentCt);
          
         
         if (blockId.equals(TemplateItemWBL.NEW_1)) { // create new block
@@ -575,7 +573,7 @@ public class TemplateBBean {
     }
     
     public String saveTemplateItemToGroupAction(){
-    	LOG.debug("save template item to group");
+    	log.debug("save template item to group");
     	if(groupItemId != null){
 	        try {
 	            templateItemWBL.saveToGroup(groupItemId);

@@ -22,18 +22,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.tool.producers.ImportConfigProducer;
 import org.springframework.web.multipart.MultipartFile;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Parses the incoming properties file and then supplies the results to the classes that need to handle the results.
  * 
  * @author chasegawa
  */
+@Slf4j
 public class ConfigSettingsPropertiesFileParser {
-    private static final Log LOG = LogFactory.getLog(ConfigSettingsPropertiesFileParser.class);
 
     /**
      * @return "uploadSuccess" if the parsing was completed without issue. Otherwise, return "uploadFailure".
@@ -53,7 +53,7 @@ public class ConfigSettingsPropertiesFileParser {
                 result.put(keyValuePair[0], keyValuePair[1]);
             }
         } catch (IOException ioe) {
-            LOG.error("Error reading uploaded properties file for overwrite settings", ioe);
+            log.error("Error reading uploaded properties file for overwrite settings", ioe);
             return "uploadFailure";
         } finally {
             IOUtils.closeQuietly(reader);

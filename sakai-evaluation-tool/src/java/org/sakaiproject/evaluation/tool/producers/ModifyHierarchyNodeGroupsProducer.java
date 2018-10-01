@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -30,6 +28,8 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
+import lombok.extern.slf4j.Slf4j;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -44,10 +44,10 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
-import uk.org.ponder.beanutil.PathUtil;
 
+@Slf4j
 public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implements ViewParamsReporter, NavigationCaseReporter {
-    private static final Log LOG = LogFactory.getLog( ModifyHierarchyNodeGroupsProducer.class );
+
     public static final String VIEW_ID = "modify_hierarchy_node_groups";
     
     private EvalCommonLogic commonLogic;
@@ -98,7 +98,7 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
             try {
                 c = commonLogic.makeEvalGroupObject(EvalConstants.GROUP_ID_SITE_PREFIX+hierarchyEvalGroupId.substring(EvalConstants.GROUP_ID_SITE_PREFIX.length()));
             } catch (Exception e) {
-                LOG.warn("Exception: " + e.getMessage());
+                log.warn("Exception: " + e.getMessage());
             }
             if (c != null) {
                 int dupe = 0;
@@ -108,13 +108,13 @@ public class ModifyHierarchyNodeGroupsProducer extends EvalCommonProducer implem
                     }
                 }
                 if (dupe == 1) {
-                    LOG.warn(hierarchyEvalGroupId+" is already in the list, so I won't add it.");
+                    log.warn(hierarchyEvalGroupId+" is already in the list, so I won't add it.");
                 } else {
                     evalGroups.add(c);
-                    LOG.warn("Have added "+hierarchyEvalGroupId+"to list of evalgroups.");
+                    log.warn("Have added "+hierarchyEvalGroupId+"to list of evalgroups.");
                 }
             } else {
-                LOG.warn("Could not get an evalgroup for "+hierarchyEvalGroupId);
+                log.warn("Could not get an evalgroup for "+hierarchyEvalGroupId);
             }
         }
 

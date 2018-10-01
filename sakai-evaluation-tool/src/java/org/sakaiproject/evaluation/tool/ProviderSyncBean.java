@@ -18,15 +18,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.CronExpression;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
@@ -35,6 +34,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * ProviderSyncBean
  *
  */
+@Slf4j
 public class ProviderSyncBean {
 	
 	public static final String JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
@@ -45,8 +45,6 @@ public class ProviderSyncBean {
 	public static final long MILLISECONDS_PER_MINUTE = 60L * 1000L;
 	public static final long DELAY_IN_MINUTES = 2L;
 
-	private static final Log LOG = LogFactory.getLog(ProviderSyncBean.class);
-	
 	private static final String SPACE = " ";
 
     private EvalCommonLogic commonLogic;
@@ -83,11 +81,11 @@ public class ProviderSyncBean {
 	public String syncServerId;
 	
 	public void init() {
-		LOG.info("init()");
+		log.info("init()");
 	}
 	
 	public String scheduleSync() {
-		LOG.info("scheduleSync() ");
+		log.info("scheduleSync() ");
 		
 		
 		boolean error = scheduleCronJob();
@@ -96,7 +94,7 @@ public class ProviderSyncBean {
 			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);
 		}
 		
-		LOG.info("scheduleSync() error == " + error);
+		log.info("scheduleSync() error == " + error);
 		return (error ? RESULT_FAILURE : RESULT_SUCCESS);
 	}
 
@@ -217,7 +215,7 @@ public class ProviderSyncBean {
 			
 			return RESULT_SUCCESS;
 		} catch (Exception e) {
-			LOG.warn("error in updateSyncEvents() " + e);
+			log.warn("error in updateSyncEvents() " + e);
 		}
 		
 		// send error message
@@ -227,7 +225,7 @@ public class ProviderSyncBean {
 	}
 	
 	public String updateSync() {
-		LOG.info("updateSync(" + this.fullJobName + ") ");
+		log.info("updateSync(" + this.fullJobName + ") ");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
@@ -261,7 +259,7 @@ public class ProviderSyncBean {
 	}
 	
 	public String deleteSync() {
-		LOG.info("deleteSync(" + this.fullJobName + ")");
+		log.info("deleteSync(" + this.fullJobName + ")");
 		boolean success = false;
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		if(fullJobName == null || fullJobName.trim().equals("")) {
@@ -296,7 +294,7 @@ public class ProviderSyncBean {
 	 * @return
 	 */
 	public String quickSync() {
-		LOG.info("quickSync() ");
+		log.info("quickSync() ");
 		boolean success;
 		
 		Calendar cal = Calendar.getInstance();
@@ -316,7 +314,7 @@ public class ProviderSyncBean {
 		buf.append(SPACE);
 		buf.append(cal.get(Calendar.YEAR));
 		this.cronExpression = buf.toString();
-		LOG.info("quickSync() cronExpression == " + cronExpression);
+		log.info("quickSync() cronExpression == " + cronExpression);
 		
 		if(this.syncServerId != null) {
 			this.evalSettings.set(EvalSettings.SYNC_SERVER, this.syncServerId);

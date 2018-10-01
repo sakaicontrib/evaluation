@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -28,6 +26,8 @@ import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -42,9 +42,9 @@ import org.sakaiproject.genericdao.api.search.Search;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
-   private static final Log LOG = LogFactory.getLog(EvalAdhocSupportImpl.class);
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -229,7 +229,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
          copyAdhocUser(existing, user);
       } else {
          dao.save(user);
-         LOG.info("Saved adhoc user: " + user.getEmail());
+         log.info("Saved adhoc user: " + user.getEmail());
       }
    }
 
@@ -292,7 +292,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       }
 
       dao.save(group);
-      LOG.info("Saved adhoc group: " + group.getEvalGroupId());
+      log.info("Saved adhoc group: " + group.getEvalGroupId());
    }
 
    /**

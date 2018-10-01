@@ -35,11 +35,8 @@ import java.util.UUID;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -76,10 +73,8 @@ import org.sakaiproject.entity.api.EntityPropertyTypeException;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.EntityReference;
-import org.sakaiproject.entitybroker.entityprovider.search.Order;
-import org.sakaiproject.entitybroker.entityprovider.search.Restriction;
-import org.sakaiproject.entitybroker.entityprovider.search.Search;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
@@ -102,6 +97,9 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.exception.PermissionException;
+import org.sakaiproject.exception.ServerOverloadException;
+import org.sakaiproject.exception.TypeException;
 import org.sakaiproject.javax.PagingPosition;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -116,10 +114,8 @@ import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
-import org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport;
-import org.sakaiproject.exception.PermissionException;
-import org.sakaiproject.exception.ServerOverloadException;
-import org.sakaiproject.exception.TypeException;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -130,9 +126,8 @@ import org.sakaiproject.exception.TypeException;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalExternalLogicImpl implements EvalExternalLogic {
-
-    private static final Log LOG = LogFactory.getLog(EvalExternalLogicImpl.class);
 
     private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
     private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
@@ -245,7 +240,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     }
 
     public void init() {
-        LOG.debug("init, register security perms");
+        log.debug("init, register security perms");
 
         // register Sakai permissions for this tool
         registerPermissions();
@@ -362,7 +357,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         try {
             userId = userDirectoryService.getUserId(username);
         } catch(UserNotDefinedException ex) {
-            LOG.debug("Could not get userId from username: " + username);
+            log.debug("Could not get userId from username: " + username);
         }
         return userId;
     }
@@ -378,7 +373,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             try {
                 username = userDirectoryService.getUserEid(userId);
             } catch(UserNotDefinedException ex) {
-                LOG.warn("Sakai could not get username from userId: " + userId, ex);
+                log.warn("Sakai could not get username from userId: " + userId, ex);
             }
         }
         return username;
@@ -398,7 +393,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
                         sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
             } catch(UserNotDefinedException ex) {
-                LOG.debug("Sakai could not get user from userId: " + userId, ex);
+                log.debug("Sakai could not get user from userId: " + userId, ex);
             }
         }
         return user;
@@ -469,14 +464,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             }
             catch( UserNotDefinedException e )
             {
-                LOG.debug( "Cannot find user object by id:" + userId );
+                log.debug( "Cannot find user object by id:" + userId );
                 try
                 {
                     user = userDirectoryService.getUserByEid( userId );
                 }
                 catch( UserNotDefinedException e1 )
                 {
-                    LOG.debug( "Cannot find user object by eid:" + userId );
+                    log.debug( "Cannot find user object by eid:" + userId );
                 }
             }
             if (user != null) {
@@ -491,7 +486,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserSakaiAdmin(java.lang.String)
      */
     public boolean isUserSakaiAdmin(String userId) {
-        LOG.debug("Checking is eval super admin for: " + userId);
+        log.debug("Checking is eval super admin for: " + userId);
         return securityService.isSuperUser(userId);
     }
 
@@ -499,7 +494,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserLocale(java.lang.String)
      */
     public Locale getUserLocale(String userId) {
-        LOG.debug("userId: " + userId);
+        log.debug("userId: " + userId);
         //log.warn("can only get the locale for the current user right now...");
         // TODO - this sucks because there is no way to get the locale for anything but the
         // current user.... terrible -AZ
@@ -535,10 +530,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                             section.getTitle(), getContextType( SAKAI_SECTION_TYPE ) );
                     groups.add( group );
                 }
-                catch( IdNotFoundException ex ) { LOG.debug( "Could not find section with ID = " + sectionID, ex ); }
+                catch( IdNotFoundException ex ) { log.debug( "Could not find section with ID = " + sectionID, ex ); }
             }
         }
-        catch( Exception ex ) { LOG.debug( ex.getMessage() ); }
+        catch( Exception ex ) { log.debug( ex.getMessage() ); }
 
 
         return groups;
@@ -612,13 +607,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             } catch (Exception e) {
                 // invalid site reference
-                LOG.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
+                log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
                 c = null;
             }
         }
 
         if (c == null) {
-            LOG.debug("Could not get group from evalGroupId:" + evalGroupId);
+            log.debug("Could not get group from evalGroupId:" + evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
@@ -647,7 +642,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public int countEvalGroupsForUser(String userId, String permission) {
-        LOG.debug("userId: " + userId + ", permission: " + permission);
+        log.debug("userId: " + userId + ", permission: " + permission);
 
         int count = 0;
         Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
@@ -670,7 +665,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        LOG.debug("userId: " + userId + ", permission: " + permission);
+        log.debug("userId: " + userId + ", permission: " + permission);
 
         return getEvalGroups(userId, permission, false, null);
     }
@@ -679,7 +674,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId) {
-        LOG.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
+        log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
 
         return getEvalGroups(userId, permission, true, currentSiteId);
     }
@@ -762,7 +757,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String groupId = r.getId();
                         Group group = siteService.findGroup(groupId);
                         if (group == null) {
-                            LOG.info("Could not get Sakai group from group id:" + groupId);
+                            log.info("Could not get Sakai group from group id:" + groupId);
                         }
                         else {
                             l.add(new EvalGroup(r.getReference(), group.getTitle(), getContextType(r.getType())));
@@ -773,7 +768,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         if (l.isEmpty()) {
-            LOG.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+            log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
         }
         return l;
     }
@@ -892,15 +887,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         try { userEID = userDirectoryService.getUserId( userRoleEntry.getKey() ); }
                         catch( UserNotDefinedException e )
                         { 
-                            LOG.info( "Cant find userID for user = " + userRoleEntry.getKey(), e );
+                            log.info( "Cant find userID for user = " + userRoleEntry.getKey(), e );
                             continue;
                         }
                         userIDs.add( userEID );
                     }
                 }
             }
-            catch( IdUnusedException ex ) { LOG.warn( "Could not find site with ID = " + groupID.getSiteID(), ex ); }
-            catch( IdNotFoundException ex ) { LOG.warn( "Could not find section with ID = " + groupID.getSectionID(), ex ); }
+            catch( IdUnusedException ex ) { log.warn( "Could not find site with ID = " + groupID.getSiteID(), ex ); }
+            catch( IdNotFoundException ex ) { log.warn( "Could not find section with ID = " + groupID.getSectionID(), ex ); }
         }
 
         // Return the user IDs
@@ -945,7 +940,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             if (email == null || email.equals("")) {
                 if (deferExceptions) {
                     exceptionTracker += "blank or null to address in list ("+i+") :: ";
-                    LOG.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
+                    log.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
                     continue;
                 } else {
                     // die here since we were unable to find this user at all
@@ -980,9 +975,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             } catch (AddressException e) {
                 if (deferExceptions) {
                     exceptionTracker += e.getMessage() + " :: ";
-                    LOG.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
-                    if (LOG.isDebugEnabled()) {
-                        LOG.warn( e );
+                    log.debug("Invalid to address (" + email + "), skipping it, error:("+e+")...");
+                    if (log.isDebugEnabled()) {
+                        log.warn(e.getLocalizedMessage(), e );
                     }
                 } else {
                     // die here since we were unable to find this user at all
@@ -1080,7 +1075,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
         String ref = getEntityReference(evaluationEntity);
         if (ref != null) {
-            LOG.debug("Entity event: " + eventName + " for " + ref);
+            log.debug("Entity event: " + eventName + " for " + ref);
             entityBroker.fireEvent(eventName, ref);
         }
     }
@@ -1088,7 +1083,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public void registerEntityEvent(String eventName, Class<? extends Serializable> entityClass, String entityId) {
         String ref = getEntityReference(entityClass, entityId);
         if (ref != null) {
-            LOG.debug("Entity event: " + eventName + " for " + ref);
+            log.debug("Entity event: " + eventName + " for " + ref);
             entityBroker.fireEvent(eventName, ref);
         }
     }
@@ -1108,7 +1103,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             id = realId.toString();
             return getEntityReference(elementClass, id);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOG.warn("Failed to get id from entity object", e);
+            log.warn("Failed to get id from entity object", e);
             return null;
         }
     }
@@ -1281,11 +1276,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         		return contentResource.getContent();
         	}
         } catch (PermissionException | IdUnusedException | TypeException | ServerOverloadException e) {
-            if (LOG.isDebugEnabled()) {
-            	LOG.debug("Cannot byte array for Content Hosting File " + abspath,e);
+            if (log.isDebugEnabled()) {
+            	log.debug("Cannot byte array for Content Hosting File " + abspath,e);
             }
             else {
-            	LOG.info("Cannot byte array for Content Hosting File " + abspath);
+            	log.info("Cannot byte array for Content Hosting File " + abspath);
             }
             return null;
         }
@@ -1379,8 +1374,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				.forJob(jobName, jobGroup)
 				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
 				.build();
-		if(LOG.isDebugEnabled()) {
-		    LOG.debug("Created trigger: " + trigger.getCronExpression());
+		if(log.isDebugEnabled()) {
+		    log.debug("Created trigger: " + trigger.getCronExpression());
 		}
 
         if(trigger != null) {
@@ -1396,16 +1391,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             		.build();
             Scheduler scheduler = scheduleManager.getScheduler();
             if(scheduler == null) {
-                LOG.warn("Unable to access scheduler", new Throwable());
+                log.warn("Unable to access scheduler", new Throwable());
             } else {
                 try {
                     Date date = scheduler.scheduleJob(jobDetail, trigger);
-                    if(LOG.isDebugEnabled()) {
-                        LOG.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
+                    if(log.isDebugEnabled()) {
+                        log.debug("Scheduled cron job: " + trigger.getCronExpression() + " " + date);
                     }
                     jobFullName =  jobDetail.getKey().toString();
                 } catch(SchedulerException e) {
-                    LOG.warn("SchedulerException in scheduleCronJob()", e);
+                    log.warn("SchedulerException in scheduleCronJob()", e);
                 }
             }
         }
@@ -1438,7 +1433,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         SchedulerManager schedulerManager = getBean(SchedulerManager.class);
         Scheduler scheduler = schedulerManager.getScheduler();
         if (scheduler == null) {
-            LOG.warn("Unable to access scheduler", new Throwable());
+            log.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
                 Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroup));
@@ -1468,11 +1463,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                             cronJobs.put(triggerKey.toString(), map);
                         }
                     } catch(SchedulerException e) {
-                        LOG.warn("SchedulerException processing one trigger in getCronJobs", e);					
+                        log.warn("SchedulerException processing one trigger in getCronJobs", e);					
                     }
                 }
             } catch(SchedulerException e) {
-                LOG.warn("SchedulerException processing one job in getCronJobs", e);
+                log.warn("SchedulerException processing one job in getCronJobs", e);
             }
         }
         return cronJobs;
@@ -1488,12 +1483,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         SchedulerManager scheduleManager = getBean(SchedulerManager.class);
         Scheduler scheduler = scheduleManager.getScheduler();
         if(scheduler == null) {
-            LOG.warn("Unable to access scheduler", new Throwable());
+            log.warn("Unable to access scheduler", new Throwable());
         } else {
             try {
                 success = scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
             } catch(SchedulerException e) {
-                LOG.warn("SchedulerException in scheduleCronJob()", e);
+                log.warn("SchedulerException in scheduleCronJob()", e);
             }
         }
         return success;
@@ -1518,7 +1513,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 Site site = siteService.getSite(evalGroupId.replaceAll(EvalConstants.GROUP_ID_SITE_PREFIX, ""));
                 isEvalGroupPublished = site.isPublished();
             }catch(IdUnusedException e){
-                LOG.debug(e);
+                log.debug(e.getLocalizedMessage(), e);
             } 
         }
         return isEvalGroupPublished;
@@ -1534,7 +1529,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             String toolPage = null;
             //userId is Sakai id
             if(userId == null || userId.length() == 0) {
-                LOG.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+                log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
             } else {
                 String myWorkspaceId = siteService.getUserSiteId(userId);
                 if(myWorkspaceId != null && ! myWorkspaceId.trim().equals("")) {
@@ -1561,7 +1556,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
+            log.warn("getMyWorkspaceUrl(String userId) '" + userId + "' " + e);
         }
         if(url == null) {
             url = getServerUrl();

@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -38,15 +36,17 @@ import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This checks and preloads any data that is needed for the evaluation app,
  * this should be executed with locks for cluster compatibility
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class PreloadDataImpl {
 
-    private static final Log LOG = LogFactory.getLog(PreloadDataImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao evaluationDao) {
@@ -159,7 +159,7 @@ public class PreloadDataImpl {
         }
 
         if( countNewConfigs > 0){
-        	LOG.info("Preloaded " + countNewConfigs + " evaluation system EvalConfig items");
+        	log.info("Preloaded " + countNewConfigs + " evaluation system EvalConfig items");
         }
     }
 
@@ -195,7 +195,7 @@ public class PreloadDataImpl {
         		}
         	}
   
-            LOG.info("Preloaded " + count + " evaluation EmailTemplates");
+            log.info("Preloaded " + count + " evaluation EmailTemplates");
         }
     }
 
@@ -258,7 +258,7 @@ public class PreloadDataImpl {
             //       new String[] { "Req. in Major", "Req. out of Major",
             //       "Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
 
-            LOG.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
+            log.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
         }
     }
 
@@ -362,8 +362,8 @@ public class PreloadDataImpl {
             // general catch all
             saveCategoryGroup(EvalConstants.EXPERT_ITEM_CATEGORY_TITLE, "General use items", null);
             
-            LOG.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
-            LOG.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
+            log.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
+            log.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
         }
 
     }

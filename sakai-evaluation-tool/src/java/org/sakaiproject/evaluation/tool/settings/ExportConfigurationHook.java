@@ -24,9 +24,9 @@ import java.util.Arrays;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ExportConfigurationHook handles the request from the system to export the current Evaluation settings as a properties
@@ -34,10 +34,9 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
  * 
  * @author chasegawa
  */
+@Slf4j
 public class ExportConfigurationHook {
     public static final String VIEW_ID = "export_settings";
-    private static final Log LOG = LogFactory.getLog(ExportConfigurationHook.class);
-
     /**
      * This is required in order to avoid runtime reflection error.
      */
@@ -48,7 +47,7 @@ public class ExportConfigurationHook {
         try {
             return EvalSettings.class.getDeclaredField(propertyFieldName).get(String.class).toString();
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            LOG.warn( e );
+            log.warn(e.getLocalizedMessage(), e );
             return "Error getting value";
         }
     }
@@ -86,7 +85,7 @@ public class ExportConfigurationHook {
                 out.write("\n".getBytes());
             }
         } catch (IOException e) {
-            LOG.error("Error producing output stream for evalSettings.properties", e);
+            log.error("Error producing output stream for evalSettings.properties", e);
             return false;
         }
         return true;

@@ -18,8 +18,6 @@ package org.sakaiproject.evaluation.logic.imports;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionException;
@@ -32,6 +30,8 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Handle the importing of external data into the Evaluation System.
  * 
@@ -42,9 +42,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  * 
  * @author rwellis
  */
+@Slf4j
 public class EvalImportLogicImpl implements EvalImportLogic {
-	
-	private static final Log LOG = LogFactory.getLog(EvalImportLogicImpl.class);
+
 	
 	//Spring injection
 	private EvalCommonLogic commonLogic;
@@ -80,8 +80,8 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		}
 		catch(Exception e)
 		{
-			if(LOG.isWarnEnabled()) {
-				LOG.warn(e);
+			if(log.isWarnEnabled()) {
+				log.warn(e.getLocalizedMessage(), e);
 			}
 			messages.add("There was a problem loading the data: " + e.toString());
 			

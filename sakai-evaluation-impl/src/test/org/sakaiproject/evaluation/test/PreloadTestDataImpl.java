@@ -14,10 +14,10 @@
  */
 package org.sakaiproject.evaluation.test;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.dao.PreloadDataImpl;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -38,9 +38,9 @@ import org.sakaiproject.evaluation.dao.PreloadDataImpl;
  * </pre>
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class PreloadTestDataImpl {
 
-   private static final Log LOG = LogFactory.getLog(PreloadTestDataImpl.class);
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -62,7 +62,7 @@ public class PreloadTestDataImpl {
    }
 
    public void init() {
-      LOG.info("INIT");
+      log.info("INIT");
       if (preloadData == null) {
          throw new NullPointerException("PreloadDataImpl must be loaded before this class");
       } else {
@@ -76,7 +76,7 @@ public class PreloadTestDataImpl {
     * Preload the data
     */
    public void preloadDB(){
-      LOG.info("preloading DB...");
+      log.info("preloading DB...");
       etdl = new EvalTestDataLoad(dao);
    }
 }

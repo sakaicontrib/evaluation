@@ -21,11 +21,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
@@ -38,20 +36,21 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation for EvalDeliveryService
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalDeliveryServiceImpl implements EvalDeliveryService {
-
-    private static final Log LOG = LogFactory.getLog(EvalDeliveryServiceImpl.class);
 
     // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
     protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
@@ -94,14 +93,14 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
     // INIT method
     public void init() {
-        LOG.debug("Init");
+        log.debug("Init");
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, java.lang.String)
      */
     public void saveResponse(EvalResponse response, String userId) {
-        LOG.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
+        log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
 
         // set the date modified
         response.setLastModified(new Date());
@@ -183,7 +182,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 dao.saveMixedSet(new Set[] {responseSet, answersSet});
             } catch (Exception e) {
                 // failed to save so we should assume for now this is caused by the darn unique constraint
-                LOG.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
+                log.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
                         + evaluationId + ") in this evalGroupId (" + evalGroupId + "): " + e.getMessage());
                 // this will produce a nicer message
                 throw new ResponseSaveException("User (" + userId + ") cannot save response for this evaluation (" + evaluationId
@@ -195,7 +194,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 /* the response is complete (submission of an evaluation) 
                  * and not just creating the empty response so lock related evaluation
                  */
-                LOG.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
+                log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
                 EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
                 dao.lockEvaluation(evaluation, true);
                 completeMessage = ", response is complete";
@@ -213,11 +212,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
                   }
             }catch(Exception e){
-            	LOG.warn("Unable to send the confirmation email to user: " + userId, e);
+            	log.warn("Unable to send the confirmation email to user: " + userId, e);
             }
             
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
-            LOG.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
+            log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
                     "evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +
                     " with " + answerCount + " answers" + completeMessage);
             return;
@@ -232,7 +231,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getResponseById(java.lang.Long)
      */
     public EvalResponse getResponseById(Long responseId) {
-        LOG.debug("responseId: " + responseId);
+        log.debug("responseId: " + responseId);
         // get the response by passing in id
         EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
         return response;
@@ -271,7 +270,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     }
 
     public List<EvalResponse> getEvaluationResponsesForUser(String userId, Long[] evaluationIds, Boolean completed) {
-        LOG.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
+        log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
 
         if (evaluationIds.length <= 0) {
             throw new IllegalArgumentException("evaluationIds cannot be empty");
@@ -298,7 +297,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     }
 
     public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
-        LOG.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
+        log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -336,7 +335,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvalResponseIds(java.lang.Long, java.lang.String[], java.lang.Boolean)
      */
     public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
-        LOG.debug("evaluationId: " + evaluationId);
+        log.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -349,7 +348,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvaluationResponses(java.lang.Long, java.lang.String[], java.lang.Boolean)
      */
     public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
-        LOG.debug("evaluationId: " + evaluationId);
+        log.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -373,7 +372,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getAnswersForEval(java.lang.Long, java.lang.String[], java.lang.Long[])
      */
     public List<EvalAnswer> getAnswersForEval(Long evaluationId, String[] evalGroupIds, Long[] templateItemIds) {
-        LOG.debug("evaluationId: " + evaluationId);
+        log.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -395,7 +394,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     // PERMISSIONS
 
     public boolean canModifyResponse(String userId, Long responseId) {
-        LOG.debug("userId: " + userId + ", responseId: " + responseId);
+        log.debug("userId: " + userId + ", responseId: " + responseId);
         // get the response by id
         EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
         if (response == null) {
@@ -406,7 +405,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         try {
             return checkUserModifyResponse(userId, response);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return false;
     }
@@ -421,7 +420,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
      * @return true if they do, exception otherwise
      */
     protected boolean checkUserModifyResponse(String userId, EvalResponse response) {
-        LOG.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
+        log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
         String state = EvalUtils.getEvaluationState(response.getEvaluation(), false);
         if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)) {
@@ -593,7 +592,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 // check that the associated id is filled in for associated items
                 if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getCategory())) {
                     if (answer.getAssociatedId() != null) {
-                        LOG.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
+                        log.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
                                 answer.getAssociatedType(), answer.getAssociatedId()) +") should have the associated id "
                                 + "("+answer.getAssociatedId()+") field null, "
                                 + "for templateItem (" + answer.getTemplateItem().getId() + "), setting associated id and type to null");

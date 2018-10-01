@@ -14,14 +14,13 @@
  */
 package org.sakaiproject.evaluation.logic.entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.entitybroker.event.EventReceiver;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.entitybroker.EntityReference;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Allows for detecting changes to the config via events,
@@ -29,10 +28,10 @@ import org.sakaiproject.entitybroker.EntityReference;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider, EventReceiver {
 
     private EvalSettings settings;
-    private static final Log LOG = LogFactory.getLog(ConfigEntityProviderImpl.class);
 
     public void setSettings(EvalSettings settings) {
         this.settings = settings;
@@ -64,19 +63,19 @@ public class ConfigEntityProviderImpl implements ConfigEntityProvider, CoreEntit
             id = new EntityReference(id).getId();
         }  
         if (EvalSettings.EVENT_SET_ONE_CONFIG.equals(eventName)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("eventName (" + eventName + ") settings.resetCache(" + id + ")");
+            if (log.isDebugEnabled()) {
+                log.debug("eventName (" + eventName + ") settings.resetCache(" + id + ")");
             }
             settings.resetCache(id);
         } else if (EvalSettings.EVENT_SET_MANY_CONFIG.equals(eventName)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("eventName (" + eventName + ") settings.resetCache(null)");
+            if (log.isDebugEnabled()) {
+                log.debug("eventName (" + eventName + ") settings.resetCache(null)");
             }
             settings.resetCache(null);
         }
         else {  
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("eventName (" + eventName + ") EVENT received UNKNOWN!");
+            if (log.isDebugEnabled()) {
+                log.debug("eventName (" + eventName + ") EVENT received UNKNOWN!");
             }
         }
     }

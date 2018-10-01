@@ -26,8 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -40,14 +38,16 @@ import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Job to export evaluation reports for a term 
  *
  */
+@Slf4j
 public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
-	
-	private static final Log LOG = LogFactory.getLog(ExportEvaluationReportsImpl.class);
-	
+
+
     private EvalEvaluationService evaluationService;
     public void setEvaluationService(EvalEvaluationService evaluationService) {
         this.evaluationService = evaluationService;
@@ -90,22 +90,22 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 		try {
 			session.setUserEid("admin");
 			session.setUserId("admin");
-			LOG.debug("ExportEvaluationReports.execute()");
+			log.debug("ExportEvaluationReports.execute()");
 			String termId = context.getMergedJobDataMap().getString("term.id");
 			Boolean mergeGroups = context.getMergedJobDataMap().getBoolean("merge.groups");
 			List<EvalEvaluation> evaluations = evaluationService.getEvaluationsByTermId(termId);
 			String reportPath = serverConfigurationService.getString("evaluation.exportjob.outputlocation");
 			if (reportPath == null) {
-				LOG.warn("You need to define the evaluation.exportjob.outputlocation property to be a directory to write these reports before running this job");
+				log.warn("You need to define the evaluation.exportjob.outputlocation property to be a directory to write these reports before running this job");
 				return;
 			}
 			File f = new File(reportPath);
 			if (!f.isDirectory()) {
-				LOG.warn("You need to define the evaluation.exportjob.outputlocation property to be a directory to write these reports before running this job");
+				log.warn("You need to define the evaluation.exportjob.outputlocation property to be a directory to write these reports before running this job");
 				return;
 			}
 			
-			LOG.info("Evaluation query returned" + evaluations.size() + " results to export for " + termId);
+			log.info("Evaluation query returned" + evaluations.size() + " results to export for " + termId);
 			
 
 			//Maybe make a termId folder for these to go in?
@@ -126,7 +126,7 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					/* This is where merged and non-merged groups will differ */
 					if (mergeGroups == true) {
 						String outputName = dirName + "/" + evaluationTitle + "_" + addDate;
-						LOG.info("Writing reports to a basename of "+ outputName);
+						log.info("Writing reports to a basename of "+ outputName);
 						outputStream = new FileOutputStream(outputName+".csv", false);
 						evaluationService.exportReport(evaluation, evalGroupIds, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
 						outputStream.close();
@@ -144,7 +144,7 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 							}
 							groupTitle = groupTitle.replaceAll("\\W+","_");
 							String outputName = dirName + "/" + evaluationTitle + "_" + groupTitle + "_" + addDate;
-							LOG.info("Writing reports to a basename of "+ outputName);
+							log.info("Writing reports to a basename of "+ outputName);
 							outputStream = new FileOutputStream(outputName+".csv", false);
 							evaluationService.exportReport(evaluation, new String[] {groupId}, null, outputStream, EvalEvaluationService.CSV_RESULTS_REPORT);
 							outputStream.close();
@@ -154,17 +154,17 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 					}
 				}
 				catch (FileNotFoundException e) {
-					LOG.warn("Error writing to file " + outputStream + ". Job aborting");
+					log.warn("Error writing to file " + outputStream + ". Job aborting");
 					return;
 				} catch (IOException e) {
-					LOG.warn("Error writing to file " + outputStream + ". Job aborting");
+					log.warn("Error writing to file " + outputStream + ". Job aborting");
 					return;
 				} 
 				catch (SecurityException e) {
-					LOG.info("Security exception thrown for evaluation (" + evaluation.getId() + ") skipping");
+					log.info("Security exception thrown for evaluation (" + evaluation.getId() + ") skipping");
 				}
 				catch (Exception e) {
-					LOG.warn("Unknown exception " + e.getMessage() + " found. Job aborting");
+					log.warn("Unknown exception " + e.getMessage() + " found. Job aborting");
 					return;
 				}
 
@@ -176,7 +176,7 @@ public class ExportEvaluationReportsImpl implements ExportEvaluationReports {
 	}
 	
 	public void init() {
-		LOG.debug("init()");
+		log.debug("init()");
 	}
 
 }

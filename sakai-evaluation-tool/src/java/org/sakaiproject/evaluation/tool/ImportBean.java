@@ -16,8 +16,6 @@ package org.sakaiproject.evaluation.tool;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.FilePickerHelper;
 import org.sakaiproject.entity.api.Reference;
@@ -28,15 +26,17 @@ import org.sakaiproject.exception.TypeException;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This is the backing bean of the XML data import process.
  * 
  * @author Dick Ellis (rwellis@umich.edu)
  * FIXME - DO NOT use sakai services directly
  */
+@Slf4j
 public class ImportBean {
 
-    private static final Log LOG = LogFactory.getLog(ImportBean.class);
 
     // injection
     private SessionManager sessionManager;
@@ -99,7 +99,7 @@ public class ImportBean {
      * INITIALIZATION
      */
     public void init() {
-        LOG.debug("INIT");
+        log.debug("INIT");
     }
 
 }

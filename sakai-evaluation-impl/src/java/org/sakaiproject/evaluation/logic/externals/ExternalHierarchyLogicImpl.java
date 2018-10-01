@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Section;
-import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
@@ -46,8 +44,10 @@ import org.sakaiproject.hierarchy.model.HierarchyNode;
 import org.sakaiproject.hierarchy.utils.HierarchyUtils;
 import org.sakaiproject.memory.api.Cache;
 import org.sakaiproject.memory.api.MemoryService;
-import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SiteService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Allows Evaluation to interface with an external hierarchy system,
@@ -55,9 +55,9 @@ import org.sakaiproject.site.api.Site;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
-    private static final Log LOG = LogFactory.getLog(ExternalHierarchyLogicImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao evaluationDao) {
@@ -117,7 +117,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (hierarchyService.getRootNode(HIERARCHY_ID) == null) {
             HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
             hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
-            LOG.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
+            log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
         }
         // get the provider if there is one
         // setup provider
@@ -125,10 +125,10 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             evalHierarchyProvider = (EvalHierarchyProvider) externalLogic.getBean(EvalHierarchyProvider.class);
             if (evalHierarchyProvider != null)
             {
-                LOG.info("EvalHierarchyProvider found...");
+                log.info("EvalHierarchyProvider found...");
             }
         } else {
-            LOG.debug("No EvalHierarchyProvider found...");
+            log.debug("No EvalHierarchyProvider found...");
         }
         
         cache = memoryService.getCache(CACHE_NAME);
@@ -360,7 +360,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     public EvalHierarchyNode getNodeById(String nodeId) {
     	EvalHierarchyNode ret = (EvalHierarchyNode)cache.get(nodeId);
     	if(ret != null) {
-            LOG.debug("--- Fetching (External)getNodeById record from cache for: " + nodeId);
+            log.debug("--- Fetching (External)getNodeById record from cache for: " + nodeId);
             return ret;
         }
       
@@ -372,7 +372,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             HierarchyNode hNode = hierarchyService.getNodeById(nodeId);
             node = makeEvalNode(hNode);
         }
-        LOG.debug("+++ Adding (External)getNodeById record to cache for: " + nodeId);
+        log.debug("+++ Adding (External)getNodeById record to cache for: " + nodeId);
         cache.put(nodeId, node);
         return node;
     }
@@ -564,7 +564,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 }
             }
         }
-        catch( NumberFormatException ex ) { LOG.warn( ex ); }
+        catch( NumberFormatException ex ) { log.warn(ex.getLocalizedMessage(), ex ); }
 
         return groups;
     }
@@ -659,8 +659,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
                 }
             }
         }
-        catch ( IdUnusedException ex ) { LOG.debug("IdUnusedException looking up site ID", ex); }
-        catch ( IdNotFoundException ex ) { LOG.warn( "Could not find site or section by ID", ex ); }
+        catch ( IdUnusedException ex ) { log.debug("IdUnusedException looking up site ID", ex); }
+        catch ( IdNotFoundException ex ) { log.warn( "Could not find site or section by ID", ex ); }
 
         if (StringUtils.isNotBlank(nodeID)) {
             HierarchyNode currentNode = hierarchyService.getNodeById(nodeID);

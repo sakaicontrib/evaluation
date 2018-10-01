@@ -18,33 +18,30 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.MessageLocator;
 
 /**
@@ -52,9 +49,8 @@ import uk.org.ponder.messageutil.MessageLocator;
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class PDFReportExporterIndividual implements ReportExporter {
-
-    private static final Log LOG = LogFactory.getLog(PDFReportExporterIndividual.class);
 
     int displayNumber;
 
@@ -222,7 +218,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
                 for (int i = 0; i < dtis.size(); i++) {
                     DataTemplateItem dti = dtis.get(i);
-                    LOG.debug("Item text: "+dti.templateItem.getItem().getItemText());
+                    log.debug("Item text: "+dti.templateItem.getItem().getItemText());
                     
                     if (!instructorViewAllResults // If the eval is so configured,
                       && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
@@ -367,7 +363,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             }
 
         } else {
-            LOG.warn("Trying to add unknown type to PDF: " + templateItemType);
+            log.warn("Trying to add unknown type to PDF: " + templateItemType);
         }
     }
 
@@ -564,7 +560,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
                 }
             }
             else {
-                LOG.warn("Trying to add unknown type to PDF: " + templateItemType);
+                log.warn("Trying to add unknown type to PDF: " + templateItemType);
             }
         }
 

@@ -21,21 +21,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This class implements all DAO functionality for Hierarchy Rules.
  */
+@Slf4j
 public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
 {
-    private static final Log LOG = LogFactory.getLog( EvalHierarchyRuleSupportImpl.class );
 
     private EvaluationDao dao;
     public void setDao( EvaluationDao dao )
@@ -49,9 +48,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public boolean isRuleAlreadyAssignedToNode( String ruleText, String qualifierSelection, String optionSelection, Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "isRuleAlreadyAssignedToNode( " + ruleText + ", " + qualifierSelection + ", " + optionSelection + ", " + nodeID + " )" );
+            log.debug( "isRuleAlreadyAssignedToNode( " + ruleText + ", " + qualifierSelection + ", " + optionSelection + ", " + nodeID + " )" );
         }
 
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifierSelection ) || StringUtils.isBlank( optionSelection ) )
@@ -72,9 +71,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void assignNodeRule( String ruleText, String qualifier, String option, Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "assignNodeRule( " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+            log.debug( "assignNodeRule( " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
         }
 
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifier ) || StringUtils.isBlank( option ) )
@@ -96,9 +95,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void removeNodeRule( Long ruleID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "removeNodeRule( " + ruleID + " )" );
+            log.debug( "removeNodeRule( " + ruleID + " )" );
         }
 
         EvalHierarchyRule rule = getByID( ruleID );
@@ -116,9 +115,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void removeAllRulesForNode( Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "removeAllRulesForNode( " + nodeID + " )" );
+            log.debug( "removeAllRulesForNode( " + nodeID + " )" );
         }
 
         Set<EvalHierarchyRule> rules = new HashSet( getAllByNodeID( nodeID ) );
@@ -134,9 +133,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public void updateNodeRule( Long ruleID, String ruleText, String qualifier, String option, Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "updateNodeRule( " + ruleID + ", " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
+            log.debug( "updateNodeRule( " + ruleID + ", " + ruleText + ", " + qualifier + ", " + option + ", " + nodeID + " )" );
         }
 
         if( StringUtils.isBlank( ruleText ) || StringUtils.isBlank( qualifier ) || StringUtils.isBlank( option ) )
@@ -164,9 +163,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public List<HierarchyNodeRule> getRulesByNodeID( Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "getRulesByNodeID( " + nodeID + " )" );
+            log.debug( "getRulesByNodeID( " + nodeID + " )" );
         }
 
         List<EvalHierarchyRule> rules = getAllByNodeID( nodeID );
@@ -179,9 +178,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public HierarchyNodeRule getRuleByID( Long ruleID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "getRuleByID( " + ruleID + " )" );
+            log.debug( "getRuleByID( " + ruleID + " )" );
         }
 
         EvalHierarchyRule rule = getByID( ruleID );
@@ -201,9 +200,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     public List<HierarchyNodeRule> getAllRules()
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "getAllRules()" );
+            log.debug( "getAllRules()" );
         }
 
         List<EvalHierarchyRule> rules = dao.findAll( EvalHierarchyRule.class );
@@ -218,9 +217,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     private EvalHierarchyRule getByID( Long ruleID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "getByID( " + ruleID + " )" );
+            log.debug( "getByID( " + ruleID + " )" );
         }
 
         Search searchObj = new Search();
@@ -245,9 +244,9 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
      */
     private List<EvalHierarchyRule> getAllByNodeID( Long nodeID )
     {
-        if( LOG.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
-            LOG.debug( "getAllByNodeID( " + nodeID + " )" );
+            log.debug( "getAllByNodeID( " + nodeID + " )" );
         }
 
         Search searchObj = new Search();

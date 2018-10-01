@@ -16,41 +16,40 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jfree.chart.JFreeChart;
 
-import uk.org.ponder.util.UniversalRuntimeException;
-
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.ListItem;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.ColumnText;
-import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * 
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalPDFReportBuilder {
 
     private Document document;
@@ -77,8 +76,6 @@ public class EvalPDFReportBuilder {
     private final float SPACING_BETWEEN_LIST_ITEMS=1.0f;
     
     float pagefooter = 16.0f;
-    
-    private static final Log LOG = LogFactory.getLog(EvalPDFReportBuilder.class);
 
     public EvalPDFReportBuilder(OutputStream outputStream) {
         document = new Document();
@@ -189,7 +186,7 @@ public class EvalPDFReportBuilder {
 
     public void addSectionHeader(String headerText,boolean lastElementIsHeader, float theSize)
     {
-    	LOG.debug("Added a header with text: "+headerText+" and size: "+theSize+". Previous element was another header: "+lastElementIsHeader);
+    	log.debug("Added a header with text: "+headerText+" and size: "+theSize+". Previous element was another header: "+lastElementIsHeader);
     	if (!lastElementIsHeader)
     	{
     		Paragraph emptyPara = new Paragraph(" ");
@@ -238,7 +235,7 @@ public class EvalPDFReportBuilder {
                 }
             }
             myElements.add(list);
-            LOG.debug("Current comment list has "+textItems.size()+" comments.");
+            log.debug("Current comment list has "+textItems.size()+" comments.");
             myElements.add(new Paragraph(textNumberOfComments + " : " + textItems.size(), paragraphFont));
         }
         
@@ -374,7 +371,7 @@ public class EvalPDFReportBuilder {
 			this.addElementArrayWithJump(myElements);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
-			LOG.warn( e );
+			log.warn(e.getLocalizedMessage(), e );
 		}
     }
 
@@ -414,7 +411,7 @@ public class EvalPDFReportBuilder {
     	//20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
     	//Adds a big size element (a header or a graphic) and jumps to another page/column if it detects that is below the last third of the document.
     	float y = responseArea.getYLine();
-    	LOG.debug("Vertical position Y: "+y);
+    	log.debug("Vertical position Y: "+y);
     	try
     	{
     		if ((jumpIfLittleSpace) && (y<(document.top()/3)))
@@ -456,7 +453,7 @@ public class EvalPDFReportBuilder {
     	{
     		//First test. Do the elements fit in current column?
     		float y = responseArea.getYLine();
-    		LOG.debug("Vertical position Y: "+y);
+    		log.debug("Vertical position Y: "+y);
     		
 			for (Element element:arrayElements)
 			{
@@ -537,16 +534,16 @@ public class EvalPDFReportBuilder {
     	//Adds an array of elements that does not fit in a column, one by one.
     	//Current lowagie library does not allow to copy a List if it exceeds a whole page. It is truncated.
     	//So we add Lists always one element at a time.
-    	LOG.debug("Entering in AddBigElementArray with: "+myElements.toString()+". Curent column is: "+column);
+    	log.debug("Entering in AddBigElementArray with: "+myElements.toString()+". Curent column is: "+column);
 
 		responseArea.setText(null);
-		LOG.debug("Initial vertical position: "+responseArea.getYLine());
+		log.debug("Initial vertical position: "+responseArea.getYLine());
 		
 		for (Element element:myElements)
 		{
 			if (element.getClass().equals(com.lowagie.text.List.class))
 			{
-				LOG.debug("We have a List element to add.");
+				log.debug("We have a List element to add.");
 				com.lowagie.text.List myList=(com.lowagie.text.List)element;
 				for (int i=0;i<myList.size();i++)
 				{

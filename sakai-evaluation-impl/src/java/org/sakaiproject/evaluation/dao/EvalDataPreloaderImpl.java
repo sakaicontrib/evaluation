@@ -14,9 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is a simple bean which will initiate the data preloading sequence with locks
@@ -24,9 +24,9 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalDataPreloaderImpl {
 
-   private static final Log LOG = LogFactory.getLog(PreloadDataImpl.class);
 
    public static String EVAL_PRELOAD_LOCK = "data.preload.lock";
    public static String EVAL_FIXUP_LOCK = "data.fixup.lock";
@@ -51,16 +51,16 @@ public class EvalDataPreloaderImpl {
       String serverId = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
       boolean killSakaiOnError = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_CAN_KILL_SAKAI, false);
       if (autoDDL) {
-         LOG.info("Auto DDL enabled: Checking preload data exists...");
+         log.info("Auto DDL enabled: Checking preload data exists...");
          if (! preloadData.checkCriticalDataPreloaded() ) {
-            LOG.info("Preload data missing, preparing to preload critical evaluation system data");
+            log.info("Preload data missing, preparing to preload critical evaluation system data");
             Boolean gotLock = dao.obtainLock(EVAL_PRELOAD_LOCK, serverId, 10000);
             if (gotLock == null) {
             	if(killSakaiOnError) {
             		throw new IllegalStateException("Failure attempting to obtain lock ("+EVAL_PRELOAD_LOCK+") and preload evaluation system data, " 
             				+ "see logs just before this for more details, system terminating..."); 
             	} else {
-            		LOG.warn("Failure attempting to obtain lock ("+EVAL_PRELOAD_LOCK+") and preload evaluation system data");
+            		log.warn("Failure attempting to obtain lock ("+EVAL_PRELOAD_LOCK+") and preload evaluation system data");
             	}
             } else if (gotLock) {
                preloadData.preload();
@@ -68,16 +68,16 @@ public class EvalDataPreloaderImpl {
             }
          }
       } else {
-         LOG.info("Auto DDL disabled: Skipping data preloading...");
+         log.info("Auto DDL disabled: Skipping data preloading...");
          if ( preloadData.checkCriticalDataPreloaded() ) {
-            LOG.info("Preloaded data is present");
+            log.info("Preloaded data is present");
          } else {
         	if(killSakaiOnError) {
         		throw new IllegalStateException("Preloaded data is missing, evaluation cannot start up in this state, " +
         				"you must either enable the auto.ddl flag or preload the critical system data (config settings, email templates, scales) " +
             			"manually, evaluation system shutting down...");
         	} else {
-        		LOG.warn("Preloaded data is missing, evaluation cannot start up in this state. " +
+        		log.warn("Preloaded data is missing, evaluation cannot start up in this state. " +
         				"You must either enable the auto.ddl flag or preload the critical system data " + 
         				"(config settings, email templates, scales) manually)");
         	}

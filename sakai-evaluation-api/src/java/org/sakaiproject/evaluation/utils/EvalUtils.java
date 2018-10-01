@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
@@ -42,15 +40,17 @@ import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * This class contains various model related utils needed in many areas
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalUtils {
 
-    private static final Log LOG = LogFactory.getLog(EvalUtils.class);
 
     private static HashMap<String, Integer> stateNumbers;
 
@@ -275,7 +275,7 @@ public class EvalUtils {
 
                 // Update due date
                 Date newDueDate = new Date( eval.getStartDate().getTime() + (1000l * 60l * 60l * (long)minHoursLong) );
-                LOG.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
+                log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
                 eval.setDueDate(newDueDate);
 
                 // Update stop date if needed
@@ -290,7 +290,7 @@ public class EvalUtils {
                     if (eval.getViewDate().equals(eval.getStopDate()) ||
                             eval.getViewDate().before(eval.getStopDate()) ) {
                         Date newView = new Date( eval.getStopDate().getTime() + 5000 );
-                        LOG.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
+                        log.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
                         eval.setViewDate(newView);
                     }
                 }
@@ -315,7 +315,7 @@ public class EvalUtils {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         if (!cal.getTime().equals(d)) {
-            LOG.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+            log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
         }
         return cal.getTime();
     }
