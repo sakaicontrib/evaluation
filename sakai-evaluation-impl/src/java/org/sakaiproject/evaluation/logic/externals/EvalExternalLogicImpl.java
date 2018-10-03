@@ -749,7 +749,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                             } else {
                                 addSite = true;
                             }
-                            if (addSite) {
+                            if (addSite && !site.isSoftlyDeleted()) {
                                 l.add(new EvalGroup(r.getReference(), site.getTitle(), getContextType(r.getType())));
                             }
                         } catch (IdUnusedException e) {
