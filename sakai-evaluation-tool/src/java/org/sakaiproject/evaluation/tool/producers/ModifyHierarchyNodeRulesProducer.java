@@ -16,8 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -26,6 +25,7 @@ import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -45,9 +45,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author bjones86
  */
+@Slf4j
 public class ModifyHierarchyNodeRulesProducer extends EvalCommonProducer implements ViewParamsReporter
 {
-    private static final Log LOG = LogFactory.getLog( ModifyHierarchyNodeRulesProducer.class );
     public static final String VIEW_ID = "modify_hierarchy_node_rules";
     public String getViewID() { return VIEW_ID; }
 
@@ -132,7 +132,7 @@ public class ModifyHierarchyNodeRulesProducer extends EvalCommonProducer impleme
         try { existingNodeRules = hierarchyLogic.getRulesByNodeID( Long.parseLong( evalNode.id ) ); }
         catch( Exception ex )
         {
-            LOG.warn( "Can't fetch hierarchy node ID = " + evalNode.id, ex );
+            log.warn( "Can't fetch hierarchy node ID = " + evalNode.id, ex );
             existingNodeRules = Collections.emptyList();
         }
         for( HierarchyNodeRule existingRule : existingNodeRules )

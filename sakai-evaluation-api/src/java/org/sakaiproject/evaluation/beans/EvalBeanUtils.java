@@ -18,9 +18,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -32,6 +29,8 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Utils which depend on some of the basic eval beans<br/>
@@ -40,9 +39,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalBeanUtils {
 
-    private static final Log LOG = LogFactory.getLog(EvalBeanUtils.class);
 
     // Section awareness default setting from sakai.properties
     private static final String SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT = "evalsys.section.aware.default";
@@ -260,7 +259,7 @@ public class EvalBeanUtils {
         calendar.setTime( now );
         if (eval.getStartDate() == null) {
             eval.setStartDate(now);
-            LOG.debug("Setting start date to default of: " + eval.getStartDate());
+            log.debug("Setting start date to default of: " + eval.getStartDate());
         } else {
             calendar.setTime(eval.getStartDate());
         }
@@ -277,7 +276,7 @@ public class EvalBeanUtils {
                 // default the due date to the end of the start date + 1 day
                 Date endOfDay = EvalUtils.getEndOfDayDate( calendar.getTime() );
                 eval.setDueDate( endOfDay );
-                LOG.debug("Setting due date to default of: " + eval.getDueDate());
+                log.debug("Setting due date to default of: " + eval.getDueDate());
             } else {
                 calendar.setTime(eval.getDueDate());
             }
@@ -292,7 +291,7 @@ public class EvalBeanUtils {
                 // assign stop date to equal due date for now
                 if (eval.getStopDate() == null) {
                     eval.setStopDate(eval.getDueDate());
-                    LOG.debug("Setting stop date to default of: " + eval.getStopDate());
+                    log.debug("Setting stop date to default of: " + eval.getStopDate());
                 }
             } else {
                 eval.setStopDate(null);
@@ -310,7 +309,7 @@ public class EvalBeanUtils {
                 if (eval.getViewDate() == null) {
                     // default the view date to the today + 2
                     eval.setViewDate(calendar.getTime());
-                    LOG.debug("Setting view date to default of: " + eval.getViewDate());
+                    log.debug("Setting view date to default of: " + eval.getViewDate());
                 }
             } else {
                 eval.setViewDate(null);
@@ -520,7 +519,7 @@ public class EvalBeanUtils {
             // force the due date to the end of the day if we are using dates only AND eval is not due yet
             if (eval.getDueDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_GRACEPERIOD, false) ) {
-                    LOG.info("Forcing date to end of day for non null due date: " + eval.getDueDate());
+                    log.info("Forcing date to end of day for non null due date: " + eval.getDueDate());
                     eval.setDueDate( EvalUtils.getEndOfDayDate( eval.getDueDate() ) );
                 }
             }
@@ -535,7 +534,7 @@ public class EvalBeanUtils {
             // force the stop date to the end of the day if we are using dates only AND eval is not closed yet
             if (eval.getStopDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_CLOSED, false) ) {
-                    LOG.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
+                    log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
                     eval.setStopDate( EvalUtils.getEndOfDayDate( eval.getStopDate() ) );
                 }
             }
@@ -562,7 +561,7 @@ public class EvalBeanUtils {
             // force the view date to the end of the day if we are using dates only AND eval is not viewable yet
             if (eval.getViewDate() != null) {
                 if (EvalUtils.checkStateBefore(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, false) ) {
-                    LOG.info("Forcing date to end of day for non null stop date: " + eval.getViewDate());
+                    log.info("Forcing date to end of day for non null stop date: " + eval.getViewDate());
                     eval.setViewDate( EvalUtils.getEndOfDayDate( eval.getViewDate() ) );
                 }
             }

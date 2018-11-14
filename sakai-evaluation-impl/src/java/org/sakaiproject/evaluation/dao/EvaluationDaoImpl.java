@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -59,7 +57,7 @@ import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
 import org.springframework.dao.DataAccessResourceFailureException;
 
-import static org.sakaiproject.event.cover.UsageSessionService.getSession;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -77,9 +75,9 @@ import static org.sakaiproject.event.cover.UsageSessionService.getSession;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements EvaluationDao {
 
-    private static final Log LOG = LogFactory.getLog(EvaluationDaoImpl.class);
 
     protected static final int MAX_UPDATE_SIZE = 999;
 
@@ -95,7 +93,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     private static final String SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE = "SELECT site_id FROM SAKAI_SITE WHERE title LIKE :title";
 
     public void init() {
-        LOG.debug("init");
+        log.debug("init");
     }
 
     /* (non-Javadoc)
@@ -143,13 +141,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                     session.evict(object);
                 }
             } else {
-                LOG.warn("Session is not open OR not connected, cannot evict objects");
+                log.warn("Session is not open OR not connected, cannot evict objects");
             }
             if (!active) {
-                LOG.info("Unable to evict object ("+object.getClass().getName()+") from session, it is not persistent: "+object);
+                log.info("Unable to evict object ("+object.getClass().getName()+") from session, it is not persistent: "+object);
             }
         } catch (DataAccessResourceFailureException | IllegalStateException | HibernateException e) {
-            LOG.warn("Failure while attempting to evict object ("+object.getClass().getName()+") from session", e);
+            log.warn("Failure while attempting to evict object ("+object.getClass().getName()+") from session", e);
         }
     }
 
@@ -161,26 +159,26 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null");
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null");
-            LOG.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
+            log.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
         }
         count = countBySearch(EvalEvaluation.class, new Search("instructorViewResults","", Restriction.NULL) );
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null");
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null");
-            LOG.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
+            log.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
         }
         count = countBySearch(EvalEvaluation.class, new Search("modifyResponsesAllowed","", Restriction.NULL) );
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.modifyResponsesAllowed = false where eval.modifyResponsesAllowed is null");
-            LOG.info("Updated " + counter + " EvalEvaluation.modifyResponsesAllowed fields from null to default");
+            log.info("Updated " + counter + " EvalEvaluation.modifyResponsesAllowed fields from null to default");
         }
         count = countBySearch(EvalEvaluation.class, new Search("blankResponsesAllowed","", Restriction.NULL) );
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null");
-            LOG.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
+            log.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
         }
     }
 
@@ -473,7 +471,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
                 props, values, comparisons, null, options);
-        LOG.debug("countSharedEntitiesForUser: HQL=" + hql);
+        log.debug("countSharedEntitiesForUser: HQL=" + hql);
         int count = count(hql);
         return count;
     }
@@ -507,7 +505,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
                 props, values, comparisons, order, options);
-        LOG.debug("getSharedEntitiesForUser: HQL=" + hql);
+        log.debug("getSharedEntitiesForUser: HQL=" + hql);
         Map<String, Object> params = new HashMap<>();
         List<T> l = (List<T>) executeHqlQuery(hql, params, start, limit);
         return l;
@@ -881,7 +879,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @param templateItems the array of {@link EvalTemplateItem} to remove 
      */
     public void removeTemplateItems(EvalTemplateItem[] templateItems) {
-        LOG.debug("Removing " + templateItems.length + " template items");
+        log.debug("Removing " + templateItems.length + " template items");
         Set<EvalTemplateItem> deleteTemplateItems = new HashSet<>();
 
         for( EvalTemplateItem templateItem : templateItems )
@@ -895,7 +893,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
         // do the actual deletes
         getHibernateTemplate().deleteAll(deleteTemplateItems);
-        LOG.info("Removed " + deleteTemplateItems.size() + " template items");
+        log.info("Removed " + deleteTemplateItems.size() + " template items");
     }
 
 
@@ -1147,15 +1145,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             String rids = "(" + ArrayUtils.arrayToString(responseIds) + ")";
             // purge out the answers first
             String hql = "delete EvalAnswer answer where answer.response.id in " + rids;
-            LOG.debug("delete EvalAnswer HQL:" + hql);
+            log.debug("delete EvalAnswer HQL:" + hql);
             int results = getHibernateTemplate().bulkUpdate(hql);
-            LOG.info("Remove " + results + " answers that were associated with the following responses: " + rids);
+            log.info("Remove " + results + " answers that were associated with the following responses: " + rids);
 
             // purge out the responses
             hql = "delete EvalResponse response where response.id in " + rids;
-            LOG.debug("delete EvalResponse HQL:" + hql);
+            log.debug("delete EvalResponse HQL:" + hql);
             results = getHibernateTemplate().bulkUpdate(hql);
-            LOG.info("Remove " + results + " responses with the following ids: " + rids);
+            log.info("Remove " + results + " responses with the following ids: " + rids);
         }
     }
 
@@ -1250,8 +1248,8 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         for (Object object : results) {
             responseUsers.add((String) object);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("ResponseUserIds(eval:"+evaluationId+", groups:"
+        if (log.isDebugEnabled()) {
+            log.debug("ResponseUserIds(eval:"+evaluationId+", groups:"
                 +ArrayUtils.arrayToString(evalGroupIds)+", completed="+completed+"): users="+responseUsers);
         }
         return responseUsers;
@@ -1416,7 +1414,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if success, false otherwise
      */
     public boolean lockScale(EvalScale scale, Boolean lockState) {
-        LOG.debug("scale:" + scale.getId());
+        log.debug("scale:" + scale.getId());
         if (scale.getId() == null) {
             throw new IllegalStateException("Cannot change lock state on an unsaved scale object");
         }
@@ -1444,7 +1442,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                         .setProjection(Projections.rowCount());
                 if (((Long) getHibernateTemplate().findByCriteria(dc).get(0)).intValue() > 0) {
                     // this is locked by something, we cannot unlock it
-                    LOG.info("Cannot unlock scale (" + scale.getId() + "), it is locked elsewhere");
+                    log.info("Cannot unlock scale (" + scale.getId() + "), it is locked elsewhere");
                     return false;
                 }
 
@@ -1466,7 +1464,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if success, false otherwise
      */
     public boolean lockItem(EvalItem item, Boolean lockState) {
-        LOG.debug("item:" + item.getId() + ", lockState:" + lockState);
+        log.debug("item:" + item.getId() + ", lockState:" + lockState);
         if (item.getId() == null) {
             throw new IllegalStateException("Cannot change lock state on an unsaved item object");
         }
@@ -1495,7 +1493,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + item.getId() + "' and ti.template.locked = true";
                 if (count(hqlQuery) > 0) {
                     // this is locked by something, we cannot unlock it
-                    LOG.info("Cannot unlock item (" + item.getId() + "), it is locked elsewhere");
+                    log.info("Cannot unlock item (" + item.getId() + "), it is locked elsewhere");
                     return false;
                 }
 
@@ -1523,7 +1521,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if success, false otherwise
      */
     public boolean lockTemplate(EvalTemplate template, Boolean lockState) {
-        LOG.debug("template:" + template.getId() + ", lockState:" + lockState);
+        log.debug("template:" + template.getId() + ", lockState:" + lockState);
         if (template.getId() == null) {
             throw new IllegalStateException("Cannot change lock state on an unsaved template object");
         }
@@ -1556,7 +1554,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + template.getId() + "' and eval.locked = true";
                 if (count(hqlQuery) > 0) {
                     // this is locked by something, we cannot unlock it
-                    LOG.info("Cannot unlock template (" + template.getId() + "), it is locked elsewhere");
+                    log.info("Cannot unlock template (" + template.getId() + "), it is locked elsewhere");
                     return false;
                 }
 
@@ -1588,7 +1586,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      * @return true if success, false otherwise
      */
     public boolean lockEvaluation(EvalEvaluation evaluation, Boolean lockState) {
-        LOG.debug("evaluation:" + evaluation.getId() + ", lockState:" + lockState);
+        log.debug("evaluation:" + evaluation.getId() + ", lockState:" + lockState);
         if (evaluation.getId() == null) {
             throw new IllegalStateException("Cannot change lock state on an unsaved evaluation object");
         }
@@ -1654,7 +1652,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     public boolean isUsedScale(Long scaleId) {
         if (scaleId != null) {
-            LOG.debug("scaleId: " + scaleId);
+            log.debug("scaleId: " + scaleId);
             String hqlQuery = "from EvalItem as item where item.scale.id = '" + scaleId + "'";
             if (count(hqlQuery) > 0) {
                 // this is used by something
@@ -1670,7 +1668,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     public boolean isUsedItem(Long itemId) {
         if (itemId != null) {
-            LOG.debug("itemId: " + itemId);
+            log.debug("itemId: " + itemId);
             String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + itemId + "'";
             if (count(hqlQuery) > 0) {
                 // this is used by something
@@ -1686,7 +1684,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     public boolean isUsedTemplate(Long templateId) {
         if (templateId != null) {
-            LOG.debug("templateId: " + templateId);
+            log.debug("templateId: " + templateId);
             String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + templateId + "'";
             if (count(hqlQuery) > 0) {
                 // this is used by something
@@ -1760,7 +1758,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         } catch (RuntimeException e) {
             obtainedLock = null; // null indicates the failure
             cleanupLockAfterFailure(lockId);
-            LOG.fatal("Lock obtaining failure for lock ("+lockId+"): " + e.getMessage(), e);
+            log.error("Lock obtaining failure for lock ("+lockId+"): " + e.getMessage(), e);
         }
 
         return obtainedLock;
@@ -1807,7 +1805,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         } catch (RuntimeException e) {
             releasedLock = null; // null indicates the failure
             cleanupLockAfterFailure(lockId);
-            LOG.fatal("Lock releasing failure for lock ("+lockId+"): " + e.getMessage(), e);
+            log.error("Lock releasing failure for lock ("+lockId+"): " + e.getMessage(), e);
         }
 
         return releasedLock;
@@ -1849,8 +1847,8 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 	public List<Map<String,Object>>  getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
     	String query1 = "select userId,emailTemplateId,min(evalDueDate) from EvalEmailProcessingData group by emailTemplateId,userId order by emailTemplateId,userId";
     	
-    	if(LOG.isDebugEnabled()) {
-    		LOG.debug("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
+    	if(log.isDebugEnabled()) {
+    		log.debug("getConsolidatedEmailMapping(" + sendingAvailableEmails + ", " + pageSize + ", " + page + ")");
     	}
     	
     	List<Map<String,Object>> rv = new ArrayList<>();
@@ -1868,7 +1866,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         List results = query.list();
 
         if(results != null) {
-        	LOG.info("found items from email-processing-queue: " + results.size());
+        	log.info("found items from email-processing-queue: " + results.size());
 
             for(int i = 0; i < results.size(); i++) {
                 Object[] row = (Object[]) results.get(i);
@@ -1888,7 +1886,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 map.put(EvalConstants.KEY_EMAIL_TEMPLATE_ID,templateId);
                 map.put(EvalConstants.KEY_EARLIEST_DUE_DATE,earliestDueDate);
                 rv.add(map);
-                LOG.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
+                log.info("added email-processing entry for user: " + userId + " templateId: " + templateId);
                 if(templateId.longValue() != previousTemplateId.longValue() || userIdList.size() > MAX_UPDATE_SIZE) {
                     // mark eval_assign_user records as sent 
                     markRecordsAsSent(session, sendingAvailableEmails, templateId,
@@ -1900,7 +1898,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         }
 
 		if(templateId == null || userIdList.isEmpty() ) {
-			LOG.info("Can't mark EvalAssignUser records due to null values: userId == " + userIdList + "   templateId == " + templateId);
+			log.info("Can't mark EvalAssignUser records due to null values: userId == " + userIdList + "   templateId == " + templateId);
     	} else {
 			// mark eval_assign_user records as sent 
 	    	markRecordsAsSent(session, sendingAvailableEmails, templateId,
@@ -1945,11 +1943,11 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 				updateQuery.executeUpdate();
 				
 			} catch (HibernateException e) {
-				LOG.warn("Error trying to update evalAssignUser. " + userId, e);
+				log.warn("Error trying to update evalAssignUser. " + userId, e);
 			}
 		}
-		if(LOG.isDebugEnabled()) {
-			LOG.debug("         --> marked entries for users: " + userIdList);
+		if(log.isDebugEnabled()) {
+			log.debug("         --> marked entries for users: " + userIdList);
 		}
 		session.flush();
 		userIdList.clear();
@@ -2027,9 +2025,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	}
     	
 	    	count = query.executeUpdate();
-    	LOG.debug("Rows inserted into EVAL_EMAIL_PROCESSING_QUEUE: " + count);
+    	log.debug("Rows inserted into EVAL_EMAIL_PROCESSING_QUEUE: " + count);
 		} catch(DataAccessResourceFailureException | IllegalStateException | HibernateException e) {
-			LOG.warn("error processing consolidated-email query: " + e);
+			log.warn("error processing consolidated-email query: " + e);
 		}
 		
     	return count;
@@ -2076,7 +2074,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
             getHibernateTemplate().deleteAll(locks);
             getHibernateTemplate().flush();
         } catch (Exception ex) {
-            LOG.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
+            log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
         }
     }
 

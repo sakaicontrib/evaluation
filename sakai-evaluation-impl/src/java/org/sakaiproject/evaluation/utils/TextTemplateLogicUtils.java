@@ -22,20 +22,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is a weird location but it will have to do for now,
@@ -43,9 +41,8 @@ import freemarker.template.TemplateException;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class TextTemplateLogicUtils {
-
-    private static final Log LOG = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
     public static final Object LOCK = new Object();
 
@@ -110,7 +107,7 @@ public class TextTemplateLogicUtils {
                 // Specify how templates will see the data-model
                 freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
                 resetCounter.getAndSet(0);
-                LOG.info("Constructed new freemarker template for template processing");
+                log.info("Constructed new freemarker template for template processing");
             }
         }
 
@@ -177,7 +174,7 @@ public class TextTemplateLogicUtils {
                     throw new RuntimeException("Could not initialize velocity", e);
                 }
                 resetCounter.getAndSet(0);
-                LOG.info("Constructed new velocity engine for template processing");
+                log.info("Constructed new velocity engine for template processing");
             }
         }
 

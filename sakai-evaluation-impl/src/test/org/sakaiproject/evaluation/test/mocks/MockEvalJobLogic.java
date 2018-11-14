@@ -14,9 +14,9 @@
  */
 package org.sakaiproject.evaluation.test.mocks;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -26,17 +26,17 @@ import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class MockEvalJobLogic implements EvalJobLogic {
 
-   private static final Log LOG = LogFactory.getLog(MockEvalJobLogic.class);
 
    public void jobAction(Long evaluationId, String jobType) {
-      LOG.info("MOCK: jobAction(evaluationId="+evaluationId+", jobType="+jobType+")");
+      log.info("MOCK: jobAction(evaluationId="+evaluationId+", jobType="+jobType+")");
       // pretend all is ok and do nothing
    }
 
    public void processEvaluationStateChange(Long evaluationId, String actionState) {
-      LOG.info("MOCK: jobAction(evaluationId="+evaluationId+", actionState="+actionState+")");
+      log.info("MOCK: jobAction(evaluationId="+evaluationId+", actionState="+actionState+")");
       // pretend all is ok and do nothing
    }
 

@@ -25,11 +25,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.producers.EvaluationNotificationsProducer;
@@ -45,6 +43,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -59,9 +58,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class RenderingUtils {
-	
-    private static final Log LOG = LogFactory.getLog(RenderingUtils.class);
 
     private EvalAuthoringService authoringService;
     public void setAuthoringService(EvalAuthoringService authoringService) {
@@ -245,8 +243,8 @@ public class RenderingUtils {
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType) // since BLOCK_CHILD is always a scaled item
         ) {
             // only do something here if this item type can handle a scale
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
+            if (log.isDebugEnabled()) {
+                log.debug("templateItem ("+templateItem.getId()+") scaled item rendering check: "+templateItem);
             }
             if (scaleOptions == null || scaleOptions.isEmpty()) {
                 // if scale options are missing then try to get them from the item
@@ -260,12 +258,12 @@ public class RenderingUtils {
             }
             if (scaleDisplaySetting == null) {
                 // this should not happen but just in case it does, we want to trap and warn about it
-                LOG.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
+                log.warn("templateItem ("+templateItem.getId()+") without a scale display setting, using defaults for rendering: "+templateItem);
             } else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX)
                     || scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED)
             ) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
+                if (log.isDebugEnabled()) {
+                    log.debug("templateItem ("+templateItem.getId()+") is a matrix type item: ");
                 }
                 /* MATRIX - special labels for the matrix items
                  * Show numbers in front (e.g. "blah" becomes "1 - blah")

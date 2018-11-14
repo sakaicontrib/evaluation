@@ -14,10 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -29,12 +28,11 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class CommonProducerBean {
 
-    private static final Log LOG = LogFactory.getLog(CommonProducerBean.class);
-
     public void init() {
-        LOG.info("INIT");
+        log.info("INIT");
     }
 
     public void beforeProducer(String viewId, UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {

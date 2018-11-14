@@ -24,26 +24,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
+import com.opencsv.CSVWriter;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
-import com.opencsv.CSVWriter;
 
 /**
  * 
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class CSVTakersReportExporter implements ReportExporter {
-
-    private static final Log LOG = LogFactory.getLog(ReportExporterBean.class);
 
     private static final char DELIMITER = ',';
 
@@ -81,7 +80,7 @@ public class CSVTakersReportExporter implements ReportExporter {
         List<String> userIds = ownersOfResponses(responses, groupIdSet);
         List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
         Collections.sort(users, new EvalUser.SortNameComparator());
-        LOG.debug("users.size(): " + users.size());
+        log.debug("users.size(): " + users.size());
         String[] row = new String[3];
 
         // Headers

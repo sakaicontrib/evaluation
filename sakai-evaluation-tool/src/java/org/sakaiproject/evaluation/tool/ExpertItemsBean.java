@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -30,14 +28,15 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The backing bean for expert and existing items adding
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class ExpertItemsBean {
-
-    private static final Log LOG = LogFactory.getLog(ExpertItemsBean.class);
 
     public Map<String, Boolean> selectedIds = new HashMap<>();
     public Long templateId;
@@ -69,7 +68,7 @@ public class ExpertItemsBean {
      * @return the status location
      */
     public String processActionAddItems() {
-        LOG.debug("in process action add items, selectedItems=" + selectedIds.size());
+        log.debug("in process action add items, selectedItems=" + selectedIds.size());
 
         String currentUserId = commonLogic.getCurrentUserId();
         String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
@@ -86,10 +85,10 @@ public class ExpertItemsBean {
             Long itemId = new Long(iter.next());
             EvalItem item = authoringService.getItemById(itemId);
             if (item == null) {
-                LOG.error("Invalid item id: " + itemId);
+                log.error("Invalid item id: " + itemId);
                 continue;
             }
-            LOG.debug("Checking to add item:" + itemId);
+            log.debug("Checking to add item:" + itemId);
             if (Objects.equals( selectedIds.get(itemId.toString()), Boolean.TRUE )) {
                 // make the template item based on the item and default settings
                 EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);
@@ -99,7 +98,7 @@ public class ExpertItemsBean {
                 templateItem.setHierarchyNodeId(hierarchyNodeId);
                 // save the template item
                 authoringService.saveTemplateItem(templateItem, currentUserId);
-                LOG.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
+                log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
             }
         }
 

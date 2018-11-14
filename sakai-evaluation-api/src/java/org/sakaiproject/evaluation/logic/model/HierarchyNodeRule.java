@@ -15,18 +15,19 @@
 package org.sakaiproject.evaluation.logic.model;
 
 import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalHierarchyRule;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This represents a single hierarchy rule in the system.
  */
+@Slf4j
 public class HierarchyNodeRule implements Serializable
 {
     private static final long serialVersionUID = 1L;
-    private static final Log LOG = LogFactory.getLog( HierarchyNodeRule.class );
 
     private Long id;        // unique identifier
     private Long nodeID;    // the node this rule belongs to
@@ -42,7 +43,7 @@ public class HierarchyNodeRule implements Serializable
         {
             IllegalArgumentException iae = new IllegalArgumentException( "None of the inputs can be null or blank: nodeID=" + nodeID + ", rule=" + rule 
                                                                          + ", option=" + option );
-            LOG.warn( iae );
+            log.warn(iae.getMessage(), iae);
             throw iae;
         }
 
@@ -57,7 +58,7 @@ public class HierarchyNodeRule implements Serializable
         if( rule == null || StringUtils.isBlank( rule.getRule() ) || StringUtils.isBlank( rule.getOpt() ) )
         {
             IllegalArgumentException iae = new IllegalArgumentException( "None of the inputs can be null or blank: EvalHierarchyRule=" + rule );
-            LOG.warn( iae );
+            log.warn(iae.getMessage(), iae);
             throw iae;
         }
 

@@ -18,14 +18,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
@@ -35,9 +34,8 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * @author Will Humphries (whumphri@vt.edu)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class TakeEvalBean {
-
-    private static final Log LOG = LogFactory.getLog(TakeEvalBean.class);
 
     public EvalEvaluation eval;
     public String evalGroupId;
@@ -64,7 +62,7 @@ public class TakeEvalBean {
     }
     
     public String saveEvaluationWithoutSubmit() {
-        LOG.debug("save evaluation without submit");
+        log.debug("save evaluation without submit");
         try {
             Map<String, String[]> selectionOptions = new HashMap<>();
             if (selectioninstructorIds != null) {
@@ -95,7 +93,7 @@ public class TakeEvalBean {
     }
 
     public String submitEvaluation() {
-        LOG.debug("submit evaluation");
+        log.debug("submit evaluation");
         try {
         	Map<String, String[]> selectionOptions = new HashMap<>();
             if (selectioninstructorIds != null) {

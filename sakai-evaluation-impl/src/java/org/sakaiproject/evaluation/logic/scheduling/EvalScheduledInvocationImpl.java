@@ -14,12 +14,12 @@
  */
 package org.sakaiproject.evaluation.logic.scheduling;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob.EvalIdType;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class simply calls a method in EvalJobLogic 
@@ -28,9 +28,8 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob.EvalIdType;
  * @author rwellis
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk) - fixed and simplified
  */
+@Slf4j
 public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
-
-    private static final Log LOG = LogFactory.getLog(EvalScheduledInvocationImpl.class);
 
     private EvalJobLogic evalJobLogic;
     public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
@@ -49,8 +48,8 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
             throw new IllegalStateException("Invalid opaqueContext (null or empty), something has failed in the job scheduler");
         }
 
-        if(LOG.isDebugEnabled()) {
-            LOG.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
+        if(log.isDebugEnabled()) {
+            log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
         }
 
         // opaqueContext provides evaluation id and job type.

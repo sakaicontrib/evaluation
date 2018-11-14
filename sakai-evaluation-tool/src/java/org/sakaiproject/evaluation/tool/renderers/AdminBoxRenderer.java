@@ -26,8 +26,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -46,6 +44,7 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
@@ -61,9 +60,8 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * @author mgillian
  * @author azeckoski
  */
+@Slf4j
 public class AdminBoxRenderer {
-
-    private static final Log LOG = LogFactory.getLog(AdminBoxRenderer.class);
 
     private DateFormat df;
 
@@ -125,8 +123,8 @@ public class AdminBoxRenderer {
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
         boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", userReadonlyAdmin=" + userReadonlyAdmin + ", beginEvaluation=" + beginEvaluation);
+        if (log.isDebugEnabled()) {
+            log.debug("currentUserId=" + currentUserId + ", userAdmin=" + userAdmin + ", userReadonlyAdmin=" + userReadonlyAdmin + ", beginEvaluation=" + beginEvaluation);
         }
 
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, false, false);
@@ -143,14 +141,14 @@ public class AdminBoxRenderer {
 
         if (!userAdmin && !userReadonlyAdmin) {
             List<EvalEvaluation> newEvals = new ArrayList<>();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("non-admin special case: " + evals.size() + " evals, " + EvalUtils.getEvalIdsFromEvaluations(evals));
+            if (log.isDebugEnabled()) {
+                log.debug("non-admin special case: " + evals.size() + " evals, " + EvalUtils.getEvalIdsFromEvaluations(evals));
             }
             for (EvalEvaluation evaluation : evals) {
                 // Add the owned evals ONLY
                 if (currentUserId.equals(evaluation.getOwner())) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("non-admin special case: OWNER, id=" + evaluation.getId());
+                    if (log.isDebugEnabled()) {
+                        log.debug("non-admin special case: OWNER, id=" + evaluation.getId());
                     }
                     newEvals.add(evaluation);
                 }
@@ -197,8 +195,8 @@ public class AdminBoxRenderer {
             {
                 String evalState = evaluationService.returnAndFixEvalState(eval, true);
                 evalState = commonLogic.calculateViewability(evalState);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("eval=" + eval.getId() + ", state=" + evalState + ", title=" + eval.getTitle());
+                if (log.isDebugEnabled()) {
+                    log.debug("eval=" + eval.getId() + ", state=" + evalState + ", title=" + eval.getTitle());
                 }
 
                 // 1) if a evaluation is queued, title link go to EditSettings page with populated
@@ -208,8 +206,8 @@ public class AdminBoxRenderer {
                 // 3) if a evaluation is closed, title link go to previewEval page with populated
                 // data
                 List<EvalGroup> groups = evalGroups.get(eval.getId());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("eval (" + eval.getId() + ") groups (" + groups.size() + "): " + EvalUtils.getGroupIdsFromGroups(groups));
+                if (log.isDebugEnabled()) {
+                    log.debug("eval (" + eval.getId() + ") groups (" + groups.size() + "): " + EvalUtils.getGroupIdsFromGroups(groups));
                 }
                 for (EvalGroup group : groups) {
                     UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, "evalAdminList:", eval.getId().toString());
@@ -242,8 +240,8 @@ public class AdminBoxRenderer {
                     int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), groupIds);
                     int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                     String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
+                    if (log.isDebugEnabled()) {
+                        log.debug("group responses=" + responsesCount + ", enrollments=" + enrollmentsCount + ", str=" + responseString);
                     }
 
                     boolean allowedViewResponders = false;

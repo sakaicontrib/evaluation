@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.inferrers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -24,9 +22,9 @@ import org.sakaiproject.evaluation.logic.entity.EvalReportsEntityProvider;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
-
-
 import org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -34,9 +32,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Aaron Zeckoski (azeckoski @ unicon.net)
  */
+@Slf4j
 public class ReportsVPInferrer implements EntityViewParamsInferrer {
-
-    private static final Log LOG = LogFactory.getLog(ReportsVPInferrer.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -49,7 +46,7 @@ public class ReportsVPInferrer implements EntityViewParamsInferrer {
     }
 
     public void init() {
-        LOG.info("VP init");
+        log.info("VP init");
     }
 
     /* (non-Javadoc)

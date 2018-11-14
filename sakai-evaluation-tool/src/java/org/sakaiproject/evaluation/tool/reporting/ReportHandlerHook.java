@@ -16,10 +16,9 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -28,9 +27,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class ReportHandlerHook {
-
-   private static final Log LOG = LogFactory.getLog(ReportHandlerHook.class);
 
    private ViewParameters viewparams;
    public void setViewparams(ViewParameters viewparams) {
@@ -53,7 +51,7 @@ public class ReportHandlerHook {
     */
    public boolean handle() {
       if (viewparams instanceof DownloadReportViewParams) {
-          LOG.debug("Handing viewparams and response off to the reportExporter");
+          log.debug("Handing viewparams and response off to the reportExporter");
           return reportExporterBean.export((DownloadReportViewParams) viewparams, response);
       }
       return false;

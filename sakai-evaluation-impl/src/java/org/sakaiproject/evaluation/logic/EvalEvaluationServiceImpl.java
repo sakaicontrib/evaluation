@@ -20,29 +20,33 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
-import org.sakaiproject.evaluation.model.*;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
+import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.search.Order;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
-import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
-import org.sakaiproject.evaluation.toolaccess.ToolApi;
-import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
-import org.sakaiproject.site.api.SiteService.SortType;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of the evals service,
@@ -50,9 +54,9 @@ import org.sakaiproject.site.api.SiteService.SortType;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalEvaluationServiceImpl implements EvalEvaluationService, EvaluationAccessAPI {
 
-    private static final Log LOG = LogFactory.getLog(EvalEvaluationServiceImpl.class);
 
     // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
     protected final String EVENT_EVAL_STATE_START =                   "eval.evaluation.state.start";
@@ -108,7 +112,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationById(java.lang.Long)
      */
     public EvalEvaluation getEvaluationById(Long evaluationId) {
-        LOG.debug("evalId: " + evaluationId);
+        log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
         fixupEvaluation(eval);
         return eval;
@@ -143,7 +147,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluationsByTemplateId(java.lang.Long)
      */
     public int countEvaluationsByTemplateId(Long templateId) {
-        LOG.debug("templateId: " + templateId);
+        log.debug("templateId: " + templateId);
         Search search = makeSearchForEvalsByTemplate(templateId);
         int count = (int) dao.countBySearch(EvalEvaluation.class, search );
         return count;
@@ -153,7 +157,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByTemplateId(java.lang.Long)
      */
     public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
-        LOG.debug("templateId: " + templateId);
+        log.debug("templateId: " + templateId);
         Search search = makeSearchForEvalsByTemplate(templateId);
         List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
         for (EvalEvaluation evaluation : evals) {
@@ -166,7 +170,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByTermId(java.lang.String)
      */
     public List<EvalEvaluation> getEvaluationsByTermId(String termId) {
-    	LOG.debug("termId: " + termId);
+    	log.debug("termId: " + termId);
         Search search = makeSearchForEvalsByTermId(termId);
         List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
         for (EvalEvaluation evaluation : evals) {
@@ -179,7 +183,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByState(java.lang.String)
 	 */
 	public List<EvalEvaluation> getEvaluationsByState(String state) {
-		LOG.debug("state: " + state);
+		log.debug("state: " + state);
 		Search search = new Search();
 		search.addRestriction(new Restriction("state", state));
 		List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
@@ -237,7 +241,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationState(java.lang.Long)
      */
     public String updateEvaluationState(Long evaluationId) {
-        LOG.debug("evalId: " + evaluationId);
+        log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
         // fix the state of this eval if needed, save it, and return the state constant 
@@ -248,7 +252,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#updateEvaluationReminderStatus(java.lang.Long, org.sakaiproject.evaluation.logic.model.EvalReminderStatus)
      */
     public void updateEvaluationReminderStatus(Long evaluationId, EvalReminderStatus reminderStatus) {
-        LOG.debug("evalId: " + evaluationId);
+        log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setCurrentReminderStatus(reminderStatus);
         dao.update(eval);
@@ -262,7 +266,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         String trueState = EvalUtils.getEvaluationState(evaluation, true);
         // check state against stored state
         if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(trueState)) {
-            LOG.warn("Evaluation ("+evaluation.getTitle()+") in UNKNOWN state");
+            log.warn("Evaluation ("+evaluation.getTitle()+") in UNKNOWN state");
         } else if ( EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState()) 
                 || EvalConstants.EVALUATION_STATE_DELETED.equals(evaluation.getState()) ) {
             // never fix the state if it is currently in a special state
@@ -458,7 +462,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     @Override
     public EvalEvaluation updateEvaluationOwner(Long evaluationId, String userId) {
-        LOG.debug("evalId: " + evaluationId);
+        log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setOwner(userId);
         dao.update(eval);
@@ -517,7 +521,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     // PERMISSIONS
 
     public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId) {
-        LOG.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
+        log.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
 
         // grab the evaluation itself first
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
@@ -533,7 +537,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_KEY.equals(eval.getAuthControl()) ) {
                     // if this uses a key then only the key matters
                     // TODO add key check
-                	LOG.info("Evaluation key (" + eval.getAuthControl() + ") is not a valid evaluation authcontrol key");
+                	log.info("Evaluation key (" + eval.getAuthControl() + ") is not a valid evaluation authcontrol key");
                     allowed = false;
                 } else if ( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ.equals(eval.getAuthControl()) ) {
                     if (commonLogic.isUserAdmin(userId) ) {
@@ -557,7 +561,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                                     // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
                                     allowed = true;
                                 } else {
-                                	LOG.info("User (" + userId + ") is not in a valid group for evaluation (" + evaluationId + ")");
+                                	log.info("User (" + userId + ") is not in a valid group for evaluation (" + evaluationId + ")");
                                     allowed = false;
                                 }
                             }
@@ -568,7 +572,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                             evalGroupIds = new String[]{evalGroupId};
                             List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, evalGroupIds, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
                             if (userAssigns.isEmpty()) {
-                                LOG.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
+                                log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
                                 allowed = false;
                             } else {
                                 // check if the eval allows multiple submissions
@@ -579,7 +583,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                                     EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
                                     if (response != null && response.complete && response.isSubmitted()) {
                                         // user already has a response saved for this evaluation and evalGroupId
-                                        LOG.info("User (" + userId + ") cannot take evaluation (" + evaluationId 
+                                        log.info("User (" + userId + ") cannot take evaluation (" + evaluationId 
                                                 + ") again in this group (" + evalGroupId 
                                                 + "), completed response exists ("+response.getId()+") from " 
                                                 + response.getEndTime() + " and this evaluation does not allow multiple attempts");
@@ -599,21 +603,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             } else {
                 // invalid group
                 if (evalGroupId == null) {
-                    LOG.info("User (" + userId + ") cannot take evaluation (" + evaluationId + "), there are no enabled groups assigned");
+                    log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + "), there are no enabled groups assigned");
                 } else {
-                    LOG.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") with group ("+evalGroupId+"), group disabled or user not a member");
+                    log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") with group ("+evalGroupId+"), group disabled or user not a member");
                 }
             }
         } else {
             // invalid state
             String state = EvalUtils.getEvaluationState(eval, false);
-            LOG.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
+            log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
         }
         return allowed;
     }
 
     public boolean canBeginEvaluation(String userId) {
-        LOG.debug("Checking begin eval for: " + userId);
+        log.debug("Checking begin eval for: " + userId);
         boolean isAdmin = commonLogic.isUserAdmin(userId);
         if ( isAdmin && (dao.countAll(EvalTemplate.class) > 0) ) {
             // admin can access all templates and create an evaluation if 
@@ -625,7 +629,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             // check if this user has the assign evals permission in any groups
             int permCount = commonLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION);
             if ( permCount > 0 ) {
-                LOG.debug("User has permission to assign evaluation in at least one group");
+                log.debug("User has permission to assign evaluation in at least one group");
                 /*
                  * TODO - this check needs to be more robust at some point
                  * currently we are ignoring shared and visible templates - AZ
@@ -643,14 +647,14 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     }
 
     public boolean canControlEvaluation(String userId, Long evaluationId) {
-        LOG.debug("evalId: " + evaluationId + ",userId: " + userId);
+        log.debug("evalId: " + evaluationId + ",userId: " + userId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
         return securityChecks.canUserControlEvaluation(userId, eval);
     }
 
     public boolean canRemoveEvaluation(String userId, Long evaluationId) {
-        LOG.debug("evalId: " + evaluationId + ",userId: " + userId);
+        log.debug("evalId: " + evaluationId + ",userId: " + userId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
         boolean allowed;
@@ -659,7 +663,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         } catch (IllegalStateException e) {
             allowed = false;
         } catch (SecurityException e) {
-            LOG.debug("User ("+userId+") cannot remove evalaution: " + eval.getId() + ", " + e.getMessage());
+            log.debug("User ("+userId+") cannot remove evalaution: " + eval.getId() + ", " + e.getMessage());
             allowed = false;
         }
         return allowed;
@@ -668,7 +672,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     // EVAL AND ASSIGN GROUPS
 
     public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved) {
-        LOG.debug("evalId: " + evaluationId);
+        log.debug("evalId: " + evaluationId);
 
         Search search = new Search("evaluation.id", evaluationId);
 
@@ -691,13 +695,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
-        LOG.debug("assignGroupId: " + assignGroupId);
+        log.debug("assignGroupId: " + assignGroupId);
         EvalAssignGroup eag = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroupId);
         return eag;
     }
 
     public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId) {
-        LOG.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
+        log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
         if (evaluationId == null
                 || evalGroupId == null || "".equals(evalGroupId)) {
             throw new IllegalArgumentException("evaluationId and evalGroupId must not be null");
@@ -728,7 +732,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public Map<Long, List<EvalAssignGroup>> getAssignGroupsForEvals(Long[] evaluationIds,
             boolean includeUnApproved, Boolean includeHierarchyGroups) {
-        LOG.debug("evalIds: " + ArrayUtils.arrayToString(evaluationIds) + ", includeUnApproved=" + includeUnApproved);
+        log.debug("evalIds: " + ArrayUtils.arrayToString(evaluationIds) + ", includeUnApproved=" + includeUnApproved);
         Map<Long, List<EvalAssignGroup>> evals = new TreeMap<>();
         
         if ( evaluationIds != null && evaluationIds.length > 0){
@@ -798,7 +802,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public boolean canCreateAssignEval(String userId, Long evaluationId) {
-        LOG.debug("userId: " + userId + ", evaluationId: " + evaluationId);
+        log.debug("userId: " + userId + ", evaluationId: " + evaluationId);
         boolean allowed = false;
 
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
@@ -806,14 +810,14 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         try {
             allowed = securityChecks.checkCreateAssignments(userId, eval);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return allowed;
     }
 
 
     public boolean canDeleteAssignGroup(String userId, Long assignGroupId) {
-        LOG.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
+        log.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
         boolean allowed = false;
 
         EvalAssignGroup assignGroup = getAssignGroupById(assignGroupId);
@@ -826,7 +830,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         try {
             allowed = securityChecks.checkRemoveAssignments(userId, assignGroup, eval);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return allowed;
     }
@@ -835,7 +839,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     // RESPONSES
 
     public EvalResponse getResponseById(Long responseId) {
-        LOG.debug("responseId: " + responseId);
+        log.debug("responseId: " + responseId);
         EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
         return response;
     }
@@ -866,7 +870,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
-        LOG.debug("evaluationId: " + evaluationId);
+        log.debug("evaluationId: " + evaluationId);
 
         if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
@@ -939,7 +943,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public boolean canModifyResponse(String userId, Long responseId) {
-        LOG.debug("userId: " + userId + ", responseId: " + responseId);
+        log.debug("userId: " + userId + ", responseId: " + responseId);
         // get the response by id
         EvalResponse response = getResponseById(responseId);
         if (response == null) {
@@ -952,7 +956,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         try {
             return securityChecks.checkUserModifyResponse(userId, response, eval);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return false;
     }
@@ -982,7 +986,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     }
 
     public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
-        LOG.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+        log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 
         if (emailTemplateTypeConstant == null) {
             throw new IllegalArgumentException("Invalid emailTemplateTypeConstant, cannot be null");
@@ -1043,7 +1047,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     // PERMISSIONS
 
     public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant) {
-        LOG.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateTypeConstant: "
+        log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateTypeConstant: "
                 + emailTemplateTypeConstant);
 
         // get evaluation
@@ -1056,13 +1060,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         try {
             return securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return false;
     }
 
     public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId) {
-        LOG.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: " + emailTemplateId);
+        log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: " + emailTemplateId);
 
         // get the email template
         EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(emailTemplateId);
@@ -1075,10 +1079,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             // make sure this template is associated with this evaluation
             if (eval.getAvailableEmailTemplate() != null
                     && emailTemplate.getId().equals(eval.getAvailableEmailTemplate().getId())) {
-                LOG.debug("template matches available template from eval (" + eval.getId() + ")");
+                log.debug("template matches available template from eval (" + eval.getId() + ")");
             } else if (eval.getReminderEmailTemplate() != null
                     && emailTemplate.getId().equals(eval.getReminderEmailTemplate().getId())) {
-                LOG.debug("template matches reminder template from eval (" + eval.getId() + ")");
+                log.debug("template matches reminder template from eval (" + eval.getId() + ")");
             } else {
                 throw new IllegalArgumentException("email template (" + emailTemplate.getId()
                         + ") does not match any template from eval (" + eval.getId() + ")");
@@ -1089,7 +1093,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         try {
             return securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
         } catch (RuntimeException e) {
-            LOG.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return false;
     }

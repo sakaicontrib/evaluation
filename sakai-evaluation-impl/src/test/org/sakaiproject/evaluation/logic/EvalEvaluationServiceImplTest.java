@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,15 +34,17 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Tests for the EvalEvaluationServiceImpl
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
-    private static final Log LOG = LogFactory.getLog( EvalEvaluationServiceImplTest.class );
     protected EvalEvaluationServiceImpl evaluationService;
     protected EvalSettings settings;
 
@@ -108,7 +108,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
     @Test
     public void testCacheRetrievalOfEvals() {
-        LOG.debug("CACHE: Testing lots of retrievals in a row");
+        log.debug("CACHE: Testing lots of retrievals in a row");
         EvalEvaluation eval;
 
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
@@ -132,7 +132,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
         Assert.assertNotNull(eval);
 
-        LOG.debug("CACHE: Should have been 3 showSQL log lines");
+        log.debug("CACHE: Should have been 3 showSQL log lines");
     }
 
     /**

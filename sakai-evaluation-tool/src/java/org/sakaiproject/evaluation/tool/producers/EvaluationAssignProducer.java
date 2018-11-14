@@ -24,9 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -48,6 +45,7 @@ import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -86,9 +84,8 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
  */
 @SuppressWarnings("deprecation")
+@Slf4j
 public class EvaluationAssignProducer extends EvalCommonProducer implements ViewParamsReporter, ActionResultInterceptor {
-	
-    private static final Log LOG = LogFactory.getLog(EvaluationAssignProducer.class);
 
     public static final String VIEW_ID = "evaluation_assign";
     public String getViewID() {
@@ -183,7 +180,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
             hasAssistantQuestions = validItemCategories.contains(EvalConstants.ITEM_CATEGORY_ASSISTANT);
         }
         
-	LOG.debug("Template id: " + evaluation.getTemplate().getId() + " useSelectionOptions: " + useSelectionOptions + 
+	log.debug("Template id: " + evaluation.getTemplate().getId() + " useSelectionOptions: " + useSelectionOptions + 
 	          " hasInstructorQuestions: " + hasInstructorQuestions + " hasAssistantQuestions: " + hasAssistantQuestions);
 
         String actionBean = "setupEvalBean.";

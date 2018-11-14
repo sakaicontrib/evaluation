@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,11 +40,12 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
-import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.genericdao.api.search.Restriction;
 import org.sakaiproject.genericdao.api.search.Search;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -57,9 +56,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 @ContextConfiguration(locations={
 		"/hibernate-test.xml",
 		"classpath:org/sakaiproject/evaluation/spring-hibernate.xml"})
+@Slf4j
 public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringContextTests {
-
-    private static final Log LOG = LogFactory.getLog( EvaluationDaoImplTest.class );
 
     protected EvaluationDao evaluationDao;
 
@@ -155,7 +153,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
                 null, null, null, null);
-        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        log.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
 
@@ -163,7 +161,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, new String[] {EvalTestDataLoad.SITE1_REF}, 
                 null, null, null, null);
-        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        log.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
 
@@ -176,7 +174,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(etdl.evaluationActive.getId(), null, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        log.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(1, l.size());
 
@@ -184,7 +182,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalJUnit4SpringCont
         start = System.currentTimeMillis();
         l = evaluationDao.getParticipantsForEval(null, EvalTestDataLoad.USER_ID, null, 
                 EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-        LOG.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
+        log.debug("Query executed in " + (System.currentTimeMillis()-start) + " ms");
         Assert.assertNotNull(l);
         Assert.assertEquals(11, l.size());
 

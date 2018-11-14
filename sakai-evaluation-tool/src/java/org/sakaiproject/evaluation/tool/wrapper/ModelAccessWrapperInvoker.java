@@ -14,11 +14,10 @@
  */
 package org.sakaiproject.evaluation.tool.wrapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
 import org.springframework.transaction.UnexpectedRollbackException;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.util.RunnableInvoker;
 
 /**
@@ -27,9 +26,8 @@ import uk.org.ponder.util.RunnableInvoker;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class ModelAccessWrapperInvoker implements RunnableInvoker {
-
-    private static final Log LOG = LogFactory.getLog(ModelAccessWrapperInvoker.class);
 
     public EvalDaoInvoker daoInvoker;
     public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
@@ -44,7 +42,7 @@ public class ModelAccessWrapperInvoker implements RunnableInvoker {
             daoInvoker.invokeTransactionalAccess(toinvoke);
         } catch (UnexpectedRollbackException e) {
             // this will stop the exceptions from reaching the portal
-            LOG.info("Eval: Caught transaction rollback exception: " + e.getCause());
+            log.info("Eval: Caught transaction rollback exception: " + e.getCause());
         }
     }
 

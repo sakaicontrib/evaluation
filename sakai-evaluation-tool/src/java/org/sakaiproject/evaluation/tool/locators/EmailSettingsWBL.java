@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
 import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
 import org.sakaiproject.component.cover.ComponentManager;
@@ -32,12 +30,14 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.scheduling.ConsolidatedNotificationsJob;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class EmailSettingsWBL extends SettingsWBL {
 	
 	public static final String JOB_GROUP_NAME = "org.sakaiproject.evaluation.tool.EmailSettingsWBL";
 	public static final String SPRING_BEAN_NAME = JobBeanWrapper.SPRING_BEAN_NAME;
 
-	private static final Log LOG = LogFactory.getLog(EmailSettingsWBL.class);
 	
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -52,7 +52,7 @@ public class EmailSettingsWBL extends SettingsWBL {
     	if(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS.equals(beanname) || 
     			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME.equals(beanname) || 
     			EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES.equals(beanname)) {
-        	LOG.info("set(" + beanname + "," + toset + ") ");
+        	log.info("set(" + beanname + "," + toset + ") ");
     		synchronized(LOCK) {
     			updateNeeded = true;
     		}
@@ -60,7 +60,7 @@ public class EmailSettingsWBL extends SettingsWBL {
     }
     
     public void saveSettings() {
-    	LOG.info("saveSettings() -- Saving email settings ");
+    	log.info("saveSettings() -- Saving email settings ");
     	synchronized (LOCK) {
     		if(this.updateNeeded) {
     			this.scheduleJob();
@@ -71,7 +71,7 @@ public class EmailSettingsWBL extends SettingsWBL {
     }
 
 	protected void scheduleJob() {
-		LOG.info("scheduleJob() -- Scheduling email job ");
+		log.info("scheduleJob() -- Scheduling email job ");
 		Map<String,Map<String,String>> cronJobs = this.commonLogic.getCronJobs(JOB_GROUP_NAME);
 		for(Map.Entry<String, Map<String,String>> cronJob : cronJobs.entrySet()) {
 			Map<String,String> details = cronJob.getValue();
@@ -79,7 +79,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 			try {
 				this.commonLogic.deleteCronJob(jobName,JOB_GROUP_NAME);
 			} catch (Exception e) {
-				LOG.info("Unable to delete cron job with group='" + JOB_GROUP_NAME + "' and name='" + jobName + "'");
+				log.info("Unable to delete cron job with group='" + JOB_GROUP_NAME + "' and name='" + jobName + "'");
 			}
 		}
 		
@@ -166,7 +166,7 @@ public class EmailSettingsWBL extends SettingsWBL {
 		buf.append(" ");
 		buf.append(startTime.toString());
 		buf.append(" ? * * *");
-		LOG.debug("emailSettings cronExpression == " + buf.toString());
+		log.debug("emailSettings cronExpression == " + buf.toString());
 
 		return buf.toString();
 	}

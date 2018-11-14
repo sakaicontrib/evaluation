@@ -20,12 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
 import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
 import org.sakaiproject.evaluation.jobmonitor.LoggingJobStatusReporter;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
@@ -33,18 +29,20 @@ import org.sakaiproject.evaluation.logic.EvalLockManager;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * ConsolidatedNotificationsJobImpl is the default mechanism for sending consolidated 
  * notifications about evaluations. It is invoked by a chron job if enabled and scheduled 
  * through the admin's "Control Email Settings" page in sakai.
  */
+@Slf4j
 public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificationsJob {
 	
 	public static final String LOCK_CONSOLIDATED_EMAIL_JOB = "LOCK_CONSOLIDATED_EMAIL_JOB";
 	private static final long TWO_HOURS = 2L * 60L * 60L * 1000L;
 
-	private static final Log LOG = LogFactory.getLog(ConsolidatedNotificationsJobImpl.class);
-	
+
 	protected EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
@@ -67,18 +65,18 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	
     protected JobStatusReporter jobStatusReporter;
     public void setJobStatusReporter(JobStatusReporter jobStatusReporter) {
-    	LOG.info("setJobStatusReporter() jobStatusReporter == " + jobStatusReporter);
+    	log.info("setJobStatusReporter() jobStatusReporter == " + jobStatusReporter);
     	this.jobStatusReporter = jobStatusReporter;
     }
     
     protected String jobStatusReporterName;
     public void setJobStatusReporterName(String jobStatusReporterName) {
-    	LOG.info("setJobStatusReporterName() jobStatusReporterName == " + jobStatusReporterName);
+    	log.info("setJobStatusReporterName() jobStatusReporterName == " + jobStatusReporterName);
     	this.jobStatusReporterName = jobStatusReporterName;
     }
 	
 	public void init() {
-		LOG.info("init()");
+		log.info("init()");
 		
         if(jobStatusReporter == null) {
         	if(jobStatusReporterName != null) {
@@ -97,7 +95,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 	 */
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		LOG.info("execute()");
+		log.info("execute()");
 		
 		// this server must get lock to do this job
 		String serverId = this.externalLogic.getServerId();
@@ -118,9 +116,9 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 				if(sendAvailableEmails) {
 					String[] recipients = this.emailLogic.sendConsolidatedAvailableNotifications(jobStatusReporter, jobId);
 					if(recipients == null) {
-						LOG.debug("announcements sent: 0");
+						log.debug("announcements sent: 0");
 					} else {
-						LOG.debug("announcements sent: " + recipients.length);
+						log.debug("announcements sent: " + recipients.length);
 					}
 				}
 		
@@ -140,8 +138,8 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 							nextReminder = new Date();
 						}
 					}
-					if (LOG.isInfoEnabled()) {
-						LOG.info("Next reminder date is " + nextReminder + ".");
+					if (log.isInfoEnabled()) {
+						log.info("Next reminder date is " + nextReminder + ".");
 					}
 					//reminder interval unit is a day
 					long one_hour = 1000L * 60L * 60L;
@@ -154,9 +152,9 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 		
 						String[] recipients = this.emailLogic.sendConsolidatedReminderNotifications(jobStatusReporter, jobId);
 						if(recipients == null) {
-							LOG.debug("reminders sent: 0");
+							log.debug("reminders sent: 0");
 						} else {
-							LOG.debug("reminders sent: " + recipients.length);
+							log.debug("reminders sent: " + recipients.length);
 						}
 						Calendar cal = Calendar.getInstance();
 						cal.setTimeInMillis(tdate + reminderInterval * one_day);
@@ -199,7 +197,7 @@ public class ConsolidatedNotificationsJobImpl implements ConsolidatedNotificatio
 					}
 				}
 			} catch(Exception e) {
-				LOG.warn("Error processing email job",e);
+				log.warn("Error processing email job",e);
 			} finally {
 				// this server must release lock
 				lockManager.releaseLock(LOCK_CONSOLIDATED_EMAIL_JOB, serverId);

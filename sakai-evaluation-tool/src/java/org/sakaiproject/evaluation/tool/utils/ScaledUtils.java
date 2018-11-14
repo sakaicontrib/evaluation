@@ -17,13 +17,12 @@ package org.sakaiproject.evaluation.tool.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.stringutil.StringUtil;
 
 /**
@@ -32,9 +31,8 @@ import uk.org.ponder.stringutil.StringUtil;
  * @author Antranig Basman (amb26@ponder.org.uk)
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class ScaledUtils {
-
-   private static final Log LOG = LogFactory.getLog(ScaledUtils.class);
 
 	public static String[] idealKeys = {
 		EvalConstants.SCALE_IDEAL_NONE,
@@ -69,7 +67,7 @@ public class ScaledUtils {
       }
       if (index == -1) {
          // Fix for http://www.caret.cam.ac.uk/jira/browse/CTL-562 - added to ensure this will not cause a failure
-         LOG.info("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
+         log.info("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
          index = 0;
       }
       return index;

@@ -17,8 +17,6 @@ package org.sakaiproject.evaluation.tool.inferrers;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -33,8 +31,9 @@ import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-
 import org.sakaiproject.rsf.entitybroker.EntityViewParamsInferrer;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -42,9 +41,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Aaron Zeckoski (azeckoski @ unicon.net)
  */
+@Slf4j
 public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
-    private static final Log LOG = LogFactory.getLog(EvaluationVPInferrer.class);
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -63,7 +62,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
 
     public void init() {
-        LOG.debug("VP init");
+        log.debug("VP init");
     }
 
     /* (non-Javadoc)
@@ -111,7 +110,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
             // anonymous evaluation URLs ALWAYS go to the take_eval page
-            LOG.debug("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
+            log.debug("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
             EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
             vp.external = true;
             return vp;
@@ -119,7 +118,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions
             String currentUserId = commonLogic.getCurrentUserId();
             boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
-            LOG.debug("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
+            log.debug("Note: User ("+currentUserId+") accessing authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
 
             // eval has not started
             if ( EvalUtils.checkStateBefore(EvalUtils.getEvaluationState(evaluation, false), EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
@@ -161,7 +160,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // check perms if not anonymous
                 // switched to take check first
                 if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
-                    LOG.debug("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
+                    log.debug("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
                     EvalViewParameters vp = new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                     vp.external = true;
                     return vp;

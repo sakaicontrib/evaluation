@@ -20,23 +20,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 import org.sakaiproject.genericdao.api.search.Search;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementation for the settings control
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
+@Slf4j
 public class EvalSettingsImpl implements EvalSettings {
-
-    private static final Log LOG = LogFactory.getLog(EvalSettingsImpl.class);
 
     private EvaluationDao dao;
     public void setDao(EvaluationDao dao) {
@@ -58,9 +56,9 @@ public class EvalSettingsImpl implements EvalSettings {
      * spring init
      */
     public void init() {
-        LOG.debug("init");
+        log.debug("init");
 
-        LOG.debug("BOOLEAN_SETTINGS " + BOOLEAN_SETTINGS);
+        log.debug("BOOLEAN_SETTINGS " + BOOLEAN_SETTINGS);
 
         // convert the array into a Set to make it easier to work with
         booleanSettings.addAll( Arrays.asList( BOOLEAN_SETTINGS ) );
@@ -68,7 +66,7 @@ public class EvalSettingsImpl implements EvalSettings {
         // count the current config settings
         int count = dao.countAll(EvalConfig.class);
         if (count > 0) {
-            LOG.info("Updating boolean only evaluation system settings to ensure they are not null...");
+            log.info("Updating boolean only evaluation system settings to ensure they are not null...");
             // check the existing boolean settings for null values and fix them if they are null
             for (String setting : booleanSettings) {
                 if (get(setting) == null) {
@@ -85,7 +83,7 @@ public class EvalSettingsImpl implements EvalSettings {
      * @see org.sakaiproject.evaluation.logic.EvaluationSettings#get(java.lang.Object)
      */
     public Object get(String settingConstant) {
-        LOG.debug("Getting admin setting for: " + settingConstant);
+        log.debug("Getting admin setting for: " + settingConstant);
         String name = SettingsLogicUtils.getName(settingConstant);
         String type = SettingsLogicUtils.getType(settingConstant);
 
@@ -114,7 +112,7 @@ public class EvalSettingsImpl implements EvalSettings {
      * @see org.sakaiproject.evaluation.logic.EvaluationSettings#set(java.lang.Object, java.lang.Object)
      */
     public boolean set(String settingConstant, Object settingValue) {
-        LOG.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
+        log.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
         String name = SettingsLogicUtils.getName(settingConstant);
         String type = SettingsLogicUtils.getType(settingConstant);
 
@@ -154,7 +152,7 @@ public class EvalSettingsImpl implements EvalSettings {
             externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
             configCache.put(name, c); // update the cache
         } catch (Exception e) {
-            LOG.error("Could not save system setting:" + name + ":" + value, e);
+            log.error("Could not save system setting:" + name + ":" + value, e);
             return false;
         }
         return true;
@@ -185,7 +183,7 @@ public class EvalSettingsImpl implements EvalSettings {
             if (l.size() > 0) {
                 config = (EvalConfig) l.get(0);
             } else {
-                LOG.debug("No admin setting for this constant:" + name);
+                log.debug("No admin setting for this constant:" + name);
             }
             if (useCache) {
                 if (config == null) {
@@ -218,11 +216,11 @@ public class EvalSettingsImpl implements EvalSettings {
                 config = new EvalConfig(config.getName(), config.getValue());
                 configCache.put(config.getName(), config);
             }
-            LOG.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
+            log.info("Resetting config settings cache: cleared and reloaded all "+l.size()+" values");
         } else {
             String name = SettingsLogicUtils.getName(settingConstant);
             if (configCache.containsKey(name)) {
-                LOG.info("Resetting config settings cache: cleared single value: " + name);
+                log.info("Resetting config settings cache: cleared single value: " + name);
                 configCache.remove(name);
             }
         }

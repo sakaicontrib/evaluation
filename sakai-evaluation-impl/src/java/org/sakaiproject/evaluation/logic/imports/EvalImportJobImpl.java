@@ -17,17 +17,15 @@ package org.sakaiproject.evaluation.logic.imports;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.user.api.UserDirectoryService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Process an XML ContentResource and save/update evaluation data using Quartz.
@@ -36,9 +34,9 @@ import org.sakaiproject.user.api.UserDirectoryService;
  * FIXME rwellis, please use generics in all collections in this class -AZ
  * FIXME rwellis, please fix injections and non-threadsafe as indicated below -AZ
  */
+@Slf4j
 public class EvalImportJobImpl implements EvalImportJob{
-	
-	private static final Log LOG = LogFactory.getLog(EvalImportJobImpl.class);
+
 	
 	//on demand injection of services - this is bad, use real injection -AZ
 	private org.sakaiproject.evaluation.logic.imports.EvalImport evalImport = 
@@ -85,7 +83,7 @@ public class EvalImportJobImpl implements EvalImportJob{
 		}
 		catch(Exception e) {
 			//TODO add to audit trail
-			LOG.error("job execution " + e);
+			log.error("job execution " + e);
 		}
 	}
 }

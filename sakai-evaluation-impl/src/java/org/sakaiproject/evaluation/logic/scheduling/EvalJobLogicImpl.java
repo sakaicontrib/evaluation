@@ -16,9 +16,6 @@ package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
@@ -30,6 +27,8 @@ import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Handle job scheduling related to EvalEvaluation state transitions.</br> Dates that have not
  * passed may be changed, which might then require rescheduling a job to keep jobs and
@@ -40,9 +39,10 @@ import org.sakaiproject.evaluation.utils.ArrayUtils;
  * @author rwellis
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalJobLogicImpl implements EvalJobLogic {
 
-    private static final Log LOG = LogFactory.getLog(EvalJobLogicImpl.class);
+
 
     // max length for events                           // max-32:12345678901234567890123456789012
     protected final String EVENT_EVAL_VIEWABLE_INSTRUCTORS =    "eval.state.viewable.inst";
@@ -95,9 +95,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     }
 
     public void processEvaluationStateChange(Long evaluationId, String actionState) {
-        if (LOG.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
-            LOG.debug("EvalJobLogicImpl.processEvaluationStateChange(" + evaluationId + ") and state=" + actionState);
+            log.debug("EvalJobLogicImpl.processEvaluationStateChange(" + evaluationId + ") and state=" + actionState);
         }
         if (evaluationId == null || actionState == null) {
             throw new NullPointerException("processEvaluationStateChange: both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
@@ -137,7 +137,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         if (eval == null) {
             // this eval was purged out so wipe out all the jobs
-            LOG.info("Could not find evaluation ("+evaluationId+") for jobAction ("+jobType+"), " +
+            log.info("Could not find evaluation ("+evaluationId+") for jobAction ("+jobType+"), " +
             "purging out all jobs related to this evaluation...");
             removeScheduledInvocations(evaluationId);
             return;
@@ -188,8 +188,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             }
 
         } else if (EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + ","
+            if (log.isDebugEnabled()) {
+                log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + ","
                         + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
             }
             if (eval.getDueDate() != null) {
@@ -325,7 +325,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         // make sure the state is up to date
         String state = evaluationService.returnAndFixEvalState(eval, false);
         if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(state)) {
-            LOG.warn(this + ".processEvaluationChange(Long " + eval.getId().toString() + ") for "
+            log.warn(this + ".processEvaluationChange(Long " + eval.getId().toString() + ") for "
                     + eval.getTitle() + ". Evaluation in UNKNOWN state");
             throw new RuntimeException("Evaluation '" + eval.getTitle() + "' in UNKNOWN state");
         }
@@ -436,19 +436,19 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
         if (eval == null || jobType == null) {
             // FIXME - this is dangerous as there is no indication that this method did nothing, should be a failure -AZ
-            LOG.warn("checkInvocationDate(eval ("+eval+") or jobType ("+jobType+") are null, cannot proceed with check");
+            log.warn("checkInvocationDate(eval ("+eval+") or jobType ("+jobType+") are null, cannot proceed with check");
             return;
         }
 
         if (correctDate == null) {
             // FIXME this can happen sometimes (any date other than startdate can be null), not sure how you may want to handle it -AZ
-            LOG.warn("checkInvocationDate(eval=" + eval.getId() + ", jobType=" + jobType + " :: null correctDate, cannot proceed with check");
+            log.warn("checkInvocationDate(eval=" + eval.getId() + ", jobType=" + jobType + " :: null correctDate, cannot proceed with check");
             return;
         }
 
-        if (LOG.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
-            LOG.debug("EvalJobLogicImpl.checkInvocationDate(" + eval.getId() + "," + jobType + "," + correctDate);
+            log.debug("EvalJobLogicImpl.checkInvocationDate(" + eval.getId() + "," + jobType + "," + correctDate);
         }
 
         // reminders are treated in processEvaluationChange() EvalConstants.EVALUATION_STATE_ACTIVE
@@ -471,15 +471,15 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             if (job.date.compareTo(correctDate) != 0) {
                 // remove the old invocation
                 commonLogic.deleteScheduledJob(job.uuid);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("EvalJobLogicImpl.checkInvocationDate remove the old invocation "
+                if (log.isDebugEnabled()) {
+                    log.debug("EvalJobLogicImpl.checkInvocationDate remove the old invocation "
                             + job.uuid + "," + job.contextId + "," + job.date);
                 }
 
                 // and schedule a new invocation
                 String newJobId = commonLogic.createScheduledJob(correctDate, eval.getId(), jobType);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("EvalJobLogicImpl.checkInvocationDate and schedule a new invocation: "
+                if (log.isDebugEnabled()) {
+                    log.debug("EvalJobLogicImpl.checkInvocationDate and schedule a new invocation: "
                             + newJobId + ", date=" + correctDate + "," + eval.getId() + "," + jobType + ")");
                 }
 
@@ -528,8 +528,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                     || reminderAt.after(eval.getSafeDueDate())) {
                 // remove reminder
                 commonLogic.deleteScheduledJob(job.uuid);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date "
+                if (log.isDebugEnabled()) {
+                    log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date "
                             + job.uuid + "," + job.contextId + "," + job.date);
                 }
             } else {
@@ -542,8 +542,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                 }
             }
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("EvalJobLogicImpl.fixReminders could not find any reminders for eval: " + evaluationId);
+            if (log.isDebugEnabled()) {
+                log.debug("EvalJobLogicImpl.fixReminders could not find any reminders for eval: " + evaluationId);
             }
         }
     }
@@ -556,7 +556,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
      */
     protected void removeScheduledReminder(Long evaluationId) {
         if (evaluationId == null) {
-            LOG.warn("removeScheduledReminder(evaluationId is null, cannot proceed");
+            log.warn("removeScheduledReminder(evaluationId is null, cannot proceed");
             return; // FIXME throw exceptions or AT LEAST log warnings here
         }
 
@@ -584,15 +584,15 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             throw new IllegalArgumentException("null arguments for scheduleJob(" + evaluationId + "," + runDate + "," + jobType + ")");
         }
 
-        if (LOG.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
-            LOG.debug("EvalJobLogicImpl.scheduleJob(" + evaluationId + "," + runDate + "," + jobType + ")");
+            log.debug("EvalJobLogicImpl.scheduleJob(" + evaluationId + "," + runDate + "," + jobType + ")");
         }
 
         String newJobId = commonLogic.createScheduledJob(runDate, evaluationId, jobType);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation("
+        if (log.isDebugEnabled()) {
+            log.debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation("
                     + runDate + "," + evaluationId + "," + jobType + "), new jobid = " + newJobId);
         }
     }
@@ -632,10 +632,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         if ( scheduleAt != 0 
                 && EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ) {
             commonLogic.createScheduledJob(new Date(scheduleAt), evaluationId, EvalConstants.JOB_TYPE_REMINDER);
-            LOG.info("Scheduling a reminder ("+new Date(scheduleAt)+") for the evaluation ("+eval.getTitle()+") ["+evaluationId+"]");
+            log.info("Scheduling a reminder ("+new Date(scheduleAt)+") for the evaluation ("+eval.getTitle()+") ["+evaluationId+"]");
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId
+            if (log.isDebugEnabled()) {
+                log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId
                         + ") - scheduledInvocationManager.createDelayedInvocation( "
                         + new Date(scheduleAt) + "," + evaluationId + "," + EvalConstants.JOB_TYPE_REMINDER);
             }
@@ -681,16 +681,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
                 reminderTime = dueTime - (1000l * 60l * 60l * 24l);
                 if (reminderTime < now) {
                     // the reminder is in the past, just warn and be done
-                    LOG.info("Trying to schedule 24h reminder in the past ("+new Date(reminderTime)+"), no reminder will be sent for eval ("+eval.getTitle()+") ["+eval.getId()+"]");
+                    log.info("Trying to schedule 24h reminder in the past ("+new Date(reminderTime)+"), no reminder will be sent for eval ("+eval.getTitle()+") ["+eval.getId()+"]");
                     reminderTime = 0;
                 } else {
-                    LOG.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
+                    log.info("Scheduling a reminder ("+new Date(reminderTime)+") for 24h before the end ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
                 }
             }
         } else if (reminderDays == -2) {
             // NOTE: special case for testing
             reminderTime = System.currentTimeMillis() + (1000l * 60l * 5l); // reminders every 5 minutes
-            LOG.warn("REMINDERS TESTING ONLY (-2): Scheduling a reminder in the near future ("+new Date(reminderTime)+") for testing: due date ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
+            log.warn("REMINDERS TESTING ONLY (-2): Scheduling a reminder in the near future ("+new Date(reminderTime)+") for testing: due date ("+new Date(dueTime)+") of the evaluation ("+eval.getTitle()+") ["+eval.getId()+"]");
         }
         return reminderTime;
     }
@@ -708,9 +708,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         // For now, we always want to include the evaluatees in the evaluationSetupService
         boolean includeEvaluatees = true;
         String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
-        if (LOG.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
-            LOG.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
         }
     }
 
@@ -722,9 +722,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     protected void sendCreatedEmail(Long evalId) {
         boolean includeOwner = true;
         String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
-        if (LOG.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
-            LOG.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
         }
     }
 
@@ -738,20 +738,20 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                 && eval.getReminderDaysInt() != 0) {
             String[] sentMessages = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_NONTAKERS);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
+            if (log.isDebugEnabled()) {
+                log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessages: " + ArrayUtils.arrayToString(sentMessages));
             }
             boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
             if (saveWithoutSubmit) {
                 String[] sentMessagesInProgress = emails.sendEvalReminderNotifications(evaluationId, EvalConstants.EVAL_INCLUDE_IN_PROGRESS);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));
+                if (log.isDebugEnabled()) {
+                    log.debug("sendReminderEmail(" + evaluationId + ")" + " sentMessagesInProgress: " + ArrayUtils.arrayToString(sentMessagesInProgress));
                 }
             } else {
-                LOG.debug("sendReminderEmail(" + evaluationId + "), No in progress reminders sent (saveWithoutSubmit is disabled)");
+                log.debug("sendReminderEmail(" + evaluationId + "), No in progress reminders sent (saveWithoutSubmit is disabled)");
             }
         } else {
-            LOG.debug("sendReminderEmail(" + evaluationId + "), no reminder sent (state="+eval.getState()+", reminderDays="+eval.getReminderDaysInt()+")");
+            log.debug("sendReminderEmail(" + evaluationId + "), no reminder sent (state="+eval.getState()+", reminderDays="+eval.getReminderDaysInt()+")");
         }
     }
 
@@ -780,8 +780,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             includeAdmins = false;
         }
         emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins, jobType);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType
+        if (log.isDebugEnabled()) {
+            log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType
                     + ", resultsPrivate " + resultsPrivate + ")");
         }
     }
