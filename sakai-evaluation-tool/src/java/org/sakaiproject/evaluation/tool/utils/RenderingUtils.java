@@ -251,7 +251,7 @@ public class RenderingUtils {
                 // NOTE: this could throw a NPE - not much we can do about that if it happens
                 scaleOptions = templateItem.getItem().getScale().getOptions();
             }
-            scaleLabels = ((List) ( (ArrayList) scaleOptions).clone()); // default to just using the options array (use a copy)
+            scaleLabels.addAll(scaleOptions); // default to just using the options array
             String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
             if (scaleDisplaySetting == null && templateItem.getItem() != null) {
                 scaleDisplaySetting = templateItem.getItem().getScaleDisplaySetting();
