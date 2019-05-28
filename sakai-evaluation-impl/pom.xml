@@ -17,9 +17,10 @@
         <url>http://www.sakaiproject.org/</url>
     </organization>
     <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
-    <packaging>jar</packaging>
+    <packaging>sakai-component</packaging>
     <properties>
         <evalsys.pom.basedir>${project.parent.basedir}</evalsys.pom.basedir>
+        <deploy.target>components</deploy.target>
     </properties>
 
     <dependencies>
