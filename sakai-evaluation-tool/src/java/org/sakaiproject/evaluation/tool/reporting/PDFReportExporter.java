@@ -247,6 +247,9 @@ public class PDFReportExporter implements ReportExporter {
      * @param html String to parse
      */
     private String htmlContentParser(String html) {
+        if (html == null)
+            return "";
+
     	Pattern style = Pattern.compile("<style((.|\n|\r)*)?>((.|\n|\r)*)?</style>");
     	Matcher mstyle = style.matcher(html);
     	while (mstyle.find()) { 
