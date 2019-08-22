@@ -51,7 +51,6 @@
     <modules>
         <module>sakai-evaluation-api</module>
         <module>sakai-evaluation-impl</module>
-        <module>sakai-evaluation-pack</module>
         <module>sakai-evaluation-tool</module>
     </modules>
 
