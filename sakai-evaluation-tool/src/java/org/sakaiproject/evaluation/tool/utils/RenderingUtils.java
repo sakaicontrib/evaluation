@@ -273,9 +273,9 @@ public class RenderingUtils {
                 for (int i = 0; i < scaleLabels.size(); i++) {
                     String label = scaleLabels.get(i);
                     if (matrixLabels.contains(label)) {
-                        scaleLabels.add(i, (i+1) + " - " + scaleLabels.get(i));
+                        scaleLabels.set(i, (i+1) + " - " + scaleLabels.get(i));
                     } else {
-                        scaleLabels.add(i, String.valueOf(i+1));
+                        scaleLabels.set(i, String.valueOf(i+1));
                     }
                 }
             }
