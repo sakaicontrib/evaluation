@@ -19,7 +19,6 @@
   <tool id="sakai.rsf.evaluation"
         title="Evaluation System"
         description="For running evaluations/feedback and surveys.">
-     <configuration name="renderInline" value="true" />
      <category name="course" />
      <category name="project" />
      <category name="myworkspace" />
