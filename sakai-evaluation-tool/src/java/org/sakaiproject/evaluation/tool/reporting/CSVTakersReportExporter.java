@@ -73,7 +73,7 @@ public class CSVTakersReportExporter implements ReportExporter {
             }
         }
 
-        CSVWriter writer = new CSVWriter(osw, DELIMITER);
+        CSVWriter writer = new CSVWriter(osw, DELIMITER, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
         Set<EvalResponse> responses = evaluation.getResponses();
         Set<String> groupIdSet = new HashSet<>(Arrays.asList(groupIds));

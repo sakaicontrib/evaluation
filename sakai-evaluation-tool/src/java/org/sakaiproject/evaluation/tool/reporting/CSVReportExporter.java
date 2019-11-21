@@ -402,7 +402,7 @@ public class CSVReportExporter implements ReportExporter {
         else
         {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-            CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
+            CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
             Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
             String currentUserId = commonLogic.getCurrentUserId();
