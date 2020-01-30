@@ -46,6 +46,7 @@
         </bean>
       </property>
       <property name="evalHierarchyRuleLogic" ref="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport" />
+      <property name="formattedText" ref="org.sakaiproject.util.api.FormattedText" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"

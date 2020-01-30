@@ -112,9 +112,10 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
-import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.util.api.FormattedText;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -154,6 +155,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     protected final String SCHEDULER_SPRING_BEAN_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
+    @Setter private FormattedText formattedText;
     private AuthzGroupService authzGroupService;
     public void setAuthzGroupService(AuthzGroupService authzGroupService) {
         this.authzGroupService = authzGroupService;
@@ -1295,14 +1297,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public String cleanupUserStrings(String userSubmittedString) {
         // clean up the string using Sakai text format (should stop XSS)
         // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-        return FormattedText.processFormattedText(userSubmittedString, new StringBuffer());
+        return formattedText.processFormattedText(userSubmittedString, new StringBuilder());
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalTextUtils#makePlainTextFromHTML(java.lang.String)
      */
     public String makePlainTextFromHTML(String html) {
-        return FormattedText.convertFormattedTextToPlaintext(html);
+        return formattedText.convertFormattedTextToPlaintext(html);
     }
 
 	public List<String> searchForEvalGroupIds(String searchString, String order, int startResult, int maxResults) {
