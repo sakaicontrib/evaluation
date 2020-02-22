@@ -41,7 +41,7 @@ public class EvalLikertChartBuilder {
     private boolean showPercentages = false;
     private int responseCount = 0;
 
-    @SuppressWarnings("deprecation")
+
     public JFreeChart makeLikertChart() {
 
         DefaultCategoryDataset likertDataset = new DefaultCategoryDataset();
@@ -69,8 +69,8 @@ public class EvalLikertChartBuilder {
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, new Color(244, 252, 212));
         renderer.setDrawBarOutline(true);
-        renderer.setOutlinePaint(new Color(34, 35, 237));
-        renderer.setOutlineStroke(new BasicStroke(0.5f));
+        renderer.setBaseOutlinePaint(new Color(34, 35, 237));
+        renderer.setBaseOutlineStroke(new BasicStroke(0.5f));
         renderer.setBaseItemLabelsVisible(true);
         if (showPercentages) {
             renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(this.responseCount));
