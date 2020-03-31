@@ -42,7 +42,6 @@
     </parent>
 
     <properties>
-        <hierarchy.version>20-SNAPSHOT</hierarchy.version>
         <evalsys.pom.basedir>${project.basedir}</evalsys.pom.basedir>
         <evalsys.project.name>${project.name}</evalsys.project.name>
         <evalsys.project.year>${project.inceptionYear}</evalsys.project.year>
@@ -131,11 +130,6 @@
                 <groupId>org.sakaiproject.entitybroker</groupId>
                 <artifactId>entitybroker-utils</artifactId>
                 <version>${sakai.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.sakaiproject.hierarchy</groupId>
-                <artifactId>hierarchy-api</artifactId>
-                <version>${hierarchy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.sakaiproject.genericdao</groupId>
