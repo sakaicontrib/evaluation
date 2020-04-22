@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -38,8 +39,8 @@ import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.util.FormattedText;
 
+import lombok.Setter;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -73,6 +74,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class ModifyTemplateItemsProducer extends EvalCommonProducer implements ViewParamsReporter {
 
     public static final String VIEW_ID = "modify_template_items"; //$NON-NLS-1$
+    
+    @Setter private EvalExternalLogic evalExternalLogic;
     public String getViewID() {
         return VIEW_ID;
     }
@@ -119,8 +122,8 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
     
     private NavBarRenderer navBarRenderer;
     public void setNavBarRenderer(NavBarRenderer navBarRenderer) {
-		this.navBarRenderer = navBarRenderer;
-	}
+      this.navBarRenderer = navBarRenderer;
+    }
 
     /*
      * 1) access this page through "Continue and Add Questions" button on Template
@@ -369,7 +372,7 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                 UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", Integer.toString(i + 1));
                 orderPulldown.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.select.order.title") ) );
 
-                String formattedText = FormattedText.convertFormattedTextToPlaintext(templateItem.getItem().getItemText());
+                String formattedText = evalExternalLogic.makePlainTextFromHTML(templateItem.getItem().getItemText());//FormattedText.convertFormattedTextToPlaintext(templateItem.getItem().getItemText());
 
                 UIBranchContainer branchText = UIBranchContainer.make(itemBranch, "item-text:");
                 UIBranchContainer branchTextHidden = UIBranchContainer.make(itemBranch, "item-text-hidden:");
@@ -506,7 +509,7 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                 "itemRowBlock:", templateItem.getId().toString()); //$NON-NLS-1$
         UIOutput.make(radiobranch, "hidden-item-id", templateItem.getId().toString());
         UIOutput.make(radiobranch, "item-block-num", Integer.toString(index));
-        UIVerbatim.make(radiobranch, "item-block-text", FormattedText.convertFormattedTextToPlaintext(templateItem.getItem().getItemText()));
+        UIVerbatim.make(radiobranch, "item-block-text", evalExternalLogic.makePlainTextFromHTML(templateItem.getItem().getItemText()));
         UIInternalLink removeChildItem = UIInternalLink.make(radiobranch,	"child-remove-item", 
                 new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
         removeChildItem.decorate(new UIFreeAttributeDecorator("templateItemId", templateItem.getId().toString()));
