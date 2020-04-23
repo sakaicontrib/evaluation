@@ -127,7 +127,7 @@ public class ModifyScaleProducer extends EvalCommonProducer implements ViewParam
         boundedDynamicListInputEvolver.setMaximumLength((Integer)evalSettings.get(EvalSettings.EVAL_MAX_LIST_LENGTH));
 
         UIInputMany modifypoints = UIInputMany.make(form, 
-                "modify-scale-points:", scaleOTP + "options");
+                "modify-scale-points:", scaleOTP + "optionsArray", (scaleId == null ? EvalToolConstants.DEFAULT_INITIAL_SCALE_VALUES : null) );
         boundedDynamicListInputEvolver.evolve(modifypoints);
 
         UISelect radios = UISelect.make(form, "scaleIdealRadio", 
