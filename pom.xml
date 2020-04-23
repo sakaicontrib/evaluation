@@ -220,66 +220,6 @@
         <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
     </scm>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.mycila.maven-license-plugin</groupId>
-                    <artifactId>maven-license-plugin</artifactId>
-                    <version>1.9.0</version>
-                    <configuration>
-                        <header>${evalsys.pom.basedir}/LICENSE_HEADER</header>
-                        <strictCheck>true</strictCheck>
-                        <failIfMissing>true</failIfMissing>
-                        <properties>
-                            <name>${evalsys.project.name}</name>
-                            <year>${evalsys.project.year}</year>
-                            <holder>Sakai Foundation</holder>
-                        </properties>
-                        <excludes>
-                            <exclude>target/**</exclude>
-                            <exclude>m2-target/**</exclude>
-                            <exclude>bin/**</exclude>
-                            <exclude>src/ddl/**</exclude>
-                            <exclude>.idea/**</exclude>
-                            <exclude>**/*.properties</exclude>
-                            <exclude>**/*.txt</exclude>
-                            <exclude>**/js/facebox/**</exclude>
-                            <exclude>**/js/fluid/**</exclude>
-                            <exclude>**/js/jquery/**</exclude>
-                            <exclude>**/js/ui.*</exclude>
-                            <exclude>**/js/yahoo*</exclude>
-                            <exclude>**/css/jquery/**</exclude>
-                            <exclude>**/css/scss/**</exclude>
-                            <exclude>LICENSE*</exclude>
-                            <exclude>**/README</exclude>
-                            <exclude>.recommenders/**</exclude>
-                        </excludes>
-                        <mapping>
-                            <tag>DYNASCRIPT_STYLE</tag>
-                        </mapping>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>check-headers</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <!-- Used to replace the headers of files with proper licenses - http://code.google.com/p/maven-license-plugin - 
-                    Run mvn license:format to fix up licenses on all files in the project -->
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+
 
 </project>
