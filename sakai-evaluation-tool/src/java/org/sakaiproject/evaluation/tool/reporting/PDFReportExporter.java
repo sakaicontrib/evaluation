@@ -323,7 +323,7 @@ public class PDFReportExporter implements ReportExporter {
             List<String> optionLabels = RenderingUtils.makeReportingScaleLabels(templateItem, itemScaleOptions);
             if (templateItem.getUsesNA()) {
                 // add in the N/A label to the end
-                optionLabels.add(optionLabels.size()-1, messageLocator.getMessage("reporting.notapplicable.longlabel"));
+                optionLabels.add(optionLabels.size(), messageLocator.getMessage("reporting.notapplicable.longlabel"));
             }
 
             // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
