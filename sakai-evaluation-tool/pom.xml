@@ -142,15 +142,8 @@
         <!-- For Reporting -->
         <dependency>
             <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.24</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.19</version>
+            <version>1.5.0</version>
             <type>jar</type>
         </dependency>
 
