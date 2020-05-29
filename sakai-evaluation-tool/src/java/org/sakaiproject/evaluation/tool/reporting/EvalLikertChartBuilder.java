@@ -69,13 +69,13 @@ public class EvalLikertChartBuilder {
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, new Color(244, 252, 212));
         renderer.setDrawBarOutline(true);
-        renderer.setBaseOutlinePaint(new Color(34, 35, 237));
-        renderer.setBaseOutlineStroke(new BasicStroke(0.5f));
-        renderer.setBaseItemLabelsVisible(true);
+        renderer.setDefaultOutlinePaint(new Color(34, 35, 237));
+        renderer.setDefaultOutlineStroke(new BasicStroke(0.5f));
+        renderer.setDefaultItemLabelsVisible(true);
         if (showPercentages) {
-            renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(this.responseCount));
+            renderer.setDefaultItemLabelGenerator(new LikertPercentageItemLabelGenerator(this.responseCount));
         } else {
-            renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+            renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         }
         // Turn off the Top Value Axis
         ValueAxis rangeAxis = plot.getRangeAxis();
@@ -91,7 +91,7 @@ public class EvalLikertChartBuilder {
         Font labelFont = new Font("Serif", Font.PLAIN, 6);
 
         CategoryItemRenderer itemRenderer = plot.getRenderer();
-        itemRenderer.setBaseItemLabelFont(labelFont);
+        itemRenderer.setDefaultItemLabelFont(labelFont);
 
         plot.setOutlinePaint(null);
 
