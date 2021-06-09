@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -35,6 +35,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -950,17 +951,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     @SuppressWarnings("unchecked")
     public Long getItemGroupIdByItemId(Long itemId, String userId) {
 
-    	Long itemGroupId = null;
-    	
-    	String hql = "select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id= ?";
-        Object[] params = new Object[] {itemId};
-        
-        List<Long> results = (List<Long>) getHibernateTemplate().find(hql, params);
-        if (! results.isEmpty() 
-                && results.get(0) != null) {
-            itemGroupId = results.get(0);
+        List<Long> results = getHibernateTemplate().execute(session -> session
+                .createQuery("select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id = :itemid")
+                .setParameter("itemid", itemId)
+                .list());
+
+        if (!results.isEmpty()) {
+            return results.get(0);
         }
-        return itemGroupId;    
+        return null;
     }
 
     /**
@@ -1166,14 +1165,18 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     @SuppressWarnings("unchecked")
     public List<String> getEvalCategories(String userId) {
-        String hql = "select distinct eval.evalCategory from EvalEvaluation eval where eval.evalCategory is not null ";
-        String[] params = new String[] {};
-        if (userId != null) {
-            hql += " and eval.owner = ? ";
-            params = new String[] { userId };
+        StringBuilder hql = new StringBuilder("select distinct eval.evalCategory from EvalEvaluation eval where eval.evalCategory is not null");
+        if (StringUtils.isNotBlank(userId)) {
+            hql.append(" and eval.owner = :userid");
         }
-        hql += " order by eval.evalCategory";
-        return (List<String>) getHibernateTemplate().find(hql, (Object[]) params);
+        hql.append(" order by eval.evalCategory");
+        return getHibernateTemplate().execute(session -> {
+                Query query = session.createQuery(hql.toString());
+                if (StringUtils.contains(hql.toString(), ":userid")) {
+                    query.setParameter("userid", userId);
+                }
+                return query.list();
+        });
     }
 
     /**
@@ -1185,15 +1188,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     @SuppressWarnings("unchecked")
     public String getNodeIdForEvalGroup(String evalGroupId) {
-        String hql = "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = ? order by egn.nodeId";
-        // switched to join from the subselect version
-        //    String hql = "select egn.nodeId from EvalGroupNodes egn where ? in elements(egn.evalGroups) order by egn.nodeId";
-        String[] params = new String[] {evalGroupId};
-        List<String> l = (List<String>) getHibernateTemplate().find(hql, (Object[]) params);
-        if (l.isEmpty()) {
-            return null;
+        List<String> nodeIds = (List<String>) getHibernateTemplate().execute(session -> session
+                .createQuery("select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = :groupid order by egn.nodeId")
+                .setParameter("groupid", evalGroupId)
+                .list());
+
+        if (!nodeIds.isEmpty()) {
+            return nodeIds.get(0);
         }
-        return (String) l.get(0);
+        return null;
     }
 
     /**
@@ -1204,15 +1207,15 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     @SuppressWarnings("unchecked")
     protected Long getTemplateIdForEvaluation(Long evaluationId) {
-        Long templateId = null;
-        String hql = "select eval.template.id from EvalEvaluation eval where eval.id = ?";
-        Object[] params = new Object[] {evaluationId};
-        List<Long> results = (List<Long>) getHibernateTemplate().find(hql, params);
-        if (! results.isEmpty() 
-                && results.get(0) != null) {
-            templateId = results.get(0);
+        List<Long> results = (List<Long>) getHibernateTemplate().execute(session -> session
+                .createQuery("select eval.template.id from EvalEvaluation eval where eval.id = :evalid")
+                .setParameter("evalid", evaluationId)
+                .list());
+
+        if (!results.isEmpty()) {
+            return results.get(0);
         }
-        return templateId;
+        return null;
     }
 
 
@@ -1640,10 +1643,11 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
      */
     @SuppressWarnings("unchecked")
     protected Long[] getItemIdsUsingScale(Long scaleId) {
-        String hql = "select item.id from EvalItem item join item.scale itemScale where itemScale.id = ? order by item.id";
-        Object[] params = new Object[] {scaleId};
-        List<Long> l = (List<Long>) getHibernateTemplate().find(hql, params);
-        return l.toArray(new Long[] {});
+        List<Long> itemIds = getHibernateTemplate().execute(session -> session
+                .createQuery("select item.id from EvalItem item join item.scale itemScale where itemScale.id = :scaleid order by item.id")
+                .setParameter("scaleid", scaleId)
+                .list());
+        return itemIds.toArray(new Long[] {});
     }
 
     /**
