@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -35,7 +34,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -1937,13 +1938,13 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 		
 		Query updateQuery = session.createQuery(hqlBuffer.toString());
 		
-		updateQuery.setDate("dateSent", new Date());
-		updateQuery.setLong("emailTemplateId", templateId);
+		updateQuery.setParameter("dateSent", new Date());
+		updateQuery.setParameter("emailTemplateId", templateId);
 		
 		for(String userId : userIdList) {
 			try {
 				
-				updateQuery.setString("userId", userId);
+				updateQuery.setParameter("userId", userId);
 				updateQuery.executeUpdate();
 				
 			} catch (HibernateException e) {
@@ -2022,9 +2023,9 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     	
     	for(Map.Entry<String,Object> entry : params.entrySet()) {
     		if(entry.getValue() instanceof Date) {
-    			query.setDate(entry.getKey(), (Date) entry.getValue());
+    			query.setParameter(entry.getKey(), (Date) entry.getValue(), DateType.INSTANCE);
     		} else if(entry.getValue() instanceof String) {
-    			query.setString(entry.getKey(), (String) entry.getValue());
+    			query.setParameter(entry.getKey(), (String) entry.getValue());
     		}
     	}
     	
@@ -2044,7 +2045,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     public Set<String> getAllSiteIDsMatchingSectionTitle( String sectionTitleWithWildcards )
     {
         Session session = getSessionFactory().openSession();
-        SQLQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE );
+        NativeQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE );
         query.setParameter( "title", sectionTitleWithWildcards );
         Set<String> results = new HashSet<>( query.list() );
         session.close();
@@ -2058,7 +2059,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     public Set<String> getAllSiteIDsMatchingSiteTitle( String siteTitleWithWildcards )
     {
         Session session = getSessionFactory().openSession();
-        SQLQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE );
+        NativeQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE );
         query.setParameter( "title", siteTitleWithWildcards );
         Set<String> results = new HashSet<>( query.list() );
         session.close();
