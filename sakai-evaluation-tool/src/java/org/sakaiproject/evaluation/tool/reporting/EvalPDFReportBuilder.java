@@ -547,9 +547,9 @@ public class EvalPDFReportBuilder {
 				com.lowagie.text.List myList=(com.lowagie.text.List)element;
 				for (int i=0;i<myList.size();i++)
 				{
-					ArrayList<ListItem> arrayItems = myList.getItems();
-					ListItem miItem = arrayItems.get(i);
-					String text = (String) miItem.getContent();
+					List<Element> arrayItems = myList.getItems();
+					Element miItem = arrayItems.get(i);
+					String text = miItem.toString();
 					Paragraph para = new Paragraph("\u2022   "+text, paragraphFont);
 			    	para.setIndentationLeft(20f);
 			    	this.addLittleElementWithJump(para);

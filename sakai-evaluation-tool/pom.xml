@@ -169,9 +169,8 @@
 
         <!-- Needed for generating PDF Files for export -->
         <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>2.1.7</version>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
             <type>jar</type>
             <exclusions>
                 <exclusion>
