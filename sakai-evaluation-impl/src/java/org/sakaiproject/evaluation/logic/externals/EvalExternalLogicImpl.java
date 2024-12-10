@@ -917,9 +917,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             return isUserSakaiAdmin(userId);
         }
 
-        // try checking Sakai
-        String reference = evalGroupId;
-        return securityService.unlock(userId, permission, reference);
+        // Special RoleView user from View Site As
+        if (userDirectoryService.isRoleViewType(userId))  {
+            return false;
+        }
+
+        // try checking Sakai authz permissions last
+        return securityService.unlock(userId, permission, evalGroupId);
     }
 
     /* (non-Javadoc)
