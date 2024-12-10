@@ -156,90 +156,23 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     protected final String SCHEDULER_SPRING_BEAN_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
     @Setter private FormattedText formattedText;
-    private AuthzGroupService authzGroupService;
-    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
-        this.authzGroupService = authzGroupService;
-    }
-
-    private EmailService emailService;
-    public void setEmailService(EmailService emailService) {
-        this.emailService = emailService;
-    }
-
-    private EntityBroker entityBroker;
-    public void setEntityBroker(EntityBroker entityBroker) {
-        this.entityBroker = entityBroker;
-    }
-
-    private EntityManager entityManager;
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    private FunctionManager functionManager;
-    public void setFunctionManager(FunctionManager functionManager) {
-        this.functionManager = functionManager;
-    }
-
-    private SecurityService securityService;
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
-    }
-
-    private ServerConfigurationService serverConfigurationService;
-    public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {
-        this.serverConfigurationService = serverConfigurationService;
-    }
-
-    private SessionManager sessionManager;
-    public void setSessionManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
-    }
-
-    private SiteService siteService;
-    public void setSiteService(SiteService siteService) {
-        this.siteService = siteService;
-    }
-
-    private ToolManager toolManager;
-    public void setToolManager(ToolManager toolManager) {
-        this.toolManager = toolManager;
-    }
-
-    private UserDirectoryService userDirectoryService;
-    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
-        this.userDirectoryService = userDirectoryService;
-    }
-
-    private ContentHostingService contentHostingService;
-    public void setContentHostingService(ContentHostingService service) {
-        this.contentHostingService = service;
-    }
-
-    protected ScheduledInvocationManager scheduledInvocationManager;
-    public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
-        this.scheduledInvocationManager = scheduledInvocationManager;
-    }
-
-    protected ClusterService clusterService;
-    public void setClusterService(ClusterService clusterService) {
-        this.clusterService = clusterService;
-    }
-
-    protected CourseManagementService courseManagementService;
-    public void setCourseManagementService( CourseManagementService courseManagementService ) {
-        this.courseManagementService = courseManagementService;
-    }
-    
-    protected SectionRoleResolver sectionRoleResolver;
-    public void setSectionRoleResolver( SectionRoleResolver sectionRoleResolver ) {
-        this.sectionRoleResolver = sectionRoleResolver;
-    }
-
-    private EvalHierarchyRuleSupport evalHierarchyRuleLogic;
-    public void setEvalHierarchyRuleLogic( EvalHierarchyRuleSupport evalHierarchyRuleLogic ) {
-        this.evalHierarchyRuleLogic = evalHierarchyRuleLogic;
-    }
+    @Setter private AuthzGroupService authzGroupService;
+    @Setter private EmailService emailService;
+    @Setter private EntityBroker entityBroker;
+    @Setter private EntityManager entityManager;
+    @Setter private FunctionManager functionManager;
+    @Setter private SecurityService securityService;
+    @Setter private ServerConfigurationService serverConfigurationService;
+    @Setter private SessionManager sessionManager;
+    @Setter private SiteService siteService;
+    @Setter private ToolManager toolManager;
+    @Setter private UserDirectoryService userDirectoryService;
+    @Setter private ContentHostingService contentHostingService;
+    @Setter protected ScheduledInvocationManager scheduledInvocationManager;
+    @Setter protected ClusterService clusterService;
+    @Setter protected CourseManagementService courseManagementService;
+    @Setter protected SectionRoleResolver sectionRoleResolver;
+    @Setter private EvalHierarchyRuleSupport evalHierarchyRuleLogic;
 
     public void init() {
         log.debug("init, register security perms");
@@ -290,11 +223,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         List<String> groupsList = new ArrayList<>(1);
         groupsList.add("/site/!admin");
         Set<String> userIdSet = authzGroupService.getUsersIsAllowed("site.upd", groupsList);
-
-        Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(new ArrayList(userIdSet));
-        List<EvalUser> sakaiAdminList = new ArrayList<>(sakaiAdminMap.values());
-
-        return sakaiAdminList;
+        Map<String, EvalUser> sakaiAdminMap = this.getEvalUsersByIds(new ArrayList<>(userIdSet));
+        return new ArrayList<>(sakaiAdminMap.values());
 
     }
 
@@ -395,7 +325,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
                         sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName(), sakaiUser.getSortName(), sakaiUser.getDisplayId());
             } catch(UserNotDefinedException ex) {
-                log.debug("Sakai could not get user from userId: " + userId, ex);
+                log.debug("Sakai could not get user from userId: {}", userId, ex);
             }
         }
         return user;
@@ -422,10 +352,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      */
     public Map<String, EvalUser> getEvalUsersByIds(List<String> userIds) {
         Map<String, EvalUser> users = new HashMap<>();
-        boolean foundAll = false;
-        if (userIds == null || userIds.size() == 0) {
-            foundAll = true;
-        }
+        boolean foundAll = userIds == null || userIds.isEmpty();
 
         if (! foundAll) {
             // get remaining users from Sakai
@@ -449,37 +376,26 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @return a map of userId -> {@link User}
      */
     public Map<String, User> getSakaiUsers(List<String> userIds) {
-        // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
-        // the user already exists in Sakai -AZ
-        //    // get the list of users efficiently
-        //    List userIds = Arrays.asList( toUserIds );
-        //    List l = userDirectoryService.getUsers( userIds );
-
-        // handling this in a much less efficient way for now (see above comment) -AZ
         Map<String, User> sakaiUsers = new HashMap<>(); // fill this with users
-        for( String userId : userIds )
-        {
-            User user = null;
-            try
-            {
-                user = userDirectoryService.getUser( userId );
-            }
-            catch( UserNotDefinedException e )
-            {
-                log.debug( "Cannot find user object by id:" + userId );
-                try
-                {
-                    user = userDirectoryService.getUserByEid( userId );
-                }
-                catch( UserNotDefinedException e1 )
-                {
-                    log.debug( "Cannot find user object by eid:" + userId );
-                }
-            }
-            if (user != null) {
+        List<String> remainingUserIds = new ArrayList<>(userIds);
+
+        // First attempt to get all users in one call
+        List<User> users = userDirectoryService.getUsers(userIds);
+        for (User user : users) {
+            sakaiUsers.put(user.getId(), user);
+            remainingUserIds.remove(user.getId());
+        }
+
+        // For remaining users, attempt to get them individually by EID
+        for (String userId : remainingUserIds) {
+            try {
+                User user = userDirectoryService.getUserByEid(userId);
                 sakaiUsers.put(user.getId(), user);
+            } catch (UserNotDefinedException e) {
+                log.debug("Cannot find user object by eid:{}", userId);
             }
         }
+
         return sakaiUsers;
     }
 
@@ -488,7 +404,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserSakaiAdmin(java.lang.String)
      */
     public boolean isUserSakaiAdmin(String userId) {
-        log.debug("Checking is eval super admin for: " + userId);
+        log.debug("Checking is eval super admin for: {}", userId);
         return securityService.isSuperUser(userId);
     }
 
@@ -496,7 +412,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserLocale(java.lang.String)
      */
     public Locale getUserLocale(String userId) {
-        log.debug("userId: " + userId);
+        log.debug("fetching locale for userId: {}", userId);
         //log.warn("can only get the locale for the current user right now...");
         // TODO - this sucks because there is no way to get the locale for anything but the
         // current user.... terrible -AZ
@@ -644,17 +560,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public int countEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        log.debug("countEvalGroupsForUser userId: {}, permission: {}", userId, permission);
 
         int count = 0;
         Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
-        Iterator<String> it = authzGroupIds.iterator();
-        while (it.hasNext()) {
-            String authzGroupId = it.next();
+        for (String authzGroupId : authzGroupIds) {
             Reference r = entityManager.newReference(authzGroupId);
-            if(r.isKnownType()) {
+            if (r.isKnownType()) {
                 // check if this is a Sakai Site or Group
-                if(r.getType().equals(SiteService.APPLICATION_ID)) {
+                if (r.getType().equals(SiteService.APPLICATION_ID)) {
                     count++;
                 }
             }
@@ -667,7 +581,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
-        log.debug("userId: " + userId + ", permission: " + permission);
+        log.debug("userId: {}, permission: {}", userId, permission);
 
         return getEvalGroups(userId, permission, false, null);
     }
@@ -676,7 +590,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
     public List<EvalGroup> getFilteredEvalGroupsForUser(String userId, String permission, String currentSiteId) {
-        log.debug("userId: " + userId + ", permission: " + permission + ", current site: " + currentSiteId);
+        log.debug("getFilteredEvalGroupsForUser userId: {}, permission: {}, current site: {}", userId, permission, currentSiteId);
 
         return getEvalGroups(userId, permission, true, currentSiteId);
     }
@@ -770,7 +684,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         if (l.isEmpty()) {
-            log.debug("Empty list of groups for user:" + userId + ", permission: " + permission);
+            log.debug("Empty list of groups for user:{}, permission: {}", userId, permission);
         }
         return l;
     }
@@ -851,10 +765,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             }
             azGroups.add( azGroup );
             userIDs.addAll( authzGroupService.getUsersIsAllowed( permission, azGroups ) );
-            if( userIDs.contains( ADMIN_USER_ID ) )
-            {
-                userIDs.remove( ADMIN_USER_ID );
-            }
+            userIDs.remove( ADMIN_USER_ID );
         }
 
         // Otherwise, it's section aware but we only need to run the following if the sectin prefix is present in the evalGroupID
@@ -888,8 +799,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                         String userEID;
                         try { userEID = userDirectoryService.getUserId( userRoleEntry.getKey() ); }
                         catch( UserNotDefinedException e )
-                        { 
-                            log.info( "Cant find userID for user = " + userRoleEntry.getKey(), e );
+                        {
+                            log.info("Cant find userID for user = {}", userRoleEntry.getKey(), e);
                             continue;
                         }
                         userIDs.add( userEID );
@@ -900,8 +811,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             catch( IdNotFoundException ex ) { log.warn( "Could not find section with ID = " + groupID.getSectionID(), ex ); }
         }
 
-        // Return the user IDs
+        // Clean the userIDs of RoleViewType users and then return the user IDs
+        userIDs.removeAll( getRoleViewTypeUserIds(userIDs) );
         return userIDs;
+    }
+
+    /**
+     * Need to help remove the fake users from Sakai 23+ View Site As
+     */
+    private Set<String> getRoleViewTypeUserIds(Set<String> userIDs) {
+        Set<String> roleViewTypeUserIds = new HashSet<>();
+        for (String userId : userIDs) {
+            if (userDirectoryService.isRoleViewType(userId)) {
+                roleViewTypeUserIds.add(userId);
+            }
+        }
+        return roleViewTypeUserIds;
     }
 
     /* (non-Javadoc)
@@ -918,8 +843,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         // try checking Sakai
-        String reference = evalGroupId;
-        return securityService.unlock(userId, permission, reference);
+        return securityService.unlock(userId, permission, evalGroupId);
     }
 
     /* (non-Javadoc)
@@ -942,7 +866,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             if (email == null || email.equals("")) {
                 if (deferExceptions) {
                     exceptionTracker += "blank or null to address in list ("+i+") :: ";
-                    log.debug("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
+                    log.debug("blank or null to address in list ({}): {}", i, ArrayUtils.arrayToString(to));
                     continue;
                 } else {
                     // die here since we were unable to find this user at all

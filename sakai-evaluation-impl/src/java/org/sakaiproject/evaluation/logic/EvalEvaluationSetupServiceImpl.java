@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -1364,7 +1365,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         	String adhocGroupTitle = "Public ad-hoc group for " + eval.getTitle();
 			EvalAdhocGroup group = new EvalAdhocGroup(commonLogic.getCurrentUserId(), adhocGroupTitle);
         	commonLogic.saveAdhocGroup(group);
-            group.setEvaluateeIds(new ArrayList<String> (Arrays.asList(commonLogic.getCurrentUserId())));
+            group.setEvaluateeIds(new ArrayList<String> (Collections.singletonList(commonLogic.getCurrentUserId())));
             commonLogic.saveAdhocGroup(group);
             evalGroupIds = new String[] {group.getEvalGroupId()};
         }
@@ -1374,7 +1375,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (securityChecks.checkCreateAssignments(userId, eval)) {
 
             // first we have to get all the assigned hierarchy nodes for this eval
-            Set<String> nodeIdsSet = new HashSet<>();
             Set<String> currentNodeIds = new HashSet<>();
 
             List<EvalAssignHierarchy> currentAssignHierarchies = evaluationService.getAssignHierarchyByEval(evaluationId);
@@ -1382,14 +1382,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 currentNodeIds.add(assignHierarchy.getNodeId());
             }
 
-            nodeIdsSet.addAll( Arrays.asList( nodeIds ) );
+            Set<String> nodeIdsSet = new HashSet<>(Arrays.asList(nodeIds));
 
             if (! appendMode) {
                 Set<String> selectedNodeIds = new HashSet<>(nodeIdsSet);
                 Set<String> existingNodeIds = new HashSet<>(currentNodeIds);
                 existingNodeIds.removeAll(selectedNodeIds);
                 // now remove all the nodes remaining in the current set
-                if (existingNodeIds.size() > 0) {
+                if (!existingNodeIds.isEmpty()) {
                     Long[] removeHierarchyIds = new Long[existingNodeIds.size()];
                     int counter = 0;
                     for (EvalAssignHierarchy assignHierarchy : currentAssignHierarchies) {
@@ -1417,7 +1417,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // next we have to get all the assigned eval groups for this eval
-            Set<String> evalGroupIdsSet = new HashSet<>();
             Set<String> currentEvalGroupIds = new HashSet<>();
 
             // get the current list of assigned eval groups
@@ -1427,7 +1426,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
             }
 
-            evalGroupIdsSet.addAll( Arrays.asList( evalGroupIds ) );
+            Set<String> evalGroupIdsSet = new HashSet<>(Arrays.asList(evalGroupIds));
 
             if (! appendMode) {
                 Set<String> selectedGroupIds = new HashSet<>(evalGroupIdsSet);
@@ -1439,7 +1438,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
                 existingGroupIds.removeAll(selectedGroupIds);
                 // now remove all the groups remaining in the existing set
-                if (existingGroupIds.size() > 0) {
+                if (!existingGroupIds.isEmpty()) {
                     Set<EvalAssignGroup> removeAssignGroups = new HashSet<>();
                     for (EvalAssignGroup assignGroup : currentGroups) {
                         if (existingGroupIds.contains(assignGroup.getEvalGroupId())) {
@@ -1499,8 +1498,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             evalGroupIds = evalGroupIdsSet.toArray(new String[] {});
 
             // now we need to create all the persistent group assignment objects for the new groups
-            Set<EvalAssignGroup> groupAssignments = new HashSet<>();
-            groupAssignments.addAll( makeAssignGroups(eval, userId, evalGroupIdsSet, null) );
+            Set<EvalAssignGroup> groupAssignments = new HashSet<>(makeAssignGroups(eval, userId, evalGroupIdsSet, null));
 
             // finally we add in the groups for all the new expanded assign groups for the expanded nodes set
             for (String nodeId : allNodeIds) {
