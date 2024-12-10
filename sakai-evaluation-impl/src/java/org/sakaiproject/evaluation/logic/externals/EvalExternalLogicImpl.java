@@ -851,10 +851,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             }
             azGroups.add( azGroup );
             userIDs.addAll( authzGroupService.getUsersIsAllowed( permission, azGroups ) );
-            if( userIDs.contains( ADMIN_USER_ID ) )
-            {
-                userIDs.remove( ADMIN_USER_ID );
-            }
+            userIDs.remove( ADMIN_USER_ID );
         }
 
         // Otherwise, it's section aware but we only need to run the following if the sectin prefix is present in the evalGroupID
@@ -900,8 +897,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             catch( IdNotFoundException ex ) { log.warn( "Could not find section with ID = " + groupID.getSectionID(), ex ); }
         }
 
-        // Return the user IDs
+        // Clean the userIDs of RoleViewType users first
+        userIDs.removeAll( getRoleViewTypeUserIds(userIDs) );
         return userIDs;
+    }
+
+    /**
+     * Need to help remove the fake users from Sakai 23+ View Site As
+     */
+    protected Set<String> getRoleViewTypeUserIds(Set<String> userIDs) {
+        Set<String> roleViewTypeUserIds = new HashSet<>();
+        for (String userId : userIDs) {
+            if (userDirectoryService.isRoleViewType(userId)) {
+                roleViewTypeUserIds.add(userId);
+            }
+        }
+        return roleViewTypeUserIds;
     }
 
     /* (non-Javadoc)

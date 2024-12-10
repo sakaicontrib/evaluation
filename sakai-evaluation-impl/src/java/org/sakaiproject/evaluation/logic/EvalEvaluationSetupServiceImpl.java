@@ -1023,8 +1023,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @return the list of {@link EvalAssignUser} ids changed during the synchronization (created, updated, deleted),
      * NOTE: deleted {@link EvalAssignUser} will not be able to be retrieved
      */
-    public List<Long> synchronizeUserAssignmentsForced(EvalEvaluation evaluation, 
-            String evalGroupId, boolean removeAllowed) {
+    public List<Long> synchronizeUserAssignmentsForced(EvalEvaluation evaluation, String evalGroupId, boolean removeAllowed) {
         Long evaluationId = evaluation.getId();
         String currentUserId = commonLogic.getCurrentUserId();
         if (currentUserId == null) {
@@ -1099,11 +1098,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             	currentTakers.addAll(currentAssistants);
             	currentTakers.addAll(currentEvaluated);
             }
-           
-            HashSet<String> currentAll = new HashSet<>();
-            currentAll.addAll(currentEvaluated);
-            currentAll.addAll(currentAssistants);
-            currentAll.addAll(currentTakers);
+
             /* Resolve the current permissions against the existing assignments,
              * this should only change linked records but should respect unlinked and removed records by not
              * adding a record where one already exists for the given user/group combo,
@@ -1162,12 +1157,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (assignUserToRemove.isEmpty() && assignUserToSave.isEmpty()) {
             message += ": no changes to the user assignments ("+assignedUsers.size()+")";
         } else {
-            if (removeAllowed 
-                    && ! assignUserToRemove.isEmpty()) {
-                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[assignUserToRemove.size()]);
-                if (log.isDebugEnabled()) {
-                    log.debug("Deleting user eval assignment Ids: "+assignUserToRemove);
-                }
+            if (removeAllowed && ! assignUserToRemove.isEmpty()) {
+                Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[0]);
+                log.debug("Deleting user eval assignment Ids: {}", assignUserToRemove);
                 dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
                 message += ": removed the following assignments: " + assignUserToRemove;
                 changedUserAssignments.addAll( assignUserToRemove );
@@ -1178,9 +1170,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
                 // this is meant to force the assigned users set to be re-calculated
                 assignUserToSave = new HashSet<>(assignUserToSave);
-                if (log.isDebugEnabled()) {
-                    log.debug("Saving user eval assignments: "+assignUserToSave);
-                }
+                log.debug("Saving user eval assignments: {}", assignUserToSave);
                 dao.saveSet(assignUserToSave);
                 message += ": created the following assignments: " + assignUserToSave;
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
@@ -1205,7 +1195,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
             }
             if (! orphanedUserAssignments.isEmpty()) {
-                Long[] orphanedUserAssignmentsArray = orphanedUserAssignments.toArray(new Long[orphanedUserAssignments.size()]);
+                Long[] orphanedUserAssignmentsArray = orphanedUserAssignments.toArray(new Long[0]);
                 dao.deleteSet(EvalAssignUser.class, orphanedUserAssignmentsArray);
                 message += ": removed the following orphaned user assignments: " + orphanedUserAssignments;
                 changedUserAssignments.addAll( orphanedUserAssignments );
