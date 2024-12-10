@@ -347,8 +347,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     @SuppressWarnings("unchecked")
     public List<EvalEvaluation> getEvalsWithoutUserAssignments() {
         String hql = "select eval from EvalAssignUser eau right join eau.evaluation eval where eau.id is null";
-        List<EvalEvaluation> evals = (List<EvalEvaluation>) executeHqlQuery(hql, new Object[] {}, 0, 0);
-        return evals;
+        return (List<EvalEvaluation>) executeHqlQuery(hql, new Object[] {}, 0, 0);
     }
 
     /**
@@ -1252,10 +1251,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         for (Object object : results) {
             responseUsers.add((String) object);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("ResponseUserIds(eval:"+evaluationId+", groups:"
-                +ArrayUtils.arrayToString(evalGroupIds)+", completed="+completed+"): users="+responseUsers);
-        }
+        log.debug("ResponseUserIds(eval:{}, groups:{}, completed={}): users={}", evaluationId, ArrayUtils.arrayToString(evalGroupIds), completed, responseUsers);
         return responseUsers;
     }
 
