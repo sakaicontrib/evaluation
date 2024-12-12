@@ -364,8 +364,8 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
         }
 
         EvalGroup c = null;
-        if (c == null) {
-            // check external
+        if (!evalGroupId.startsWith(EvalAdhocGroup.ADHOC_ID_PREFIX)) {
+            // check external as long as it doesn't start with "adhoc-group:"
             c = externalLogic.makeEvalGroupObject(evalGroupId);
             if (c != null && EvalConstants.GROUP_TYPE_INVALID.equals(c.type)) {
                 c = null;
