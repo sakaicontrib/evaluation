@@ -327,88 +327,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         if (evaluationId == null && (userId == null || "".equals(userId)) ) {
             throw new IllegalArgumentException("At least one of the following must be set: evaluationId, userId");
         }
-        /**
-        // create the search
-        Search search = new Search();
-        if (evaluationId != null) {
-            // getEvaluationOrFail(evaluationId); // took out eval fetch for now
-            search.addRestriction( new Restriction("evaluation.id", evaluationId) );
-        }
-        if (evalStateConstant != null) {
-            EvalUtils.validateStateConstant(evalStateConstant);
-            search.addRestriction( new Restriction("evaluation.state", evalStateConstant) );
-        }
-        if (evalGroupIds != null && evalGroupIds.length > 0) {
-            search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
-        }
-        if (assignTypeConstant != null 
-                && includeConstant == null) {
-            EvalAssignUser.validateType(assignTypeConstant);
-            // only set this if the includeConstant is not set
-            search.addRestriction( new Restriction("type", assignTypeConstant) );
-        }
-        if (assignStatusConstant == null) {
-            search.addRestriction( new Restriction("status", EvalAssignUser.STATUS_REMOVED, Restriction.NOT_EQUALS) );
-        } else if (STATUS_ANY.equals(assignStatusConstant)) {
-            // no restriction needed in this case
-        } else {
-            EvalAssignUser.validateStatus(assignStatusConstant);
-            search.addRestriction( new Restriction("status", assignStatusConstant) );
-        }
-        if (userId != null && ! "".equals(userId)) {
-            search.addRestriction( new Restriction("userId", userId) );
-        }
-        boolean includeFilterUsers = false;
-        Set<String> userFilter = null;
-        if (includeConstant != null) {
-            EvalUtils.validateEmailIncludeConstant(includeConstant);
-            String[] groupIds = new String[] {};
-            if (evalGroupIds != null && evalGroupIds.length > 0) {
-                groupIds = evalGroupIds;
-            }
-            // force the results to only include eval takers
-            search.addRestriction( new Restriction("type", EvalAssignUser.TYPE_EVALUATOR) );
-            // now set up the filter
-            if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-                // get all users who have NOT responded
-                userFilter = dao.getResponseUserIds(evaluationId, groupIds);
-                includeFilterUsers = false;
-            } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
-                // get all users who have responded
-                userFilter = dao.getResponseUserIds(evaluationId, groupIds);
-                includeFilterUsers = true;
-            } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
-                // do nothing
-            } else {
-                throw new IllegalArgumentException("Unknown includeConstant: " + includeConstant);
-            }
-        }
-        // get the assignments based on the search
-        List<EvalAssignUser> results = dao.findBySearch(EvalAssignUser.class, search);
-        List<EvalAssignUser> assignments = new ArrayList<EvalAssignUser>( results );
-        // This code is potentially expensive but there is not really a better way to handle it -AZ
-        if (userFilter != null && ! userFilter.isEmpty()) {
-            // filter the results based on the userFilter
-            for (Iterator<EvalAssignUser> iterator = assignments.iterator(); iterator.hasNext();) {
-                EvalAssignUser evalAssignUser = iterator.next();
-                String uid = evalAssignUser.getUserId();
-                if (includeFilterUsers) {
-                    // only include users in the filter
-                    if (! userFilter.contains(uid)) {
-                        iterator.remove();
-                    }
-                } else {
-                    // exclude all users in the filter
-                    if (userFilter.contains(uid)) {
-                        iterator.remove();
-                    }
-                }
-            }
-        }
-         **/
         // this is handled in the DAO now
-        List<EvalAssignUser> assignments = dao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
-        return assignments;
+        return dao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
     }
 
     public int countParticipantsForEval(Long evaluationId, String[] evalGroupIds) {
@@ -701,17 +621,15 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     }
 
     public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId) {
-        log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
-        if (evaluationId == null
-                || evalGroupId == null || "".equals(evalGroupId)) {
+        log.debug("evaluationId: {}, evalGroupId: {}", evaluationId, evalGroupId);
+        if (evaluationId == null || evalGroupId == null || evalGroupId.isEmpty()) {
             throw new IllegalArgumentException("evaluationId and evalGroupId must not be null");
         }
-        EvalAssignGroup assignGroup = dao.findOneBySearch(EvalAssignGroup.class, new Search(
+        return dao.findOneBySearch(EvalAssignGroup.class, new Search(
                 new Restriction[] {
                         new Restriction("evaluation.id", evaluationId),
                         new Restriction("evalGroupId", evalGroupId)
                 }) );
-        return assignGroup;
     }
 
     public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
@@ -732,7 +650,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public Map<Long, List<EvalAssignGroup>> getAssignGroupsForEvals(Long[] evaluationIds,
             boolean includeUnApproved, Boolean includeHierarchyGroups) {
-        log.debug("evalIds: " + ArrayUtils.arrayToString(evaluationIds) + ", includeUnApproved=" + includeUnApproved);
+        log.debug("evalIds: {}, includeUnApproved={}", ArrayUtils.arrayToString(evaluationIds), includeUnApproved);
         Map<Long, List<EvalAssignGroup>> evals = new TreeMap<>();
         
         if ( evaluationIds != null && evaluationIds.length > 0){
@@ -765,14 +683,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	        search.addOrder( new Order("evalGroupId") );
 	        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, search );
 
-	        for (int i=0; i<l.size(); i++) {
-	            EvalAssignGroup eac = l.get(i);
-	
-	            // put stuff in inner list
-	            Long evalId = eac.getEvaluation().getId();
-	            List<EvalAssignGroup> innerList = evals.get(evalId);
-	            innerList.add( eac );
-	        }
+            for (EvalAssignGroup eac : l) {
+                // put stuff in inner list
+                Long evalId = eac.getEvaluation().getId();
+                List<EvalAssignGroup> innerList = evals.get(evalId);
+                innerList.add(eac);
+            }
         }
         return evals;
     }
