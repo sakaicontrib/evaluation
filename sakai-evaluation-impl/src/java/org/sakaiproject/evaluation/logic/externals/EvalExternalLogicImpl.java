@@ -609,13 +609,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 }
             } catch (Exception e) {
                 // invalid site reference
-                log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
+                log.debug("Could not get sakai site from evalGroupId:{}", evalGroupId, e);
                 c = null;
             }
         }
 
         if (c == null) {
-            log.debug("Could not get group from evalGroupId:" + evalGroupId);
+            log.debug("Could not get group from evalGroupId:{}", evalGroupId);
             // create a fake group placeholder as an error notice
             c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
                     EvalConstants.GROUP_TYPE_INVALID );
