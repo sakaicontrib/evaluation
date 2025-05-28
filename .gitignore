@@ -65,4 +65,10 @@ fabric.properties
 modules.xml
 *.ipr
 
+.java-version
+.cursor/
+.claude/
+.codex/
+.aider/
+
 # End of https://www.gitignore.io/api/intellij+iml

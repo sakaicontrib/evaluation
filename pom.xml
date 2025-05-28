@@ -32,13 +32,13 @@
     </description>
     <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
     <packaging>pom</packaging>
-    <version>23-SNAPSHOT</version><!--eval.version-->
+    <version>25-SNAPSHOT</version><!--eval.version-->
     <inceptionYear>2005</inceptionYear>
     
     <parent>
         <groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
-        <version>23-SNAPSHOT</version>
+        <version>25-SNAPSHOT</version>
     </parent>
 
     <properties>
