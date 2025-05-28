@@ -699,7 +699,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
                 continue; // skip processing for invalid groups
             }
-            if (org.apache.commons.lang.ArrayUtils.isNotEmpty(groupIds)) {
+            if (groupIds != null && groupIds.length > 0) {
                 if (!ArrayUtils.contains(groupIds, group.evalGroupId)) {
                     continue;
                 }

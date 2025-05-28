@@ -40,7 +40,7 @@ public class TextTemplateLogicUtilsTest extends TestCase {
          "Welcome ${name}, Your email address is very special. It is ${email}. We like it so much we would like to hire the " +
          "company you are working for (${company}) to do something for us.\n Sincerly, ${author}";
 
-   public void runTestingProcessTextTemplate() {
+   public void testProcessTextTemplate() {
       Map<String, String> replacementValues;
       String result;
 
@@ -93,11 +93,6 @@ public class TextTemplateLogicUtilsTest extends TestCase {
    }
 
    public void testFreemarkerTextTemplate() {
-      TextTemplateLogicUtils.useFreemarker = true;
-      TextTemplateLogicUtils.useVelocity = false;
-
-      runTestingProcessTextTemplate();
-
       // test freemarker if statements
       String result;
 
@@ -130,46 +125,5 @@ public class TextTemplateLogicUtilsTest extends TestCase {
       assertEquals(resultIf, result);
    }
 
-   public void testVelocityTextTemplate() {
-      TextTemplateLogicUtils.useFreemarker = false;
-      TextTemplateLogicUtils.useVelocity = true;
-
-      runTestingProcessTextTemplate();
-
-      // test velocity if statements
-      String result;
-
-      Map<String, String> replacementValues = new HashMap<>();
-      replacementValues.put("name", "Aaron Zeckoski");
-      replacementValues.put("ShowSomething", "false");
-
-      String sampleIf = 
-         "This sample template has information that can be optionally shown:\n" +
-         "Welcome ${name}, You will optionally be shown something:\n" +
-         "#if ($ShowSomething == \"true\")\n" +
-         "This is optionally shown\n" +
-         "#end\n";
-      String resultIf = 
-         "This sample template has information that can be optionally shown:\n" +
-         "Welcome Aaron Zeckoski, You will optionally be shown something:\n" +
-         "This is optionally shown\n";
-      String resultNotIf = 
-         "This sample template has information that can be optionally shown:\n" +
-         "Welcome Aaron Zeckoski, You will optionally be shown something:\n";
-
-      result = TextTemplateLogicUtils.processTextTemplate(sampleIf, replacementValues);
-      assertNotNull(result);
-      assertEquals(resultNotIf, result);
-
-      replacementValues.put("ShowSomething", "true");
-
-      result = TextTemplateLogicUtils.processTextTemplate(sampleIf, replacementValues);
-      assertNotNull(result);
-      assertEquals(resultIf, result);
-
-      // back to defaults (required for maven 2)
-      TextTemplateLogicUtils.useFreemarker = true;
-      TextTemplateLogicUtils.useVelocity = false;
-   }
 
 }

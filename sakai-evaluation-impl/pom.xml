@@ -115,11 +115,6 @@
             <version>2.3.34</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.6.4</version>
-        </dependency>
 
         <!-- Various Sakai dependencies -->
 
