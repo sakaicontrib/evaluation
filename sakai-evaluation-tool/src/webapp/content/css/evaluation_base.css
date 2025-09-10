@@ -13,9 +13,9 @@
  * permissions and limitations under the License.
  */
 /** 
-* Aaron Zeckoski (aaronz@vt.edu) 
-* Gonzalo Silverio
-*/
+ * Aaron Zeckoski (aaronz@vt.edu) 
+ * Gonzalo Silverio
+ */
 /*PART 1 - reorderer*/
 /*Styles for the drag and drop as in template item reorderer*/
 /*outer container of a sortable list*/
@@ -183,8 +183,8 @@ div.scaleDesc {
   cursor: default;
   margin-top: -0.04em;
   padding: 0 1em 0 0;
-  background: url(../images/asterisk_orange.gif) 1.3em 50% no-repeat;
 }
+.selectable::before { content: "*"; margin-right: .3em; }
 
 .selectable input {
   margin: 0;
@@ -224,11 +224,12 @@ div.scaleDesc {
 
 .breadCrumb li {
   display: inline;
-  background: #ffffee url(../images/breadSep.gif) center right no-repeat;
+  background: #ffffee;
   padding: 0 1.2em 0  .5em;
   margin: 0;
   float: left;
 }
+.breadCrumb li+li::before { content: "›"; margin-right: .5em; }
 
 .breadCrumb li:first-child {
   padding-left: 3px;
@@ -283,27 +284,27 @@ div.scaleDesc {
 }
 
 .messageStepGraphic .first-noncur-step {
-  background: white url(../images/first-noncur-step.gif) top left no-repeat;
+  background: white;
 }
 
 .messageStepGraphic .first-cur-step {
-  background: white url(../images/first-cur-step.gif) top left no-repeat;
+  background: white;
 }
 
 .messageStepGraphic .med-noncur-step {
-  background: white url(../images/med-noncur-step.gif) top left no-repeat;
+  background: white;
 }
 
 .messageStepGraphic .med-cur-step {
-  background: white url(../images/med-cur-step.gif) top left no-repeat;
+  background: white;
 }
 
 .messageStepGraphic .last-noncur-step {
-  background: white url(../images/last-noncur-step.gif) top left no-repeat;
+  background: white;
 }
 
 .messageStepGraphic .last-cur-step {
-  background: white url(../images/last-cur-step.gif) top left no-repeat;
+  background: white;
 }
 
 /*PART 2 end*/
@@ -626,11 +627,10 @@ td.fullDisplayHorizontalColoredWrapper {
 }
 
 .fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected {
-  background-image: url(../images/tick.png);
-  background-position: .5em;
-  background-repeat: no-repeat;
   padding: .5em;
 }
+.fullDisplayHorizontalScale .labelSelected::before,
+.fullDisplayHorizontalColored .labelSelected::before { content: "✓"; margin-right: .5em; }
 
 .fullVertical, .fullDisplayHorizontal {
   clear: both;
@@ -701,25 +701,28 @@ div.fullVertical {
 
 /*2nd toolbar item links*/
 .addItem {
-  padding-left: 2em;
-  background: transparent url(../images/add.png) center left no-repeat;
+  /* icon now provided in markup via <span class="bi bi-plus-lg"> */
+  padding-left: 0;
+  background: none;
 }
 
 .goToList {
-  padding-left: 2em;
-  background: transparent url(../images/application_view_list.png) center left no-repeat;
+  /* icon now provided in markup via <span class="bi bi-list-ul"> */
+  padding-left: 0;
+  background: none;
 }
 
 .exportAction {
-  padding-left: 2em;
-  background: transparent url(../images/table_go.png) center left no-repeat;
+  /* icon now provided in markup via <span class="bi bi-file-earmark-arrow-down"> */
+  padding-left: 0;
+  background: none;
 }
 
 .emailItem {
   margin-left: 2em;
   display: block;
   height: 15px;
-  background: transparent url(../images/email-send.png) center left no-repeat;
+  background: none;
 }
 
 /*see block items*/
@@ -817,11 +820,9 @@ label.blockItemLabel:hover {
 }
 
 .itemDoneCheckShow {
-  background: url(../images/tick.png) center left no-repeat;
-  display: table-cell;
-  height: 16px;
-  width: 16px;
+  display: inline-block;
 }
+.itemDoneCheckShow::before { content: "✓"; }
 
 .blockItemHeaderHilite {
   color: #0099cc;
@@ -924,25 +925,31 @@ label.blockItemLabel:hover {
 }
 
 .messageAlert {
-  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
+  background: #ffeeee;
   border: 1px solid #FF5555;
   color: #FF5555;
   margin: 0.5em 0;
 }
+.messageAlert { position: relative; padding-left: 2em; }
+.messageAlert::before { content: "⚠"; position: absolute; left: .5em; top: .4em; }
 
 .messageInformation {
-  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
+  background: #ffffee;
   border: 1px solid #EEBB44;
   color: #d93;
   margin: 0.5em 0;
 }
+.messageInformation { position: relative; padding-left: 2em; }
+.messageInformation::before { content: "ℹ"; position: absolute; left: .5em; top: .4em; }
 
 .messageComfirm {
-  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
+  background: #eeffbb;
   border: 1px solid #CCEE66;
   color: #779900;
   margin: 0.5em 0;
 }
+.messageComfirm { position: relative; padding-left: 2em; }
+.messageComfirm::before { content: "✔"; position: absolute; left: .5em; top: .4em; }
 
 .messageAlert ul, .messageInformation ul, .messageComfirm ul {
   list-style: none;
@@ -1075,63 +1082,51 @@ label.block {
 }
 
 /*delete button*/
-.hideComment {
-  padding-left: 2em;
-  background: transparent url(../images/cross.png) center left no-repeat;
-}
+.hideComment { padding-left: 0; background: none; }
 
-.editComment {
-  padding-left: 2em;
-  background: transparent url(../images/pencil.png) center left no-repeat;
-}
+.editComment { padding-left: 0; background: none; }
 
 .actionArrow {
-  background: #ffeeee url(/library/image/sakai/collapse.gif) no-repeat scroll left 3px;
+  background: #ffeeee;
   font-weight: bold;
   padding: 2px 5px 6px 13px;
 }
 
 .removeLink {
-  background: transparent url(/library/image/silk/delete.png) no-repeat scroll left center;
-  padding-left: 1.6em;
-  text-indent: 110%;
-  overflow: hidden;
-  height: 25px;
-  width: 25px;
+  /* Replaced Silk icon background with inline Bootstrap Icon in markup (bi-trash). */
+  background: none;
+  padding-left: 0;
+  text-indent: 0;
+  overflow: visible;
+  height: auto;
+  width: auto;
 }
 
 .editLink {
-  background: transparent url(/library/image/silk/pencil.png) no-repeat scroll left center;
-  padding-left: 1.6em;
+  /* Replaced Silk icon background with inline Bootstrap Icon in markup (bi-pencil). */
+  background: none;
+  padding-left: 0;
 }
 
 .preview {
-  /*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
+  /* Replaced old play icon with inline Bootstrap Icon in markup as needed. */
   padding-left: 0.5em;
 }
 
 a.more {
-  background-image: url(../images/collapsed.gif);
-  background-position: 100% center;
-  background-repeat: no-repeat;
-  padding-left: 10px;
-  padding-right: 15px;
+  background: none;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 a.less {
-  background-image: url(../images/expanded.gif);
-  background-position: 100% center;
-  background-repeat: no-repeat;
-  padding-right: 15px;
-  padding-left: 10px;
+  background: none;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .removeArrow {
-  background-image: url(/library/image/sakai/expand-collapse.gif);
-  height: 7px;
-  width: 10px;
-  background-repeat: no-repeat;
-  margin-left: 97%;
+  background: none;
 }
 
 .removeDiv {
@@ -1329,10 +1324,7 @@ a.less {
   padding: 0;
 }
 
-.infoItem {
-  padding-left: 2em;
-  background: transparent url(/library/image/sakai/information.png) center left no-repeat;
-}
+.infoItem { padding-left: 0; background: none; }
 
 .itemListReport ol {
   list-style: none;
@@ -1361,25 +1353,34 @@ a.less {
 }
 
 .messageAlert {
-  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
+  background: #ffeeee;
   border: 1px solid #FF5555;
   color: #FF5555;
   margin: .5em 0;
+  position: relative;
+  padding-left: 2em;
 }
+.messageAlert::before { content: "⚠"; position: absolute; left: .5em; top: .4em; }
 
 .messageInformation {
-  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
+  background: #ffffee;
   border: 1px solid #EEBB44;
   color: #d93;
   margin: .5em 0;
+  position: relative;
+  padding-left: 2em;
 }
+.messageInformation::before { content: "ℹ"; position: absolute; left: .5em; top: .4em; }
 
 .messageComfirm {
-  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
+  background: #eeffbb;
   border: 1px solid #CCEE66;
   color: #779900;
   margin: .5em 0;
+  position: relative;
+  padding-left: 2em;
 }
+.messageComfirm::before { content: "✔"; position: absolute; left: .5em; top: .4em; }
 
 .messageAlert ul, .messageInformation ul, .messageComfirm ul {
   list-style: none;
@@ -1403,7 +1404,7 @@ a.less {
   text-decoration: none !important;
   padding: 0 1em;
   border: 1px solid #ccc;
-  background: #eeeeee url(../images/pager-back.png) repeat-x !important;
+  background: #eeeeee !important;
 }
 
 .listPager span {
@@ -1416,7 +1417,7 @@ a.less {
   text-decoration: none !important;
   padding: 0 1em;
   border: 1px solid #bbb;
-  background: #eeeeee url(../images/pager-back-hover.png) repeat-x !important;
+  background: #e5e5e5 !important;
 }
 
 .listPager span.listPagerCount {
@@ -1468,7 +1469,8 @@ a.less {
 /* Group template item - add existing item into group */
 .dropItem {
   padding-bottom: 1px;
-  background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat;
+  /* Replaced Silk file-add icon with inline Bootstrap Icon in markup (bi-file-earmark-plus). */
+  background: none;
 }
 
 .JSshow {
@@ -1498,14 +1500,30 @@ a.less {
 }
 
 .elementAlertBack {
-  background: transparent url(/library/image/silk/error.png) no-repeat scroll right 0;
-  padding-right: 20px;
+  /* Replaced Silk error background with inline Bootstrap Icon in markup (bi-exclamation-triangle-fill). */
+  background: none;
+  padding-right: 0;
 }
 
 .elementAlertFront {
-  background: transparent url(/library/image/silk/error.png) no-repeat scroll left 0;
-  padding-left: 20px;
+  /* Replaced Silk error background with inline Bootstrap Icon in markup (bi-exclamation-triangle-fill). */
+  background: none;
+  padding-left: 0;
 }
+
+/* Accessibility helper mirroring Bootstrap's visually-hidden utility */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; /* added line */
+  border: 0;
+}
+
+/* Tweak inline Bootstrap Icons alignment when used with text */
+span.bi { vertical-align: -0.125em; }
 
 /* style selection controls fieldset */
 .selectionsItemListNew {
@@ -1600,17 +1618,9 @@ p.alertMessage ul {
   margin:0px;
 }
 
-table tr.node td.node-1 {
-  background: url(../images/tipsy-east.gif) 1.4em .5em no-repeat;
-}
-
-table tr.node td.node-2 {
-  background: url(../images/tipsy-east.gif) 3.3em .5em no-repeat;
-}
-
-table tr.node td.node-3 {
-  background: url(../images/tipsy-east.gif) 5.4em .5em no-repeat;
-}
+table tr.node td.node-1,
+table tr.node td.node-2,
+table tr.node td.node-3 { background: none; }
 
 .cancelButton > a {
   line-height: 24px;
@@ -1623,17 +1633,10 @@ table.tablesorter th.header {
   background-position: center left;
 }
 
-table.tablesorter th.header.headerSortUp {
-  background-image: url(../images/tipsy-north.gif);
-  font-weight: bold;
-  padding-left: 14px !important;
-}
-
-table.tablesorter th.header.headerSortDown {
-  background-image: url(../images/tipsy-south.gif);
-  font-weight: bold;
-  padding-left: 14px !important;
-}
+table.tablesorter th.header { position: relative; padding-left: 14px !important; }
+table.tablesorter th.header::after { content: ""; position: absolute; left: 4px; }
+table.tablesorter th.header.headerSortUp::after { content: "▲"; }
+table.tablesorter th.header.headerSortDown::after { content: "▼"; }
 
 /* admin checkbox alignment - EVALSYS-1250 */
 .administrate-form .cbxmultlftalgn label {

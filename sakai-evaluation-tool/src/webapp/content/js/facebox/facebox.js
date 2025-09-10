@@ -97,7 +97,7 @@
                 </div> \
                 <div class="footer"> \
                   <a href="#" class="close"> \
-                    <img src="/facebox/closelabel.gif" title="close" class="close_image" /> \
+                    <span class="close_image bi bi-x-lg" aria-hidden="true"></span> \
                   </a> \
                 </div> \
               </td> \
@@ -206,7 +206,10 @@
     })
 
     $('#facebox .close').click($.facebox.close)
-    $('#facebox .close_image').attr('src', $.facebox.settings.closeImage)
+    // If using an <img> close button, keep it in sync; otherwise harmless on non-img
+    if ($.facebox.settings.closeImage) {
+      $('#facebox .close_image').attr('src', $.facebox.settings.closeImage)
+    }
   }
 
   // getPageScroll() by quirksmode.com

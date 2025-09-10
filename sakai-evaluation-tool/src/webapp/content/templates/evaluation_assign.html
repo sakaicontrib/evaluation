@@ -75,8 +75,8 @@
 				<p>
 					<input rsf:id="use-hierarchynodes-checkbox" id="use-hierarchynodes-checkbox" type="checkbox" />
 					<span>
-						<img src="../images/collapsed.png" rsf:id="show-button" id="" />
-						<img src="../images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						<span class="bi bi-chevron-right" rsf:id="show-button" id="" aria-hidden="true"></span>
+						<span class="bi bi-chevron-down" style="display:none" rsf:id="hide-button" id="" aria-hidden="true"></span>
 					</span>
 					<span rsf:id="msg=assigneval.page.hier.title">Assign to Hierarchy Nodes</span>
 				</p>
@@ -89,14 +89,15 @@
 			<div rsf:id="evalgroups-area:">
 				<p>
 					<span>
-						<img src="../images/collapsed.png" rsf:id="show-button" id="" />
-						<img src="../images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						<span class="bi bi-chevron-right" rsf:id="show-button" id="" aria-hidden="true"></span>
+						<span class="bi bi-chevron-down" style="display:none" rsf:id="hide-button" id="" aria-hidden="true"></span>
 					</span>
 					<span rsf:id="msg=assigneval.page.groups.title">Assign to Evaluation Groups</span>
 				</p>
 				<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
 					<p class="instructionText"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
 					<p class="elementAlertFront instructionText" rsf:id="assign-eval-instructions-group-notpublished">
+					<span class="bi bi-exclamation-triangle-fill" aria-hidden="true"></span>
 					This denotes a site that are currently unpublished. Make sure you publish it otherwise students will not be notified via email or given access to complete this evaluation.</p>
 					
 					<div rsf:id="siteCheckboxes"/>
@@ -139,8 +140,8 @@
 			<!-- or you have no previous adhoc groups.                   -->
 				<p>
 					<span>
-						<img src="../images/collapsed.png" rsf:id="show-button" id="" />
-						<img src="../images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						<span class="bi bi-chevron-right" rsf:id="show-button" id="" aria-hidden="true"></span>
+						<span class="bi bi-chevron-down" style="display:none" rsf:id="hide-button" id="" aria-hidden="true"></span>
 					</span>
 					<span rsf:id="msg=assigneval.page.adhocgroups.title">Assign to an adhoc group.</span>
 				</p>
@@ -178,6 +179,7 @@
                 
 			</div>
 			<div id="error" style="display:none" class="messageAlert">
+		        <span class="bi bi-exclamation-triangle-fill" aria-hidden="true"></span>
 		        <ul style="margin:0px;">
 		            <li><span rsf:id="msg=assigneval.invalid.selection">Message for user here</span></li>
 		        </ul>

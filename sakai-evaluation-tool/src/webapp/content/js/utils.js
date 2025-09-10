@@ -610,8 +610,8 @@ evalsys.initFacebox = function(options) {
     if (!evalsys.faceboxinitialized) {
         // only run the facebox init one time
         if (typeof jQuery.facebox !== "undefined") {
-            jQuery.facebox.settings.loadingImage = '/library/image/sakai/spinner.gif';
-            jQuery.facebox.settings.closeImage = '/library/image/sakai/cross.png';
+            // Use portal-provided styling; avoid image-based close button
+            jQuery.facebox.settings.closeImage = null;
             //jQuery.facebox.settings.opacity = 0.1;
             //jQuery.facebox.settings.overlay = true;
             //jQuery.facebox.settings.faceboxHtml = "some html";

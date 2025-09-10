@@ -123,9 +123,9 @@
                   <option value="3">3</option>
                 </select>
                  <span class="itemTextReplacementHolder">
-                <h4 rsf:id="item-text:" class="itemText"> <span rsf:id="item-text-short">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-control" href="#" class="more">more</a> <a rsf:id="item-text-block" href="#" class="blockExpandText"> [Hide child items] </a></h4>
+                <h4 rsf:id="item-text:" class="itemText"> <span rsf:id="item-text-short">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-control" href="#" class="more"><span class="bi bi-chevron-down" aria-hidden="true"></span> more</a> <a rsf:id="item-text-block" href="#" class="blockExpandText"> [Hide child items] </a></h4>
 
-<h4 rsf:id="item-text-hidden:" class="itemText" style="display:none"> <span rsf:id="item-text-long">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-hidden-control" href="#" class="less">less</a></h4>
+<h4 rsf:id="item-text-hidden:" class="itemText" style="display:none"> <span rsf:id="item-text-long">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span><a rsf:id="item-text-hidden-control" href="#" class="less"><span class="bi bi-chevron-up" aria-hidden="true"></span> less</a></h4>
                 </span>
                 <div class="scaleDesc textPanelFooter">
                     <span class="textPanelReplacementHolder">
@@ -133,12 +133,12 @@
                         <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span>
                         <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span>
                         <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>   &nbsp;
-                        <img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>    &nbsp;
+                        <span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>    &nbsp;
                     </span>
                     <span>
-                        <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"> <img src="/library/image/silk/zoom.png" alt="Preview" border="0"/></a> &nbsp;
-                        <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0"/></a> &nbsp;
-				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a>
+                        <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp;
+                        <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
+				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
                 <a rsf:id="remove-row-item-unblock"href="remove_question.html" rel="unblock">Ungroup</a> </span>
                 </div>
                 <div class="cleaner">&nbsp;</div>
@@ -146,7 +146,7 @@
                             <div rsf:id="block-children:" id="block-children:" class="itemLine3">
                	<div id="itemTableBlock" class="itemTableBlock">
              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
-                       <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+                      <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
 					 <span  rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRowBlock::1:hidden-item-id" />
@@ -155,9 +155,9 @@
 							
 							<span class="itemRight">
 								&nbsp;
-								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
+								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
                                 <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
-                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><img border="0" alt="Remove" src="/library/image/sakai/cross.png"/></a>
+                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
 <span rsf:id="remove-row-item-disabled" >Remove</span>
      					   </span>						</div>
 					</div>   
@@ -179,24 +179,24 @@
                   <option value="3">3</option>
                 </select>
                   <span class="itemTextReplacementHolder">
-                <h4 rsf:id="item-text" class="itemText"> Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. <a class="more">more</a> </h4>
+                <h4 rsf:id="item-text" class="itemText"> Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. <a class="more"><span class="bi bi-chevron-down" aria-hidden="true"></span> more</a> </h4>
                 </span>
                 <div class="scaleDesc textPanelFooter">
                     <span class="itemType textPanelReplacementHolder">
                         <span rsf:id="item-results-sharing"> Results Sharing </span>
                         <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span> <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span> <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>
                         &nbsp;
-                        <img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>    &nbsp;
+                        <span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>    &nbsp;
                 </span>
-                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><img src="/library/image/silk/zoom.png" alt="Preview" border="0" /></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
-								 &nbsp; <a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a> </span>
+                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
+								 &nbsp; <a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a> </span>
                 </div>
                 <div class="cleaner">&nbsp;</div>
               </div>
                             <div rsf:id="block-children:" id="block-children:" class="itemLine3">
                <div id="itemTableBlock" class="itemTableBlock">
              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
-                   <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#">Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+                  <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
 					 <span rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 				<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable" style="padding:.2em;width:99%">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
@@ -206,9 +206,9 @@
 							<span class="itemRight">
 								
 								&nbsp;
-								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a>
+								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
                                 <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
-                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><img border="0" alt="Remove" src="/library/image/sakai/cross.png"/></a>
+                                <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
 <span rsf:id="remove-row-item-disabled" >Remove</span>
     							
 				</span>						</div>
@@ -236,12 +236,12 @@
                     					 <span class="itemType textPanelReplacementHolder">
                 	<span rsf:id="item-results-sharing"> Results Sharing </span>
                          <span rsf:id="item-classification-label" class="itemClassification lighthighlight">Item Classification</span> <span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span> <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>
-                     &nbsp;<img rsf:id="item-hierarchy" alt="Hierarchy ID:" src="/library/image/silk/text_linespacing.png"/>  &nbsp;
+                     &nbsp;<span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>  &nbsp;
                      </span>
 
-                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><img src="/library/image/silk/zoom.png" alt="Preview" border="0" /></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><img src="/library/image/silk/pencil.png" alt="Edit" border="0" /></a> &nbsp;
+                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
                 &nbsp;
-				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><img src="/library/image/sakai/cross.png" alt="Remove" border="0" /></a>
+				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
                 <a rsf:id="remove-row-item-unblock" href="remove_question.html" rel="unblock">Ungroup</a>
                  </span>  
                 </div>

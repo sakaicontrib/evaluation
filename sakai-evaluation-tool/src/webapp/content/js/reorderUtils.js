@@ -210,10 +210,11 @@ $(document).bind('list.warning', function(e, ui, option, extra, err){
     var item = ui.item? ui.item : ui;
         if (option != "noAlert") {
        $("div.itemList").find('.itemOperationsEnabled').remove();
-        var error = '<div class="itemOperationsEnabled">\
-                        <img src="/library/image/sakai/cancelled.gif"/>\
-                        <span class="instructionText">'+ err +'</span> <a href="#" id="closeItemOperationsEnabled">close</a></div>\
-                        ';
+        var error = '<div class="itemOperationsEnabled">'
+          + '<span class="bi bi-x-circle" aria-hidden="true"></span>'
+          + '<span class="visually-hidden">Error</span> '
+          + '<span class="instructionText">' + err + '</span> '
+          + '<a href="#" id="closeItemOperationsEnabled">close</a></div>';
         if(extra == 'block')
             item.parents('.itemLine3').prepend(error);
         $('#closeItemOperationsEnabled').click(function() {

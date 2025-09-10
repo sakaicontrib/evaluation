@@ -169,8 +169,8 @@ div.scaleDesc {
   cursor: default;
   margin-top: -0.04em;
   padding: 0 1em 0 0;
-  background: url(../images/asterisk_orange.gif) 1.3em 50% no-repeat;
 }
+.selectable::before { content: "*"; margin-right: .3em; }
 
 .selectable input {
   margin: 0;
@@ -208,13 +208,8 @@ div.scaleDesc {
   float: left;
 }
 
-.breadCrumb li {
-  display: inline;
-  background: #ffffee url(../images/breadSep.gif) center right no-repeat;
-  padding: 0 1.2em 0  .5em;
-  margin: 0;
-  float: left;
-}
+.breadCrumb li { display: inline; background: #ffffee; padding: 0 1.2em 0  .5em; margin: 0; float: left; }
+.breadCrumb li+li::before { content: "›"; margin-right: .5em; }
 
 .breadCrumb li:first-child {
   padding-left: 3px;
@@ -264,29 +259,17 @@ div.scaleDesc {
   color: #666 !important;
 }
 
-.messageStepGraphic .first-noncur-step {
-  background: white url(../images/first-noncur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .first-noncur-step { background: white; }
 
-.messageStepGraphic .first-cur-step {
-  background: white url(../images/first-cur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .first-cur-step { background: white; }
 
-.messageStepGraphic .med-noncur-step {
-  background: white url(../images/med-noncur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .med-noncur-step { background: white; }
 
-.messageStepGraphic .med-cur-step {
-  background: white url(../images/med-cur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .med-cur-step { background: white; }
 
-.messageStepGraphic .last-noncur-step {
-  background: white url(../images/last-noncur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .last-noncur-step { background: white; }
 
-.messageStepGraphic .last-cur-step {
-  background: white url(../images/last-cur-step.gif) top left no-repeat;
-}
+.messageStepGraphic .last-cur-step { background: white; }
 
 /*PART 2 end*/
 /*PART 3 - summary page  layout definitions*/
@@ -615,12 +598,8 @@ td.fullDisplayHorizontalColoredWrapper {
   background-color: #fff;
 }
 
-.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected {
-  background-image: url(../images/tick.png);
-  background-position: .5em;
-  background-repeat: no-repeat;
-  padding: .5em;
-}
+.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected { padding: .5em; }
+.fullDisplayHorizontalScale .labelSelected::before, .fullDisplayHorizontalColored .labelSelected::before { content: "✓"; margin-right: .5em; }
 
 .fullVertical, .fullDisplayHorizontal {
   clear: both;
@@ -689,25 +668,28 @@ div.fullVertical {
 
 /*2nd toolbar item links*/
 .addItem {
-  padding-left: 2em;
-  background: transparent url(../images/add.png) center left no-repeat;
+  // icon now provided in markup via <span class="bi bi-plus-lg">
+  padding-left: 0;
+  background: none;
 }
 
 .goToList {
-  padding-left: 2em;
-  background: transparent url(../images/application_view_list.png) center left no-repeat;
+  // icon now provided in markup via <span class="bi bi-list-ul">
+  padding-left: 0;
+  background: none;
 }
 
 .exportAction {
-  padding-left: 2em;
-  background: transparent url(../images/table_go.png) center left no-repeat;
+  // icon now provided in markup via <span class="bi bi-file-earmark-arrow-down">
+  padding-left: 0;
+  background: none;
 }
 
 .emailItem {
   margin-left: 2em;
   display: block;
   height: 15px;
-  background: transparent url(../images/email-send.png) center left no-repeat;
+  background: none;
 }
 
 /*see block items*/
@@ -806,12 +788,8 @@ label.blockItemLabel:hover {
   background: #fff;
 }
 
-.itemDoneCheckShow {
-  background: url(../images/tick.png) center left no-repeat;
-	display: inline-block;
-	height: 16px;
-	width: 16px;
-}
+.itemDoneCheckShow { display: inline-block; }
+.itemDoneCheckShow::before { content: "✓"; }
 
 .blockItemHeaderHilite {
   color: #0099cc;
@@ -913,26 +891,14 @@ label.blockItemLabel:hover {
   padding: 0;
 }
 
-.messageAlert {
-  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
-  border: 1px solid #FF5555;
-  color: #FF5555;
-  margin: 0.5em 0;
-}
+.messageAlert { background: #ffeeee; border: 1px solid #FF5555; color: #FF5555; margin: 0.5em 0; position: relative; padding-left: 2em; }
+.messageAlert::before { content: "⚠"; position: absolute; left: .5em; top: .4em; }
 
-.messageInformation {
-  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
-  border: 1px solid #EEBB44;
-  color: #d93;
-  margin: 0.5em 0;
-}
+.messageInformation { background: #ffffee; border: 1px solid #EEBB44; color: #d93; margin: 0.5em 0; position: relative; padding-left: 2em; }
+.messageInformation::before { content: "ℹ"; position: absolute; left: .5em; top: .4em; }
 
-.messageComfirm {
-  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
-  border: 1px solid #CCEE66;
-  color: #779900;
-  margin: 0.5em 0;
-}
+.messageComfirm { background: #eeffbb; border: 1px solid #CCEE66; color: #779900; margin: 0.5em 0; position: relative; padding-left: 2em; }
+.messageComfirm::before { content: "✔"; position: absolute; left: .5em; top: .4em; }
 
 .messageAlert ul, .messageInformation ul, .messageComfirm ul {
   list-style: none;
@@ -1060,64 +1026,38 @@ label.block {
 }
 
 /*delete button*/
-.hideComment {
-  padding-left: 2em;
-  background: transparent url(../images/cross.png) center left no-repeat;
-}
+.hideComment { padding-left: 0; background: none; }
 
-.editComment {
-  padding-left: 2em;
-  background: transparent url(../images/pencil.png) center left no-repeat;
-}
+.editComment { padding-left: 0; background: none; }
 
-.actionArrow {
-  background: #ffeeee url(/library/image/sakai/collapse.gif) no-repeat scroll left 3px;
-  font-weight: bold;
-  padding: 2px 5px 6px 13px;
-}
+.actionArrow { background: #ffeeee; font-weight: bold; padding: 2px 5px 6px 13px; }
 
 .removeLink {
-  background: transparent url(/library/image/silk/delete.png) no-repeat scroll left center;
-  padding-left: 1.6em;
-  text-indent: 110%;
-  overflow: hidden;
-  height: 25px;
-  width: 25px;
+  // Silk icon removed; use inline <span class="bi bi-trash"> in markup
+  background: none;
+  padding-left: 0;
+  text-indent: 0;
+  overflow: visible;
+  height: auto;
+  width: auto;
 }
 
 .editLink {
-  background: transparent url(/library/image/silk/pencil.png) no-repeat scroll left center;
-  padding-left: 1.6em;
+  // Silk icon removed; use inline <span class="bi bi-pencil"> in markup
+  background: none;
+  padding-left: 0;
 }
 
 .preview {
-  /*background:transparent url(/library/image/silk/control_play.png) no-repeat scroll left center;*/
+  // Old play icon removed; use inline <span class="bi bi-zoom-in"> in markup where needed
   padding-left: 0.5em;
 }
 
-a.more {
-  background-image: url(../images/collapsed.gif);
-  background-position: 100% center;
-  background-repeat: no-repeat;
-  padding-left: 10px;
-  padding-right: 15px;
-}
+a.more { background: none; padding-left: 0; padding-right: 0; }
 
-a.less {
-  background-image: url(../images/expanded.gif);
-  background-position: 100% center;
-  background-repeat: no-repeat;
-  padding-right: 15px;
-  padding-left: 10px;
-}
+a.less { background: none; padding-right: 0; padding-left: 0; }
 
-.removeArrow {
-  background-image: url(/library/image/sakai/expand-collapse.gif);
-  height: 7px;
-  width: 10px;
-  background-repeat: no-repeat;
-  margin-left: 97%;
-}
+.removeArrow { background: none; }
 
 .removeDiv {
   margin-top: -10px;
@@ -1314,10 +1254,7 @@ a.less {
   padding: 0;
 }
 
-.infoItem {
-  padding-left: 2em;
-  background: transparent url(/library/image/sakai/information.png) center left no-repeat;
-}
+.infoItem { padding-left: 0; background: none; }
 
 .itemListReport ol {
   list-style: none;
@@ -1345,26 +1282,14 @@ a.less {
   background: white;
 }
 
-.messageAlert {
-  background: #ffeeee url(../images/exclamation.gif) 5px 7px no-repeat;
-  border: 1px solid #FF5555;
-  color: #FF5555;
-  margin: .5em 0;
-}
+.messageAlert { background: #ffeeee; border: 1px solid #FF5555; color: #FF5555; margin: .5em 0; position: relative; padding-left: 2em; }
+.messageAlert::before { content: "⚠"; position: absolute; left: .5em; top: .4em; }
 
-.messageInformation {
-  background: #ffffee url(../images/asterisk_yellow.gif) 5px 7px no-repeat;
-  border: 1px solid #EEBB44;
-  color: #d93;
-  margin: .5em 0;
-}
+.messageInformation { background: #ffffee; border: 1px solid #EEBB44; color: #d93; margin: .5em 0; position: relative; padding-left: 2em; }
+.messageInformation::before { content: "ℹ"; position: absolute; left: .5em; top: .4em; }
 
-.messageComfirm {
-  background: #eeffbb url(../images/accept.gif) 5px 7px no-repeat;
-  border: 1px solid #CCEE66;
-  color: #779900;
-  margin: .5em 0;
-}
+.messageComfirm { background: #eeffbb; border: 1px solid #CCEE66; color: #779900; margin: .5em 0; position: relative; padding-left: 2em; }
+.messageComfirm::before { content: "✔"; position: absolute; left: .5em; top: .4em; }
 
 .messageAlert ul, .messageInformation ul, .messageComfirm ul {
   list-style: none;
@@ -1384,12 +1309,7 @@ a.less {
   font-size: 1.2em;
 }
 
-.listPager a {
-  text-decoration: none !important;
-  padding: 0 1em;
-  border: 1px solid #ccc;
-  background: #eeeeee url(../images/pager-back.png) repeat-x !important;
-}
+.listPager a { text-decoration: none !important; padding: 0 1em; border: 1px solid #ccc; background: #eeeeee !important; }
 
 .listPager span {
   padding: 0 1em;
@@ -1397,12 +1317,7 @@ a.less {
   background: #fff;
 }
 
-.listPager a:hover {
-  text-decoration: none !important;
-  padding: 0 1em;
-  border: 1px solid #bbb;
-  background: #eeeeee url(../images/pager-back-hover.png) repeat-x !important;
-}
+.listPager a:hover { text-decoration: none !important; padding: 0 1em; border: 1px solid #bbb; background: #e5e5e5 !important; }
 
 .listPager span.listPagerCount {
   border: 0;
@@ -1453,7 +1368,7 @@ a.less {
 /* Group template item - add existing item into group */
 .dropItem {
   padding-bottom: 1px;
-  background: transparent url(/library/image/silk/page_white_put.png) center left no-repeat;
+  background: none; // use inline <span class="bi bi-file-earmark-plus">
 }
 
 .JSshow {
@@ -1483,13 +1398,13 @@ a.less {
 }
 
 .elementAlertBack {
-  background: transparent url(/library/image/silk/error.png) no-repeat scroll right 0;
-  padding-right: 20px;
+  background: none; // use inline <span class="bi bi-exclamation-triangle-fill">
+  padding-right: 0;
 }
 
 .elementAlertFront {
-  background: transparent url(/library/image/silk/error.png) no-repeat scroll left 0;
-  padding-left: 20px;
+  background: none; // use inline <span class="bi bi-exclamation-triangle-fill">
+  padding-left: 0;
 }
 
 /* style selection controls fieldset */

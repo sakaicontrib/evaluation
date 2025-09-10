@@ -29,8 +29,8 @@ var evalAssignFacebox = (function() {
 
         $.facebox.settings.opacity = 0.1;
         $.facebox.settings.overlay = true;
-        $.facebox.settings.loadingImage = '/library/image/sakai/spinner.gif';
-        $.facebox.settings.closeImage = '/library/image/sakai/cross.png';
+        // Avoid image-based close button; spinner left as-is
+        $.facebox.settings.closeImage = null;
 
         $.facebox.settings.faceboxHtml = '<div id="facebox" style="display:none;">' +
                                          '<div class="popup"> ' +
@@ -44,7 +44,7 @@ var evalAssignFacebox = (function() {
                                          '<td class="body">' +
                                          '<div class="header breadCrumb" style="display:block">' +
                                          '<h2 id="titleHeader" class="titleHeader">&nbsp;</h2>' +
-                                         '<a class="close" href="#" accesskey="x"><img class="close_image" title="close"/></a></div>' +
+                                         '<a class="close" href="#" accesskey="x"><span class="close_image bi bi-x-lg" aria-hidden="true"></span></a></div>' +
                                          '<div style="display: none" class="results"></div>' +
                                          '<div class="content">' +
                                          '</div>' +
