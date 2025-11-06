@@ -1,0 +1,7 @@
+{
+  "customSyntax": "postcss-scss",
+  "rules": {
+    "color-no-invalid-hex": true,
+    "no-empty-source": true
+  }
+}

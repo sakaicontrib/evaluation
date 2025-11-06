@@ -390,13 +390,19 @@ tool/src/webapp/content/css/jquery/images/ui-icons_228ef1_256x240.png -text svne
 tool/src/webapp/content/css/jquery/images/ui-icons_ef8c08_256x240.png -text svneol=unset#image/png
 tool/src/webapp/content/css/jquery/images/ui-icons_ffd27a_256x240.png -text svneol=unset#image/png
 tool/src/webapp/content/css/jquery/images/ui-icons_ffffff_256x240.png -text svneol=unset#image/png
-tool/src/webapp/content/css/scss/_base.scss -text
-tool/src/webapp/content/css/scss/_evaluation_base_copy.scss -text
 tool/src/webapp/content/css/scss/_graphics.scss -text
 tool/src/webapp/content/css/scss/_helpers.scss -text
 tool/src/webapp/content/css/scss/_layout.scss -text
 tool/src/webapp/content/css/scss/_typography.scss -text
-tool/src/webapp/content/css/scss/evaluation_base.scss -text
+tool/src/webapp/content/css/scss/evaluation/_item-display.scss -text
+tool/src/webapp/content/css/scss/evaluation/_messages.scss -text
+tool/src/webapp/content/css/scss/evaluation/_navigation.scss -text
+tool/src/webapp/content/css/scss/evaluation/_reorderer.scss -text
+tool/src/webapp/content/css/scss/evaluation/_reports.scss -text
+tool/src/webapp/content/css/scss/evaluation/_scale-lists.scss -text
+tool/src/webapp/content/css/scss/evaluation/_summary.scss -text
+tool/src/webapp/content/css/scss/evaluation/_utilities.scss -text
+tool/src/webapp/content/css/scss/evaluation/index.scss -text
 tool/src/webapp/content/css/scss/ucb/_colors-ucb.scss -text
 tool/src/webapp/content/css/scss/ucb/_graphics-ucb.scss -text
 tool/src/webapp/content/css/scss/ucb/_layout-ucb.scss -text
