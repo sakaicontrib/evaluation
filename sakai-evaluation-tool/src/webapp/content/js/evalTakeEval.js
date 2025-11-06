@@ -454,23 +454,16 @@ $(document).ready(function() {
     }
 
     function frameGrow(height, updown){
-        var h = height == "" ? 250 : parseInt(height, 10),
-            windowName = window.name,
-            frame = null;
-        if (windowName !== null && windowName.length > 0){
-            frame = parent.document.getElementById(windowName);
-            try {
-                if (frame){
-                    var clientH;
-                    if (updown == 'shrink'){
-                        clientH = document.body.clientHeight - h;
-                    }else{
-                        clientH = document.body.clientHeight + h;
-                    }
-                    $(frame).height(clientH);
-                }
-            } catch(e) {}
+        if (typeof evalsys === "undefined" || typeof evalsys.resizeEmbeddedFrame !== "function") {
+            return;
         }
+        var h = parseInt(height, 10);
+        if (isNaN(h)) {
+            h = 0;
+        }
+        evalsys.resizeEmbeddedFrame({
+            extra: updown === 'shrink' ? 0 : h
+        });
     }
 
     // Debugging

@@ -21,49 +21,57 @@
 	<title rsf:id="modify-block-title">Edit Block</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- INCLUDED page - No JS/CSS -->
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <script type="text/javascript" src="/library/js/spinner.js"></script>
+    <script src="/sakai-evaluation-tool/content/js/eval.portal.shim.js" type="text/javascript"></script>
+    <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 <body>
-	<div class="portletBody">
+	<div class="portletBody container-fluid py-3">
 
-		<div class="evalEditorSmall">
-			<form name="block_form" id="block_form" rsf:id="blockForm" method="post">
+		<div class="evalEditorSmall card border-0 shadow-sm p-4">
+			<form name="block_form" id="block_form" rsf:id="blockForm" method="post" class="needs-validation d-flex flex-column gap-4" novalidate="novalidate">
 				<div class="navPanel"></div>
 				<div rsf:id="itemRow:" id="itemRow::1:" class="itemRow border rounded-3 shadow-sm mb-3" style="display:none;">
 						<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
 					</div>
 
-				<span rsf:id="item-header">Blocking items:</span>
-				<span name="itemNo" rsf:id="itemNo">1</span>:
-				<span name="itemClassification" rsf:id="itemClassification">####</span>
-				(<span rsf:id="added-by">added by</span>
-				<span name="userInfo" rsf:id="userInfo">#####</span>)
-				<p>
-					<span rsf:id="scale-type-header">Scale Type:</span>
-					<span name="scaleLabel" rsf:id="scaleLabel" class="highlight">Title of scale (scale points)</span>
-				</p>
+				<div class="bg-light rounded-3 border mb-4 p-3">
+					<div class="fw-semibold">
+						<span rsf:id="item-header" class="me-1">Blocking items:</span>
+						<span name="itemNo" rsf:id="itemNo" class="badge bg-primary text-white">1</span>:
+						<span name="itemClassification" rsf:id="itemClassification" class="text-uppercase small">####</span>
+						(<span rsf:id="added-by" class="text-muted">added by</span>
+						<span name="userInfo" rsf:id="userInfo" class="text-muted">#####</span>)
+					</div>
+					<p class="mb-0 mt-2">
+						<span rsf:id="scale-type-header" class="fw-semibold">Scale Type:</span>
+						<span name="scaleLabel" rsf:id="scaleLabel" class="highlight ms-2">Title of scale (scale points)</span>
+					</p>
+				</div>
 		
-				<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
+				<h4 rsf:id="item-header-text-header" class="h6 text-uppercase text-muted">Item Header Text :</h4>
 				
-				<div>
-					<span rsf:id="block-text-select" />
-					<div rsf:id="block-text-choice:" class="blockText">
-						<input type="radio" name="block-text-radio" rsf:id="block-text-radio" id="block-text-choice::0:block-text-radio" />
-						<label for="block-text-radio" rsf:id="block-text">Block item text</label>
+				<div class="mb-3">
+					<span rsf:id="block-text-select" class="d-block mb-2" />
+					<div rsf:id="block-text-choice:" class="blockText form-check">
+						<input type="radio" name="block-text-radio" rsf:id="block-text-radio" id="block-text-choice::0:block-text-radio" class="form-check-input" />
+						<label for="block-text-radio" rsf:id="block-text" class="form-check-label">Block item text</label>
 					</div>
 				</div>
 				
-				<div id="item-text-div" class="longtext evalEditorSmall">
+				<div id="item-text-div" class="longtext evalEditorSmall mb-3">
 					<div rsf:id="item-text:">
-						<textarea name="item-text-dummy" rsf:id="item-text-dummy" cols="80" rows="5">
-                        </textarea>
+						<textarea name="item-text-dummy" rsf:id="item-text-dummy" cols="80" rows="5" class="form-control"></textarea>
 					</div>
 				</div>
-				<br />
 
-				<p rsf:id="show-scale-display:" class="longtext">
-					<label rsf:id="scale-display-header" class="block">Scale Display Setting:</label>
-					<select rsf:id="scale-display-list" id="scale-display-list">
+				<div rsf:id="show-scale-display:" class="mb-3">
+					<label rsf:id="scale-display-header" class="form-label">Scale Display Setting:</label>
+					<select rsf:id="scale-display-list" id="scale-display-list" class="form-select">
 						<option value="Compact">Compact</option>
 						<option value="CompactColored">Compact Colored</option>
 						<option value="Full">Full</option>
@@ -72,32 +80,32 @@
 						<option value="SteppedColored">Stepped Colored</option>
 						<option value="Vertical">Vertical</option>
 					</select>
-				</p>
+				</div>
 			
-               <p rsf:id="showNA:" class="checkbox">
-                   <input rsf:id="item_NA" type="checkbox" id="item-na" />
-                   <label rsf:id="add-na-header" for="showNA:::item-na">N/A (not applicable):</label>
-               </p>
+               <div rsf:id="showNA:" class="form-check mb-3">
+                   <input rsf:id="item_NA" type="checkbox" id="item-na" class="form-check-input" />
+                   <label rsf:id="add-na-header" for="showNA:::item-na" class="form-check-label">N/A (not applicable):</label>
+               </div>
 
-               <div rsf:id="showItemCategory:">
-                   <b rsf:id="msg=modifyitem.item.category.header">Item Category:</b>
+               <div rsf:id="showItemCategory:" class="mb-3">
+                   <b rsf:id="msg=modifyitem.item.category.header" class="form-label fw-semibold d-block">Item Category:</b>
 
-                   <span rsf:id="item-category-list" />
-                   <span rsf:id="item-category-branch:" class="checkbox">
-                       <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
-                       <label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>                                  
+                   <span rsf:id="item-category-list" class="form-text text-muted" />
+                   <span rsf:id="item-category-branch:" class="form-check form-check-inline">
+                       <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" class="form-check-input" />
+                       <label rsf:id="item-category-label" for="item-category-radio" class="form-check-label">Group/Course</label>                                  
                    </span>
-                   <span rsf:id="item-category-branch:"  class="checkbox">
-                       <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
-                       <label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
+                   <span rsf:id="item-category-branch:"  class="form-check form-check-inline">
+                       <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" class="form-check-input" />
+                       <label rsf:id="item-category-label" for="item-category-radio" class="form-check-label">Evaluatee/Instructor</label>
                    </span>
                </div>
 
                <!-- DIV tag for node selector renderer -->
-               <div rsf:id="hierarchyNodeSelector:">
-                 <div>
-                    <h4><span>Hierarchy Assignment:</span></h4>
-                    <select style="font-family: monospace">
+               <div rsf:id="hierarchyNodeSelector:" class="card border-0 shadow-sm mb-4">
+                 <div class="card-body">
+                    <h4 class="h6 text-uppercase text-muted"><span>Hierarchy Assignment:</span></h4>
+                    <select class="form-select font-monospace">
                        <option value="TOP_LEVEL">Top Level</option>
                        <option value="BIOL_DEPT">+ Biology Dept</option>
                        <option value="BIOL_101">  - Bio 101</option>
@@ -105,12 +113,12 @@
                  </div>
                </div>
 
-				<p class="act">
+				<div class="d-flex flex-wrap justify-content-end gap-2">
 					<input type="hidden" rsf:id="ordered-child-ids" id="ordered-child-ids" />
-					<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="active submit" accesskey="s" />
-					<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="flag='preview';" accesskey="v"/>
-					<input type="submit" value="Cancel" class="close" rsf:id="cancel-button" accesskey="x" />
-				</p>
+					<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="btn btn-primary" accesskey="s" />
+					<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="flag='preview';" accesskey="v" class="btn btn-outline-primary"/>
+					<input type="button" value="Cancel" class="btn btn-outline-secondary" rsf:id="cancel-button" accesskey="x" onclick="if (typeof window.jQuery !== 'undefined') { window.jQuery(document).trigger('close.facebox'); return false; } window.history.back(); return false;" />
+				</div>
 			</form>
 		</div>
 	</div>

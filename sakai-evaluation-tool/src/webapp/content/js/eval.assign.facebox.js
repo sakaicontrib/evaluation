@@ -102,20 +102,16 @@ var evalAssignFacebox = (function() {
     };
 
     function resizeFrame(updown, height) {
+        if (typeof evalsys === "undefined" || typeof evalsys.resizeEmbeddedFrame !== "function") {
+            return;
+        }
         try {
-            var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
-                frame = parent.document.getElementById(window.name),
-                clientH = "";
-
-            if (frame) {
-                if (updown === -1) {
-                    clientH = document.body.clientHeight;
-                }
-                else {
-                    clientH = document.body.clientHeight + thisHeight; //increasing the height
-                }
-                $(frame).height(clientH);
+            var baseHeight = typeof height === "undefined" ? 280 : Number(height) + 40;
+            if (isNaN(baseHeight)) {
+                baseHeight = 0;
             }
+            var extra = updown === -1 ? 0 : baseHeight;
+            evalsys.resizeEmbeddedFrame({ extra: extra });
         } catch(e) {
             evalTemplateUtils.debug.error("Frame resize did not work. Error: %o", e, e);
         }

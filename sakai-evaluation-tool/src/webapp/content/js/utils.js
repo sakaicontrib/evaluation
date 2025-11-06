@@ -18,6 +18,80 @@ if (!jQuery) {
     throw "JQuery undefined";
 }
 
+evalsys.getHostFrame = function() {
+    if (window === window.parent) {
+        return null;
+    }
+    try {
+        var frameEl = window.frameElement;
+        if (frameEl && frameEl.tagName && frameEl.tagName.toLowerCase() === "iframe") {
+            return frameEl;
+        }
+    } catch (e) {
+        return null;
+    }
+    return null;
+};
+
+evalsys.resizeEmbeddedFrame = function(options) {
+    var frame = evalsys.getHostFrame();
+    if (!frame) {
+        return false;
+    }
+    var extra = 0;
+    var minHeight = 0;
+    if (options && typeof options.extra === "number" && !isNaN(options.extra)) {
+        extra = options.extra;
+    }
+    if (options && typeof options.minHeight === "number" && !isNaN(options.minHeight)) {
+        minHeight = options.minHeight;
+    }
+    var body = document.body || { scrollHeight: 0, offsetHeight: 0, clientHeight: 0 };
+    var docEl = document.documentElement || { scrollHeight: 0, offsetHeight: 0, clientHeight: 0 };
+    var target = Math.max(
+        minHeight,
+        body.scrollHeight,
+        body.offsetHeight,
+        body.clientHeight,
+        docEl.scrollHeight,
+        docEl.offsetHeight,
+        docEl.clientHeight
+    );
+    target = Math.max(0, target + extra);
+    frame.style.height = target + "px";
+    return true;
+};
+
+evalsys.runWhenReady = function(callback) {
+    if (typeof callback !== "function") {
+        return;
+    }
+    var execute = function() {
+        callback();
+    };
+    if (document.readyState === "loading") {
+        if (document.addEventListener) {
+            var handler = function() {
+                document.removeEventListener("DOMContentLoaded", handler);
+                execute();
+            };
+            document.addEventListener("DOMContentLoaded", handler);
+        } else if (document.attachEvent) {
+            var ieHandler = function() {
+                if (document.readyState === "complete") {
+                    document.detachEvent("onreadystatechange", ieHandler);
+                    execute();
+                }
+            };
+            document.attachEvent("onreadystatechange", ieHandler);
+        } else {
+            window.setTimeout(execute, 0);
+        }
+    } else {
+        execute();
+    }
+};
+
 /**
  * This will center any jquery object it is executed on,
  * if the container cannot be found then this will produce a failure alert

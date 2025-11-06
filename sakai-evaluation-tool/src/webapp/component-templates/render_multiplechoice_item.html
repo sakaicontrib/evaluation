@@ -34,7 +34,7 @@
 						<span class="paren">)</span>
 						<span class="dot">.</span>
 					</span>
-			<span class="required"></span>
+					<span class="required"> </span>
 					<span rsf:id="itemText" class="label">Item text label.</span>
 
             		<!--
@@ -47,42 +47,42 @@
 				<div rsf:id="nextrow:" class="content">
 				
 					<div rsf:id="verticalDisplay:">
-						<!-- DIV tag for Vertical display -->
-						<span rsf:id="dummyRadio" />
-					<div class="list-group list-group-flush fullVertical mult-choice-ans">
-						<div rsf:id="scaleOptions:" class="list-group-item check">
+				<!-- DIV tag for Vertical display -->
+				<div rsf:id="dummyRadio"></div>
+			<ul class="list-group list-group-flush mult-choice-ans">
+				<li rsf:id="scaleOptions:" class="list-group-item check">
+				<div class="form-check mb-0">
+					<input rsf:id="choiceValue" type="radio" id="vertical1" name="vertical" class="form-check-input" />
+					<label class="form-check-label" for="vertical1">
+						<span rsf:id="choiceLabel">vertical label</span>
+					</label>
+				</div>
+				</li>
+				<li rsf:id="scaleOptions:" class="list-group-item check">
 					<div class="form-check mb-0">
-						<input rsf:id="choiceValue" type="radio" id="vertical1" name="vertical" class="form-check-input" />
-						<label class="form-check-label" for="vertical1">
+						<input rsf:id="choiceValue" type="radio" id="vertical2" name="vertical" class="form-check-input" />
+						<label class="form-check-label" for="vertical2">
 							<span rsf:id="choiceLabel">vertical label</span>
 						</label>
 					</div>
-						</div>
-						<div rsf:id="scaleOptions:" class="list-group-item check">
-							<div class="form-check mb-0">
-								<input rsf:id="choiceValue" type="radio" id="vertical2" name="vertical" class="form-check-input" />
-								<label class="form-check-label" for="vertical2">
-									<span rsf:id="choiceLabel">vertical label</span>
-								</label>
-							</div>
-						</div>
-						<div rsf:id="scaleOptions:" class="list-group-item check">
-							<div class="form-check mb-0">
-								<input rsf:id="choiceValue" type="radio" id="vertical3" name="vertical" class="form-check-input" />
-								<label class="form-check-label" for="vertical3">
-									<span rsf:id="choiceLabel">vertical label</span>
-								</label>
-							</div>
-						</div>
-						<div rsf:id="showNA:" class="list-group-item na">
-							<div class="form-check mb-0">
-								<input type="radio" rsf:id="itemNA" name="vertical" id="itemNA" class="form-check-input" />
-								<label class="form-check-label" for="itemNA">
-									<span rsf:id="descNA">N/A</span>
-								</label>
-							</div>
-						</div>
+				</li>
+				<li rsf:id="scaleOptions:" class="list-group-item check">
+					<div class="form-check mb-0">
+						<input rsf:id="choiceValue" type="radio" id="vertical3" name="vertical" class="form-check-input" />
+						<label class="form-check-label" for="vertical3">
+							<span rsf:id="choiceLabel">vertical label</span>
+						</label>
 					</div>
+				</li>
+				<li rsf:id="showNA:" class="list-group-item na">
+					<div class="form-check mb-0">
+						<input type="radio" rsf:id="itemNA" name="vertical" id="itemNA" class="form-check-input" />
+						<label class="form-check-label" for="itemNA">
+							<span rsf:id="descNA">N/A</span>
+						</label>
+					</div>
+				</li>
+			</ul>
 				</div> <!-- end verticalDisplay -->
 
 					<ul rsf:id="fullDisplay:"  class="fullDisplayHorizontal mult-choice-ans list-unstyled d-flex flex-wrap gap-2">

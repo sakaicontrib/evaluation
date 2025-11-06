@@ -63,7 +63,7 @@
 								<span  rsf:id="compactDisplayStart" class="compactDisplayStart">compactDisplayStart</span>
 							</td>
 							<td width="89%" nowrap="nowrap"  rsf:id="compactRadioContainer:" class="idealScale" style="height:27px;overflow:hidden;">
-								<div rsf:id="dummyRadio"/>
+								<div rsf:id="dummyRadio"></div>
 				<div style="width:100%;position:relative;z-index:4;">
 					<!-- For correct spacing there are 2 sets of radio buttons. This is the fake one -->
 					<div class="scaleChoiceColored">
@@ -125,46 +125,46 @@
 
 					<div rsf:id="verticalDisplay:" class="fullVertical">
 						<!-- DIV tag for Vertical display -->
-						<span rsf:id="dummyRadio" />
-					<div class="list-group list-group-flush fullVertical mult-choice-ans">
-						<div rsf:id="scaleOption:" class="list-group-item check">
-							<div class="form-check mb-0">
-								<input rsf:id="radioValue" type="radio" id="vertical1" name="vertical" class="form-check-input" />
-								<label class="form-check-label" for="vertical1">
-									<span rsf:id="radioLabel">vertical label</span>
-								</label>
-							</div>
-						</div>
-						<div rsf:id="scaleOption:" class="list-group-item check">
-							<div class="form-check mb-0">
-								<input rsf:id="radioValue" type="radio" id="vertical2" name="vertical" class="form-check-input" />
-								<label class="form-check-label" for="vertical2">
-									<span rsf:id="radioLabel">vertical label</span>
-								</label>
-							</div>
-						</div>
-						<div rsf:id="scaleOption:" class="list-group-item check">
-							<div class="form-check mb-0">
-								<input rsf:id="radioValue" type="radio" id="vertical3" name="vertical" class="form-check-input" />
-								<label class="form-check-label" for="vertical3">
-									<span rsf:id="radioLabel">vertical label</span>
-								</label>
-							</div>
-						</div>
-						<div rsf:id="showNA:" class="list-group-item na">
-							<div class="form-check mb-0">
-								<input type="radio" rsf:id="na-input" name="vertical" id="na-input" class="form-check-input" />
-								<label class="form-check-label" for="na-input">
-									<span rsf:id="na-desc">N/A</span>
-								</label>
-							</div>
-						</div>
+					<div rsf:id="dummyRadio"></div>
+			<ul class="list-group list-group-flush mult-choice-ans">
+				<li rsf:id="scaleOption:" class="list-group-item check">
+				<div class="form-check mb-0">
+					<input rsf:id="radioValue" type="radio" id="vertical1" name="vertical" class="form-check-input" />
+					<label class="form-check-label" for="vertical1">
+						<span rsf:id="radioLabel">vertical label</span>
+					</label>
+				</div>
+				</li>
+				<li rsf:id="scaleOption:" class="list-group-item check">
+					<div class="form-check mb-0">
+						<input rsf:id="radioValue" type="radio" id="vertical2" name="vertical" class="form-check-input" />
+						<label class="form-check-label" for="vertical2">
+							<span rsf:id="radioLabel">vertical label</span>
+						</label>
 					</div>
+				</li>
+				<li rsf:id="scaleOption:" class="list-group-item check">
+					<div class="form-check mb-0">
+						<input rsf:id="radioValue" type="radio" id="vertical3" name="vertical" class="form-check-input" />
+						<label class="form-check-label" for="vertical3">
+							<span rsf:id="radioLabel">vertical label</span>
+						</label>
+					</div>
+				</li>
+				<li rsf:id="showNA:" class="list-group-item na">
+					<div class="form-check mb-0">
+						<input type="radio" rsf:id="na-input" name="vertical" id="na-input" class="form-check-input" />
+						<label class="form-check-label" for="na-input">
+							<span rsf:id="na-desc">N/A</span>
+						</label>
+					</div>
+				</li>
+			</ul>
 					</div>
 
           	<div rsf:id="fullDisplay:">
          				<!-- DIV tag for full display  -->
-         				<div rsf:id="dummyRadio" />
+         				<div rsf:id="dummyRadio"></div>
          				<table border="0" cellspacing="0" cellpadding="0" width="100%" class="fullDisplayHorizontalScale fullDisplayHorizontal">
          					<tr>
          						<td nowrap="nowrap" align="center" style="height:24px;" rsf:id="scaleOption:">
@@ -191,11 +191,11 @@
 												<input type="radio" rsf:id="radioValue" id="full3" name="vertical" />
 											</span>
          						</td>
-         						<td rsf:id="showNA:" style="background-color:white; padding:0; border:1px solid red"> 	 
-         							<span> 	 
-         								<label rsf:id="na-desc" for="fc4">full colored label</label> 	 
-         								<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" /> 	 
-         							</span> 	 
+						<td rsf:id="showNA:" class="fullDisplayHorizontalScaleNaCell"> 	 
+							<span> 	 
+								<label rsf:id="na-desc" for="fc4">full colored label</label> 	 
+								<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" /> 	 
+							</span> 	 
          						</td> 	 
          					</tr>
          				</table>
@@ -206,8 +206,8 @@
          					<tr>
          						<td nowrap="nowrap" valign="middle" style="height:24px;"  class="fullDisplayHorizontalColoredWrapper">
          							<div style="width:100%;position:relative;">
-						<div style="width:100%; display:block; position:relative; z-index:6;background-color:transparent;">
-         									<span rsf:id="dummyRadio" />
+							<div style="width:100%; display:block; position:relative; z-index:6;background-color:transparent;">
+	         					<div rsf:id="dummyRadio"></div>
          									<table border="0" cellspacing="0" cellpadding="0" width="100%" class="fullDisplayHorizontal fullDisplayHorizontalScale fullDisplayHorizontalColored">
          										<tr>
          											<td rsf:id="scaleOption:">
@@ -228,11 +228,11 @@
          												<input type="radio" rsf:id="radioValue" name="vertical" id="fc3" />
 														</span>
          											</td>
-					         						<td rsf:id="showNA:" style="background-color:white; padding:0"> 	 
-					         							<span> 	 
-					         								<label rsf:id="na-desc" for="fc4">full colored label</label> 	 
-					         								<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" /> 	 
-					         							</span> 	 
+						<td rsf:id="showNA:" class="fullDisplayHorizontalScaleNaCell"> 	 
+							<span> 	 
+								<label rsf:id="na-desc" for="fc4">full colored label</label> 	 
+								<input type="radio"  rsf:id="na-input" name="vertical" id="fc4" /> 	 
+							</span> 	 
 					         						</td> 	 
          										</tr>
          									</table>
@@ -274,7 +274,7 @@
 								<span rsf:id="label-end" class="response-scale-end">Very</span>
 							</legend>
 							<div rsf:id="response-list:">
-								<div rsf:id="dummyRadio" />
+							<div rsf:id="dummyRadio"></div>
 								<ol class="response-list">
 									<li rsf:id="na-input-label:" class="na">
 										<label class="na">
@@ -312,35 +312,35 @@
 						<td>
 							<div rsf:id="rowBranch:" class="pull-right blockRowBranch">
 								<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
-								<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+								<img rsf:id="cornerImage" align="top" src="/sakai-evaluation-tool/content/images/corner.gif" alt="corner arrow segment" />
 								<span rsf:id="afterTopLabelBranch:">
 								</span>
 							</div>
 							<div rsf:id="rowBranch:" class="pull-right blockRowBranch">
 									<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
-									<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+									<img rsf:id="cornerImage" align="top" src="/sakai-evaluation-tool/content/images/corner.gif" alt="corner arrow segment" />
 									<span rsf:id="afterTopLabelBranch:">
-										<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+										<img rsf:id="middleImage" align="top" src="/sakai-evaluation-tool/content/images/down-line.gif" alt="downward arrow segment" />
 									</span>
 							</div>
 							<div rsf:id="rowBranch:" class="pull-right blockRowBranch">
 								<label for="choice2" style="font-weight:bold;" rsf:id="topLabel">choice name</label>&nbsp;
-								<img rsf:id="cornerImage" align="top" src="../content/images/corner.gif" alt="corner arrow segment" />
+								<img rsf:id="cornerImage" align="top" src="/sakai-evaluation-tool/content/images/corner.gif" alt="corner arrow segment" />
 								<span rsf:id="afterTopLabelBranch:">
-									<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
-									<img rsf:id="middleImage" align="top" src="../content/images/down-line.gif" alt="downward arrow segment" />
+									<img rsf:id="middleImage" align="top" src="/sakai-evaluation-tool/content/images/down-line.gif" alt="downward arrow segment" />
+									<img rsf:id="middleImage" align="top" src="/sakai-evaluation-tool/content/images/down-line.gif" alt="downward arrow segment" />
 								</span>
 							</div>
 							<div class="pull-right blockRowBranch">
 								<label for="choiceNA" rsf:id="na-desc" style="font-weight:bold;">N/A</label>&nbsp;&nbsp;
 								<span rsf:id="bottomLabelBranch:">
-									<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+									<img rsf:id="bottomImage" align="top" src="/sakai-evaluation-tool/content/images/down-arrow.gif" alt="down arrow pointer" />
 								</span>
 								<span rsf:id="bottomLabelBranch:">
-									<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+									<img rsf:id="bottomImage" align="top" src="/sakai-evaluation-tool/content/images/down-arrow.gif" alt="down arrow pointer" />
 								</span>
 								<span rsf:id="bottomLabelBranch:">
-									<img rsf:id="bottomImage" align="top" src="../content/images/down-arrow.gif" alt="down arrow pointer" />
+									<img rsf:id="bottomImage" align="top" src="/sakai-evaluation-tool/content/images/down-arrow.gif" alt="down arrow pointer" />
 								</span>
 							</div>
 						</td>
@@ -362,7 +362,7 @@
 										<label class="blockItemLabelNA"><span class="blockChoice"></span><input rsf:id="na-input" type="radio" name="block1" id="choiceNA"  /></label>
 									</td>
 									<td  align="right" nowrap="nowrap" style="height:27px;overflow:hidden;" class="last exclude choiceGroup">
-										<div rsf:id="dummyRadio" />
+									<div rsf:id="dummyRadio"></div>
 										<div rsf:id="coloredChoicesBranch:" style="width:100%;position:relative;">
 					<div class="blockChoiceColored">
 												<label rsf:id="scaleOptionColored:" class="blockItemLabel"><span class="blockChoice"></span><input rsf:id="radioValueColored" type="radio" name="block1" id="choice1" class="blockItemChoice" /></label>
