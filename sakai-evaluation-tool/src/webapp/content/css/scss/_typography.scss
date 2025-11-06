@@ -6,7 +6,7 @@
 .portletBody {
   
   .left-separator {
-    border-left: 1px solid #aaa;
+    border-left: 1px solid var(--sakai-border-color, #dfdfdf);
     padding-left: 5px !important;
     margin-left: 2px;
   }
@@ -31,17 +31,16 @@
   .title {
     font-size: 100%;
     font-weight: bold;
-    color: #000;
     .required {
-      color: red;
+      color: var(--bs-danger, #dc3545);
     }
   }
 
-  .matrix {
+.matrix {
     legend {
       font-weight: normal;
       font-size: 0.85em;
-      color: #000;
+      color: var(--bs-body-color, #212529);
     }
   }
 

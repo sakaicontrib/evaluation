@@ -33,11 +33,17 @@
     <div class="portletBody">
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-        <ul class="breadCrumb">
-            <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-            <li><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li>
-            <li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
-        </ul>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <nav aria-label="breadcrumb" class="flex-grow-1">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+              <li class="breadcrumb-item"><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li>
+            </ol>
+          </nav>
+          <div class="d-flex flex-wrap gap-2">
+            <a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a>
+          </div>
+        </div>
 
         <div rsf:id="message-for:*" class="alertMessage">
             <ul>
@@ -59,7 +65,7 @@
                     <span rsf:id="responseGroupStats" style="font-weight: bold;"><!-- evalresponders.stats -->10/100</span>
                     <a rsf:id="responseGroupEmailLink" href="evalaution_notifications.html"><!-- evalresponders.notifications.link -->Send email message to participants</a>
                 </div>
-                <table rsf:id="showGroupResponses:" style="width: 90%" class="evalsysTable">
+                <table rsf:id="showGroupResponses:" style="width: 90%" class="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
                             <th><span rsf:id="msg=evalresponders.user.name">Name</span></th>

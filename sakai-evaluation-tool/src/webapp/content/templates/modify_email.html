@@ -36,9 +36,17 @@
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
 		<div>
-  			<ul class="breadCrumb inactive">
-  				<li><span rsf:id="msg=summary.page.title">Summary</span></li><li rsf:id="control-emailtemplates-link"><a rsf:id="payload-component">My Email Templates</a></li><li class="lastCrumb" rsf:id="msg=modifyemail.page.title">Modify Email Template</li>
-  			</ul>
+  			<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  			  <nav aria-label="breadcrumb" class="flex-grow-1">
+  			    <ol class="breadcrumb mb-0">
+  			      <li class="breadcrumb-item"><span rsf:id="msg=summary.page.title">Summary</span></li>
+  			      <li class="breadcrumb-item"><a rsf:id="payload-component">My Email Templates</a></li>
+  			    </ol>
+  			  </nav>
+  			  <div class="d-flex flex-wrap gap-2">
+  			    Modify Email Template
+  			  </div>
+  			</div>
 		</div>  
 
 		<div rsf:id="message-for:*" class="alertMessage">
@@ -52,7 +60,7 @@
 		<form rsf:id="emailTemplateForm" name="emailTemplateForm" method="post">
 			<div style="width:80%">
 				<p rsf:id="msg=modifyemail.modify.text.instructions" class="instructionText">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
-				<div rsf:id="email_templates_fieldhints" class="highlightPanel" style="background:#eee;">
+			<div rsf:id="email_templates_fieldhints" class="eval-highlight rounded p-3 mb-3" data-eval-highlight="true">
 ${EvalTitle} - the title of this evaluation <br/>
 ${EvalStartDate} - the start date of this evaluation <br/>
 ${EvalDueDate} - the due date of this evaluation <br/>

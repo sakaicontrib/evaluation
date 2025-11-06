@@ -7,11 +7,6 @@
 /////////////////////////
 // Dashboard
 /////////////////////////
-.urgentStyle {
-  color: red;
-  font-weight: bold;
-}
-
 /////////////////////////
 // Evaluation
 /////////////////////////
@@ -21,32 +16,31 @@
       label {
         font-family: verdana, sans-serif;
         font-size: 11px;
-        color: #000000;
+        color: var(--bs-body-color, #212529);
         text-shadow: none;
-        background: #ffffff;
-        border: 1px solid #ffffff;
+        background: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #ced4da);
+        border-radius: var(--bs-border-radius, .375rem);
+        transition: background-color .2s ease, border-color .2s ease, color .2s ease;
         &:hover, &:focus {
-          color: #000000;
-          background: #ee4444;
-          @include background-image(linear-gradient(#ffffff, #ffa500));
-          border-color: #ffa500;
+          color: var(--bs-body-color, #212529);
+          background: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.15));
+          border-color: var(--bs-primary-border-subtle, rgba(13, 110, 253, 0.4));
         }
       }
       .selected {
         color: #ffffff;
         text-shadow: none;
-        background: #264c83;
-        @include background-image(linear-gradient(#3163ab, #1b355b));
-        border: 1px solid #0f1e34;
+        background: var(--bs-primary, #0d6efd);
+        border: 1px solid var(--bs-primary, #0d6efd);
         span {
           color: #ffffff;
         }
         &:hover, &:focus {
           color: #ffffff;
           text-shadow: none;
-          background: #264c83;
-          @include background-image(linear-gradient(#3163ab, #1b355b));
-          border: 1px solid #0f1e34;
+          background: var(--bs-primary, #0d6efd);
+          border: 1px solid var(--bs-primary, #0d6efd);
           span {
             color: #ffffff;
           }

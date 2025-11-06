@@ -1,3 +1,5 @@
+@use "helpers" as *;
+
 //====================================
 // LAYOUT
 //====================================
@@ -97,13 +99,13 @@
   .steppedRowContainer {
     > tbody > tr {
       &:nth-child(even) {
-        background: #fff;
+        background: var(--bs-body-bg, #fff);
       }
       &:nth-child(odd) {
-        background: #eee;
+        background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05));
       }
-      &::hover {
-        background: #fdffcc;
+      &:hover {
+        background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
       }
     }
   }
@@ -112,7 +114,7 @@
     padding-bottom: 24px;
     font-weight: bold;
     font-family: Arial, sans-serif;
-    color: #000;
+    color: var(--bs-emphasis-color, #000);
   }
   .steppedLabel {
     font-weight: normal;
@@ -243,7 +245,7 @@
           li.na {
             margin-right: 5px;
             padding-right: 5px !important;
-            border-right: 1px solid #CCCCCC;
+            border-right: 1px solid var(--sakai-border-color, #dfdfdf);
           }
         }
         label {

@@ -37,11 +37,17 @@
 
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li rsf:id="eval-start-text">Add Evaluation</li>
-			<li class="lastCrumb"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item">Add Evaluation</li>
+		    </ol>
+		  </nav>
+		  <div class="d-flex flex-wrap gap-2">
+		    <a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a>
+		  </div>
+		</div>
 
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
@@ -75,7 +81,7 @@
               <div rsf:id="chooseTemplate:" class="longtext">
               <h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
               <p rsf:id="msg=starteval.choose.template.desc" class="instructionText">Select the template to use for this evaluation. Templates define the questions used.</p>
-                  <table class="evalsysTable" style="width:60%">
+                  <table class="table table-striped table-hover align-middle" style="width:60%">
                       <tr>
                           <th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
                           <th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>
@@ -178,7 +184,7 @@
                          Results are not viewable until this date
                      </span>
                 </div>
-				<table class="evalsysTable" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
+				<table class="table table-striped table-hover align-middle" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
 					<tr rsf:id="showResultsToStudents:" id="showResultsToStudents">
 						<td width="33%" class="checkbox">
 							<input rsf:id="studentViewResults" type="checkbox" name="student_view_results" id="studentViewResults" />

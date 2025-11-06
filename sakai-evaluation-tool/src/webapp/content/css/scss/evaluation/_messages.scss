@@ -1,0 +1,103 @@
+/* Evaluation message + alert styling (legacy Part 7). */
+.alertMessage ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.alertMessage ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/*
+.label {outline:1px solid lime !important;width:40%;}
+*/
+.validFail {
+  /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/
+}
+
+.validFail .label {
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+}
+
+.validFail label {
+  color: var(--bs-body-color, #212529) !important;
+}
+
+.validFailGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
+}
+
+.validFail .validFailGlyph {
+  display: inline;
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
+}
+
+.compulsory {
+  /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/
+}
+
+.compulsory .label {
+  /* color: #b11; font-weight: bold */
+}
+
+.compulsory label {
+  /* color: #000 !important */
+}
+
+.compulsoryGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
+}
+
+.compulsory .compulsoryGlyph {
+  display: inline;
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
+}
+
+.messageAlert,
+.messageInformation,
+.messageComfirm {
+  position: relative;
+}
+
+.messageAlert::before,
+.messageInformation::before,
+.messageComfirm::before {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+}
+
+.messageAlert::before { content: "⚠"; }
+.messageInformation::before { content: "ℹ"; }
+.messageComfirm::before { content: "✔"; }
+
+.messageAlert ul, .messageInformation ul, .messageComfirm ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.messageAlert ul li, .messageInformation ul li, .messageComfirm ul li {
+  padding: .25rem 0;
+  margin: 0;
+}
+
+.lighthighlight {
+  padding-left: .5em;
+}
+
+/*PART 7 end*/

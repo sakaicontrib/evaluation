@@ -147,7 +147,7 @@ public class HumanDateRenderer {
         UIMessage output = UIMessage.make(container, fieldName, message, parameters);
         output.decorate(new UITooltipDecorator( UIOutput.make(df.format(renderDate)) ));
         if (diffInDays >= 0 && diffInDays <= WARNING_DAYS) {
-            output.decorate(new UIStyleDecorator( "urgentStyle" ));
+            output.decorate(new UIStyleDecorator("text-danger fw-semibold"));
         }
         String unixtime = String.valueOf(renderDate.getTime());
         output.decorate(new UIFreeAttributeDecorator("data-time", unixtime ));

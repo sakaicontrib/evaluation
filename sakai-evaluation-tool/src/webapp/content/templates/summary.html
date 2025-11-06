@@ -40,14 +40,16 @@
   <div class="portletBody dashboard">
     <div rsf:id="navIntraTool:" class="navIntraTool" />
 
-    <ul class="breadCrumb" rsf:id="toolsBox:">
-      <li class="lastCrumb">
-        <a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> New Evaluation</a>
-      </li>
-      <li class="lastCrumb">
-        <a href="template_title_desc.html" rsf:id="createTemplateLink" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> New Template</a>
-      </li>
-    </ul>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="btn btn-sm btn-primary">
+        <span class="bi bi-plus-lg" aria-hidden="true"></span>
+        New Evaluation
+      </a>
+      <a href="template_title_desc.html" rsf:id="createTemplateLink" class="btn btn-sm btn-outline-primary">
+        <span class="bi bi-plus-lg" aria-hidden="true"></span>
+        New Template
+      </a>
+    </div>
 
     <div rsf:id="message-for:*" class="alertMessage">
       <ul>
@@ -65,42 +67,33 @@
       <p rsf:id="evaluationsNone" class="instructionText indnt2">No evaluations to take</p>
 
       <div rsf:id="evaluationsList:" class="innerPanel">
-        <table class="evalsysTable">
-          <thead>
-            <tr>
-              <th rsf:id="msg=summary.evaluations.evaluation.title" style="white-space: normal;">Evaluation</th>
-              <th rsf:id="msg=summary.evaluation.status.title">Status</th>
-              <th rsf:id="msg=summary.evaluations.starts.title">Opens</th>
-              <th rsf:id="msg=summary.evaluations.ends.title">Closes</th>
-              <th rsf:id="reportsAvailableColumn">Reports</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr rsf:id="evaluationsCourseList:">
-              <td>
-                <a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
-                <span rsf:id="evaluationCourseLink_disabled" />
-              </td>
-              <td>
-                <span rsf:id="evaluationCourseStatus">Completed</span>
-              </td>
-              <td rsf:id="evaluationStartDate" nowrap="nowrap">
-                09/20/2005
-              </td>
-              <td rsf:id="evaluationDueDate" nowrap="nowrap">
-                09/27/2005
-              </td>
-              <td rsf:id="evalReport:" nowrap="nowrap">
-                <span rsf:id="evalReportDisplay"></span>
-                <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
-                <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
-              </td>
-              <td rsf:id="evalReportUnavailable:" nowrap="nowrap">
-                <span rsf:id="msg=controlevaluations.eval.report.not.permissions"></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div rsf:id="evaluationsCourseList:" class="border rounded p-3 mb-3 d-flex flex-column gap-3">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div class="d-flex flex-column">
+              <a rsf:id="evaluationCourseLink" href="take_eval.html" class="fw-semibold">Course Title</a>
+              <span rsf:id="evaluationCourseLink_disabled" />
+            </div>
+            <span rsf:id="evaluationCourseStatus" class="badge text-bg-secondary align-self-start">Completed</span>
+          </div>
+          <div class="row row-cols-2 row-cols-sm-4 g-3 small">
+            <div class="col">
+              <div class="text-muted" rsf:id="msg=summary.evaluations.starts.title">Opens</div>
+              <span rsf:id="evaluationStartDate" class="text-nowrap d-inline-block">09/20/2005</span>
+            </div>
+            <div class="col">
+              <div class="text-muted" rsf:id="msg=summary.evaluations.ends.title">Closes</div>
+              <span rsf:id="evaluationDueDate" class="text-nowrap d-inline-block">09/27/2005</span>
+            </div>
+          </div>
+          <div rsf:id="evalReport:" class="d-flex flex-wrap gap-2 small">
+            <span rsf:id="evalReportDisplay"></span>
+            <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
+            <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
+          </div>
+          <div rsf:id="evalReportUnavailable:" class="small text-muted">
+            <span rsf:id="msg=controlevaluations.eval.report.not.permissions"></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -112,7 +105,8 @@
             <span rsf:id="summary-be-evaluated-progress-none" class="no-evals-display instructionText"></span>
         </div>
         <div rsf:id="evaluatedInProgress:" class="evaluated_in_progress">
-          <table rsf:id="evalResponseTable:" class="beEvaluatedInProgressTable tablesorter evalsysTable">
+          <div class="table-responsive">
+            <table rsf:id="evalResponseTable:" class="table table-striped table-hover align-middle beEvaluatedInProgressTable tablesorter">
             <thead>
               <tr>
                 <th rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
@@ -145,7 +139,8 @@
                 </td>
               </tr>
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
 
         <div rsf:id="summary-be-evaluated-closed-header:" class="closedEvals">
@@ -153,7 +148,8 @@
             <span rsf:id="summary-be-evaluated-closed-none" class="no-evals-display instructionText"></span>
         </div>
         <div rsf:id="evaluatedClosed:" class="evaluated_closed">
-          <table rsf:id="evalResponseTable:" class="beEvaluatedClosedTable tablesorter evalsysTable">
+          <div class="table-responsive">
+            <table rsf:id="evalResponseTable:" class="table table-striped table-hover align-middle beEvaluatedClosedTable tablesorter">
             <thead>
               <tr>
                 <th rsf:id="msg=summary.evaluations.evaluation.title">Evaluation</th>
@@ -186,7 +182,8 @@
                 </td>
               </tr>
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -221,7 +218,8 @@
              - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
                 a user would need to know what the link does without clicking on it...
         -->
-        <table class="evalsysTable">
+        <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
           <tr>
             <th rsf:id="notification-title-title">Title</th>
             <th rsf:id="notification-from-title">From</th>
@@ -237,6 +235,7 @@
             <td>0</td>
           </tr>
         </table>
+        </div>
       </div>
     </div>
   </div>

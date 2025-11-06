@@ -111,7 +111,9 @@ public class NavBarRenderer {
                     developerHelperService.getUserHomeLocationURL( developerHelperService.getCurrentUserReference() ) );
             workspaceLink.decorate( targetDecorator );
 
-            UILink logoutLink = UILink.make( UIBranchContainer.make( joint, "navigation-cell:" ), "item-link", 
+            UIBranchContainer logoutCell = UIBranchContainer.make( joint, "navigation-cell:" );
+            logoutCell.decorate( new UIFreeAttributeDecorator( "style", "display:none;" ) );
+            UILink logoutLink = UILink.make( logoutCell, "item-link", 
                     UIMessage.make( "summary.logout.link.label", new Object[] { serverConfigurationService.getString( SAK_PROP_UI_SERVICE, UI_SERVICE_DEFAULT ) } ), 
                     developerHelperService.getPortalURL() + "/logout" );
             logoutLink.decorate( targetDecorator );

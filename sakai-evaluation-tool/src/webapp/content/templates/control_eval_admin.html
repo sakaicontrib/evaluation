@@ -39,11 +39,15 @@
 		
 		<div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-			<li rsf:id="msg=controlevaladmin.page.title" class="lastCrumbNoFloat">Control Eval Admin</li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+		      <li class="breadcrumb-item active" aria-current="page">Control Eval Admin</li>
+		    </ol>
+		  </nav>
+		</div>
 
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
@@ -55,7 +59,7 @@
 		
 		<form rsf:id="eval-admin-form" class="inlineBlockForm">
 			
-			<table class="evalsysTable">
+			<table class="table table-striped table-hover align-middle">
 				
 				<thead>
 					<tr>
@@ -88,7 +92,7 @@
 				
 			</table>
 			
-			<table class="evalsysTable">
+			<table class="table table-striped table-hover align-middle">
 				
 				<thead>
 					<tr>

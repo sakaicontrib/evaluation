@@ -84,6 +84,9 @@ public class ScaledRenderer implements ItemRenderer {
 
             // setup simple variables to make code more clear
             boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting);
+            if (colored) {
+                compact.decorate(new UIStyleDecorator("compact-colored"));
+            }
 
             String compactDisplayStart = scaleOptions.get(0);
             String compactDisplayEnd = scaleOptions.get(optionCount - 1);
@@ -115,10 +118,6 @@ public class ScaledRenderer implements ItemRenderer {
 
             // For the radio buttons
             UIBranchContainer compactRadioContainer = UIBranchContainer.make(compact, "compactRadioContainer:");
-            if (colored) {
-                UILink.make(compactRadioContainer, "idealImage", ScaledUtils.getIdealImageURL(scale));
-            }
-
             if (usesNA) {
                 scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
                 scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
@@ -188,10 +187,6 @@ public class ScaledRenderer implements ItemRenderer {
             }
 
             UIBranchContainer displayContainer = UIBranchContainer.make(radiobranchFullRow, containerId);
-
-            if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(scaleDisplaySetting) ) {
-                UILink.make(displayContainer, "idealImage", ScaledUtils.getIdealImageURL(scale));
-            }
 
             if (usesNA) {
                 scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
@@ -319,7 +314,6 @@ public class ScaledRenderer implements ItemRenderer {
             UIBranchContainer coloredBranch = null;
             if (colored) {
                 coloredBranch = UIBranchContainer.make(stepped, "coloredChoicesBranch:");
-                UILink.make(coloredBranch, "idealImage", ScaledUtils.getIdealImageURL(scale));
             }
 
             for (int count = 1; count <= optionCount; count++) {

@@ -35,17 +35,21 @@
 
      <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-    <ul class="breadCrumb">
-        <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-        <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-        <li rsf:id="msg=controlhierarchy.page.title" class="lastCrumbNoFloat">Hierarchy</li>
-    </ul>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+      <nav aria-label="breadcrumb" class="flex-grow-1">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+          <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Hierarchy</li>
+        </ol>
+      </nav>
+    </div>
 
     <h3 rsf:id="msg=controlhierarchy.table.hierarchy.header">Control Hierarchy</h3> 
     <a rsf:id="show-hide-groups" href="">Show/Hide Groups</a> <a rsf:id="show-hide-users" href="">Show/Hide Users</a>
     <div rsf:id="hierarchy-tree:">
         <!-- Everything in here is replaced by the html in /evaluation/tool/src/webapp/component-templates/hierarchy_controls.html -->
-        <table class="evalsysTable">
+        <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
                     <th rsf:id="hierarchy-header">Hierarchy Level</th>

@@ -48,17 +48,15 @@
     <body>
         <div class="portletBody">
             <div rsf:id="navIntraTool:" class="navIntraTool"/>
-            <ul class="breadCrumb">
-                <li>
-                    <a rsf:id="summary-link" href="summary.html">Summary</a>
-                </li>
-				<li>
-					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-				</li>
-                <li class="lastCrumbNoFloat">
-                    <span rsf:id="msg=administrate.search.breadcrumb.title">Search</span>
-                </li>
-            </ul>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <nav aria-label="breadcrumb" class="flex-grow-1">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+                  <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><span rsf:id="msg=administrate.search.breadcrumb.title">Search</span></li>
+                </ol>
+              </nav>
+            </div>
             <div rsf:id="message-for:*" class="alertMessage">
                 <ul>
                     <li>
@@ -68,9 +66,7 @@
             </div>
             <div rsf:id="msg=administrate.search.instruction" class="instructionText">
             </div>
-            <div rsf:id="results-max" class="messageInformation">
-                <span class="bi bi-info-circle-fill" aria-hidden="true"></span>
-            </div>
+            <div rsf:id="results-max" class="messageInformation alert alert-info ps-5 mb-3" role="status" aria-live="polite"></div>
             <div class="navPanel"> 
                 <div class="viewNav">
                     <form rsf:id="search-form">
@@ -94,7 +90,7 @@
             </div>
             <!--note: form does not display if there is no results returned from the search-->
             <div rsf:id="searchResults:">
-				<table class="evalsysTable">
+				<table class="table table-striped table-hover align-middle">
 					<thead>
 						<tr>
 							<th id="item-title">

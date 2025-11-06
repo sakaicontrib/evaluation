@@ -55,11 +55,20 @@
 
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li rsf:id="page-title" class="lastCrumbNoFloat">My Items</li>
-			<li class="lastCrumb"><a rsf:id="expert-items-link" href="control_expert_items.html"  class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Expert Items</a></li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+			<nav aria-label="breadcrumb" class="flex-grow-1">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+					<li class="breadcrumb-item active" aria-current="page" rsf:id="page-title">My Items</li>
+				</ol>
+			</nav>
+			<div class="d-flex gap-2">
+				<a rsf:id="expert-items-link" href="control_expert_items.html" class="btn btn-sm btn-primary">
+					<span class="bi bi-plus-lg" aria-hidden="true"></span>
+					Expert Items
+				</a>
+			</div>
+		</div>
 					
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
@@ -106,7 +115,7 @@
 		
 		<!-- This block (list items) is not visible if there are no items visible -->
         <form rsf:id="copyForm">
-  			<table rsf:id="item-listing:" class="evalsysTable">
+			<table rsf:id="item-listing:" class="table table-striped table-hover align-middle">
   				<thead class="skip" style="display:none">
   					<tr>
   						<th id="itemMD">
@@ -140,7 +149,7 @@
   							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
   							<span rsf:id="item-modify-dummy"></span> | 
   							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
-  							<input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
+						<input rsf:id="item-copy-link" type="submit" class="btn btn-link p-0 align-baseline link-button" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</td>
   						<td headers="itemOwner" style="margin:0em 1em;">
   							<span rsf:id="item-owner">owner displayname</span>
@@ -160,7 +169,7 @@
   							<a rsf:id="item-modify-link" href="modify_scaled.html" rel="facebox">Edit</a>
   							<span rsf:id="item-modify-dummy"></span> |
   							<a rsf:id="item-preview-link" href="preview_item.html" rel="facebox">Preview</a> |
-  							<input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
+						<input rsf:id="item-copy-link" type="submit" class="btn btn-link p-0 align-baseline link-button" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</td>
   						<td style="margin:0em 1em;">
   							<span rsf:id="item-owner">owner displayname</span>

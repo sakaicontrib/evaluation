@@ -40,12 +40,16 @@
         <div class="portletBody">
             <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-            <ul class="breadCrumb">
-                <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-                <li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-                <li><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
-                <li rsf:id="page-title" class="lastCrumbNoFloat" >Add / Modify</li>
-            </ul>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <nav aria-label="breadcrumb" class="flex-grow-1">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+                  <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+                  <li class="breadcrumb-item"><a rsf:id="hierarchy-toplink" href="hierarchy.html">Hierarchy</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Add / Modify</li>
+                </ol>
+              </nav>
+            </div>
 
             <h3 rsf:id="msg=modifynoderules.page.title">Hierarchy Node Rules</h3>
 
@@ -74,7 +78,7 @@
                     </span>
                 </div>
 
-                <table class="evalsysTable">
+                <table class="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
                             <th rsf:id="rules-header">Criteria</th>

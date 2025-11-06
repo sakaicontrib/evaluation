@@ -1,0 +1,534 @@
+/* Evaluation utilities, Sakai variants, and misc helpers (legacy Part 8). */
+.navIntraTool a.inactive {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/*Special style to force divs to be able to work right when floating in all browsers*/
+.cleaner {
+  clear: both;
+  height: 1px;
+  font-size: 1px;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+/*sakai fieldsets are invisible,complex forms in this tool have the following class to organize themselves visually*/
+.visibleFS {
+  border: 1px solid var(--sakai-border-color, #dfdfdf);
+  padding: 1em .5em;
+}
+
+.visibleFS legend {
+  padding: .2em;
+  margin-left: 1em;
+  display: inline;
+  width: auto;
+  border: none;
+}
+
+.checkbox input[type="checkbox"] {
+  margin-left: auto;
+}
+
+label.block {
+  padding: 0 0 .3em 0;
+}
+
+/*squeeze the default rteditor into a smaller space*/
+.evalEditorSmall {
+  width: 50em;
+}
+
+/*delete button*/
+.hideComment { padding-left: 0; background: none; }
+
+.editComment { padding-left: 0; background: none; }
+
+.actionArrow { background: var(--bs-danger-bg-subtle, rgba(220, 53, 69, 0.15)); font-weight: bold; padding: 2px 5px 6px 13px; }
+
+.removeLink {
+  // Silk icon removed; use inline <span class="bi bi-trash"> in markup
+  background: none;
+  padding-left: 0;
+  text-indent: 0;
+  overflow: visible;
+  height: auto;
+  width: auto;
+}
+
+.editLink {
+  // Silk icon removed; use inline <span class="bi bi-pencil"> in markup
+  background: none;
+  padding-left: 0;
+}
+
+.preview {
+  // Old play icon removed; use inline <span class="bi bi-zoom-in"> in markup where needed
+  padding-left: 0.5em;
+}
+
+a.more { background: none; padding-left: 0; padding-right: 0; }
+
+a.less { background: none; padding-right: 0; padding-left: 0; }
+
+.removeArrow { background: none; }
+
+.removeDiv {
+  margin-top: -10px;
+  margin-left: 100%;
+}
+
+.removeFooter {
+  background-color: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-top-color: var(--bs-body-bg, #fff);
+}
+
+.removeBody {
+  background-color: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+  margin-bottom: -5px;
+  margin-top: -5px;
+}
+
+.childControls {
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: 10px;
+}
+
+.childItem:hover {
+  background-color: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+}
+
+.childItemDrag {
+  cursor: move;
+}
+
+/*************************************/
+/* Inline Edit */
+/* hover effect over editable element */
+.inlineEdit-invitation {
+  border: 1px solid var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.4));
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+  cursor: pointer;
+  /*margin : -1px;*/
+}
+
+.inlineEdit-tooltip {
+  position: absolute;
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+  border: 1px solid var(--bs-border-color, #ced4da);
+  font: normal 75% sans-serif;
+  padding: 3px 5px;
+}
+
+/*Adapted from the SideBar Nav, this is for inlinePopups
+*/
+.popupMenu li.selectedTool span {
+  font-weight: bold;
+  background-color: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+  display: block;
+  padding-bottom: 2px;
+  padding-right: 10px !important;
+  padding-left: 10px;
+  padding-top: 2px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  background-position: center left !important;
+  background-repeat: no-repeat !important;
+  /*filter:alpha(opacity=50);
+  opacity: 0.50;
+  moz-opacity: 0.50;*/
+}
+
+.popupMenu li span {
+  /*comment this line for a return to sanity
+  display:none*/
+}
+
+.popupMenu li a:link, #toolMenu li a {
+  display: block;
+  text-decoration: none;
+  color: var(--bs-body-color, #212529);
+  padding-bottom: 2px;
+  padding-left: 10px !important;
+  padding-right: 10px;
+  padding-top: 2px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  background-position: center left !important;
+  background-repeat: no-repeat !important;
+}
+
+.popupMenu li a:hover {
+  text-decoration: none;
+  color: var(--bs-body-color, #212529);
+  background: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.15));
+}
+
+.popupMenu li a.selected {
+  text-decoration: none;
+  color: var(--bs-body-color, #212529);
+  cursor: text;
+}
+
+.popupMenu li a.selected:hover {
+  text-decoration: none;
+  color: var(--bs-body-color, #212529);
+  cursor: text;
+}
+
+.popupMenu {
+  width: 10.2em;
+  padding: 0;
+  margin: 0;
+  color: var(--bs-body-color, #212529);
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05));
+}
+
+.popupMenu ul {
+  width: auto;
+  list-style: none;
+  margin: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.popupMenu li {
+  margin: 0;
+  width: auto;
+  padding: 0;
+  border-bottom: 1px solid var(--bs-body-bg, #fff);
+  text-align: left;
+}
+
+/* Overlay */
+#overlay {
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  z-index: 1000;
+}
+
+#overlay div {
+  width: 300px;
+  margin: 100px auto;
+  background-color: var(--bs-body-bg, #fff);
+  border: 1px solid var(--bs-border-color, #ced4da);
+  padding: 15px;
+  text-align: center;
+}
+
+.previewEvalNote {
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.4));
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+  width: 97%;
+}
+
+.validFail {
+  /* top parent of failed group 
+    can have a border, for example, or just style children below
+   */
+}
+
+.validFail .label {
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+}
+
+.validFail label {
+  color: var(--bs-body-color, #212529) !important;
+}
+
+.validFailGlyph {
+  display: none;
+  /* do not show if not child of .validFail */
+}
+
+.validFail .validFailGlyph {
+  display: inline;
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+  font-size: 100%;
+  padding: 0;
+}
+
+.infoItem { padding-left: 0; background: none; }
+
+.itemListReport ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.itemListReport .showcomments, .itemListReport .showtextresponses {
+  margin: 1em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-left: 3.5%;
+}
+
+.itemListReport .showcomments ol, .itemListReport .showtextresponses ol {
+  list-style: lower-alpha;
+  list-style-position: outside;
+  line-height: 150%;
+}
+
+.itemListReport .showcomments ol li, .itemListReport .showtextresponses ol li {
+  padding: 0.4em;
+}
+
+.listPager {
+  color: var(--bs-secondary-color, #6c757d);
+  padding: 0 3px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.listPager a { text-decoration: none !important; padding: 0 1em; border: 1px solid var(--bs-border-color, #ced4da); background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05)) !important; }
+
+.listPager span {
+  padding: 0 1em;
+  border: 1px solid var(--bs-border-color, #ced4da);
+  background: var(--bs-body-bg, #fff);
+}
+
+.listPager a:hover { text-decoration: none !important; padding: 0 1em; border: 1px solid var(--bs-primary-border-subtle, rgba(13, 110, 253, 0.4)); background: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.15)) !important; }
+
+.listPager span.listPagerCount {
+  border: 0;
+  font-size: .8em;
+}
+
+/* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
+	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
+	http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/
+/*
+.fullDisplayHorizontal ul{
+	padding:0 0 2em  0;
+	margin:1em 0;
+	clear:both;
+	float:none;
+	height:100%;
+	overflow:hidden;
+}
+.fullDisplayHorizontal  ul li{
+	padding:0;
+	margin:2px 0 ;
+	list-style: none !important;
+	float:left;
+	height:2.6em;
+	width:30%;
+}
+.fullDisplayHorizontal  ul li input{
+	display:block;
+	float:left;
+	margin-top:.55em
+}
+.fullDisplayHorizontal ul li  label{
+	padding:2px;
+	background:var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+	width:70%;
+	border:1px solid var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.4));
+	display:block;
+	float:left;
+}
+.fullDisplayHorizontal ul li  label:hover{
+	background:var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.25));
+	border:1px solid var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.5));
+	
+}
+.fullDisplayHorizontal .na{
+	margin:1em .2em;
+}*/
+/* Group template item - add existing item into group */
+.dropItem {
+  padding-bottom: 1px;
+  background: none; // use inline <span class="bi bi-file-earmark-plus">
+}
+
+.JSshow {
+  padding-right: 5px;
+  text-decoration: none;
+}
+
+/* fake-fieldset to fix EVALSYS-551 */
+.fake-fieldset .fieldset {
+  margin-top: 20px;
+  position: relative;
+  padding: 8px;
+  padding-top: 16px;
+  border: 1px solid var(--sakai-border-color, #dfdfdf);
+}
+
+.fake-fieldset .legend {
+  left: 0.5em;
+  top: -15px;
+  position: absolute;
+  font-weight: bold;
+  font-size: 110%;
+  margin-left: 32px;
+  padding: 6px 10px;
+}
+
+.elementAlertBack {
+  background: none; // use inline <span class="bi bi-exclamation-triangle-fill">
+  padding-right: 0;
+}
+
+.elementAlertFront {
+  background: none; // use inline <span class="bi bi-exclamation-triangle-fill">
+  padding-left: 0;
+}
+
+/* style selection controls fieldset */
+.selectionsItemListNew {
+  width: 95%;
+  border-color: var(--sakai-border-color, #dfdfdf);
+  border-style: solid;
+  border-width: 2px;
+  padding: .5em;
+  list-style: none;
+}
+
+.selectionsItemListNew legend {
+  padding: .3em .7em;
+  color: orange;
+  font-size: 110%;
+  margin-left: 1em;
+}
+
+.column {
+  width: 25%;
+}
+
+/* hierarchy */
+.noTextIndent {
+  text-indent: 0;
+}
+
+.inlineLink {
+  font-size: 0.9em;
+}
+
+.eval-highlight {
+  border: 1px solid var(--sakai-border-color, var(--bs-border-color, rgba(33, 37, 41, 0.15)));
+}
+
+input.btn-link.link-button {
+  background-color: transparent;
+  border: 0;
+  color: var(--link-color, var(--bs-link-color, #0d6efd));
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+input.btn-link.link-button:hover,
+input.btn-link.link-button:focus {
+  color: var(--link-hover-color, var(--link-color, var(--bs-link-color, #0d6efd)));
+  text-decoration: underline;
+  box-shadow: none;
+}
+
+input.btn-link.link-button:focus-visible {
+  outline: 2px solid var(--link-color, var(--bs-link-color, #0d6efd));
+  outline-offset: 2px;
+}
+
+td.alignCenter,
+td.actions {
+  text-align: center;
+}
+
+td.checkboxes > span:nth-child(2n+1) {
+  clear: left;
+  float: left;
+  width: 140px;
+}
+
+td.checkboxes > span:nth-child(2n) {
+  float: left;
+}
+
+.actions .saveButton {
+  margin-right: 5px;
+}
+
+.alignCenter select {
+  margin: 0 5px 0 0;
+}
+
+div.action {
+  margin-bottom: 5px;
+}
+
+div.action span.cancelButtoncancel input[type="submit"], div.action span.cancelButtoncancel input[type="button"]{
+  float:right;
+}
+
+div.alertMessage ul {
+  margin:0px;
+}
+
+p.alertMessage ul {
+  margin:0px;
+}
+
+/* tablesorter - mostly on the dashboard */
+table.tablesorter th.header {
+    cursor: pointer; 
+    background-repeat: no-repeat; 
+    background-position: center left; 
+}
+
+table.tablesorter th.header.headerSortUp { 
+    background-image: url(../images/tipsy-north.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+
+table.tablesorter th.header.headerSortDown {
+    background-image: url(../images/tipsy-south.gif); 
+    font-weight: bold;
+    padding-left: 14px !important;
+}
+
+/* admin checkbox alignment - EVALSYS-1250 */
+.administrate-form .cbxmultlftalgn label {
+    padding-left: 1.7em;
+}
+.administrate-form .cbxmultlftalgn input.cbx {
+    float:left;
+    position: absolute;
+}
+
+.matrixHeader {
+  float: right;
+  overflow: hidden;
+  width: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+.steppedRowContainer > tbody > tr:nth-child(even) {
+  background: var(--bs-body-bg, #fff);
+}
+.steppedRowContainer > tbody > tr:nth-child(odd) {
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05));
+}
+.steppedRowContainer > tbody > tr:hover  {
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+}

@@ -43,12 +43,14 @@
 
 <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-<div>
-	<ul class="breadCrumb">
-		<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-		<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-		<li rsf:id="msg=modifyscale.page.title" class="lastCrumbNoFloat">Add/Edit Scale</li>
-	</ul>
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+	<nav aria-label="breadcrumb" class="flex-grow-1">
+		<ol class="breadcrumb mb-0">
+			<li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+			<li class="breadcrumb-item active" aria-current="page" rsf:id="msg=modifyscale.page.title">Add/Edit Scale</li>
+		</ol>
+	</nav>
 </div>
 
 <div rsf:id="message-for:*" class="alertMessage">

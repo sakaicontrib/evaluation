@@ -693,3 +693,14 @@ evalsys.toggleReportFormat = function( formName )
         }
     }
 };
+
+evalsys.setItemOperationsState = function(target, enabled) {
+    var $element = $(target);
+    if (!$element || $element.length === 0) {
+        return;
+    }
+    $element.addClass('item-operations alert d-flex flex-wrap align-items-center gap-2 py-2 px-3');
+    $element.toggleClass('alert-warning', !!enabled);
+    $element.toggleClass('alert-secondary', !enabled);
+    $element.toggleClass('item-operations--enabled', !!enabled);
+};

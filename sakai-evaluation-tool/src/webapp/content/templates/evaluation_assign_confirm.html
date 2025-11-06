@@ -33,13 +33,19 @@
 <body>
     <div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
-        <ul class="breadCrumb">
-            <li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-            <li rsf:id="eval-start-text">Add Evaluation</li>
-            <li><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
-            <li rsf:id="msg=assigneval.page.title">Assign Groups</li>
-            <li class="lastCrumb" rsf:id="msg=evaluationassignconfirm.page.title">Confirm Assignment</li>
-        </ul>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <nav aria-label="breadcrumb" class="flex-grow-1">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+              <li class="breadcrumb-item">Add Evaluation</li>
+              <li class="breadcrumb-item"><a rsf:id="eval-settings-link" href="evaluation_settings.html">Evaluation Settings</a></li>
+              <li class="breadcrumb-item">Assign Groups</li>
+            </ol>
+          </nav>
+          <div class="d-flex flex-wrap gap-2">
+            Confirm Assignment
+          </div>
+        </div>
         <div rsf:id="message-for:*" class="alertMessage">
             <ul>
 				<li>Message for user here</li>
@@ -93,7 +99,7 @@
             Individual Groups Selected:
         </h4>
         <p rsf:id="noGroupsSelected" class="instructionText indnt1">No groups selected</p>
-        <table rsf:id="showSelectedGroups:" style="width:70%" class="evalsysTable indnt1">
+        <table rsf:id="showSelectedGroups:" style="width:70%" class="table table-striped table-hover align-middle indnt1">
             <tr rsf:id="groups:">
                 <td width="60%">
                     <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group" target="_blank">link</a>)</span>
@@ -109,7 +115,7 @@
                 Individual Hierarchy Nodes Selected:
             </h4>
             <span rsf:id="noNodesSelected" class="instructionText indnt1">No nodes selected</span>
-            <table rsf:id="showSelectedNodes:" style="width:70%" class="evalsysTable indnt1">
+            <table rsf:id="showSelectedNodes:" style="width:70%" class="table table-striped table-hover align-middle indnt1">
                 <tr rsf:id="nodes:">
                     <td width="60%">
                         <span rsf:id="nodeTitle">Department of Biology</span>
@@ -126,7 +132,7 @@
                 Adhoc Groups Selected:
             </h4>
             <p rsf:id="noAdhocSelected" class="instructionText indnt1">No groups selected</p>
-            <table rsf:id="showAdhocGroups:" style="width:70%" class="evalsysTable indnt1">
+            <table rsf:id="showAdhocGroups:" style="width:70%" class="table table-striped table-hover align-middle indnt1">
                 <tr rsf:id="groups:">
                     <td width="60%">
                         <span rsf:id="groupTitle">Group title</span> <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a>)</span>

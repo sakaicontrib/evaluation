@@ -41,10 +41,14 @@
                <div rsf:id="navIntraTool:" class="navIntraTool"/>
 		
 		<div>
-			<ul class="breadCrumb">
-				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-				<li rsf:id="report-groups-title" class="lastCrumbNoFloat">Choose Report Groups</li>
-			</ul>
+			<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+			  <nav aria-label="breadcrumb" class="flex-grow-1">
+			    <ol class="breadcrumb mb-0">
+			      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			      <li class="breadcrumb-item active" aria-current="page">Choose Report Groups</li>
+			    </ol>
+			  </nav>
+			</div>
 		</div>
 		
 		<div rsf:id="message-for:*" class="alertMessage">

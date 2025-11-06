@@ -56,15 +56,6 @@ public class EvalToolConstants {
         "$context/content/images/down-arrow.gif" 
     };
 
-    //For preview_item.html
-    public static String[] COLORED_IMAGE_URLS = new String[] {
-        "$context/content/images/ideal-none.gif",
-        "$context/content/images/ideal-low.jpg",
-        "$context/content/images/ideal-mid.jpg",
-        "$context/content/images/ideal-high.jpg",
-        "$context/content/images/ideal-outside.jpg"
-    };
-
     // should match the images
     public static String BLUE_COLOR = "#d7ebf6";
     public static String GREEN_COLOR = "#8be8a2";
