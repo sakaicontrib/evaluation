@@ -49,7 +49,11 @@
       </table>
     </div>
   </div>
-  <script type="text/javascript">evalsys.initPreviewScales();</script>
+  <script type="text/javascript">
+    evalsys.runWhenReady(function() {
+      evalsys.initPreviewScales();
+    });
+  </script>
 </div>
 </body>
 </html>

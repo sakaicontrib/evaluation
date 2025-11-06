@@ -18,9 +18,13 @@
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="/sakai-evaluation-tool/content/js/eval.portal.shim.js" type="text/javascript"></script>
 </head>
 <body>
 <div class="evaluation preview-item">
+  <div class="preview-actions" style="margin-bottom:1rem;">
+    <button type="button" class="btn btn-outline-secondary" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;">Back</button>
+  </div>
   <div id="item_container">
     <div rsf:id="previewed-item:">
       <!-- DIV tag for item renderer - everything in here is replaced -->

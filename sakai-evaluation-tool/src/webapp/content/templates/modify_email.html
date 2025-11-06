@@ -27,7 +27,7 @@
     <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
     <!-- end standard on all pages -->
     <script type="text/javascript" src="/library/js/spinner.js"></script>
-    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 
@@ -74,9 +74,9 @@ ${URLtoSystem} - the main URL to the system this is running in <br/>
 ${URLtoAddItems} - the direct URL to add items to an evaluation <br/>
 ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
 				</div>
-                <div>
-                    <label rsf:id="msg=modifyemail.template.subject" for="emailSubject">Subject:</label>
-                    <input rsf:id="emailSubject" type="text" id="emailSubject" size="80" maxlength="250" />
+                <div class="mb-3">
+                    <label rsf:id="msg=modifyemail.template.subject" for="emailSubject" class="form-label fw-semibold">Subject</label>
+                    <input rsf:id="emailSubject" type="text" id="emailSubject" size="80" maxlength="250" class="form-control" />
                 </div>
 				<textarea rsf:id="emailMessage" rows="20" cols="120" name="emailMessage" id="emailMessage">
                      The text of the email message will appear here

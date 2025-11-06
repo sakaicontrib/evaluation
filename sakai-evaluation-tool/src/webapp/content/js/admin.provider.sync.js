@@ -15,18 +15,12 @@
 var evalsysAdminSync = evalsysAdminSync || {};
 
 evalsysAdminSync.resizeFrame = function(updown) {
-	try {
-		var clientH, frame = parent.document.getElementById(window.name);
-		if (frame) {
-			if (updown === 'shrink') {
-				clientH = document.body.clientHeight;
-			} else {
-				clientH = document.body.clientHeight + 70;
-			}
-			$(frame).height(clientH);
-		}
-	} catch(e) {
+	if (typeof evalsys === "undefined" || typeof evalsys.resizeEmbeddedFrame !== "function") {
+		return;
 	}
+	evalsys.resizeEmbeddedFrame({
+		extra: updown === 'shrink' ? 0 : 70
+	});
 }
 
 
@@ -99,4 +93,3 @@ $(document).ready(function(){
 		evalsysAdminSync.resizeFrame('grow');
 	});
 });
-

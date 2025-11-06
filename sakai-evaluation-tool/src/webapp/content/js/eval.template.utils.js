@@ -31,20 +31,16 @@ var evalTemplateUtils = (function() {
             closedGroups = [];     // keep track of groups a user closes: EVALSYS-825
 
     function resizeFrame(updown, height) {
+        if (typeof evalsys === "undefined" || typeof evalsys.resizeEmbeddedFrame !== "function") {
+            return;
+        }
         try {
-            var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40,
-                frame = parent.document.getElementById(window.name),
-                clientH = "";
-
-            if (frame) {
-                if (updown === -1) {
-                    clientH = document.body.clientHeight;
-                }
-                else {
-                    clientH = document.body.clientHeight + thisHeight; //increasing the height
-                }
-                $(frame).height(clientH);
+            var thisHeight = typeof height === "undefined" ? 280 : Number(height) + 40;
+            if (isNaN(thisHeight)) {
+                thisHeight = 0;
             }
+            var extra = updown === -1 ? 0 : thisHeight;
+            evalsys.resizeEmbeddedFrame({ extra: extra });
         } catch(e) {
             evalTemplateUtils.debug.error("Frame resize did not work. Error: %o", e, e);
         }
