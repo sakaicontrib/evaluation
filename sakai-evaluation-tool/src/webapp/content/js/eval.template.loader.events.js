@@ -311,15 +311,15 @@ var evalTemplateLoaderEvents = (function($) {
                         checkBoxes_ALL.parents("label").removeClass("selectable");
                         checkBoxes_ALL.parents("label").removeClass("notselectable");
                         submitButton.disabled = true;
-                        submitButtonBlock.className="itemOperations";
+                        evalsys.setItemOperationsState(submitButtonBlock, false);
                     }else if(count_CheckBoxes_CHECKED < 2){
                         //alert("select less than 2 items,disable submit button");
                         submitButton.disabled = true;
-                        submitButtonBlock.className="itemOperations";
+                        evalsys.setItemOperationsState(submitButtonBlock, false);
                     }else{
                         //alert("select 2 or more items,enable submit button");
                         submitButton.disabled = false;
-                        submitButtonBlock.className="itemOperationsEnabled";
+                        evalsys.setItemOperationsState(submitButtonBlock, true);
                     }
             },
             extractSelectedItems : function(e){

@@ -64,7 +64,7 @@ function enableOrderButtons() {
                     setIndex(sortableIds[0], 0);
                 });
         $("#saveReorderButton").attr('disabled', false);
-        $("#orderInputs").attr("class","itemOperationsEnabled");
+        evalsys.setItemOperationsState($('#orderInputs'), true);
     }catch(e){}
 }
 
@@ -72,7 +72,7 @@ function disableOrderButtons() {
     try {
         $("#revertOrderButton").attr('disabled', true);
         $("#saveReorderButton").attr('disabled', true);
-        $("#orderInputs").attr("class","itemOperations");
+        evalsys.setItemOperationsState($('#orderInputs'), false);
     }catch(e){}
 }
 
@@ -209,8 +209,8 @@ $(document).bind('block.rejectItem', function(e, ui, option) {
 $(document).bind('list.warning', function(e, ui, option, extra, err){
     var item = ui.item? ui.item : ui;
         if (option != "noAlert") {
-       $("div.itemList").find('.itemOperationsEnabled').remove();
-        var error = '<div class="itemOperationsEnabled">'
+       $("div.itemList").find('.item-operations--enabled').remove();
+        var error = '<div class="item-operations item-operations--enabled alert alert-warning d-flex flex-wrap align-items-center gap-2 py-2 px-3" role="alert">'
           + '<span class="bi bi-x-circle" aria-hidden="true"></span>'
           + '<span class="visually-hidden">Error</span> '
           + '<span class="instructionText">' + err + '</span> '

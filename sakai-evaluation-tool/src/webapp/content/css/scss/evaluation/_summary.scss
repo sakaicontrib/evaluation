@@ -1,0 +1,59 @@
+/* Evaluation summary page layout definitions (legacy Part 3). */
+.summaryBox {
+  border: var(--bs-border-width, 1px) solid var(--bs-border-color, #ced4da);
+  border-radius: var(--bs-border-radius, .5rem);
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.summaryBox .innerPanel {
+  padding: 0 10px;
+}
+
+.summaryBox .innerPanel table {
+  margin-bottom: 1em;
+}
+
+.summaryBox .innerPanel .sub-heading {
+  font-size: 1.3em;
+  color: var(--bs-heading-color, inherit);
+  font-weight: bold;
+}
+
+.summaryBox .innerPanel .triangle-open,
+.summaryBox .innerPanel .triangle-closed {
+  margin-left: -16px;
+  cursor: pointer;
+}
+
+.summaryBox .innerPanel .triangle-closed:before {
+  content: "\25B6";
+}
+
+.summaryBox .innerPanel .triangle-open:before {
+  content: "\25BC";
+}
+
+.innerPanel table th {
+  position: relative;
+  padding: 8px 10px;
+}
+
+.innerPanel table tbody td {
+  color: var(--bs-secondary-color, #6c757d);
+  padding-left: 10px;
+}
+
+.summaryTable h4 {
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08)) !important;
+  margin-top: 0;
+  padding: .5em;
+  border-bottom: 1px solid var(--sakai-border-color, #dfdfdf);
+}
+
+ol.summaryEvaluateList {
+  margin: 0px;
+  padding-left: 2em;
+}
+
+/*PART 3 end*/

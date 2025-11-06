@@ -31,20 +31,16 @@
 </head>
 <body>
     <div class="portletBody">
-        <ul class="breadCrumb">
-            <li>
-                <a rsf:id="summary-link" href="summary.html">Summary</a>
-            </li>
-            <li>
-                <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-            </li>
-            <li>
-                <a rsf:id="control-scales-link" href="control_scales.html">Control Scales</a>
-            </li>
-            <li rsf:id="msg=removescale.page.title" class="lastCrumbNoFloat">
-                Remove Scale
-            </li>
-        </ul>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <nav aria-label="breadcrumb" class="flex-grow-1">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+              <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+              <li class="breadcrumb-item"><a rsf:id="control-scales-link" href="control_scales.html">Control Scales</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Remove Scale</li>
+            </ol>
+          </nav>
+        </div>
         <div rsf:id="message-for:*" class="alertMessage">
             <ul>
                 <li>
@@ -52,8 +48,8 @@
                 </li>
             </ul>
         </div>
-        <div class="messageComfirm">
-            <ul>
+        <div class="messageComfirm alert alert-success ps-5 mb-3" role="status" aria-live="polite">
+            <ul class="mb-0 list-unstyled">
                 <li>
                     <span rsf:id="removescale.confirm.text">Are you sure you want to remove scale (title)? The removal is permanent.</span>
                 </li>

@@ -1,0 +1,550 @@
+/* Evaluation item displays (full, colored, vertical, matrix, etc.) – legacy Part 5. */
+.itemListNew {
+  list-style: none;
+}
+
+.itemListNew legend {
+  padding: 0;
+  margin: 0 0 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.itemListNew ol {
+  padding: 0;
+  margin: 13px 0 0;
+}
+
+.itemListNew li {
+  border: 1px solid var(--sakai-border-color, #dfdfdf);
+  padding: 1rem;
+  border-radius: var(--bs-border-radius, .375rem);
+}
+
+.itemListEval li {
+  list-style: none;
+}
+
+.itemScalePanelNACell {
+  background: var(--bs-body-bg, #fff) !important;
+}
+
+/*since these list items can contain list items,minimize inheritance*/
+.itemListEval li ul li, .itemListEval li ol li {
+  list-style: disc;
+  list-style-position: inside;
+  border: none;
+  margin-bottom: 3px;
+  margin-right: 3px;
+}
+
+.itemListEval li ol li {
+  list-style: decimal;
+  list-style-position: inside;
+  border: none;
+}
+
+.itemListNew .itemListEval h4 {
+  display: inline;
+  color: var(--bs-body-color, #212529);
+}
+
+.itemListNew .itemListEval li:hover h4 {
+  color: var(--bs-emphasis-color, #000);
+}
+
+.itemListEval label {
+}
+
+
+.itemScalePanel {
+  border: 1px solid var(--sakai-border-color, #dfdfdf);
+  width: 100%;
+}
+
+.itemScalePanel tr {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: .75rem;
+  width: 100%;
+}
+
+.itemScalePanel td {
+  padding: .3em .5em;
+  border: 0;
+  width: auto !important;
+}
+
+.itemScalePanel td.itemScalePanelNACell,
+.itemScalePanel td.compactDisplayStartGeneric,
+.itemScalePanel td.compactDisplayEndGeneric {
+  display: flex;
+  align-items: center;
+}
+
+.itemScalePanel td.itemScalePanelNACell {
+  grid-column: 1 / span 3;
+}
+
+.itemScalePanel td.compactDisplayStartGeneric {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.itemScalePanel td.compactDisplayEndGeneric {
+  grid-column: 3;
+  grid-row: 2;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.itemScalePanel .compactDisplayStart {
+}
+
+.itemScalePanel .compactDisplayEnd {
+}
+
+.itemScalePanel .compactDisplayPositive {
+  background: var(--bs-success-bg-subtle, rgba(25, 135, 84, 0.12));
+}
+
+.itemScalePanel .compactDisplayNegative {
+  background: var(--bs-danger-bg-subtle, rgba(220, 53, 69, 0.12));
+}
+
+.itemScalePanel td.idealScale {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.itemScalePanel td.idealScale div {
+  margin: 0;
+  width: 100%;
+}
+
+.itemScalePanel td.idealScale label {
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: none;
+}
+
+.itemScalePanel td.idealScale label input {
+  margin: 0 !important;
+}
+
+.itemScalePanel td.idealScale .scaleChoiceColored label:hover {
+  background: var(--bs-body-bg, #fff);
+}
+
+.itemScalePanel td.idealScale .scaleChoiceNotColored label:hover {
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05));
+}
+
+.scaleChoiceColored {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  background-color: transparent;
+  padding-top: 1px;
+}
+
+.compact.compact-colored .scaleChoiceNotColored {
+  display: none;
+}
+
+.compact.compact-colored .itemScalePanel td.idealScale {
+  padding: .2rem .35rem !important;
+  border-radius: var(--bs-border-radius, .375rem);
+  background-image: linear-gradient(90deg,
+    rgba(var(--bs-danger-rgb, 220, 53, 69), 0.35) 0%,
+    rgba(var(--bs-orange-rgb, 253, 126, 20), 0.35) 30%,
+    rgba(var(--bs-warning-rgb, 255, 193, 7), 0.3) 60%,
+    rgba(var(--bs-success-rgb, 25, 135, 84), 0.35) 100%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px var(--bs-border-color, #ced4da);
+}
+
+.scaleChoiceNotColored {
+  padding-top: 2px;
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.scaleChoiceNotColored .scaleItemLabelSelected {
+  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.2));
+}
+
+.scaleChoiceColored .scaleItemLabelSelected {
+  background: var(--bs-body-bg, #fff);
+}
+
+.itemScalePanelNACell {
+  background: transparent !important;
+}
+
+.fullVertical ol li {
+  margin: 0;
+  padding: .3em;
+  border: none;
+  list-style: none !important;
+}
+
+td.fullDisplayHorizontalColoredWrapper {
+  padding: 0 40px;
+}
+
+.fullDisplayHorizontalColored {
+  margin-top: 0 !important;
+  position: relative;
+  border-radius: var(--bs-border-radius, .375rem);
+  background-color: var(--bs-body-bg, #fff);
+  /* Fallback gradient for browsers without CSS custom properties */
+  background-image: linear-gradient(90deg,
+    rgba(220, 53, 69, 0.35) 0%,
+    rgba(253, 126, 20, 0.35) 30%,
+    rgba(255, 193, 7, 0.3) 60%,
+    rgba(25, 135, 84, 0.35) 100%);
+  /* Preferred gradient that follows the theme palette */
+  background-image: linear-gradient(90deg,
+    rgba(var(--bs-danger-rgb, 220, 53, 69), 0.35) 0%,
+    rgba(var(--bs-orange-rgb, 253, 126, 20), 0.35) 30%,
+    rgba(var(--bs-warning-rgb, 255, 193, 7), 0.3) 60%,
+    rgba(var(--bs-success-rgb, 25, 135, 84), 0.35) 100%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px var(--bs-border-color, #ced4da);
+}
+
+.fullDisplayHorizontalColored .fullDisplayHorizontalScaleNaCell {
+  background: var(--bs-body-bg, #fff);
+}
+
+@media (forced-colors: active) {
+  .fullDisplayHorizontalColored {
+    background-image: none;
+    box-shadow: inset 0 0 0 1px CanvasText;
+  }
+}
+
+.fullDisplayHorizontalScale td {
+  padding: .75rem;
+  vertical-align: middle;
+  text-align: center;
+  white-space: normal;
+}
+
+.fullDisplayHorizontalScaleNaCell {
+  padding: 0;
+  border: 1px solid var(--bs-danger-border-subtle, rgba(220, 53, 69, 0.4));
+  border-radius: var(--bs-border-radius, .375rem);
+  background: transparent;
+}
+
+.fullDisplayHorizontal label {
+  font-weight: 600;
+}
+
+.fullDisplayHorizontalColored label {
+  color: #111;
+}
+
+.fullDisplayHorizontalScale span {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 600;
+  padding: .5rem .75rem !important;
+  border-radius: var(--bs-border-radius, .375rem);
+  transition: background-color .2s ease;
+}
+
+.fullDisplayHorizontalScale span:hover {
+  background-color: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+}
+
+.fullDisplayHorizontalScale .labelSelected {
+  background-color: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+}
+
+.fullDisplayHorizontalScale .labelSelected, .fullDisplayHorizontalColored .labelSelected {
+  padding: .5rem .75rem !important;
+}
+.fullDisplayHorizontalScale .labelSelected::before, .fullDisplayHorizontalColored .labelSelected::before { content: "✓"; margin-right: .5em; }
+
+.fullVertical, .fullDisplayHorizontal {
+  clear: both;
+  /* height:100%; EVALSYS-952*/
+  overflow: hidden;
+  padding: 0;
+}
+div.fullVertical {
+  margin-left: 40px;
+}
+.fullVertical li, .fullDisplayHorizontal li {
+  border: 1px solid var(--sakai-border-color, #dfdfdf) !important;
+  float: left;
+  height: 4em;
+  list-style: none !important;
+  background: var(--bs-body-bg, #fff);
+  border-radius: var(--bs-border-radius, .375rem);
+  overflow: hidden;
+  width: 15em;
+}
+
+.fullVertical li label, .fullDisplayHorizontal li label {
+  display: block;
+  margin: 0;
+  font-weight: normal;
+  text-indent: -2em;
+  padding: 0.5em 0.5em 0.5em 2.5em!important;
+  height: 100%;
+}
+
+.fullVertical li:hover, .fullDisplayHorizontal li:hover {
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.1));
+  cursor: pointer;
+}
+
+.fullVertical li {
+  float: none;
+  width: 50%;
+  height: auto;
+}
+
+.fullVertical li.checked, .fullDisplayHorizontal li.checked {
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+}
+
+.fullVertical li.checkedNA, .fullDisplayHorizontal li.checkedNA {
+  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.15));
+}
+
+.fullVertical li.na {
+  float: none;
+  width: 50% !important;
+  text-align: left;
+  height: auto;
+}
+
+.fullVertical li.na label, .fullDisplayHorizontal li.na {
+  border: 1px solid var(--bs-danger-border-subtle, rgba(220, 53, 69, 0.4)) !important;
+  border-radius: var(--bs-border-radius, .375rem);
+}
+@media (max-width: 600px) {
+  .fullDisplayHorizontalScale {
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  .fullDisplayHorizontalScale tr {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 100%;
+  }
+
+  .fullDisplayHorizontalScale td {
+    display: flex;
+    width: 100%;
+    padding: 0;
+  }
+
+  .fullDisplayHorizontalScale td span {
+    width: 100%;
+    justify-content: space-between;
+    border: 1px solid var(--sakai-border-color, #dfdfdf);
+  }
+
+  .fullDisplayHorizontalScale td label {
+    flex: 1 1 auto;
+    margin: 0;
+  }
+
+  .fullDisplayHorizontalScale td input[type="radio"] {
+    flex: 0 0 auto;
+  }
+
+  .itemScalePanel {
+    width: 100% !important;
+  }
+
+  .itemScalePanel tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    width: 100%;
+  }
+
+  .itemScalePanel td {
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+    padding: .25rem 0;
+    border: 0;
+  }
+
+  .itemScalePanel td.itemScalePanelNACell {
+    order: 1;
+  }
+
+  .itemScalePanel td.compactDisplayStartGeneric {
+    order: 2;
+    flex: 1 1 45%;
+    justify-content: flex-start;
+  }
+
+  .itemScalePanel td.compactDisplayEndGeneric {
+    order: 3;
+    flex: 1 1 45%;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .itemScalePanel td.idealScale {
+    order: 4;
+    width: 100% !important;
+  }
+}
+
+/*2nd toolbar item links*/
+.addItem {
+  // icon now provided in markup via <span class="bi bi-plus-lg">
+  padding-left: 0;
+  background: none;
+}
+
+.goToList {
+  // icon now provided in markup via <span class="bi bi-list-ul">
+  padding-left: 0;
+  background: none;
+}
+
+.exportAction {
+  // icon now provided in markup via <span class="bi bi-file-earmark-arrow-down">
+  padding-left: 0;
+  background: none;
+}
+
+.emailItem {
+  margin-left: 2em;
+  display: block;
+  height: 15px;
+  background: none;
+}
+
+/*see block items*/
+.steppedRowContainer {
+  border-collapse: collapse;
+}
+
+/*
+remove input width in template and use these instead
+*/
+td.exclude input {
+  padding: 0px;
+  margin: 4px 10px 4px 4px;
+}
+
+body:first-of-type td.exclude input {
+  padding: 0px;
+  margin: 4px 12px 4px 4px;
+}
+
+/*
+remove input width in template and use these instead
+*/
+
+.steppedRowContainer td td {
+  border: none;
+}
+
+.itemsListOddLine .steppedRowContainer td td {
+  border: none;
+}
+
+#toolTip {
+  padding: 3px;
+  border: 1px solid var(--bs-border-color, #ced4da);
+  position: absolute;
+  z-index: 10;
+  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+  display: none;
+}
+
+.questionCell {
+  width: 60%;
+}
+
+.NACell {
+  width: 75px !important;
+  padding-right: .5em;
+}
+
+.blockChoiceColored {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.blockChoiceColored label.blockItemLabelSelected {
+  background: var(--bs-body-bg, #fff);
+}
+
+.blockChoiceNotColored label.blockItemLabelSelected {
+  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.2));
+}
+
+.blockItemLabelSelectedNA {
+  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.2));
+}
+
+.blockChoiceColored label.blockItemLabel:hover {
+  background: var(--bs-body-bg, #fff);
+}
+
+.blockChoiceNotColored label.blockItemLabel:hover {
+  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.3));
+}
+
+.itemsListOddLine .blockChoiceNotColored label.blockItemLabel:hover {
+  background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.05));
+}
+
+label.blockItemLabel, label.blockItemLabelNA {
+  -moz-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  text-align: center;
+  display: inline-block;
+  width: 25px;
+}
+
+label.blockItemLabel input, label.blockItemLabelNA input {
+  margin: 3px 0px !important;
+}
+
+label.blockItemLabel:hover {
+  background: var(--bs-body-bg, #fff);
+}
+
+.itemDoneCheckShow { display: inline-block; }
+.itemDoneCheckShow::before { content: "✓"; }
+
+.blockItemHeaderHilite {
+  color: var(--bs-primary, #0d6efd);
+}
+
+/*PART 5 end*/

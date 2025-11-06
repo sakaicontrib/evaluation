@@ -219,27 +219,6 @@ public class BlockRenderer implements ItemRenderer {
                 scaleLabels[optionCount - count] = scaleOptions.get(count-1);
             }
 
-            // handle ideal coloring
-            String idealImage = "";
-            if (colored) {
-                String ideal = scale.getIdeal();
-                // Get the scale ideal value (none, low, mid, high )
-                if (ideal == null || "*NULL*".equals(ideal)) {
-                    // When no ideal is specified then just plain blue for both start and end
-                    idealImage = EvalToolConstants.COLORED_IMAGE_URLS[0];
-                } else if (EvalConstants.SCALE_IDEAL_LOW.equals(ideal)) {
-                    idealImage = EvalToolConstants.COLORED_IMAGE_URLS[1];
-                } else if (EvalConstants.SCALE_IDEAL_MID.equals(ideal)) {
-                    idealImage = EvalToolConstants.COLORED_IMAGE_URLS[2];
-                } else if (EvalConstants.SCALE_IDEAL_HIGH.equals(ideal)) {
-                    idealImage = EvalToolConstants.COLORED_IMAGE_URLS[3];
-                } else if (EvalConstants.SCALE_IDEAL_OUTSIDE.equals(ideal)) {
-                    idealImage = EvalToolConstants.COLORED_IMAGE_URLS[4];
-                } else {
-                    // use no decorators
-                }
-            }
-
             // Radio Buttons
             UISelect radioLabel = UISelect.make(blockStepped, "radioLabel", scaleValues, scaleLabels, null, false);
             String selectIDLabel = radioLabel.getFullID();
@@ -307,10 +286,6 @@ public class BlockRenderer implements ItemRenderer {
                 } else if ( childRenderProps.containsKey(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED) ) {
                     childRow.decorate( new UIStyleDecorator("compulsory") ); // must match the existing CSS class
                 }
-                if (colored) {
-                    UILink.make(childRow, "idealImage", idealImage);
-                }
-
                 // put in the item information (number and text)
                 UIOutput.make(childRow, "childNum", Integer.toString(displayNumber + j) );
                 UIVerbatim.make(childRow, "childText", childItem.getItemText());

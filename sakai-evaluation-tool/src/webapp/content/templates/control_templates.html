@@ -35,12 +35,18 @@
 
        <div rsf:id="navIntraTool:" class="navIntraTool"></div>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li class="lastCrumbNoFloat" rsf:id="page-title">My Templates</li>
-			<li class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Add Template</a></li>
-			<li class="lastCrumb"><a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Start Evaluation</a></li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item active" aria-current="page">My Templates</li>
+		    </ol>
+		  </nav>
+		  <div class="d-flex flex-wrap gap-2">
+		    <a rsf:id="create-template-link" href="template_title_desc.html" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Add Template</a>
+		    <a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Start Evaluation</a>
+		  </div>
+		</div>
 		
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
@@ -54,7 +60,7 @@
 		<!-- This block (list template) is not visible if there are no templates visible -->
 		<div rsf:id="template-listing:">
             <form rsf:id="copyForm">
-              <table class="evalsysTable">
+              <table class="table table-striped table-hover align-middle">
                  <thead>
                     <tr>
                        <!-- rsf cannot computer ids when using msg= so had to remove the ids -->
@@ -79,7 +85,7 @@
                           <a rsf:id="template-delete-link" href="remove_template.html">Delete</a>
                           <span rsf:id="template-delete-dummy"></span> | 
                           <a rsf:id="template-preview-link" href="preview_eval.html">Preview</a> |
-                          <input rsf:id="template-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
+						 <input rsf:id="template-copy-link" type="submit" class="btn btn-link p-0 align-baseline link-button" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
                               <span rsf:id="template-chown-dummy"></span> | 
                               <a rsf:id="template-chown-link" href="chown_template.html">Change Owner</a>
                        </td>

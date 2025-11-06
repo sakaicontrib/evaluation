@@ -32,17 +32,24 @@
 <body>
     <div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
-        <ul class="breadCrumb">
-            <li>
-                <a rsf:id="summary-link" href="summary.html">Summary</a>
-            </li>
-            <li rsf:id="page-title" class="lastCrumbNoFloat">
-                My Evaluations
-            </li>
-            <li class="lastCrumb">
-                <a rsf:id="begin-evaluation-link" href="evaluation_create.html" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Start Evaluation</a>
-            </li>
-        </ul>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <nav aria-label="breadcrumb" class="flex-grow-1">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a rsf:id="summary-link" href="summary.html">Summary</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page" rsf:id="page-title">
+                        My Evaluations
+                    </li>
+                </ol>
+            </nav>
+            <div class="d-flex gap-2">
+                <a rsf:id="begin-evaluation-link" href="evaluation_create.html" class="btn btn-sm btn-primary">
+                    <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                    Start Evaluation
+                </a>
+            </div>
+        </div>
         <div rsf:id="message-for:*" class="alertMessage">
             <ul>
                 <li>
@@ -62,7 +69,7 @@
                 <span rsf:id="msg=controlevaluations.partial.description">Your Evaluations which you started creating but did not complete</span>
                 <span rsf:id="partial-cleanup-note"></span>
             </p>
-            <table class="evalsysTable">
+            <table class="table table-striped table-hover align-middle">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -105,7 +112,7 @@
             Your Evaluations in queue that have not started yet
         </p>
         <div rsf:id="inqueue-eval-listing:">
-            <table class="evalsysTable">
+            <table class="table table-striped table-hover align-middle">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -158,7 +165,7 @@
                 </tbody>
             </table>
         </div>
-        <p rsf:id="no-inqueue-evals" class="instructionText highlightPanel">
+        <p rsf:id="no-inqueue-evals" class="instructionText eval-highlight rounded p-3" data-eval-highlight="true">
             No evaluations in-queue
         </p>
 
@@ -167,7 +174,7 @@
             Your Evaluations currently active for users to take
         </p>
         <div rsf:id="active-eval-listing:">
-            <table class="evalsysTable">
+            <table class="table table-striped table-hover align-middle">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -208,7 +215,7 @@
                             <a rsf:id="active-eval-delete-link" href="remove_evaluation.html" class="left-separator">Delete</a>
                             <a rsf:id="active-eval-notifications-link" href="evaluation_notifications.html" class="left-separator">Send Email</a>
                             <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm left-separator">
-                                <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" onclick="SPNR.disableControlsAndSpin( this, null );" />
+                                <input rsf:id="evalCloseCommand" type="submit" value="Close" class="btn btn-link p-0 align-baseline" onclick="SPNR.disableControlsAndSpin( this, null );" />
                             </form>
                             <a rsf:id="evaluation-chown-link" href="chown_evaluation.html">Change Owner</a>
                         </td>
@@ -238,7 +245,7 @@
                 </tbody>
             </table>
         </div>
-        <p rsf:id="no-active-evals" class="instructionText highlightPanel">
+        <p rsf:id="no-active-evals" class="instructionText eval-highlight rounded p-3" data-eval-highlight="true">
             No active evaluations
         </p>
 
@@ -247,7 +254,7 @@
             Your Evaluations which have been completed
         </p>
         <div rsf:id="closed-eval-listing:">
-            <table class="evalsysTable">
+            <table class="table table-striped table-hover align-middle">
                 <thead>
                     <tr>
                         <th rsf:id="msg=controlevaluations.eval.title.header" width="20%">
@@ -316,7 +323,7 @@
             </table>
             <br/>
         </div>
-        <p rsf:id="no-closed-evals" class="instructionText highlightPanel">
+        <p rsf:id="no-closed-evals" class="instructionText eval-highlight rounded p-3" data-eval-highlight="true">
             No closed evaluations
         </p>
         <hr />

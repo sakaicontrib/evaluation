@@ -154,7 +154,7 @@
                         commentTruncated: commentHolder.find("span.JScommentTruncated"),
                         commentLabel: commentHolder.find("span.JSlabel"),
                         //if li:eq(0) doesn't return an object, we are in an item preview
-                        questionHolder: commentHolder.parents("li.evalItemTop:eq(0)").length === 0 ? commentHolder.parents("div.highlightPanel:eq(0)") : commentHolder.parents("li.evalItemTop:eq(0)"),
+                        questionHolder: commentHolder.parents("li.evalItemTop:eq(0)").length === 0 ? commentHolder.parents("[data-eval-highlight='true']:eq(0)") : commentHolder.parents("li.evalItemTop:eq(0)"),
                         warn: commentHolder.find("span.JSwarn")
                     };
             //Set listeners for any question item response activity and toggle comment controls - EVALSYS-628

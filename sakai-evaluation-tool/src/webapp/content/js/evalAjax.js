@@ -463,7 +463,7 @@ function updateControlItemsTotal() {
                     $('#closeItemOperationsEnabled').parent().remove();
                 }
                 if ($('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
-                    var error = '<div class="itemOperationsEnabled">' +
+                    var error = '<div class="item-operations item-operations--enabled alert alert-warning d-flex flex-wrap align-items-center gap-2 py-2 px-3" role="alert">' +
                                 '<span class="bi bi-x-circle" aria-hidden="true"></span>' +
                                 '<span class="visually-hidden">Error</span> ' +
                                 '<span class="instructionText"></span>' + evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item') + ' <a href="#" id="closeItemOperationsEnabled">x</a></div>';

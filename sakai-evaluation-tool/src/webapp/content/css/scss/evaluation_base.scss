@@ -24,7 +24,15 @@
 // IMPORT BASE CSS
 /////////////////////////
 
-@import "evaluation_base_copy";
+// Evaluation tool UI modules (split from the legacy monolith for clarity)
+@use "evaluation/reorderer";
+@use "evaluation/navigation";
+@use "evaluation/summary";
+@use "evaluation/scale-lists";
+@use "evaluation/item-display";
+@use "evaluation/reports";
+@use "evaluation/messages";
+@use "evaluation/utilities";
 
 
 /////////////////////////
@@ -33,20 +41,20 @@
 
 // Compass.
 // http://compass-style.org/help/tutorials/best_practices/
-@import "base";
+@use "base";
 
 // Helpers.
 // Use Compass wherever possible; use this when Compass doesn't have what you need.
-@import "helpers";
+@use "helpers" as *;
 
 // Layout.
 // Defines layout and structure.
-@import "layout";
+@use "layout";
 
 // Typography.
 // Defines baseline type style and treatment.
-@import "typography";
+@use "typography";
 
 // Graphics.
 // Defines visual style.
-@import "graphics";
+@use "graphics";

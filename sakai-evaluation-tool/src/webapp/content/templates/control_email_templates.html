@@ -35,11 +35,15 @@
 
        <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-			<li rsf:id="msg=controlemailtemplates.page.title" class="lastCrumbNoFloat">Email Templates</li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+		      <li class="breadcrumb-item active" aria-current="page">Email Templates</li>
+		    </ol>
+		  </nav>
+		</div>
 
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
@@ -60,14 +64,13 @@
 		<p class="instructionText" rsf:id="msg=controlemailtemplates.instructions">A blurb here about this list, underscoring default templates</p>
 		<ol class="scaleOuterList">
 			<li rsf:id="templatesList:" class="scaleOuterListLi">
-				<div class="scaleTitleLine">
-					<span rsf:id="template_number" class="scaleTitleLineNum">#</span>
-					<div rsf:id="template_title" class="scaleTitle">Template title</div>
-					<div class="itemAction">
+				<div class="scaleTitleLine bg-body-tertiary border rounded p-3 d-flex align-items-center gap-3">
+					<span rsf:id="template_number" class="scaleTitleLineNum badge text-bg-secondary">#</span>
+					<div rsf:id="template_title" class="scaleTitle fw-semibold flex-grow-1">Template title</div>
+					<div class="itemAction d-flex align-items-center flex-wrap gap-2">
 						<a rsf:id="modify_link" href="modify_email.html">Modify</a><span rsf:id="modify_link_disabled" />
-                        &nbsp;
                         <form rsf:id="removeForm" method="post" action="control_email_templates.html" class="inlineForm">
-						   <input rsf:id="removeCommand" type="submit" value="remove" class="makeLink" onclick="SPNR.disableControlsAndSpin( this, null );" />
+						   <input rsf:id="removeCommand" type="submit" value="remove" class="btn btn-link p-0 align-baseline link-button" onclick="SPNR.disableControlsAndSpin( this, null );" />
                         </form>
                         <span rsf:id="remove_link_disabled" />
 					</div>	

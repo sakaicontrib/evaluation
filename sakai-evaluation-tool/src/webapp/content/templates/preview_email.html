@@ -34,16 +34,24 @@
 <body>
 	<div class="portletBody">
 		
-	<ul class="breadCrumb inactive">
-		<li ><span rsf:id="msg=summary.page.title">Summary</span></li><li rsf:id="msg=starteval.page.title">Create Evaluation</li><li class="lastCrumb" rsf:id="msg=previewemail.page.title">Preview Email</li>
-	</ul>
+	<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+	  <nav aria-label="breadcrumb" class="flex-grow-1">
+	    <ol class="breadcrumb mb-0">
+	      <li class="breadcrumb-item"><span rsf:id="msg=summary.page.title">Summary</span></li>
+	      <li class="breadcrumb-item">Create Evaluation</li>
+	    </ol>
+	  </nav>
+	  <div class="d-flex flex-wrap gap-2">
+	    Preview Email
+	  </div>
+	</div>
 	
 	<h3 rsf:id="msg=previewemail.header">Preview of the text of the email that is sent out to students the day evaluation goes live</h3> 
 		<p rsf:id="msg=previewemail.desc" class="instructionText">
 			Please note when sending the email the bracketed values will be substituted with actual values.
 		</p>
 		<div style="width:70%">
-              <div rsf:id="email_templates_fieldhints" class="highlightPanel" style="background:#eee;">
+              <div rsf:id="email_templates_fieldhints" class="eval-highlight rounded p-3 mb-3" data-eval-highlight="true">
 ${EvalTitle} - the title of this evaluation <br/>
 ${EvalStartDate} - the start date of this evaluation <br/>
 ${EvalDueDate} - the due date of this evaluation <br/>
@@ -61,7 +69,7 @@ ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
                   <span rsf:id="msg=modifyemail.template.subject">Subject:</span>
                   <span rsf:id="emailSubject">The message subject</span>
               </div>
-			  <div class="highlightPanel"  style="background:#eee">
+		  <div class="eval-highlight rounded p-3 mt-3" data-eval-highlight="true">
                   <div rsf:id="emailMessage">The email message would go here</div>
               </div>
 		</div>	

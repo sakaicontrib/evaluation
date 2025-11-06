@@ -46,10 +46,14 @@
 <body rsf:id="scr=sakai-body" onunload="parseInt('1')">
 	<div id="toolTip"></div>
 	<div class="portletBody evaluation preview">
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li rsf:id="msg=previeweval.evaluation.title" class="lastCrumbNoFloat">Previewing Template/Evaluation</li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item active" aria-current="page">Previewing Template/Evaluation</li>
+		    </ol>
+		  </nav>
+		</div>
 
 		<div>
 			<h3 style="display:inline">

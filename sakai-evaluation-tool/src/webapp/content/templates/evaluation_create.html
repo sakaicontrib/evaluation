@@ -36,10 +36,14 @@
 <div rsf:id="navIntraTool:" class="navIntraTool"/>
 
 <div>
-	<ul class="breadCrumb">
-		<li ><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-		<li class="lastCrumbNoFloat" rsf:id="msg=starteval.page.title">Start Evaluation</li>
-	</ul>
+	<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+	  <nav aria-label="breadcrumb" class="flex-grow-1">
+	    <ol class="breadcrumb mb-0">
+	      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+	      <li class="breadcrumb-item active" aria-current="page">Start Evaluation</li>
+	    </ol>
+	  </nav>
+	</div>
 </div>
 
 <div rsf:id="message-for:*" class="alertMessage">
@@ -67,7 +71,7 @@
 		  <div rsf:id="chooseTemplate:">
 		  	<h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
 			<p rsf:id="msg=starteval.choose.template.desc" class="instructionText">Select the template to use for this evaluation. Templates define the questions used.</p>
-				<table class="evalsysTable" style="width:60%">
+				<table class="table table-striped table-hover align-middle" style="width:60%">
 					<tr>
 						<th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
 						<th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>

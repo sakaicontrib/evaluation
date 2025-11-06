@@ -1,0 +1,68 @@
+/* Evaluation navigation, breadcrumb, and intra-tool link styles (legacy Part 2). */
+.breadCrumb {
+  font-size: .9em;
+  padding: .5em 0;
+  background: var(--bs-body-bg, #fff);
+  margin: 1em 0;
+  clear: both;
+  height: 1.5em;
+}
+
+.navIntraTool .breadCrumb {
+  margin: 0;
+  float: left;
+}
+
+.breadCrumb li {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bs-body-bg, #fff);
+  padding: 0 .75em;
+  margin: 0;
+  color: var(--bs-secondary-color, #6c757d);
+}
+.breadCrumb li+li::before { content: "›"; margin-right: .5em; }
+
+.breadCrumb li:first-child {
+  padding-left: 3px;
+}
+
+.breadCrumb li.lastCrumb {
+  display: inline;
+  background-image: none;
+  float: right;
+}
+
+.breadCrumb li.lastCrumbNoFloat {
+  display: inline;
+  background-image: none;
+}
+
+/*sub-breadcrumb for wizards deep inside of a workflow*/
+.messageStepGraphic {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1em 0;
+}
+
+.messageStepGraphic div {
+  flex: 0 1 auto;
+}
+
+.messageStepGraphic a {
+  text-decoration: none !important;
+  font-size: 1em;
+}
+
+.messageStepGraphic a:hover {
+  text-decoration: none !important;
+}
+
+.messageStepGraphic div span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+/*PART 2 end*/

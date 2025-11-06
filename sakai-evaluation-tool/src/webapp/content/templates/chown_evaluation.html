@@ -33,11 +33,17 @@
 
 	<div rsf:id="navIntraTool:" class="navIntraTool"/>
 
-	<ul class="breadCrumb">
-		<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-		<li><a rsf:id="control-evaluations-link" href="evaluations.html">My Evaluations</a></li>
-		<li class="lastCrumb" rsf:id="chown-evaluation-title">Change evaluation Owner</li>
-	</ul>
+	<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+	  <nav aria-label="breadcrumb" class="flex-grow-1">
+	    <ol class="breadcrumb mb-0">
+	      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+	      <li class="breadcrumb-item"><a rsf:id="control-evaluations-link" href="evaluations.html">My Evaluations</a></li>
+	    </ol>
+	  </nav>
+	  <div class="d-flex flex-wrap gap-2">
+	    Change evaluation Owner
+	  </div>
+	</div>
 
 	<div rsf:id="message-for:*" class="alertMessage">
 		<ul style="margin:0px;">

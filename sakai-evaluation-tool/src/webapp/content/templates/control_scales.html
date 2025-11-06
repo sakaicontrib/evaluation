@@ -42,12 +42,18 @@
 
         <div rsf:id="navIntraTool:" class="navIntraTool"></div>
 
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
-			<li rsf:id="page-title" class="lastCrumbNoFloat">Scales</li>
-			<li class="lastCrumb"><a rsf:id="add-new-scale-link" href="scale_modify.html" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Add new scale</a></li>
-		</ul>
+		<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+		  <nav aria-label="breadcrumb" class="flex-grow-1">
+		    <ol class="breadcrumb mb-0">
+		      <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		      <li class="breadcrumb-item"><a rsf:id="administrate-link" href="administrate.html">Administrate</a></li>
+		      <li class="breadcrumb-item active" aria-current="page">Scales</li>
+		    </ol>
+		  </nav>
+		  <div class="d-flex flex-wrap gap-2">
+		    <a rsf:id="add-new-scale-link" href="scale_modify.html" class="addItem"><span class="bi bi-plus-lg" aria-hidden="true"></span> Add new scale</a>
+		  </div>
+		</div>
 		<div rsf:id="message-for:*" class="alertMessage">
 			<ul>
 				<li>Message for user here</li>
@@ -62,21 +68,24 @@
         <form rsf:id="copyForm">
   			<ol class="scaleOuterList">
   				<li rsf:id="verticalDisplay:" class="scaleOuterListLi">
-  					<div class="scaleTitleLine">
-  						<span  class="scaleTitleLineNum" rsf:id="scale-no">#</span>
-  						<div class="scaleTitle" rsf:id="scale-title">Scale title</div>
-  						<div class="itemAction">
+  					<div class="scaleTitleLine bg-body-tertiary border rounded p-3 d-flex align-items-center gap-3">
+  						<span class="scaleTitleLineNum badge text-bg-secondary" rsf:id="scale-no">#</span>
+  						<div class="scaleTitle fw-semibold flex-grow-1" rsf:id="scale-title">Scale title</div>
+  						<div class="itemAction d-flex align-items-center flex-wrap gap-2">
                           <span rsf:id="modify-dummy"></span>
-                          <a rsf:id="modify-link" href="scale_add_modify.html">Modify</a> |
+                          <a rsf:id="modify-link" href="scale_add_modify.html">Modify</a>
+                          <span class="text-body-secondary small mx-1" aria-hidden="true">|</span>
                           <span rsf:id="remove-dummy"></span>
-                          <a rsf:id="remove-link" href="remove_scale.html">Remove</a> |
-                          <a rsf:id="preview-link" href="preview_item.html" class="preview_scale">Preview</a> |
-                          <input rsf:id="scale-copy-link" type="submit" class="makeLink" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
+                          <a rsf:id="remove-link" href="remove_scale.html">Remove</a>
+                          <span class="text-body-secondary small mx-1" aria-hidden="true">|</span>
+                          <a rsf:id="preview-link" href="preview_item.html" class="preview_scale">Preview</a>
+                          <span class="text-body-secondary small mx-1" aria-hidden="true">|</span>
+						<input rsf:id="scale-copy-link" type="submit" class="btn btn-link p-0 align-baseline link-button" value="Copy" onclick="SPNR.disableControlsAndSpin( this, null );" />
   						</div>
   					</div>	
   					<div class="idealScalePoint"><span rsf:id="ideal-scale-point">Ideal scale point:</span> <span rsf:id="ideal-value"  class="highlight">Ideal value</span></div>
-  					<ol class="scaleInnerList">	
-  						<li rsf:id="scaleOptions:">
+  					<ol class="scaleInnerList list-group list-group-flush mb-3">	
+  						<li rsf:id="scaleOptions:" class="list-group-item ps-0">
   							<span rsf:id="scale-option-label">Scale option label</span>
   						</li>
   					</ol>

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -71,10 +70,6 @@ public class ScaledUtils {
          index = 0;
       }
       return index;
-	}
-
-	public static String getIdealImageURL(EvalScale scale) {
-		return EvalToolConstants.COLORED_IMAGE_URLS[idealIndex(scale)];
 	}
 
 	public static String getStartClass(EvalScale scale) {

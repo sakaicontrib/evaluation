@@ -40,12 +40,18 @@
 	<div class="portletBody">
         <div rsf:id="navIntraTool:" class="navIntraTool"/>
          
-         <ul class="breadCrumb">
-         	<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-         	<li><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
-         	<li rsf:id="view-report-title" class="lastCrumbNoFloat">View Report</li>
-            <li class="lastCrumb"><a rsf:id="viewItemsFilterLink" href="#" class="goToList"><span class="bi bi-list-ul" aria-hidden="true"></span> View Written Responses Only</a></li>
-        </ul>
+         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+           <nav aria-label="breadcrumb" class="flex-grow-1">
+             <ol class="breadcrumb mb-0">
+               <li class="breadcrumb-item"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+               <li class="breadcrumb-item"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
+               <li class="breadcrumb-item active" aria-current="page">View Report</li>
+             </ol>
+           </nav>
+           <div class="d-flex flex-wrap gap-2">
+             <a rsf:id="viewItemsFilterLink" href="#" class="goToList"><span class="bi bi-list-ul" aria-hidden="true"></span> View Written Responses Only</a>
+           </div>
+         </div>
 
         <form rsf:id="evalReportForm" name="eval_report_form" method="post">
            <input rsf:id="xlsResultsReport" name="xlsResultsReport" type="submit" value="Export xls" />
@@ -75,13 +81,13 @@
 						<ul style="list-style:none;display:inline;margin:0;padding:0">
             <!-- optionally made visible if there are comments in this report -->
             <li id="allComments" style="list-style:none;display:inline;margin:0;padding:0 .2em">
-               <span id="allCommentsHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></span>
-               <span id="allCommentsShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></span>
+               <span id="allCommentsHide" style="display:none;"><button type="button" rsf:id="msg=viewreport.hide.all.comments" class="btn btn-link p-0 align-baseline">Hide All Comments</button></span>
+               <span id="allCommentsShow" style="display:none;"><button type="button" rsf:id="msg=viewreport.view.all.comments" class="btn btn-link p-0 align-baseline">Show All Comments</button></span>
             </li>
             <!-- optionally made visible if there are text responses in this report -->
             <li id="allTextResponses" style="display:none;list-style:none;display:inline;margin:0;padding:0 .2em">
-               <span id="allTextResponsesHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></span>
-               <span id="allTextResponsesShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></span>
+               <span id="allTextResponsesHide" style="display:none;"><button type="button" rsf:id="msg=viewreport.hide.all.responses" class="btn btn-link p-0 align-baseline">Hide All Text Responses</button></span>
+               <span id="allTextResponsesShow" style="display:none;"><button type="button" rsf:id="msg=viewreport.view.all.responses" class="btn btn-link p-0 align-baseline">Show All Text Responses</button></span>
             </li>
 						</ul>
 						</div>
