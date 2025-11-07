@@ -34,23 +34,26 @@
 <div class="portletBody">
      
     <h3 rsf:id="modify-location-message">Add/Modify Item Group</h3>
-    <form rsf:id="modify-expertitem-form" method="post">
+    <form rsf:id="modify-expertitem-form" method="post" class="mt-3">
     <input rsf:id="expertitem-new" type="hidden" name="expertitem-new"/>
     <input rsf:id="expertitem-type" type="hidden" name="expertitem-type"/>
     <input rsf:id="expertitem-parent" type="hidden" name="expertitem-parent"/>
     <input rsf:id="expertitem-eigId" type="hidden" name="expertitem-eigId"/>
-    	<p class="shorttext"><b><label rsf:id="category-label">Category</label>  <span rsf:id="category">General</span></b></p>
-        <p class="shorttext">
-            <label rsf:id="title-label" for="expertitem-title">Title</label>
-            <input rsf:id="expertitem-title" id="expertitem-title" type="text" maxlength="100" size="30" />
+    	<p class="shorttext mb-3 fw-semibold">
+            <label rsf:id="category-label">Category</label>
+            <span rsf:id="category" class="ms-1">General</span>
         </p>
-        <p class="shorttext">
-            <label rsf:id="description-label" for="expertitem-abbr">Description</label>
-            <textarea rsf:id="expertitem-desc" name="expertitem-text-dummy" cols="80" rows="5"></textarea>
-        </p>
-        <div class="act">
-            <input type="submit" rsf:id="save-expertitem-button" value="Save Item" onclick="SPNR.disableControlsAndSpin( this, null );" />
-            <a href="control_expertitems.html" rsf:id="cancel-link">Cancel</a>
+        <div class="shorttext mb-3">
+            <label rsf:id="title-label" for="expertitem-title" class="form-label">Title</label>
+            <input rsf:id="expertitem-title" id="expertitem-title" type="text" maxlength="100" size="30" class="form-control form-control-sm" />
+        </div>
+        <div class="shorttext mb-3">
+            <label rsf:id="description-label" for="expertitem-abbr" class="form-label">Description</label>
+            <textarea rsf:id="expertitem-desc" name="expertitem-text-dummy" cols="80" rows="5" class="form-control"></textarea>
+        </div>
+        <div class="act d-flex flex-wrap gap-2 align-items-center">
+            <input type="submit" rsf:id="save-expertitem-button" value="Save Item" class="btn btn-sm btn-primary" onclick="SPNR.disableControlsAndSpin( this, null );" />
+            <a href="control_expertitems.html" rsf:id="cancel-link" class="btn btn-sm btn-outline-secondary">Cancel</a>
         </div>
     </form>
 </div>

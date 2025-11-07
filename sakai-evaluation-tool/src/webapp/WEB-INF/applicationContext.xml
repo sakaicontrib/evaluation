@@ -131,6 +131,25 @@
         </property>
     </bean>
 
+    <!-- catch-all fallback: never allow RSF to render a null view -->
+    <bean parent="actionResultInterceptorParent">
+        <property name="value">
+            <bean class="org.sakaiproject.evaluation.tool.wrapper.DefaultViewInterceptor" />
+        </property>
+    </bean>
+
+    <bean parent="actionResultInterceptorParent">
+        <property name="value">
+            <bean class="org.sakaiproject.evaluation.tool.wrapper.AddItemActionResultInterceptor">
+                <property name="templateBBean">
+                    <bean parent="RSACBridgeProxy">
+                        <property name="targetBeanName" value="templateBBean" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
     <!-- see CTL-1214, RSF-123, RootHandlerBeanOverride and OverridedServletRoot: 
          also reportHandlerHook no longer implements HandlerHook -->
     <!--  
@@ -177,9 +196,7 @@
     </bean>
 
     <bean id="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer"
-        class="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer">
-        <property name="viewStateHandler" ref="viewStateHandler" />
-    </bean>
+        class="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
 
     <bean id="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer"
         class="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer">

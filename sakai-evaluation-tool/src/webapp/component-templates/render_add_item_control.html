@@ -26,14 +26,13 @@
 
 <!-- html template for the text item renderer -AZ -->
 <div rsf:id="render_add_item_control:" style="display:inline;">
-	<form rsf:id="add-item-form" name="add_item_form">
-		<select rsf:id="add-item-classification" id="add-item-classification-selection">
+    <form rsf:id="add-item-form" name="add_item_form" class="d-flex flex-wrap gap-2 align-items-center">
+		<select rsf:id="add-item-classification" id="add-item-classification-selection" class="form-select w-auto">
 			<option value="render_scaled_item.html" selected="selected">Scaled/Survey</option>
 			<option value="render_text_item.html">Short Answer/Essay</option>
 			<option value="render_header_item.html">Text Header</option>
 		</select>
-		<input rsf:id="add-item-button" id="add-item-button" type="button" value="Add"
-			onclick="EvalSystem.operateSelectLink(this.id, 'add-item-classification-selection')" />
+		<button rsf:id="add-item-button" id="add-item-button" type="submit" class="btn btn-primary">Add</button>
 	</form>
 </div>
 

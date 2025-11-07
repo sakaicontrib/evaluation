@@ -25,7 +25,6 @@ var evalTemplateLoaderEvents = (function($) {
 
     _modify_block = function(){
                 var siteId = $('#site-id').text();
-        $.facebox.setHeader(evalTemplateUtils.pages.modify_block_page);
 
 		var baseId = ""; // "blockPage::";
 
@@ -128,23 +127,11 @@ var evalTemplateLoaderEvents = (function($) {
     },
 
     bindRowEditPreviewIcons = function(changedRow){
-        if ( typeof changedRow === "undefined" || changedRow === null){
-            $('a[rel=facebox]').facebox();
-            $('a[rel=faceboxGrid]').faceboxGrid();
-        }else{
-            changedRow.find('a[rel=facebox]').facebox();
-            changedRow.find('a[rel=faceboxGrid]').faceboxGrid();
-        }
+        return;
     },
 
     unBindRowEditPreviewIcons = function(changedRow){
-        if ( typeof changedRow === "undefined" || changedRow === null){
-            $('a[rel=facebox]').unbind("facebox");
-            $('a[rel=faceboxGrid]').unbind("faceboxGrid");
-        }else{
-            changedRow.find('a[rel=facebox]').unbind("facebox");
-            changedRow.find('a[rel=faceboxGrid]').unbind("faceboxGrid");
-        }
+        return;
     },
         /**
          * this will bind these controls in the main item of a group: hide/show item && more/less item
@@ -194,7 +181,6 @@ var evalTemplateLoaderEvents = (function($) {
         //modify_item.html view
         modify_item: function() {
             var siteId = $('#site-id').text();
-            $.facebox.setHeader(evalTemplateUtils.pages.modify_item_page);
             if ($('.act .submit').attr('name').search(/templateBBean.saveTemplateItemToGroupAction/) !== -1) {
                 //proper submit  skip validation - it is not important
             } else if ($('.act .submit').attr('name').search(/templateBBean.saveItemAction/) === -1) {
@@ -210,55 +196,26 @@ var evalTemplateLoaderEvents = (function($) {
         },
         //modify_template.html view
         modify_template: function(){
-            var title = "",
-                description = "",
-                 o = {
-                    beforeSubmit: function() {
-                        title = $('#basic-form input[name=title]').val();
-                        description = $('#basic-form textarea[name=description]').val();
-                        if (!title) {
-                            alert( evalTemplateUtils.messageLocator("general.blank.required.field.user.message",
-                                    evalTemplateUtils.messageLocator('modifytemplatetitledesc.title.header').toLowerCase())); //TODO: Make unobtrusive
-                            return false;
-                        }
-                        $("#facebox .content").html('<img src="/library/image/sakai/spinner.gif"/>');
-                    },
-                    success: function() {
-                        $('h3.viewNav > span#title').text(title);
-                        $('span[id=description-switch::description]').text(description);
-                        $(document).trigger('close.facebox');
-                    }
-                };
-                $.facebox.setHeader(evalTemplateUtils.pages.modify_template_page);
-                evalTemplateUtils.frameGrow(0);
-                $('#basic-form').ajaxForm(o);
-                $('input.cancelButtonLightbox').bind("click", function() {
-                    $(document).trigger('close.facebox');
-                });
+            return;
         },
         //choose expert items view
         choose_expert_category: function(){
-            $.facebox.setHeader(evalTemplateUtils.pages.choose_expert_page);
-            $('a[rel*=facebox]').facebox();
+            return;
         },
         //modify expert item view
         modify_expert_item: function(){
-            $.facebox.setHeader(evalTemplateUtils.pages.modify_expert_item_page);
-            $('a[rel*=facebox]').facebox();
+            return;
         },
         //preview expert item view
         preview_expert_item: function(){
-            $.facebox.setHeader(evalTemplateUtils.pages.preview_expert_item_page);
-            $('a[rel*=facebox]').facebox();
+            return;
         },        
         //remove_expert_item view
         remove_expert_item: function(){
-            $.facebox.setHeader(evalTemplateUtils.pages.remove_expert_item_page);
-            $('a[rel*=facebox]').facebox();
+            return;
         },
         preview_item: function(){
             evalsys.instrumentItems("#item_container");
-            $.facebox.setHeader(evalTemplateUtils.pages.preview_item_page);
         },
         bindDeleteIcons : bindDeleteIcons,
         unBindDeleteIcons : unBindDeleteIcons,
@@ -343,35 +300,8 @@ var evalTemplateLoaderEvents = (function($) {
                     if (checkBoxes_CHECKED.length < 2) {
                         alert(evalTemplateUtils.messageLocator('modifytemplate.group.warn.minimum'));
                          return false;
-                    } else {
-                        $(submitButton).parent().ajaxSubmit({
-                            success: function(msg){
-                                //Unbind current reveal event
-                                $(document).unbind('reveal.facebox');
-                                //Bind new reveal event
-                                $(document).bind('reveal.facebox', function() {
-                                    evalTemplateLoaderEvents.modify_block();
-                                    $('#saveBlockAction')
-                                            .unbind("click")
-                                            .bind("click", function(){
-                                                    var childIdList = [],
-                                                    reuseBlockText = $('.blockText input[type=radio][checked][value!=new1]').length > 0;
-                                                    $('#blockForm input[name*=hidden-item-id]').each(function(){
-                                                        childIdList.push($(this).val());
-                                                    });
-                                                    $("#ordered-child-ids").val(childIdList.toString());
-                                                    return true;
-                                                });
-
-                                });
-                                $.facebox.setHeader(evalTemplateUtils.pages.modify_block_page);
-                                evalTemplateUtils.frameScrollHeight = e.pageY;
-                                evalTemplateUtils.frameGrow(0);
-                                $.facebox(msg);
-                            }
-                        });
-                        return false;
                     }
+                    return true;
                 }
                 return false;
             }

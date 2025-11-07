@@ -37,8 +37,6 @@
 
 // For the evalAssign view
 $(document).ready(function() {
-    //trigger FB overrides 	
-    evalAssignFacebox.init();
     $('a[rel=assignInstructorSelector]').assignSelector({type:0});
     $('a[rel=assignTaSelector]').assignSelector({type:1});
     $(':submit').bind('click', function() {
@@ -87,7 +85,7 @@ $(document).ready(function() {
                 }
             },
             siteId:false,
-            documentFB:null
+            inlinePanel:null
         },
         set:{
             typeOfBranch:function(that) {
@@ -106,7 +104,6 @@ $(document).ready(function() {
         },
         selectedPeople:0,
         deselectedPeopleIds: new Array(),
-        initedafterRevealFacebox:0,
         that:null,
         deselectedLog:new Array(),
         thatRowNumber:0 ,
@@ -125,115 +122,147 @@ $(document).ready(function() {
     function init(that, options) {
         //copy options to this class
         variables.options = options;
-        $(document).bind('afterReveal.facebox', function() {
-            variables.initedafterRevealFacebox++;
-            log(variables.initedafterRevealFacebox);
-                log("WARN: Lightbox loaded, attaching listerners now...");
-                var _that = $('#facebox div.content:eq(0)');    //lightbox $document object
-                variables.get.documentFB = _that ? _that : null;
-                //Set the current evalGroupID
-                var grpId = variables.get.documentFB.find("input[name=evalGroupId]").val();
-                variables.evalGroupId = grpId == null ? '' : grpId.replace('/site/', '');
-                //deselect boxes already deselected
-                var field, regText = variables.evalGroupId + ".deselected" + (variables.options.type == 0 ? "Instructors" : "Assistants"),
-                sRegExInput = new RegExp(regText);
-                $('input[name=el-binding]').each(function() {
-                    if ($(this).val().search(sRegExInput) != -1) {
-                        field = $(this);
-                    }
-                });
-                var deselected = field.val().replace("j#{selectedEvaluationUsersLocator." + regText + "}[", "").replace(/"/g,"").replace(/ /g,"").replace("]", "").split(",");
-                if (deselected.length > 0) {
-                    variables.get.documentFB.find('input[type=checkbox]:checked').each(function() {
-                        for (var i = 0; i < deselected.length; i++) {
-                            if ( deselected[i] == $(this).attr('id')) {
-                                this.checked = false;
-                            }
-                        }
-                    });
-                    handleCheckboxes(variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked'), 1);
-                }
-
-                //check proper radiobox depending on selcetion option already saved in the DOM
-                regText = variables.evalGroupId + (variables.options.type === 0 ? ".instructor" : ".assistant"),
-                sRegExInput = new RegExp(regText);
-                $('input[name=el-binding]').each(function() {
-                    if ($(this).val().search(sRegExInput) != -1) {
-                        field = $(this);
-                    }
-                });
-                var selectionSaved = field.val().replace("j#{assignGroupSelectionSettings." + regText + "}", "");
-                log("selectionSaved value: " + selectionSaved);
-                if (selectionSaved.toString().length > 0) {
-                    variables.get.documentFB.find('input[type=radio]').each(function() {
-                        if ( selectionSaved === $(this).val()) {
-                            this.checked = true;
-                        }
-
-                    });
-                }
-
-                /**
-                 *  Excecute this as soon as lightbox DON is loaded
-                 */
-
-                //set initial state of select all box
-                if(variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked').length === 0){
-                   $('#selectorControl').each(function(){
-                      this.checked = true;
-                    });
-                }
-                $.facebox.setHeader($("#title"));
-                //Activate Mass (De)Selector controls
-                $("#selectorControl").bind('click', function(){
-                    if (this.checked) {
-                        $('.selectTable tbody input[type=checkbox]').not(':checked').each(function(){
-                            this.checked = true;
-                        });
-                    }else{
-                        $('.selectTable tbody input[type=checkbox]:checked').each(function(){
-                          this.checked = false;
-                        });
-                    }
-                });
-                //bind individual checkbox to toggle main selector
-                $(".selectTable tbody input[type=checkbox]").bind('click', function(){
-                    if (this.checked) {
-                        if($('.selectTable tbody input[type=checkbox]').not(':checked').length === 0){
-                           $('#selectorControl').each(function(){
-                              this.checked = true;
-                            });
-                        }
-                    }else{
-                        $('#selectorControl').each(function(){
-                          this.checked = false;
-                        });
-                    }
-                });
-
-                $('#facebox input[id=save-item-action]').bind('click', function() {
-                    log("Binding submit button value");
-                    handleFormSubmit(this);
-
-                    return false;
-                });
-                //Make list scrollable if hieght is more than 200px
-                var tableHolder = variables.get.documentFB.find('.selectTable:eq(0)');
-                tableHolder
-                        .css({
-                    'overflow': 'auto',
-                    'height': tableHolder.height() > 200 ? '205px' : (tableHolder.height() + 10) + "px"
-                }) ;
-                log("Formatting table holder hieght. Set height to:" + tableHolder.height());
-        });
-        $(document).bind('afterClose.facebox', function() {
-            log("Running afterClose.facebox; initialising variables.initedafterRevealFacebox.");
-            variables.initedafterRevealFacebox = 0;
-        });
         return that.each(function() {
             initControls($(this));
             initClassVars();
         });
+    }
+
+    function openInlinePanel(that) {
+        var row = that.parents('tr:eq(0)');
+        var container = row.find('.assign-select-inline');
+        if (!container.length) {
+            return false;
+        }
+        $('.assign-select-inline').not(container).empty().hide();
+        container.show();
+        variables.that = that;
+        variables.groupCheckBox = row.find('input[type=checkbox]');
+        variables.set.typeOfBranch(that);
+        variables.evalGroupId = (variables.groupCheckBox.val() || '').replace('/site/', '');
+        var url = that.attr('href');
+        if (!url) {
+            return false;
+        }
+        if (container.data('loaded-url') === url && container.children().length) {
+            initInlinePanel(container);
+            return false;
+        }
+        container.html('<div class="instructionText">Loading...</div>');
+        $.get(url, function(data) {
+            var $wrap = $('<div>').html(data);
+            var $fragment = $wrap.find('#assign-select-fragment');
+            if ($fragment.length === 0) {
+                $fragment = $wrap;
+            }
+            container.empty().append($fragment);
+            container.data('loaded-url', url);
+            initInlinePanel(container);
+        });
+        return false;
+    }
+
+    function closeInlinePanel() {
+        if (variables.get.inlinePanel) {
+            variables.get.inlinePanel.hide();
+        }
+    }
+
+    function initInlinePanel(container) {
+        log("Inline selector loaded, attaching listeners now...");
+        variables.get.inlinePanel = container;
+        // deselect boxes already deselected
+        var field, regText = variables.evalGroupId + ".deselected" + (variables.options.type == 0 ? "Instructors" : "Assistants"),
+        sRegExInput = new RegExp(regText);
+        $('input[name=el-binding]').each(function() {
+            if ($(this).val().search(sRegExInput) != -1) {
+                field = $(this);
+            }
+        });
+        if (field && field.val) {
+            var deselected = field.val().replace("j#{selectedEvaluationUsersLocator." + regText + "}[", "").replace(/"/g,"").replace(/ /g,"").replace("]", "").split(",");
+            if (deselected.length > 0) {
+                container.find('input[type=checkbox]:checked').each(function() {
+                    for (var i = 0; i < deselected.length; i++) {
+                        if ( deselected[i] == $(this).attr('id')) {
+                            this.checked = false;
+                        }
+                    }
+                });
+                handleCheckboxes(container.find('.selectTable tbody input[type=checkbox]').not(':checked'), 1);
+            }
+        }
+
+        // check proper radiobox depending on selection option already saved in the DOM
+        regText = variables.evalGroupId + (variables.options.type === 0 ? ".instructor" : ".assistant"),
+        sRegExInput = new RegExp(regText);
+        field = null;
+        $('input[name=el-binding]').each(function() {
+            if ($(this).val().search(sRegExInput) != -1) {
+                field = $(this);
+            }
+        });
+        if (field && field.val) {
+            var selectionSaved = field.val().replace("j#{assignGroupSelectionSettings." + regText + "}", "");
+            log("selectionSaved value: " + selectionSaved);
+            if (selectionSaved.toString().length > 0) {
+                container.find('input[type=radio]').each(function() {
+                    if ( selectionSaved === $(this).val()) {
+                        this.checked = true;
+                    }
+                });
+            }
+        }
+
+        // set initial state of select all box
+        if (container.find('.selectTable tbody input[type=checkbox]').not(':checked').length === 0) {
+            container.find('.selectorControl').each(function() {
+                this.checked = true;
+            });
+        }
+        // Activate Mass (De)Selector controls
+        container.find('.selectorControl').off('click').on('click', function() {
+            if (this.checked) {
+                container.find('.selectTable tbody input[type=checkbox]').not(':checked').each(function() {
+                    this.checked = true;
+                });
+            } else {
+                container.find('.selectTable tbody input[type=checkbox]:checked').each(function() {
+                    this.checked = false;
+                });
+            }
+        });
+        // bind individual checkbox to toggle main selector
+        container.find(".selectTable tbody input[type=checkbox]").off('click').on('click', function() {
+            if (this.checked) {
+                if (container.find('.selectTable tbody input[type=checkbox]').not(':checked').length === 0) {
+                    container.find('.selectorControl').each(function() {
+                        this.checked = true;
+                    });
+                }
+            } else {
+                container.find('.selectorControl').each(function() {
+                    this.checked = false;
+                });
+            }
+        });
+
+        container.find('.assign-select-save').off('click').on('click', function() {
+            log("Binding submit button value");
+            handleFormSubmit(this);
+            return false;
+        });
+        container.find('.assign-select-cancel').off('click').on('click', function() {
+            closeInlinePanel();
+            return false;
+        });
+        // Make list scrollable if height is more than 200px
+        var tableHolder = container.find('.selectTable:eq(0)');
+        tableHolder.css({
+            'overflow': 'auto',
+            'height': tableHolder.height() > 200 ? '205px' : (tableHolder.height() + 10) + "px"
+        });
+        log("Formatting table holder height. Set height to:" + tableHolder.height());
     }
 
     function initClassVars() {
@@ -244,22 +273,18 @@ $(document).ready(function() {
 
     function initControls(that) {
         that.hide();
-        variables.groupCheckBox = that.parents('tr').find('input[type=checkbox]');
-        that.bind('click', function() {
-                    var _url = that.attr('href');
-                    variables.that = that;
-                    variables.thatRowNumber = that.parents('tr').attr('rel');
-                    variables.set.typeOfBranch(that);
-                    log("Fetching URL: " + _url);
-                    $.facebox({ajax: _url});
-                    return false;
-                });
-        variables.groupCheckBox.bind('click', function() {
+        that.on('click', function() {
+            variables.thatRowNumber = that.parents('tr').attr('rel');
+            log("Fetching URL: " + that.attr('href'));
+            openInlinePanel(that);
+            return false;
+        });
+        that.parents('tr').find('input[type=checkbox]').on('click', function() {
             if (this.checked) {
                 that.fadeIn('fast');
             } else {
                 that.fadeOut('fast');
-
+                that.parents('tr').find('.assign-select-inline').empty().hide();
             }
         });
 
@@ -297,7 +322,7 @@ $(document).ready(function() {
             if (where == 1) {
                 return false;
             }
-            $(document).trigger('close.facebox');
+            closeInlinePanel();
         }
         return false;
     }
@@ -323,9 +348,9 @@ $(document).ready(function() {
 
     function handleFormSubmit(_that) {
         log("Running pre-SET checks");
-        var that = $(_that), temp = variables.get.documentFB.find('.selectTable tbody input[type=checkbox]').not(':checked'),
-        tempChecked = variables.get.documentFB.find('.selectTable tbody input[type=checkbox]:checked'),
-        selectionChosen = variables.get.documentFB.find('input[type=radio]:checked');
+        var that = $(_that), temp = variables.get.inlinePanel.find('.selectTable tbody input[type=checkbox]').not(':checked'),
+        tempChecked = variables.get.inlinePanel.find('.selectTable tbody input[type=checkbox]:checked'),
+        selectionChosen = variables.get.inlinePanel.find('input[type=radio]:checked');
         variables.selectedPeople = tempChecked.length > 0 ? tempChecked.length : 0;
         if(temp.length>0){
             if (handleCheckboxes(temp, 0)) {
@@ -333,7 +358,7 @@ $(document).ready(function() {
                 var origionalSelected = variables.that.attr('class').replace("addItem total:", "");  //gets a String
                 var text = variables.that.attr('title') + " (" + variables.selectedPeople + "/" + origionalSelected + ")";
                 variables.that.text(text);
-                $(document).trigger('close.facebox');
+                closeInlinePanel();
             }
         }else{
               if (handleCheckboxes(tempChecked, 2)) {
@@ -341,7 +366,7 @@ $(document).ready(function() {
                 var origionalSelected2 = variables.that.attr('class').replace("addItem total:", "");  //gets a String
                 var text2 = variables.that.attr('title') + " (" + variables.selectedPeople + "/" + origionalSelected2 + ")";
                 variables.that.text(text2);
-                $(document).trigger('close.facebox');
+                closeInlinePanel();
             }
         }
         //save selection setting to DOM

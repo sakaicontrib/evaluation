@@ -117,7 +117,7 @@
 					<input type="hidden" rsf:id="ordered-child-ids" id="ordered-child-ids" />
 					<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="btn btn-primary" accesskey="s" />
 					<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="flag='preview';" accesskey="v" class="btn btn-outline-primary"/>
-					<input type="button" value="Cancel" class="btn btn-outline-secondary" rsf:id="cancel-button" accesskey="x" onclick="if (typeof window.jQuery !== 'undefined') { window.jQuery(document).trigger('close.facebox'); return false; } window.history.back(); return false;" />
+					<input type="button" value="Cancel" class="btn btn-outline-secondary" rsf:id="cancel-button" accesskey="x" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;" />
 				</div>
 			</form>
 		</div>

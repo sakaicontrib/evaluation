@@ -29,11 +29,17 @@ import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
+import org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer;
+import org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyItemProducer;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 
 /**
  * This request-scope bean handles template creation and modification and actions related
@@ -87,6 +93,20 @@ public class TemplateBBean {
         this.messages = messages;
     }
 
+    public String getAddItemSelection() {
+        return addItemSelection;
+    }
+
+    public void setAddItemSelection(String addItemSelection) {
+        this.addItemSelection = addItemSelection;
+    }
+
+    public ViewParameters consumePendingAddItemView() {
+        ViewParameters toReturn = this.pendingAddItemView;
+        this.pendingAddItemView = null;
+        return toReturn;
+    }
+
 
     // public pea type variables
 
@@ -106,8 +126,37 @@ public class TemplateBBean {
     
     public Long groupItemId;
 
+    private String addItemSelection;
+    private ViewParameters pendingAddItemView;
+
 
     // TEMPLATES
+
+    public String launchAddItemAction() {
+        if (addItemSelection == null) {
+            throw new IllegalArgumentException("No add-item selection supplied");
+        }
+        if (templateId == null) {
+            throw new IllegalArgumentException("Template id is required to launch add-item");
+        }
+        ViewParameters target = resolveAddItemTarget(addItemSelection);
+        pendingAddItemView = target;
+        return "navigate";
+    }
+
+    private ViewParameters resolveAddItemTarget(String token) {
+        if (token.startsWith("item:")) {
+            String classification = token.substring(5);
+            return new ItemViewParameters(ModifyItemProducer.VIEW_ID, classification, templateId);
+        }
+        if ("existing".equals(token)) {
+            return new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null);
+        }
+        if ("expert".equals(token)) {
+            return new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null);
+        }
+        throw new IllegalArgumentException("Unknown add-item token: " + token);
+    }
 
     /**
      * If the template is already stored, button will show text "Save" method
@@ -274,12 +323,13 @@ public class TemplateBBean {
     public String saveBothAction() {
         log.info("save template item and item");
         try {
-            return templateItemWBL.saveBoth();  //returns the item's Id
+            templateItemWBL.saveBoth();
         } catch (BlankRequiredFieldException e) {
             messages.addMessage( new TargettedMessage(e.messageKey, 
                     new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
             throw new RuntimeException(e); // should not be needed but it is
         }
+        return "success";
     }
 
 

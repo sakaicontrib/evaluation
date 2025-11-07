@@ -81,7 +81,7 @@
 
         <p class="act">
             <input rsf:id="addContinue" type="submit" value="Continue and Add Questions" accesskey="s" class="active" onclick="SPNR.disableControlsAndSpin( this, null );" />
-            <input rsf:id="cancel-button-lightbox" type="button" value="Cancel" class="cancel" accesskey="x" onclick="$(document).trigger('close.facebox')" />
+            <input rsf:id="cancel-button-lightbox" type="button" value="Cancel" class="cancel" accesskey="x" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;" />
         </p>
     </form>
 

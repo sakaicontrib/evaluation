@@ -24,5 +24,4 @@ $(document).ready(function () {
 
 });
 
-//trigger FB overrides
-evalTemplateFacebox.init();
+// facebox overrides removed

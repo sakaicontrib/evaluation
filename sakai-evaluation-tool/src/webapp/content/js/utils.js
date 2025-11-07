@@ -604,13 +604,7 @@ evalsys.initSummary = function() {
 };
 
 evalsys.initControlScales = function() {
-    evalsys.initFacebox({verticalCenterOnClick: true, minWidth: 740});
-    jQuery('a.preview_scale').facebox();
-    /* $(".preview_scale").click(function(event) {
-        //event.preventDefault();
-        var previewUrl = $(this).attr("href");
-        alert("preview scale: "+previewUrl);
-    }); */
+    // No facebox previews; rely on normal navigation.
 };
 
 evalsys.initModifyScales = function() {
@@ -620,33 +614,6 @@ evalsys.initModifyScales = function() {
         // each time the text box is clicked on
         $(this).attr("maxlength", "250"); // force the input text boxes to 250 chars or less
     });
-
-    var $previewScaleLink = jQuery('a.preview_scale');
-    var originalUrl = $previewScaleLink.attr("href"); // store the url so we can append to it later
-
-    // NOTE: the order here matters (the order of the click events firing must be the one below first and THEN the facebox one)
-    $previewScaleLink.click(function(event) {
-        // Get the form elements from scale_ideal_container and scale_points_container
-        var $form = jQuery("form.scale_modify_form");
-        var formData = $form.find(".scale_points_container INPUT,.scale_ideal_container INPUT").serializeArray();
-        // now we extract the data from the array and make it into a query string to append on the URL
-        var scaleData = "";
-        for (var i = 0; i < formData.length; i++) {
-            var element = formData[i];
-            if (element["name"] == "modify-scale-points:1:list-control") {
-                if (i > 0) { scaleData += "&"; }
-                scaleData += "points=" + element["value"];
-            } else if (element["name"] == "scaleIdealRadio-selection") {
-                if (i > 0) { scaleData += "&"; }
-                scaleData += "ideal=" + element["value"];
-            }
-        }
-        var previewUrl = originalUrl+"?"+encodeURI(scaleData);
-        $previewScaleLink.attr("href", previewUrl);
-    });
-
-    evalsys.initFacebox({verticalCenterOnClick: false, minWidth: 740});
-    $previewScaleLink.facebox();
 };
 
 evalsys.initPreviewScales = function() {
@@ -664,7 +631,6 @@ evalsys.initPreviewScales = function() {
                 "min-width": "200px",
                 "max-width": (screenWidth-40)+"px"
             });
-            $('#facebox').center({elementSelector: "table.faceboxtable", vertical: false});
         },
     });
     evalsys.instrumentItems("div.preview-item");
@@ -675,62 +641,6 @@ evalsys.initPreviewItem = function(selector) {
     evalsys.instrumentItems(selector);
 };
 
-
-//SPECIAL inits
-/**
- * @param options an object with options for this facebox
- */
-evalsys.initFacebox = function(options) {
-    if (!evalsys.faceboxinitialized) {
-        // only run the facebox init one time
-        if (typeof jQuery.facebox !== "undefined") {
-            // Use portal-provided styling; avoid image-based close button
-            jQuery.facebox.settings.closeImage = null;
-            //jQuery.facebox.settings.opacity = 0.1;
-            //jQuery.facebox.settings.overlay = true;
-            //jQuery.facebox.settings.faceboxHtml = "some html";
-            // DOCS: https://github.com/defunkt/facebox
-            if (options && options.verticalCenterOnClick) {
-                jQuery(document).bind('beforeReveal.facebox', function() {
-                    // set the vertical position
-                    var posY = jQuery.facebox.mousePosY;
-                    //var $clickedOn = jQuery.facebox.clicked;
-                    var $facebox = $('#facebox');
-                    $facebox.css({
-                        'top': posY+'px'
-                    });
-                    // set the min-width
-                    if (options && options.minWidth > 0) {
-                        $facebox.css({
-                            'min-width': (options.minWidth+26) +'px'
-                        });
-                        $facebox.find('.body').css({
-                            'min-width': (options.minWidth) +'px'
-                        });
-                    }
-                });
-            }
-            jQuery(document).bind('reveal.facebox', function() {
-                // set the width
-                var $facebox = $('#facebox');
-                var faceboxWidth = $facebox.find('table.faceboxtable').width();
-                if (options && options.minWidth > 0) {
-                    faceboxWidth = faceboxWidth < options.minWidth ? options.minWidth : faceboxWidth;
-                }
-                //alert("before widths: .body="+$('#facebox .body').width()+", .content="+$('#facebox .content').width()+", .popup="+$('#facebox .popup').width()+", .table="+$('#facebox table.faceboxtable').width()+" ");
-                $facebox.css({
-                    'width': (faceboxWidth+26) +'px'
-                });
-                $facebox.find('.body').css({
-                    'width': (faceboxWidth) +'px'
-                });
-            });
-            evalsys.faceboxinitialized = true;
-        } else {
-            alert("Programming error: no facebox is available!");
-        }
-    }
-};
 
 // Utility function to select/deselect all checkboxes of a given form
 evalsys.toggleCheckboxes = function( formName, checkToggle )

@@ -30,13 +30,13 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
+import org.sakaiproject.evaluation.tool.TemplateBBean;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
@@ -125,6 +125,11 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
       this.navBarRenderer = navBarRenderer;
     }
 
+    private TemplateBBean templateBBean;
+    public void setTemplateBBean(TemplateBBean templateBBean) {
+        this.templateBBean = templateBBean;
+    }
+
     /*
      * 1) access this page through "Continue and Add Questions" button on Template
      * page 2) access this page through links on Control Panel or other 3) access
@@ -189,33 +194,40 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
 	        UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
 	
 	        // create the choices for the pulldown
-	        ArrayList<ViewParameters> templateItemVPList = new ArrayList<>();
-	        ArrayList<String> templateItemLabelList = new ArrayList<>();
-	        for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
-	            templateItemVPList.add( new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
-	                    EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i], templateId) );
-	            templateItemLabelList.add(EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS[i]);
-	        }
+        ArrayList<String> templateItemLabelList = new ArrayList<>();
+        ArrayList<String> templateItemValueList = new ArrayList<>();
+        for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
+            templateItemLabelList.add(EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS[i]);
+            templateItemValueList.add("item:" + EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i]);
+        }
+
+        // add in existing items selection
+        templateItemLabelList.add("item.classification.existing");
+        templateItemValueList.add("existing");
+
+        // add in expert items choice if enabled
+        Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
+        if (useExpertItems) {
+            templateItemLabelList.add("item.classification.expert");
+            templateItemValueList.add("expert");
+        }
 	
-	        // add in existing items selection
-	        templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
-	        templateItemLabelList.add("item.classification.existing");
-	
-	        // add in expert items choice if enabled
-	        Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
-	        if (useExpertItems) {
-	            templateItemVPList.add( new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
-	            templateItemLabelList.add("item.classification.expert");
-	        }
-	
-	        EvalUser TempOwner = commonLogic.getEvalUserById( template.getOwner() );
-	        UIOutput.make(tofill, "template-owner", TempOwner.displayName );
-	
-	
-	        addItemControlRenderer.renderControl(tofill, "add-item-control:", 
-	                templateItemVPList.toArray(new ViewParameters[templateItemVPList.size()]), 
-	                templateItemLabelList.toArray(new String[templateItemLabelList.size()]), 
-	                UIMessage.make("modifytemplate.add.item.button"), templateId);
+        if (templateBBean != null) {
+            templateBBean.templateId = templateId;
+        }
+
+        EvalUser TempOwner = commonLogic.getEvalUserById( template.getOwner() );
+        UIOutput.make(tofill, "template-owner", TempOwner.displayName );
+
+        if (templateBBean != null && templateItemValueList.size() > 0
+                && templateBBean.getAddItemSelection() == null) {
+            templateBBean.setAddItemSelection(templateItemValueList.get(0));
+        }
+
+        addItemControlRenderer.renderControl(tofill, "add-item-control:", 
+                templateItemValueList.toArray(new String[templateItemValueList.size()]), 
+                templateItemLabelList.toArray(new String[templateItemLabelList.size()]), 
+                UIMessage.make("modifytemplate.add.item.button"), templateId);
 	
 	        if (templateItemsList.isEmpty()) {
 	            UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
@@ -456,7 +468,11 @@ public class ModifyTemplateItemsProducer extends EvalCommonProducer implements V
                     if (childList.size() > 0) {
                         UIBranchContainer blockChildren = UIBranchContainer.make(itemBranch, "block-children:", Integer.toString(blockChildNum));
                         UIMessage.make(itemBranch, "modifyblock-items-list-instructions",
-                        "modifyblock.page.instructions");
+                                "modifyblock.page.instructions");
+                        UIInternalLink.make(blockChildren, "add-block-new-item-link", UIMessage.make("modifytemplate.group.add.newitem"),
+                                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId, null, templateItem.getId()));
+                        UIInternalLink.make(blockChildren, "add-block-existing-item-link", UIMessage.make("modifytemplate.group.add.existingitem"),
+                                new org.sakaiproject.evaluation.tool.viewparams.ChooseItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null, templateItem.getId()));
                         blockChildNum++;
                         int orderNo = 0;
 

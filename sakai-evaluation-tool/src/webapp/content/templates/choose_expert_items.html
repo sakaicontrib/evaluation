@@ -19,22 +19,29 @@
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title rsf:id="page-title">Expert Items - Choose Items</title>
+    <!-- standard on all pages -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- INCLUDE page - No JS/CSS -->
-    <script type="text/javascript"> 
-        $(document).ready(function() { 
-        	$.facebox.setHeader($(".portletBody .titleHeader"));
-        	$('a[rel*=facebox]').facebox();
-        }); 
-        var selectAllBox = jQuery('#selectAllNone');
-        selectAllBox.change( function() {
-        	var onoff = selectAllBox.get(0).checked;
-        	jQuery('.expertitembox').each(function(i) {
-        		this.checked = onoff;
-        	});
-        });
-    </script> 
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/headscripts.js" rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript"></script>
+    <!-- end standard on all pages -->
+    <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
+    <script type="text/javascript">
+        (function() {
+            var selectAllBox = document.getElementById('selectAllNone');
+            if (!selectAllBox) {
+                return;
+            }
+            selectAllBox.addEventListener('change', function() {
+                var boxes = document.querySelectorAll('.expertitembox');
+                for (var i = 0; i < boxes.length; i++) {
+                    boxes[i].checked = selectAllBox.checked;
+                }
+            });
+        })();
+    </script>
 </head>
 
 <body>
@@ -53,12 +60,12 @@
 		</div>
 		<div class=" med-noncur-step">
 			<span>
-				<a rsf:id="choose-category-1-link" rel="facebox" href="choose_expert_category.html" class="text-secondary text-decoration-none">(1) Choose Category</a>
+				<a rsf:id="choose-category-1-link" href="choose_expert_category.html" class="text-secondary text-decoration-none">(1) Choose Category</a>
 			</span>
 		</div>
 		<div class=" med-noncur-step">
 			<span>
-				<a rsf:id="choose-objective-2-link" rel="facebox" href="choose_expert_objective.html" class="text-secondary text-decoration-none">(2) Choose Objective</a>
+				<a rsf:id="choose-objective-2-link" href="choose_expert_objective.html" class="text-secondary text-decoration-none">(2) Choose Objective</a>
 			</span>	
 		</div>	
 		<div class=" last-cur-step">
@@ -85,7 +92,7 @@
     <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->            
     <p class="act">
         <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-        <input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
+        <input rsf:id="cancel-button" type="button" value="Cancel" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;" accesskey="x" />
     </p>
   
 		
@@ -133,7 +140,7 @@
 
 	<p class="act">
 		<input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
-		<input rsf:id="cancel-button" type="button" value="Cancel" onclick="$(document).trigger('close.facebox')" accesskey="x" />
+		<input rsf:id="cancel-button" type="button" value="Cancel" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;" accesskey="x" />
 	</p>	
 	
 	</form>

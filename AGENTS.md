@@ -89,3 +89,8 @@ Tests are located in `sakai-evaluation-impl/src/test/` and use:
 - EntityBroker for REST API endpoints
 - Spring/Hibernate for core framework
 - FreeMarker for email templating
+## Notes for agents
+- Facebox modals are being phased out. For template editing flows (ModifyTemplateItemsProducer), prefer full navigation rather than invoking eval.template.facebox.js or EvalSystem.operateSelectLink.
+- Avoid editing legacy JS helpers (`eval.template.facebox.js`, `evalUtils.js`) unless explicitly requested; small UI tweaks should rely on template-level scripts or new modules.
+- RSF templates are strict XHTML. Escape special characters (e.g., `&`) or avoid them. Inline `<script>` blocks are parsed by XML, so guard against entity issues.
+- A global `DefaultViewInterceptor` now ensures RSF never renders view `null`; use regular navigation patterns and trust this safety net instead of replicating redirect hacks.
