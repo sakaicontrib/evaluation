@@ -90,7 +90,7 @@
 
       <div rsf:id="show-item-choices:" class="longtext card border-0 shadow-sm mb-4">
         <div class="card-body">
-        <h4 rsf:id="msg=modifyitem.item.choices.header" class="h6 text-uppercase text-muted mb-3">Choices:</h4>
+        <h4 rsf:id="msg=modifyitem.item.choices.header" class="h6 text-uppercase mb-3">Choices:</h4>
         <div class="labelindnt d-flex flex-column gap-2">
           <div rsf:id="modify-scale-points:">
             <!-- start div for evolver widget - contents below are dummy -->
@@ -245,7 +245,7 @@
       </fieldset>
       <div class="d-flex flex-wrap justify-content-end gap-2">
         <input rsf:id="save-item-action" type="submit" value="Save item" class="btn btn-primary" accesskey="s" />
-        <input rsf:id="cancel-button" type="button" value="Cancel" class="btn btn-outline-secondary" accesskey="x" onclick="if (typeof window.jQuery !== 'undefined') { window.jQuery(document).trigger('close.facebox'); return false; } window.history.back(); return false;" />
+        <input rsf:id="cancel-button" type="button" value="Cancel" class="btn btn-outline-secondary" accesskey="x" onclick="if (window.history.length > 1) { window.history.back(); return false; } if (document.referrer) { window.location.href=document.referrer; return false; } window.close(); return false;" />
       </div>
     </form>
   </div>

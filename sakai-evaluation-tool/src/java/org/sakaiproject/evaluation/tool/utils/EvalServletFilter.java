@@ -23,6 +23,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class EvalServletFilter implements Filter {
@@ -34,12 +35,19 @@ public class EvalServletFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		
-		HttpServletResponse httpServletResponse = (HttpServletResponse)response;
-		
+		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+
 		httpServletResponse.setHeader("Cache-Control","private, max-age=0");
 		httpServletResponse.setDateHeader ("Expires", 0);
-		
+
+		String requestUri = httpServletRequest.getRequestURI();
+		if (requestUri != null && requestUri.endsWith(".map")) {
+			// Source map requests (e.g. PNotify.js.map) should not be handled by RSF views,
+			// they can safely return 404 and avoid noisy stack traces in the logs.
+			httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 	        chain.doFilter(request, httpServletResponse);
 	}
 

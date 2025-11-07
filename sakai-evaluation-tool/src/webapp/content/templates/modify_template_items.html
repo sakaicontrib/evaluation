@@ -32,7 +32,6 @@
     <script src="/sakai-evaluation-tool/webjars/autosize/3.0.21/dist/autosize.min.js" type="text/javascript"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/jquery/form.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/fluid/Fluid.js"></script>
-    <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/facebox/facebox.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/evalUtils.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/reorderUtils.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/eval.template.utils.js"></script>        
@@ -41,7 +40,6 @@
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/jquery/jquery.tipsy.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/toggleCommentBox.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/utils.js"></script>
-    <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/eval.template.facebox.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/eval.template.loader.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/eval.template.loader.events.js"></script>
     <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/eval.template.sort.js"></script>
@@ -52,7 +50,6 @@
     <script type="text/javascript" src="/library/js/spinner.js"></script>
 
     <link href="/sakai-evaluation-tool/content/css/jquery/jquery-ui-1.8.all.css" type="text/css" rel="stylesheet" media="all" />
-    <link href="/sakai-evaluation-tool/content/js/facebox/facebox.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="/sakai-evaluation-tool/content/css/tipsy.css" type="text/css" rel="stylesheet" media="all" />
     <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <link rsf:id="local_css_include" href="local_css_file.css" type="text/css" rel="stylesheet" media="all" />
@@ -79,7 +76,16 @@
     <span rsf:id="site-id" id="site-id" style="display:none">Site Id</span>
     <div class="navPanel eval-highlight rounded p-3" data-eval-highlight="true">
       <h3 class="viewNav"> <span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span> <span rsf:id="title" class="highlight" id="">Title</span> </h3>
-      <div class="listNav itemAction"> <a href="modify_template.html" rsf:id="modify_title_desc_link" rel="faceboxGrid">Edit Template Title/Description</a> | <a rsf:id="preview_eval_link" href="preview_eval.html">View a preview</a> | <span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a></span> | <a href="evaluation_start.html" rsf:id="begin_eval_link" id="begin_eval_link">Begin an evaluation using this template</a> <span rsf:id="begin-eval-dummylink" id="begin-eval-dummylink" style="color:gray;"></span></div>
+      <div class="listNav itemAction">
+        <a href="modify_template.html" rsf:id="modify_title_desc_link">Edit Template Title/Description</a>
+        |
+        <a rsf:id="preview_eval_link" href="preview_eval.html">View a preview</a>
+        |
+        <span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a></span>
+        |
+        <a href="evaluation_start.html" rsf:id="begin_eval_link" id="begin_eval_link">Begin an evaluation using this template</a>
+        <span rsf:id="begin-eval-dummylink" id="begin-eval-dummylink" style="color:gray;"></span>
+      </div>
     </div>
     <div rsf:id="description-switch:" class="textPanel"> <span rsf:id="description" id="">Template description goes here, this would be notes for other admins or yourself, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui laoreet libero, nec pulvinar sem mi ac felis.</span> </div>
     <div class="navPanel">
@@ -141,9 +147,9 @@
                         <span rsf:id="item-category" class="lighthighlight">(Tutor)</span>   &nbsp;
                         <span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>    &nbsp;
                     </span>
-                    <span>
-                        <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp;
-                        <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
+	                    <span>
+	                        <a href="preview_item.html" class="preview" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp;
+	                        <a rsf:id="modify-row-item" href="modify_scaled.html"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
 				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
                 <a rsf:id="remove-row-item-unblock"href="remove_question.html" rel="unblock">Ungroup</a> </span>
                 </div>
@@ -151,8 +157,8 @@
               </div>
                             <div rsf:id="block-children:" id="block-children:" class="itemLine3 border-top p-3">
                	<div id="itemTableBlock" class="itemTableBlock rounded-3 p-3 mt-3">
-              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
-                      <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+              			<a rsf:id="add-block-new-item-link" class="addItem" href="#">Add new item</a>
+                      <a rsf:id="add-block-existing-item-link" class="dropItem addItem" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
 			 <span  rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 			<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable border rounded-3 p-2 mb-2 w-100">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRowBlock::1:hidden-item-id" />
@@ -161,7 +167,7 @@
 							
 							<span class="itemRight">
 								&nbsp;
-								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
+								<a rsf:id="modify-row-item" href="modify_scaled.html"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
                                 <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
                                 <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
 <span rsf:id="remove-row-item-disabled" >Remove</span>
@@ -194,15 +200,15 @@
                         &nbsp;
                         <span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>    &nbsp;
                 </span>
-                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
+	                    <span> <a href="preview_item.html" class="preview" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
 								 &nbsp; <a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a> </span>
                 </div>
                 <div class="cleaner">&nbsp;</div>
               </div>
                             <div rsf:id="block-children:" id="block-children:" class="itemLine3 border-top p-3">
                <div id="itemTableBlock" class="itemTableBlock rounded-3 p-3 mt-3">
-              			<a rsf:id="msg=modifytemplate.group.add.newitem" class="addItem" rel="faceboxAddNewGroupItem" href="#">Add new item</a>
-                  <a rsf:id="msg=modifytemplate.group.add.existingitem" class="dropItem addItem" rel="faceboxAddGroupItems" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
+                  <a rsf:id="add-block-new-item-link" class="addItem" href="#">Add new item</a>
+                  <a rsf:id="add-block-existing-item-link" class="dropItem addItem" href="#"><span class="bi bi-file-earmark-plus" aria-hidden="true"></span> Add existing item</a>  &nbsp;&nbsp; | &nbsp;
 			 <span rsf:id="modifyblock-items-list-instructions" class="instructionText">Drag and drop to rearrange the blocked items</span>
 		<div rsf:id="itemRowBlock:" id="itemRowBlock::1:" class="itemRowBlock inlineEditable border rounded-3 p-2 mb-2 w-100">
 							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
@@ -212,7 +218,7 @@
 							<span class="itemRight">
 								
 								&nbsp;
-								<a rsf:id="modify-row-item" href="modify_scaled.html" rel="childEdit"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
+								<a rsf:id="modify-row-item" href="modify_scaled.html"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a>
                                 <a rsf:id="child-ungroup-item" href="remove_question.html" rel="childUngroup">Ungroup</a>
                                 <a rsf:id="child-remove-item" href="remove_question.html" rel="childRemove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
 <span rsf:id="remove-row-item-disabled" >Remove</span>
@@ -245,7 +251,7 @@
                      &nbsp;<span rsf:id="item-hierarchy" class="bi bi-text-paragraph" aria-hidden="true"></span><span class="visually-hidden">Hierarchy ID</span>  &nbsp;
                      </span>
 
-                    <span> <a href="preview_item.html" class="preview" rel="faceboxGrid" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html" rel="faceboxGrid"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
+	                    <span> <a href="preview_item.html" class="preview" rsf:id="preview-row-item"><span class="bi bi-zoom-in" aria-hidden="true"></span><span class="visually-hidden">Preview</span></a> &nbsp; <a rsf:id="modify-row-item" href="modify_scaled.html"><span class="bi bi-pencil" aria-hidden="true"></span><span class="visually-hidden">Edit</span></a> &nbsp;
                 &nbsp;
 				<a rsf:id="remove-row-item"href="remove_question.html" rel="remove"><span class="bi bi-x-lg" aria-hidden="true"></span><span class="visually-hidden">Remove</span></a>
                 <a rsf:id="remove-row-item-unblock" href="remove_question.html" rel="unblock">Ungroup</a>
@@ -263,7 +269,7 @@
         <div class="item-operations alert alert-secondary d-flex flex-wrap align-items-center gap-2 py-2 px-3" id="blockInputs">
           <form rsf:id="createBlockForm" id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html" class="inlineForm">
             <input type="hidden" name="templateItemIds"/>
-            <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="button" value="Create Group" disabled="disabled" />
+            <input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Group" disabled="disabled" />
           </form>
           <span rsf:id="blockInstructions"class="instructionText"> Check the boxes next to a set of items and click Create Block to make a block with the chosen items </span> </div>
         <div class="cleaner">&nbsp;</div>

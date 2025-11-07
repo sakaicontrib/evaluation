@@ -18,6 +18,10 @@
 var evalTemplateData = (function() {
     //Private data
     var currentRow = undefined,
+    modalState = {
+        elementToUpdate: null,
+        loadingImage: "/library/image/sakai/spinner.gif"
+    },
     // if @textarea is boolen FALSE, treat form as a non ck editor form.
     _postFCKform = function(form, textarea, target, btn) {
         evalTemplateUtils.debug.group("Starting Fn submitFCKform", [form, textarea, target, btn]);
@@ -28,8 +32,8 @@ var evalTemplateData = (function() {
                 fckEditor = null,
                 fckEditorValue = null,
                 isFCKEditor = textarea !== false,
-                isBlockChild = $.facebox.settings.elementToUpdate === 'block';
-        img.src = $.facebox.settings.loadingImage;
+                isBlockChild = modalState.elementToUpdate === 'block';
+        img.src = modalState.loadingImage;
         //evalTemplateUtils.debug.info("Saving item %i", templateItemId);
         if (isFCKEditor) {
             try {
@@ -72,11 +76,8 @@ var evalTemplateData = (function() {
             dataType: "html",
             beforeSend: function() {
                 //Disable the form in the 
-                $('#facebox input').each(function() {
+                $(form).find('input, select, textarea, button').each(function() {
                     $(this).attr('disabled', 'disabled');
-                });
-                $("#facebox option").each(function(){
-                    this.disabled = true;
                 });
                 btn.parent().append(img);
             },
@@ -84,11 +85,10 @@ var evalTemplateData = (function() {
                 var successDOM = $(d);
                 //Check if there is a server-side error or an alert
                 if(evalTemplateData.showRSFMessage(successDOM)){
-                    //error happened. Do not remove the facebox in calse its a blank field or somethin the user can fix.
+                    // error happened; keep the current UI so the user can fix it.
                     return false;
                 }
 
-                $(document).trigger('close.facebox');
                 if (form == '#blockForm' || form == '#item-form') {
                     var rows = $("div.itemRow"),
                         numRows = rows.length;
@@ -96,7 +96,7 @@ var evalTemplateData = (function() {
                         //this is an empty template
                         $('#itemList').html(successDOM.find('#itemList').html());
                         $(document).trigger('activateControls.templateItems');
-                        evalTemplateUtils.debug.warn(" Updated row %o", $.facebox.settings.elementToUpdate);
+                        evalTemplateUtils.debug.warn(" Updated row %o", modalState.elementToUpdate);
 
                         // restore closed group items
                         for ( var closedIndex = 0; closedIndex < evalTemplateUtils.closedGroup.get.length; closedIndex ++ ){
@@ -170,15 +170,15 @@ var evalTemplateData = (function() {
         return true;
     },
     
-    //fillActionResponse function called by $.facebox.showResponse
+    // fillActionResponse function invoked by action handlers
     _fillActionResponse = function (entityCat,_id, templateOwner){
       evalTemplateUtils.debug.group("starting fillActionResponse", this);
         var id = _id;
     if(entityCat == "eval-item"){
-        var par = $.facebox.settings.elementToUpdate;
+        var par = modalState.elementToUpdate;
 		id = $(par).children(".itemLine2").children("[name=rowItemId]").html();
 	}
-	evalTemplateUtils.debug.info($.facebox.settings.elementToUpdate);
+	evalTemplateUtils.debug.info(modalState.elementToUpdate);
 	var entityURL = "/direct/" + entityCat + "/" + id + ".xml";
 		$.ajax({
 		url: entityURL,

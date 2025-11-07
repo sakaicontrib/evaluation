@@ -22,6 +22,7 @@ package org.sakaiproject.evaluation.tool.viewparams;
 public class ChooseItemViewParameters extends TemplateViewParameters {
 
 	public String searchString;
+	public Long groupItemId;
 
 	public ChooseItemViewParameters() { }
 
@@ -29,6 +30,13 @@ public class ChooseItemViewParameters extends TemplateViewParameters {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.searchString = searchString;
+	}
+
+	public ChooseItemViewParameters(String viewID, Long templateId, String searchString, Long groupItemId) {
+		this.viewID = viewID;
+		this.templateId = templateId;
+		this.searchString = searchString;
+		this.groupItemId = groupItemId;
 	}
 
 }

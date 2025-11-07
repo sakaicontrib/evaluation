@@ -670,19 +670,25 @@ public class ModifyItemProducer extends EvalCommonProducer implements ViewParams
         if (ivp.templateId == null) {
             // go to the Items view if we are not working with a template currently
             result.resultingView = new SimpleViewParameters(ControlItemsProducer.VIEW_ID);
-        }else{
-            if(actionReturn != null){
-                try{
-                    Long itemId = Long.parseLong(actionReturn.toString());
-                    result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
-                }catch(NumberFormatException e){
-                    if ("success".equals(actionReturn.toString())){
-                        result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
-                    }else{
-                        //This is an unexpected return string, possibly an error. So return an error view:
-                        result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
-                    }
-                }
+            return;
+        }
+
+        // default to the template editor since RSF 1.3 may provide a null action return
+        TemplateViewParameters templateView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId);
+        result.resultingView = templateView;
+
+        if (actionReturn == null) {
+            return;
+        }
+
+        String actionReturnValue = actionReturn.toString();
+        try {
+            Long itemId = Long.parseLong(actionReturnValue);
+            result.resultingView = new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, ivp.templateId, itemId);
+        } catch (NumberFormatException e) {
+            if (!"success".equals(actionReturnValue)) {
+                //This is an unexpected return string, possibly an error. So return an error view:
+                result.resultingView = new SimpleViewParameters(MessagesProducer.VIEW_ID);
             }
         }
     }

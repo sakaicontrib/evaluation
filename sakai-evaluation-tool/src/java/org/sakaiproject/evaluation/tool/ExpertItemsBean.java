@@ -40,6 +40,7 @@ public class ExpertItemsBean {
 
     public Map<String, Boolean> selectedIds = new HashMap<>();
     public Long templateId;
+    public Long groupItemId;
 
     private EvalCommonLogic commonLogic;
     public void setCommonLogic(EvalCommonLogic commonLogic) {
@@ -75,6 +76,12 @@ public class ExpertItemsBean {
         String hierarchyNodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
         EvalTemplate template = authoringService.getTemplateById(templateId);
+        EvalTemplateItem parentBlock = null;
+        int totalGroupedItems = 0;
+        if (groupItemId != null) {
+            parentBlock = authoringService.getTemplateItemById(groupItemId);
+            totalGroupedItems = authoringService.getItemCountForTemplateItemBlock(parentBlock.getTemplate().getId(), groupItemId);
+        }
         if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
             // TODO change the level and node based on current settings
             hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
@@ -96,6 +103,16 @@ public class ExpertItemsBean {
                 templateItem.setTemplate(template);
                 templateItem.setHierarchyLevel(hierarchyLevel);
                 templateItem.setHierarchyNodeId(hierarchyNodeId);
+                if (parentBlock != null) {
+                    totalGroupedItems++;
+                    templateItem.setBlockParent(Boolean.FALSE);
+                    templateItem.setBlockId(groupItemId);
+                    templateItem.setDisplayOrder(totalGroupedItems);
+                    templateItem.setHierarchyLevel(parentBlock.getHierarchyLevel());
+                    templateItem.setHierarchyNodeId(parentBlock.getHierarchyNodeId());
+                    templateItem.setCategory(parentBlock.getCategory());
+                    templateItem.setResultsSharing(parentBlock.getResultsSharing());
+                }
                 // save the template item
                 authoringService.saveTemplateItem(templateItem, currentUserId);
                 log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");

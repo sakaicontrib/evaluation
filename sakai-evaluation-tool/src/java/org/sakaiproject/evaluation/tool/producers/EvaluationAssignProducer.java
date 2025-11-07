@@ -514,6 +514,7 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
 			                    link.decorate(new UIStyleDecorator("addItem total:"+totalUsers));
 			                    link.decorate(new UITooltipDecorator(messageLocator.getMessage("assignselect.tas.page.title")));
 			                }
+			                UIOutput.make(checkboxRow, "assign-select-inline");
 		                }else{
 		                	title.decorate( new UIStyleDecorator("instruction") );
 		                	UIMessage.make(checkboxRow, "select-no", "assigneval.cannot.assign");
@@ -600,8 +601,6 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         
         UICommand assignButton;
         if (useSelectionOptions){
-        	UIOutput.make(tofill, "JS-facebox");
-        	UIOutput.make(tofill, "JS-facebox-assign");
         	UIOutput.make(tofill, "JS-assign");
                 UIMessage.make(form, "select-column-title", "assignselect.page.column.title");
         	form.type = EarlyRequestParser.ACTION_REQUEST;

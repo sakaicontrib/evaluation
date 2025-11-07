@@ -37,7 +37,6 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
@@ -79,7 +78,7 @@ public class EvaluationAssignSelectProducer extends EvalCommonProducer implement
 		
 		boolean isInstructor, isAssistant;
 		
-		UIForm form = UIForm.make(tofill, "form");
+		UIContainer form = UIBranchContainer.make(tofill, "form");
 		String actionBean = "setupEvalBean.";
 		String actionBeanVariable = actionBean;
 		//Deal with EvalGroups

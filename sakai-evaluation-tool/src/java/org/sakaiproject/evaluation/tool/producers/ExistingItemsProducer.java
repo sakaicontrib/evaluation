@@ -90,8 +90,13 @@ public class ExistingItemsProducer extends EvalCommonProducer implements Navigat
 
         ChooseItemViewParameters itemViewParameters = (ChooseItemViewParameters) viewparams;
         Long templateId = itemViewParameters.templateId;
+        Long groupItemId = itemViewParameters.groupItemId;
         String searchString = itemViewParameters.searchString;
         if (searchString == null) searchString = "";
+        Long blockScaleId = null;
+        if (groupItemId != null) {
+            blockScaleId = authoringService.getTemplateItemById(groupItemId).getItem().getScale().getId();
+        }
 
         UIInternalLink.make(tofill, "modify-items-link", UIMessage.make("items.page.title"), //$NON-NLS-2$
                 new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
@@ -116,6 +121,11 @@ public class ExistingItemsProducer extends EvalCommonProducer implements Navigat
             for (int i = 0; i < existingItems.size(); i++) {
                 EvalItem item = (EvalItem) existingItems.get(i);
                 UIBranchContainer items = UIBranchContainer.make(form, "item-list:", item.getId().toString());
+                if (blockScaleId != null) {
+                    if (item.getScale() == null || !blockScaleId.equals(item.getScale().getId())) {
+                        continue;
+                    }
+                }
                 if (i % 2 == 0) {
                     items.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                 }
@@ -142,6 +152,9 @@ public class ExistingItemsProducer extends EvalCommonProducer implements Navigat
             UICommand addItemsCommand = UICommand.make(form, "insert-items-command", UIMessage.make("expert.items.insert"),
             "#{expertItemsBean.processActionAddItems}");
             addItemsCommand.parameters.add(new UIELBinding("#{expertItemsBean.templateId}", templateId));
+            if (groupItemId != null) {
+                addItemsCommand.parameters.add(new UIELBinding("#{expertItemsBean.groupItemId}", groupItemId));
+            }
 
             // create the top cancel link
             UIInternalLink.make(form, "cancel-items", UIMessage.make("items.cancel"), 

@@ -574,6 +574,7 @@
         <property name="messageLocator" ref="messageLocator" />
         <property name="navBarRenderer" ref="navBarRenderer" />
         <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"/>
+        <property name="templateBBean" ref="templateBBean" />
     </bean>
 
     <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
