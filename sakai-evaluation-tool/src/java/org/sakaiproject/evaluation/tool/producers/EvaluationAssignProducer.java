@@ -38,6 +38,7 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.SetupEvalBean;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.renderers.NavBarRenderer;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
@@ -147,6 +148,11 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         this.renderingUtils = renderingUtils;
     }
 
+    private SetupEvalBean setupEvalBean;
+    public void setSetupEvalBean(SetupEvalBean setupEvalBean) {
+        this.setupEvalBean = setupEvalBean;
+    }
+
     public void fill(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         // local variables used in the render logic
@@ -243,14 +249,14 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         List<String> hierNodesLabels = new ArrayList<>();
         List<String> hierNodesValues = new ArrayList<>();
         UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder",
-                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedHierarchyNodeIDs", evalViewParams.selectedHierarchyNodeIDs);
+                new String[] {}, new String[] {}, actionBean + "selectedHierarchyNodeIDs", evalViewParams.selectedHierarchyNodeIDs);
         String hierNodesSelectID = hierarchyNodesSelect.getFullID();
 
         // Things for building the UISelect of Eval Group Checkboxes
         List<String> evalGroupsLabels = new ArrayList<>();
         List<String> evalGroupsValues = new ArrayList<>();
         UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder",
-                new String[] {}, new String[] {}, (useSelectionOptions? actionBean : "") + "selectedGroupIDs",evalViewParams.selectedGroupIDs == null ? new String[]{} : evalViewParams.selectedGroupIDs);
+                new String[] {}, new String[] {}, actionBean + "selectedGroupIDs", evalViewParams.selectedGroupIDs == null ? new String[]{} : evalViewParams.selectedGroupIDs);
         String evalGroupsSelectID = evalGroupsSelect.getFullID();
 
         /*
@@ -592,21 +598,17 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         
         UIMessage.make(form, "back-button", "general.back.button");
         
+        UICommand assignButton;
         if (useSelectionOptions){
         	UIOutput.make(tofill, "JS-facebox");
         	UIOutput.make(tofill, "JS-facebox-assign");
         	UIOutput.make(tofill, "JS-assign");
                 UIMessage.make(form, "select-column-title", "assignselect.page.column.title");
         	form.type = EarlyRequestParser.ACTION_REQUEST;
-        	UICommand.make(form, "confirmAssignCourses", UIMessage.make("evaluationassignconfirm.done.button"),actionBean + "completeConfirmAction" );
+        	assignButton = UICommand.make(form, "confirmAssignCourses", UIMessage.make("evaluationassignconfirm.done.button"),actionBean + "completeConfirmAction" );
         }else{
-        	// this is a get form which does not submit to a backing bean
-            EvalViewParameters formViewParams = (EvalViewParameters) evalViewParams.copyBase();
-            formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
-            form.viewparams = formViewParams;
-        	form.type = EarlyRequestParser.RENDER_REQUEST;
-        	 // all command buttons are just HTML now so no more bindings
-        	UIMessage assignButton = UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
+          form.type = EarlyRequestParser.ACTION_REQUEST;
+          assignButton = UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), actionBean + "reviewAssignmentsAction");
 
             // activate the adhoc groups deletion javascript
             if (useAdHocGroups) {
@@ -705,12 +707,51 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
         if ("evalSettings".equals(actionReturn)) {
             result.resultingView = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalId);
         } else if ("evalAssign".equals(actionReturn)) {
-            result.resultingView = new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evalId);
+            EvalViewParameters vp = new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evalId);
+            copyNavigationState(vp, evp);
+            populateSelectionState(vp, evp);
+            result.resultingView = vp;
         } else if ("evalConfirm".equals(actionReturn)) {
-            result.resultingView = new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evalId);
+            EvalViewParameters vp = new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evalId);
+            copyNavigationState(vp, evp);
+            populateSelectionState(vp, evp);
+            result.resultingView = vp;
         } else if ("controlEvals".equals(actionReturn)) {
             result.resultingView = new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID);
         }
+    }
+
+    private void copyNavigationState(EvalViewParameters target, EvalViewParameters source) {
+        if (source == null) {
+            return;
+        }
+        target.reOpening = source.reOpening;
+        target.returnToSearchResults = source.returnToSearchResults;
+        target.adminSearchPage = source.adminSearchPage;
+        target.adminSearchString = source.adminSearchString;
+        target.noGroups = source.noGroups;
+        target.evalGroupId = source.evalGroupId;
+    }
+
+    private void populateSelectionState(EvalViewParameters target, EvalViewParameters fallback) {
+        if (setupEvalBean != null) {
+            target.selectedGroupIDs = copyArray(setupEvalBean.selectedGroupIDs);
+            target.selectedHierarchyNodeIDs = copyArray(setupEvalBean.selectedHierarchyNodeIDs);
+            target.expanded = setupEvalBean.expanded;
+            target.nodeClicked = setupEvalBean.nodeClicked;
+        } else if (fallback != null) {
+            target.selectedGroupIDs = copyArray(fallback.selectedGroupIDs);
+            target.selectedHierarchyNodeIDs = copyArray(fallback.selectedHierarchyNodeIDs);
+            target.expanded = fallback.expanded;
+            target.nodeClicked = fallback.nodeClicked;
+        }
+    }
+
+    private String[] copyArray(String[] values) {
+        if (values == null) {
+            return new String[] {};
+        }
+        return values.clone();
     }
 
     /* (non-Javadoc)

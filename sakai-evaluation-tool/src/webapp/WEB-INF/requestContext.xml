@@ -804,10 +804,11 @@
         <property name="messageLocator" ref="messageLocator" />
 		<property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="viewStateHandler" ref="viewStateHandler" />
-		<property name="navBarRenderer" ref="navBarRenderer" />	
+		<property name="navBarRenderer" ref="navBarRenderer" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="renderingUtils" ref="renderingUtils" />
+        <property name="setupEvalBean" ref="setupEvalBean" />
     </bean>
 	
     <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignSelectProducer">
