@@ -458,10 +458,38 @@ public class SetupEvalBean {
 		return destination;
 	}
 
-    // NOTE: There is no action for the 3) assign step because that one just passes the data
-    // straight to the confirm view
+	// NOTE: There is no action for the 3) assign step because that one just passes the data
+	// straight to the confirm view
 
 	// TODO - how do we handle removing assignments? (Currently not supported)
+
+	/**
+	 * Performs server-side validation of the assignments before the user is sent to the
+	 * confirmation screen. This keeps the submission as a POST while still leveraging the
+	 * existing confirmation workflow.
+	 * @return navigation outcome
+	 */
+	public String reviewAssignmentsAction() {
+		if (evaluationId == null) {
+			throw new IllegalArgumentException("evaluationId cannot be null");
+		}
+
+		EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Could not find evaluation for id " + evaluationId);
+		}
+
+		boolean hasSelectedGroups = selectedGroupIDs != null && selectedGroupIDs.length > 0;
+		boolean hasSelectedNodes = selectedHierarchyNodeIDs != null && selectedHierarchyNodeIDs.length > 0;
+		boolean anonymousAllowed = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+
+		if (!anonymousAllowed && !hasSelectedGroups && !hasSelectedNodes) {
+			messages.addMessage(new TargettedMessage("assigneval.invalid.selection", new Object[] {},
+					TargettedMessage.SEVERITY_ERROR));
+			return "evalAssign";
+		}
+		return "evalConfirm";
+	}
 
 	/**
 	 * Complete the creation process for an evaluation (view all the current
