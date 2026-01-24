@@ -48,7 +48,7 @@ public class EvalServletFilter implements Filter {
 			httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-	        chain.doFilter(request, httpServletResponse);
+		chain.doFilter(request, httpServletResponse);
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
