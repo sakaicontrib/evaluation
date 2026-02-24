@@ -349,7 +349,9 @@ public class EvaluationAssignProducer extends EvalCommonProducer implements View
                 addCollapseControl(tofill, hierarchyArea, "initJSHierarchyToggle",
                         "hierarchy-assignment-area", "hide-button", "show-button", evalViewParams.expanded == null);
 
-                form.parameters.add( new UIELBinding(actionBean + "expanded", evalViewParams.expanded) );
+                if (evalViewParams.expanded != null) {
+                    form.parameters.add(new UIELBinding(actionBean + "expanded", evalViewParams.expanded));
+                }
             }
             
             /*
