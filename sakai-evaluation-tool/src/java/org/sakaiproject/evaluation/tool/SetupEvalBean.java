@@ -124,7 +124,7 @@ public class SetupEvalBean {
     
 	public String nodeClicked = null;
 	
-	public String[] expanded = new String[] {};
+	public String[] expanded = null;
     /**
 	 * the selected option (eg. for TAs and Instructors) in this evaluation. see
 	 * {@link EvalEvaluation.selectionSettings}
