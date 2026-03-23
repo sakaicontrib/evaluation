@@ -54,6 +54,7 @@
 	      init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
+      <property name="transactionManager" ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="courseManagementService" ref="org.sakaiproject.coursemanagement.api.CourseManagementService" />
       <property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
