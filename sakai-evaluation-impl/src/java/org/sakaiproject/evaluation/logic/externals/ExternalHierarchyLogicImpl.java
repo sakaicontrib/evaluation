@@ -46,6 +46,11 @@ import org.sakaiproject.memory.api.Cache;
 import org.sakaiproject.memory.api.MemoryService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,6 +99,11 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         this.authzGroupService = authzGroupService;
     }
 
+    private PlatformTransactionManager transactionManager;
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public static final String HIERARCHY_ID = "evaluationHierarchyId";
     public static final String HIERARCHY_ROOT_TITLE = "Root";
     
@@ -113,12 +123,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * Place any code that should run when this class is initialized by spring here
      */
     public void init() {
-        // create the hierarchy if it is not there already
-        if (hierarchyService.getRootNode(HIERARCHY_ID) == null) {
-            HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
-            hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
-            log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
-        }
+        ensureHierarchyExists();
         // get the provider if there is one
         // setup provider
         if (evalHierarchyProvider == null) {
@@ -132,6 +137,35 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         }
         
         cache = memoryService.getCache(CACHE_NAME);
+    }
+
+    private void ensureHierarchyExists() {
+        if (hierarchyService.getRootNode(HIERARCHY_ID) != null) {
+            return;
+        }
+
+        if (transactionManager == null) {
+            createHierarchyRoot();
+            return;
+        }
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        transactionTemplate.setReadOnly(false);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                if (hierarchyService.getRootNode(HIERARCHY_ID) == null) {
+                    createHierarchyRoot();
+                }
+            }
+        });
+    }
+
+    private void createHierarchyRoot() {
+        HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
+        hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
+        log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
     }
 
     /*
