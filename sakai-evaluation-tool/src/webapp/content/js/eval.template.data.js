@@ -190,7 +190,10 @@ var evalTemplateData = (function() {
 				$(entityCat, xml).each(function(){
 					if (par) {
 						$(par).children(".itemLine2").children(".itemText").html($("itemText", this).text());
-						$(par).highlight(250, "#eeeeee");
+						$(par).addClass("eval-item-updated");
+						window.setTimeout(function() {
+							$(par).removeClass("eval-item-updated");
+						}, 300);
                         evalTemplateUtils.debug.info("%o ids not null ", par);
 					}
 				});

@@ -24,8 +24,8 @@
         transition: background-color .2s ease, border-color .2s ease, color .2s ease;
         &:hover, &:focus {
           color: var(--bs-body-color, #212529);
-          background: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.15));
-          border-color: var(--bs-primary-border-subtle, rgba(13, 110, 253, 0.4));
+          background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+          border-color: var(--bs-border-color, #ced4da);
         }
       }
       .selected {

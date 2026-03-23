@@ -73,7 +73,9 @@
         }
         var commentLink = dom.commentHolder.find("a, span:not(.JSwarn)");
         commentLink
-                .css({color:"#000", opacity:0.5})
+                .removeClass("comment-control-enabled")
+                .addClass("comment-control-disabled")
+                .css("opacity", "")
                 .unbind("click")
                 .bind("click", function() {
             return false;
@@ -88,7 +90,9 @@
 
     function enable(dom) {
         dom.commentHolder.find("a, span:not(.JSwarn)")
-                .css({color:null, opacity:1})
+                .removeClass("comment-control-disabled")
+                .addClass("comment-control-enabled")
+                .css("opacity", "")
                 .unbind("click")
                 //Remove event for tooltip
                 .unbind('mouseenter').unbind('mouseleave');
