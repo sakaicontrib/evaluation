@@ -12,6 +12,33 @@
 // Evaluation
 /////////////////////////
 .evaluation {
+  .eval-selector-option--active {
+    background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
+  }
+
+  fieldset.eval-selector-error {
+    background: var(--bs-danger-bg-subtle, rgba(220, 53, 69, 0.12));
+    box-shadow: inset 0 0 0 1px var(--bs-danger-border-subtle, rgba(220, 53, 69, 0.35));
+  }
+
+  .itemLine2--selected-scale,
+  .item-delete-target--active,
+  .eval-item-updated {
+    background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+  }
+
+  .eval-template-popup {
+    color: var(--bs-body-color, #212529);
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #ced4da);
+    border-radius: var(--bs-border-radius, .375rem);
+    box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0, 0, 0, 0.075));
+  }
+
+  .template-link-muted {
+    color: var(--bs-secondary-color, #6c757d);
+  }
+
   .itemListEval {
     margin-top: 0;
     
@@ -443,6 +470,34 @@
 /////////////////////////
   .JSevalComment {
     margin: 0 0 15px 55px;
+    color: inherit;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: .125em;
+    }
+
+    a:hover,
+    a:focus {
+      color: inherit;
+    }
+
+    .comment-control-disabled {
+      color: var(--bs-secondary-color, currentColor) !important;
+      text-decoration-color: currentColor;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    .comment-control-disabled:hover,
+    .comment-control-disabled:focus {
+      color: var(--bs-secondary-color, currentColor) !important;
+    }
+
+    span:not(.JSwarn) {
+      color: inherit;
+    }
   }
 
 } //end namespace

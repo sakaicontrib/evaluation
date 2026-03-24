@@ -162,6 +162,12 @@ function updateControlItemsTotal() {
     // private functions
     //
 
+    function getItemTarget(options) {
+        if (options.itemType == "blockChild") {
+            return $('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]');
+        }
+        return $('input[name=template-item-id][value='+options.id+']:hidden').parents('.itemRow');
+    }
 
     function move_box(an, box, options)
     {
@@ -226,18 +232,12 @@ function updateControlItemsTotal() {
         if (!options.itemType){
             options.itemType = 'none';
         }
-        if ((options.itemType == "blockChild")){
-            $('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').css('background', '#fff');
-        }
-        else{
-            $('input[name=template-item-id][value='+options.id+']:hidden').parents('.itemRow').css('background', '#fff');
-        }
+        var itemTarget = getItemTarget(options);
+        itemTarget.removeClass('item-delete-target--active');
 
         var href = an.href,
         width = 150,
         // only apply to IE
-
-        borderStyle = '1px solid #2266AA',
         boxdiv = document.getElementById(href);
 
         if (boxdiv !== null)
@@ -273,11 +273,9 @@ function updateControlItemsTotal() {
         boxdiv.style.position = 'absolute';
         boxdiv.style.width = width + 'px';
         //boxdiv.style.height = height + 'px';
-        boxdiv.style.border = borderStyle;
         // boxdiv.style.textAlign = 'right';
         boxdiv.style.padding = '4px';
-        boxdiv.style.background = '#FFFFFF';
-        $(boxdiv).addClass('act');
+        $(boxdiv).addClass('act eval-template-popup');
         $(boxdiv).hide();
         document.body.appendChild(boxdiv);
 
@@ -287,12 +285,7 @@ function updateControlItemsTotal() {
            actionText = evalTemplateUtils.messageLocator('general.command.delete');
         }
 
-        if (options.itemType == "blockChild") {
-            $('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').css('background', '#ffc');
-        }
-        else{
-            $('input[name=template-item-id][value='+options.id+']:hidden').parents('.itemRow').css('background', '#ffc');
-        }
+        itemTarget.addClass('item-delete-target--active');
 
         var content = '<div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>' +
                       '<div class="" style="float: right;">' +

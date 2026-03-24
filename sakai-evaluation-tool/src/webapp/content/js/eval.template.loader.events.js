@@ -237,12 +237,12 @@ var evalTemplateLoaderEvents = (function($) {
 
                     var count_CheckBoxes_CHECKED = checkBoxes_CHECKED.length; //enforce at least 2 check box are checked
 
-                    $(".itemLine2").removeAttr('style');
+                    $(".itemLine2").removeClass('itemLine2--selected-scale');
                     if (count_CheckBoxes_CHECKED > 0){
                         for (var a=0; a< checkBoxes_CHECKED_array.length;a++) {
                             var target = $(checkBoxes_CHECKED_array[a]),
                                 targetId = target.attr('id');
-                                target.parents(".itemLine2:eq(0)").attr('style', 'background-color:#FFFFCC;');
+                                target.parents(".itemLine2:eq(0)").addClass('itemLine2--selected-scale');
                             var scaleId = targetId.substring(targetId.indexOf('-')+1, targetId.lastIndexOf('-'));
                             //disable other check box which has different scale id
                              for(var b=0;b<checkBoxes_ALL_array.length;b++){

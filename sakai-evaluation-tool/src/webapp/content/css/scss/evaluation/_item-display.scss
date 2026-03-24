@@ -289,6 +289,10 @@ td.fullDisplayHorizontalColoredWrapper {
   /* height:100%; EVALSYS-952*/
   overflow: hidden;
   padding: 0;
+  --eval-choice-bg: #fff;
+  --eval-choice-color: var(--sakai-surface-subtle-text, #212529);
+  --eval-choice-selected-bg: rgba(255, 193, 7, 0.15);
+  --eval-choice-selected-na-bg: rgba(108, 117, 125, 0.15);
 }
 div.fullVertical {
   margin-left: 40px;
@@ -298,10 +302,12 @@ div.fullVertical {
   float: left;
   height: 4em;
   list-style: none !important;
-  background: var(--bs-body-bg, #fff);
+  background: var(--eval-choice-bg);
   border-radius: var(--bs-border-radius, .375rem);
   overflow: hidden;
   width: 15em;
+  color: var(--eval-choice-color);
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
 .fullVertical li label, .fullDisplayHorizontal li label {
@@ -311,10 +317,13 @@ div.fullVertical {
   text-indent: -2em;
   padding: 0.5em 0.5em 0.5em 2.5em!important;
   height: 100%;
+  color: inherit;
 }
 
-.fullVertical li:hover, .fullDisplayHorizontal li:hover {
-  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.1));
+.fullVertical li:hover, .fullVertical li:focus-within,
+.fullDisplayHorizontal li:hover, .fullDisplayHorizontal li:focus-within {
+  background: var(--eval-choice-bg);
+  box-shadow: inset 0 0 0 1px var(--bs-border-color, #ced4da), var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0, 0, 0, 0.075));
   cursor: pointer;
 }
 
@@ -325,11 +334,15 @@ div.fullVertical {
 }
 
 .fullVertical li.checked, .fullDisplayHorizontal li.checked {
-  background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
+  background: var(--eval-choice-bg);
+  border-color: var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.45)) !important;
+  box-shadow: inset 0 0 0 1px var(--bs-warning-border-subtle, rgba(255, 193, 7, 0.45));
 }
 
 .fullVertical li.checkedNA, .fullDisplayHorizontal li.checkedNA {
-  background: var(--bs-secondary-bg, rgba(108, 117, 125, 0.15));
+  background: var(--eval-choice-bg);
+  border-color: var(--bs-secondary-border-subtle, rgba(108, 117, 125, 0.45)) !important;
+  box-shadow: inset 0 0 0 1px var(--bs-secondary-border-subtle, rgba(108, 117, 125, 0.45));
 }
 
 .fullVertical li.na {

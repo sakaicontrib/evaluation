@@ -108,15 +108,7 @@ $(document).ready(function() {
         deselectedLog:new Array(),
         thatRowNumber:0 ,
         evalGroupId:null,
-        groupCheckBox:null,
-        css: {
-            enabled:{
-                color: ""
-            },
-            disabled:{
-                color: "#888"
-            }
-        }
+        groupCheckBox:null
     };
 
     function init(that, options) {
