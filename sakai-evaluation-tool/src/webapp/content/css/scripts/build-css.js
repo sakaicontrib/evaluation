@@ -35,7 +35,15 @@ const ensureDir = (dir) => {
   }
 };
 
-const PREFIX = ".Mrphs-sakai-rsf-evaluation";
+const PORTAL_PREFIX = ".Mrphs-sakai-rsf-evaluation";
+const DIRECT_PREFIX = ".portletBody.evaluation";
+
+const prefixSelectorForScope = (scope, selector) => {
+  if (selector.startsWith(".evaluation")) {
+    return selector.replace(/^\.evaluation\b/, scope);
+  }
+  return `${scope} ${selector}`;
+};
 
 const compile = async () => {
   const entryFile = path.resolve(__dirname, "../scss/evaluation/index.scss");
@@ -47,16 +55,18 @@ const compile = async () => {
 
   const prefixed = await postcss([
     prefixSelector({
-      prefix: PREFIX,
-      transform: (prefix, selector, prefixed) => {
-        if (selector.startsWith(prefix)) {
+      prefix: PORTAL_PREFIX,
+      transform: (prefix, selector) => {
+        if (selector.startsWith(PORTAL_PREFIX) || selector.startsWith(DIRECT_PREFIX)) {
           return selector;
         }
         // Avoid prefixing @ rules like @font-face
         if (selector.startsWith("@")) {
           return selector;
         }
-        return prefixed;
+        const portalSelector = prefixSelectorForScope(PORTAL_PREFIX, selector);
+        const directSelector = prefixSelectorForScope(DIRECT_PREFIX, selector);
+        return `${portalSelector}, ${directSelector}`;
       }
     })
   ]).process(result.css, { from: undefined });

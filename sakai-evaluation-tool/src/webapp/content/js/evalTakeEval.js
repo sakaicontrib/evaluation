@@ -51,9 +51,7 @@ $(document).ready(function() {
         if (instrSel.find('input[type=checkbox]').length !== 0) {
             var selectedInstrDomArray = instrSel.find('input:checked').get();
             if (selectedInstrDomArray.length > 0) {
-                instrSel.find("fieldset").css({
-                    background:'#fff'
-                });
+                clearSelectorErrorState(instrSel);
                 var selectedInstrArray = new Array();
                 $.each(selectedInstrDomArray, function(i, item) {
                     selectedInstrArray.push($(item).val());
@@ -67,9 +65,7 @@ $(document).ready(function() {
         if (assSel.find('input[type=checkbox]').length !== 0) {
             var selectedassistantDomArray = assSel.find('input:checked').get();
             if (selectedassistantDomArray.length > 0) {
-                assSel.find("fieldset").css({
-                    background:'#fff'
-                });
+                clearSelectorErrorState(assSel);
                 var selectedassistantArray = new Array();
                 $.each(selectedassistantDomArray, function(i, item) {
                     selectedassistantArray.push($(item).val());
@@ -90,9 +86,7 @@ $(document).ready(function() {
             if (!valid) {
                 return error("TUTOR", assSel);
             } else {
-                assSel.find("fieldset").css({
-                    background:'#fff'
-                });
+                clearSelectorErrorState(assSel);
             }
         }
         if (instrSel.find('select').length !== 0) {
@@ -105,19 +99,19 @@ $(document).ready(function() {
             if (!valid) {
                 return  error("LECTURER", instrSel);
             } else {
-                instrSel.find("fieldset").css({
-                    background:'#fff'
-                });
+                clearSelectorErrorState(instrSel);
             }
         }
         SPNR.disableControlsAndSpin( this, null );
     });
 
+    function clearSelectorErrorState(selector) {
+        selector.find("fieldset").removeClass("eval-selector-error");
+    }
+
     function error(type, that) {
         alert('Please evaluate at least one ' + type + '.');
-        that.find("fieldset").css({
-            background:'#fee'
-        });
+        that.find("fieldset").addClass("eval-selector-error");
         return false;
     }
 
@@ -145,9 +139,6 @@ $(document).ready(function() {
      * Public variables. Once init() has ran, do not reference directly to these, use variables.options instead.
      */
     $.fn.evalSelector.settings = {
-        css:{
-            activeCheckbox: {background:'#eee'}
-        },
         type: 1, //Type is for type of category we are handling. ie: 0 = instructor, 1 = assistant (TA)
         debug: false,
         fields: ['input', 'select', 'textarea'] //Array of fields in the form
@@ -316,7 +307,7 @@ $(document).ready(function() {
                     variables.set.typeOfBranch($(this));
                     if (this.checked) {
                         //Fn for Check
-                        elem.parent().css('background', variables.options.css.activeCheckbox.background);
+                        elem.parent().addClass('eval-selector-option--active');
                         //log("SELECTED: " + elemLabel + " with id: " + elemId);
                         if (!variables.isVisible(elemId)) {
                             variables.questionsToShow.push(elemId);
@@ -330,7 +321,7 @@ $(document).ready(function() {
                     else {
                         this.checked = true;
                         if (variables.isVisible(elemId) && confirmSelection(elemLabel)) {
-                            elem.parent().css('background', '');
+                            elem.parent().removeClass('eval-selector-option--active');
                             //log("DESELECTED: " + elemLabel + " with id: " + elemId);
                             variables.questionsToHide.push(elemId);
                             variables.foundSplice(elemId);
@@ -342,6 +333,9 @@ $(document).ready(function() {
                     }
                 });
                 checkSavedPeople(elemId, this, '', 'checkbox');
+                if (this.checked) {
+                    elem.parent().addClass('eval-selector-option--active');
+                }
             });
         }
         var elem = that.find('select');

@@ -80,12 +80,18 @@ jobs:
       - name: Start Tomcat and verify startup
         run: |
           touch "${TOMCAT_DIR}/logs/catalina.out"
-          "${TOMCAT_DIR}/bin/catalina.sh" start
+          bash "${TOMCAT_DIR}/bin/catalina.sh" start
           if ! timeout 600 bash -c 'until grep -q "Server startup in" "'"${TOMCAT_DIR}/logs/catalina.out"'"; do sleep 10; done'; then
             echo "Tomcat failed to report startup within 10 minutes" >&2
             tail -n 200 "${TOMCAT_DIR}/logs/catalina.out" || true
             exit 1
           fi
-          curl --fail --silent --show-error --max-time 60 http://localhost:8080/portal/ > /tmp/portal.html
+          if ! timeout 300 bash -c 'until curl --fail --silent --show-error --max-time 60 http://localhost:8080/portal/ > /tmp/portal.html; do sleep 10; done'; then
+            echo "Sakai portal did not become available at /portal/" >&2
+            echo "--- catalina.out (tail) ---" >&2
+            tail -n 200 "${TOMCAT_DIR}/logs/catalina.out" >&2 || true
+            echo "--- webapps ---" >&2
+            ls -la "${TOMCAT_DIR}/webapps" >&2 || true
+            exit 1
+          fi
           tail -n 20 "${TOMCAT_DIR}/logs/catalina.out"
-
