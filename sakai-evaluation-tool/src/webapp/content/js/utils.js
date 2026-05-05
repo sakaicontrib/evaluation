@@ -604,7 +604,31 @@ evalsys.initSummary = function() {
 };
 
 evalsys.initControlScales = function() {
-    // No facebox previews; rely on normal navigation.
+    var modalEl = document.getElementById('scaleModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $body = jQuery('#scaleModalBody');
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        evalsys.positionModalInViewport(modalEl);
+    });
+
+    jQuery(document).on('click', 'a.preview_scale', function(e) {
+        e.preventDefault();
+        $body.html('<p class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></p>');
+        modal.show();
+        jQuery.ajax({
+            url: this.href,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(html) { $body.html(html); },
+            error: function() { $body.html('<p class="text-danger">Error loading preview.</p>'); }
+        });
+    });
+
+    modalEl.addEventListener('shown.bs.modal', function() {
+        jQuery(modalEl).find('.modal-dialog').draggable({ handle: '.modal-header' });
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function() { $body.html(''); });
 };
 
 evalsys.initModifyScales = function() {
@@ -617,23 +641,38 @@ evalsys.initModifyScales = function() {
 };
 
 evalsys.initPreviewScales = function() {
-    // NOTE: this essentially loads in a lightbox so be careful
-    if (typeof jQuery.accordian !== "undefined") {
-        alert("programming error: jquery ui accordian is not loaded!");
-    }
-    var screenWidth = $("body").innerWidth(); //$(document).width()
-    jQuery("#items_container").accordion({
-        autoHeight: false,
-        clearStyle: true,
-        change: function(event, ui) {
-            // force the CSS min and max midth
-            ui.newContent.css({
+    var $container = jQuery("#items_container");
+    var containerWidth = $container.closest('.modal-body').length
+        ? $container.closest('.modal-body').innerWidth()
+        : jQuery("body").innerWidth();
+
+    $container.accordion({
+        heightStyle: "content",
+        activate: function(event, ui) {
+            ui.newPanel.css({
                 "min-width": "200px",
-                "max-width": (screenWidth-40)+"px"
+                "max-width": (containerWidth - 40) + "px"
             });
-        },
+        }
     });
     evalsys.instrumentItems("div.preview-item");
+};
+
+// In Sakai, the tool iframe is full-height and the portal scrolls externally.
+// Bootstrap's position:fixed is relative to the iframe viewport, which doesn't match
+// the visible browser area when the user has scrolled. This helper adjusts the
+// modal dialog's margin-top so it appears within the visible viewport.
+evalsys.positionModalInViewport = function(modalEl) {
+    try {
+        if (window.parent && window.frameElement) {
+            var parentScrollY = window.parent.scrollY || window.parent.pageYOffset || 0;
+            var iframeOffsetTop = window.frameElement.getBoundingClientRect().top + parentScrollY;
+            var parentViewH   = window.parent.innerHeight;
+            var visibleTop    = parentScrollY - iframeOffsetTop;
+            var marginTop     = Math.max(10, visibleTop + parentViewH * 0.05);
+            jQuery(modalEl).find('.modal-dialog').css('margin-top', marginTop + 'px');
+        }
+    } catch(e) { /* cross-origin fallback: use Bootstrap default */ }
 };
 
 evalsys.initPreviewItem = function(selector) {
@@ -641,6 +680,256 @@ evalsys.initPreviewItem = function(selector) {
     evalsys.instrumentItems(selector);
 };
 
+evalsys.initControlItems = function() {
+    evalsys.initFacebox({verticalCenterOnClick: true, minWidth: 740});
+    jQuery('a.preview_item').facebox();
+
+    // When facebox opens, if it contains the edit form, intercept its submit
+    jQuery(document).bind('reveal.facebox', function() {
+        var $form = jQuery('#facebox #item-form');
+        if ($form.length === 0) { return; }
+        $form.off('submit.faceboxEdit').on('submit.faceboxEdit', function(e) {
+            e.preventDefault();
+            var formData = $form.serialize();
+            jQuery.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: formData,
+                success: function() {
+                    jQuery(document).trigger('close.facebox');
+                    window.location.reload();
+                },
+                error: function() {
+                    alert('Error saving the item. Please try again.');
+                }
+            });
+        });
+    });
+
+    jQuery('a.edit_item').facebox();
+};
+
+evalsys.initControlItemsModal = function() {
+    var modalEl = document.getElementById('itemModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $body = jQuery('#itemModalBody');
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        evalsys.positionModalInViewport(modalEl);
+    });
+
+    function loadIntoModal(url) {
+        $body.html('<p class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></p>');
+        modal.show();
+        jQuery.ajax({
+            url: url,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(html) {
+                $body.html(html);
+                var $form = $body.find('#item-form');
+                if ($form.length === 0) { return; }
+                $form.off('submit.modalEdit').on('submit.modalEdit', function(e) {
+                    e.preventDefault();
+                    jQuery.ajax({
+                        url: $form.attr('action'),
+                        type: 'POST',
+                        data: $form.serialize(),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        success: function() {
+                            modal.hide();
+                            window.location.reload();
+                        },
+                        error: function() {
+                            alert('Error saving the item. Please try again.');
+                        }
+                    });
+                });
+            },
+            error: function() {
+                $body.html('<p class="text-danger">Error loading content.</p>');
+            }
+        });
+    }
+
+    jQuery(document).on('click', 'a.preview_item, a.edit_item', function(e) {
+        e.preventDefault();
+        loadIntoModal(this.href);
+    });
+
+    // Make modal draggable from the header using jQuery UI
+    modalEl.addEventListener('shown.bs.modal', function() {
+        jQuery(modalEl).find('.modal-dialog').draggable({
+            handle: '.modal-header'
+        });
+    });
+
+    // Clear modal body when hidden to avoid stale content
+    modalEl.addEventListener('hidden.bs.modal', function() {
+        $body.html('');
+    });
+};
+
+evalsys.initModifyItem = function() {
+    var modalEl = document.getElementById('previewItemModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $body = jQuery('#previewItemModalBody');
+    var $previewLink = jQuery('a.preview_item');
+    var originalUrl = $previewLink.attr('href');
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        evalsys.positionModalInViewport(modalEl);
+    });
+
+    $previewLink.click(function(e) {
+        e.preventDefault();
+        // Build URL with current form values
+        var textVal = '';
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances && CKEDITOR.instances['item-text']) {
+            textVal = CKEDITOR.instances['item-text'].getData();
+        } else {
+            textVal = jQuery('#item-text').val() || '';
+        }
+        var scaleDisplay = jQuery('#scale-display-list').val() || jQuery('#choices-display-list').val() || '';
+        var na = jQuery('#item-na').is(':checked') ? 'true' : 'false';
+        var textLines = jQuery('#item-response-size-list').val() || '';
+        var params = [];
+        if (scaleDisplay) { params.push('scaleDisplay=' + encodeURIComponent(scaleDisplay)); }
+        if (textVal)       { params.push('text=' + encodeURIComponent(textVal)); }
+        params.push('na=' + na);
+        if (textLines)     { params.push('textLines=' + encodeURIComponent(textLines)); }
+        var url = originalUrl + (params.length > 0 ? '?' + params.join('&') : '');
+
+        $body.html('<p class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></p>');
+        modal.show();
+        jQuery.ajax({
+            url: url,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(html) { $body.html(html); },
+            error: function() { $body.html('<p class="text-danger">Error loading preview.</p>'); }
+        });
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function() { $body.html(''); });
+};
+
+evalsys.initTemplateItemsModal = function() {
+    var modalEl = document.getElementById('templateItemModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $body = jQuery('#templateItemModalBody');
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        evalsys.positionModalInViewport(modalEl);
+    });
+
+    function loadIntoModal(url) {
+        $body.html('<p class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></p>');
+        modal.show();
+        jQuery.ajax({
+            url: url,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(html) {
+                $body.html(html);
+                bindModalForm();
+            },
+            error: function() {
+                $body.html('<p class="text-danger">Error loading content.</p>');
+            }
+        });
+    }
+
+    function bindModalForm() {
+        var $form = $body.find('form').first();
+        if ($form.length === 0) { return; }
+        $form.off('submit.modalEdit').on('submit.modalEdit', function(e) {
+            e.preventDefault();
+            jQuery.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function(html) {
+                    // If response has no form, save succeeded
+                    if (jQuery(html).find('form').length === 0 && html.indexOf('<form') === -1) {
+                        modal.hide();
+                        window.location.reload();
+                    } else {
+                        $body.html(html);
+                        bindModalForm();
+                    }
+                },
+                error: function() {
+                    alert('Error saving. Please try again.');
+                }
+            });
+        });
+    }
+
+    jQuery(document).on('click', 'a[rel=faceboxGrid], a[rel=childEdit]', function(e) {
+        e.preventDefault();
+        loadIntoModal(this.href);
+    });
+
+    modalEl.addEventListener('shown.bs.modal', function() {
+        jQuery(modalEl).find('.modal-dialog').draggable({ handle: '.modal-header' });
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function() { $body.html(''); });
+};
+
+
+//SPECIAL inits
+/**
+ * This sets up the facebox lightbox system
+ */
+evalsys.initFacebox = function(options) {
+    if (!evalsys.faceboxinitialized) {
+        // only run the facebox init one time
+        if (typeof jQuery.facebox !== "undefined") {
+            // Use portal-provided styling; avoid image-based close button
+            jQuery.facebox.settings.closeImage = null;
+            //jQuery.facebox.settings.opacity = 0.1;
+            //jQuery.facebox.settings.overlay = true;
+            //jQuery.facebox.settings.faceboxHtml = "some html";
+            // DOCS: https://github.com/defunkt/facebox
+            if (options && options.verticalCenterOnClick) {
+                jQuery(document).bind('beforeReveal.facebox', function() {
+                    // set the vertical position
+                    var posY = jQuery.facebox.mousePosY;
+                    var $facebox = $('#facebox');
+                    $facebox.css({
+                        'top': posY+'px'
+                    });
+                    // set the min-width
+                    if (options && options.minWidth > 0) {
+                        $facebox.css({
+                            'min-width': (options.minWidth+26) +'px'
+                        });
+                        $facebox.find('.body').css({
+                            'min-width': (options.minWidth) +'px'
+                        });
+                    }
+                });
+            }
+            jQuery(document).bind('reveal.facebox', function() {
+                // set the width
+                var $facebox = $('#facebox');
+                var faceboxWidth = $facebox.find('table.faceboxtable').width();
+                if (options && options.minWidth > 0) {
+                    faceboxWidth = faceboxWidth < options.minWidth ? options.minWidth : faceboxWidth;
+                }
+                $facebox.css({
+                    'width': (faceboxWidth+26) +'px'
+                });
+                $facebox.find('.body').css({
+                    'width': (faceboxWidth) +'px'
+                });
+            });
+            evalsys.faceboxinitialized = true;
+        } else {
+            alert("Programming error: no facebox is available!");
+        }
+    }
+};
 
 // Utility function to select/deselect all checkboxes of a given form
 evalsys.toggleCheckboxes = function( formName, checkToggle )

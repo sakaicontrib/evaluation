@@ -18,7 +18,7 @@ import java.io.OutputStream;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
-import uk.org.ponder.messageutil.MessageLocator;
+
 
 
 /**
@@ -48,7 +48,7 @@ public interface ReportExporter {
     * @param newReportStyle toggle new report style on/off
     */
    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle);
-   public void setMessageLocator(MessageLocator locator);
+   public void setEvalMessageLocator(EvalMessageLocator locator);
 
    
    public String getContentType();

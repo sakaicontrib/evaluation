@@ -27,8 +27,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
+import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
 
 /**
  * This utility class is responsible for creating convenient arrays and other 
@@ -55,8 +54,8 @@ public class EvalResponseAggregatorUtil {
         this.deliveryService = deliveryService;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalMessageLocator messageLocator;
+    public void setMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 
@@ -105,7 +104,7 @@ public class EvalResponseAggregatorUtil {
             }
         }
         else {
-            throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
+            throw new RuntimeException("Trying to add an unsupported question type ("+itemType+") "
                     + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
         }
         return togo;

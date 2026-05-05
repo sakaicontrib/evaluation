@@ -1,0 +1,307 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{assigneval.page.title}">Assign Evaluation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:if="${isPartial}" th:text="#{starteval.page.title}">Add Evaluation</li>
+        <li>
+            <a th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
+               th:text="#{evalsettings.page.title}">Evaluation Settings</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{assigneval.page.title}">Assign Evaluation</li>
+    </ul>
+
+    <!-- Flash error messages -->
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="#{${errorMessage}}">Error</li></ul>
+    </div>
+
+    <h3 th:text="#{assigneval.assign.page.title(${eval.title})}">Assignment</h3>
+    <p class="instructionText"
+       th:text="#{assigneval.assign.instructions(${eval.title})}">Instructions</p>
+
+    <!-- Date summary -->
+    <table class="itemSummary">
+        <tr>
+            <th th:text="#{evalsettings.start.date.header}">Start Date</th>
+            <td th:text="${startDate}">date</td>
+        </tr>
+        <tr th:if="${dueDate != null}">
+            <th th:text="#{evalsettings.due.date.header}">Due Date</th>
+            <td th:text="${dueDate}">date</td>
+        </tr>
+        <tr th:if="${stopDate != null}">
+            <th th:text="#{evalsettings.stop.date.header}">Stop Date</th>
+            <td th:text="${stopDate}">date</td>
+        </tr>
+        <tr th:if="${viewDate != null}">
+            <th th:text="#{evalsettings.view.date.header}">View Date</th>
+            <td th:text="${viewDate}">date</td>
+        </tr>
+    </table>
+
+    <!-- Unpublished groups warning -->
+    <div th:if="${unpublishedCount > 0}" class="alertMessage">
+        <p th:text="#{assigneval.assign.instructions.notpublished}">Some sites are unpublished.</p>
+    </div>
+
+    <!-- GET form that submits selectedGroupIDs to evaluation_assign_confirm as query params -->
+    <form id="eval-assign-form" th:action="@{/evaluation_assign_confirm}" method="get">
+        <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+
+        <!-- Collapsible section: site groups -->
+        <details open style="margin-bottom:0.5em">
+            <summary th:text="#{assigneval.page.groups.title}" style="cursor:pointer;font-weight:bold;padding:4px 0">
+                Assign to Evaluation Groups
+            </summary>
+            <div th:if="${not #lists.isEmpty(groupRows)}" class="indnt1">
+                <table class="evalsysTable">
+                    <thead>
+                        <tr>
+                            <th th:text="#{assigneval.select.header}">Select</th>
+                            <th th:text="#{assigneval.name.header}">Title</th>
+                            <th th:if="${(hasInstructors or hasAssistants)}"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="row,stat : ${groupRows}"
+                            th:classappend="${(stat.even ? 'itemsListOddLine ' : '') + (row.preSelected ? 'selectedGroup' : '')}"
+                            th:rel="${stat.index}">
+                            <td>
+                                <input type="checkbox"
+                                       name="selectedGroupIDs"
+                                       th:id="${'grp-' + stat.index}"
+                                       th:value="${row.evalGroupId}"
+                                       th:disabled="${!row.hasEvaluators}"
+                                       th:checked="${row.preSelected}"/>
+                            </td>
+                            <td>
+                                <label th:for="${'grp-' + stat.index}"
+                                       th:text="${row.title}"
+                                       th:classappend="${!row.published} ? 'elementAlertBack' : ''">
+                                    Group title
+                                </label>
+                                <span th:unless="${row.hasEvaluators}"
+                                      class="instruction"
+                                      th:text="#{assigneval.cannot.assign}">
+                                    Cannot assign
+                                </span>
+                                <span th:if="${!row.published}"
+                                      class="instruction"
+                                      th:text="#{assigneval.notpublished}">
+                                    Unpublished
+                                </span>
+                            </td>
+                            <td th:if="${(hasInstructors or hasAssistants)}">
+                                <a th:if="${hasInstructors}"
+                                   rel="assignInstructorSelector"
+                                   class="addItem"
+                                   th:href="@{/evaluation_assign_select(evaluationId=${evaluationId},evalGroupId=${row.evalGroupId},evalCategory=${selectionTypeInstructor})}"
+                                   th:title="#{assignselect.instructors.page.title}"
+                                   th:text="#{assignselect.instructors.page.title}"
+                                   style="display:none">Select Instructors</a>
+                                <a th:if="${hasAssistants}"
+                                   rel="assignTaSelector"
+                                   class="addItem"
+                                   th:href="@{/evaluation_assign_select(evaluationId=${evaluationId},evalGroupId=${row.evalGroupId},evalCategory=${selectionTypeAssistant})}"
+                                   th:title="#{assignselect.tas.page.title}"
+                                   th:text="#{assignselect.tas.page.title}"
+                                   style="display:none;margin-left:10px">Select TAs</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${#lists.isEmpty(groupRows)}" class="alertMessage indnt1">
+                <p>No groups available for assignment.</p>
+            </div>
+        </details>
+
+        <!-- Collapsible section: adhoc groups -->
+        <details th:if="${enableAdhocGroups}" open style="margin-bottom:0.5em">
+            <summary th:text="#{assigneval.page.adhocgroups.title}" style="cursor:pointer;font-weight:bold;padding:4px 0">
+                Assign to an adhoc Group
+            </summary>
+            <div class="indnt1">
+                <table th:unless="${#lists.isEmpty(adhocGroupRows)}" class="evalsysTable">
+                    <thead>
+                        <tr>
+                            <th th:text="#{assigneval.select.header}">Select</th>
+                            <th th:text="#{assigneval.name.header}">Title</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="row,stat : ${adhocGroupRows}"
+                            th:classappend="${stat.even} ? 'itemsListOddLine' : ''">
+                            <td>
+                                <input type="checkbox"
+                                       name="selectedGroupIDs"
+                                       th:id="${'adhoc-' + stat.index}"
+                                       th:value="${row.evalGroupId}"
+                                       th:disabled="${!row.hasEvaluators}"
+                                       th:checked="${row.preSelected}"/>
+                            </td>
+                            <td>
+                                <label th:for="${'adhoc-' + stat.index}"
+                                       th:text="${row.title}">Adhoc group title</label>
+                                <span th:unless="${row.hasEvaluators}"
+                                      class="instruction"
+                                      th:text="#{assigneval.cannot.assign}">Cannot assign</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/modify_adhoc_group(adhocGroupId=${row.adhocGroupId}, returnUrl=${currentUrl})}"
+                                   th:text="#{assigneval.page.adhocgroups.editgrouplink}">edit</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top:0.5em">
+                    <a th:href="@{/modify_adhoc_group(returnUrl=${currentUrl})}"
+                       th:text="#{assigneval.page.adhocgroups.newgrouplink}">Create a new Adhoc Group now</a>
+                </p>
+            </div>
+        </details>
+
+        <p class="act">
+            <input type="submit" th:value="#{assigneval.save.assigned.button}" class="active"
+                   onclick="SPNR.disableControlsAndSpin(this,null);"/>
+            <input type="button" th:value="#{general.back.button}"
+                   onclick="history.go(-1);return false;"/>
+        </p>
+
+    </form>
+
+    <!-- Bootstrap Modal for instructor/TA selector -->
+    <div class="modal fade" id="assignSelectModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="cursor:move">
+                    <h5 class="modal-title" id="assignSelectModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="assignSelectModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+$(document).ready(function () {
+
+    var modalEl = document.getElementById('assignSelectModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $body = $('#assignSelectModalBody');
+
+    // Show/hide selector links based on checkbox state
+    function updateSelectorLinks($checkbox) {
+        var $row = $checkbox.closest('tr');
+        if ($checkbox.is(':checked')) {
+            $row.find('a[rel=assignInstructorSelector], a[rel=assignTaSelector]').fadeIn('fast');
+        } else {
+            $row.find('a[rel=assignInstructorSelector], a[rel=assignTaSelector]').fadeOut('fast');
+        }
+    }
+
+    $('tbody tr').each(function () {
+        updateSelectorLinks($(this).find('input[type=checkbox]'));
+    });
+
+    $('tbody input[type=checkbox]').change(function () {
+        updateSelectorLinks($(this));
+    });
+
+    // Open selector in Bootstrap Modal
+    $(document).on('click', 'a[rel=assignInstructorSelector], a[rel=assignTaSelector]', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var title = $(this).attr('title') || '';
+        $('#assignSelectModalLabel').text(title);
+        $body.html('<p class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></p>');
+        modal.show();
+        $.ajax({
+            url: url,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function (html) {
+                $body.html(html);
+                bindModalContent();
+            },
+            error: function () {
+                $body.html('<p class="text-danger">Error loading content.</p>');
+            }
+        });
+    });
+
+    function bindModalContent() {
+        // Select-all control
+        $body.find('#selectorControl').change(function () {
+            $body.find('.evalgroupselect').prop('checked', this.checked);
+        });
+        $body.find('.evalgroupselect').change(function () {
+            $body.find('#selectorControl').prop('checked',
+                $body.find('.evalgroupselect:not(:checked)').length === 0);
+        });
+        if ($body.find('.evalgroupselect:not(:checked)').length === 0) {
+            $body.find('#selectorControl').prop('checked', true);
+        }
+
+        // Submit form via AJAX
+        $body.find('#assign-select-form').submit(function (e) {
+            e.preventDefault();
+            var $form = $(this);
+            $.post($form.attr('action'), $form.serialize()).done(function () {
+                modal.hide();
+            });
+        });
+    }
+
+    modalEl.addEventListener('shown.bs.modal', function () {
+        $(modalEl).find('.modal-dialog').draggable({ handle: '.modal-header' });
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function () { $body.html(''); });
+});
+</script>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

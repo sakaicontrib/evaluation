@@ -1,0 +1,228 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{summary.page.title}">Evaluations dashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/jquery/jquery-ui-1.8.all.css}" type="text/css" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/jquery/jquery-ui-1.8.all.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/jquery/jquery.tablesorter.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/utils.js}" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation dashboard">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb: tool links (only if the user can create or start evaluations) -->
+    <ul th:if="${canCreate or canBegin}" class="breadCrumb">
+        <li th:if="${canBegin}" class="lastCrumb">
+            <a th:href="@{/evaluation_create}" class="addItem">
+                <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                <span th:text="#{starteval.page.title}">New Evaluation</span>
+            </a>
+        </li>
+        <li th:if="${canCreate}" class="lastCrumb">
+            <a th:href="@{/modify_template}" class="addItem">
+                <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                <span th:text="#{createtemplate.page.title}">New Template</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Page title -->
+    <h3 th:text="#{summary.page.title}">Evaluations dashboard</h3>
+    <p th:text="#{summary.page.instruction}" class="instructionText">Quick links to evaluation items</p>
+    <p th:if="${canBegin}" class="instructionText" th:text="#{summary.instructor.instruction}"></p>
+
+    <!-- =====================================================================
+         BOX: Evaluations I need to complete (EvaluateBox)
+         ===================================================================== -->
+    <div th:if="${not #lists.isEmpty(evalsToTake)}" class="summaryBox">
+        <h4 th:text="#{summary.evaluations.title}">Current evaluations I need to take</h4>
+        <div class="innerPanel">
+            <table class="evalsysTable">
+                <thead>
+                    <tr>
+                        <th th:text="#{summary.evaluations.evaluation.title}">Evaluation</th>
+                        <th th:text="#{summary.evaluation.status.title}">Status</th>
+                        <th th:text="#{summary.evaluations.starts.title}">Opens</th>
+                        <th th:text="#{summary.evaluations.ends.title}">Closes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${evalsToTake}">
+                        <td>
+                            <!-- Enlace activo -->
+                            <a th:if="${row.linkEnabled}"
+                               th:href="${row.responseId != null}
+                                   ? @{/take_eval(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId},responseId=${row.responseId})}
+                                   : @{/take_eval(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId})}"
+                               th:text="${row.title}">Course Title</a>
+                            <!-- Text only if completed and not modifiable -->
+                            <span th:unless="${row.linkEnabled}" th:text="${row.title}">Course Title</span>
+                        </td>
+                        <td><span th:text="#{${row.statusKey}}">Status</span></td>
+                        <td th:text="${row.startDate}" nowrap="nowrap">09/20/2005</td>
+                        <td th:text="${row.dueDate}" nowrap="nowrap">09/27/2005</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p th:if="${#lists.isEmpty(evalsToTake)}" class="instructionText indnt2"
+       th:text="#{summary.evaluations.none}">No evaluations to take</p>
+
+    <!-- =====================================================================
+         BOX: Evaluations where I can be evaluated (BeEvaluatedBox)
+         ===================================================================== -->
+    <div th:if="${showEvaluateeBox and (not #lists.isEmpty(evalsInProgress) or not #lists.isEmpty(evalsClosed))}"
+         class="summaryBox beEvaluated">
+        <h4 th:text="#{summary.evaluated.title}">Evaluations in which I may be evaluated</h4>
+        <div class="innerPanel">
+
+            <!-- En curso -->
+            <div class="inProgressEvals">
+                <span th:text="#{summary.evaluated.inprogress}" class="sub-heading">In Progress</span>
+                <span th:if="${#lists.isEmpty(evalsInProgress)}"
+                      class="no-evals-display instructionText"
+                      th:text="#{summary.be.evaluated.none}"></span>
+            </div>
+            <div th:if="${not #lists.isEmpty(evalsInProgress)}" class="evaluated_in_progress">
+                <table class="beEvaluatedInProgressTable tablesorter evalsysTable">
+                    <thead>
+                        <tr>
+                            <th th:text="#{summary.evaluations.evaluation.title}">Evaluation</th>
+                            <th th:text="#{summary.evaluations.starts.title}">Open</th>
+                            <th th:text="#{summary.evaluations.ends.title}">Close</th>
+                            <th th:text="#{summary.responses.responses}">Responses</th>
+                            <th th:text="#{summary.responses.results}">Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="row : ${evalsInProgress}">
+                            <td>
+                                <a th:href="@{/preview_eval(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId})}"
+                                   th:text="${row.title}">Evaluation Title</a>
+                            </td>
+                            <td th:text="${row.startDate}" nowrap="nowrap">09/20/2005</td>
+                            <td th:text="${row.dueDate}" nowrap="nowrap">09/20/2005</td>
+                            <td nowrap="nowrap">
+                                <a th:if="${row.showRespondentsLink}"
+                                   th:href="@{/evaluation_responders(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId})}"
+                                   th:text="${row.responseRate}">2 of 39</a>
+                                <span th:unless="${row.showRespondentsLink}" th:text="${row.responseRate}">2 of 39</span>
+                            </td>
+                            <td nowrap="nowrap">
+                                <a th:if="${row.showResultsLink}"
+                                   th:href="@{/report_view(evaluationId=${row.evalId},groupIds=${row.evalGroupId})}"
+                                   th:text="#{summary.responses.results}">results</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Cerradas -->
+            <div class="closedEvals">
+                <span th:text="#{summary.evaluated.closed}" class="sub-heading">Closed</span>
+                <span th:if="${#lists.isEmpty(evalsClosed)}"
+                      class="no-evals-display instructionText"
+                      th:text="#{summary.be.evaluated.none}"></span>
+            </div>
+            <div th:if="${not #lists.isEmpty(evalsClosed)}" class="evaluated_closed">
+                <table class="beEvaluatedClosedTable tablesorter evalsysTable">
+                    <thead>
+                        <tr>
+                            <th th:text="#{summary.evaluations.evaluation.title}">Evaluation</th>
+                            <th th:text="#{summary.evaluations.starts.title}">Opens</th>
+                            <th th:text="#{summary.evaluations.ends.title}">Closes</th>
+                            <th th:text="#{summary.responses.responses}">Responses</th>
+                            <th th:text="#{summary.responses.results}">Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="row : ${evalsClosed}">
+                            <td>
+                                <a th:href="@{/preview_eval(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId})}"
+                                   th:text="${row.title}">Evaluation Title</a>
+                            </td>
+                            <td th:text="${row.startDate}" nowrap="nowrap">09/20/2005</td>
+                            <td th:text="${row.dueDate}" nowrap="nowrap">09/20/2005</td>
+                            <td nowrap="nowrap">
+                                <a th:if="${row.showRespondentsLink}"
+                                   th:href="@{/evaluation_responders(evaluationId=${row.evalId},evalGroupId=${row.evalGroupId})}"
+                                   th:text="${row.responseRate}">2 of 39</a>
+                                <span th:unless="${row.showRespondentsLink}" th:text="${row.responseRate}">2 of 39</span>
+                            </td>
+                            <td nowrap="nowrap">
+                                <a th:if="${row.showResultsLink}"
+                                   th:href="@{/report_view(evaluationId=${row.evalId},groupIds=${row.evalGroupId})}"
+                                   th:text="#{summary.responses.results}">results</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         BOX: Site listing (SiteListingBox)
+         ===================================================================== -->
+    <div th:if="${showSitesBox}" class="summaryBox">
+        <h4 th:text="#{summary.sitelisting.title}">Site/Group Listing</h4>
+        <div class="innerPanel">
+            <h5 th:text="#{summary.sitelisting.evaluated}">Sites you can be evaluated in:</h5>
+            <ol th:if="${not #lists.isEmpty(evaluatedGroups)}" class="summaryEvaluateList">
+                <li th:each="group : ${evaluatedGroups}">
+                    <span th:text="${group.title}">Site/Group Title</span>
+                </li>
+            </ol>
+            <p th:if="${#lists.isEmpty(evaluatedGroups)}" class="instructionText indnt2"
+               th:text="#{no.list.items}">No items to list</p>
+
+            <h5 th:text="#{summary.sitelisting.evaluate}">Sites you can evaluate:</h5>
+            <ol th:if="${not #lists.isEmpty(evaluateGroups)}" class="summaryEvaluateList">
+                <li th:each="group : ${evaluateGroups}">
+                    <span th:text="${group.title}">Site/Group Title</span>
+                </li>
+            </ol>
+            <p th:if="${#lists.isEmpty(evaluateGroups)}" class="instructionText indnt2"
+               th:text="#{no.list.items}">No items to list</p>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">if (typeof evalsys !== 'undefined') evalsys.initSummary();</script>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

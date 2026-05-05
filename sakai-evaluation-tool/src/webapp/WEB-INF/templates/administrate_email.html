@@ -1,0 +1,270 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{controlemail.page.title}">Control Email Settings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/jquery/jquery-ui-1.8.all.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/evalUtils.js}" type="text/javascript"></script>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/administrate}" th:text="#{administrate.page.title}">Administrate</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{controlemail.page.title}">Control Email Settings</li>
+    </ul>
+
+    <h3 th:text="#{controlemail.title}">Control Email Notification</h3>
+
+    <form method="post" th:action="@{/administrate_email}">
+
+        <!-- === SECTION: Individual email === -->
+        <div class="emailTypeOptionsContainer" style="border:1px solid #ccc;border-radius:5px;padding:10px;background:#ffffe0;margin-bottom:1em">
+            <p class="checkbox indnt1" style="border:none">
+                <input type="radio" id="emailtype1" name="useConsolidated" value="false" class="emailtypeChoice"
+                       th:checked="${!useConsolidated}"/>
+                <label for="emailtype1" th:text="#{controlemail.individual.emails}">Send one email per student per evaluation.</label>
+            </p>
+            <p class="instructionText textPanelFooter indnt3" style="padding:3px" th:text="#{controlemail.individual.emails.explain}">
+                This will mean that Pat Student will get five emails if she has five evaluations.
+            </p>
+            <fieldset class="visibleFS indnt3 emailTypeOptions">
+                <legend th:text="#{controlemail.individual.emails.settings}">Separate email settings</legend>
+
+                <p class="longtext indnt1">
+                    <label for="defaultReminderFrequency" class="block" th:text="#{controlemail.reminder.defaults}">How often should reminders be sent?</label>
+                    <select id="defaultReminderFrequency" name="defaultReminderFrequency">
+                        <option th:each="v : ${reminderDayValues}"
+                                th:value="${v}"
+                                th:text="#{evalsettings.reminder.days.__${v}__}"
+                                th:selected="${v == defaultReminderFrequency}">Option</option>
+                    </select>
+                </p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="enableJobCompletionEmail" name="enableJobCompletionEmail" value="true"
+                           th:checked="${enableJobCompletionEmail}"/>
+                    <label for="enableJobCompletionEmail">Enable an email to be sent to the evaluation admin when an email job has completed</label>
+                </p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="enableReminderStatus" name="enableReminderStatus" value="true"
+                           th:checked="${enableReminderStatus}"/>
+                    <label for="enableReminderStatus">Enable the job status while reminders are running.</label>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="evalTimeToWaitSecs" class="block">
+                        The time in seconds between the creation of an evaluation and the send of the available notification, default 300 (5 mins)
+                    </label>
+                    <input type="text" id="evalTimeToWaitSecs" name="evalTimeToWaitSecs"
+                           th:value="${evalTimeToWaitSecs}" maxlength="5" size="5"/>
+                    &nbsp;<span id="time-wait-errmsg"></span>
+                </p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="allowEvalBeginEmail" name="allowEvalBeginEmail" value="true"
+                           th:checked="${allowEvalBeginEmail}"/>
+                    <label for="allowEvalBeginEmail">Allow users to choose whether to send an initial email notification when creating an evaluation (otherwise an email notification will always be sent when the evaluation opens)</label>
+                </p>
+            </fieldset>
+        </div>
+
+        <!-- === SECTION: Consolidated email === -->
+        <div class="emailTypeOptionsContainer" style="border:1px solid #ccc;border-radius:5px;padding:10px;background:#ffffe0;margin-bottom:1em">
+            <p class="checkbox indnt1">
+                <input type="radio" id="emailtype2" name="useConsolidated" value="true" class="emailtypeChoice"
+                       th:checked="${useConsolidated}"/>
+                <label for="emailtype2" th:text="#{controlemail.consolidated.emails}">Send summary emails (one email per student per email template).</label>
+            </p>
+            <p class="instructionText textPanelFooter indnt3" style="padding:3px" th:text="#{controlemail.consolidated.emails.explain}">
+                This will mean that if Pat Student has five evaluations of the same type she will get one summary email about it.
+            </p>
+
+            <fieldset class="visibleFS indnt3 emailTypeOptions">
+                <legend th:text="#{controlemail.consolidated.emails.settings}">Consolidated email settings</legend>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="consolidatedSendAvailable" name="consolidatedSendAvailable" value="true"
+                           th:checked="${consolidatedSendAvailable}"/>
+                    <label for="consolidatedSendAvailable" th:text="#{controlemail.consolidated.available.enabled}">Send notifications when evaluations open</label>
+                </p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="forceSendAvailable" name="forceSendAvailable" value="true"
+                           th:checked="${forceSendAvailable}"/>
+                    <label for="forceSendAvailable" th:text="#{controlemail.consolidated.force.send.available.notification.immediately}">Force Send E-mail Available notification</label>
+                </p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="forceSendCreatedEmail" name="forceSendCreatedEmail" value="true"
+                           th:checked="${forceSendCreatedEmail}"/>
+                    <label for="forceSendCreatedEmail" th:text="#{controlemail.consolidated.force.send.created.email}">Force Send E-mail Creation notification, even if instructor cannot modify evaluation</label>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="singleEmailReminderDays" class="block" th:text="#{controlemail.reminder.frequency}">Send reminders</label>
+                    <select id="singleEmailReminderDays" name="singleEmailReminderDays">
+                        <option th:each="v : ${reminderDayValues}"
+                                th:value="${v}"
+                                th:text="#{evalsettings.reminder.days.__${v}__}"
+                                th:selected="${v == singleEmailReminderDays}">Option</option>
+                    </select>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label class="block" th:text="#{controlemail.job-start-time}">At what time should processing of emails begin?</label>
+                    <select id="consolidatedJobStartTime" name="consolidatedJobStartTime">
+                        <option th:each="h : ${hourValues}"
+                                th:value="${h}"
+                                th:text="#{controlemail.start.hour.__${h}__}"
+                                th:selected="${h.toString() == consolidatedJobStartTime}">Hour</option>
+                    </select>
+                    <select id="consolidatedJobStartMinutes" name="consolidatedJobStartMinutes">
+                        <option th:each="m : ${minuteValues}"
+                                th:value="${m}"
+                                th:text="#{controlemail.start.minutes.__${m}__}"
+                                th:selected="${m.toString() == consolidatedJobStartMinutes}">Min</option>
+                    </select>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="nextReminderDate" class="block" th:text="#{controlemail.next-reminder-date}">Next reminder date</label>
+                    <input type="datetime-local" id="nextReminderDate" name="nextReminderDate"
+                           th:value="${nextReminderDate}"/>
+                    <span class="instructionText block indnt1" th:text="#{controlemail.setting-reminder-date}">
+                        If this shows the current date and time, reminders are not yet scheduled.
+                    </span>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="logProgressEvery" class="block" th:text="#{controlemail.log.progress.every}">Number of emails to process before logging progress</label>
+                    <select id="logProgressEvery" name="logProgressEvery">
+                        <option th:each="v : ${batchValues}"
+                                th:value="${v}"
+                                th:text="${v}"
+                                th:selected="${v == logProgressEvery}">Option</option>
+                    </select>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="emailBatchSize" class="block" th:text="#{controlemail.batch.size}">Number of emails to process before pausing</label>
+                    <select id="emailBatchSize" name="emailBatchSize">
+                        <option th:each="v : ${batchValues}"
+                                th:value="${v}"
+                                th:text="${v}"
+                                th:selected="${v == emailBatchSize}">Option</option>
+                    </select>
+                </p>
+
+                <p class="longtext indnt1">
+                    <label for="emailWaitInterval" class="block" th:text="#{controlemail.wait.interval}">Number of seconds to pause before processing more email</label>
+                    <select id="emailWaitInterval" name="emailWaitInterval">
+                        <option th:each="v : ${batchValues}"
+                                th:value="${v}"
+                                th:text="${v}"
+                                th:selected="${v == emailWaitInterval}">Option</option>
+                    </select>
+                </p>
+            </fieldset>
+        </div>
+
+        <!-- === SECTION: General options === -->
+        <div>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="sendSubmitted" name="sendSubmitted" value="true"
+                       th:checked="${sendSubmitted}"/>
+                <label for="sendSubmitted" th:text="#{controlemail.send.submitted}">Enable submission confirmation email</label>
+            </p>
+
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="sendEvaluatee" name="sendEvaluatee" value="true"
+                       th:checked="${sendEvaluatee}"/>
+                <label for="sendEvaluatee" th:text="#{controlemail.send.evaluatee}">Enable notification to evaluatees of open evaluation</label>
+            </p>
+
+            <p class="longtext indnt1">
+                <label for="deliveryOption" class="block" th:text="#{controlemail.header}">Email delivery options</label>
+                <select id="deliveryOption" name="deliveryOption">
+                    <option th:each="i : ${#numbers.sequence(0, deliveryValues.length - 1)}"
+                            th:value="${deliveryValues[i]}"
+                            th:text="${deliveryLabels[i]}"
+                            th:selected="${deliveryValues[i] == deliveryOption}">Option</option>
+                </select>
+            </p>
+
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="useAdminFromEmail" name="useAdminFromEmail" value="true"
+                       th:checked="${useAdminFromEmail}"/>
+                <label for="useAdminFromEmail" th:text="#{controlemail.use-admin-from-address}">Use evaluation admin email address to send from for notifications</label>
+            </p>
+
+            <p class="longtext indnt1">
+                <label for="helpdeskEmail" class="block">Helpdesk email address (email messages appear to come from this email address by default)</label>
+                <input type="text" id="helpdeskEmail" name="helpdeskEmail"
+                       th:value="${helpdeskEmail}" size="50"/>
+            </p>
+        </div>
+
+        <p class="act">
+            <input type="submit" value="Save Settings" class="active" accesskey="s"
+                   onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            <input type="button" value="Cancel" accesskey="x"
+                   onclick="SPNR.disableControlsAndSpin(this, null); history.go(-1);"/>
+        </p>
+    </form>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('fieldset.emailTypeOptions').hide();
+        $('div.emailTypeOptionsContainer').each(function () {
+            if ($(this).find('.emailtypeChoice:checked').length > 0) {
+                $(this).find('fieldset.emailTypeOptions').fadeIn('slow');
+            }
+        });
+        $('.emailtypeChoice').change(function () {
+            $('fieldset.emailTypeOptions').fadeOut('slow');
+            if ($(this).is(':checked')) {
+                $(this).closest('div.emailTypeOptionsContainer').find('fieldset.emailTypeOptions').fadeIn('slow');
+            }
+        });
+    });
+    EvalSystem.addNumericOnly('evalTimeToWaitSecs', 'time-wait-errmsg');
+</script>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

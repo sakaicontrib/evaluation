@@ -25,7 +25,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
 import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.springframework.context.MessageSource;
@@ -33,8 +32,6 @@ import org.springframework.context.MessageSource;
 import com.opencsv.CSVParser;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * 
@@ -67,20 +64,20 @@ public class ReportExporterBean implements ToolApi {
       this.messageSource = messageSource;
     }
 
-    public class MyMessageLocator extends MessageLocator {
-      public String getMessage(String[] code, Object[] args) {
-        if (code != null) {
-          for (String s: code) {
+    public class MyMessageLocator extends EvalMessageLocator {
+      @Override
+      public Object[] getMessages(String[] codes, Object[] args) {
+        if (codes != null) {
+          for (String code : codes) {
             try {
-              return messageSource.getMessage(s, args, Locale.getDefault());
+              return new Object[]{ messageSource.getMessage(code, args, Locale.getDefault()) };
             } catch (Exception e) {
-              log.warn(e.getLocalizedMessage(), e );
+              log.warn(e.getLocalizedMessage(), e);
             }
           }
-          // if none found, just use the code
-          return code[0];
-        } else
-          return "";
+          return new Object[]{ codes[0] };
+        }
+        return new Object[]{ "" };
       }
     }
 
@@ -102,11 +99,6 @@ public class ReportExporterBean implements ToolApi {
     private Map<String, ReportExporter> exportersMap;
     public void setExportersMap(Map<String, ReportExporter> exportersMap) {
         this.exportersMap = exportersMap;
-    }
-
-    public DownloadReportViewParams processReport()
-    {
-        return new DownloadReportViewParams( viewID, templateID, evalID, groupIDs, fileName, newReportStyle );
     }
 
     EvaluationAccessAPI evaluationAccessAPI = null;
@@ -157,7 +149,7 @@ public class ReportExporterBean implements ToolApi {
       }
 
       MyMessageLocator messageLocator = new MyMessageLocator();
-      exporter.setMessageLocator(messageLocator);
+      exporter.setEvalMessageLocator(messageLocator);
       if (EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL.equals(exportType)) {
         exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream, newReportStyle);
       } else {
@@ -170,57 +162,6 @@ public class ReportExporterBean implements ToolApi {
       evaluationAccessAPI.setToolApi(this);
     }
 
-    public boolean export(DownloadReportViewParams drvp, HttpServletResponse response) {
-        // get evaluation and template from DAO
-        EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
-
-        OutputStream resultsOutputStream;
-
-         // Get rid of spaces in the filename
-        drvp.filename = drvp.filename.replaceAll( " ", "_" );
-
-        ReportExporter exporter = exportersMap.get(drvp.viewID);
-	
-        if (exporter == null) {
-            throw new IllegalArgumentException("No exporter found for ViewID: " + drvp.viewID);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Found exporter: " + exporter.getClass() + " for drvp.viewID " + drvp.viewID);
-        }
-
-        resultsOutputStream = getOutputStream(response);
-
-        // If it's a CSV export in the new report format, we need to change the filename extension to '.zip' instead of '.csv',
-        // as it will contain 2 files (instructor items and course items)
-        if( isCSV( drvp.viewID ) && newReportStyle )
-        {
-            drvp.filename = drvp.filename.replace( ".csv", ".zip" );
-        }
-
-        // If it's a .csv or .pdf download, force the browser to download the file instead of displaying it inside the iframe
-        if( isCSVTakers( drvp.viewID ) || isCSV( drvp.viewID ) || isPDF( drvp.viewID ) )
-        {
-            response.setHeader( "Content-disposition", "attachment; filename=\"" + drvp.filename + "\"" );
-            response.setHeader( "Pragma", "public" );
-            response.setHeader( "Expires", "0" );
-            response.setHeader( "Cache-Control", "must-revalidate, post-check=0, pre-check=0" );
-            response.setHeader( "Content-Transfer-Encoding", "binary" );
-            response.setContentType( "application/octet-stream" );
-        }
-
-        // If it's anything else, just do the normal header content
-        else
-        {
-            response.setHeader("Content-disposition", "inline; filename=\"" + drvp.filename+"\"");
-            response.setContentType(exporter.getContentType());
-        }
-
-        //Support drvp.evaluateeId
-        this.exportReport(evaluation,drvp.groupIds,drvp.evaluateeId,resultsOutputStream,drvp.viewID);
-
-        return true;
-    }
-
     // Utility methods
     private boolean isCSVTakers ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_TAKERS_REPORT ); }
     private boolean isCSV       ( String viewID ) { return viewID.equals( EvalEvaluationService.CSV_RESULTS_REPORT ); }
@@ -231,8 +172,7 @@ public class ReportExporterBean implements ToolApi {
     	try {
             return response.getOutputStream();
         } catch (IOException ioe) {
-            throw UniversalRuntimeException.accumulate(ioe,
-                    "Unable to get response stream for Evaluation Results Export");
+            throw new RuntimeException("Unable to get response stream for Evaluation Results Export", ioe);
         }
     }
 

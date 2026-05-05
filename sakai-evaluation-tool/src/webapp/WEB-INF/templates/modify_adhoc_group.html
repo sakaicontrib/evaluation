@@ -1,0 +1,108 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="${isNew} ? #{modifyadhocgroup.page.title.new} : #{modifyadhocgroup.page.title.existing(${groupTitle})}">Adhoc Group</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <h3 th:text="${isNew} ? #{modifyadhocgroup.page.title.new} : #{modifyadhocgroup.page.title.existing(${groupTitle})}">Adhoc Group</h3>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="alertMessage successMessage">
+        <ul><li th:text="#{__${successMessage}__(${successArgs != null ? successArgs[0] : ''})}">OK</li></ul>
+    </div>
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="#{__${errorMessage}__(${errorArgs != null ? errorArgs[0] : ''})}">Error</li></ul>
+    </div>
+    <div th:if="${infoMessage}" class="alertMessage informationMessage">
+        <ul><li th:text="#{__${infoMessage}__(${infoArgs != null ? infoArgs[0] : ''})}">Info</li></ul>
+    </div>
+
+    <p class="instructionText" th:text="#{modifyadhocgroup.message.instructions}">Please enter a group name and list of participants.</p>
+
+    <!-- Current members list — remove forms are INDEPENDENT (not nested inside save form) -->
+    <th:block th:unless="${isNew}">
+        <p th:if="${#lists.isEmpty(members)}" th:text="#{modifyadhocgroup.message.emptygroup}">No members.</p>
+        <div th:unless="${#lists.isEmpty(members)}">
+            <p>Click the <b>X</b> by the username or email address to remove it from the adhoc survey group</p>
+            <table width="50%">
+                <tr th:each="member : ${members}" style="color:#666">
+                    <td width="40%">
+                        <span th:text="${member.displayName}">Display name</span>
+                        (<span th:if="${member.adhocUser}" th:text="#{modifyadhocgroup.adhocuser.label}">Adhoc User</span>
+                         <span th:unless="${member.adhocUser}" th:text="${member.displayId}">eid</span>)
+                    </td>
+                    <td width="20%">
+                        <form method="post" th:action="@{/modify_adhoc_group/remove}">
+                            <input type="hidden" name="adhocGroupId" th:value="${adhocGroupId}"/>
+                            <input type="hidden" name="adhocUserId" th:value="${member.userId}"/>
+                            <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+                            <input type="submit" value="X" onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </th:block>
+
+    <!-- Save form — no nested forms inside -->
+    <form method="post" th:action="@{/modify_adhoc_group/save}">
+        <input type="hidden" th:name="adhocGroupId" th:if="${adhocGroupId != null}" th:value="${adhocGroupId}"/>
+        <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+
+        <div>
+            <p>
+                <span th:text="#{modifyadhocgroup.title.label}">Group name:</span>
+                <input type="text" name="groupTitle" th:value="${groupTitle}" size="40"/>
+            </p>
+
+            <p th:text="#{modifyadhocgroup.message.members}">Enter usernames or emails, one per line.</p>
+            <textarea name="newMembers" rows="5" cols="80"></textarea>
+
+            <p>
+                <input type="submit" th:value="${isNew} ? #{modifyadhocgroup.newsave} : #{modifyadhocgroup.update}"
+                       onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            </p>
+        </div>
+    </form>
+
+    <!-- Back link to the wizard if returnUrl is provided -->
+    <a th:if="${returnUrl != null and !returnUrl.isEmpty()}"
+       th:href="${returnUrl}"
+       th:text="#{modifyadhocgroup.backtoevalassign}">Back to Evaluation Group Assignments</a>
+
+</div>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

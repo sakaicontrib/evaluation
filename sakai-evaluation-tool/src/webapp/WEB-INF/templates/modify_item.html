@@ -1,0 +1,364 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{modifyitem.page.title}">Add/Modify Item</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/library/webjars/jquery-ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/content/js/utils.js}"></script>
+    [(${sakaiHtmlHead})]
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:if="${templateId == null}">
+            <a th:href="@{/control_items}" th:text="#{controlitems.page.title}">Control Items</a>
+        </li>
+        <li th:if="${templateId != null}">
+            <a th:href="@{/modify_template_items(templateId=${templateId})}"
+               th:text="#{modifytemplate.page.title}">Template Items</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{modifyitem.page.title}">Add/Modify Item</li>
+    </ul>
+
+    <!-- Fragment loaded into Bootstrap Modal from control_items -->
+    <div th:fragment="itemContent">
+
+    <!-- Item type and item info -->
+    <div class="navPanel evalEditorSmall">
+        <div class="viewNav">
+            <span th:text="#{modifyitem.item.header}">Item:</span>
+            <span class="highlight" th:text="#{__${classificationLabelKey}__}">Type</span>
+            (<span class="instructionText"
+                   th:text="#{modifyitem.item.added.by.owner(${ownerName})}">added by user</span>)
+        </div>
+        <div th:if="${canRemove}" class="listNav itemAction">
+            <a th:if="${itemId != null}"
+               th:href="@{/remove_item(itemId=${itemId})}"
+               th:text="#{general.command.delete}">Remove</a>
+            <a th:if="${templateItemId != null}"
+               th:href="@{/remove_item(templateItemId=${templateItemId})}"
+               th:text="#{general.command.delete}">Remove</a>
+            &nbsp;
+            <a th:if="${itemId != null}"
+               th:href="@{/preview_item(itemId=${itemId})}"
+               class="preview_item"
+               th:text="#{general.command.preview}">Preview</a>
+            <a th:if="${templateItemId != null}"
+               th:href="@{/preview_item(templateItemId=${templateItemId})}"
+               class="preview_item"
+               th:text="#{general.command.preview}">Preview</a>
+        </div>
+    </div>
+
+    <form id="item-form" th:action="@{/modify_item}" method="post">
+        <input type="hidden" name="itemClassification" th:value="${itemClassification}"/>
+        <input type="hidden" name="itemId" th:if="${itemId != null}" th:value="${itemId}"/>
+        <input type="hidden" name="templateItemId" th:if="${templateItemId != null}" th:value="${templateItemId}"/>
+        <input type="hidden" name="templateId" th:if="${templateId != null}" th:value="${templateId}"/>
+
+        <!-- Item text (CKEditor) -->
+        <p>
+            <span th:text="#{modifyitem.item.text.header}">Item Text:</span>
+            <span class="instructionText" th:text="#{modifyitem.item.text.instruction}">question text</span>
+        </p>
+        <div class="longtext evalEditorSmall">
+            <textarea id="item-text" name="itemText" cols="80" rows="5"
+                      th:text="${itemText}"
+                      th:readonly="${itemLocked}"></textarea>
+        </div>
+
+        <!-- Scale (SCALED items only, not locked) -->
+        <div th:if="${showItemScale}" class="longtext">
+            <label for="item-scale-list" th:text="#{modifyitem.item.scale.header}">Scale:</label>
+            <select id="item-scale-list" name="scaleId">
+                <option th:each="i : ${#numbers.sequence(0, scaleValues.size() - 1)}"
+                        th:value="${scaleValues[i]}"
+                        th:text="${scaleLabels[i]}"
+                        th:selected="${scaleValues[i] == currentScaleId}">Scale</option>
+            </select>
+        </div>
+        <!-- Locked scale: show name only -->
+        <div th:if="${showItemScaleLocked}" class="longtext">
+            <label th:text="#{modifyitem.item.scale.header}">Scale:</label>
+            <span th:text="${currentScaleText}">Scale name</span>
+        </div>
+
+        <!-- MC/MA options (with dynamic JS) -->
+        <div th:if="${showItemChoices}" class="longtext">
+            <h4 th:text="#{modifyitem.item.choices.header}">Choices:</h4>
+            <div class="labelindnt">
+                <div id="choices-list">
+                    <div th:each="opt,stat : ${choiceOptions}"
+                         th:id="${'choice-row-' + stat.index}"
+                         class="choice-row" style="margin-bottom:4px">
+                        <input type="text" name="options" th:value="${opt}" maxlength="250"
+                               th:id="${'choice-' + stat.index}"/>
+                        &nbsp;
+                        <button type="button" class="removeChoiceBtn"
+                                th:text="#{modifyscale.remove.scale.option.button}"
+                                onclick="removeChoiceOption(this)">Remove</button>
+                        <br/>
+                    </div>
+                </div>
+                <div style="margin-top:4px">
+                    <button type="button" id="add-choice-btn"
+                            th:text="#{modifyscale.add.scale.option.button}"
+                            onclick="addChoiceOption()">Add Option</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sharing (admin, in item bank) -->
+        <div th:if="${showItemSharing}" class="longtext">
+            <label for="item-sharing-list" class="pulldown-label"
+                   th:text="#{modifyitem.item.sharing.header}">Sharing:</label>
+            <select id="item-sharing-list" name="sharing">
+                <option th:each="i : ${#numbers.sequence(0, sharingValues.length - 1)}"
+                        th:value="${sharingValues[i]}"
+                        th:text="#{__${sharingLabels[i]}__}"
+                        th:selected="${sharing == sharingValues[i]}">option</option>
+            </select>
+        </div>
+
+        <!-- Expert (admin, in item bank) -->
+        <div th:if="${showItemExpert}">
+            <div class="checkbox">
+                <input type="checkbox" id="item-expert" name="itemExpert" value="true"
+                       th:checked="${itemExpert}"/>
+                <label for="item-expert" th:text="#{modifyitem.item.expert.header}">Expert Item</label>
+                <span class="instructionText" th:text="#{modifyitem.item.expert.instruction}">expert indicator</span>
+            </div>
+            <p>
+                <span th:text="#{modifyitem.item.expert.desc.header}">Expert Description:</span>
+                <span class="instructionText" th:text="#{modifyitem.item.expert.desc.instruction}">usage description</span>
+            </p>
+            <div>
+                <textarea id="expert-desc" name="expertDescription" cols="80" rows="3"
+                          th:text="${expertDescription}"></textarea>
+            </div>
+            <div>
+                <span th:text="#{modifyitem.item.expert.itemgroup.header}">Expert Item Group:</span>
+                <select id="item-expert-list" name="itemGroupId">
+                    <option th:each="eg : ${expertGroups}"
+                            th:value="${eg.id}"
+                            th:text="${eg.label}"
+                            th:selected="${eg.id == itemGroupId}">Group</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Results sharing (only inside a template, if the setting allows it) -->
+        <div th:if="${showResultsSharing}">
+            <p>
+                <b><span th:text="#{modifyitem.results.sharing.header}">Result Sharing:</span></b>
+            </p>
+            <div th:each="i : ${#numbers.sequence(0, resultsSharingValues.length - 1)}" class="checkbox" style="margin-left:1em">
+                <input type="radio" name="resultsSharing"
+                       th:id="${'rs-' + i}"
+                       th:value="${resultsSharingValues[i]}"
+                       th:checked="${resultsSharing == resultsSharingValues[i]}"/>
+                <label th:for="${'rs-' + i}"
+                       th:text="#{__${resultsSharingLabels[i]}__}">Sharing option</label>
+            </div>
+        </div>
+
+        <!-- Display Hints -->
+        <fieldset th:if="${showItemDisplayHints}" class="visibleFS evalEditorSmall">
+            <legend th:text="${templateId != null} ? #{modifyitem.display.header} : #{modifyitem.display.hint.header}">
+                Display Settings
+            </legend>
+            <div id="nonBlockSettings">
+                <div th:if="${templateId == null}" class="instructionText"
+                     th:text="#{modifyitem.display.hint.instruction}">optional hints</div>
+                <div th:if="${templateId != null}" class="instructionText"
+                     th:text="#{modifyitem.display.instruction}">required settings</div>
+
+                <!-- Scale display setting (SCALED o MC/MA) -->
+                <p th:if="${showScaleDisplay}" class="longtext">
+                    <label for="scale-display-list" class="pulldown-label"
+                           th:text="#{modifyitem.scale.display.header}">Scale Display:</label>
+                    <select id="scale-display-list" name="scaleDisplaySetting">
+                        <option th:each="i : ${#numbers.sequence(0, scaleDisplayValues.length - 1)}"
+                                th:value="${scaleDisplayValues[i]}"
+                                th:text="#{__${scaleDisplayLabels[i]}__}"
+                                th:selected="${scaleDisplaySetting == scaleDisplayValues[i]}">option</option>
+                    </select>
+                </p>
+                <p th:if="${showChoicesDisplay}" class="longtext">
+                    <label for="choices-display-list" class="pulldown-label"
+                           th:text="#{modifyitem.scale.display.header}">Display:</label>
+                    <select id="choices-display-list" name="scaleDisplaySetting">
+                        <option th:each="i : ${#numbers.sequence(0, choicesDisplayValues.length - 1)}"
+                                th:value="${choicesDisplayValues[i]}"
+                                th:text="#{__${choicesDisplayLabels[i]}__}"
+                                th:selected="${scaleDisplaySetting == choicesDisplayValues[i]}">option</option>
+                    </select>
+                </p>
+
+                <!-- Response size (TEXT) -->
+                <p th:if="${showResponseSize}" class="longtext">
+                    <label for="item-response-size-list" class="pulldown-label"
+                           th:text="#{modifyitem.item.response.size.header}">Response size:</label>
+                    <select id="item-response-size-list" name="displayRows">
+                        <option th:each="i : ${#numbers.sequence(0, responseSizeValues.length - 1)}"
+                                th:value="${responseSizeValues[i]}"
+                                th:text="#{__${responseSizeLabels[i]}__}"
+                                th:selected="${displayRows == responseSizeValues[i]}">option</option>
+                    </select>
+                </p>
+
+                <!-- N/A -->
+                <p th:if="${showNA}" class="checkbox">
+                    <input type="checkbox" id="item-na" name="usesNA" value="true"
+                           th:checked="${usesNA}"/>
+                    <label for="item-na" th:text="#{modifyitem.item.na.header}">N/A</label>
+                </p>
+
+                <!-- Comment -->
+                <p th:if="${showComment}" class="checkbox">
+                    <input type="checkbox" id="item-comment" name="usesComment" value="true"
+                           th:checked="${usesComment}"/>
+                    <label for="item-comment" th:text="#{modifyitem.item.comment.header}">Comment</label>
+                </p>
+            </div>
+
+            <!-- Compulsory -->
+            <p th:if="${showCompulsory}" class="checkbox">
+                <input type="checkbox" id="item-compulsory" name="compulsory" value="true"
+                       th:checked="${compulsory}"/>
+                <label for="item-compulsory" th:text="#{modifyitem.item.compulsory.header}">Must be answered</label>
+            </p>
+
+            <!-- Category -->
+            <div th:if="${showCategory}" id="nonBlockSettings2">
+                <b th:text="#{modifyitem.item.category.header}">Category:</b>
+                <span th:each="i : ${#numbers.sequence(0, categoryValues.length - 1)}" class="checkbox">
+                    <input type="radio" name="category"
+                           th:id="${'cat-' + i}"
+                           th:value="${categoryValues[i]}"
+                           th:checked="${category == categoryValues[i]}"/>
+                    <label th:for="${'cat-' + i}"
+                           th:text="#{__${categoryLabels[i]}__}">Category</label>
+                </span>
+            </div>
+        </fieldset>
+
+        <div class="act">
+            <input type="submit" name="saveAction" th:value="#{modifyitem.save.button}" class="active"
+                   accesskey="s"
+                   th:onclick="${inFacebox} ? 'return true;' : 'if (typeof SPNR !== \'undefined\') SPNR.disableControlsAndSpin(this, null);'"/>
+            <input type="button" th:value="#{general.cancel.button}"
+                   accesskey="x"
+                   th:onclick="${inFacebox} ? 'var m = document.getElementById(\'itemModal\'); if (m) bootstrap.Modal.getInstance(m).hide(); return false;' : 'history.go(-1); return false;'"/>
+        </div>
+    </form>
+
+    <!-- CKEditor: only in direct navigation (not in facebox) -->
+    <script th:if="${!itemLocked and not inFacebox}">
+        sakai.editor.launch("item-text", "{noop:0}");
+    </script>
+
+    <script th:inline="javascript">
+        var minChoices = 2;
+        var maxChoices = 40;
+
+        function countChoices() {
+            return document.querySelectorAll('#choices-list .choice-row').length;
+        }
+
+        function updateChoiceButtons() {
+            var rows = document.querySelectorAll('#choices-list .choice-row');
+            var canRemove = rows.length > minChoices;
+            rows.forEach(function(row) {
+                var btn = row.querySelector('.removeChoiceBtn');
+                if (btn) btn.disabled = !canRemove;
+            });
+            var addBtn = document.getElementById('add-choice-btn');
+            if (addBtn) addBtn.disabled = rows.length >= maxChoices;
+        }
+
+        function addChoiceOption() {
+            if (countChoices() >= maxChoices) return;
+            var list = document.getElementById('choices-list');
+            if (!list) return;
+            var removeLabel = '';
+            var existing = document.querySelector('.removeChoiceBtn');
+            if (existing) removeLabel = existing.textContent.trim();
+            var div = document.createElement('div');
+            div.className = 'choice-row';
+            div.style.marginBottom = '4px';
+            div.innerHTML = '<input type="text" name="options" value="" maxlength="250"/> &nbsp;'
+                + '<button type="button" class="removeChoiceBtn" onclick="removeChoiceOption(this)">'
+                + removeLabel + '</button><br/>';
+            list.appendChild(div);
+            updateChoiceButtons();
+        }
+
+        function removeChoiceOption(btn) {
+            if (countChoices() <= minChoices) return;
+            btn.closest('.choice-row').remove();
+            updateChoiceButtons();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateChoiceButtons();
+        });
+    </script>
+
+    <!-- Bootstrap Modal for item preview (only in direct navigation) -->
+    <div th:unless="${inFacebox}" class="modal fade" id="previewItemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="previewItemModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:unless="${inFacebox}">
+        <script type="text/javascript">evalsys.initModifyItem();</script>
+    </th:block>
+
+    </div><!-- /itemContent fragment -->
+
+</div><!-- /portletBody -->
+
+<th:block th:if="${mainFrameId != '' and not inFacebox}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{viewreport.page.title}">View Report</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/evalUtils.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/utils.js}" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:if="${canChooseGroups}">
+            <a th:href="@{/report_groups(evaluationId=${evaluationId})}"
+               th:text="#{reportgroups.page.title}">Choose Report Groups</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{viewreport.page.title}">View Report</li>
+        <li th:if="${hasItems}" class="lastCrumb">
+            <a th:if="${allEssays}"
+               th:href="@{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_regular')}"
+               th:text="#{viewreport.view.all}" class="goToList">
+                <span class="bi bi-list-ul" aria-hidden="true"></span> View All Items
+            </a>
+            <a th:unless="${allEssays}"
+               th:href="@{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_allessays')}"
+               th:text="#{viewreport.view.written}" class="goToList">
+                <span class="bi bi-list-ul" aria-hidden="true"></span> View Written Responses Only
+            </a>
+        </li>
+    </ul>
+
+    <!-- Access denied -->
+    <div th:if="${notAllowed}" class="alertMessage">
+        <ul><li th:text="#{viewreport.not.allowed}">Not allowed</li></ul>
+    </div>
+
+    <!-- Not enough responses -->
+    <div th:if="${notEnoughResponses}" class="alertMessage">
+        <ul><li>
+            <span th:text="${responsesNeeded}">N</span> more
+            <span th:text="#{controlevaluations.eval.report.after.responses(${responsesNeeded})}">responses needed</span>
+        </li></ul>
+    </div>
+
+    <!-- Main content -->
+    <th:block th:unless="${notAllowed or notEnoughResponses}">
+
+        <!-- Export buttons -->
+        <th:block th:if="${hasItems and !exportOptions.isEmpty()}">
+            <th:block th:each="opt : ${exportOptions}">
+                <a th:href="${opt.url}" th:text="#{__${opt.labelKey}__}" class="button">Export</a>
+            </th:block>
+        </th:block>
+
+        <!-- Individual PDF exports -->
+        <div th:if="${!individualPdfs.isEmpty()}" class="individualExports">
+            <ul id="evalIndividualExports">
+                <li th:each="pdf : ${individualPdfs}" class="exportIndividual">
+                    <a th:href="${pdf.url}"
+                       th:text="#{viewreport.view.pdf.individual(${pdf.displayName})}"
+                       target="_blank" class="exportAction">
+                        <span class="bi bi-file-earmark-arrow-down" aria-hidden="true"></span> Export individual pdf
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Nav panel: title and toggle controls -->
+        <div class="navPanel">
+            <div class="viewNav">
+                <h3 th:text="${evaluation.title}" style="margin:0;padding:0">Evaluation title</h3>
+            </div>
+            <div class="listNav">
+                <ul style="list-style:none;display:inline;margin:0;padding:0">
+                    <li id="allComments" style="list-style:none;display:none;margin:0;padding:0 .2em">
+                        <span id="allCommentsHide" style="display:none;">
+                            <span th:text="#{viewreport.hide.all.comments}" class="makeLink">Hide All Comments</span>
+                        </span>
+                        <span id="allCommentsShow" style="display:none;">
+                            <span th:text="#{viewreport.view.all.comments}" class="makeLink">Show All Comments</span>
+                        </span>
+                    </li>
+                    <li id="allTextResponses" style="list-style:none;display:none;margin:0;padding:0 .2em">
+                        <span id="allTextResponsesHide" style="display:none;">
+                            <span th:text="#{viewreport.hide.all.responses}" class="makeLink">Hide All Text Responses</span>
+                        </span>
+                        <span id="allTextResponsesShow" style="display:none;">
+                            <span th:text="#{viewreport.view.all.responses}" class="makeLink">Show All Text Responses</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Viewing groups info -->
+        <p th:text="#{viewreport.viewinggroups(${groupNames})}" class="instructionText">Viewing Groups: ...</p>
+
+        <!-- Category sections -->
+        <th:block th:each="section : ${categorySections}">
+            <h3 th:if="${section.headerKey != null}">
+                <span th:if="${section.headerArg == null}" th:text="#{__${section.headerKey}__}">Category header</span>
+                <span th:unless="${section.headerArg == null}" th:text="#{__${section.headerKey}__(${section.headerArg})}">Category with name</span>
+            </h3>
+            <div class="itemListReport">
+                <ol>
+                    <li th:each="item : ${section.items}"
+                        th:class="${item.odd ? 'reportItemOddLine' : 'reportItemEvenLine'}"
+                        style="padding:0">
+
+                        <!-- Textual / Header item -->
+                        <div th:if="${item.type == 'textual'}" th:utext="${item.itemText}" style="margin:1em 0">
+                            Header text
+                        </div>
+
+                        <!-- Scaled item (also MultipleChoice, MultipleAnswer, BlockChild) -->
+                        <div th:if="${item.type == 'scaled'}">
+                            <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%"
+                                   class="listHier lines" style="margin:0">
+                                <tr class="highLightRow">
+                                    <td width="3%" valign="top">
+                                        <span th:text="${item.displayNumber}">1</span>.
+                                    </td>
+                                    <td width="70%" valign="top">
+                                        <div th:utext="${item.itemText}">Scaled item question text</div>
+                                    </td>
+                                    <td class="special">
+                                        <span th:text="#{viewreport.responses.count(${item.responsesCount})}">50 responses</span>
+                                    </td>
+                                </tr>
+                                <tr th:each="choice : ${item.choices}">
+                                    <td></td>
+                                    <td>
+                                        <h5>
+                                            <span th:if="${choice.labelKey}"   th:text="#{__${choice.label}__}">Not Applicable</span>
+                                            <span th:unless="${choice.labelKey}" th:text="${choice.label}">Choice label</span>
+                                        </h5>
+                                    </td>
+                                    <td class="special">
+                                        <span th:text="#{viewreport.answers.percentage(${choice.count}, ${choice.percentage})}">5 (10%)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div th:if="${item.mean != null}" align="right" style="width:85%"
+                                 th:text="#{viewreport.answers.mean(${item.mean.answersCount}, ${item.mean.meanText})}">0 answers, mean = 0</div>
+
+                            <!-- Comments section -->
+                            <div th:if="${item.usesComments}" class="showcomments">
+                                <h5 th:text="#{viewreport.comments.header}">Comments:</h5>
+                                <span th:if="${item.comments.isEmpty()}" style="font-style:italic;"
+                                      th:text="#{viewreport.no.comments}">No Comments</span>
+                                <ol th:unless="${item.comments.isEmpty()}">
+                                    <li th:each="comment : ${item.comments}"
+                                        th:class="${comment.odd ? 'itemsListOddLine' : ''}">
+                                        <span th:text="${comment.text}">comment text</span>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Essay / Text item -->
+                        <div th:if="${item.type == 'essay'}">
+                            <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%"
+                                   class="listHier lines" style="margin:0">
+                                <tr class="highLightRow">
+                                    <td width="3%" valign="top">
+                                        <span th:text="${item.displayNumber}">1</span>.
+                                    </td>
+                                    <td width="70%" valign="top">
+                                        <div th:utext="${item.itemText}">Essay item text</div>
+                                    </td>
+                                    <td class="special">
+                                        <span th:text="#{viewreport.responses.count(${item.responsesCount})}">N responses</span>
+                                        <span th:if="${item.usesNA}">
+                                            <span th:text="#{reporting.notapplicable.shortlabel}">N/A</span>:
+                                            <span th:text="${item.naCount}">0</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="showtextresponses">
+                                <span th:if="${item.responses.isEmpty()}" style="font-style:italic;"
+                                      th:text="#{viewreport.no.responses}">No responses</span>
+                                <ol th:unless="${item.responses.isEmpty()}">
+                                    <li th:each="resp : ${item.responses}"
+                                        th:class="${resp.odd ? 'itemsListOddLine' : ''}">
+                                        <span th:text="${resp.text}">response text</span>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div>&nbsp;</div>
+                    </li>
+                </ol>
+            </div>
+        </th:block>
+
+    </th:block>
+
+    <script th:inline="javascript">
+        EvalSystem.initEvalReportView(
+            /*[[${hasComments ? 'allComments' : ''}]]*/ '',
+            /*[[${hasTextResponses ? 'allTextResponses' : ''}]]*/  ''
+        );
+    </script>
+
+</div>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><title>Select</title></head>
+<body>
+<div th:fragment="content">
+
+    <h2 id="title" style="display:none"
+        th:text="${isInstructor} ? #{assignselect.instructors.page.header(${groupTitle}, ${evalTitle})} : #{assignselect.tas.page.header(${groupTitle}, ${evalTitle})}">
+        Select people
+    </h2>
+
+    <form method="post" th:action="@{/evaluation_assign_select/save}" id="assign-select-form">
+        <input type="hidden" name="evaluationId"  th:value="${evaluationId}"/>
+        <input type="hidden" name="evalGroupId"   th:value="${evalGroupId}"/>
+        <input type="hidden" name="evalCategory"  th:value="${evalCategory}"/>
+
+        <!-- Selection option radio buttons -->
+        <div id="selectInstructorTA" th:if="${enableInstructorAssistantSelection}">
+            <p class="instructionText" th:text="${isInstructor} ? #{assignselect.instructions.instructors} : #{assignselect.instructions.assistants}">
+                How many should respondents evaluate?
+            </p>
+            <div>
+                <input type="radio" name="selectionOption" th:value="${selectionOptionAll}"
+                       th:checked="${selectionOption == selectionOptionAll}"/>
+                <label th:text="#{evalsettings.selection.instructor.all}">All</label>
+            </div>
+            <div>
+                <input type="radio" name="selectionOption" th:value="${selectionOptionOne}"
+                       th:checked="${selectionOption == selectionOptionOne}"/>
+                <label th:text="#{evalsettings.selection.instructor.one}">One</label>
+            </div>
+            <div>
+                <input type="radio" name="selectionOption" th:value="${selectionOptionMultiple}"
+                       th:checked="${selectionOption == selectionOptionMultiple}"/>
+                <label th:text="#{evalsettings.selection.instructor.many}">Multiple</label>
+            </div>
+        </div>
+
+        <p class="instructionText" th:text="${isInstructor} ? #{assignselect.instructions.instructor} : #{assignselect.instructions.assistant}">
+            Choose the people to include.
+        </p>
+
+        <div class="selectTable">
+            <table class="evalsysTable" style="width:90%">
+                <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectorControl"/>
+                        <span th:text="#{assigneval.select.header}">Select</span>
+                    </th>
+                    <th th:text="#{assignselect.table.numbers}">Number</th>
+                    <th th:text="#{assignselect.table.names}">Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${userRows}">
+                    <td>
+                        <input type="checkbox" name="selectedUserIds"
+                               class="evalgroupselect"
+                               th:id="${row.userId}"
+                               th:value="${row.userId}"
+                               th:checked="${row.selected}"/>
+                    </td>
+                    <td th:text="${row.username}">username</td>
+                    <td th:text="${row.sortName}">Sort name</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="act">
+            <input type="submit" id="save-item-action" class="active" accesskey="s"
+                   th:value="#{assignselect.form.save}"/>
+            <input type="button" id="cancel-button" accesskey="x"
+                   th:value="#{general.cancel.button}"
+                   onclick="var m = document.querySelector('.modal.show'); if (m) bootstrap.Modal.getInstance(m).hide(); return false;"/>
+        </p>
+    </form>
+
+</div>
+</body>
+</html>

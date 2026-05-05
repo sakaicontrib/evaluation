@@ -1,0 +1,408 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{controlevaluations.page.title}">My Evaluations</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li>
+            <a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{controlevaluations.page.title}">My Evaluations</li>
+        <li th:if="${canBegin}" class="lastCrumb">
+            <a th:href="@{/evaluation_create}" class="addItem">
+                <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                <span th:text="#{starteval.page.title}">Start Evaluation</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Unpublished groups warning -->
+    <p th:if="${countUnpublishedGroups > 0}" class="elementAlertFront instructionText">
+        <span class="bi bi-exclamation-triangle-fill" aria-hidden="true"></span>
+        <span th:text="#{controlevaluations.instructions.site.unpublished}">
+            This evaluation is assigned to at least one currently unpublished site.
+        </span>
+    </p>
+
+    <!-- =========================================================
+         SECTION: Partial evaluations
+         ========================================================= -->
+    <div th:if="${not #lists.isEmpty(partialRows)}">
+        <h3 th:text="#{controlevaluations.partial.header}">Partial Evaluations</h3>
+        <p class="instructionText">
+            <span th:text="#{controlevaluations.partial.description}">Your evaluations which you started creating but did not complete</span>
+            <span th:if="${partialCleanupDays > 0}"
+                  th:text="#{controlevaluations.partial.cleanup(${partialCleanupDays})}"></span>
+        </p>
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
+                    <th th:text="#{controlevaluations.eval.settings.header}" class="screenOnly">Settings</th>
+                    <th th:text="#{controlevaluations.partial.created.date.header}">Created On</th>
+                    <th th:text="#{controlevaluations.partial.owner.header}">Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${partialRows}">
+                    <td><span th:text="${row.title}">Evaluation title</span></td>
+                    <td class="itemAction screenOnly">
+                        <a th:href="@{/evaluation_settings(evaluationId=${row.evalId})}"
+                           th:text="#{controlevaluations.partial.continue}">Continue</a>
+                        <a th:href="@{/remove_eval(evaluationId=${row.evalId})}"
+                           class="left-separator"
+                           th:text="#{general.command.delete}">Delete</a>
+                        <a th:href="@{/chown_eval(evaluationId=${row.evalId})}"
+                           th:text="#{general.command.chown}">Change Owner</a>
+                    </td>
+                    <td th:text="${row.lastModified}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- =========================================================
+         SECTION: Queued evaluations
+         ========================================================= -->
+    <h3 th:text="#{controlevaluations.inqueue.header}">In-Queue Evaluations</h3>
+    <p class="instructionText" th:text="#{controlevaluations.inqueue.description}">
+        Your evaluations in queue that have not started yet
+    </p>
+    <div th:if="${not #lists.isEmpty(inqueueRows)}">
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
+                    <th th:text="#{controlevaluations.eval.settings.header}" class="screenOnly">Settings</th>
+                    <th th:text="#{controlevaluations.eval.assigned.header}">Assigned</th>
+                    <th th:text="#{controlevaluations.eval.startdate.header}">Start Date</th>
+                    <th th:text="#{controlevaluations.eval.duedate.header}">Due Date</th>
+                    <th th:text="#{controlevaluations.eval.owner.header}">Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${inqueueRows}">
+                    <td>
+                        <a th:href="@{/preview_eval(evaluationId=${row.evalId})}"
+                           th:text="${row.title}"
+                           th:title="#{controlevaluations.eval.title.tooltip}"
+                           target="_blank">Evaluation Title</a>
+                        <span class="itemAction">
+                            (<a th:href="${row.directUrl}"
+                                th:title="#{controlevaluations.eval.direct.tooltip}"
+                                th:text="#{controlevaluations.eval.direct.link}"
+                                target="_blank">link</a>)
+                        </span>
+                        <span th:if="${row.categoryLabel != null}">
+                            [<a th:href="${row.categoryUrl}"
+                                th:title="${row.categoryLabel}"
+                                th:text="${row.categoryLabel}"
+                                target="_blank">category</a>]
+                        </span>
+                    </td>
+                    <td class="itemAction screenOnly">
+                        <th:block th:if="${row.canEdit}">
+                            <a th:href="@{/evaluation_settings(evaluationId=${row.evalId})}"
+                               th:text="#{general.command.edit}">Edit</a>
+                        </th:block>
+                        <th:block th:if="${row.canDelete}">
+                            <a th:href="@{/remove_eval(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{general.command.delete}">Delete</a>
+                        </th:block>
+                        <th:block th:if="${row.canNotify}">
+                            <a th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{controlevaluations.eval.email.link}">Send Email</a>
+                        </th:block>
+                        <th:block th:if="${row.canChown}">
+                            <a th:href="@{/chown_eval(evaluationId=${row.evalId})}"
+                               th:text="#{general.command.chown}">Change Owner</a>
+                        </th:block>
+                    </td>
+                    <td>
+                        <a th:if="${row.groupsIsLink}"
+                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:text="${row.groupsLabel}">Course 1010</a>
+                        <span th:unless="${row.groupsIsLink}"
+                              th:text="${row.groupsLabel}">Course 1010</span>
+                    </td>
+                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${#lists.isEmpty(inqueueRows)}" class="instructionText highlightPanel"
+       th:text="#{controlevaluations.inqueue.none}">No evaluations in-queue</p>
+
+    <!-- =========================================================
+         SECTION: Active evaluations
+         ========================================================= -->
+    <h3 style="font-weight:bold;" th:text="#{controlevaluations.active.header}">Active Evaluations</h3>
+    <p class="instructionText" th:text="#{controlevaluations.active.description}">
+        Your evaluations currently active for users to take
+    </p>
+    <div th:if="${not #lists.isEmpty(activeRows)}">
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
+                    <th th:text="#{controlevaluations.eval.settings.header}" class="screenOnly">Settings</th>
+                    <th th:text="#{controlevaluations.eval.assigned.header}">Assigned</th>
+                    <th th:text="#{controlevaluations.eval.startdate.header}">Start Date</th>
+                    <th th:text="#{controlevaluations.eval.duedate.header}">Due Date</th>
+                    <th th:text="#{controlevaluations.eval.responserate.header}">Response Rate</th>
+                    <th th:text="#{controlevaluations.eval.report.header}" class="screenOnly">Report</th>
+                    <th th:text="#{controlevaluations.eval.owner.header}">Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${activeRows}">
+                    <td>
+                        <a th:href="@{/preview_eval(evaluationId=${row.evalId})}"
+                           th:text="${row.title}"
+                           th:title="#{controlevaluations.eval.title.tooltip}">Evaluation Title</a>
+                        <span class="itemAction">
+                            (<a th:href="${row.directUrl}"
+                                th:title="#{controlevaluations.eval.direct.tooltip}"
+                                th:text="#{controlevaluations.eval.direct.link}"
+                                target="_blank">link</a>)
+                        </span>
+                        <span th:if="${row.categoryLabel != null}">
+                            [<a th:href="${row.categoryUrl}"
+                                th:title="${row.categoryLabel}"
+                                th:text="${row.categoryLabel}"
+                                target="_blank">category</a>]
+                        </span>
+                    </td>
+                    <td class="itemAction screenOnly" nowrap="nowrap">
+                        <th:block th:if="${row.canEdit}">
+                            <a th:href="@{/evaluation_settings(evaluationId=${row.evalId})}"
+                               th:text="#{general.command.edit}">Edit</a>
+                        </th:block>
+                        <th:block th:if="${row.canDelete}">
+                            <a th:href="@{/remove_eval(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{general.command.delete}">Delete</a>
+                        </th:block>
+                        <th:block th:if="${row.canNotify}">
+                            <a th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{controlevaluations.eval.email.link}">Send Email</a>
+                        </th:block>
+                        <th:block th:if="${row.canEarlyClose}">
+                            <form th:action="@{/control_evaluations/close}" method="post"
+                                  class="inlineForm left-separator">
+                                <input type="hidden" name="evaluationId" th:value="${row.evalId}"/>
+                                <input type="hidden" name="maxAgeToDisplay" th:value="${maxAgeToDisplay}"/>
+                                <input type="submit"
+                                       th:value="#{controlevaluations.active.close.now}"
+                                       class="makeLink"/>
+                            </form>
+                        </th:block>
+                    </td>
+                    <td>
+                        <a th:if="${row.groupsIsLink}"
+                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:text="${row.groupsLabel}">12</a>
+                        <span th:unless="${row.groupsIsLink}"
+                              th:text="${row.groupsLabel}">12</span>
+                    </td>
+                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <!-- Response rate -->
+                    <td nowrap="nowrap">
+                        <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
+                           th:href="@{/evaluation_responders(evaluationId=${row.evalId})}"
+                           th:text="${row.responseRateText}">2 of 39</a>
+                        <a th:if="${row.responseRateMode.name() == 'NOTIFY'}"
+                           th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
+                           th:text="${row.responseRateText}">2 of 39</a>
+                        <span th:if="${row.responseRateMode.name() == 'TEXT'}"
+                              th:text="${row.responseRateText}">2 of 39</span>
+                    </td>
+                    <!-- Informe -->
+                    <td class="screenOnly" nowrap="nowrap">
+                        <th:block th:switch="${row.reportMode.name()}">
+                            <span th:case="'DATE_RESPONSES'"
+                                  th:with="parts=${#strings.arraySplit(row.reportText,'|')}"
+                                  th:text="#{controlevaluations.eval.report.viewable.least.responses(${parts[0]},${parts[1]})}">viewable on date with N responses</span>
+                            <span th:case="'RESPONSES'"
+                                  th:text="#{controlevaluations.eval.report.after.responses(${row.reportText})}">After N more responses</span>
+                            <span th:case="'DATE'"
+                                  th:text="${row.reportText}">20/03/2007</span>
+                            <a th:case="'LINK'"
+                               th:href="@{/report_view(evaluationId=${row.evalId})}"
+                               th:text="#{controlevaluations.eval.report.link}">results</a>
+                        </th:block>
+                    </td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${#lists.isEmpty(activeRows)}" class="instructionText highlightPanel"
+       th:text="#{controlevaluations.active.none}">No active evaluations</p>
+
+    <!-- =========================================================
+         SECTION: Closed evaluations
+         ========================================================= -->
+    <h3 th:text="#{controlevaluations.closed.header}">Closed Evaluations</h3>
+    <p class="instructionText" th:text="#{controlevaluations.closed.description}">
+        Your evaluations which have been completed
+    </p>
+    <div th:if="${not #lists.isEmpty(closedRows)}">
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
+                    <th th:text="#{controlevaluations.eval.settings.header}" class="screenOnly">Settings</th>
+                    <th th:text="#{controlevaluations.eval.assigned.header}">Assigned</th>
+                    <th th:text="#{controlevaluations.eval.startdate.header}">Start Date</th>
+                    <th th:text="#{controlevaluations.eval.duedate.header}">Due Date</th>
+                    <th th:text="#{controlevaluations.eval.responserate.header}">Response Rate</th>
+                    <th th:text="#{controlevaluations.eval.report.header}" class="screenOnly">Report</th>
+                    <th th:text="#{controlevaluations.eval.owner.header}">Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${closedRows}">
+                    <td>
+                        <a th:href="@{/preview_eval(evaluationId=${row.evalId})}"
+                           th:text="${row.title}"
+                           th:title="#{controlevaluations.eval.title.tooltip}">Evaluation Title</a>
+                        <span th:if="${row.categoryLabel != null}"
+                              th:title="${row.categoryLabel}"
+                              th:text="${row.categoryLabel}">category</span>
+                    </td>
+                    <td class="itemAction screenOnly">
+                        <th:block th:if="${row.canEdit}">
+                            <a th:href="@{/evaluation_settings(evaluationId=${row.evalId})}"
+                               th:text="#{general.command.edit}">Edit</a>
+                        </th:block>
+                        <th:block th:if="${row.canDelete}">
+                            <a th:href="@{/remove_eval(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{general.command.delete}">Delete</a>
+                        </th:block>
+                        <th:block th:if="${row.canNotify}">
+                            <a th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
+                               class="left-separator"
+                               th:text="#{controlevaluations.eval.email.link}">Send Email</a>
+                        </th:block>
+                        <th:block th:if="${row.canReopen}">
+                            <a th:href="@{/evaluation_settings(evaluationId=${row.evalId},reopen=true)}"
+                               class="left-separator"
+                               th:text="#{controlevaluations.closed.reopen.now}">Reopen</a>
+                        </th:block>
+                        <th:block th:if="${row.canChown}">
+                            <a th:href="@{/chown_eval(evaluationId=${row.evalId})}"
+                               th:text="#{general.command.chown}">Change Owner</a>
+                        </th:block>
+                    </td>
+                    <td>
+                        <a th:if="${row.groupsIsLink}"
+                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:text="${row.groupsLabel}">Course 1010</a>
+                        <span th:unless="${row.groupsIsLink}"
+                              th:text="${row.groupsLabel}">Course 1010</span>
+                    </td>
+                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <!-- Response rate -->
+                    <td nowrap="nowrap">
+                        <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
+                           th:href="@{/evaluation_responders(evaluationId=${row.evalId})}"
+                           th:text="${row.responseRateText}">2 of 39</a>
+                        <a th:if="${row.responseRateMode.name() == 'NOTIFY'}"
+                           th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
+                           th:text="${row.responseRateText}">2 of 39</a>
+                        <span th:if="${row.responseRateMode.name() == 'TEXT'}"
+                              th:text="${row.responseRateText}">2 of 39</span>
+                    </td>
+                    <!-- Informe -->
+                    <td class="screenOnly" nowrap="nowrap">
+                        <th:block th:switch="${row.reportMode.name()}">
+                            <span th:case="'DATE_RESPONSES'"
+                                  th:with="parts=${#strings.arraySplit(row.reportText,'|')}"
+                                  th:text="#{controlevaluations.eval.report.viewable.least.responses(${parts[0]},${parts[1]})}">viewable on date with N responses</span>
+                            <span th:case="'RESPONSES'"
+                                  th:text="#{controlevaluations.eval.report.after.responses(${row.reportText})}">After N more responses</span>
+                            <span th:case="'DATE'"
+                                  th:text="${row.reportText}">20/03/2007</span>
+                            <a th:case="'LINK'"
+                               th:href="@{/report_view(evaluationId=${row.evalId})}"
+                               th:text="#{controlevaluations.eval.report.link}">results</a>
+                        </th:block>
+                    </td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${#lists.isEmpty(closedRows)}" class="instructionText highlightPanel"
+       th:text="#{controlevaluations.closed.none}">No closed evaluations</p>
+
+    <!-- =========================================================
+         Filter for closed evaluations by age
+         ========================================================= -->
+    <hr/>
+    <span>
+        <span th:text="#{controlevaluations.closed.displaying}">Displaying:</span>
+        <span th:text="${maxAgeToDisplay == 0 ? 'All' : maxAgeToDisplay}">6</span>
+        <span th:text="#{controlevaluations.closed.months}">months</span>
+        &nbsp;
+        <a th:if="${maxAgeToDisplay != 6}"
+           th:href="@{/control_evaluations(maxAgeToDisplay=6)}"
+           th:text="#{controlevaluations.closed.six}">6 Months</a>
+        <a th:if="${maxAgeToDisplay != 12}"
+           th:href="@{/control_evaluations(maxAgeToDisplay=12)}"
+           th:text="#{controlevaluations.closed.twelve}">12 Months</a>
+        <a th:if="${maxAgeToDisplay != 18}"
+           th:href="@{/control_evaluations(maxAgeToDisplay=18)}"
+           th:text="#{controlevaluations.closed.eighteen}">18 Months</a>
+        <a th:if="${maxAgeToDisplay != 0}"
+           th:href="@{/control_evaluations(maxAgeToDisplay=0)}"
+           th:text="#{controlevaluations.closed.all}">All</a>
+    </span>
+
+</div>
+<th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
+</body>
+</html>

@@ -27,6 +27,22 @@
   display: inline;
   width: auto;
   border: none;
+  color: var(--bs-orange, orange);
+  font-weight: bold;
+}
+
+.instructionText {
+  color: var(--bs-secondary-color, #555);
+  line-height: 1.4em;
+  margin: 0.5em 0;
+}
+
+.highlightPanel {
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: var(--bs-border-radius, 0.375rem);
+  padding: 0.75em 1em;
+  margin: 0.5em 0;
 }
 
 .checkbox input[type="checkbox"] {

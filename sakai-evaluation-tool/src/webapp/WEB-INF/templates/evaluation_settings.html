@@ -1,0 +1,394 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{evalsettings.page.title}">Evaluation Settings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    [(${sakaiHtmlHead})]
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:if="${isPartial}" th:text="#{starteval.page.title}">Add Evaluation</li>
+        <li class="lastCrumb">
+            <a th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
+               th:text="#{evalsettings.page.title}">Evaluation Settings</a>
+        </li>
+    </ul>
+
+    <!-- Flash error messages -->
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="${errorMessage}">Error</li></ul>
+    </div>
+
+    <h3 th:text="#{evalsettings.page.title}">Evaluation Settings</h3>
+
+    <form th:action="@{/evaluation_settings}" method="post">
+        <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+
+        <!-- ===== TITLE AND INSTRUCTIONS ===== -->
+        <fieldset class="visibleFS">
+            <legend th:text="#{evalsettings.title.settings}">Evaluation Title</legend>
+
+            <p class="shorttext">
+                <label for="title" th:text="#{evalsettings.title.header}">Title</label>
+                <input th:if="${titleEditable}" type="text" id="title" name="title"
+                       th:value="${eval.title}" size="50" maxlength="255"/>
+                <span th:unless="${titleEditable}" class="highlight" th:text="${eval.title}">Title</span>
+            </p>
+
+            <div class="longtext evalEditorLarge">
+                <label for="instructions" th:text="#{evalsettings.instructions.header}">Instructions</label>
+                <div th:if="${instructionsEditable}">
+                    <textarea id="instructions" name="instructions" rows="4" cols="60"
+                              th:text="${eval.instructions}"></textarea>
+                </div>
+                <div th:unless="${instructionsEditable}"
+                     th:utext="${eval.instructions}">Instructions text</div>
+                <p class="instructionText textPanelFooter">
+                    <span th:text="#{evalsettings.instructions.desc}">Will appear at the top of the evaluation.</span>
+                </p>
+            </div>
+
+            <!-- Assigned template -->
+            <div th:if="${evalTemplate != null}" class="shorttext">
+                <span th:text="#{evalsettings.template.title.display(${evalTemplate.title})}">Template: ...</span>
+                &nbsp;(<a th:href="@{/preview_eval(templateId=${evalTemplate.id})}"
+                          th:text="#{evalsettings.template.preview.link}">Preview</a>)
+                &nbsp;[<a th:href="@{/modify_template_items(templateId=${evalTemplate.id})}"
+                          th:text="#{general.command.edit}">Edit</a>]
+            </div>
+        </fieldset>
+
+        <!-- ===== FECHAS ===== -->
+        <fieldset class="visibleFS">
+            <legend th:text="#{evalsettings.dates.header}">Evaluation Dates</legend>
+
+            <div class="shorttext">
+                <span class="instructionText" th:text="#{evalsettings.dates.current(${currentDate})}">Today is ...</span>
+            </div>
+
+            <!-- Start date -->
+            <div class="shorttext">
+                <label for="startDate" th:text="#{evalsettings.start.date.header}">Start Date</label>
+                <input th:if="${startDateEditable}" type="datetime-local" id="startDate" name="startDate"
+                       th:value="${startDateStr}" required="required"/>
+                <span th:unless="${startDateEditable}" th:text="${startDateStr}">Start date</span>
+                <span class="instructionText textPanelFooter"
+                      th:text="#{evalsettings.start.date.desc}">Start date description</span>
+            </div>
+
+            <!-- Due date -->
+            <div class="shorttext">
+                <label for="dueDate" th:text="#{evalsettings.due.date.header}">Due Date</label>
+                <input th:if="${dueDateEditable}" type="datetime-local" id="dueDate" name="dueDate"
+                       th:value="${dueDateStr}" required="required"/>
+                <span th:unless="${dueDateEditable}" th:text="${dueDateStr}">Due date</span>
+                <span class="instructionText textPanelFooter"
+                      th:text="#{evalsettings.due.date.desc}">Due date description</span>
+            </div>
+
+            <!-- Stop date (if the setting allows it) -->
+            <div th:if="${useStopDate}" class="shorttext">
+                <label for="stopDate" th:text="#{evalsettings.stop.date.header}">Stop Date</label>
+                <input th:if="${stopDateEditable}" type="datetime-local" id="stopDate" name="stopDate"
+                       th:value="${stopDateStr}"/>
+                <span th:unless="${stopDateEditable}" th:text="${stopDateStr}">Stop date</span>
+                <span class="instructionText textPanelFooter"
+                      th:text="#{evalsettings.stop.date.desc}">Stop date description</span>
+            </div>
+
+            <!-- View date (if the setting allows it) -->
+            <div th:if="${useViewDate}" class="shorttext">
+                <label for="viewDate" th:text="#{evalsettings.view.date.header}">View Date</label>
+                <input th:if="${viewDateEditable}" type="datetime-local" id="viewDate" name="viewDate"
+                       th:value="${viewDateStr}"/>
+                <span th:unless="${viewDateEditable}" th:text="${viewDateStr}">View date</span>
+                <span class="instructionText textPanelFooter"
+                      th:text="#{evalsettings.view.date.desc}">View date description</span>
+            </div>
+        </fieldset>
+
+        <!-- ===== RESULTADOS ===== -->
+        <fieldset class="visibleFS">
+            <legend th:text="#{evalsettings.results.viewing.header}">Evaluation Results</legend>
+
+            <!-- Results sharing -->
+            <div class="shorttext">
+                <label th:text="#{evalsettings.results.viewing.sharing.header}">Results sharing</label>
+                <span th:each="i : ${#numbers.sequence(0, resultsSharingValues.length - 1)}">
+                    <input type="radio" name="resultsSharing"
+                           th:id="${'rs-' + i}"
+                           th:value="${resultsSharingValues[i]}"
+                           th:checked="${eval.resultsSharing == resultsSharingValues[i]}"/>
+                    <label th:for="${'rs-' + i}"
+                           th:text="${#messages.msg(resultsSharingLabels[i])}">Label</label>
+                    &nbsp;
+                </span>
+            </div>
+
+            <!-- Hierarchy notes -->
+            <p th:if="${showHierarchy}" class="instructionText"
+               th:text="#{evalsettings.results.viewable.admin.note}">Hierarchy note</p>
+
+            <!-- View date when sameViewDates is true -->
+            <div th:if="${useViewDate and sameViewDates}" class="shorttext">
+                <span th:text="#{evalsettings.view.results.date.label}">Results viewable after due/view date</span>
+            </div>
+
+            <!-- Participantes pueden ver resultados -->
+            <div class="shorttext">
+                <span th:if="${studentViewSetting == null}">
+                    <input th:if="${!viewSettingsDisabled}" type="checkbox" id="studentViewResults"
+                           name="studentViewResults" value="true"
+                           th:checked="${eval.studentViewResults}"/>
+                    <input th:if="${viewSettingsDisabled}" type="hidden" name="studentViewResults"
+                           th:value="${eval.studentViewResults}"/>
+                    <label for="studentViewResults"
+                           th:text="#{evalsettings.studentViewResults.label}">Students view results</label>
+                </span>
+                <span th:unless="${studentViewSetting == null}">
+                    <label th:text="${studentViewSetting} ? #{evalsettings.studentViewResults.label} : #{evalsettings.studentViewResults.disabled}">
+                        Students view results</label>
+                </span>
+                <!-- Student view date (if sameViewDates is false and the setting allows it) -->
+                <span th:if="${(studentViewSetting == null or studentViewSetting) and !sameViewDates}">
+                    <label th:text="#{evalsettings.view.results.students.date.after.label}">After date:</label>
+                    <input type="datetime-local" name="studentsDate" th:value="${studentsDateStr}"/>
+                </span>
+            </div>
+
+            <!-- Instructores pueden ver resultados -->
+            <div class="shorttext">
+                <span th:if="${instrViewSetting == null}">
+                    <input th:if="${!viewSettingsDisabled}" type="checkbox" id="instructorViewResults"
+                           name="instructorViewResults" value="true"
+                           th:checked="${eval.instructorViewResults}"/>
+                    <label for="instructorViewResults"
+                           th:text="#{evalsettings.instructorViewResults.label}">Instructors view results</label>
+                </span>
+                <span th:unless="${instrViewSetting == null}">
+                    <label th:text="${instrViewSetting} ? #{evalsettings.instructorViewResults.label} : #{evalsettings.instructorViewResults.disabled}">
+                        Instructors view results</label>
+                </span>
+            </div>
+            <div class="shorttext">
+                <span th:if="${instrViewAllSetting == null}">
+                    <input th:if="${!viewSettingsDisabled}" type="checkbox" id="instructorViewAllResults"
+                           name="instructorViewAllResults" value="true"
+                           th:checked="${eval.instructorViewAllResults}"/>
+                    <label for="instructorViewAllResults"
+                           th:text="#{evalsettings.instructorViewAllResults.label}">Instructors view all results</label>
+                </span>
+                <span th:unless="${instrViewAllSetting == null}">
+                    <label th:text="${instrViewAllSetting} ? #{evalsettings.instructorViewAllResults.label} : #{evalsettings.instructorViewAllResults.disabled}">
+                        Instructors view all results</label>
+                </span>
+                <!-- Fecha para instructores -->
+                <span th:if="${(instrViewSetting == null or instrViewSetting) and !sameViewDates}">
+                    <label th:text="#{evalsettings.view.results.instructors.date.after.label}">After date:</label>
+                    <input type="datetime-local" name="instructorsDate" th:value="${instructorsDateStr}"/>
+                </span>
+            </div>
+        </fieldset>
+
+        <!-- ===== RESPONDENTES ===== -->
+        <fieldset class="visibleFS">
+            <legend th:text="#{evalsettings.student.completion.settings.header}">Participant Completion Settings</legend>
+
+            <!-- Blank responses -->
+            <div class="shorttext">
+                <span th:if="${studentUnansweredSetting == null}">
+                    <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="blankResponsesAllowed"
+                           name="blankResponsesAllowed" value="true"
+                           th:checked="${eval.blankResponsesAllowed}"/>
+                    <input th:if="${respondentSettingsDisabled}" type="hidden" name="blankResponsesAllowed"
+                           th:value="${eval.blankResponsesAllowed}"/>
+                    <label for="blankResponsesAllowed"
+                           th:text="#{evalsettings.blankResponsesAllowed.label}">Blank responses allowed</label>
+                </span>
+                <span th:unless="${studentUnansweredSetting == null}">
+                    <label th:text="${studentUnansweredSetting} ? #{evalsettings.blankResponsesAllowed.label} : #{evalsettings.blankResponsesAllowed.disabled}">
+                        Blank responses</label>
+                </span>
+                <p class="instructionText textPanelFooter indnt2"
+                   th:text="#{evalsettings.blank.responses.allowed.note}">Blank responses note</p>
+            </div>
+
+            <!-- Modify responses -->
+            <div class="shorttext">
+                <span th:if="${studentModifySetting == null}">
+                    <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="modifyResponsesAllowed"
+                           name="modifyResponsesAllowed" value="true"
+                           th:checked="${eval.modifyResponsesAllowed}"/>
+                    <input th:if="${respondentSettingsDisabled}" type="hidden" name="modifyResponsesAllowed"
+                           th:value="${eval.modifyResponsesAllowed}"/>
+                    <label for="modifyResponsesAllowed"
+                           th:text="#{evalsettings.modifyResponsesAllowed.label}">Modify responses allowed</label>
+                </span>
+                <span th:unless="${studentModifySetting == null}">
+                    <label th:text="${studentModifySetting} ? #{evalsettings.modifyResponsesAllowed.label} : #{evalsettings.modifyResponsesAllowed.disabled}">
+                        Modify responses</label>
+                </span>
+                <p class="instructionText textPanelFooter indnt2"
+                   th:text="#{evalsettings.modify.responses.allowed.note}">Modify responses note</p>
+            </div>
+
+            <!-- All roles participate -->
+            <div th:if="${allRolesSetting == null or allRolesSetting}" class="shorttext">
+                <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="allRolesParticipate"
+                       name="allRolesParticipate" value="true"
+                       th:checked="${eval.allRolesParticipate}"/>
+                <input th:if="${respondentSettingsDisabled}" type="hidden" name="allRolesParticipate"
+                       th:value="${eval.allRolesParticipate}"/>
+                <label for="allRolesParticipate"
+                       th:text="${allRolesSetting == null} ? #{evalsettings.allRolesParticipate.label} : #{evalsettings.allRolesParticipate.disabled}">
+                    All roles participate</label>
+                <p class="instructionText textPanelFooter indnt2"
+                   th:text="#{evalsettings.all.roles.participate.note}">All roles note</p>
+            </div>
+
+            <!-- Compulsory text items (only when the setting is null = configurable) -->
+            <div th:if="${compulsoryTextSetting == null}" class="shorttext">
+                <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="compulsoryTextItemsAllowed"
+                       name="compulsoryTextItemsAllowed" value="true"
+                       th:checked="${eval.compulsoryTextItemsAllowed}"/>
+                <label for="compulsoryTextItemsAllowed"
+                       th:text="#{evalsettings.compulsoryTextItemsAllowed.label}">Compulsory text</label>
+                <p class="instructionText textPanelFooter indnt2"
+                   th:text="#{evalsettings.text.items.compulsory.note}">Compulsory text note</p>
+            </div>
+        </fieldset>
+
+        <!-- ===== ADMIN SETTINGS (solo admin) ===== -->
+        <fieldset th:if="${userAdmin}" class="visibleFS">
+            <legend th:text="#{evalsettings.admin.settings.instructions}">Admin Settings</legend>
+
+            <!-- Auth control -->
+            <div class="shorttext">
+                <label for="authControl" th:text="#{evalsettings.auth.control.label.required}">Auth Control</label>
+                <select id="authControl" name="authControl" th:disabled="${authControlDisabled}">
+                    <option th:each="i : ${#numbers.sequence(0, authControlValues.length - 1)}"
+                            th:value="${authControlValues[i]}"
+                            th:text="${#messages.msg(authControlLabels[i])}"
+                            th:selected="${eval.authControl == authControlValues[i]}">Option</option>
+                </select>
+            </div>
+
+            <!-- Instructor opt -->
+            <div class="shorttext">
+                <label th:text="#{evalsettings.instructor.opt.desc}">Instructor opt</label>
+                <select th:if="${instrOptIsSelect}" name="instructorOpt"
+                        th:disabled="${instrOptDisabled}">
+                    <option th:each="i : ${#numbers.sequence(0, instrOptValues.length - 1)}"
+                            th:value="${instrOptValues[i]}"
+                            th:text="${#messages.msg(instrOptLabels[i])}"
+                            th:selected="${eval.instructorOpt == instrOptValues[i]}">Option</option>
+                </select>
+                <span th:unless="${instrOptIsSelect}"
+                      th:text="${instrOptFixedLabel != null ? #messages.msg(instrOptFixedLabel) : ''}">Fixed</span>
+            </div>
+        </fieldset>
+
+        <!-- ===== NOTIFICACIONES ===== -->
+        <fieldset class="visibleFS">
+            <legend th:text="#{evalsettings.reminder.settings.header}">Evaluation Notifications</legend>
+
+            <!-- Opening email toggle -->
+            <div th:if="${allowToggleMail}" class="shorttext">
+                <input type="checkbox" id="sendAvailableNotifications" name="sendAvailableNotifications" value="true"
+                       th:checked="${eval.sendAvailableNotifications}"
+                       th:disabled="${respondentSettingsDisabled}"/>
+                <label for="sendAvailableNotifications"
+                       th:text="#{evalsettings.general.enable.email.onbegin}">Send opening email</label>
+            </div>
+
+            <!-- Reminder days (only if not using consolidated email) -->
+            <div th:unless="${consolidatedEmail}" class="shorttext">
+                <label for="reminderDays" th:text="#{evalsettings.reminder.noresponders.header}">Reminder</label>
+                <select id="reminderDays" name="reminderDays" th:disabled="${reminderDisabled}">
+                    <option th:each="i : ${#numbers.sequence(0, reminderDaysValues.length - 1)}"
+                            th:value="${reminderDaysValues[i]}"
+                            th:text="${#messages.msg(reminderDaysLabels[i])}"
+                            th:selected="${eval.reminderDays != null and eval.reminderDays.toString() == reminderDaysValues[i]}">
+                        Option</option>
+                </select>
+            </div>
+
+            <!-- From email address -->
+            <div th:unless="${consolidatedEmail}" class="shorttext">
+                <label for="reminderFromEmail" th:text="#{evalsettings.email.sent.from(${eval.reminderFromEmail})}">From email</label>
+                <input type="email" id="reminderFromEmail" name="reminderFromEmail"
+                       th:value="${eval.reminderFromEmail}" size="40"/>
+            </div>
+
+            <!-- Links to email templates -->
+            <p>
+                <a th:href="@{/preview_email(emailType='available',evaluationId=${evaluationId})}"
+                   th:text="#{evalsettings.available.mail.link}">View notification email</a>
+                &nbsp;|&nbsp;
+                <a th:href="@{/preview_email(emailType='reminder',evaluationId=${evaluationId})}"
+                   th:text="#{evalsettings.reminder.mail.link}">View reminder email</a>
+            </p>
+        </fieldset>
+
+        <!-- ===== EXTRAS (category, term ID) ===== -->
+        <fieldset th:if="${categoriesEnabled or termIdsEnabled}" class="visibleFS">
+            <div th:if="${categoriesEnabled}" class="shorttext">
+                <label for="evalCategory">Category</label>
+                <input type="text" id="evalCategory" name="evalCategory" th:value="${eval.evalCategory}"/>
+            </div>
+            <div th:if="${termIdsEnabled}" class="shorttext">
+                <label for="termId">Term ID</label>
+                <input type="text" id="termId" name="termId" th:value="${eval.termId}"/>
+            </div>
+        </fieldset>
+
+        <!-- ===== BOTONES ===== -->
+        <p class="act">
+            <input type="submit" th:value="#{${saveButtonKey}}" class="active"
+                   onclick="SPNR.disableControlsAndSpin(this,null);"/>
+            <input type="button" th:value="#{general.cancel.button}"
+                   onclick="history.go(-1);return false;"/>
+        </p>
+
+    </form>
+
+</div>
+<th:block th:if="${instructionsEditable}">
+    <script>sakai.editor.launch("instructions", "{noop:0}");</script>
+</th:block>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

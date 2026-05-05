@@ -1,0 +1,121 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{controltemplates.page.title}">My Templates</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li>
+            <a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{controltemplates.page.title}">My Templates</li>
+        <li class="lastCrumb">
+            <a th:href="@{/modify_template}" class="addItem">
+                <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                <span th:text="#{controltemplates.create.template.link}">New Template</span>
+            </a>
+        </li>
+    </ul>
+
+    <h3 th:text="#{controltemplates.templates.header}">Evaluation Templates</h3>
+    <p class="instructionText" th:text="#{controltemplates.templates.description}">
+        Templates store items in a layout and are used to create evaluations
+    </p>
+
+    <!-- Template list -->
+    <div th:if="${not #lists.isEmpty(templateRows)}">
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controltemplates.template.title.header}">Template Title</th>
+                    <th th:text="#{controlevaluations.eval.settings.header}" class="screenOnly">Actions</th>
+                    <th th:text="#{controltemplates.template.owner.header}">Owner</th>
+                    <th th:text="#{controltemplates.template.lastupdate.header}">Last Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${templateRows}">
+                    <td th:text="${row.title}">Template Title</td>
+                    <td class="itemAction screenOnly">
+                        <!-- Editar -->
+                        <a th:if="${row.canModify}"
+                           th:href="@{/modify_template_items(templateId=${row.templateId})}"
+                           th:text="#{general.command.edit}">Edit</a>
+                        <span th:unless="${row.canModify}"
+                              th:text="#{general.command.edit}"
+                              th:title="#{controltemplates.template.inuse.note}"
+                              class="inactive">Edit</span>
+                        <!-- Eliminar -->
+                        <a th:if="${row.canDelete}"
+                           th:href="@{/remove_template(templateId=${row.templateId})}"
+                           class="left-separator"
+                           th:text="#{general.command.delete}">Delete</a>
+                        <span th:unless="${row.canDelete}"
+                              th:text="#{general.command.delete}"
+                              th:title="#{controltemplates.template.inuse.note}"
+                              class="inactive left-separator">Delete</span>
+                        <!-- Previsualizar -->
+                        <a th:href="@{/preview_eval(templateId=${row.templateId})}"
+                           class="left-separator"
+                           th:text="#{general.command.preview}">Preview</a>
+                        <!-- Copiar -->
+                        <form th:action="@{/control_templates/copy}" method="post" class="inlineForm left-separator">
+                            <input type="hidden" name="templateId" th:value="${row.templateId}"/>
+                            <input type="submit" th:value="#{general.copy}" class="makeLink"/>
+                        </form>
+                        <!-- Cambiar propietario -->
+                        <a th:if="${row.canChown}"
+                           th:href="@{/chown_template(templateId=${row.templateId})}"
+                           class="left-separator"
+                           th:text="#{general.command.chown}">Change Owner</a>
+                        <span th:unless="${row.canChown}"
+                              th:text="#{general.command.chown}"
+                              th:title="#{controltemplates.template.inuse.note}"
+                              class="inactive left-separator">Change Owner</span>
+                    </td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                    <td th:text="${row.lastModified}" nowrap="nowrap">20/03/2007</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p th:if="${#lists.isEmpty(templateRows)}" class="instructionText highlightPanel"
+       th:text="#{controltemplates.templates.none}">No templates available</p>
+
+</div>
+<th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
+</body>
+</html>

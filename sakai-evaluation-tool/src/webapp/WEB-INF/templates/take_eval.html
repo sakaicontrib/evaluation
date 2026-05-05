@@ -1,0 +1,164 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{takeeval.page.title}">Take Evaluation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
+    <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}"></script>
+    <script th:src="@{/webjars/autosize/3.0.21/dist/autosize.min.js}"></script>
+    <script th:src="@{/content/js/utils.js}"></script>
+    <script th:src="@{/content/js/jquery/jquery.tipsy.js}"></script>
+    <script th:src="@{/content/js/toggleCommentBox.js}"></script>
+    <script th:src="@{/content/js/evalTakeEval.js}"></script>
+    <script th:src="@{/content/js/evalUtils.js}"></script>
+    <script th:src="@{/content/js/spinner.js}"></script>
+    <link th:href="@{/content/css/tipsy.css}" type="text/css" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body onunload="parseInt('1')">
+<div id="toolTip"></div>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation bar -->
+    <ul th:unless="${external}" th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Title -->
+    <div>
+        <h3 style="display:inline">
+            <span th:text="#{takeeval.eval.title.header}">Evaluation:</span>
+            <span th:text="${eval != null ? eval.title : ''}">Eval title</span>
+        </h3>
+    </div>
+
+    <!-- Cannot take message -->
+    <div th:if="${cannotTakeMessage != null}" class="messagePanel">
+        <p th:text="${cannotTakeMessage}">Cannot take message</p>
+        <p><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></p>
+    </div>
+
+    <!-- Switch group form (multiple groups) -->
+    <div th:if="${showSwitchGroup}" class="itemAction">
+        <form th:action="@{/take_eval}" method="get">
+            <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+            <label th:text="#{takeeval.switch.group.header}">Switch Group:</label>
+            <select name="evalGroupId" onchange="this.form.submit()">
+                <option th:each="i : ${#numbers.sequence(0, groupValues.size() - 1)}"
+                        th:value="${groupValues[i]}"
+                        th:text="${groupLabels[i]}"
+                        th:selected="${groupValues[i] == evalGroupId}">Group</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Group title -->
+    <div th:if="${groupTitle != null}">
+        <span th:text="#{takeeval.group.title.header}">Group:</span>
+        <span th:text="${groupTitle}">Group title</span>
+    </div>
+
+    <!-- Instructions -->
+    <div th:if="${eval != null and eval.instructions != null and eval.instructions != ''}" style="margin:.5em 0">
+        <h5 style="display:inline" th:text="#{takeeval.instructions.header}">Instructions:</h5>
+        <div class="instructionText" style="display:inline" th:utext="${eval.instructions}">Instructions here</div>
+    </div>
+
+    <!-- Must answer all note -->
+    <div th:if="${mustAnswerAll}" class="messagePanel">
+        <span th:text="#{takeeval.user.must.answer.all.note}">You must answer all questions.</span>
+    </div>
+
+    <!-- Saved warning -->
+    <div th:if="${savedWarning != null}" class="messagePanel">
+        <span th:text="${savedWarning}">Saved warning</span>
+    </div>
+
+    <!-- Main evaluation form -->
+    <div th:if="${cannotTakeMessage == null}">
+        <form th:action="@{/take_eval}" method="post" id="evaluationForm">
+            <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+            <input type="hidden" name="evalGroupId" th:value="${evalGroupId}"/>
+            <input type="hidden" name="responseId" th:value="${responseId}"/>
+
+            <!-- Hidden fields for indexed answer binding -->
+            <th:block th:each="sub, stat : ${evalForm.answers}">
+                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].templateItemId'}"
+                       th:value="${sub.templateItemId}"/>
+                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].existingAnswerId'}"
+                       th:value="${sub.existingAnswerId}"/>
+                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].associatedId'}"
+                       th:value="${sub.associatedId}"/>
+                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].associatedType'}"
+                       th:value="${sub.associatedType}"/>
+                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].itemType'}"
+                       th:value="${sub.itemType}"/>
+            </th:block>
+
+            <!-- Category sections -->
+            <div th:each="section : ${categorySections}" class="fake-fieldset itemListNew">
+                <div class="fieldset">
+                    <div class="legend" th:text="${section.header}">Category</div>
+                    <ol class="itemListEval">
+                        <th:block th:each="nodeGroup : ${section.nodeGroups}">
+                            <li th:if="${nodeGroup.nodeTitle != null}">
+                                <h4 th:text="${nodeGroup.nodeTitle}">Node</h4>
+                            </li>
+                            <li th:each="item : ${nodeGroup.items}"
+                                class="evalItemTop"
+                                th:classappend="${item.odd} ? ' itemsListOddLine'">
+                                <div th:replace="~{fragments/take_eval_item :: item(item=${item})}">Item here</div>
+                            </li>
+                        </th:block>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="act">
+                <th:block th:if="${saveWithoutSubmit}">
+                    <input type="submit" name="action" value="save"
+                           th:value="#{takeeval.save.button}"
+                           onclick="if (typeof SPNR !== 'undefined') SPNR.disableControlsAndSpin(this, null);"/>
+                </th:block>
+                <input type="submit" name="action" value="submit"
+                       th:value="#{takeeval.submit.button}"
+                       class="active"
+                       onclick="if (typeof SPNR !== 'undefined') SPNR.disableControlsAndSpin(this, null);"/>
+                <th:block th:if="${cancelAllowed}">
+                    <a th:href="@{/summary}" th:text="#{general.cancel.button}">Cancel</a>
+                </th:block>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script type="text/javascript">evalsys.instrumentItems(".evaluation");</script>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

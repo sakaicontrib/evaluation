@@ -1,0 +1,61 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{removeexpertitem.page.title}">Remove Expert Item Group</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/control_expert_items}" th:text="#{controlexpertitems.page.title}">Expert Items</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{removeexpertitem.page.title}">Remove Group</li>
+    </ul>
+
+    <div class="alertMessage">
+        <span th:text="#{removeexpertitem.confirm.text(${group.title})}">Are you sure...?</span>
+    </div>
+
+    <form method="post" th:action="@{/remove_expert_item}" class="act">
+        <input type="hidden" name="type" th:value="${type}"/>
+        <input type="hidden" th:if="${categoryId != null}" name="categoryId" th:value="${categoryId}"/>
+        <input type="hidden" th:if="${objectiveId != null}" name="objectiveId" th:value="${objectiveId}"/>
+        <input type="submit" th:value="#{removeexpertitem.remove.scale.button}" class="active"/>
+        <a th:href="@{/control_expert_items}" th:text="#{modifyexpertitem.cancel}">Cancel</a>
+    </form>
+
+</div>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+</body>
+</html>

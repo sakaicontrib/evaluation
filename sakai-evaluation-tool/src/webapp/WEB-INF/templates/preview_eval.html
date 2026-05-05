@@ -1,0 +1,121 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{previeweval.page.title}">Previewing</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
+    <meta http-equiv="Expires" content="Mon, 01 Jan 1990 00:00:00 GMT"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}"></script>
+    <script th:src="@{/webjars/autosize/3.0.21/dist/autosize.min.js}"></script>
+    <script th:src="@{/content/js/utils.js}"></script>
+    <script th:src="@{/content/js/jquery/jquery.tipsy.js}"></script>
+    <script th:src="@{/content/js/toggleCommentBox.js}"></script>
+    <script th:src="@{/content/js/evalTakeEval.js}"></script>
+    <script th:src="@{/content/js/evalUtils.js}"></script>
+    <link th:href="@{/content/css/tipsy.css}" type="text/css" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body onunload="parseInt('1')">
+<div id="toolTip"></div>
+<div class="portletBody evaluation preview">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb" th:unless="${external}">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{previeweval.page.title}">Previewing</li>
+    </ul>
+
+    <!-- Evaluation title -->
+    <div>
+        <h3 style="display:inline">
+            <span th:if="${!isTemplatePreview}" class="highlight" th:text="#{previeweval.evaluation.title.prefix}">Preview Evaluation: </span>
+            <span th:if="${isTemplatePreview}" class="highlight" th:text="#{previeweval.template.title}">Preview Template</span>
+            <span th:text="${eval.title}">Evaluation title</span>
+        </h3>
+        <span class="instructionText">
+            (<span th:text="#{previeweval.course.title.header}">Group:</span>
+            <span th:text="${groupDisplayTitle}">Group title</span>)
+        </span>
+    </div>
+
+    <!-- Grouping note (only if there are instructors or TAs) -->
+    <div th:if="${showGroupsNote}" class="previewEvalNote">
+        <h5 style="display:inline" th:text="#{previeweval.evaluation.note.title}">Note:</h5>
+        <span th:text="#{previeweval.evaluation.note}">Questions are grouped...</span>
+    </div>
+
+    <!-- Instrucciones -->
+    <div th:if="${eval.instructions != null}" style="margin:.5em 0">
+        <h5 style="display:inline" th:text="#{takeeval.instructions.header}">Instructions:</h5>
+        <div class="instructionText" style="display:inline" th:utext="${eval.instructions}">Instructions here</div>
+    </div>
+
+    <div class="content">
+        <div id="startPreviewItems"></div>
+
+        <!-- No items -->
+        <div th:if="${noItems}" style="font-weight:bold;font-size:1.1em;font-style:italic;"
+             th:text="#{no.list.items}">No items</div>
+
+        <!-- Item categories -->
+        <div th:each="section : ${categorySections}" class="fake-fieldset itemListNew">
+            <div class="fieldset">
+                <div class="legend" th:text="${section.header}">Category Header</div>
+                <ol class="itemListEval">
+                    <th:block th:each="nodeGroup : ${section.nodeGroups}">
+                        <!-- Hierarchy node title (if any) -->
+                        <li th:if="${nodeGroup.nodeTitle != null}">
+                            <h4 th:text="${nodeGroup.nodeTitle}">Node title</h4>
+                        </li>
+                        <!-- Node items -->
+                        <li th:each="item : ${nodeGroup.items}"
+                            class="evalItemTop"
+                            th:classappend="${item.odd} ? ' itemsListOddLine'">
+                            <div th:replace="~{fragments/eval_item :: item(item=${item})}">Item rendered here</div>
+                        </li>
+                    </th:block>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Back button -->
+        <p th:unless="${external}" class="act">
+            <a href="#" onclick="javascript:history.go(-1);return false;" accesskey="x"
+               th:text="#{general.back.button}">[ Back ]</a>
+        </p>
+    </div>
+
+</div>
+<script type="text/javascript">evalsys.instrumentItems(".evaluation");</script>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

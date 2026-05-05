@@ -49,6 +49,15 @@ public class EvalToolConstants {
         //    "sharing.shared"
     };
 
+    //For preview_item.html - ideal indicator images (none/low/mid/high/outside)
+    public static String[] COLORED_IMAGE_URLS = new String[] {
+        "$context/content/images/ideal-none.gif",
+        "$context/content/images/ideal-low.jpg",
+        "$context/content/images/ideal-mid.jpg",
+        "$context/content/images/ideal-high.jpg",
+        "$context/content/images/ideal-outside.jpg"
+    };
+
     //For template_modify and preview_item.html
     public static String[] STEPPED_IMAGE_URLS = new String[] {
         "$context/content/images/corner.gif",

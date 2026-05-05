@@ -1,0 +1,241 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{administrate.sync.page.title}">Synchronize Group Memberships</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/jquery/jquery-ui-1.8.all.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/jquery/jquery-ui-1.8.all.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/admin.provider.sync.js}" type="text/javascript"></script>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+    <!-- Badge: view migrated to Spring MVC + Thymeleaf -->
+    <span style="float:right;background:#d45800;color:#fff;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin:2px 0 4px 8px;opacity:.9;">&#127807; Thymeleaf</span>
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/administrate}" th:text="#{administrate.page.title}">Administrate</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{administrate.sync.breadcrumb.title}">Sync Group Members</li>
+    </ul>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="alertMessage successMessage">
+        <ul><li th:text="${successArgs != null} ? #{__${successMessage}__(${successArgs[0]}, ${successArgs.size() > 1 ? successArgs[1] : ''})} : #{__${successMessage}__}">OK</li></ul>
+    </div>
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="#{__${errorMessage}__}">Error</li></ul>
+    </div>
+
+    <h3 th:text="#{administrate.sync.page.title}">Synchronize Group Memberships</h3>
+
+    <!-- Tab index para JS -->
+    <span th:text="${initialTab}" class="initialTab" style="display:none"></span>
+
+    <div id="tabs" style="margin:1em 0">
+        <ul>
+            <li><a href="#tabs-1"><span th:text="#{administrate.sync.by_event.tab}">By triggering event</span></a></li>
+            <li><a href="#tabs-2"><span th:text="#{administrate.sync.by_time.tab}">By time and state</span></a></li>
+            <li><a href="#tabs-3"><span th:text="#{administrate.sync.quick.tab}">Quick sync</span></a></li>
+        </ul>
+
+        <!-- ===== TAB 1: Por Evento ===== -->
+        <div id="tabs-1">
+            <form method="post" th:action="@{/administrate_provider_sync/events}"
+                  style="border:1px solid #ccc;background:#fff;display:block;padding:1em">
+                <input type="hidden" name="currentTab" value="0" class="currentTab"/>
+
+                <p class="instructionText" th:text="#{administrate.sync.by_event.instruction}">Sync when the following events occur</p>
+
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="syncUnassignedOnStartup" name="syncUnassignedOnStartup"
+                           value="true" th:checked="${syncUnassignedOnStartup}"/>
+                    <label for="syncUnassignedOnStartup" th:text="#{administrate.sync.on_server_startup}">Sync on startup</label>
+                </p>
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="syncOnStateChange" name="syncOnStateChange"
+                           value="true" th:checked="${syncOnStateChange}"/>
+                    <label for="syncOnStateChange" th:text="#{administrate.sync.on_state_change}">Sync on state change</label>
+                </p>
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="syncOnGroupSave" name="syncOnGroupSave"
+                           value="true" th:checked="${syncOnGroupSave}"/>
+                    <label for="syncOnGroupSave" th:text="#{administrate.sync.on_group_save}">Sync on group save</label>
+                </p>
+                <p class="checkbox indnt1">
+                    <input type="checkbox" id="syncOnGroupUpdate" name="syncOnGroupUpdate"
+                           value="true" th:checked="${syncOnGroupUpdate}"/>
+                    <label for="syncOnGroupUpdate" th:text="#{administrate.sync.on_group_update}">Sync on group update</label>
+                </p>
+
+                <th:block th:if="${not #lists.isEmpty(serverIds)}">
+                    <p class="longtext indnt1">
+                        <label for="syncServer1" class="block" th:text="#{administrate.sync.select.server}">Select server</label>
+                        <select id="syncServer1" name="syncServerId">
+                            <option value="">—</option>
+                            <option th:each="sid : ${serverIds}"
+                                    th:value="${sid}"
+                                    th:text="${sid}"
+                                    th:selected="${sid == syncServerId}">Server</option>
+                        </select>
+                    </p>
+                </th:block>
+
+                <p class="act">
+                    <input type="submit" class="active" th:value="#{administrate.sync.event.submit}"
+                           onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                </p>
+            </form>
+        </div>
+
+        <!-- ===== TAB 2: Por Tiempo ===== -->
+        <div id="tabs-2">
+            <!-- Existing triggers table -->
+            <div th:if="${not #maps.isEmpty(cronJobs)}">
+                <table class="evalsysTable" style="margin-bottom:1em">
+                    <thead>
+                    <tr>
+                        <th th:text="#{administrate.sync.triggers.cronExpression}">Cron</th>
+                        <th th:text="#{administrate.sync.triggers.states}">States</th>
+                        <th th:text="#{administrate.sync.triggers.actions}">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${cronJobs}">
+                        <td th:text="${entry.value[CRON_EXPRESSION_KEY]}">cron</td>
+                        <td th:text="${entry.value[STATE_LIST_KEY]}">states</td>
+                        <td>
+                            <!-- Hidden data for the edit JS -->
+                            <span class="fullJobName" style="display:none" th:text="${entry.key}"></span>
+                            <span class="triggerCronExpression" style="display:none" th:text="${entry.value[CRON_EXPRESSION_KEY]}"></span>
+                            <span class="triggerStateList" style="display:none" th:text="${entry.value[STATE_LIST_KEY]}"></span>
+                            <span class="triggerDeleteConfirm" style="display:none"
+                                  th:text="#{administrate.sync.triggers.delete.confirm(${entry.value[CRON_EXPRESSION_KEY]}, ${entry.value[STATE_LIST_KEY]})}"></span>
+                            <a href="#" class="triggerRevise" th:text="#{administrate.sync.triggers.revise}">Edit</a>
+                            &nbsp;
+                            <a href="#" class="triggerDelete" th:text="#{administrate.sync.triggers.delete}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p th:if="${#maps.isEmpty(cronJobs)}" class="instructionText" th:text="#{administrate.sync.triggers.none}">No syncs scheduled.</p>
+
+            <!-- Button to show the add form -->
+            <a href="#" id="addSync" th:text="#{administrate.sync.by_time.save}">Schedule Sync</a>
+
+            <!-- Create/edit form (hidden initially) -->
+            <div id="syncEdit" style="display:none;border:1px solid #ccc;background:#fff;padding:1em;margin-top:0.5em">
+                <form method="post" th:action="@{/administrate_provider_sync/schedule}">
+                    <input type="hidden" class="formfullJobName" name="fullJobName" value=""/>
+                    <p>
+                        <label th:text="#{administrate.sync.by_time.cronExpression}">Cron Expression:</label>
+                        <input type="text" class="formCronExpression" name="cronExpression" size="30"/>
+                        <a href="http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html" target="_blank"
+                           th:text="#{administrate.sync.by_time.cronTutorial.label}">?</a>
+                    </p>
+                    <p th:text="#{administrate.sync.by_time.stateList}">Eval State:</p>
+                    <th:block th:each="st : ${stateOptions}">
+                        <p class="checkbox indnt1">
+                            <input type="checkbox" name="states" th:value="${st[0]}"/>
+                            <span class="formStateName" style="display:none" th:text="${st[0]}"></span>
+                            <label th:text="${#messages.msg(st[1])}">State</label>
+                        </p>
+                    </th:block>
+
+                    <th:block th:if="${not #lists.isEmpty(serverIds)}">
+                        <p class="longtext indnt1">
+                            <label class="block" th:text="#{administrate.sync.by_time.server}">Select server</label>
+                            <select name="syncServerId">
+                                <option value="">—</option>
+                                <option th:each="sid : ${serverIds}" th:value="${sid}" th:text="${sid}"
+                                        th:selected="${sid == syncServerId}">Server</option>
+                            </select>
+                        </p>
+                    </th:block>
+
+                    <p class="act">
+                        <input type="submit" class="active createSync" th:value="#{administrate.sync.by_time.save}"
+                               onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                        <!-- Update button: shown after clicking Revise, changes the form action -->
+                        <input type="submit" class="updateSync" style="display:none"
+                               th:value="#{administrate.sync.by_time.revise}"
+                               formaction="administrate_provider_sync/update"
+                               onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                        <a href="#" class="cancelSyncEdit">Cancel</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Formulario oculto para eliminar -->
+            <form method="post" th:action="@{/administrate_provider_sync/delete}" class="syncDeleteForm" style="display:none">
+                <input type="hidden" name="fullJobName" class="syncDeleteItem" value=""/>
+                <input type="submit" class="syncDeleteSubmit" value="delete"/>
+            </form>
+        </div>
+
+        <!-- ===== TAB 3: Quick Sync ===== -->
+        <div id="tabs-3">
+            <form method="post" th:action="@{/administrate_provider_sync/quick}"
+                  style="border:1px solid #ccc;background:#fff;display:block;padding:1em">
+                <input type="hidden" name="currentTab" value="2" class="currentTab"/>
+
+                <p class="instructionText" th:text="#{administrate.sync.quick_sync.states}">Run quick sync on evaluations that are:</p>
+
+                <th:block th:each="st : ${stateOptions}">
+                    <p class="checkbox indnt1">
+                        <input type="checkbox" name="states" th:value="${st[0]}" th:id="${'qs-' + st[0]}"/>
+                        <label th:for="${'qs-' + st[0]}" th:text="${#messages.msg(st[1])}">State</label>
+                    </p>
+                </th:block>
+
+                <th:block th:if="${not #lists.isEmpty(serverIds)}">
+                    <p class="longtext indnt1">
+                        <label class="block" th:text="#{administrate.sync.quick_sync.server}">Select server</label>
+                        <select name="syncServerId">
+                            <option value="">—</option>
+                            <option th:each="sid : ${serverIds}" th:value="${sid}" th:text="${sid}"
+                                    th:selected="${sid == syncServerId}">Server</option>
+                        </select>
+                    </p>
+                </th:block>
+
+                <p class="act">
+                    <input type="submit" class="active" th:value="#{administrate.sync.quick_sync.save}"
+                           onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                </p>
+            </form>
+        </div>
+    </div><!-- #tabs -->
+
+</div>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.stringutil.StringUtil;
+import java.util.Objects;
 
 /**
  * Utilities for manipulating scales.
@@ -59,7 +59,7 @@ public class ScaledUtils {
 	public static int idealIndex(EvalScale scale) {
       int index = -1;
       for (int i = 0; i < idealKeys.length; ++ i) {
-         if (StringUtil.equals(scale.getIdeal(), idealKeys[i])) {
+         if (Objects.equals(scale.getIdeal(), idealKeys[i])) {
             index = i;
             break;
          }

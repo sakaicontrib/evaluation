@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -33,8 +35,8 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import com.opencsv.CSVWriter;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
+
+
 
 /**
  * 
@@ -51,8 +53,8 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.commonLogic = commonLogic;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalMessageLocator messageLocator;
+    public void setEvalMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 
@@ -69,7 +71,7 @@ public class CSVTakersReportExporter implements ReportExporter {
                 osw.close();
                 return;
             } catch (IOException e) {
-                throw UniversalRuntimeException.accumulate(e, "IO Exception thrown whilst trying to print out CSV of evaluation takers");
+                throw new RuntimeException("IO Exception thrown whilst trying to print out CSV of evaluation takers", e);
             }
         }
 
@@ -99,7 +101,7 @@ public class CSVTakersReportExporter implements ReportExporter {
             writer.close();
             osw.close();
         } catch (IOException e) {
-            throw UniversalRuntimeException.accumulate(e, "IO Exception thrown whilst trying to print out CSV of evaluation takers");
+            throw new RuntimeException("IO Exception thrown whilst trying to print out CSV of evaluation takers", e);
         }
     }
 
