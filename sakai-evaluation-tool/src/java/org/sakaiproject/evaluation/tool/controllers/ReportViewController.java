@@ -300,25 +300,56 @@ public class ReportViewController {
     public void download(@RequestParam Long evaluationId,
                          @RequestParam(required = false) String[] groupIds,
                          @RequestParam String type,
-                         @RequestParam String filename,
                          @RequestParam(required = false) String userId,
                          HttpServletResponse response) throws IOException {
 
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
+        String currentUserId = commonLogic.getCurrentUserId();
 
         if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
+        // Enforce the same minimum-response threshold as /report_view
+        if (groupIds != null && groupIds.length > 0) {
+            int responsesCount = deliveryService.countResponses(evaluationId, groupIds[0], true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluationId, new String[]{groupIds[0]});
+            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+            boolean controlEval = evaluationService.canControlEvaluation(currentUserId, evaluationId);
+            if (!controlEval && responsesNeeded > 0) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+        }
+
+        String title = sanitizeFilename(evaluation.getTitle());
+        String filename;
         String contentType;
         switch (type) {
-            case EvalEvaluationService.XLS_RESULTS_REPORT: contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; break;
+            case EvalEvaluationService.XLS_RESULTS_REPORT:
+                filename = title + ".xlsx";
+                contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                break;
             case EvalEvaluationService.CSV_RESULTS_REPORT:
-            case EvalEvaluationService.CSV_TAKERS_REPORT:  contentType = "text/csv"; break;
+                filename = title + ".csv";
+                contentType = "text/csv";
+                break;
+            case EvalEvaluationService.CSV_TAKERS_REPORT:
+                filename = title + "-takers.csv";
+                contentType = "text/csv";
+                break;
             case EvalEvaluationService.PDF_RESULTS_REPORT:
-            case EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL: contentType = "application/pdf"; break;
-            default: response.sendError(HttpServletResponse.SC_BAD_REQUEST); return;
+                filename = title + ".pdf";
+                contentType = "application/pdf";
+                break;
+            case EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL:
+                filename = title + "Individual.pdf";
+                contentType = "application/pdf";
+                break;
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
         }
 
         response.setContentType(contentType);
@@ -407,24 +438,20 @@ public class ReportViewController {
         List<ExportOption> options = new ArrayList<>();
         String title = sanitizeFilename(evaluation.getTitle());
         if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT))) {
-            String fn = title + ".xlsx";
-            options.add(new ExportOption(EvalEvaluationService.XLS_RESULTS_REPORT, "viewreport.view.xls", fn,
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.XLS_RESULTS_REPORT, fn, null)));
+            options.add(new ExportOption(EvalEvaluationService.XLS_RESULTS_REPORT, "viewreport.view.xls", title + ".xlsx",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.XLS_RESULTS_REPORT, null)));
         }
         if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT))) {
-            String fn = title + ".csv";
-            options.add(new ExportOption(EvalEvaluationService.CSV_RESULTS_REPORT, "viewreport.view.csv", fn,
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_RESULTS_REPORT, fn, null)));
+            options.add(new ExportOption(EvalEvaluationService.CSV_RESULTS_REPORT, "viewreport.view.csv", title + ".csv",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_RESULTS_REPORT, null)));
         }
         if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT))) {
-            String fn = title + ".pdf";
-            options.add(new ExportOption(EvalEvaluationService.PDF_RESULTS_REPORT, "viewreport.view.pdf", fn,
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.PDF_RESULTS_REPORT, fn, null)));
+            options.add(new ExportOption(EvalEvaluationService.PDF_RESULTS_REPORT, "viewreport.view.pdf", title + ".pdf",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.PDF_RESULTS_REPORT, null)));
         }
         if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT))) {
-            String fn = title + "-takers.csv";
-            options.add(new ExportOption(EvalEvaluationService.CSV_TAKERS_REPORT, "viewreport.view.listofevaluationtakers", fn,
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_TAKERS_REPORT, fn, null)));
+            options.add(new ExportOption(EvalEvaluationService.CSV_TAKERS_REPORT, "viewreport.view.listofevaluationtakers", title + "-takers.csv",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_TAKERS_REPORT, null)));
         }
         return options;
     }
@@ -441,10 +468,9 @@ public class ReportViewController {
         for (EvalAssignUser eu : evaluatees) {
             if (!seen.contains(eu.getUserId())) {
                 EvalUser user = commonLogic.getEvalUserById(eu.getUserId());
-                String fn = title + "Individual.pdf";
-                list.add(new IndividualPdf(eu.getUserId(), user.displayName, fn,
+                list.add(new IndividualPdf(eu.getUserId(), user.displayName, title + "Individual.pdf",
                         buildDownloadUrl(ctxPath, evaluation.getId(), groupIds,
-                                EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL, fn, eu.getUserId())));
+                                EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL, eu.getUserId())));
                 seen.add(eu.getUserId());
             }
         }
@@ -452,7 +478,7 @@ public class ReportViewController {
     }
 
     private String buildDownloadUrl(String ctxPath, Long evaluationId, String[] groupIds,
-                                    String type, String filename, String userId) {
+                                    String type, String userId) {
         StringBuilder url = new StringBuilder(ctxPath)
                 .append("/report_view/download?evaluationId=").append(evaluationId);
         if (groupIds != null) {
@@ -461,7 +487,6 @@ public class ReportViewController {
             }
         }
         url.append("&type=").append(URLEncoder.encode(type, StandardCharsets.UTF_8));
-        url.append("&filename=").append(URLEncoder.encode(filename, StandardCharsets.UTF_8));
         if (userId != null) {
             url.append("&userId=").append(URLEncoder.encode(userId, StandardCharsets.UTF_8));
         }

@@ -281,7 +281,7 @@
                    th:onclick="${inFacebox} ? 'return true;' : 'if (typeof SPNR !== \'undefined\') SPNR.disableControlsAndSpin(this, null);'"/>
             <input type="button" th:value="#{general.cancel.button}"
                    accesskey="x"
-                   th:onclick="${inFacebox} ? 'var m = document.getElementById(\'itemModal\'); if (m) bootstrap.Modal.getInstance(m).hide(); return false;' : 'history.go(-1); return false;'"/>
+                   th:onclick="${inFacebox} ? 'var m = document.querySelector(\'.modal.show\'); if (m) { var bm = bootstrap.Modal.getInstance(m); if (bm) bm.hide(); } return false;' : 'history.go(-1); return false;'"/>
         </div>
     </form>
 
