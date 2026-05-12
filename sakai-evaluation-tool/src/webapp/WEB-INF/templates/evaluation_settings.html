@@ -353,10 +353,10 @@
 
             <!-- Links to email templates -->
             <p>
-                <a th:href="@{/preview_email(emailType='available',evaluationId=${evaluationId})}"
+                <a th:href="@{/preview_email(emailType='Available',evaluationId=${evaluationId})}"
                    th:text="#{evalsettings.available.mail.link}">View notification email</a>
                 &nbsp;|&nbsp;
-                <a th:href="@{/preview_email(emailType='reminder',evaluationId=${evaluationId})}"
+                <a th:href="@{/preview_email(emailType='Reminder',evaluationId=${evaluationId})}"
                    th:text="#{evalsettings.reminder.mail.link}">View reminder email</a>
             </p>
         </fieldset>
@@ -377,8 +377,7 @@
         <p class="act">
             <input type="submit" th:value="#{${saveButtonKey}}" class="active"
                    onclick="SPNR.disableControlsAndSpin(this,null);"/>
-            <input type="button" th:value="#{general.cancel.button}"
-                   onclick="history.go(-1);return false;"/>
+            <a th:href="@{/control_evaluations}" th:text="#{general.cancel.button}" class="button"></a>
         </p>
 
     </form>

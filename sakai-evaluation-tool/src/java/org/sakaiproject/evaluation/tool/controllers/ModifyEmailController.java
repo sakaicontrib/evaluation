@@ -102,16 +102,22 @@ public class ModifyEmailController {
         if (templateId != null) {
             return evaluationService.getEmailTemplate(templateId);
         }
+        EvalEmailTemplate defaultTemplate = null;
         if (evaluationId != null && emailType != null) {
             EvalEmailTemplate t = evaluationService.getEmailTemplate(evaluationId, emailType);
             if (t != null && t.getDefaultType() == null) {
                 return t; // non-default template assigned to this eval
             }
+            defaultTemplate = t; // save default content for pre-population
         }
-        // new template
+        // new template, pre-populated from default if available
         EvalEmailTemplate t = new EvalEmailTemplate();
         t.setOwner(commonLogic.getCurrentUserId());
         if (emailType != null) t.setType(emailType);
+        if (defaultTemplate != null) {
+            t.setSubject(defaultTemplate.getSubject());
+            t.setMessage(defaultTemplate.getMessage());
+        }
         return t;
     }
 }

@@ -54,7 +54,12 @@
         <a th:if="${evaluationId != null}"
            th:href="@{/modify_email(templateId=${templateId}, emailType=${emailType}, evaluationId=${evaluationId})}"
            th:text="#{previewemail.modify.button}" class="active">Edit</a>
-        <a th:href="@{/control_email_templates}" th:text="#{general.cancel.button}">Back</a>
+        <a th:if="${evaluationId != null}"
+           th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
+           th:text="#{general.cancel.button}">Back</a>
+        <a th:if="${evaluationId == null}"
+           th:href="@{/control_email_templates}"
+           th:text="#{general.cancel.button}">Back</a>
     </p>
 
 </div>
