@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -70,7 +71,9 @@ public class EvaluationSettingsController {
     private EvalBeanUtils evalBeanUtils;
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Locale locale, Model model) {
+    public String show(@RequestParam Long evaluationId,
+                       @RequestParam(required = false, defaultValue = "false") boolean reopen,
+                       Locale locale, Model model) {
         String currentUserId = commonLogic.getCurrentUserId();
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
@@ -84,6 +87,22 @@ public class EvaluationSettingsController {
         String currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
         boolean isPartial = EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState());
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
+
+        // REOPEN: if the eval is closed/viewable and reopen=true, treat it as ACTIVE
+        boolean reOpening = false;
+        Date reOpenDueDate = null;
+        if (reopen) {
+            Boolean enableReOpen = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
+            if (Boolean.TRUE.equals(enableReOpen) &&
+                    EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+                reOpening = true;
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, 2);
+                cal.add(Calendar.MINUTE, -1);
+                reOpenDueDate = cal.getTime();
+            }
+        }
 
         // Editability flags per state
         boolean titleEditable        = EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true);
@@ -200,13 +219,14 @@ public class EvaluationSettingsController {
 
         // Formatted dates for the datetime-local inputs
         model.addAttribute("startDateStr",      formatDate(eval.getStartDate()));
-        model.addAttribute("dueDateStr",        formatDate(eval.getDueDate()));
+        model.addAttribute("dueDateStr",        reOpening ? formatDate(reOpenDueDate) : formatDate(eval.getDueDate()));
         model.addAttribute("stopDateStr",       formatDate(eval.getStopDate()));
         model.addAttribute("viewDateStr",       formatDate(eval.getViewDate()));
         model.addAttribute("studentsDateStr",   formatDate(eval.getStudentsDate()));
         model.addAttribute("instructorsDateStr",formatDate(eval.getInstructorsDate()));
 
-        model.addAttribute("saveButtonKey", saveButtonKey);
+        model.addAttribute("reOpening",         reOpening);
+        model.addAttribute("saveButtonKey",      reOpening ? "evalsettings.reopening.eval.link" : saveButtonKey);
 
         return "evaluation_settings";
     }
@@ -238,6 +258,7 @@ public class EvaluationSettingsController {
             @RequestParam(required = false) String reminderFromEmail,
             @RequestParam(required = false) String evalCategory,
             @RequestParam(required = false) String termId,
+            @RequestParam(required = false, defaultValue = "false") boolean reOpening,
             RedirectAttributes redirectAttrs) {
 
         String currentUserId = commonLogic.getCurrentUserId();
@@ -251,6 +272,11 @@ public class EvaluationSettingsController {
         }
 
         String currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
+
+        // REOPEN: treat closed/viewable eval as active to allow field updates
+        if (reOpening && EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+            currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+        }
 
         // Apply editable fields based on the current state
         if (EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {

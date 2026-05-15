@@ -49,6 +49,7 @@ public class ControlTemplatesController {
         String  title;
         String  ownerName;
         String  lastModified;
+        String  lastModifiedSort; // epoch ms for tablesorter
         boolean canModify;
         boolean canDelete;
         boolean canChown;
@@ -74,6 +75,7 @@ public class ControlTemplatesController {
             row.setTitle(template.getTitle());
             row.setOwnerName(commonLogic.getEvalUserById(template.getOwner()).displayName);
             row.setLastModified(template.getLastModified() != null ? df.format(template.getLastModified()) : "");
+            row.setLastModifiedSort(template.getLastModified() != null ? String.valueOf(template.getLastModified().getTime()) : "0");
             boolean controllable = !template.getLocked() &&
                     authoringService.canModifyTemplate(currentUserId, template.getId());
             row.setCanModify(controllable);

@@ -54,6 +54,7 @@
 
     <form th:action="@{/evaluation_settings}" method="post">
         <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+        <input th:if="${reOpening}" type="hidden" name="reOpening" value="true"/>
 
         <!-- ===== TITLE AND INSTRUCTIONS ===== -->
         <fieldset class="visibleFS">

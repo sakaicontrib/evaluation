@@ -84,8 +84,11 @@ public class ControlEvaluationsController {
         String  title;
         String  ownerName;
         String  startDate;
+        String  startDateSort;  // epoch ms for tablesorter
         String  dueDate;
-        String  lastModified;   // only for partial evaluations
+        String  dueDateSort;    // epoch ms for tablesorter
+        String  lastModified;       // only for partial evaluations
+        String  lastModifiedSort;   // epoch ms for tablesorter
         // Direct URL to the evaluation and category
         String  directUrl;
         String  categoryLabel;
@@ -93,6 +96,7 @@ public class ControlEvaluationsController {
         // Assigned groups
         String  groupsLabel;    // group title (1 group) or "N groups"
         boolean groupsIsLink;   // false = display as text (read-only admin viewing another's eval)
+        boolean groupsInvalid;  // true when the single assigned group no longer exists
         // Actions available to the current user
         boolean canEdit;
         boolean canDelete;
@@ -204,6 +208,7 @@ public class ControlEvaluationsController {
             row.setTitle(eval.getTitle());
             row.setOwnerName(commonLogic.getEvalUserById(eval.getOwner()).displayName);
             row.setLastModified(eval.getLastModified() != null ? df.format(eval.getLastModified()) : "");
+            row.setLastModifiedSort(eval.getLastModified() != null ? String.valueOf(eval.getLastModified().getTime()) : "0");
             row.setCanEdit(true);
             row.setCanDelete(true);
             row.setCanChown(true);
@@ -244,8 +249,7 @@ public class ControlEvaluationsController {
             EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
                     earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired,
                     allowedGroupIds, false);
-            // chown always visible for closed evals
-            row.setCanChown(true);
+            row.setCanChown(false); // chown not available for closed evals
             closedRows.add(row);
         }
 
@@ -290,8 +294,10 @@ public class ControlEvaluationsController {
         row.setOwnerName(commonLogic.getEvalUserById(eval.getOwner()).displayName);
 
         row.setStartDate(eval.getStartDate() != null ? df.format(eval.getStartDate()) : "");
+        row.setStartDateSort(eval.getStartDate() != null ? String.valueOf(eval.getStartDate().getTime()) : "0");
         Date dueDate = eval.getSafeDueDate() != null ? eval.getSafeDueDate() : eval.getDueDate();
         row.setDueDate(dueDate != null ? df.format(dueDate) : "");
+        row.setDueDateSort(dueDate != null ? String.valueOf(dueDate.getTime()) : "0");
 
         // Direct URLs
         row.setDirectUrl(commonLogic.getEntityURL(eval));
@@ -305,7 +311,12 @@ public class ControlEvaluationsController {
         boolean ownerOrNotReadonly = !userReadonlyAdmin || currentUserId.equals(eval.getOwner());
         row.setGroupsIsLink(ownerOrNotReadonly);
         if (groupsCount == 1) {
-            row.setGroupsLabel(getTitleForFirstEvalGroup(eval.getId()));
+            String title = getTitleForFirstEvalGroup(eval.getId());
+            if (title == null || title.startsWith("** INVALID:")) {
+                row.setGroupsInvalid(true);
+            } else {
+                row.setGroupsLabel(title);
+            }
         } else {
             row.setGroupsLabel(String.valueOf(groupsCount)); // the template appends the "groups" text
         }

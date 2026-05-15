@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -91,6 +92,18 @@ public class EvaluationAssignConfirmController {
 
         if (selectedGroupIDs == null) selectedGroupIDs = new String[0];
         if (selectedHierarchyNodeIDs == null) selectedHierarchyNodeIDs = new String[0];
+
+        // When accessed from control_evaluations (no groups in URL), load current assignments from DB
+        if (selectedGroupIDs.length == 0 && !isPartial) {
+            Map<Long, List<EvalAssignGroup>> existing =
+                evaluationService.getAssignGroupsForEvals(new Long[]{evaluationId}, true, null);
+            List<EvalAssignGroup> assignGroups = existing.get(evaluationId);
+            if (assignGroups != null) {
+                selectedGroupIDs = assignGroups.stream()
+                    .map(EvalAssignGroup::getEvalGroupId)
+                    .toArray(String[]::new);
+            }
+        }
 
         // Separate regular groups from adhoc groups
         List<GroupConfirmRow> normalRows = new ArrayList<>();

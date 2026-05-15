@@ -151,8 +151,8 @@
             <p class="act">
                 <input type="submit" th:value="#{evaluationassignconfirm.done.button}" class="active"
                        onclick="SPNR.disableControlsAndSpin(this,null);"/>
-                <input type="button" th:value="#{evaluationassignconfirm.changes.assigned.courses.button}"
-                       onclick="history.go(-1);return false;"/>
+                <a th:href="@{/evaluation_assign(evaluationId=${evaluationId})}"
+                   th:text="#{evaluationassignconfirm.changes.assigned.courses.button}">Change</a>
             </p>
         </form>
     </div>

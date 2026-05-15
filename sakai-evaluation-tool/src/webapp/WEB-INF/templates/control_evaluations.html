@@ -22,9 +22,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <script src="/library/js/headscripts.js" type="text/javascript"></script>
     <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
-    <script src="/library/js/headscripts.js" type="text/javascript"></script>
     <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
     <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+    <script th:src="@{/content/js/jquery/jquery.tablesorter.min.js}"></script>
 </head>
 <body>
 <div class="portletBody evaluation">
@@ -67,7 +68,7 @@
             <span th:if="${partialCleanupDays > 0}"
                   th:text="#{controlevaluations.partial.cleanup(${partialCleanupDays})}"></span>
         </p>
-        <table class="evalsysTable">
+        <table class="evalsysTable tablesorter partialTable">
             <thead>
                 <tr>
                     <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
@@ -88,7 +89,7 @@
                         <a th:href="@{/chown_eval(evaluationId=${row.evalId})}"
                            th:text="#{general.command.chown}">Change Owner</a>
                     </td>
-                    <td th:text="${row.lastModified}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.lastModified}" th:data-sort-value="${row.lastModifiedSort}" nowrap="nowrap">20/03/2007</td>
                     <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
                 </tr>
             </tbody>
@@ -103,7 +104,7 @@
         Your evaluations in queue that have not started yet
     </p>
     <div th:if="${not #lists.isEmpty(inqueueRows)}">
-        <table class="evalsysTable">
+        <table class="evalsysTable tablesorter inqueueTable">
             <thead>
                 <tr>
                     <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
@@ -157,12 +158,12 @@
                     <td>
                         <a th:if="${row.groupsIsLink}"
                            th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
-                           th:text="${row.groupsLabel}">Course 1010</a>
+                           th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</a>
                         <span th:unless="${row.groupsIsLink}"
-                              th:text="${row.groupsLabel}">Course 1010</span>
+                              th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</span>
                     </td>
-                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
-                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.startDate}" th:data-sort-value="${row.startDateSort}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" th:data-sort-value="${row.dueDateSort}" nowrap="nowrap">20/03/2007</td>
                     <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
                 </tr>
             </tbody>
@@ -179,7 +180,7 @@
         Your evaluations currently active for users to take
     </p>
     <div th:if="${not #lists.isEmpty(activeRows)}">
-        <table class="evalsysTable">
+        <table class="evalsysTable tablesorter activeTable">
             <thead>
                 <tr>
                     <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
@@ -240,12 +241,12 @@
                     <td>
                         <a th:if="${row.groupsIsLink}"
                            th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
-                           th:text="${row.groupsLabel}">12</a>
+                           th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">12</a>
                         <span th:unless="${row.groupsIsLink}"
-                              th:text="${row.groupsLabel}">12</span>
+                              th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">12</span>
                     </td>
-                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
-                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.startDate}" th:data-sort-value="${row.startDateSort}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" th:data-sort-value="${row.dueDateSort}" nowrap="nowrap">20/03/2007</td>
                     <!-- Response rate -->
                     <td nowrap="nowrap">
                         <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
@@ -288,7 +289,7 @@
         Your evaluations which have been completed
     </p>
     <div th:if="${not #lists.isEmpty(closedRows)}">
-        <table class="evalsysTable">
+        <table class="evalsysTable tablesorter closedTable">
             <thead>
                 <tr>
                     <th th:text="#{controlevaluations.eval.title.header}">Evaluation Title</th>
@@ -339,12 +340,12 @@
                     <td>
                         <a th:if="${row.groupsIsLink}"
                            th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
-                           th:text="${row.groupsLabel}">Course 1010</a>
+                           th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</a>
                         <span th:unless="${row.groupsIsLink}"
-                              th:text="${row.groupsLabel}">Course 1010</span>
+                              th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</span>
                     </td>
-                    <td th:text="${row.startDate}" nowrap="nowrap">15/03/2007</td>
-                    <td th:text="${row.dueDate}" nowrap="nowrap">20/03/2007</td>
+                    <td th:text="${row.startDate}" th:data-sort-value="${row.startDateSort}" nowrap="nowrap">15/03/2007</td>
+                    <td th:text="${row.dueDate}" th:data-sort-value="${row.dueDateSort}" nowrap="nowrap">20/03/2007</td>
                     <!-- Response rate -->
                     <td nowrap="nowrap">
                         <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
@@ -403,6 +404,18 @@
     </span>
 
 </div>
+<script th:inline="none">
+$(document).ready(function() {
+    var dateExtract = function(node) {
+        var v = node.getAttribute('data-sort-value');
+        return v !== null ? v : (node.innerText || node.textContent || '');
+    };
+    $('.partialTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}}, sortList: [[2, 1]] });
+    $('.inqueueTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}}, sortList: [[3, 1]] });
+    $('.activeTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}, 5: {sorter: false}, 6: {sorter: false}}, sortList: [[3, 1]] });
+    $('.closedTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}, 5: {sorter: false}, 6: {sorter: false}}, sortList: [[3, 1]] });
+});
+</script>
 <th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
 </body>
 </html>
