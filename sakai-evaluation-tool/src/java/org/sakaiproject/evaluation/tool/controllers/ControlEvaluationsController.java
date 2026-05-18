@@ -18,11 +18,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -64,10 +62,9 @@ public class ControlEvaluationsController {
     /**
      * Modes for the response-rate column.
      * RESPONDERS  → link to the respondents list
-     * NOTIFY      → enlace a enviar emails
-     * TEXT        → texto plano
+     * TEXT        → plain text (no permission or threshold not met)
      */
-    public enum RateMode { RESPONDERS, NOTIFY, TEXT }
+    public enum RateMode { RESPONDERS, TEXT }
 
     /**
      * Modes for the results/report column.
@@ -153,13 +150,6 @@ public class ControlEvaluationsController {
         int responsesRequired = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
         boolean checkUnpublished = (Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK);
 
-        // Get the groups where the user has view_responders permission
-        List<EvalGroup> allowedGroupsForResponders = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
-        Set<String> allowedGroupIds = new HashSet<>();
-        for (EvalGroup g : allowedGroupsForResponders) {
-            allowedGroupIds.add(g.evalGroupId);
-        }
-
         // Fetch and classify evaluations
         List<EvalEvaluation> partialEvals = new ArrayList<>();
         List<EvalEvaluation> inqueueEvals = new ArrayList<>();
@@ -217,8 +207,7 @@ public class ControlEvaluationsController {
 
         for (EvalEvaluation eval : inqueueEvals) {
             EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired,
-                    allowedGroupIds, false);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
 
             // Verificar grupos no publicados
             if (checkUnpublished) {
@@ -240,15 +229,13 @@ public class ControlEvaluationsController {
 
         for (EvalEvaluation eval : activeEvals) {
             EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired,
-                    allowedGroupIds, true);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, true);
             activeRows.add(row);
         }
 
         for (EvalEvaluation eval : closedEvals) {
             EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired,
-                    allowedGroupIds, false);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
             row.setCanChown(false); // chown not available for closed evals
             closedRows.add(row);
         }
@@ -286,7 +273,7 @@ public class ControlEvaluationsController {
             String currentUserId, boolean userReadonlyAdmin, boolean isUserAdmin,
             boolean earlyCloseAllowed, boolean reopeningAllowed,
             boolean viewResultsIgnoreDates, int responsesRequired,
-            Set<String> allowedGroupIds, boolean isActive) {
+            boolean isActive) {
 
         EvalRow row = new EvalRow();
         row.setEvalId(eval.getId());
@@ -345,17 +332,10 @@ public class ControlEvaluationsController {
             row.setResponseRateText(responseString);
             row.setResponsesNeeded(responsesNeeded);
 
-            // Determine the response rate link mode
-            boolean showRespondersLink = (responsesNeeded == 0 && !allowedGroupIds.isEmpty() &&
-                    hasOverlapWithEvalGroups(eval.getId(), allowedGroupIds));
-            boolean allowedEmailStudents = ownerOrNotReadonly;
-            if (showRespondersLink) {
-                row.setResponseRateMode(RateMode.RESPONDERS);
-            } else if (allowedEmailStudents) {
-                row.setResponseRateMode(RateMode.NOTIFY);
-            } else {
-                row.setResponseRateMode(RateMode.TEXT);
-            }
+            // Determine the response rate link mode: owner/instructor can always see
+            // responders once the minimum response threshold is met
+            boolean showRespondersLink = responsesNeeded == 0 && ownerOrNotReadonly;
+            row.setResponseRateMode(showRespondersLink ? RateMode.RESPONDERS : RateMode.TEXT);
 
             // Determine the report mode
             buildReportMode(row, eval, df, currentUserId, isUserAdmin, viewResultsIgnoreDates,
@@ -363,17 +343,6 @@ public class ControlEvaluationsController {
         }
 
         return row;
-    }
-
-    private boolean hasOverlapWithEvalGroups(Long evalId, Set<String> allowedGroupIds) {
-        Map<Long, List<EvalGroup>> groupsMap = evaluationService.getEvalGroupsForEval(
-                new Long[]{evalId}, false, true);
-        List<EvalGroup> groups = groupsMap.get(evalId);
-        if (groups == null) return false;
-        for (EvalGroup g : groups) {
-            if (allowedGroupIds.contains(g.evalGroupId)) return true;
-        }
-        return false;
     }
 
     private void buildReportMode(EvalRow row, EvalEvaluation eval, DateFormat df,

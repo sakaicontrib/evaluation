@@ -36,8 +36,6 @@
     <ul class="breadCrumb">
         <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
         <li><a th:href="@{/control_evaluations}" th:text="#{controlevaluations.page.title}">My Evaluations</a></li>
-        <li><a th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
-               th:text="#{evalsettings.page.title}">Evaluation Settings</a></li>
         <li class="lastCrumbNoFloat" th:text="#{evalresponders.page.title}">Evaluation Responders</li>
     </ul>
 
@@ -49,8 +47,9 @@
               style="font-weight:bold;font-size:1.1em;">Eval info</span>
         <span th:text="#{evalresponders.stats(${totalResponded}, ${totalAssigned})}"
               style="font-weight:bold;">(X responded out of Y)</span>
-        <a th:if="${globalEmailUrl != null}"
-           th:href="${globalEmailUrl}"
+    </div>
+    <div th:if="${showGlobalEmail}" style="margin-top:0.5em">
+        <a th:href="@{/evaluation_notifications(evaluationId=${evaluationId})}"
            th:text="#{evalresponders.notifications.link(${evalTitle})}">Send email</a>
     </div>
 
@@ -63,8 +62,8 @@
                   style="font-weight:bold;">Group: Title</span>
             <span th:text="#{evalresponders.stats(${group.responded}, ${group.assigned})}"
                   style="font-weight:bold;">(X/Y)</span>
-            <a th:if="${group.emailUrl != null}"
-               th:href="${group.emailUrl}"
+            <a th:if="${group.emailGroupId != null}"
+               th:href="@{/evaluation_notifications(evaluationId=${evaluationId}, evalGroupId=${group.emailGroupId})}"
                th:text="#{evalresponders.notifications.link(${group.groupTitle})}">Send email</a>
         </div>
 

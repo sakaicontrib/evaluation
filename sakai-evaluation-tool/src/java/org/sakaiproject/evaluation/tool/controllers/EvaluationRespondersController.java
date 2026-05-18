@@ -30,7 +30,6 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -77,7 +76,7 @@ public class EvaluationRespondersController {
         private final String groupTitle;     // null → anonymous eval
         private final int responded;
         private final int assigned;
-        private final String emailUrl;       // null → no email link
+        private final String emailGroupId;   // null → no email link; group id for the notification URL
         private final List<UserRow> users;
     }
 
@@ -101,10 +100,6 @@ public class EvaluationRespondersController {
         boolean allowEmailStudents = Boolean.TRUE.equals(settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS));
         int responsesRequired = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 
-        // groups the current user can view responders for
-        List<EvalGroup> allowedGroups = commonLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_VIEW_RESPONDERS);
-        List<String> allowedGroupIds = new ArrayList<>();
-        for (EvalGroup g : allowedGroups) allowedGroupIds.add(g.evalGroupId);
 
         String[] evalGroupIds = evalGroupId != null ? new String[]{evalGroupId} : null;
 
@@ -125,10 +120,16 @@ public class EvaluationRespondersController {
         if (evalAnonymous) {
             statsAssigned = "--";
             List<EvalUser> users = new ArrayList<>();
+            Map<String, EvalResponse> anonResponses = new HashMap<>();
             for (EvalResponse r : responses) {
                 users.add(commonLogic.getEvalUserById(r.getOwner()));
+                anonResponses.put(r.getOwner(), r);
             }
             usersByGroupId.put(EvalConstants.EVALUATION_AUTHCONTROL_NONE, users);
+            // index anonymous responses under the same synthetic key so the status
+            // lookup below finds them (responses are stored with their real evalGroupId,
+            // which differs from the synthetic key used in usersByGroupId)
+            groupToUserResponses.put(EvalConstants.EVALUATION_AUTHCONTROL_NONE, anonResponses);
         } else {
             List<EvalAssignUser> assigned = evaluationService.getParticipantsForEval(
                     evaluationId, null, evalGroupIds, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
@@ -163,17 +164,18 @@ public class EvaluationRespondersController {
             List<EvalUser> users = entry.getValue();
             Collections.sort(users, new EvalUser.SortNameComparator());
 
-            boolean showEntryStatus = allowedGroupIds.contains(groupId);
+            // canControlEvaluation already passed at the top of this method
+            boolean showEntryStatus = true;
             Map<String, EvalResponse> userResponses = groupToUserResponses.getOrDefault(groupId, new HashMap<>());
 
             String groupTitle = null;
-            String emailUrl = null;
+            String emailGroupId = null;
             int assigned2 = users.size();
 
             if (!evalAnonymous) {
                 groupTitle = commonLogic.makeEvalGroupObject(groupId).title;
                 if (allowEmailStudents || userAdmin) {
-                    emailUrl = "../evaluation_notifications?evaluationId=" + evaluationId + "&evalGroupId=" + groupId;
+                    emailGroupId = groupId;
                 }
             }
 
@@ -195,12 +197,11 @@ public class EvaluationRespondersController {
                 userRows.add(new UserRow(u.displayName, u.username, statusKey));
             }
 
-            groupRows.add(new GroupRow(groupTitle, userResponses.size(), assigned2, emailUrl, userRows));
+            groupRows.add(new GroupRow(groupTitle, userResponses.size(), assigned2, emailGroupId, userRows));
         }
 
-        String globalEmailUrl = (allowEmailStudents || userAdmin)
-                ? "../evaluation_notifications?evaluationId=" + evaluationId
-                : null;
+        // global email link only makes sense when there are multiple groups
+        boolean showGlobalEmail = (allowEmailStudents || userAdmin) && groupRows.size() > 1;
 
         model.addAttribute("evaluationId", evaluationId);
         model.addAttribute("evalGroupId", evalGroupId);
@@ -209,7 +210,7 @@ public class EvaluationRespondersController {
         model.addAttribute("evalDueDate", df.format(eval.getSafeDueDate()));
         model.addAttribute("totalResponded", responses.size());
         model.addAttribute("totalAssigned", statsAssigned);
-        model.addAttribute("globalEmailUrl", globalEmailUrl);
+        model.addAttribute("showGlobalEmail", showGlobalEmail);
         model.addAttribute("evalAnonymous", evalAnonymous);
         model.addAttribute("groupRows", groupRows);
         return "evaluation_responders";

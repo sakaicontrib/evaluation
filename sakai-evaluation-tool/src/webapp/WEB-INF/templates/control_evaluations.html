@@ -252,9 +252,6 @@
                         <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
                            th:href="@{/evaluation_responders(evaluationId=${row.evalId})}"
                            th:text="${row.responseRateText}">2 of 39</a>
-                        <a th:if="${row.responseRateMode.name() == 'NOTIFY'}"
-                           th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
-                           th:text="${row.responseRateText}">2 of 39</a>
                         <span th:if="${row.responseRateMode.name() == 'TEXT'}"
                               th:text="${row.responseRateText}">2 of 39</span>
                     </td>
@@ -350,9 +347,6 @@
                     <td nowrap="nowrap">
                         <a th:if="${row.responseRateMode.name() == 'RESPONDERS'}"
                            th:href="@{/evaluation_responders(evaluationId=${row.evalId})}"
-                           th:text="${row.responseRateText}">2 of 39</a>
-                        <a th:if="${row.responseRateMode.name() == 'NOTIFY'}"
-                           th:href="@{/evaluation_notifications(evaluationId=${row.evalId})}"
                            th:text="${row.responseRateText}">2 of 39</a>
                         <span th:if="${row.responseRateMode.name() == 'TEXT'}"
                               th:text="${row.responseRateText}">2 of 39</span>

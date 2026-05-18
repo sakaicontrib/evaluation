@@ -37,8 +37,8 @@
     <ul class="breadCrumb">
         <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
         <li><a th:href="@{/control_evaluations}" th:text="#{controlevaluations.page.title}">My Evaluations</a></li>
-        <li><a th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
-               th:text="#{evalsettings.page.title}">Evaluation Settings</a></li>
+        <li><a th:href="@{/evaluation_responders(evaluationId=${evaluationId})}"
+               th:text="#{evalresponders.page.title}">Evaluation Responders</a></li>
         <li class="lastCrumbNoFloat" th:text="#{evalnotify.page.title}">Send Notifications</li>
     </ul>
 
