@@ -205,6 +205,9 @@
                    onclick="SPNR.disableControlsAndSpin(this,null);"/>
             <input type="button" th:value="#{general.back.button}"
                    onclick="history.go(-1);return false;"/>
+            <a th:href="@{/remove_eval(evaluationId=${evaluationId})}"
+               th:text="#{removeeval.remove.button}"
+               style="margin-left:2em;color:#900;"></a>
         </p>
 
     </form>

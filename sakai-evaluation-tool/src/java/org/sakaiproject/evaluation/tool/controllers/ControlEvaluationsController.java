@@ -38,6 +38,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,7 +92,7 @@ public class ControlEvaluationsController {
         String  categoryLabel;
         String  categoryUrl;
         // Assigned groups
-        String  groupsLabel;    // group title (1 group) or "N groups"
+        String  groupsLabel;    // group title (1 group) or "N groups" when multiple
         boolean groupsIsLink;   // false = display as text (read-only admin viewing another's eval)
         boolean groupsInvalid;  // true when the single assigned group no longer exists
         // Actions available to the current user
@@ -133,6 +134,9 @@ public class ControlEvaluationsController {
     @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
     private EvalBeanUtils evalBeanUtils;
 
+    @Resource(name = "messageSource")
+    private MessageSource messageSource;
+
     // Handlers -------------------------------------------------------------------------------
 
     @GetMapping
@@ -140,7 +144,7 @@ public class ControlEvaluationsController {
                        Locale locale, Model model) {
 
         String currentUserId = commonLogic.getCurrentUserId();
-        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
         boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
         boolean isUserAdmin       = commonLogic.isUserAdmin(currentUserId);
@@ -206,7 +210,7 @@ public class ControlEvaluationsController {
         }
 
         for (EvalEvaluation eval : inqueueEvals) {
-            EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
+            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
                     earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
 
             // Verificar grupos no publicados
@@ -228,13 +232,13 @@ public class ControlEvaluationsController {
         }
 
         for (EvalEvaluation eval : activeEvals) {
-            EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
+            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
                     earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, true);
             activeRows.add(row);
         }
 
         for (EvalEvaluation eval : closedEvals) {
-            EvalRow row = buildCommonRow(eval, df, currentUserId, userReadonlyAdmin, isUserAdmin,
+            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
                     earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
             row.setCanChown(false); // chown not available for closed evals
             closedRows.add(row);
@@ -269,7 +273,7 @@ public class ControlEvaluationsController {
 
     // Private methods -----------------------------------------------------------------------
 
-    private EvalRow buildCommonRow(EvalEvaluation eval, DateFormat df,
+    private EvalRow buildCommonRow(EvalEvaluation eval, DateFormat df, Locale locale,
             String currentUserId, boolean userReadonlyAdmin, boolean isUserAdmin,
             boolean earlyCloseAllowed, boolean reopeningAllowed,
             boolean viewResultsIgnoreDates, int responsesRequired,
@@ -305,7 +309,8 @@ public class ControlEvaluationsController {
                 row.setGroupsLabel(title);
             }
         } else {
-            row.setGroupsLabel(String.valueOf(groupsCount)); // the template appends the "groups" text
+            row.setGroupsLabel(messageSource.getMessage(
+                    "controlevaluations.eval.groups.link", new Object[]{groupsCount}, locale));
         }
 
         // Actions (only if not a foreign read-only admin)

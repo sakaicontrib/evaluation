@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,19 +58,22 @@ public class ScaledUtils {
 	};
 
 	public static int idealIndex(EvalScale scale) {
-      int index = -1;
-      for (int i = 0; i < idealKeys.length; ++ i) {
-         if (Objects.equals(scale.getIdeal(), idealKeys[i])) {
-            index = i;
-            break;
-         }
-      }
-      if (index == -1) {
-         // Fix for http://www.caret.cam.ac.uk/jira/browse/CTL-562 - added to ensure this will not cause a failure
-         log.info("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
-         index = 0;
-      }
-      return index;
+        // Normalize legacy RSF sentinel "*NULL*" to Java null (EvalConstants.SCALE_IDEAL_NONE)
+        String ideal = EvalToolConstants.NULL.equals(scale.getIdeal()) ? null : scale.getIdeal();
+        int index = -1;
+        for (int i = 0; i < idealKeys.length; ++ i) {
+            if (Objects.equals(ideal, idealKeys[i])) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            // Fix for http://www.caret.cam.ac.uk/jira/browse/CTL-562 - added to ensure this will not cause a failure
+            log.info("Could not find index for scale ({}) for ideal setting: {}, setting to default of 0 (no ideal)",
+                    scale.getId(), scale.getIdeal());
+            index = 0;
+        }
+        return index;
 	}
 
 	public static String getStartClass(EvalScale scale) {

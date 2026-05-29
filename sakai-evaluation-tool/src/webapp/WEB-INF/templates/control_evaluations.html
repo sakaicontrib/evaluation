@@ -157,7 +157,7 @@
                     </td>
                     <td>
                         <a th:if="${row.groupsIsLink}"
-                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:href="@{/evaluation_assignments(evaluationId=${row.evalId})}"
                            th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</a>
                         <span th:unless="${row.groupsIsLink}"
                               th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</span>
@@ -240,7 +240,7 @@
                     </td>
                     <td>
                         <a th:if="${row.groupsIsLink}"
-                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:href="@{/evaluation_assignments(evaluationId=${row.evalId})}"
                            th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">12</a>
                         <span th:unless="${row.groupsIsLink}"
                               th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">12</span>
@@ -282,6 +282,11 @@
          SECTION: Closed evaluations
          ========================================================= -->
     <h3 th:text="#{controlevaluations.closed.header}">Closed Evaluations</h3>
+    <div style="margin-bottom:0.5em">
+        <label for="closedSearch" th:text="#{controlevaluations.search.label}">Search by title:</label>
+        <input type="text" id="closedSearch" style="margin-left:0.5em;width:20em"
+               th:placeholder="#{controlevaluations.search.placeholder}"/>
+    </div>
     <p class="instructionText" th:text="#{controlevaluations.closed.description}">
         Your evaluations which have been completed
     </p>
@@ -336,7 +341,7 @@
                     </td>
                     <td>
                         <a th:if="${row.groupsIsLink}"
-                           th:href="@{/evaluation_assign_confirm(evaluationId=${row.evalId})}"
+                           th:href="@{/evaluation_assignments(evaluationId=${row.evalId})}"
                            th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</a>
                         <span th:unless="${row.groupsIsLink}"
                               th:text="${row.groupsInvalid} ? #{controlevaluations.eval.group.deleted} : ${row.groupsLabel}">Course 1010</span>
@@ -400,6 +405,14 @@
 </div>
 <script th:inline="none">
 $(document).ready(function() {
+    $('#closedSearch').on('input', function() {
+        var term = $(this).val().toLowerCase().trim();
+        $('.closedTable tbody tr').each(function() {
+            var title = $(this).find('td:first-child').text().toLowerCase();
+            $(this).toggle(!term || title.indexOf(term) !== -1);
+        });
+    });
+
     var dateExtract = function(node) {
         var v = node.getAttribute('data-sort-value');
         return v !== null ? v : (node.innerText || node.textContent || '');

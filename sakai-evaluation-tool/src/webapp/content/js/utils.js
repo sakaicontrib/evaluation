@@ -977,3 +977,37 @@ evalsys.setItemOperationsState = function(target, enabled) {
     $element.toggleClass('alert-secondary', !enabled);
     $element.toggleClass('item-operations--enabled', !!enabled);
 };
+
+// Sticky table headers inside Sakai iframes.
+// position:sticky doesn't work because the portal (parent window) scrolls,
+// not the iframe. We listen to the parent's scroll event and apply translateY.
+evalsys.initStickyHeaders = function() {
+    var scrollParent;
+    try {
+        scrollParent = (window.parent && window.parent !== window) ? window.parent : window;
+    } catch (e) {
+        scrollParent = window;
+    }
+
+    scrollParent.addEventListener('scroll', function() {
+        var iframeTop = 0;
+        try {
+            if (window.frameElement) {
+                iframeTop = window.frameElement.getBoundingClientRect().top;
+            }
+        } catch (e) {}
+
+        document.querySelectorAll('table.evalsysTable').forEach(function(table) {
+            var thead = table.querySelector('thead');
+            if (!thead) return;
+            var tableRect = table.getBoundingClientRect();
+            var theadHeight = thead.offsetHeight;
+            var offset = -(iframeTop + tableRect.top);
+            if (offset > 0 && offset < tableRect.height - theadHeight) {
+                thead.style.transform = 'translateY(' + offset + 'px)';
+            } else {
+                thead.style.transform = '';
+            }
+        });
+    });
+};

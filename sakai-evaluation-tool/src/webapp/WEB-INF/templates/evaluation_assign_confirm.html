@@ -153,6 +153,9 @@
                        onclick="SPNR.disableControlsAndSpin(this,null);"/>
                 <a th:href="@{/evaluation_assign(evaluationId=${evaluationId})}"
                    th:text="#{evaluationassignconfirm.changes.assigned.courses.button}">Change</a>
+                <a th:href="@{/remove_eval(evaluationId=${evaluationId})}"
+                   th:text="#{removeeval.remove.button}"
+                   style="margin-left:2em;color:#900;"></a>
             </p>
         </form>
     </div>

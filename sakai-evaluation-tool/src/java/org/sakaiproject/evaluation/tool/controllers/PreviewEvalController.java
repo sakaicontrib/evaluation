@@ -145,6 +145,7 @@ public class PreviewEvalController {
     public String show(
             @RequestParam(required = false) Long evaluationId,
             @RequestParam(required = false) Long templateId,
+            @RequestParam(required = false) String evalGroupId,
             @RequestParam(required = false, defaultValue = "false") boolean external,
             Model model,
             HttpServletRequest request) {
@@ -179,23 +180,40 @@ public class PreviewEvalController {
         // ---- Determine group for group-specific preview ----------------------
         EvalAssignGroup group = null;
         String groupDisplayTitle = null;
-        Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
-        if (useGroupSpecificPreview != null && useGroupSpecificPreview && evaluationId != null) {
-            int groupCount = evaluationService.countEvaluationGroups(evaluationId, true);
-            if (groupCount == 1) {
-                Map<Long, List<EvalAssignGroup>> groupMap = evaluationService
-                        .getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
-                List<EvalAssignGroup> groups = groupMap.get(evaluationId);
-                if (groups != null && !groups.isEmpty()) {
-                    EvalAssignGroup candidate = groups.get(0);
-                    String gid = candidate.getEvalGroupId();
-                    if (gid != null) {
-                        String title = commonLogic.getDisplayTitle(gid);
-                        if (title != null) {
-                            group = candidate;
-                            groupDisplayTitle = title;
-                        } else {
-                            groupDisplayTitle = gid;
+        if (evalGroupId != null && evaluationId != null) {
+            // Direct link: use the explicitly provided group
+            String title = commonLogic.getDisplayTitle(evalGroupId);
+            groupDisplayTitle = (title != null) ? title : evalGroupId;
+            Map<Long, List<EvalAssignGroup>> gm = evaluationService
+                    .getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
+            List<EvalAssignGroup> gl = gm.get(evaluationId);
+            if (gl != null) {
+                for (EvalAssignGroup ag : gl) {
+                    if (evalGroupId.equals(ag.getEvalGroupId())) {
+                        group = ag;
+                        break;
+                    }
+                }
+            }
+        } else {
+            Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
+            if (useGroupSpecificPreview != null && useGroupSpecificPreview && evaluationId != null) {
+                int groupCount = evaluationService.countEvaluationGroups(evaluationId, true);
+                if (groupCount == 1) {
+                    Map<Long, List<EvalAssignGroup>> groupMap = evaluationService
+                            .getAssignGroupsForEvals(new Long[]{evaluationId}, false, false);
+                    List<EvalAssignGroup> groups = groupMap.get(evaluationId);
+                    if (groups != null && !groups.isEmpty()) {
+                        EvalAssignGroup candidate = groups.get(0);
+                        String gid = candidate.getEvalGroupId();
+                        if (gid != null) {
+                            String title = commonLogic.getDisplayTitle(gid);
+                            if (title != null) {
+                                group = candidate;
+                                groupDisplayTitle = title;
+                            } else {
+                                groupDisplayTitle = gid;
+                            }
                         }
                     }
                 }

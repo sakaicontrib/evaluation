@@ -190,6 +190,9 @@ public class ReportViewController {
 
         boolean canChooseGroups = viewableGroups.size() > 1;
         if (groupIds == null || groupIds.length == 0) {
+            if (canChooseGroups) {
+                return "redirect:/report_groups?evaluationId=" + evaluationId;
+            }
             groupIds = viewableGroups.toArray(new String[0]);
         }
 

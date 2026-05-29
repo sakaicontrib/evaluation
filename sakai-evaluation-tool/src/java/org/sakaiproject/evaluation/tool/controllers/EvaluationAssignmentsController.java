@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -88,7 +90,7 @@ public class EvaluationAssignmentsController {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Model model) {
+    public String show(@RequestParam Long evaluationId, Model model, HttpServletRequest request) {
         if (evaluationId == null)
             throw new IllegalArgumentException("evaluationId is required");
 
@@ -141,7 +143,8 @@ public class EvaluationAssignmentsController {
             boolean published = commonLogic.isEvalGroupPublished(gid);
             if (!published) unpublishedCount++;
 
-            String directLink = commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, ag.getId().toString());
+            String directLink = request.getContextPath() + "/preview_eval?evaluationId=" + evaluationId
+                    + "&evalGroupId=" + URLEncoder.encode(gid, StandardCharsets.UTF_8);
 
             int instructorCount = 0, assistantCount = 0;
             if (hasInstructors) {
@@ -182,7 +185,8 @@ public class EvaluationAssignmentsController {
                     if (ah.getNodeId().equals(ag.getNodeId())) {
                         String gid = ag.getEvalGroupId();
                         EvalGroup g = commonLogic.makeEvalGroupObject(gid);
-                        String dl = commonLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, ag.getId().toString());
+                        String dl = request.getContextPath() + "/preview_eval?evaluationId=" + evaluationId
+                                + "&evalGroupId=" + URLEncoder.encode(gid, StandardCharsets.UTF_8);
                         nodeGroups.add(new GroupRow(g.title, g.type, dl,
                                 evaluatorCount.getOrDefault(gid, 0), 0, 0, true));
                     }

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -83,7 +84,8 @@ public class EvaluationRespondersController {
     @GetMapping
     public String show(@RequestParam Long evaluationId,
                        @RequestParam(required = false) String evalGroupId,
-                       Model model) {
+                       Model model,
+                       HttpServletRequest request) {
 
         String currentUserId = commonLogic.getCurrentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
@@ -203,6 +205,18 @@ public class EvaluationRespondersController {
         // global email link only makes sense when there are multiple groups
         boolean showGlobalEmail = (allowEmailStudents || userAdmin) && groupRows.size() > 1;
 
+        // Build takers download URL
+        StringBuilder takersUrl = new StringBuilder(request.getContextPath())
+                .append("/report_view/download?evaluationId=").append(evaluationId)
+                .append("&type=").append(EvalEvaluationService.CSV_TAKERS_REPORT);
+        if (evalGroupId != null) {
+            takersUrl.append("&groupIds=").append(java.net.URLEncoder.encode(evalGroupId, java.nio.charset.StandardCharsets.UTF_8));
+        } else {
+            for (String gid : usersByGroupId.keySet()) {
+                takersUrl.append("&groupIds=").append(java.net.URLEncoder.encode(gid, java.nio.charset.StandardCharsets.UTF_8));
+            }
+        }
+
         model.addAttribute("evaluationId", evaluationId);
         model.addAttribute("evalGroupId", evalGroupId);
         model.addAttribute("evalTitle", eval.getTitle());
@@ -213,6 +227,7 @@ public class EvaluationRespondersController {
         model.addAttribute("showGlobalEmail", showGlobalEmail);
         model.addAttribute("evalAnonymous", evalAnonymous);
         model.addAttribute("groupRows", groupRows);
+        model.addAttribute("takersDownloadUrl", takersUrl.toString());
         return "evaluation_responders";
     }
 }

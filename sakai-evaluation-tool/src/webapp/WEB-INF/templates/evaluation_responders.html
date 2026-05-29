@@ -48,6 +48,9 @@
         <span th:text="#{evalresponders.stats(${totalResponded}, ${totalAssigned})}"
               style="font-weight:bold;">(X responded out of Y)</span>
     </div>
+    <div style="margin-top:0.5em">
+        <a th:href="${takersDownloadUrl}" th:text="#{viewreport.view.listofevaluationtakers}">Download takers CSV</a>
+    </div>
     <div th:if="${showGlobalEmail}" style="margin-top:0.5em">
         <a th:href="@{/evaluation_notifications(evaluationId=${evaluationId})}"
            th:text="#{evalresponders.notifications.link(${evalTitle})}">Send email</a>
