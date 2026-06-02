@@ -26,10 +26,7 @@ import javax.annotation.Resource;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
@@ -56,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_evaluations")
-public class ControlEvaluationsController {
+public class ControlEvaluationsController extends EvalControllerSupport {
 
     // DTO ------------------------------------------------------------------------------------
 
@@ -113,23 +110,11 @@ public class ControlEvaluationsController {
 
     // Services ------------------------------------------------------------------------------
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
     private EvalEvaluationSetupService evaluationSetupService;
 
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
     private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
 
     @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
     private EvalBeanUtils evalBeanUtils;
@@ -327,25 +312,23 @@ public class ControlEvaluationsController {
             row.setCanChown(!isActive); // chown available for inqueue; not for active evals in the original
         }
 
-        // Response rate (only for active and closed, not inqueue where there is no data yet)
-        if (!isActive || true) { // siempre calcular
-            int responsesCount  = deliveryService.countResponses(eval.getId(), null, true);
-            int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), null);
-            int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
-            String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+        // Response rate — calculated for all states (inqueue, active, closed)
+        int responsesCount  = deliveryService.countResponses(eval.getId(), null, true);
+        int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId(), null);
+        int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+        String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
-            row.setResponseRateText(responseString);
-            row.setResponsesNeeded(responsesNeeded);
+        row.setResponseRateText(responseString);
+        row.setResponsesNeeded(responsesNeeded);
 
-            // Determine the response rate link mode: owner/instructor can always see
-            // responders once the minimum response threshold is met
-            boolean showRespondersLink = responsesNeeded == 0 && ownerOrNotReadonly;
-            row.setResponseRateMode(showRespondersLink ? RateMode.RESPONDERS : RateMode.TEXT);
+        // Determine the response rate link mode: owner/instructor can always see
+        // responders once the minimum response threshold is met
+        boolean showRespondersLink = responsesNeeded == 0 && ownerOrNotReadonly;
+        row.setResponseRateMode(showRespondersLink ? RateMode.RESPONDERS : RateMode.TEXT);
 
-            // Determine the report mode
-            buildReportMode(row, eval, df, currentUserId, isUserAdmin, viewResultsIgnoreDates,
-                    responsesRequired, responsesNeeded);
-        }
+        // Determine the report mode
+        buildReportMode(row, eval, df, currentUserId, isUserAdmin, viewResultsIgnoreDates,
+                responsesRequired, responsesNeeded);
 
         return row;
     }

@@ -14,11 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,13 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_expert_item")
-public class ModifyExpertItemController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class ModifyExpertItemController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam String type,
@@ -90,20 +80,25 @@ public class ModifyExpertItemController {
         EvalItemGroup group;
 
         if (isNew) {
+            // New group: no prior load, no session conflict
             if (isCategory) {
                 group = new EvalItemGroup(currentUserId, type, title, description, Boolean.TRUE, null, null);
             } else {
                 EvalItemGroup parent = authoringService.getItemGroupById(parentId != null ? parentId : categoryId);
                 group = new EvalItemGroup(currentUserId, type, title, description, Boolean.TRUE, parent, null);
             }
+            authoringService.saveItemGroup(group, currentUserId);
         } else {
-            Long eigId = isCategory ? categoryId : objectiveId;
-            group = authoringService.getItemGroupById(eigId);
-            group.setTitle(title);
-            group.setDescription(description);
+            // Edit: load and save must share the same Hibernate session
+            final Long eigId = isCategory ? categoryId : objectiveId;
+            daoInvoker.invokeTransactionalAccess(() -> {
+                EvalItemGroup g = authoringService.getItemGroupById(eigId);
+                g.setTitle(title);
+                g.setDescription(description);
+                authoringService.saveItemGroup(g, currentUserId);
+            });
         }
 
-        authoringService.saveItemGroup(group, currentUserId);
         return "redirect:/control_expert_items";
     }
 }

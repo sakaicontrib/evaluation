@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -49,13 +48,7 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/modify_block")
-public class ModifyBlockController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
+public class ModifyBlockController extends EvalControllerSupport {
 
     @Resource(name = "localTemplateLogic")
     private LocalTemplateLogic localTemplateLogic;
@@ -245,14 +238,17 @@ public class ModifyBlockController {
 
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         boolean isNewBlock = "new1".equals(blockId);
-        Long parentId;
+        Long[] parentIdHolder = {null};
 
-        if (!isNewBlock) {
-            parentId = doModifyBlock(blockId, orderedChildIds, itemText, scaleDisplaySetting, usesNA, category);
-        } else {
-            parentId = doCreateBlock(templateId, templateItemIds, orderedChildIds, itemText,
-                    scaleDisplaySetting, usesNA, category, blockTextChoice, originalDisplayOrder);
-        }
+        daoInvoker.invokeTransactionalAccess(() -> {
+            if (!isNewBlock) {
+                parentIdHolder[0] = doModifyBlock(blockId, orderedChildIds, itemText, scaleDisplaySetting, usesNA, category);
+            } else {
+                parentIdHolder[0] = doCreateBlock(templateId, templateItemIds, orderedChildIds, itemText,
+                        scaleDisplaySetting, usesNA, category, blockTextChoice, originalDisplayOrder);
+            }
+        });
+        Long parentId = parentIdHolder[0];
 
         if (isAjax) {
             return "item_saved";

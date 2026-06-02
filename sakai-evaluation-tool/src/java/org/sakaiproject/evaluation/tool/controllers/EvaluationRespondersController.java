@@ -27,7 +27,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -51,19 +50,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/evaluation_responders")
-public class EvaluationRespondersController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
+public class EvaluationRespondersController extends EvalControllerSupport {
 
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
     private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
 
     @Data
     public static class UserRow {
@@ -112,8 +102,6 @@ public class EvaluationRespondersController {
             groupToUserResponses.computeIfAbsent(r.getEvalGroupId(), k -> new HashMap<>())
                     .put(r.getOwner(), r);
         }
-
-        boolean showStatus = (responses.size() >= responsesRequired) || true; // controlEval = true (already checked above)
 
         // build per-group data
         Map<String, List<EvalUser>> usersByGroupId = new HashMap<>();
@@ -184,7 +172,7 @@ public class EvaluationRespondersController {
             List<UserRow> userRows = new ArrayList<>();
             for (EvalUser u : users) {
                 String statusKey;
-                if ((showStatus && showEntryStatus) || userAdmin) {
+                if (showEntryStatus || userAdmin) {
                     EvalResponse resp = userResponses.get(u.userId);
                     if (resp == null) {
                         statusKey = "evalresponders.status.untaken";

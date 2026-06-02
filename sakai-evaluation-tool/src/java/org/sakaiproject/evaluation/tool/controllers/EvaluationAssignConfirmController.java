@@ -25,8 +25,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -53,13 +51,7 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/evaluation_assign_confirm")
-public class EvaluationAssignConfirmController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
+public class EvaluationAssignConfirmController extends EvalControllerSupport {
 
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
     private EvalEvaluationSetupService evaluationSetupService;
@@ -170,46 +162,55 @@ public class EvaluationAssignConfirmController {
         if (selectedHierarchyNodeIDs == null) selectedHierarchyNodeIDs = new String[0];
 
         String currentUserId = commonLogic.getCurrentUserId();
-        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+        final String[] finalGroupIDs = selectedGroupIDs;
+        final String[] finalNodeIDs = selectedHierarchyNodeIDs;
+        String[] redirectHolder = {null};
 
-        if (eval == null) {
-            throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
-        }
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+            if (eval == null) {
+                throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
+            }
 
-        // Validate that at least 1 group or node is selected (except anonymous evaluations)
-        boolean isAnonymous = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
-        if (!isAnonymous && selectedGroupIDs.length == 0 && selectedHierarchyNodeIDs.length == 0) {
+            // Validate that at least 1 group or node is selected (except anonymous evaluations)
+            boolean isAnonymous = EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+            if (!isAnonymous && finalGroupIDs.length == 0 && finalNodeIDs.length == 0) {
+                redirectHolder[0] = "redirect:/evaluation_assign?evaluationId=" + evaluationId;
+                return;
+            }
+
+            // Validate hierarchy nodes
+            if (finalNodeIDs.length > 0) {
+                Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(finalNodeIDs);
+                if (nodes.size() != finalNodeIDs.length) {
+                    throw new IllegalArgumentException("Invalid hierarchy node IDs were submitted");
+                }
+            }
+
+            if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+                // Activate the evaluation (true = transition from PARTIAL to the correct state)
+                evaluationSetupService.saveEvaluation(eval, currentUserId, true);
+
+                // Save assignments
+                List<org.sakaiproject.evaluation.model.EvalAssignHierarchy> assignedList =
+                    evaluationSetupService.setEvalAssignments(evaluationId, finalNodeIDs, finalGroupIDs, false);
+
+                if (assignedList.isEmpty() && !isAnonymous) {
+                    // Failsafe: no assignments were created, delete the evaluation
+                    evaluationSetupService.deleteEvaluation(evaluationId, currentUserId);
+                    throw new IllegalStateException(
+                        "An evaluation was created with no group assignments. The evaluation has been deleted.");
+                }
+            } else {
+                // Update assignments for an already-active evaluation
+                evaluationSetupService.setEvalAssignments(evaluationId, finalNodeIDs, finalGroupIDs, false);
+            }
+        });
+
+        if (redirectHolder[0] != null) {
             redirectAttrs.addFlashAttribute("errorMessage", "assigneval.invalid.selection");
-            return "redirect:/evaluation_assign?evaluationId=" + evaluationId;
+            return redirectHolder[0];
         }
-
-        // Validate hierarchy nodes
-        if (selectedHierarchyNodeIDs.length > 0) {
-            Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIDs);
-            if (nodes.size() != selectedHierarchyNodeIDs.length) {
-                throw new IllegalArgumentException("Invalid hierarchy node IDs were submitted");
-            }
-        }
-
-        if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
-            // Activate the evaluation (true = transition from PARTIAL to the correct state)
-            evaluationSetupService.saveEvaluation(eval, currentUserId, true);
-
-            // Guardar asignaciones
-            List<org.sakaiproject.evaluation.model.EvalAssignHierarchy> assignedList =
-                evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, false);
-
-            if (assignedList.isEmpty() && !isAnonymous) {
-                // Failsafe: no assignments were created, delete the evaluation
-                evaluationSetupService.deleteEvaluation(evaluationId, currentUserId);
-                throw new IllegalStateException(
-                    "An evaluation was created with no group assignments. The evaluation has been deleted.");
-            }
-        } else {
-            // Update assignments for an already-active evaluation
-            evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, false);
-        }
-
         return "redirect:/control_evaluations";
     }
 }
