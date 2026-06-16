@@ -494,9 +494,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                  * TODO - this check needs to be more robust at some point
                  * currently we are ignoring shared and visible templates - AZ
                  */
-                int count = dao.countSharedEntitiesForUser(EvalTemplate.class, userId, 
-                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE}, 
-                        null, null, null, new String[] {"notEmpty"});
+                int count = dao.countTemplatesForUser(userId,
+                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE},
+                        false);
                 if (count > 0 ) {
                     // if they can access at least one template with an item then they can create an evaluation
                     return true;

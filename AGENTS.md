@@ -126,10 +126,12 @@ Downloads are served by `ReportViewController` at `GET /report_view/download` wi
 - Database conversion scripts available for version upgrades
 
 ### DAO persistence conventions
-- GenericDAO has been removed from this project. Do not add `org.sakaiproject.genericdao` dependencies, `Search`/`Restriction`/`Order` query objects, or GenericDAO batch helpers.
-- Add explicit `EvaluationDao` methods for new persistence behavior, with named HQL queries or narrowly scoped Hibernate helpers in `EvaluationDaoImpl`.
+- GenericDAO has been removed from this project. Do not add `org.sakaiproject.genericdao` dependencies, `Search`/`Restriction`/`Order` query objects, GenericDAO batch helpers, or local GenericDAO-style query helpers.
+- Add new persistence behavior to the narrow domain port first (`EvaluationSettingsDao`, `EvaluationAuthoringDao`, `EvaluationAssignmentDao`, `EvaluationResponseDao`, `EvaluationQueryDao`, etc.), then implement it in the matching `EvaluationDao*Methods` slice.
 - Keep query semantics readable at the call site: prefer domain method names like `getEvaluationsUsingEmailTemplate` or `deleteAssignmentsForEvaluation` over local generic query abstractions.
-- `EvaluationDaoImpl` owns the small base persistence surface still used by services and fixtures: `findById`, `findAll`, `countAll`, `create`, `save`, `update`, and `delete`.
+- Keep HQL construction and parameter binding explicit in the owning slice.
+- `EvaluationDaoImpl` is only the Spring bean shell. Do not add behavior there.
+- `EvaluationDaoHibernateSupport` owns the small base persistence surface still used by services and fixtures: `findById`, `findAll`, `countAll`, `create`, `save`, `update`, and `delete`.
 - `SakaiComponentBeanNameAutoProxyCreator` is allowed as narrow Spring/Sakai classloader infrastructure for transactional proxies; do not expand it into DAO/query helper behavior.
 - If a new transitive dependency disappears while removing persistence libraries, declare the directly used dependency explicitly rather than relying on unrelated libraries to provide it.
 

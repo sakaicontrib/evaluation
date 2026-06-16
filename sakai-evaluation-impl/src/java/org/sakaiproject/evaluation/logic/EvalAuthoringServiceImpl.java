@@ -116,8 +116,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 log.debug("Fixed " + scales.size() + " scales with a null mode, set to default SCALE_MODE...");
             }
 
-            // fix up orphaned template items (template or item is null)
-            dao.getOrphanedTemplateItems();
+            // fix up orphaned template items (template and item are both null)
+            List<EvalTemplateItem> orphanedTemplateItems = dao.getOrphanedTemplateItems();
+            if (!orphanedTemplateItems.isEmpty()) {
+                dao.deleteTemplateItems(new HashSet<>(orphanedTemplateItems));
+                log.debug("Removed " + orphanedTemplateItems.size() + " orphaned template items");
+            }
 
         }
     }

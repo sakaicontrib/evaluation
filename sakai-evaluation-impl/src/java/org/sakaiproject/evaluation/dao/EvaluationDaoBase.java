@@ -14,14 +14,30 @@
  */
 package org.sakaiproject.evaluation.dao;
 
-/**
- * Compatibility facade for evaluation persistence.
- * <p>
- * New code should depend on the smallest domain-specific DAO port it needs
- * instead of adding methods directly here.
- */
-public interface EvaluationDao extends EvaluationDaoBase, EvaluationSettingsDao,
-        EvaluationEmailTemplateDao, EvaluationAuthoringDao, EvaluationAssignmentDao,
-        EvaluationQueryDao, EvaluationResponseDao, EvaluationAdminSupportDao,
-        EvaluationLockDao, EvaluationConsolidatedEmailDao {
+import java.io.Serializable;
+import java.util.List;
+
+public interface EvaluationDaoBase {
+
+    public void forceCommit();
+
+    public void forceRollback();
+
+    public void fixupDatabase();
+
+    public <T> T findById(Class<T> type, Serializable id);
+
+    public <T> List<T> findAll(Class<T> type);
+
+    public <T> int countAll(Class<T> type);
+
+    public void create(Object object);
+
+    public void save(Object object);
+
+    public void update(Object object);
+
+    public void delete(Object object);
+
+    public <T> boolean delete(Class<T> entityClass, Serializable id);
 }
