@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -47,7 +48,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.sakaiproject.genericdao.api.GenericDao;
 
 
 /**
@@ -664,15 +664,18 @@ public class EvalTestDataLoad {
      * @param dao a real dao which can insert data in the database,
      * if null then a fake one will be created (the data will not be truly accessible)
      */
-    public EvalTestDataLoad(GenericDao dao) {
+    public EvalTestDataLoad(EvaluationDao dao) {
         AUTHZGROUPSET1.add(AUTHZGROUP1A_ID);
         AUTHZGROUPSET1.add(AUTHZGROUP1B_ID);
         AUTHZGROUPSET2.add(AUTHZGROUP2A_ID);
 
+        TestDataDao testDataDao;
         if (dao == null) {
-            dao = new FakeGenericDao();
+            testDataDao = new FakeTestDataDao();
+        } else {
+            testDataDao = new EvaluationTestDataDao(dao);
         }
-        initializeAndSave(dao);      
+        initializeAndSave(testDataDao);
     }
 
     /**
@@ -680,7 +683,7 @@ public class EvalTestDataLoad {
      * (this will make sure all the public properties are not null)
      * @param dao
      */
-    public void initializeAndSave(GenericDao dao) {
+    public void initializeAndSave(TestDataDao dao) {
         List<String> options1 = new ArrayList<String>( Arrays.asList("Bad", "Average", "Good"));
         scale1 = new EvalScale(ADMIN_USER_ID, "Scale 1", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PUBLIC, NOT_EXPERT, "description", 
@@ -1635,7 +1638,7 @@ public class EvalTestDataLoad {
 
     }
 
-    private int makeUserAssigns(GenericDao dao, EvalAssignGroup assignGroup) {
+    private int makeUserAssigns(TestDataDao dao, EvalAssignGroup assignGroup) {
         List<String> userIds = new ArrayList<>();
         List<String> userTypes = new ArrayList<>();
         // make the list of users and types from the perms
@@ -1694,46 +1697,35 @@ public class EvalTestDataLoad {
     }
 
     /**
-     * A fake generic dao which will stand in for a real one in the case of saving stuff
+     * A fake data dao which will stand in for a real one in the case of saving stuff
      * 
      * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
      */
-    @SuppressWarnings("unchecked")
-    public class FakeGenericDao implements GenericDao {
+    private interface TestDataDao {
+        void save(Object object);
+
+        void update(Object object);
+    }
+
+    private static class EvaluationTestDataDao implements TestDataDao {
+        private final EvaluationDao dao;
+
+        EvaluationTestDataDao(EvaluationDao dao) {
+            this.dao = dao;
+        }
+
+        public void save(Object object) {
+            dao.save(object);
+        }
+
+        public void update(Object object) {
+            dao.update(object);
+        }
+    }
+
+    public class FakeTestDataDao implements TestDataDao {
 
         int idCounter = 0;
-
-        public Object findById(Class entityClass, Serializable id) {
-            throw new UnsupportedOperationException();
-        }
-
-        public String getIdProperty(Class entityClass) {
-            return "id";
-        }
-
-        public List getPersistentClasses() {
-            throw new UnsupportedOperationException();
-        }
-
-        public void invokeTransactionalAccess(Runnable toinvoke) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void setPersistentClasses(List classes) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void create(Object object) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void delete(Object object) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean delete(Class entityClass, Serializable id) {
-            throw new UnsupportedOperationException();
-        }
 
         public void save(Object object) {
             Class<?> elementClass = object.getClass();

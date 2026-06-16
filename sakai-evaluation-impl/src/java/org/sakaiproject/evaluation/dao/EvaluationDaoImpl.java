@@ -28,22 +28,24 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
+import org.sakaiproject.evaluation.model.EvalConfig;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalGroupNodes;
+import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalLock;
@@ -54,17 +56,16 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
-import org.sakaiproject.genericdao.hibernate.HibernateGeneralGenericDao;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.orm.hibernate5.HibernateObjectRetrievalFailureException;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is the more specific Evaluation data access interface,
- * it should contain specific DAO methods, the generic ones
- * are included from the GenericDao already<br/>
+ * it should contain specific DAO methods and the minimal persistence mechanics
+ * needed by the evaluation logic layer.<br/>
  * This is now isolated to the logic layer only to ensure there is no access from the outside<br/>
  * <br/>
  * <b>LOCKING methods note:</b><br/>
@@ -78,7 +79,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 @Slf4j
-public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements EvaluationDao {
+public class EvaluationDaoImpl extends HibernateDaoSupport implements EvaluationDao {
 
 
     protected static final int MAX_UPDATE_SIZE = 999;
@@ -96,6 +97,171 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
 
     public void init() {
         log.debug("init");
+    }
+
+    public <T> T findById(Class<T> type, Serializable id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id must be set to find persistent object");
+        }
+        try {
+            return getHibernateTemplate().get(type, id);
+        } catch (HibernateObjectRetrievalFailureException e) {
+            return null;
+        }
+    }
+
+    public <T> List<T> findAll(Class<T> type) {
+        return currentSession().createQuery("from " + type.getName(), type).list();
+    }
+
+    public <T> int countAll(Class<T> type) {
+        Long total = currentSession().createQuery("select count(entity) from " + type.getName() + " entity", Long.class)
+                .uniqueResult();
+        return total == null ? 0 : total.intValue();
+    }
+
+    public void create(Object object) {
+        if (getPersistentId(object) != null) {
+            throw new IllegalArgumentException("This object is already persistent with id: " + getPersistentId(object)
+                    + " - you must use update to save this object and not create");
+        }
+        getHibernateTemplate().save(object);
+    }
+
+    public void save(Object object) {
+        if (getPersistentId(object) == null) {
+            create(object);
+        } else {
+            update(object);
+        }
+    }
+
+    public void update(Object object) {
+        if (getPersistentId(object) == null) {
+            throw new IllegalArgumentException("Could not get an id value from the supplied object, cannot update without an id: " + object);
+        }
+        getHibernateTemplate().update(object);
+    }
+
+    public void delete(Object object) {
+        Serializable id = getPersistentId(object);
+        if (id == null) {
+            getHibernateTemplate().delete(object);
+        } else {
+            delete(object.getClass(), id);
+        }
+    }
+
+    public <T> boolean delete(Class<T> entityClass, Serializable id) {
+        Object object = findById(entityClass, id);
+        if (object == null) {
+            return false;
+        }
+        getHibernateTemplate().delete(object);
+        return true;
+    }
+
+    private Serializable getPersistentId(Object object) {
+        ClassMetadata metadata = getSessionFactory().getClassMetadata(object.getClass());
+        if (metadata == null) {
+            throw new IllegalArgumentException("Could not get class metadata for this object, it may not be persistent: " + object);
+        }
+        return metadata.getIdentifier(object);
+    }
+
+    private int count(String hqlQuery) {
+        String countHql = buildCountHQL(hqlQuery);
+        Number total = (Number) currentSession().createQuery(countHql).uniqueResult();
+        return total == null ? 0 : total.intValue();
+    }
+
+    private String buildCountHQL(String hqlQuery) {
+        if (hqlQuery == null) {
+            throw new IllegalArgumentException("hqlQuery cannot be null");
+        }
+        String trimmed = hqlQuery.trim();
+        String lower = trimmed.toLowerCase();
+        int fromLoc = lower.indexOf("from");
+        if (fromLoc < 0) {
+            throw new IllegalArgumentException("Could not find 'from' in HQL query: " + hqlQuery);
+        }
+        String fromClause = trimmed.substring(fromLoc);
+        if (fromLoc == 0) {
+            return "select count(*) " + fromClause;
+        }
+        String oldPrefix = trimmed.substring(0, fromLoc);
+        String[] parts = oldPrefix.split(" ");
+        if (parts.length > 1) {
+            return "select count(" + parts[1] + ") " + fromClause;
+        }
+        return "select count(*) " + fromClause;
+    }
+
+    private String makeComparisonHQL(String property, int comparisonConstant, Object value) {
+        String stringValue = null;
+        if (comparisonConstant != COMPARE_NOT_NULL && comparisonConstant != COMPARE_NULL) {
+            if (value == null) {
+                throw new IllegalArgumentException("Comparison value cannot be null unless using NULL or NOT_NULL");
+            }
+            if (value instanceof Boolean || value instanceof Number) {
+                stringValue = value.toString();
+            } else {
+                stringValue = "'" + value.toString() + "'";
+            }
+        }
+        switch (comparisonConstant) {
+            case COMPARE_EQUALS:
+                return property + " = " + stringValue;
+            case COMPARE_GREATER:
+                return property + " > " + stringValue;
+            case COMPARE_LESS:
+                return property + " < " + stringValue;
+            case COMPARE_LIKE:
+                return property + " like " + stringValue;
+            case COMPARE_NOT_EQUALS:
+                return property + " <> " + stringValue;
+            case COMPARE_NOT_NULL:
+                return property + " is not null";
+            case COMPARE_NULL:
+                return property + " is null";
+            default:
+                throw new IllegalArgumentException("Invalid comparison constant: " + comparisonConstant);
+        }
+    }
+
+    private List<?> executeHqlQuery(String hql, Object[] params, int start, int limit) {
+        Query<?> query = currentSession().createQuery(hql);
+        query.setFirstResult(start);
+        if (limit > 0) {
+            query.setMaxResults(limit);
+        }
+        for (int i = 0; i < params.length; i++) {
+            query.setParameter(i, params[i]);
+        }
+        return query.list();
+    }
+
+    private List<?> executeHqlQuery(String hql, Map<String, Object> params, int start, int limit) {
+        Query<?> query = currentSession().createQuery(hql);
+        query.setFirstResult(start);
+        if (limit > 0) {
+            query.setMaxResults(limit);
+        }
+        setParameters(query, params);
+        return query.list();
+    }
+
+    private void setParameters(Query<?> query, Map<String, Object> params) {
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Object param = entry.getValue();
+            if (param != null && param.getClass().isArray()) {
+                query.setParameterList(entry.getKey(), (Object[]) param);
+            } else if (param instanceof java.util.Collection) {
+                query.setParameterList(entry.getKey(), (java.util.Collection<?>) param);
+            } else {
+                query.setParameter(entry.getKey(), param);
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -156,32 +322,1390 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     public void fixupDatabase() {
         // fix up some of the null fields
         long count;
-        count = countBySearch(EvalEvaluation.class, new Search("studentViewResults","", Restriction.NULL) );
+        count = countEvaluationsWithNullProperty("studentViewResults");
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null");
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null");
             log.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
         }
-        count = countBySearch(EvalEvaluation.class, new Search("instructorViewResults","", Restriction.NULL) );
+        count = countEvaluationsWithNullProperty("instructorViewResults");
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null");
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null");
             log.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
         }
-        count = countBySearch(EvalEvaluation.class, new Search("modifyResponsesAllowed","", Restriction.NULL) );
+        count = countEvaluationsWithNullProperty("modifyResponsesAllowed");
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.modifyResponsesAllowed = false where eval.modifyResponsesAllowed is null");
             log.info("Updated " + counter + " EvalEvaluation.modifyResponsesAllowed fields from null to default");
         }
-        count = countBySearch(EvalEvaluation.class, new Search("blankResponsesAllowed","", Restriction.NULL) );
+        count = countEvaluationsWithNullProperty("blankResponsesAllowed");
         if (count > 0) {
             int counter = 0;
             counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null");
             log.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
         }
+    }
+
+    private long countEvaluationsWithNullProperty(String propertyName) {
+        Long count = currentSession().createQuery(
+                "select count(eval.id) from EvalEvaluation eval where eval." + propertyName + " is null",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count;
+    }
+
+    public int countEvalConfigs() {
+        Long count = currentSession().createQuery(
+                "select count(cfg.id) from EvalConfig cfg", Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalConfig getEvalConfigByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        List<EvalConfig> configs = currentSession().createQuery(
+                "select cfg from EvalConfig cfg where cfg.name = :name",
+                EvalConfig.class)
+                .setParameter("name", name)
+                .setMaxResults(1)
+                .list();
+        return configs.isEmpty() ? null : configs.get(0);
+    }
+
+    public List<EvalConfig> getAllEvalConfigs() {
+        return currentSession().createQuery(
+                "select cfg from EvalConfig cfg",
+                EvalConfig.class)
+                .list();
+    }
+
+    public int countEvalConfigsByNames(String[] names) {
+        if (names == null) {
+            throw new IllegalArgumentException("names cannot be null");
+        }
+        if (names.length == 0) {
+            return 0;
+        }
+        Long count = currentSession().createQuery(
+                "select count(cfg.id) from EvalConfig cfg where cfg.name in (:names)",
+                Long.class)
+                .setParameterList("names", names)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public int countDefaultEmailTemplates() {
+        Long count = currentSession().createQuery(
+                "select count(emailTemplate.id) from EvalEmailTemplate emailTemplate "
+                + "where emailTemplate.defaultType is not null",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalEmailTemplate> getDefaultEmailTemplates() {
+        return currentSession().createQuery(
+                "select emailTemplate from EvalEmailTemplate emailTemplate "
+                + "where emailTemplate.defaultType is not null",
+                EvalEmailTemplate.class)
+                .list();
+    }
+
+    public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly) {
+        StringBuilder hql = new StringBuilder("select emailTemplate from EvalEmailTemplate emailTemplate where 1 = 1");
+        if (emailTemplateType != null) {
+            hql.append(" and emailTemplate.type = :emailTemplateType");
+        }
+        if (ownerUserId != null) {
+            hql.append(" and emailTemplate.owner = :ownerUserId");
+        }
+        if (includeDefaultsOnly != null) {
+            hql.append(includeDefaultsOnly ? " and emailTemplate.defaultType is not null" : " and emailTemplate.defaultType is null");
+        }
+
+        Query<EvalEmailTemplate> query = currentSession().createQuery(hql.toString(), EvalEmailTemplate.class);
+        if (emailTemplateType != null) {
+            query.setParameter("emailTemplateType", emailTemplateType);
+        }
+        if (ownerUserId != null) {
+            query.setParameter("ownerUserId", ownerUserId);
+        }
+        return query.list();
+    }
+
+    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateType) {
+        if (emailTemplateType == null) {
+            throw new IllegalArgumentException("emailTemplateType cannot be null");
+        }
+        List<EvalEmailTemplate> templates = currentSession().createQuery(
+                "select emailTemplate from EvalEmailTemplate emailTemplate where emailTemplate.defaultType = :emailTemplateType",
+                EvalEmailTemplate.class)
+                .setParameter("emailTemplateType", emailTemplateType)
+                .setMaxResults(1)
+                .list();
+        return templates.isEmpty() ? null : templates.get(0);
+    }
+
+    public EvalEmailTemplate getEmailTemplateByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalEmailTemplate> templates = currentSession().createQuery(
+                "select emailTemplate from EvalEmailTemplate emailTemplate where emailTemplate.eid = :eid",
+                EvalEmailTemplate.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return templates.isEmpty() ? null : templates.get(0);
+    }
+
+    public List<EvalEvaluation> getEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType) {
+        if (emailTemplateId == null) {
+            throw new IllegalArgumentException("emailTemplateId cannot be null");
+        }
+        String property = getEvaluationEmailTemplateProperty(emailTemplateType);
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation where evaluation." + property + ".id = :emailTemplateId",
+                EvalEvaluation.class)
+                .setParameter("emailTemplateId", emailTemplateId)
+                .list();
+    }
+
+    public int countEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType) {
+        if (emailTemplateId == null) {
+            throw new IllegalArgumentException("emailTemplateId cannot be null");
+        }
+        String property = getEvaluationEmailTemplateProperty(emailTemplateType);
+        Long count = currentSession().createQuery(
+                "select count(evaluation.id) from EvalEvaluation evaluation where evaluation." + property + ".id = :emailTemplateId",
+                Long.class)
+                .setParameter("emailTemplateId", emailTemplateId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public void deleteEmailTemplates(Set<EvalEmailTemplate> emailTemplates) {
+        if (emailTemplates == null) {
+            throw new IllegalArgumentException("emailTemplates cannot be null");
+        }
+        for (EvalEmailTemplate emailTemplate : emailTemplates) {
+            if (emailTemplate != null) {
+                currentSession().delete(emailTemplate);
+            }
+        }
+    }
+
+    private String getEvaluationEmailTemplateProperty(String emailTemplateType) {
+        if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)
+                || EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateType)
+                || EvalConstants.EMAIL_TEMPLATE_AVAILABLE_EVALUATEE.equals(emailTemplateType)) {
+            return "availableEmailTemplate";
+        }
+        if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)
+                || EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equals(emailTemplateType)) {
+            return "reminderEmailTemplate";
+        }
+        if (EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplateType)) {
+            return "submissionConfirmationEmailTemplate";
+        }
+        throw new IllegalArgumentException("Unsupported email template type: " + emailTemplateType);
+    }
+
+    public int countEvalScales() {
+        Long count = currentSession().createQuery(
+                "select count(scale.id) from EvalScale scale",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalScale getScaleByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalScale> scales = currentSession().createQuery(
+                "select scale from EvalScale scale where scale.eid = :eid",
+                EvalScale.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return scales.isEmpty() ? null : scales.get(0);
+    }
+
+    public List<EvalScale> getScalesByIds(Long[] scaleIds) {
+        if (scaleIds == null) {
+            throw new IllegalArgumentException("scaleIds cannot be null");
+        }
+        if (scaleIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select scale from EvalScale scale where scale.id in (:scaleIds)",
+                EvalScale.class)
+                .setParameterList("scaleIds", scaleIds)
+                .list();
+    }
+
+    public List<EvalScale> getScalesWithNullMode() {
+        return currentSession().createQuery(
+                "select scale from EvalScale scale where scale.mode is null",
+                EvalScale.class)
+                .list();
+    }
+
+    public void saveScales(Set<EvalScale> scales) {
+        if (scales == null || scales.isEmpty()) {
+            return;
+        }
+        for (EvalScale scale : scales) {
+            if (scale != null) {
+                currentSession().saveOrUpdate(scale);
+            }
+        }
+    }
+
+    public void deleteScales(Set<EvalScale> scales) {
+        if (scales == null || scales.isEmpty()) {
+            return;
+        }
+        for (EvalScale scale : scales) {
+            if (scale != null) {
+                currentSession().delete(scale);
+            }
+        }
+    }
+
+    public int countEvalItems() {
+        Long count = currentSession().createQuery(
+                "select count(item.id) from EvalItem item",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalItem getItemByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalItem> items = currentSession().createQuery(
+                "select item from EvalItem item where item.eid = :eid",
+                EvalItem.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return items.isEmpty() ? null : items.get(0);
+    }
+
+    public List<EvalItem> getItemsByAutoUseTag(String autoUseTag) {
+        if (autoUseTag == null) {
+            throw new IllegalArgumentException("autoUseTag cannot be null");
+        }
+        return currentSession().createQuery(
+                "select item from EvalItem item where item.autoUseTag = :autoUseTag order by item.id",
+                EvalItem.class)
+                .setParameter("autoUseTag", autoUseTag)
+                .list();
+    }
+
+    public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert) {
+        StringBuilder hql = new StringBuilder(
+                "select item from EvalItem item where item.hidden = false "
+                + "and item.classification <> :blockParentType ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("blockParentType", EvalConstants.ITEM_TYPE_BLOCK_PARENT);
+        appendSharingPredicate(hql, "item", userId, sharingConstants, params);
+        if (!includeExpert) {
+            hql.append("and (item.expert is null or item.expert <> :expert) ");
+            params.put("expert", Boolean.TRUE);
+        }
+        if (filter != null && filter.length() > 0) {
+            hql.append("and item.itemText like :filter ");
+            params.put("filter", "%" + filter + "%");
+        }
+        hql.append("order by item.id");
+
+        Query<EvalItem> query = currentSession().createQuery(hql.toString(), EvalItem.class);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+        return query.list();
+    }
+
+    public List<EvalItem> getItemsByIds(Long[] itemIds) {
+        if (itemIds == null) {
+            throw new IllegalArgumentException("itemIds cannot be null");
+        }
+        if (itemIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select item from EvalItem item where item.id in (:itemIds)",
+                EvalItem.class)
+                .setParameterList("itemIds", itemIds)
+                .list();
+    }
+
+    public List<EvalItem> getItemsUsingScale(Long scaleId) {
+        if (scaleId == null) {
+            throw new IllegalArgumentException("scaleId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select item from EvalItem item where item.scale.id = :scaleId",
+                EvalItem.class)
+                .setParameter("scaleId", scaleId)
+                .list();
+    }
+
+    public void saveItems(Set<EvalItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        for (EvalItem item : items) {
+            if (item != null) {
+                currentSession().saveOrUpdate(item);
+            }
+        }
+    }
+
+    public void deleteItems(Set<EvalItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        for (EvalItem item : items) {
+            if (item != null) {
+                currentSession().delete(item);
+            }
+        }
+    }
+
+    public int countEvalItemGroups() {
+        Long count = currentSession().createQuery(
+                "select count(itemGroup.id) from EvalItemGroup itemGroup",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalItemGroup getItemGroupByTitle(String title) {
+        if (title == null) {
+            throw new IllegalArgumentException("title cannot be null");
+        }
+        List<EvalItemGroup> itemGroups = currentSession().createQuery(
+                "select itemGroup from EvalItemGroup itemGroup where itemGroup.title = :title",
+                EvalItemGroup.class)
+                .setParameter("title", title)
+                .setMaxResults(1)
+                .list();
+        return itemGroups.isEmpty() ? null : itemGroups.get(0);
+    }
+
+    public int countEvaluationsByIds(Long[] evaluationIds) {
+        if (evaluationIds == null) {
+            throw new IllegalArgumentException("evaluationIds cannot be null");
+        }
+        if (evaluationIds.length == 0) {
+            return 0;
+        }
+        Long count = currentSession().createQuery(
+                "select count(evaluation.id) from EvalEvaluation evaluation where evaluation.id in (:evaluationIds)",
+                Long.class)
+                .setParameterList("evaluationIds", evaluationIds)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public int countEvaluationById(Long evaluationId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(evaluation.id) from EvalEvaluation evaluation where evaluation.id = :evaluationId",
+                Long.class)
+                .setParameter("evaluationId", evaluationId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalEvaluation getEvaluationByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalEvaluation> evaluations = currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation where evaluation.eid = :eid",
+                EvalEvaluation.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return evaluations.isEmpty() ? null : evaluations.get(0);
+    }
+
+    public int countTemplateById(Long templateId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(template.id) from EvalTemplate template where template.id = :templateId",
+                Long.class)
+                .setParameter("templateId", templateId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public int countEvaluationsByTemplateId(Long templateId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(evaluation.id) from EvalEvaluation evaluation "
+                + "where evaluation.template.id = :templateId "
+                + "and evaluation.state != :partialState "
+                + "and evaluation.state != :deletedState",
+                Long.class)
+                .setParameter("templateId", templateId)
+                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
+                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation "
+                + "where evaluation.template.id = :templateId "
+                + "and evaluation.state != :partialState "
+                + "and evaluation.state != :deletedState",
+                EvalEvaluation.class)
+                .setParameter("templateId", templateId)
+                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
+                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
+                .list();
+    }
+
+    public List<EvalEvaluation> getEvaluationsByTermId(String termId) {
+        if (termId == null) {
+            throw new IllegalArgumentException("termId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation "
+                + "where evaluation.termId = :termId "
+                + "and evaluation.state != :partialState "
+                + "and evaluation.state != :deletedState",
+                EvalEvaluation.class)
+                .setParameter("termId", termId)
+                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
+                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
+                .list();
+    }
+
+    public List<EvalEvaluation> getEvaluationsByState(String state) {
+        if (state == null) {
+            throw new IllegalArgumentException("state cannot be null");
+        }
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation where evaluation.state = :state",
+                EvalEvaluation.class)
+                .setParameter("state", state)
+                .list();
+    }
+
+    public List<EvalEvaluation> getEvaluationsNotViewableOrDeleted() {
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation "
+                + "where evaluation.state != :viewableState "
+                + "and evaluation.state != :deletedState",
+                EvalEvaluation.class)
+                .setParameter("viewableState", EvalConstants.EVALUATION_STATE_VIEWABLE)
+                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
+                .list();
+    }
+
+    public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory) {
+        if (evalCategory == null) {
+            throw new IllegalArgumentException("evalCategory cannot be null");
+        }
+        return currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation "
+                + "where evaluation.evalCategory = :evalCategory "
+                + "order by evaluation.startDate",
+                EvalEvaluation.class)
+                .setParameter("evalCategory", evalCategory)
+                .list();
+    }
+
+    public EvalAssignUser getAssignUserByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalAssignUser> assignUsers = currentSession().createQuery(
+                "select assignUser from EvalAssignUser assignUser where assignUser.eid = :eid",
+                EvalAssignUser.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return assignUsers.isEmpty() ? null : assignUsers.get(0);
+    }
+
+    public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        StringBuilder hql = new StringBuilder("select count(assignGroup.id) from EvalAssignGroup assignGroup where assignGroup.evaluation.id = :evaluationId");
+        if (!includeUnApproved) {
+            hql.append(" and assignGroup.instructorApproval = true");
+        }
+        Long count = currentSession().createQuery(hql.toString(), Long.class)
+                .setParameter("evaluationId", evaluationId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalAssignGroup getAssignGroupByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalAssignGroup> assignGroups = currentSession().createQuery(
+                "select assignGroup from EvalAssignGroup assignGroup where assignGroup.eid = :eid",
+                EvalAssignGroup.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return assignGroups.isEmpty() ? null : assignGroups.get(0);
+    }
+
+    public int countParticipantsForEval(Long evaluationId, String[] evalGroupIds) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        StringBuilder hql = new StringBuilder(
+                "select count(assignUser.id) from EvalAssignUser assignUser "
+                + "where assignUser.evaluation.id = :evaluationId "
+                + "and assignUser.type = :assignType "
+                + "and assignUser.status != :removedStatus");
+        if (evalGroupIds != null && evalGroupIds.length > 0) {
+            hql.append(" and assignUser.evalGroupId in (:evalGroupIds)");
+        }
+        Query<Long> query = currentSession().createQuery(hql.toString(), Long.class)
+                .setParameter("evaluationId", evaluationId)
+                .setParameter("assignType", EvalAssignUser.TYPE_EVALUATOR)
+                .setParameter("removedStatus", EvalAssignUser.STATUS_REMOVED);
+        if (evalGroupIds != null && evalGroupIds.length > 0) {
+            query.setParameterList("evalGroupIds", evalGroupIds);
+        }
+        Long count = query.uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalAssignGroup> getApprovedAssignGroupsForEvaluation(Long evaluationId, String evalGroupId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        StringBuilder hql = new StringBuilder(
+                "select assignGroup from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id = :evaluationId "
+                + "and assignGroup.instructorApproval = true");
+        if (evalGroupId != null) {
+            hql.append(" and assignGroup.evalGroupId = :evalGroupId");
+        }
+        Query<EvalAssignGroup> query = currentSession().createQuery(hql.toString(), EvalAssignGroup.class)
+                .setParameter("evaluationId", evaluationId);
+        if (evalGroupId != null) {
+            query.setParameter("evalGroupId", evalGroupId);
+        }
+        return query.list();
+    }
+
+    public int countApprovedAssignGroupsForEvaluation(Long evaluationId, String[] evalGroupIds) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        if (evalGroupIds == null || evalGroupIds.length == 0) {
+            return 0;
+        }
+        Long count = currentSession().createQuery(
+                "select count(assignGroup.id) from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id = :evaluationId "
+                + "and assignGroup.instructorApproval = true "
+                + "and assignGroup.evalGroupId in (:evalGroupIds)",
+                Long.class)
+                .setParameter("evaluationId", evaluationId)
+                .setParameterList("evalGroupIds", evalGroupIds)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        if (evalGroupId == null) {
+            throw new IllegalArgumentException("evalGroupId cannot be null");
+        }
+        List<EvalAssignGroup> assignGroups = currentSession().createQuery(
+                "select assignGroup from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id = :evaluationId "
+                + "and assignGroup.evalGroupId = :evalGroupId",
+                EvalAssignGroup.class)
+                .setParameter("evaluationId", evaluationId)
+                .setParameter("evalGroupId", evalGroupId)
+                .setMaxResults(1)
+                .list();
+        return assignGroups.isEmpty() ? null : assignGroups.get(0);
+    }
+
+    public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select assignHierarchy from EvalAssignHierarchy assignHierarchy "
+                + "where assignHierarchy.evaluation.id = :evaluationId "
+                + "and assignHierarchy.nodeId is not null "
+                + "order by assignHierarchy.id",
+                EvalAssignHierarchy.class)
+                .setParameter("evaluationId", evaluationId)
+                .list();
+    }
+
+    public List<EvalAssignGroup> getAssignGroupsForEvals(Long[] evaluationIds, boolean includeUnApproved, Boolean includeHierarchyGroups) {
+        if (evaluationIds == null) {
+            throw new IllegalArgumentException("evaluationIds cannot be null");
+        }
+        if (evaluationIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        StringBuilder hql = new StringBuilder(
+                "select assignGroup from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id in (:evaluationIds)");
+        if (!includeUnApproved) {
+            hql.append(" and assignGroup.instructorApproval = true");
+        }
+        if (includeHierarchyGroups != null) {
+            hql.append(includeHierarchyGroups ? " and assignGroup.nodeId is not null" : " and assignGroup.nodeId is null");
+        }
+        hql.append(" order by assignGroup.evalGroupId");
+        return currentSession().createQuery(hql.toString(), EvalAssignGroup.class)
+                .setParameterList("evaluationIds", evaluationIds)
+                .list();
+    }
+
+    public int countAssignGroupsByEvalAndGroupId(Long evaluationId, String evalGroupId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        if (evalGroupId == null) {
+            throw new IllegalArgumentException("evalGroupId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(assignGroup.id) from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id = :evaluationId "
+                + "and assignGroup.evalGroupId = :evalGroupId",
+                Long.class)
+                .setParameter("evaluationId", evaluationId)
+                .setParameter("evalGroupId", evalGroupId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public void deleteAssignmentsForEvaluation(Long evaluationId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        currentSession().createQuery(
+                "delete from EvalAssignUser assignUser where assignUser.evaluation.id = :evaluationId")
+                .setParameter("evaluationId", evaluationId)
+                .executeUpdate();
+        currentSession().createQuery(
+                "delete from EvalAssignGroup assignGroup where assignGroup.evaluation.id = :evaluationId")
+                .setParameter("evaluationId", evaluationId)
+                .executeUpdate();
+        currentSession().createQuery(
+                "delete from EvalAssignHierarchy assignHierarchy where assignHierarchy.evaluation.id = :evaluationId")
+                .setParameter("evaluationId", evaluationId)
+                .executeUpdate();
+    }
+
+    public void saveAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups) {
+        if (assignHierarchies == null) {
+            throw new IllegalArgumentException("assignHierarchies cannot be null");
+        }
+        if (assignGroups == null) {
+            throw new IllegalArgumentException("assignGroups cannot be null");
+        }
+        for (EvalAssignHierarchy assignHierarchy : assignHierarchies) {
+            if (assignHierarchy != null) {
+                currentSession().saveOrUpdate(assignHierarchy);
+            }
+        }
+        for (EvalAssignGroup assignGroup : assignGroups) {
+            if (assignGroup != null) {
+                currentSession().saveOrUpdate(assignGroup);
+            }
+        }
+    }
+
+    public List<EvalAssignHierarchy> getAssignHierarchiesByIds(Long[] assignHierarchyIds) {
+        if (assignHierarchyIds == null) {
+            throw new IllegalArgumentException("assignHierarchyIds cannot be null");
+        }
+        if (assignHierarchyIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select assignHierarchy from EvalAssignHierarchy assignHierarchy "
+                + "where assignHierarchy.id in (:assignHierarchyIds)",
+                EvalAssignHierarchy.class)
+                .setParameterList("assignHierarchyIds", assignHierarchyIds)
+                .list();
+    }
+
+    public List<EvalAssignGroup> getAssignGroupsByEvalAndNodeIds(Long evaluationId, Set<String> nodeIds) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        if (nodeIds == null) {
+            throw new IllegalArgumentException("nodeIds cannot be null");
+        }
+        if (nodeIds.isEmpty()) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select assignGroup from EvalAssignGroup assignGroup "
+                + "where assignGroup.evaluation.id = :evaluationId "
+                + "and assignGroup.nodeId in (:nodeIds)",
+                EvalAssignGroup.class)
+                .setParameter("evaluationId", evaluationId)
+                .setParameterList("nodeIds", nodeIds)
+                .list();
+    }
+
+    public void deleteAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups) {
+        if (assignHierarchies == null) {
+            throw new IllegalArgumentException("assignHierarchies cannot be null");
+        }
+        if (assignGroups == null) {
+            throw new IllegalArgumentException("assignGroups cannot be null");
+        }
+        for (EvalAssignGroup assignGroup : assignGroups) {
+            if (assignGroup != null) {
+                currentSession().delete(assignGroup);
+            }
+        }
+        for (EvalAssignHierarchy assignHierarchy : assignHierarchies) {
+            if (assignHierarchy != null) {
+                currentSession().delete(assignHierarchy);
+            }
+        }
+    }
+
+    public void saveAssignUsers(Set<EvalAssignUser> assignUsers) {
+        if (assignUsers == null) {
+            throw new IllegalArgumentException("assignUsers cannot be null");
+        }
+        for (EvalAssignUser assignUser : assignUsers) {
+            if (assignUser != null) {
+                currentSession().saveOrUpdate(assignUser);
+            }
+        }
+    }
+
+    public void deleteAssignUsersByIds(Long[] assignUserIds) {
+        if (assignUserIds == null) {
+            throw new IllegalArgumentException("assignUserIds cannot be null");
+        }
+        if (assignUserIds.length == 0) {
+            return;
+        }
+        List<EvalAssignUser> assignUsers = currentSession().createQuery(
+                "select assignUser from EvalAssignUser assignUser where assignUser.id in (:assignUserIds)",
+                EvalAssignUser.class)
+                .setParameterList("assignUserIds", assignUserIds)
+                .list();
+        for (EvalAssignUser assignUser : assignUsers) {
+            currentSession().delete(assignUser);
+        }
+    }
+
+    public int deleteAssignUsersByAssignGroupIdExcludingStatus(Long assignGroupId, String excludedStatus) {
+        if (assignGroupId == null) {
+            throw new IllegalArgumentException("assignGroupId cannot be null");
+        }
+        if (excludedStatus == null) {
+            throw new IllegalArgumentException("excludedStatus cannot be null");
+        }
+        List<EvalAssignUser> assignUsers = currentSession().createQuery(
+                "select assignUser from EvalAssignUser assignUser "
+                + "where assignUser.assignGroupId = :assignGroupId "
+                + "and assignUser.status <> :excludedStatus",
+                EvalAssignUser.class)
+                .setParameter("assignGroupId", assignGroupId)
+                .setParameter("excludedStatus", excludedStatus)
+                .list();
+        for (EvalAssignUser assignUser : assignUsers) {
+            currentSession().delete(assignUser);
+        }
+        return assignUsers.size();
+    }
+
+    public List<EvalResponse> getEvaluationResponsesForUserAndGroup(Long evaluationId, String userId, String evalGroupId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        if (userId == null) {
+            throw new IllegalArgumentException("userId cannot be null");
+        }
+        if (evalGroupId == null) {
+            throw new IllegalArgumentException("evalGroupId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select response from EvalResponse response "
+                + "where response.owner = :userId "
+                + "and response.evaluation.id = :evaluationId "
+                + "and response.evalGroupId = :evalGroupId",
+                EvalResponse.class)
+                .setParameter("userId", userId)
+                .setParameter("evaluationId", evaluationId)
+                .setParameter("evalGroupId", evalGroupId)
+                .list();
+    }
+
+    public List<EvalResponse> getEvaluationResponsesForUser(Long[] evaluationIds, String ownerUserId, Boolean completed) {
+        if (evaluationIds == null) {
+            throw new IllegalArgumentException("evaluationIds cannot be null");
+        }
+        if (evaluationIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        StringBuilder hql = new StringBuilder("select response from EvalResponse response where response.evaluation.id in (:evaluationIds)");
+        if (ownerUserId != null) {
+            hql.append(" and response.owner = :ownerUserId");
+        }
+        appendResponseCompletedClause(hql, completed);
+        hql.append(" order by response.id");
+
+        Query<EvalResponse> query = currentSession().createQuery(hql.toString(), EvalResponse.class)
+                .setParameterList("evaluationIds", evaluationIds);
+        if (ownerUserId != null) {
+            query.setParameter("ownerUserId", ownerUserId);
+        }
+        return query.list();
+    }
+
+    public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        StringBuilder hql = new StringBuilder("select count(response.id) from EvalResponse response where response.evaluation.id = :evaluationId");
+        if (evalGroupId != null) {
+            hql.append(" and response.evalGroupId = :evalGroupId");
+        }
+        appendResponseCompletedClause(hql, completed);
+
+        Query<Long> query = currentSession().createQuery(hql.toString(), Long.class)
+                .setParameter("evaluationId", evaluationId);
+        if (evalGroupId != null) {
+            query.setParameter("evalGroupId", evalGroupId);
+        }
+        Long count = query.uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("evaluationId cannot be null");
+        }
+        StringBuilder hql = new StringBuilder("select response from EvalResponse response where response.evaluation.id = :evaluationId");
+        boolean restrictGroups = evalGroupIds != null && evalGroupIds.length > 0;
+        if (restrictGroups) {
+            hql.append(" and response.evalGroupId in (:evalGroupIds)");
+        }
+        appendResponseCompletedClause(hql, completed);
+        hql.append(" order by response.id");
+
+        Query<EvalResponse> query = currentSession().createQuery(hql.toString(), EvalResponse.class)
+                .setParameter("evaluationId", evaluationId);
+        if (restrictGroups) {
+            query.setParameterList("evalGroupIds", evalGroupIds);
+        }
+        return query.list();
+    }
+
+    public List<EvalResponse> getEvaluationResponses(Long[] evaluationIds, String ownerUserId, String[] evalGroupIds, Boolean completed) {
+        StringBuilder hql = new StringBuilder("select response from EvalResponse response");
+        Query<EvalResponse> query = buildEvaluationResponsesQuery(hql, evaluationIds, ownerUserId, evalGroupIds, completed, EvalResponse.class);
+        return query.list();
+    }
+
+    public int countEvaluationResponses(Long[] evaluationIds, String ownerUserId, String[] evalGroupIds, Boolean completed) {
+        StringBuilder hql = new StringBuilder("select count(response.id) from EvalResponse response");
+        Query<Long> query = buildEvaluationResponsesQuery(hql, evaluationIds, ownerUserId, evalGroupIds, completed, Long.class);
+        Long count = query.uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    private <T> Query<T> buildEvaluationResponsesQuery(StringBuilder hql, Long[] evaluationIds, String ownerUserId,
+            String[] evalGroupIds, Boolean completed, Class<T> resultClass) {
+        if (evaluationIds == null || evaluationIds.length == 0) {
+            throw new IllegalArgumentException("evaluationIds cannot be null or empty");
+        }
+
+        hql.append(" where response.evaluation.id in (:evaluationIds)");
+        if (ownerUserId != null && ownerUserId.length() > 0) {
+            hql.append(" and response.owner = :ownerUserId");
+        }
+        boolean restrictGroups = evalGroupIds != null && evalGroupIds.length > 0;
+        if (restrictGroups) {
+            hql.append(" and response.evalGroupId in (:evalGroupIds)");
+        }
+        appendResponseCompletedClause(hql, completed);
+
+        Query<T> query = currentSession().createQuery(hql.toString(), resultClass)
+                .setParameterList("evaluationIds", evaluationIds);
+        if (ownerUserId != null && ownerUserId.length() > 0) {
+            query.setParameter("ownerUserId", ownerUserId);
+        }
+        if (restrictGroups) {
+            query.setParameterList("evalGroupIds", evalGroupIds);
+        }
+        return query;
+    }
+
+    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers) {
+        if (response == null) {
+            throw new IllegalArgumentException("response cannot be null");
+        }
+        currentSession().saveOrUpdate(response);
+        if (answers != null && !answers.isEmpty()) {
+            for (EvalAnswer answer : answers) {
+                if (answer != null) {
+                    currentSession().saveOrUpdate(answer);
+                }
+            }
+        }
+    }
+
+    public List<EvalTemplateItem> getTemplateItemsByHierarchyNodeId(String nodeId) {
+        if (nodeId == null) {
+            throw new IllegalArgumentException("nodeId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem where templateItem.hierarchyNodeId = :nodeId",
+                EvalTemplateItem.class)
+                .setParameter("nodeId", nodeId)
+                .list();
+    }
+
+    public EvalTemplate getTemplateByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalTemplate> templates = currentSession().createQuery(
+                "select template from EvalTemplate template where template.eid = :eid",
+                EvalTemplate.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return templates.isEmpty() ? null : templates.get(0);
+    }
+
+    public List<EvalScale> getScalesForUser(String userId, String[] sharingConstants) {
+        StringBuilder hql = new StringBuilder(
+                "select scale from EvalScale scale where scale.mode = :mode and scale.hidden = false ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("mode", EvalConstants.SCALE_MODE_SCALE);
+        appendSharingPredicate(hql, "scale", userId, sharingConstants, params);
+        hql.append("order by scale.title");
+
+        Query<EvalScale> query = currentSession().createQuery(hql.toString(), EvalScale.class);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+        return query.list();
+    }
+
+    public List<EvalTemplate> getTemplatesByAutoUseTag(String autoUseTag) {
+        if (autoUseTag == null) {
+            throw new IllegalArgumentException("autoUseTag cannot be null");
+        }
+        return currentSession().createQuery(
+                "select template from EvalTemplate template where template.autoUseTag = :autoUseTag order by template.id",
+                EvalTemplate.class)
+                .setParameter("autoUseTag", autoUseTag)
+                .list();
+    }
+
+    public List<EvalTemplate> getTemplatesForUser(String userId, String[] sharingConstants, boolean includeEmpty) {
+        StringBuilder hql = new StringBuilder(
+                "select template from EvalTemplate template "
+                + "where template.type = :templateType and template.hidden = false ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("templateType", EvalConstants.TEMPLATE_TYPE_STANDARD);
+        appendSharingPredicate(hql, "template", userId, sharingConstants, params);
+        if (!includeEmpty) {
+            hql.append("and template.templateItems.size > 0 ");
+        }
+        hql.append("order by template.sharing, template.title");
+
+        Query<EvalTemplate> query = currentSession().createQuery(hql.toString(), EvalTemplate.class);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+        return query.list();
+    }
+
+    private void appendSharingPredicate(StringBuilder hql, String alias, String userId,
+            String[] sharingConstants, Map<String, Object> params) {
+        if (sharingConstants == null || sharingConstants.length == 0) {
+            throw new IllegalArgumentException("No sharing constants specified, you must specify at least one");
+        }
+        hql.append("and (");
+        for (int i = 0; i < sharingConstants.length; i++) {
+            String sharingConstant = sharingConstants[i];
+            if (i > 0) {
+                hql.append(" or ");
+            }
+            String sharingParam = "sharing" + i;
+            if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)
+                    || EvalConstants.SHARING_OWNER.equals(sharingConstant)) {
+                params.put(sharingParam, EvalConstants.SHARING_PRIVATE);
+                if (userId == null) {
+                    hql.append(alias).append(".sharing = :").append(sharingParam);
+                } else {
+                    hql.append("(").append(alias).append(".sharing = :").append(sharingParam)
+                            .append(" and ").append(alias).append(".owner = :sharingOwner)");
+                    params.put("sharingOwner", userId);
+                }
+            } else {
+                params.put(sharingParam, sharingConstant);
+                hql.append(alias).append(".sharing = :").append(sharingParam);
+            }
+        }
+        hql.append(") ");
+    }
+
+    public EvalTemplateItem getTemplateItemByEid(String eid) {
+        if (eid == null) {
+            throw new IllegalArgumentException("eid cannot be null");
+        }
+        List<EvalTemplateItem> templateItems = currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem where templateItem.eid = :eid",
+                EvalTemplateItem.class)
+                .setParameter("eid", eid)
+                .setMaxResults(1)
+                .list();
+        return templateItems.isEmpty() ? null : templateItems.get(0);
+    }
+
+    public List<EvalTemplateItem> getTemplateItemsByAutoUseTag(String autoUseTag) {
+        if (autoUseTag == null) {
+            throw new IllegalArgumentException("autoUseTag cannot be null");
+        }
+        return currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem "
+                + "where templateItem.autoUseTag = :autoUseTag order by templateItem.displayOrder, templateItem.id",
+                EvalTemplateItem.class)
+                .setParameter("autoUseTag", autoUseTag)
+                .list();
+    }
+
+    public List<EvalTemplateItem> getTemplateItemsByIds(Long[] templateItemIds) {
+        if (templateItemIds == null) {
+            throw new IllegalArgumentException("templateItemIds cannot be null");
+        }
+        if (templateItemIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem where templateItem.id in (:templateItemIds)",
+                EvalTemplateItem.class)
+                .setParameterList("templateItemIds", templateItemIds)
+                .list();
+    }
+
+    public List<EvalTemplate> getTemplatesUsingItem(Long itemId) {
+        if (itemId == null) {
+            throw new IllegalArgumentException("itemId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select distinct templateItem.template from EvalTemplateItem templateItem "
+                + "where templateItem.item.id = :itemId",
+                EvalTemplate.class)
+                .setParameter("itemId", itemId)
+                .list();
+    }
+
+    public List<EvalTemplateItem> getOrphanedTemplateItems() {
+        return currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem "
+                + "where templateItem.template is null and templateItem.item is null",
+                EvalTemplateItem.class)
+                .list();
+    }
+
+    public int countTopLevelTemplateItems(Long templateId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(templateItem.id) from EvalTemplateItem templateItem "
+                + "where templateItem.template.id = :templateId and templateItem.blockId is null",
+                Long.class)
+                .setParameter("templateId", templateId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public int countBlockChildTemplateItems(Long templateId, Long blockId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        if (blockId == null) {
+            throw new IllegalArgumentException("blockId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(templateItem.id) from EvalTemplateItem templateItem "
+                + "where templateItem.template.id = :templateId and templateItem.blockId = :blockId",
+                Long.class)
+                .setParameter("templateId", templateId)
+                .setParameter("blockId", blockId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalTemplateItem> getBlockChildTemplateItems(Long blockParentId) {
+        if (blockParentId == null) {
+            throw new IllegalArgumentException("blockParentId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select templateItem from EvalTemplateItem templateItem "
+                + "where templateItem.blockId = :blockParentId order by templateItem.displayOrder",
+                EvalTemplateItem.class)
+                .setParameter("blockParentId", blockParentId)
+                .list();
+    }
+
+    public void saveTemplateItemWithLinks(EvalTemplateItem templateItem, EvalItem item, EvalTemplate template) {
+        if (templateItem == null) {
+            throw new IllegalArgumentException("templateItem cannot be null");
+        }
+        currentSession().saveOrUpdate(templateItem);
+        if (item != null) {
+            currentSession().saveOrUpdate(item);
+        }
+        if (template != null) {
+            currentSession().saveOrUpdate(template);
+        }
+    }
+
+    public int countEvaluationsByTitle(String titlePattern) {
+        if (titlePattern == null) {
+            throw new IllegalArgumentException("titlePattern cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(evaluation.id) from EvalEvaluation evaluation where evaluation.title like :titlePattern",
+                Long.class)
+                .setParameter("titlePattern", titlePattern)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    public List<EvalEvaluation> getEvaluationsByTitle(String titlePattern, String orderProperty, int startResult, int maxResults) {
+        if (titlePattern == null) {
+            throw new IllegalArgumentException("titlePattern cannot be null");
+        }
+        String orderBy = getEvaluationOrderProperty(orderProperty);
+        Query<EvalEvaluation> query = currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation "
+                + "where evaluation.title like :titlePattern "
+                + "order by evaluation." + orderBy,
+                EvalEvaluation.class)
+                .setParameter("titlePattern", titlePattern);
+        if (startResult > 0) {
+            query.setFirstResult(startResult);
+        }
+        if (maxResults > 0) {
+            query.setMaxResults(maxResults);
+        }
+        return query.list();
+    }
+
+    private String getEvaluationOrderProperty(String orderProperty) {
+        if (orderProperty == null || orderProperty.isEmpty()) {
+            return "title";
+        }
+        switch (orderProperty) {
+            case "id":
+            case "title":
+            case "owner":
+            case "state":
+            case "startDate":
+            case "dueDate":
+            case "stopDate":
+            case "viewDate":
+            case "lastModified":
+                return orderProperty;
+            default:
+                throw new IllegalArgumentException("Unsupported evaluation order property: " + orderProperty);
+        }
+    }
+
+    public void saveTemplateItems(Set<EvalTemplateItem> templateItems) {
+        if (templateItems == null || templateItems.isEmpty()) {
+            return;
+        }
+        for (EvalTemplateItem templateItem : templateItems) {
+            if (templateItem != null) {
+                currentSession().saveOrUpdate(templateItem);
+            }
+        }
+    }
+
+    public List<EvalGroupNodes> getEvalGroupNodesByNodeIds(String[] nodeIds) {
+        if (nodeIds == null) {
+            throw new IllegalArgumentException("nodeIds cannot be null");
+        }
+        if (nodeIds.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select groupNode from EvalGroupNodes groupNode where groupNode.nodeId in (:nodeIds) order by groupNode.id",
+                EvalGroupNodes.class)
+                .setParameterList("nodeIds", nodeIds)
+                .list();
+    }
+
+    private void appendResponseCompletedClause(StringBuilder hql, Boolean completed) {
+        if (completed != null) {
+            hql.append(completed ? " and response.endTime is not null" : " and response.endTime is null");
+        }
+    }
+
+    public List<EvalAdmin> getAllEvalAdmins() {
+        return currentSession().createQuery(
+                "select ea from EvalAdmin ea",
+                EvalAdmin.class)
+                .list();
+    }
+
+    public EvalAdmin getEvalAdminByUserId(String userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId cannot be null");
+        }
+        List<EvalAdmin> admins = currentSession().createQuery(
+                "select ea from EvalAdmin ea where ea.userId = :userId",
+                EvalAdmin.class)
+                .setParameter("userId", userId)
+                .setMaxResults(1)
+                .list();
+        return admins.isEmpty() ? null : admins.get(0);
+    }
+
+    public List<EvalHierarchyRule> getAllHierarchyRules() {
+        return currentSession().createQuery(
+                "select rule from EvalHierarchyRule rule",
+                EvalHierarchyRule.class)
+                .list();
+    }
+
+    public EvalHierarchyRule getHierarchyRuleById(Long ruleId) {
+        if (ruleId == null) {
+            throw new IllegalArgumentException("ruleId cannot be null");
+        }
+        List<EvalHierarchyRule> rules = currentSession().createQuery(
+                "select rule from EvalHierarchyRule rule where rule.id = :ruleId",
+                EvalHierarchyRule.class)
+                .setParameter("ruleId", ruleId)
+                .setMaxResults(1)
+                .list();
+        return rules.isEmpty() ? null : rules.get(0);
+    }
+
+    public List<EvalHierarchyRule> getHierarchyRulesByNodeId(Long nodeId) {
+        if (nodeId == null) {
+            throw new IllegalArgumentException("nodeId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select rule from EvalHierarchyRule rule where rule.nodeID = :nodeId",
+                EvalHierarchyRule.class)
+                .setParameter("nodeId", nodeId)
+                .list();
+    }
+
+    public void deleteHierarchyRules(Set<EvalHierarchyRule> rules) {
+        if (rules == null || rules.isEmpty()) {
+            return;
+        }
+        for (EvalHierarchyRule rule : rules) {
+            if (rule != null) {
+                currentSession().delete(rule);
+            }
+        }
+    }
+
+    public EvalAdhocUser getAdhocUserByUsername(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("username cannot be null");
+        }
+        List<EvalAdhocUser> users = currentSession().createQuery(
+                "select adhocUser from EvalAdhocUser adhocUser where adhocUser.username = :username",
+                EvalAdhocUser.class)
+                .setParameter("username", username)
+                .setMaxResults(1)
+                .list();
+        return users.isEmpty() ? null : users.get(0);
+    }
+
+    public EvalAdhocUser getAdhocUserByEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("email cannot be null");
+        }
+        List<EvalAdhocUser> users = currentSession().createQuery(
+                "select adhocUser from EvalAdhocUser adhocUser where adhocUser.email = :email",
+                EvalAdhocUser.class)
+                .setParameter("email", email)
+                .setMaxResults(1)
+                .list();
+        return users.isEmpty() ? null : users.get(0);
+    }
+
+    public List<EvalAdhocUser> getAllAdhocUsers() {
+        return currentSession().createQuery(
+                "select adhocUser from EvalAdhocUser adhocUser",
+                EvalAdhocUser.class)
+                .list();
+    }
+
+    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids) {
+        if (ids == null) {
+            throw new IllegalArgumentException("ids cannot be null");
+        }
+        if (ids.length == 0) {
+            return new ArrayList<>(0);
+        }
+        return currentSession().createQuery(
+                "select adhocUser from EvalAdhocUser adhocUser where adhocUser.id in (:ids)",
+                EvalAdhocUser.class)
+                .setParameterList("ids", ids)
+                .list();
+    }
+
+    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId cannot be null");
+        }
+        return currentSession().createQuery(
+                "select grp from EvalAdhocGroup grp where grp.owner = :userId order by grp.title",
+                EvalAdhocGroup.class)
+                .setParameter("userId", userId)
+                .list();
     }
 
     /**
@@ -545,11 +2069,17 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
 
-            Search search = new Search("evalGroupId", evalGroupIds);
+            StringBuilder assignGroupHql = new StringBuilder(
+                    "select assignGroup from EvalAssignGroup assignGroup where assignGroup.evalGroupId in (:evalGroupIds)");
             if (approvedOnly != null) {
-                search.addRestriction( new Restriction("instructorApproval", approvedOnly) );
+                assignGroupHql.append(" and assignGroup.instructorApproval = :instructorApproval");
             }
-            List<EvalAssignGroup> eags = findBySearch(EvalAssignGroup.class, search);
+            Query<EvalAssignGroup> assignGroupQuery = currentSession().createQuery(assignGroupHql.toString(), EvalAssignGroup.class)
+                    .setParameterList("evalGroupIds", evalGroupIds);
+            if (approvedOnly != null) {
+                assignGroupQuery.setParameter("instructorApproval", approvedOnly);
+            }
+            List<EvalAssignGroup> eags = assignGroupQuery.list();
             for (EvalAssignGroup evalAssignGroup : eags) {
                 Long evalId = evalAssignGroup.getEvaluation().getId();
                 if (! evalToAGList.containsKey(evalId)) {
@@ -912,32 +2442,27 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
     public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty,
             boolean includeExpert) {
 
-        DetachedCriteria dc = DetachedCriteria.forClass(EvalItemGroup.class).add(
-                Expression.eq("expert", includeExpert));
+        StringBuilder hql = new StringBuilder("select eig from EvalItemGroup eig where eig.expert = :includeExpert");
+        Map<String, Object> params = new HashMap<>();
+        params.put("includeExpert", includeExpert);
 
         if (parentItemGroupId == null) {
-            dc.add(Expression.isNull("parent"));
+            hql.append(" and eig.parent is null");
         } else {
-            dc.add(Property.forName("parent.id").eq(parentItemGroupId));
+            hql.append(" and eig.parent.id = :parentItemGroupId");
+            params.put("parentItemGroupId", parentItemGroupId);
         }
 
         if (!includeEmpty) {
-            String hqlQuery = "select distinct eig.parent.id from EvalItemGroup eig where eig.parent is not null";
-            List<?> parentIds = getHibernateTemplate().find(hqlQuery);
-
             // only include categories with items OR groups using them as a parent
-            dc.add(Restrictions.disjunction().add(Property.forName("groupItems").isNotEmpty()).add(
-                    Property.forName("id").in(parentIds)));
+            hql.append(" and (size(eig.groupItems) > 0");
+            hql.append(" or exists (select child.id from EvalItemGroup child where child.parent = eig))");
         }
 
-        dc.addOrder(Order.asc("title"));
-
-        List<?> things = getHibernateTemplate().findByCriteria(dc);
-        List<EvalItemGroup> results = new ArrayList<>();
-        for (Object object : things) {
-            results.add((EvalItemGroup) object);
-        }
-        return results;
+        hql.append(" order by eig.title asc");
+        Query<EvalItemGroup> query = currentSession().createQuery(hql.toString(), EvalItemGroup.class);
+        setParameters(query, params);
+        return query.list();
     }
 
     /**
@@ -1437,10 +2962,12 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
                 return false;
             } else {
                 // unlock scale (if not locked elsewhere)
-                DetachedCriteria dc = DetachedCriteria.forClass(EvalItem.class).add(
-                        Restrictions.eq("locked", Boolean.TRUE)).add(Restrictions.eq("scale.id", scale.getId()))
-                        .setProjection(Projections.rowCount());
-                if (((Long) getHibernateTemplate().findByCriteria(dc).get(0)).intValue() > 0) {
+                Long lockedItemCount = currentSession().createQuery(
+                                "select count(item.id) from EvalItem item where item.locked = true and item.scale.id = :scaleId",
+                                Long.class)
+                        .setParameter("scaleId", scale.getId())
+                        .uniqueResult();
+                if (lockedItemCount != null && lockedItemCount > 0) {
                     // this is locked by something, we cannot unlock it
                     log.info("Cannot unlock scale (" + scale.getId() + "), it is locked elsewhere");
                     return false;
@@ -1724,7 +3251,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         Boolean obtainedLock;
         try {
             // check the lock
-            List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
+            List<EvalLock> locks = getLocksByName(lockId);
             if (locks.size() > 0) {
                 // check if this is my lock, if not, then exit, if so then go ahead
                 EvalLock lock = locks.get(0);
@@ -1790,7 +3317,7 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         Boolean releasedLock = false;
         try {
             // check the lock
-            List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
+            List<EvalLock> locks = getLocksByName(lockId);
             if (locks.size() > 0) {
                 // check if this is my lock, if not, then exit, if so then go ahead
                 EvalLock lock = locks.get(0);
@@ -2071,12 +3598,20 @@ public class EvaluationDaoImpl extends HibernateGeneralGenericDao implements Eva
         getHibernateTemplate().clear(); // cancel any pending operations
         // try to clear the lock if things died
         try {
-            List<EvalLock> locks = findBySearch(EvalLock.class, new Search("name", lockId) );
+            List<EvalLock> locks = getLocksByName(lockId);
             getHibernateTemplate().deleteAll(locks);
             getHibernateTemplate().flush();
         } catch (Exception ex) {
             log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
         }
+    }
+
+    private List<EvalLock> getLocksByName(String lockId) {
+        return currentSession().createQuery(
+                "select lock from EvalLock lock where lock.name = :lockId",
+                EvalLock.class)
+                .setParameter("lockId", lockId)
+                .list();
     }
 
 }

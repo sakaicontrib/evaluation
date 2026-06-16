@@ -31,7 +31,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.genericdao.api.search.Search;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -2811,7 +2810,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      List<EvalTemplateItem> templateItems = evaluationDao.findBySearch(EvalTemplateItem.class, new Search("id", copiedIds) );
+      List<EvalTemplateItem> templateItems = evaluationDao.getTemplateItemsByIds(copiedIds);
       Assert.assertNotNull(templateItems);
       Assert.assertEquals(templateItemIds.length, templateItems.size());
 
@@ -2999,6 +2998,58 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
       }
+   }
+
+   @Test
+   public void testCopyTemplateWithBlockItemsRemapsCopiedChildren() {
+      Long copiedId = authoringService.copyTemplate(etdl.templateAdminBlock.getId(), "copy block template",
+            EvalTestDataLoad.ADMIN_USER_ID, true, true);
+      Assert.assertNotNull(copiedId);
+
+      List<EvalTemplateItem> copiedItems = authoringService.getTemplateItemsForTemplate(copiedId, null, null, null);
+      Assert.assertNotNull(copiedItems);
+      Assert.assertEquals(3, copiedItems.size());
+
+      EvalTemplateItem copiedParent = null;
+      List<EvalTemplateItem> copiedChildren = new ArrayList<>();
+      for (EvalTemplateItem copiedItem : copiedItems) {
+         Assert.assertEquals(copiedId, copiedItem.getTemplate().getId());
+         Assert.assertEquals(EvalTestDataLoad.ADMIN_USER_ID, copiedItem.getOwner());
+         Assert.assertTrue(copiedItem.isHidden());
+         Assert.assertNotNull(copiedItem.getCopyOf());
+         Assert.assertNotNull(copiedItem.getItem());
+         Assert.assertNotNull(copiedItem.getItem().getCopyOf());
+
+         if (copiedItem.getBlockParent()) {
+            copiedParent = copiedItem;
+         } else {
+            copiedChildren.add(copiedItem);
+         }
+      }
+
+      Assert.assertNotNull(copiedParent);
+      Assert.assertEquals(etdl.templateItem9B.getId(), copiedParent.getCopyOf());
+      Assert.assertNull(copiedParent.getBlockId());
+      Assert.assertEquals(etdl.item9.getId(), copiedParent.getItem().getCopyOf());
+
+      Assert.assertEquals(2, copiedChildren.size());
+      for (EvalTemplateItem copiedChild : copiedChildren) {
+         Assert.assertEquals(Boolean.FALSE, copiedChild.getBlockParent());
+         Assert.assertEquals(copiedParent.getId(), copiedChild.getBlockId());
+         Assert.assertFalse(etdl.templateItem9B.getId().equals(copiedChild.getBlockId()));
+         Assert.assertTrue(etdl.templateItem2B.getId().equals(copiedChild.getCopyOf())
+               || etdl.templateItem3B.getId().equals(copiedChild.getCopyOf()));
+         Assert.assertTrue(etdl.item2.getId().equals(copiedChild.getItem().getCopyOf())
+               || etdl.item3.getId().equals(copiedChild.getItem().getCopyOf()));
+      }
+
+      List<EvalTemplateItem> copiedBlockItems =
+            authoringService.getBlockChildTemplateItemsForBlockParent(copiedParent.getId(), true);
+      Assert.assertNotNull(copiedBlockItems);
+      Assert.assertEquals(3, copiedBlockItems.size());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(0).getId());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(1).getBlockId());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(2).getBlockId());
    }
 
 

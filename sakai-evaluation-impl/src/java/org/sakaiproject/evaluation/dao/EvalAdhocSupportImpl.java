@@ -23,9 +23,6 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
-import org.sakaiproject.genericdao.api.search.Order;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -84,10 +81,8 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    public EvalAdhocUser getAdhocUserByUsername(String username) {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
-         List<EvalAdhocUser> users = dao.findBySearch(EvalAdhocUser.class,
-                 new Search("username", username) );
-         if (users.size() > 0) {
-            user = users.get(0);
+         if (username != null) {
+            user = dao.getAdhocUserByUsername(username);
          }
       }
       return user;      
@@ -102,10 +97,8 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    public EvalAdhocUser getAdhocUserByEmail(String email) {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
-         List<EvalAdhocUser> users = dao.findBySearch(EvalAdhocUser.class, 
-                 new Search("email", email) );
-         if (users.size() > 0) {
-            user = users.get(0);
+         if (email != null) {
+            user = dao.getAdhocUserByEmail(email);
          }
       }
       return user;      
@@ -152,10 +145,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       List<EvalAdhocUser> users = new ArrayList<>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (ids == null) {
-            users = dao.findAll(EvalAdhocUser.class);
+            users = dao.getAllAdhocUsers();
          } else {
             if (ids.length > 0) {
-               users = dao.findBySearch(EvalAdhocUser.class, new Search("id", ids) );
+               users = dao.getAdhocUsersByIds(ids);
             }
          }
       }
@@ -305,9 +298,9 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
       List<EvalAdhocGroup> groups = new ArrayList<>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
-         groups = dao.findBySearch(EvalAdhocGroup.class, new Search(
-                 new Restriction("owner", userId), 
-                 new Order("title") ) );
+         if (userId != null) {
+            groups = dao.getAdhocGroupsForOwner(userId);
+         }
       }
       return groups;
    }

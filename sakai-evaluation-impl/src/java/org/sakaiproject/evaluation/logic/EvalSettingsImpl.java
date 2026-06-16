@@ -24,7 +24,6 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
-import org.sakaiproject.genericdao.api.search.Search;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +63,7 @@ public class EvalSettingsImpl implements EvalSettings {
         booleanSettings.addAll( Arrays.asList( BOOLEAN_SETTINGS ) );
 
         // count the current config settings
-        int count = dao.countAll(EvalConfig.class);
+        int count = dao.countEvalConfigs();
         if (count > 0) {
             log.info("Updating boolean only evaluation system settings to ensure they are not null...");
             // check the existing boolean settings for null values and fix them if they are null
@@ -178,10 +177,9 @@ public class EvalSettingsImpl implements EvalSettings {
             }
         }
         if (! found) {
-            List<EvalConfig> l = dao.findBySearch(EvalConfig.class, 
-                    new Search("name", name) );
-            if (l.size() > 0) {
-                config = (EvalConfig) l.get(0);
+            config = dao.getEvalConfigByName(name);
+            if (config != null) {
+                log.debug("Found admin setting for this constant:" + name);
             } else {
                 log.debug("No admin setting for this constant:" + name);
             }
@@ -210,7 +208,7 @@ public class EvalSettingsImpl implements EvalSettings {
             // clear out cache
             configCache.clear();
             // reload all cache items
-            List<EvalConfig> l = dao.findAll(EvalConfig.class);
+            List<EvalConfig> l = dao.getAllEvalConfigs();
             for (EvalConfig config : l) {
                 // copy the values to avoid putting persistent objects in the cache
                 config = new EvalConfig(config.getName(), config.getValue());

@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,23 +22,38 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalAdmin;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
+import org.sakaiproject.evaluation.model.EvalConfig;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalGroupNodes;
+import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.genericdao.api.GeneralGenericDao;
 
 /**
  * Do NOT use this class outside the LOGIC layer
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public interface EvaluationDao extends GeneralGenericDao {
+public interface EvaluationDao {
+
+    public static final int COMPARE_EQUALS = 0;
+    public static final int COMPARE_GREATER = 1;
+    public static final int COMPARE_LESS = 2;
+    public static final int COMPARE_LIKE = 3;
+    public static final int COMPARE_NULL = 4;
+    public static final int COMPARE_NOT_NULL = 5;
+    public static final int COMPARE_NOT_EQUALS = 6;
 
     /**
      * Cause an immediate commit of the current transaction
@@ -54,6 +70,826 @@ public interface EvaluationDao extends GeneralGenericDao {
      * and will apply any fixes that it can 
      */
     public void fixupDatabase();
+
+    /**
+     * Find a persisted entity by id.
+     *
+     * @param type entity class
+     * @param id persistent id
+     * @return matching entity, or null when none exists
+     */
+    public <T> T findById(Class<T> type, Serializable id);
+
+    /**
+     * Load all persisted entities of a type.
+     *
+     * @param type entity class
+     * @return matching entities
+     */
+    public <T> List<T> findAll(Class<T> type);
+
+    /**
+     * Count all persisted entities of a type.
+     *
+     * @param type entity class
+     * @return matching entity count
+     */
+    public <T> int countAll(Class<T> type);
+
+    /**
+     * Persist a new entity.
+     *
+     * @param object entity to persist
+     */
+    public void create(Object object);
+
+    /**
+     * Save a new or changed entity.
+     *
+     * @param object entity to save
+     */
+    public void save(Object object);
+
+    /**
+     * Update a persistent entity.
+     *
+     * @param object entity to update
+     */
+    public void update(Object object);
+
+    /**
+     * Delete a persistent entity.
+     *
+     * @param object entity to delete
+     */
+    public void delete(Object object);
+
+    /**
+     * Delete a persistent entity by type and id.
+     *
+     * @param entityClass entity class
+     * @param id persistent id
+     * @return true when an entity was deleted
+     */
+    public <T> boolean delete(Class<T> entityClass, Serializable id);
+
+    /**
+     * Count persisted evaluation system configuration values.
+     *
+     * @return the number of stored {@link EvalConfig} rows
+     */
+    public int countEvalConfigs();
+
+    /**
+     * Find a single evaluation system configuration value by its unique name.
+     *
+     * @param name the config name
+     * @return the matching config, or null if it does not exist
+     */
+    public EvalConfig getEvalConfigByName(String name);
+
+    /**
+     * Load all persisted evaluation system configuration values.
+     *
+     * @return all stored configs
+     */
+    public List<EvalConfig> getAllEvalConfigs();
+
+    /**
+     * Count persisted configuration values whose names are in the supplied list.
+     *
+     * @param names config names
+     * @return number of matching config rows
+     */
+    public int countEvalConfigsByNames(String[] names);
+
+    /**
+     * Count persisted evaluation email templates with a non-null default type.
+     *
+     * @return number of default email-template rows
+     */
+    public int countDefaultEmailTemplates();
+
+    /**
+     * Load persisted evaluation email templates with a non-null default type.
+     *
+     * @return default email templates
+     */
+    public List<EvalEmailTemplate> getDefaultEmailTemplates();
+
+    /**
+     * Load evaluation email templates using the filters exposed by the service API.
+     *
+     * @param ownerUserId optional owner user id; null returns templates for all owners
+     * @param emailTemplateType optional template type
+     * @param includeDefaultsOnly optional default-template filter; true returns defaults,
+     * false returns non-defaults, null returns both
+     * @return matching email templates
+     */
+    public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly);
+
+    /**
+     * Find the default evaluation email template for a template type.
+     *
+     * @param emailTemplateType template type/default type
+     * @return the matching default email template, or null if none exists
+     */
+    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateType);
+
+    /**
+     * Find an evaluation email template by external id.
+     *
+     * @param eid external id
+     * @return the matching template, or null if none exists
+     */
+    public EvalEmailTemplate getEmailTemplateByEid(String eid);
+
+    /**
+     * Load evaluations that reference an email template in one of the evaluation
+     * email-template slots.
+     *
+     * @param emailTemplateId email template id
+     * @param emailTemplateType one of the evaluation email template constants
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType);
+
+    /**
+     * Count evaluations that reference an email template in one of the evaluation
+     * email-template slots.
+     *
+     * @param emailTemplateId email template id
+     * @param emailTemplateType one of the evaluation email template constants
+     * @return matching evaluation count
+     */
+    public int countEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType);
+
+    /**
+     * Delete evaluation email templates as a batch.
+     *
+     * @param emailTemplates email templates to delete
+     */
+    public void deleteEmailTemplates(Set<EvalEmailTemplate> emailTemplates);
+
+    /**
+     * Count persisted evaluation scales.
+     *
+     * @return scale count
+     */
+    public int countEvalScales();
+
+    /**
+     * Find an evaluation scale by external id.
+     *
+     * @param eid external id
+     * @return the matching scale, or null if none exists
+     */
+    public EvalScale getScaleByEid(String eid);
+
+    /**
+     * Load evaluation scales by persistent ids.
+     *
+     * @param scaleIds scale ids
+     * @return matching scales
+     */
+    public List<EvalScale> getScalesByIds(Long[] scaleIds);
+
+    /**
+     * Load evaluation scales whose mode has not been initialized.
+     *
+     * @return scales with a null mode
+     */
+    public List<EvalScale> getScalesWithNullMode();
+
+    /**
+     * Save or update evaluation scales as a batch.
+     *
+     * @param scales scales to save
+     */
+    public void saveScales(Set<EvalScale> scales);
+
+    /**
+     * Delete evaluation scales as a batch.
+     *
+     * @param scales scales to delete
+     */
+    public void deleteScales(Set<EvalScale> scales);
+
+    /**
+     * Count persisted evaluation items.
+     *
+     * @return item count
+     */
+    public int countEvalItems();
+
+    /**
+     * Find an evaluation item by external id.
+     *
+     * @param eid external id
+     * @return the matching item, or null if none exists
+     */
+    public EvalItem getItemByEid(String eid);
+
+    /**
+     * Load evaluation items with an auto-use tag, ordered by id.
+     *
+     * @param autoUseTag auto-use tag
+     * @return matching items
+     */
+    public List<EvalItem> getItemsByAutoUseTag(String autoUseTag);
+
+    /**
+     * Load visible evaluation items available to a user for the supplied sharing scope.
+     *
+     * @param userId owner user id for private items; null includes all private items
+     * @param sharingConstants sharing constants to include
+     * @param filter optional text filter
+     * @param includeExpert true to include expert items
+     * @return matching items ordered by id
+     */
+    public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert);
+
+    /**
+     * Load evaluation items by persistent ids.
+     *
+     * @param itemIds item ids
+     * @return matching items
+     */
+    public List<EvalItem> getItemsByIds(Long[] itemIds);
+
+    /**
+     * Load evaluation items that use a scale.
+     *
+     * @param scaleId scale id
+     * @return matching items
+     */
+    public List<EvalItem> getItemsUsingScale(Long scaleId);
+
+    /**
+     * Save or update evaluation items as a batch.
+     *
+     * @param items items to save
+     */
+    public void saveItems(Set<EvalItem> items);
+
+    /**
+     * Delete evaluation items as a batch.
+     *
+     * @param items items to delete
+     */
+    public void deleteItems(Set<EvalItem> items);
+
+    /**
+     * Count persisted evaluation item groups.
+     *
+     * @return item group count
+     */
+    public int countEvalItemGroups();
+
+    /**
+     * Find an evaluation item group by title.
+     *
+     * @param title item group title
+     * @return the matching item group, or null if none exists
+     */
+    public EvalItemGroup getItemGroupByTitle(String title);
+
+    /**
+     * Count evaluations matching the supplied persistent ids.
+     *
+     * @param evaluationIds evaluation ids
+     * @return number of matching evaluations
+     */
+    public int countEvaluationsByIds(Long[] evaluationIds);
+
+    /**
+     * Count evaluations matching the supplied persistent id.
+     *
+     * @param evaluationId evaluation id
+     * @return 1 if the evaluation exists, otherwise 0
+     */
+    public int countEvaluationById(Long evaluationId);
+
+    /**
+     * Find an evaluation by external id.
+     *
+     * @param eid external id
+     * @return the matching evaluation, or null if none exists
+     */
+    public EvalEvaluation getEvaluationByEid(String eid);
+
+    /**
+     * Count persisted templates by id.
+     *
+     * @param templateId template id
+     * @return 1 if the template exists, otherwise 0
+     */
+    public int countTemplateById(Long templateId);
+
+    /**
+     * Count non-partial, non-deleted evaluations that use a template.
+     *
+     * @param templateId template id
+     * @return matching evaluation count
+     */
+    public int countEvaluationsByTemplateId(Long templateId);
+
+    /**
+     * Load non-partial, non-deleted evaluations that use a template.
+     *
+     * @param templateId template id
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId);
+
+    /**
+     * Load non-partial, non-deleted evaluations for a term.
+     *
+     * @param termId term id
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsByTermId(String termId);
+
+    /**
+     * Load evaluations by state.
+     *
+     * @param state evaluation state
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsByState(String state);
+
+    /**
+     * Load evaluations that are not in terminal viewable/deleted states.
+     *
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsNotViewableOrDeleted();
+
+    /**
+     * Load evaluations for a category ordered by start date.
+     *
+     * @param evalCategory evaluation category
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory);
+
+    /**
+     * Find an assigned user by external id.
+     *
+     * @param eid external id
+     * @return the matching assignment, or null if none exists
+     */
+    public EvalAssignUser getAssignUserByEid(String eid);
+
+    /**
+     * Count groups assigned to an evaluation, optionally requiring instructor approval.
+     *
+     * @param evaluationId evaluation id
+     * @param includeUnApproved true to include unapproved groups
+     * @return matching group count
+     */
+    public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved);
+
+    /**
+     * Find an assigned group by external id.
+     *
+     * @param eid external id
+     * @return the matching assignment, or null if none exists
+     */
+    public EvalAssignGroup getAssignGroupByEid(String eid);
+
+    /**
+     * Count evaluator assignments for an evaluation, optionally constrained to eval groups,
+     * excluding removed assignments.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupIds optional eval group ids
+     * @return matching evaluator assignment count
+     */
+    public int countParticipantsForEval(Long evaluationId, String[] evalGroupIds);
+
+    /**
+     * Load approved group assignments for an evaluation, optionally constrained to one eval group id.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupId optional eval group id
+     * @return matching approved group assignments
+     */
+    public List<EvalAssignGroup> getApprovedAssignGroupsForEvaluation(Long evaluationId, String evalGroupId);
+
+    /**
+     * Count approved group assignments for an evaluation constrained to eval group ids.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupIds eval group ids
+     * @return matching approved group assignment count
+     */
+    public int countApprovedAssignGroupsForEvaluation(Long evaluationId, String[] evalGroupIds);
+
+    /**
+     * Find a group assignment by evaluation and eval group id.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupId eval group id
+     * @return matching group assignment, or null if none exists
+     */
+    public EvalAssignGroup getAssignGroupByEvalAndGroupId(Long evaluationId, String evalGroupId);
+
+    /**
+     * Load non-empty hierarchy assignments for an evaluation ordered by id.
+     *
+     * @param evaluationId evaluation id
+     * @return matching hierarchy assignments
+     */
+    public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId);
+
+    /**
+     * Load group assignments for evaluations, optionally constrained by approval and hierarchy origin.
+     *
+     * @param evaluationIds evaluation ids
+     * @param includeUnApproved true to include unapproved groups
+     * @param includeHierarchyGroups null for all, true for node-created groups, false for direct groups
+     * @return matching group assignments ordered by eval group id
+     */
+    public List<EvalAssignGroup> getAssignGroupsForEvals(Long[] evaluationIds, boolean includeUnApproved, Boolean includeHierarchyGroups);
+
+    /**
+     * Count group assignments matching an evaluation and eval group id.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupId eval group id
+     * @return matching group assignment count
+     */
+    public int countAssignGroupsByEvalAndGroupId(Long evaluationId, String evalGroupId);
+
+    /**
+     * Delete all user, group, and hierarchy assignments associated with an evaluation.
+     *
+     * @param evaluationId evaluation id
+     */
+    public void deleteAssignmentsForEvaluation(Long evaluationId);
+
+    /**
+     * Save hierarchy node assignments and their expanded group assignments.
+     *
+     * @param assignHierarchies hierarchy assignments to save
+     * @param assignGroups group assignments to save
+     */
+    public void saveAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups);
+
+    /**
+     * Load hierarchy assignments by persistent ids.
+     *
+     * @param assignHierarchyIds hierarchy assignment ids
+     * @return matching hierarchy assignments
+     */
+    public List<EvalAssignHierarchy> getAssignHierarchiesByIds(Long[] assignHierarchyIds);
+
+    /**
+     * Load node-created group assignments for an evaluation and node ids.
+     *
+     * @param evaluationId evaluation id
+     * @param nodeIds hierarchy node ids
+     * @return matching group assignments
+     */
+    public List<EvalAssignGroup> getAssignGroupsByEvalAndNodeIds(Long evaluationId, Set<String> nodeIds);
+
+    /**
+     * Delete hierarchy node assignments and their expanded group assignments.
+     *
+     * @param assignHierarchies hierarchy assignments to delete
+     * @param assignGroups group assignments to delete
+     */
+    public void deleteAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups);
+
+    /**
+     * Save or update user assignment rows.
+     *
+     * @param assignUsers user assignments to save
+     */
+    public void saveAssignUsers(Set<EvalAssignUser> assignUsers);
+
+    /**
+     * Delete user assignment rows by persistent ids.
+     *
+     * @param assignUserIds user assignment ids
+     */
+    public void deleteAssignUsersByIds(Long[] assignUserIds);
+
+    /**
+     * Delete user assignments tied to an assigned group, excluding a status that should be preserved.
+     *
+     * @param assignGroupId assigned group id
+     * @param excludedStatus status to preserve
+     * @return number of rows removed
+     */
+    public int deleteAssignUsersByAssignGroupIdExcludingStatus(Long assignGroupId, String excludedStatus);
+
+    /**
+     * Load a response for an evaluation/user/group unique key.
+     *
+     * @param evaluationId evaluation id
+     * @param userId internal user id
+     * @param evalGroupId eval group id
+     * @return matching responses
+     */
+    public List<EvalResponse> getEvaluationResponsesForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
+
+    /**
+     * Load responses for evaluation ids, optionally constrained to one owner, ordered by id.
+     *
+     * @param evaluationIds evaluation ids
+     * @param ownerUserId optional owner user id; null returns all owners
+     * @param completed optional completion filter; null returns complete and incomplete
+     * @return matching responses
+     */
+    public List<EvalResponse> getEvaluationResponsesForUser(Long[] evaluationIds, String ownerUserId, Boolean completed);
+
+    /**
+     * Count responses for an evaluation, optionally constrained to one eval group and completion state.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupId optional eval group id
+     * @param completed optional completion filter
+     * @return response count
+     */
+    public int countResponses(Long evaluationId, String evalGroupId, Boolean completed);
+
+    /**
+     * Load responses for an evaluation, optionally constrained to eval groups and completion state, ordered by id.
+     *
+     * @param evaluationId evaluation id
+     * @param evalGroupIds optional eval group ids
+     * @param completed optional completion filter
+     * @return matching responses
+     */
+    public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed);
+
+    /**
+     * Load responses for evaluation ids, optionally constrained to one owner, eval groups,
+     * and completion state.
+     *
+     * @param evaluationIds evaluation ids
+     * @param ownerUserId optional owner user id; null returns all owners
+     * @param evalGroupIds optional eval group ids
+     * @param completed optional completion filter
+     * @return matching responses
+     */
+    public List<EvalResponse> getEvaluationResponses(Long[] evaluationIds, String ownerUserId, String[] evalGroupIds, Boolean completed);
+
+    /**
+     * Count responses for evaluation ids, optionally constrained to one owner, eval groups,
+     * and completion state.
+     *
+     * @param evaluationIds evaluation ids
+     * @param ownerUserId optional owner user id; null returns all owners
+     * @param evalGroupIds optional eval group ids
+     * @param completed optional completion filter
+     * @return matching response count
+     */
+    public int countEvaluationResponses(Long[] evaluationIds, String ownerUserId, String[] evalGroupIds, Boolean completed);
+
+    /**
+     * Save a response and its answers in the order required by the answer foreign key.
+     *
+     * @param response response to save
+     * @param answers answers to save after the response
+     */
+    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers);
+
+    /**
+     * Load template items associated with a hierarchy node.
+     *
+     * @param nodeId hierarchy node id
+     * @return matching template items
+     */
+    public List<EvalTemplateItem> getTemplateItemsByHierarchyNodeId(String nodeId);
+
+    /**
+     * Find an evaluation template by external id.
+     *
+     * @param eid external id
+     * @return the matching template, or null if none exists
+     */
+    public EvalTemplate getTemplateByEid(String eid);
+
+    /**
+     * Load visible scale-mode scales available to a user for the supplied sharing scope.
+     *
+     * @param userId owner user id for private scales; null includes all private scales
+     * @param sharingConstants sharing constants to include
+     * @return matching scales ordered by title
+     */
+    public List<EvalScale> getScalesForUser(String userId, String[] sharingConstants);
+
+    /**
+     * Load templates with an auto-use tag, ordered by id.
+     *
+     * @param autoUseTag auto-use tag
+     * @return matching templates
+     */
+    public List<EvalTemplate> getTemplatesByAutoUseTag(String autoUseTag);
+
+    /**
+     * Load visible standard templates available to a user for the supplied sharing scope.
+     *
+     * @param userId owner user id for private templates; null includes all private templates
+     * @param sharingConstants sharing constants to include
+     * @param includeEmpty true to include templates with no template items
+     * @return matching templates ordered by sharing and title
+     */
+    public List<EvalTemplate> getTemplatesForUser(String userId, String[] sharingConstants, boolean includeEmpty);
+
+    /**
+     * Find a template item by external id.
+     *
+     * @param eid external id
+     * @return the matching template item, or null if none exists
+     */
+    public EvalTemplateItem getTemplateItemByEid(String eid);
+
+    /**
+     * Load template items with an auto-use tag, ordered by display order and id.
+     *
+     * @param autoUseTag auto-use tag
+     * @return matching template items
+     */
+    public List<EvalTemplateItem> getTemplateItemsByAutoUseTag(String autoUseTag);
+
+    /**
+     * Load template items by persistent ids.
+     *
+     * @param templateItemIds template item ids
+     * @return matching template items
+     */
+    public List<EvalTemplateItem> getTemplateItemsByIds(Long[] templateItemIds);
+
+    /**
+     * Load distinct templates that contain a template item using an item.
+     *
+     * @param itemId item id
+     * @return matching templates
+     */
+    public List<EvalTemplate> getTemplatesUsingItem(Long itemId);
+
+    /**
+     * Load template items with missing template and item links.
+     *
+     * @return orphaned template items
+     */
+    public List<EvalTemplateItem> getOrphanedTemplateItems();
+
+    /**
+     * Count top-level template items in a template.
+     *
+     * @param templateId template id
+     * @return matching template item count
+     */
+    public int countTopLevelTemplateItems(Long templateId);
+
+    /**
+     * Count child template items in a template block.
+     *
+     * @param templateId template id
+     * @param blockId block parent template item id
+     * @return matching template item count
+     */
+    public int countBlockChildTemplateItems(Long templateId, Long blockId);
+
+    /**
+     * Load child template items for a block parent ordered by display order.
+     *
+     * @param blockParentId block parent template item id
+     * @return child template items
+     */
+    public List<EvalTemplateItem> getBlockChildTemplateItems(Long blockParentId);
+
+    /**
+     * Save a template item and update its item/template link owners.
+     *
+     * @param templateItem template item to save
+     * @param item linked item
+     * @param template linked template
+     */
+    public void saveTemplateItemWithLinks(EvalTemplateItem templateItem, EvalItem item, EvalTemplate template);
+
+    /**
+     * Count evaluations whose title matches an HQL LIKE pattern.
+     *
+     * @param titlePattern title LIKE pattern
+     * @return matching evaluation count
+     */
+    public int countEvaluationsByTitle(String titlePattern);
+
+    /**
+     * Load evaluations whose title matches an HQL LIKE pattern.
+     *
+     * @param titlePattern title LIKE pattern
+     * @param orderProperty supported evaluation property to order by
+     * @param startResult zero-based start row
+     * @param maxResults maximum rows
+     * @return matching evaluations
+     */
+    public List<EvalEvaluation> getEvaluationsByTitle(String titlePattern, String orderProperty, int startResult, int maxResults);
+
+    /**
+     * Save template items as a batch.
+     *
+     * @param templateItems template items to save
+     */
+    public void saveTemplateItems(Set<EvalTemplateItem> templateItems);
+
+    /**
+     * Load eval-group node mappings by node id, ordered by persistent id.
+     *
+     * @param nodeIds hierarchy node ids
+     * @return matching eval-group node mappings
+     */
+    public List<EvalGroupNodes> getEvalGroupNodesByNodeIds(String[] nodeIds);
+
+    /**
+     * Load all users assigned as evaluation administrators.
+     *
+     * @return all evaluation admin records
+     */
+    public List<EvalAdmin> getAllEvalAdmins();
+
+    /**
+     * Find an evaluation administrator assignment by user id.
+     *
+     * @param userId the internal user id
+     * @return the matching admin record, or null if the user is not an eval admin
+     */
+    public EvalAdmin getEvalAdminByUserId(String userId);
+
+    /**
+     * Load all hierarchy rules.
+     *
+     * @return all hierarchy rules
+     */
+    public List<EvalHierarchyRule> getAllHierarchyRules();
+
+    /**
+     * Find a hierarchy rule by id.
+     *
+     * @param ruleId the rule id
+     * @return the matching hierarchy rule, or null if it does not exist
+     */
+    public EvalHierarchyRule getHierarchyRuleById(Long ruleId);
+
+    /**
+     * Load all hierarchy rules assigned to a node.
+     *
+     * @param nodeId the hierarchy node id
+     * @return hierarchy rules for the node
+     */
+    public List<EvalHierarchyRule> getHierarchyRulesByNodeId(Long nodeId);
+
+    /**
+     * Delete hierarchy rules as a batch.
+     *
+     * @param rules hierarchy rules to delete
+     */
+    public void deleteHierarchyRules(Set<EvalHierarchyRule> rules);
+
+    /**
+     * Find an adhoc user by username.
+     *
+     * @param username the unique login name
+     * @return the matching adhoc user, or null if none exists
+     */
+    public EvalAdhocUser getAdhocUserByUsername(String username);
+
+    /**
+     * Find an adhoc user by email address.
+     *
+     * @param email the unique email address
+     * @return the matching adhoc user, or null if none exists
+     */
+    public EvalAdhocUser getAdhocUserByEmail(String email);
+
+    /**
+     * Load all adhoc users.
+     *
+     * @return all stored adhoc users
+     */
+    public List<EvalAdhocUser> getAllAdhocUsers();
+
+    /**
+     * Load adhoc users by their persistent ids.
+     *
+     * @param ids persistent adhoc user ids
+     * @return matching adhoc users
+     */
+    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids);
+
+    /**
+     * Load adhoc groups owned by a user, ordered by title.
+     *
+     * @param userId the internal user id of the owner
+     * @return matching adhoc groups
+     */
+    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId);
 
     /**
      * Method to find all evals which have no user assignments

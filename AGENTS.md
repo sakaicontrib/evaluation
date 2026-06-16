@@ -125,6 +125,14 @@ Downloads are served by `ReportViewController` at `GET /report_view/download` wi
 - DDL scripts for multiple databases in `sakai-evaluation-impl/src/ddl/`
 - Database conversion scripts available for version upgrades
 
+### DAO persistence conventions
+- GenericDAO has been removed from this project. Do not add `org.sakaiproject.genericdao` dependencies, `Search`/`Restriction`/`Order` query objects, or GenericDAO batch helpers.
+- Add explicit `EvaluationDao` methods for new persistence behavior, with named HQL queries or narrowly scoped Hibernate helpers in `EvaluationDaoImpl`.
+- Keep query semantics readable at the call site: prefer domain method names like `getEvaluationsUsingEmailTemplate` or `deleteAssignmentsForEvaluation` over local generic query abstractions.
+- `EvaluationDaoImpl` owns the small base persistence surface still used by services and fixtures: `findById`, `findAll`, `countAll`, `create`, `save`, `update`, and `delete`.
+- `SakaiComponentBeanNameAutoProxyCreator` is allowed as narrow Spring/Sakai classloader infrastructure for transactional proxies; do not expand it into DAO/query helper behavior.
+- If a new transitive dependency disappears while removing persistence libraries, declare the directly used dependency explicitly rather than relying on unrelated libraries to provide it.
+
 ## Testing
 Tests are located in `sakai-evaluation-impl/src/test/` and use:
 - Spring Test framework for integration testing

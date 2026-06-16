@@ -18,31 +18,23 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalAdmin;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 
 public class EvalAdminSupportImpl implements EvalAdminSupport {
 	
 	private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
-    }
+	public void setDao(EvaluationDao dao) {
+		this.dao = dao;
+	}
 	
-    public List<EvalAdmin> getEvalAdmins() {
-		return (dao.findAll(EvalAdmin.class));
+	public List<EvalAdmin> getEvalAdmins() {
+		return dao.getAllEvalAdmins();
 	}
 
 	public EvalAdmin getEvalAdmin(String userId) {
-		Search searchObj = new Search();
-		searchObj.addRestriction(new Restriction("userId", userId));
-		List<EvalAdmin> results = dao.findBySearch(EvalAdmin.class, searchObj);
-		
-		if (results.isEmpty())
-		{
+		if (userId == null) {
 			return null;
 		}
-		
-		return results.get(0);
+		return dao.getEvalAdminByUserId(userId);
 	}
 	
 	public void assignEvalAdmin(String userId, String assignorUserId) {

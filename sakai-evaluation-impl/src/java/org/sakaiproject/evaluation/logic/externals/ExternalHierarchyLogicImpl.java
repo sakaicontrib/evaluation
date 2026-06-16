@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,9 +37,6 @@ import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalHierarchyProvider;
 import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.genericdao.api.search.Order;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 import org.sakaiproject.hierarchy.utils.HierarchyUtils;
@@ -164,7 +162,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
     private void createHierarchyRoot() {
         HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
-        hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
+        hierarchyService.saveNodeMetaData(root.getId().toString(), HIERARCHY_ROOT_TITLE, null, null);
         log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
     }
 
@@ -437,12 +435,12 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         externalLogic.removeAllRulesForNode( Long.parseLong( nodeId ) );
 
         // cleanup related data
-        List<EvalTemplateItem> l = dao.findBySearch(EvalTemplateItem.class, new Search("hierarchyNodeId", nodeId) );
+        List<EvalTemplateItem> l = dao.getTemplateItemsByHierarchyNodeId(nodeId);
         for (EvalTemplateItem templateItem : l) {
             templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
             templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
         }
-        dao.saveSet( new HashSet<EvalTemplateItem>(l) );
+        dao.saveTemplateItems(new HashSet<>(l));
         // return the parent node
         return makeEvalNode(node);
     }
@@ -831,14 +829,18 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @return an {@link EvalHierarchyNode} based on the basic node
      */
     private EvalHierarchyNode makeEvalNode(HierarchyNode node) {
+        if (node == null) {
+            return null;
+        }
         EvalHierarchyNode eNode = new EvalHierarchyNode();
-        eNode.id = node.id;
-        eNode.title = node.title;
-        eNode.description = node.description;
-        eNode.directChildNodeIds = node.directChildNodeIds;
-        eNode.childNodeIds = node.childNodeIds;
-        eNode.directParentNodeIds = node.directParentNodeIds;
-        eNode.parentNodeIds = node.parentNodeIds;
+        String nodeId = node.getId().toString();
+        eNode.id = nodeId;
+        eNode.title = node.getTitle();
+        eNode.description = node.getDescription();
+        eNode.directChildNodeIds = getNodeIds(hierarchyService.getDirectChildNodeIds(new String[] {nodeId}), nodeId);
+        eNode.childNodeIds = getNodeIds(hierarchyService.getChildNodeIds(new String[] {nodeId}), nodeId);
+        eNode.directParentNodeIds = getNodeIds(hierarchyService.getDirectParentNodeIds(new String[] {nodeId}), nodeId);
+        eNode.parentNodeIds = getNodeIds(hierarchyService.getParentNodeIds(new String[] {nodeId}), nodeId);
         return eNode;
     }
 
@@ -850,14 +852,30 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      */
     private HierarchyNode makeHierarchyNode(EvalHierarchyNode evalNode) {
         HierarchyNode node = new HierarchyNode();
-        node.id = evalNode.id;
-        node.title = evalNode.title;
-        node.description = evalNode.description;
-        node.directChildNodeIds = evalNode.directChildNodeIds;
-        node.childNodeIds = evalNode.childNodeIds;
-        node.directParentNodeIds = evalNode.directParentNodeIds;
-        node.parentNodeIds = evalNode.parentNodeIds;
+        node.setId(Long.valueOf(evalNode.id));
+        node.setTitle(evalNode.title);
+        node.setDescription(evalNode.description);
+        node.setChildren(getHierarchyNodesByIds(evalNode.directChildNodeIds));
+        node.setParents(getHierarchyNodesByIds(evalNode.directParentNodeIds));
         return node;
+    }
+
+    private Set<String> getNodeIds(Map<String, Set<String>> nodeIdsByNodeId, String nodeId) {
+        if (nodeIdsByNodeId == null || nodeIdsByNodeId.get(nodeId) == null) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(nodeIdsByNodeId.get(nodeId));
+    }
+
+    private Set<HierarchyNode> getHierarchyNodesByIds(Set<String> nodeIds) {
+        if (nodeIds == null || nodeIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Map<String, HierarchyNode> nodesById = hierarchyService.getNodesByIds(nodeIds.toArray(new String[nodeIds.size()]));
+        if (nodesById == null || nodesById.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(nodesById.values());
     }
 
     /**
@@ -880,11 +898,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @return a list of egn or empty list if none found
      */
     private List<EvalGroupNodes> getEvalGroupNodesByNodeId(String[] nodeIds) {
-        List<EvalGroupNodes> l = dao.findBySearch(EvalGroupNodes.class, new Search(
-                new Restriction("nodeId", nodeIds),
-                new Order("id")
-        ) );
-        return l;
+        return dao.getEvalGroupNodesByNodeIds(nodeIds);
     }
 
 }

@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -260,6 +261,44 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         // TODO - add tests for changing state when checked
     }    
 
+    @Test
+    public void testUpdateEvaluationReminderStatusForceCommit() {
+        Long evaluationId = etdl.evaluationActive.getId();
+        EvalReminderStatus originalStatus = etdl.evaluationActive.getCurrentReminderStatus();
+        EvalReminderStatus reminderStatus = new EvalReminderStatus(9, 3, EvalTestDataLoad.SITE1_REF);
+
+        try {
+            evaluationService.updateEvaluationReminderStatus(evaluationId, reminderStatus);
+
+            EvalEvaluation updatedEvaluation = evaluationService.getEvaluationById(evaluationId);
+            Assert.assertNotNull(updatedEvaluation.getCurrentReminderStatus());
+            Assert.assertEquals(reminderStatus.toString(), updatedEvaluation.getCurrentReminderStatus().toString());
+
+            evaluationService.updateEvaluationReminderStatus(evaluationId, null);
+            updatedEvaluation = evaluationService.getEvaluationById(evaluationId);
+            Assert.assertNull(updatedEvaluation.getCurrentReminderStatus());
+        } finally {
+            evaluationService.updateEvaluationReminderStatus(evaluationId, originalStatus);
+        }
+    }
+
+    @Test
+    public void testUpdateEvaluationOwnerForceCommit() {
+        Long evaluationId = etdl.evaluationActive.getId();
+        String originalOwner = etdl.evaluationActive.getOwner();
+        String updatedOwner = EvalTestDataLoad.MAINT_USER_ID.equals(originalOwner)
+                ? EvalTestDataLoad.ADMIN_USER_ID
+                : EvalTestDataLoad.MAINT_USER_ID;
+
+        try {
+            EvalEvaluation updatedEvaluation = evaluationService.updateEvaluationOwner(evaluationId, updatedOwner);
+            Assert.assertEquals(updatedOwner, updatedEvaluation.getOwner());
+            Assert.assertEquals(updatedOwner, evaluationService.getEvaluationById(evaluationId).getOwner());
+        } finally {
+            evaluationService.updateEvaluationOwner(evaluationId, originalOwner);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testGetUserIdsTakingEvalInGroup() {
@@ -371,6 +410,49 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         } catch (IllegalArgumentException e) {
             Assert.assertNotNull(e);
         }
+    }
+
+    @Test
+    public void testGetParticipantsStatusFiltering() {
+        List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, null, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(2, participants.size());
+
+        EvalAssignUser unlinked = participants.get(0);
+        EvalAssignUser removed = participants.get(1);
+        unlinked.setStatus(EvalAssignUser.STATUS_UNLINKED);
+        removed.setStatus(EvalAssignUser.STATUS_REMOVED);
+        evaluationDao.update(unlinked);
+        evaluationDao.update(removed);
+
+        participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, null, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(1, participants.size());
+        Assert.assertEquals(EvalAssignUser.STATUS_UNLINKED, participants.get(0).getStatus());
+
+        participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(2, participants.size());
+
+        participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, EvalAssignUser.STATUS_LINKED, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(0, participants.size());
+
+        participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, EvalAssignUser.STATUS_UNLINKED, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(1, participants.size());
+        Assert.assertEquals(unlinked.getId(), participants.get(0).getId());
+
+        participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
+                null, EvalAssignUser.STATUS_REMOVED, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(1, participants.size());
+        Assert.assertEquals(removed.getId(), participants.get(0).getId());
     }
 
     @Test
@@ -1441,9 +1523,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluations(java.lang.String)}.
 	 */
-    @Test
+	@Test
 	public void testCountEvaluations()
 	{
+		int totalEvaluations = evaluationDao.countAll(EvalEvaluation.class);
+
+		Assert.assertEquals(totalEvaluations, this.evaluationService.countEvaluations(null));
+		Assert.assertEquals(totalEvaluations, this.evaluationService.countEvaluations(""));
+
 		String searchString01 = "Eval";
 		int count01 = this.evaluationService.countEvaluations(searchString01);
 		Assert.assertEquals(11,count01);
@@ -1478,6 +1565,12 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 	{
 		String searchString = "Eval";
 		String order = "title";
+
+		int totalEvaluations = evaluationDao.countAll(EvalEvaluation.class);
+		List<EvalEvaluation> allEvaluations = this.evaluationService.getEvaluations(null, order, 0, 0);
+		Assert.assertEquals(totalEvaluations, allEvaluations.size());
+		allEvaluations = this.evaluationService.getEvaluations("", order, 0, 0);
+		Assert.assertEquals(totalEvaluations, allEvaluations.size());
 		
 		List<EvalEvaluation> list01 = this.evaluationService.getEvaluations(searchString, order, 0, 5);
 		Assert.assertEquals(5, list01.size());

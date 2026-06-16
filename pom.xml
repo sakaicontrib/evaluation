@@ -131,11 +131,6 @@
                 <artifactId>entitybroker-utils</artifactId>
                 <version>${sakai.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.sakaiproject.genericdao</groupId>
-                <artifactId>generic-dao</artifactId>
-                <version>${sakai.genericdao.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

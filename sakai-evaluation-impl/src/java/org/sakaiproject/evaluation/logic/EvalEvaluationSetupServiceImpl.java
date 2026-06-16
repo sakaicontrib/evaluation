@@ -53,10 +53,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
-import org.sakaiproject.genericdao.api.search.Order;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -193,12 +189,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // only execute the code if we have an exclusive lock
                 if (lockObtained != null && lockObtained) {
                     // get all evals that are not viewable (i.e. completely done with) or deleted 
-                    List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, 
-                            new Search( new Restriction[] {
-                                    new Restriction("state", EvalConstants.EVALUATION_STATE_VIEWABLE, Restriction.NOT_EQUALS),
-                                    new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
-                            })
-                    );
+                    List<EvalEvaluation> evals = dao.getEvaluationsNotViewableOrDeleted();
                     if (evals.size() > 0) {
                         log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
                         // only do partial purge if constant > 0
@@ -549,23 +540,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
             } else {
                 // no responses so cleanup all the assignments
-                // remove associated AssignGroups
-                List<EvalAssignGroup> acs = dao.findBySearch(EvalAssignGroup.class, 
-                        new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignGroup> assignGroupSet = new HashSet<>(acs);
-                dao.deleteSet(assignGroupSet);
-
-                // remove associated assigned hierarchy nodes
-                List<EvalAssignHierarchy> ahs = dao.findBySearch(EvalAssignHierarchy.class, 
-                        new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignHierarchy> assignHierSet = new HashSet<>(ahs);
-                dao.deleteSet(assignHierSet);
-
-                // remove associated assigned users
-                List<EvalAssignUser> eus = dao.findBySearch(EvalAssignUser.class, 
-                        new Search("evaluation.id", evaluationId) );
-                Set<EvalAssignUser> eusSet = new HashSet<>(eus);
-                dao.deleteSet(eusSet);
+                dao.deleteAssignmentsForEvaluation(evaluationId);
 
                 // remove the evaluation and copied template since there are no responses
                 removeTemplate = true;
@@ -585,8 +560,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (available != null) {
                 if (available.getDefaultType() == null) {
                     // only remove non-default templates
-                    long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class, 
-                            new Search("availableEmailTemplate.id", available.getId()) ) ;
+                    int evalsUsingTemplate = dao.countEvaluationsUsingEmailTemplate(available.getId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
                     if ( evalsUsingTemplate <= 1l ) {
                         // template was only used in this evaluation
                         emailSet.add( available );
@@ -595,15 +569,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
             if (reminder != null) {
                 if (reminder.getDefaultType() == null) {
-                    long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class, 
-                            new Search("reminderEmailTemplate.id", reminder.getId()) ) ;
+                    int evalsUsingTemplate = dao.countEvaluationsUsingEmailTemplate(reminder.getId(), EvalConstants.EMAIL_TEMPLATE_REMINDER);
                     if ( evalsUsingTemplate <= 1l ) {
                         // template was only used in this evaluation
                         emailSet.add( reminder );
                     }
                 }
             }
-            dao.deleteSet(emailSet);
+            dao.deleteEmailTemplates(emailSet);
 
             if (removeTemplate) {
                 // remove template if it is a copy
@@ -753,11 +726,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
 
                 // now get the responses for all the returned evals
-                List<EvalResponse> l = dao.findBySearch(EvalResponse.class, new Search(
-                        new Restriction[] {
-                                new Restriction("owner", userId),
-                                new Restriction("evaluation.id", evalIds)
-                        }) );
+                List<EvalResponse> l = dao.getEvaluationResponsesForUser(evalIds, userId, null);
 
                 // Iterate through and remove the evals this user already took
                 for (int i = 0; i < l.size(); i++) {
@@ -944,9 +913,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         List<EvalEvaluation> evals = new ArrayList<>();
         if (userId == null) {
             // get all evals for a category
-            evals = dao.findBySearch(EvalEvaluation.class, new Search(
-                    new Restriction("evalCategory", evalCategory), 
-                    new Order("startDate") ) );
+            evals = dao.getEvaluationsByCategory(evalCategory);
         } else {
             // get all evals for a specific user for a category
             //List takeGroups = commonLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
@@ -976,7 +943,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             EvalEvaluation eval = getEvaluationOrFail(evaluationId);
             // check permissions
             if ( securityChecks.checkRemoveAssignments(null, null, eval) ) {
-                dao.deleteSet(EvalAssignUser.class, userAssignmentIds);
+                dao.deleteAssignUsersByIds(userAssignmentIds);
             }
         }
     }
@@ -1160,7 +1127,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (removeAllowed && ! assignUserToRemove.isEmpty()) {
                 Long[] assignUserToRemoveArray = assignUserToRemove.toArray(new Long[0]);
                 log.debug("Deleting user eval assignment Ids: {}", assignUserToRemove);
-                dao.deleteSet(EvalAssignUser.class, assignUserToRemoveArray);
+                dao.deleteAssignUsersByIds(assignUserToRemoveArray);
                 message += ": removed the following assignments: " + assignUserToRemove;
                 changedUserAssignments.addAll( assignUserToRemove );
             }
@@ -1171,7 +1138,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // this is meant to force the assigned users set to be re-calculated
                 assignUserToSave = new HashSet<>(assignUserToSave);
                 log.debug("Saving user eval assignments: {}", assignUserToSave);
-                dao.saveSet(assignUserToSave);
+                dao.saveAssignUsers(assignUserToSave);
                 message += ": created the following assignments: " + assignUserToSave;
                 for (EvalAssignUser evalAssignUser : assignUserToSave) {
                     changedUserAssignments.add( evalAssignUser.getId() );
@@ -1196,7 +1163,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
             if (! orphanedUserAssignments.isEmpty()) {
                 Long[] orphanedUserAssignmentsArray = orphanedUserAssignments.toArray(new Long[0]);
-                dao.deleteSet(EvalAssignUser.class, orphanedUserAssignmentsArray);
+                dao.deleteAssignUsersByIds(orphanedUserAssignmentsArray);
                 message += ": removed the following orphaned user assignments: " + orphanedUserAssignments;
                 changedUserAssignments.addAll( orphanedUserAssignments );
             }
@@ -1291,7 +1258,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 eauSet.add(evalAssignUser);
             }
             // save all of the user assignments
-            dao.saveSet(eauSet);
+            dao.saveAssignUsers(eauSet);
         }
     }
 
@@ -1436,7 +1403,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             removeAssignGroups.add(assignGroup);
                         }
                     }
-                    //dao.deleteSet(removeAssignGroups);
                     // Ensure the user assignments are cleaned up - EVALSYS-703
                     for (EvalAssignGroup assignGroup : removeAssignGroups) {
                         deleteAssignGroupInternal(assignGroup);
@@ -1500,7 +1466,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // save everything at once
-            dao.saveMixedSet(new Set[] {nodeAssignments, groupAssignments});
+            dao.saveAssignHierarchyAndGroups(nodeAssignments, groupAssignments);
             log.info("User (" + userId + ") added nodes (" + ArrayUtils.arrayToString(nodeIds)
                     + ") and groups (" + ArrayUtils.arrayToString(evalGroupIds) + ") to evaluation ("
                     + evaluationId + ")");
@@ -1530,7 +1496,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     public void deleteAssignHierarchyNodesById(Long... assignHierarchyIds) {
         String userId = commonLogic.getCurrentUserId();
         // get the list of hierarchy assignments
-        List<EvalAssignHierarchy> l = dao.findBySearch(EvalAssignHierarchy.class, new Search("id", assignHierarchyIds) );
+        List<EvalAssignHierarchy> l = dao.getAssignHierarchiesByIds(assignHierarchyIds);
         if (l.size() > 0) {
             Set<String> nodeIds = new HashSet<>();
             Long evaluationId = l.get(0).getEvaluation().getId();
@@ -1544,15 +1510,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // now get the list of assign groups with a nodeId that matches any of these and remove those also
-            List<EvalAssignGroup> eags = dao.findBySearch(EvalAssignGroup.class, new Search(
-                    new Restriction[] {
-                            new Restriction("evaluation.id", evaluationId),
-                            new Restriction("nodeId", nodeIds)
-                    }) );
+            List<EvalAssignGroup> eags = dao.getAssignGroupsByEvalAndNodeIds(evaluationId, nodeIds);
             Set<EvalAssignGroup> groups = new HashSet<>();
             StringBuilder groupListing = new StringBuilder();
             if (eags.size() > 0) {
-                for (EvalAssignGroup evalAssignGroup : groups) {
+                for (EvalAssignGroup evalAssignGroup : eags) {
                     if (evaluationService.canDeleteAssignGroup(userId, evalAssignGroup.getId())) {
                         groups.add(evalAssignGroup);
                         groupListing.append( evalAssignGroup.getEvalGroupId() ).append(":");
@@ -1560,7 +1522,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
             }
 
-            dao.deleteMixedSet(new Set[] {eahs, groups});
+            dao.deleteAssignHierarchyAndGroups(eahs, groups);
             log.info("User (" + userId + ") deleted existing hierarchy assignments ("
                     + ArrayUtils.arrayToString(assignHierarchyIds) + ") and groups ("+groupListing.toString()+")");
 
@@ -1704,13 +1666,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
 
         // also need to remove any user assignments related to this group
-        List<EvalAssignUser> assignedUsers = dao.findBySearch(EvalAssignUser.class, new Search( new Restriction[] {
-                new Restriction("assignGroupId", assignGroupId),
-                new Restriction("status", EvalAssignUser.STATUS_UNLINKED, Restriction.NOT_EQUALS)
-        }));
-        Set<EvalAssignUser> assignedUsersSet = new HashSet<EvalAssignUser>(assignedUsers);
-        dao.deleteSet( assignedUsersSet );
-        log.info("User assignments ("+assignedUsers.size()+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
+        int removed = dao.deleteAssignUsersByAssignGroupIdExcludingStatus(assignGroupId, EvalAssignUser.STATUS_UNLINKED);
+        log.info("User assignments ("+removed+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
     }
 
     // EMAIL TEMPLATES
@@ -1755,8 +1712,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 // check if there are evaluations this is used in and if the user can modify this based on them
 
                 // check available templates
-                List<EvalEvaluation> l = dao.findBySearch(EvalEvaluation.class, 
-                        new Search("availableEmailTemplate.id", emailTemplate.getId() ) );
+                List<EvalEvaluation> l = dao.getEvaluationsUsingEmailTemplate(emailTemplate.getId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
                 for (int i = 0; i < l.size(); i++) {
                     EvalEvaluation eval = (EvalEvaluation) l.get(i);
                     // check eval/template permissions
@@ -1764,8 +1720,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
 
                 // check reminder templates
-                l = dao.findBySearch(EvalEvaluation.class,
-                        new Search("reminderEmailTemplate.id", emailTemplate.getId() ) );
+                l = dao.getEvaluationsUsingEmailTemplate(emailTemplate.getId(), EvalConstants.EMAIL_TEMPLATE_REMINDER);
                 for (int i = 0; i < l.size(); i++) {
                     EvalEvaluation eval = (EvalEvaluation) l.get(i);
                     // check eval/template permissions
@@ -1794,13 +1749,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)
                     || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType) ) {
-                String templateTypeEval = "availableEmailTemplate";
-                if ( EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType) ) {
-                    templateTypeEval = "reminderEmailTemplate";
-                }
                 // get the evals that this template is used in
-                List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, 
-                        new Search(templateTypeEval + ".id", emailTemplateId) );
+                List<EvalEvaluation> evals = dao.getEvaluationsUsingEmailTemplate(emailTemplateId, emailTemplateType);
                 for (EvalEvaluation evaluation : evals) {
                     // replace with the default template (that means null it out)
                     if ( EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType) ) {
@@ -1828,8 +1778,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      */
     protected List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
         // get all the evalGroupIds for the given eval ids in one storage call
-        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, new Search("evaluation.id", evaluationId) );
-        return l;
+        return dao.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
     }
 
     /**
@@ -1853,13 +1802,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     protected boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
         log.debug("assignContext: " + ac.getId());
 
-        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, new Search(
-                new Restriction[] {
-                        new Restriction("evaluation.id", ac.getEvaluation().getId()),
-                        new Restriction("evalGroupId", ac.getEvalGroupId())
-                }) );
-        return (ac.getId() == null && l.size() >= 1) || 
-               (ac.getId() != null && l.size() >= 2);
+        int count = dao.countAssignGroupsByEvalAndGroupId(ac.getEvaluation().getId(), ac.getEvalGroupId());
+        return (ac.getId() == null && count >= 1) ||
+               (ac.getId() != null && count >= 2);
     }
 
     /**
@@ -2021,23 +1966,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (clearAssociation
                 && emailTemplateTypeConstant != null) {
             Long checkEmailTemplateId = null;
-            String evalTemplateType = null;
             if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
                 if (eval.getAvailableEmailTemplate() != null) {
                     checkEmailTemplateId = eval.getAvailableEmailTemplate().getId();
-                    evalTemplateType = "availableEmailTemplate";
                 }
                 eval.setAvailableEmailTemplate(null);
             } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
                 if (eval.getReminderEmailTemplate() != null) {
                     checkEmailTemplateId = eval.getReminderEmailTemplate().getId();
-                    evalTemplateType = "reminderEmailTemplate";
                 }
                 eval.setReminderEmailTemplate(null);
             } else if (EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplateTypeConstant)) {
                 if (eval.getSubmissionConfirmationEmailTemplate() != null) {
                     checkEmailTemplateId = eval.getSubmissionConfirmationEmailTemplate().getId();
-                    evalTemplateType = "submissionConfirmationEmailTemplate";
                 }
                 eval.setSubmissionConfirmationEmailTemplate(null);
             }
@@ -2049,8 +1990,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 if (checkTemplate != null
                         && checkTemplate.getDefaultType() == null) {
                     // only remove non-default templates
-                    long evalsUsingTemplate = dao.countBySearch(EvalEvaluation.class,
-                            new Search(evalTemplateType + ".id", checkEmailTemplateId) ) ;
+                    int evalsUsingTemplate = dao.countEvaluationsUsingEmailTemplate(checkEmailTemplateId, emailTemplateTypeConstant);
                     if ( evalsUsingTemplate <= 0 ) {
                         // template was only used in this evaluation
                         dao.delete(checkTemplate);
