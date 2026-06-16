@@ -72,6 +72,7 @@
 
     <bean id="CSVTakersExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVTakersReportExporter">
         <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic"/>
+        <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService"/>
     </bean>
 
     <bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">

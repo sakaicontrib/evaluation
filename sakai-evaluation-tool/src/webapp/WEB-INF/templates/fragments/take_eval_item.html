@@ -23,7 +23,7 @@
     Renders a single evaluation item with interactive form inputs for take_eval.
     item is a TakeEvalController.FormItemData.
     Hidden binding fields are in take_eval.html; this fragment only renders visible inputs.
-    For answerable items, input names follow: evalForm.answers[N].{field}
+    For answerable items, input names follow: answers[N].{field}
 -->
 <div th:fragment="item(item)">
 
@@ -46,12 +46,12 @@
                 </h5>
                 <div class="content">
                     <textarea th:attr="rows=${item.displayRows}"
-                              th:name="${'evalForm.answers[' + item.answerIndex + '].text'}"
+                              th:name="${'answers[' + item.answerIndex + '].text'}"
                               th:text="${item.currentText}"></textarea>
                     <th:block th:if="${item.usesNA}">
                         <span>
                             <input type="checkbox"
-                                   th:name="${'evalForm.answers[' + item.answerIndex + '].na'}"
+                                   th:name="${'answers[' + item.answerIndex + '].na'}"
                                    value="true"
                                    th:checked="${item.currentNA}"/>
                             <label>N/A</label>
@@ -62,7 +62,7 @@
                     <div class="commentBox" style="display:none;">
                         <label>Comment:</label>
                         <textarea rows="2"
-                                  th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
                                   th:text="${item.currentComment}"></textarea>
                     </div>
                 </th:block>
@@ -99,7 +99,7 @@
                                                 <label th:each="o : ${item.options}" class="scaleItemLabel">
                                                     <span class="blockChoice skip"></span>
                                                     <input type="radio"
-                                                           th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                           th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                            th:value="${o.value}"
                                                            th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"
                                                            class="scaleItemInput"/>
@@ -111,7 +111,7 @@
                                         <label th:each="o : ${item.options}" class="scaleItemLabel">
                                             <span class="blockChoice skip"></span>
                                             <input type="radio"
-                                                   th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                   th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                    th:value="${o.value}"
                                                    th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"
                                                    class="scaleItemInput"/>
@@ -127,7 +127,7 @@
                     <th:block th:if="${item.usesNA}">
                         <span>
                             <input type="radio"
-                                   th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                   th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                    value="-1"
                                    th:checked="${item.currentNA}"/>
                             <label>N/A</label>
@@ -137,7 +137,7 @@
                         <div class="commentBox" style="display:none;">
                             <label>Comment:</label>
                             <textarea rows="2"
-                                      th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
                                       th:text="${item.currentComment}"></textarea>
                         </div>
                     </th:block>
@@ -162,7 +162,7 @@
                                         <label th:for="${'full-' + item.displayNumber + '-' + o.index}" style="font-weight:bold;" th:text="${o.label}">label</label>
                                         <input type="radio"
                                                th:id="${'full-' + item.displayNumber + '-' + o.index}"
-                                               th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                               th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                th:value="${o.value}"
                                                th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                     </span>
@@ -173,7 +173,7 @@
                     <th:block th:if="${item.usesNA}">
                         <span>
                             <input type="radio"
-                                   th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                   th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                    value="-1"
                                    th:checked="${item.currentNA}"/>
                             <label>N/A</label>
@@ -183,7 +183,7 @@
                         <div class="commentBox" style="display:none;">
                             <label>Comment:</label>
                             <textarea rows="2"
-                                      th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
                                       th:text="${item.currentComment}"></textarea>
                         </div>
                     </th:block>
@@ -215,7 +215,7 @@
                                                         <span style="padding:.2em .5em">
                                                             <label th:text="${o.label}">label</label>
                                                             <input type="radio"
-                                                                   th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                                   th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                                    th:value="${o.value}"
                                                                    th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                                         </span>
@@ -231,7 +231,7 @@
                     <th:block th:if="${item.usesNA}">
                         <span>
                             <input type="radio"
-                                   th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                   th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                    value="-1"
                                    th:checked="${item.currentNA}"/>
                             <label>N/A</label>
@@ -241,7 +241,7 @@
                         <div class="commentBox" style="display:none;">
                             <label>Comment:</label>
                             <textarea rows="2"
-                                      th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
                                       th:text="${item.currentComment}"></textarea>
                         </div>
                     </th:block>
@@ -262,7 +262,7 @@
                             <li th:each="o : ${item.options}" class="check">
                                 <label>
                                     <input type="radio"
-                                           th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                           th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                            th:value="${o.value}"
                                            th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                     <span th:text="${o.label}">label</span>
@@ -271,7 +271,7 @@
                             <li th:if="${item.usesNA}" class="na">
                                 <label>
                                     <input type="radio"
-                                           th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                           th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                            value="-1"
                                            th:checked="${item.currentNA}"/>
                                     <span>N/A</span>
@@ -283,7 +283,7 @@
                         <div class="commentBox" style="display:none;">
                             <label>Comment:</label>
                             <textarea rows="2"
-                                      th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
                                       th:text="${item.currentComment}"></textarea>
                         </div>
                     </th:block>
@@ -318,7 +318,7 @@
                                             <label>
                                                 <span th:text="${o.label}">1</span>
                                                 <input type="radio"
-                                                       th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                       th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                        th:value="${o.value}"
                                                        th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                             </label>
@@ -330,7 +330,7 @@
                         <th:block th:if="${item.usesNA}">
                             <span>
                                 <input type="radio"
-                                       th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                       th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                        value="-1"
                                        th:checked="${item.currentNA}"/>
                                 <label>N/A</label>
@@ -340,7 +340,7 @@
                             <div class="commentBox" style="display:none;">
                                 <label>Comment:</label>
                                 <textarea rows="2"
-                                          th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                          th:name="${'answers[' + item.answerIndex + '].comment'}"
                                           th:text="${item.currentComment}"></textarea>
                             </div>
                         </th:block>
@@ -389,7 +389,7 @@
                                                     <label th:each="o : ${item.options}" class="blockItemLabel">
                                                         <span class="blockChoice"></span>
                                                         <input type="radio"
-                                                               th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                               th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                                th:value="${o.value}"
                                                                th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"
                                                                class="blockItemChoice"/>
@@ -401,7 +401,7 @@
                                             <label th:each="o : ${item.options}" class="blockItemLabel">
                                                 <span class="blockChoice"></span>
                                                 <input type="radio"
-                                                       th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                                       th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                        th:value="${o.value}"
                                                        th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"
                                                        class="blockItemChoice"/>
@@ -416,7 +416,7 @@
                 <th:block th:if="${item.usesNA}">
                     <span>
                         <input type="radio"
-                               th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                               th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                value="-1"
                                th:checked="${item.currentNA}"/>
                         <label>N/A</label>
@@ -426,7 +426,7 @@
                     <div class="commentBox" style="display:none;">
                         <label>Comment:</label>
                         <textarea rows="2"
-                                  th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
                                   th:text="${item.currentComment}"></textarea>
                     </div>
                 </th:block>
@@ -452,7 +452,7 @@
                                 <li th:each="o : ${item.options}" class="check">
                                     <label>
                                         <input type="radio"
-                                               th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                               th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                th:value="${o.value}"
                                                th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                         <span th:text="${o.label}">label</span>
@@ -461,7 +461,7 @@
                                 <li th:if="${item.usesNA}" class="na">
                                     <label>
                                         <input type="radio"
-                                               th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                               th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                value="-1"
                                                th:checked="${item.currentNA}"/>
                                         <span>N/A</span>
@@ -475,7 +475,7 @@
                             <li th:each="o : ${item.options}" class="check">
                                 <label>
                                     <input type="radio"
-                                           th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                           th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                            th:value="${o.value}"
                                            th:checked="${item.currentNumeric != null and item.currentNumeric.toString() == o.value}"/>
                                     <span th:text="${o.label}">label</span>
@@ -484,7 +484,7 @@
                             <li th:if="${item.usesNA}" class="na">
                                 <label>
                                     <input type="radio"
-                                           th:name="${'evalForm.answers[' + item.answerIndex + '].numeric'}"
+                                           th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                            value="-1"
                                            th:checked="${item.currentNA}"/>
                                     <span>N/A</span>
@@ -497,7 +497,7 @@
                     <div class="commentBox" style="display:none;">
                         <label>Comment:</label>
                         <textarea rows="2"
-                                  th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
                                   th:text="${item.currentComment}"></textarea>
                     </div>
                 </th:block>
@@ -523,7 +523,7 @@
                                     <li th:each="o : ${item.options}" class="check">
                                         <label>
                                             <input type="checkbox" class="ma"
-                                                   th:name="${'evalForm.answers[' + item.answerIndex + '].multipleAnswers'}"
+                                                   th:name="${'answers[' + item.answerIndex + '].multipleAnswers'}"
                                                    th:value="${o.value}"
                                                    th:checked="${item.currentMultipleAnswers != null and item.currentMultipleAnswers.contains(#numbers.toInt(o.value))}"/>
                                             <span th:text="${o.label}">label</span>
@@ -532,7 +532,7 @@
                                     <li th:if="${item.usesNA}" class="na">
                                         <label>
                                             <input type="checkbox" class="ma"
-                                                   th:name="${'evalForm.answers[' + item.answerIndex + '].na'}"
+                                                   th:name="${'answers[' + item.answerIndex + '].na'}"
                                                    value="true"
                                                    th:checked="${item.currentNA}"/>
                                             <span>N/A</span>
@@ -546,7 +546,7 @@
                                 <li th:each="o : ${item.options}" class="check">
                                     <label>
                                         <input type="checkbox" class="ma check"
-                                               th:name="${'evalForm.answers[' + item.answerIndex + '].multipleAnswers'}"
+                                               th:name="${'answers[' + item.answerIndex + '].multipleAnswers'}"
                                                th:value="${o.value}"
                                                th:checked="${item.currentMultipleAnswers != null and item.currentMultipleAnswers.contains(#numbers.toInt(o.value))}"/>
                                         <span th:text="${o.label}">label</span>
@@ -555,7 +555,7 @@
                                 <li th:if="${item.usesNA}" class="na">
                                     <label>
                                         <input type="checkbox" class="ma"
-                                               th:name="${'evalForm.answers[' + item.answerIndex + '].na'}"
+                                               th:name="${'answers[' + item.answerIndex + '].na'}"
                                                value="true"
                                                th:checked="${item.currentNA}"/>
                                         <span>N/A</span>
@@ -569,7 +569,7 @@
                     <div class="commentBox" style="display:none;">
                         <label>Comment:</label>
                         <textarea rows="2"
-                                  th:name="${'evalForm.answers[' + item.answerIndex + '].comment'}"
+                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
                                   th:text="${item.currentComment}"></textarea>
                     </div>
                 </th:block>
@@ -616,7 +616,7 @@
                                                                 <label>
                                                                     <span th:text="${o.label}">1</span>
                                                                     <input type="radio"
-                                                                           th:name="${'evalForm.answers[' + child.answerIndex + '].numeric'}"
+                                                                           th:name="${'answers[' + child.answerIndex + '].numeric'}"
                                                                            th:value="${o.value}"
                                                                            th:checked="${child.currentNumeric != null and child.currentNumeric.toString() == o.value}"/>
                                                                 </label>
@@ -685,7 +685,7 @@
                                                             <label th:each="o : ${item.options}" class="blockItemLabel">
                                                                 <span class="blockChoice skip"></span>
                                                                 <input type="radio"
-                                                                       th:name="${'evalForm.answers[' + child.answerIndex + '].numeric'}"
+                                                                       th:name="${'answers[' + child.answerIndex + '].numeric'}"
                                                                        th:value="${o.value}"
                                                                        th:checked="${child.currentNumeric != null and child.currentNumeric.toString() == o.value}"
                                                                        class="blockItemChoice"/>
@@ -697,7 +697,7 @@
                                                     <label th:each="o : ${item.options}" class="blockItemLabel">
                                                         <span class="blockChoice skip"></span>
                                                         <input type="radio"
-                                                               th:name="${'evalForm.answers[' + child.answerIndex + '].numeric'}"
+                                                               th:name="${'answers[' + child.answerIndex + '].numeric'}"
                                                                th:value="${o.value}"
                                                                th:checked="${child.currentNumeric != null and child.currentNumeric.toString() == o.value}"
                                                                class="blockItemChoice"/>

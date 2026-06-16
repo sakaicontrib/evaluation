@@ -698,9 +698,6 @@ evalsys.initControlItems = function() {
                 success: function() {
                     jQuery(document).trigger('close.facebox');
                     window.location.reload();
-                },
-                error: function() {
-                    alert('Error saving the item. Please try again.');
                 }
             });
         });

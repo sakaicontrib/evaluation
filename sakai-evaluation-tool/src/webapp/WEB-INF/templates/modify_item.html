@@ -39,6 +39,7 @@
     <!-- Navigation -->
     <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
 
+
     <!-- Breadcrumb -->
     <ul class="breadCrumb">
         <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
@@ -335,6 +336,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateChoiceButtons();
         });
+
     </script>
 
     <!-- Bootstrap Modal for item preview (only in direct navigation) -->

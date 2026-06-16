@@ -1127,26 +1127,26 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
     protected String getEntityReference(Class<? extends Serializable> entityClass, String entityId) {
         String prefix;
-        // make sure this class is supported and get the prefix
-        if (entityClass == EvalEvaluation.class) {
+        // Use isAssignableFrom instead of == so Hibernate proxy subclasses are also matched.
+        if (EvalEvaluation.class.isAssignableFrom(entityClass)) {
             prefix = EvaluationEntityProvider.ENTITY_PREFIX;
-        } else if (entityClass == EvalAssignGroup.class) {
+        } else if (EvalAssignGroup.class.isAssignableFrom(entityClass)) {
             prefix = AssignGroupEntityProvider.ENTITY_PREFIX;
-        } else if (entityClass == EvalAssignHierarchy.class) {
+        } else if (EvalAssignHierarchy.class.isAssignableFrom(entityClass)) {
             prefix = "eval-assignhierarchy";
-        } else if (entityClass == EvalGroup.class) {
+        } else if (EvalGroup.class.isAssignableFrom(entityClass)) {
             prefix = "eval-group";
-        } else if (entityClass == EvalScale.class) {
+        } else if (EvalScale.class.isAssignableFrom(entityClass)) {
             prefix = "eval-scale";
-        } else if (entityClass == EvalItem.class) {
+        } else if (EvalItem.class.isAssignableFrom(entityClass)) {
             prefix = ItemEntityProvider.ENTITY_PREFIX;
-        } else if (entityClass == EvalTemplateItem.class) {
+        } else if (EvalTemplateItem.class.isAssignableFrom(entityClass)) {
             prefix = TemplateItemEntityProvider.ENTITY_PREFIX;
-        } else if (entityClass == EvalTemplate.class) {
+        } else if (EvalTemplate.class.isAssignableFrom(entityClass)) {
             prefix = TemplateEntityProvider.ENTITY_PREFIX;
-        } else if (entityClass == EvalResponse.class) {
+        } else if (EvalResponse.class.isAssignableFrom(entityClass)) {
             prefix = "eval-response";
-        } else if (entityClass == EvalConfig.class) {
+        } else if (EvalConfig.class.isAssignableFrom(entityClass)) {
             prefix = ConfigEntityProvider.ENTITY_PREFIX;
         } else {
             return "eval:" + entityClass.getName();

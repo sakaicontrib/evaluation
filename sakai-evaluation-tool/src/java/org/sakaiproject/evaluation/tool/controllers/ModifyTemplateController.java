@@ -150,7 +150,9 @@ public class ModifyTemplateController {
         model.addAttribute("currentSharing", currentSharing);
         model.addAttribute("sharingValues", EvalToolConstants.SHARING_VALUES);
         model.addAttribute("sharingLabels", EvalToolConstants.SHARING_LABELS_PROPS);
-        model.addAttribute("fixedSharingValue", showSharingDropdown ? null : sharingValue);
+        // SHARING_OWNER ("owner") is only a system-setting value meaning "owner decides";
+        // it is never valid as a template's own sharing value, so map it to its effective default.
+        model.addAttribute("fixedSharingValue", showSharingDropdown ? null : effectiveSharing(sharingValue));
     }
 
     private String resolveSharingToSave(String sharingParam, boolean userAdmin) {
@@ -158,6 +160,15 @@ public class ModifyTemplateController {
         if (EvalConstants.SHARING_OWNER.equals(sharingValue) && userAdmin && sharingParam != null) {
             return sharingParam;
         }
-        return sharingValue != null ? sharingValue : EvalConstants.SHARING_PRIVATE;
+        return effectiveSharing(sharingValue != null ? sharingValue : EvalConstants.SHARING_PRIVATE);
+    }
+
+    /**
+     * EvalAuthoringServiceImpl.saveTemplate() rejects SHARING_OWNER as the template's own
+     * sharing value (it throws IllegalArgumentException). Map it to SHARING_PRIVATE, which
+     * matches the "sharing.private" label shown to non-admin users in this case.
+     */
+    private String effectiveSharing(String sharingValue) {
+        return EvalConstants.SHARING_OWNER.equals(sharingValue) ? EvalConstants.SHARING_PRIVATE : sharingValue;
     }
 }

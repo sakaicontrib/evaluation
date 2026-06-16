@@ -292,20 +292,26 @@ var EvalSystem = function() {
 			hideButton.show();
 			showButton.parent().next().wrap("<a href=\"#\"></a>");
 	
+			var fireRSF = function() {
+				if (typeof RSF !== 'undefined' && RSF.getDOMModifyFirer) {
+					RSF.getDOMModifyFirer().fireEvent();
+				}
+			};
+
 			var showAction = function(event) {
 				showButton.hide();
 				hideButton.show();
 				area.show("normal");
 				toggles.show("normal");
-				RSF.getDOMModifyFirer().fireEvent();
+				fireRSF();
 			};
-	
+
 			var hideAction = function(event) {
 				showButton.show();
 				hideButton.hide();
 				area.hide("normal");
 				toggles.hide("normal");
-				RSF.getDOMModifyFirer().fireEvent();
+				fireRSF();
 			};
 	
 			if (initialHide) {
@@ -319,7 +325,7 @@ var EvalSystem = function() {
 				hideButton.toggle();
 				area.toggle("normal");
 				toggles.toggle("normal");
-				RSF.getDOMModifyFirer().fireEvent();
+				fireRSF();
 			};
 	
 			togglearea.click( function (event) { toggle(event); } );

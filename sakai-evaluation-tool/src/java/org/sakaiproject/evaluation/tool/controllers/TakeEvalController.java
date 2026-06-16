@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -42,6 +43,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
@@ -182,6 +184,9 @@ public class TakeEvalController {
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
     private EvalEvaluationService evaluationService;
 
+    @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
+    private EvalDaoInvoker daoInvoker;
+
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
     private EvalAuthoringService authoringService;
 
@@ -205,6 +210,7 @@ public class TakeEvalController {
             @RequestParam(required = false) String evalGroupId,
             @RequestParam(required = false) Long responseId,
             @RequestParam(required = false, defaultValue = "false") boolean external,
+            @RequestParam(required = false) String error,
             Model model,
             HttpServletRequest request) {
 
@@ -264,8 +270,8 @@ public class TakeEvalController {
                 if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, g.evalGroupId)) {
                     if (evalGroupId == null) {
                         evalGroupId = g.evalGroupId;
-                        userCanAccess = true;
                     }
+                    userCanAccess = true;
                     validGroups.add(commonLogic.makeEvalGroupObject(g.evalGroupId));
                 }
             }
@@ -320,6 +326,18 @@ public class TakeEvalController {
                 model.addAttribute("savedWarning",
                         messageSource.getMessage("takeeval.saved.warning", null, locale));
             }
+        }
+
+        // Submission error from a previous POST attempt
+        if ("missing_required".equals(error)) {
+            model.addAttribute("validationError",
+                    messageSource.getMessage("takeeval.user.must.answer.all.exception", null, locale));
+        } else if ("blank_response".equals(error)) {
+            model.addAttribute("validationError",
+                    messageSource.getMessage("takeeval.user.blank.response.exception", null, locale));
+        } else if ("savefailed".equals(error)) {
+            model.addAttribute("validationError",
+                    messageSource.getMessage("takeeval.user.cannot.save.reponse", null, locale));
         }
 
         // Settings
@@ -478,25 +496,87 @@ public class TakeEvalController {
             @RequestParam Long evaluationId,
             @RequestParam String evalGroupId,
             @RequestParam(required = false) Long responseId,
-            @RequestParam(required = false) String action,
-            @ModelAttribute("evalForm") EvalFormWrapper formWrapper,
-            Model model,
-            HttpServletRequest request) {
+            @RequestParam(required = false) String actionSave,
+            @RequestParam(required = false) String actionSubmit,
+            @ModelAttribute("evalForm") EvalFormWrapper formWrapper) {
 
         String currentUserId = commonLogic.getCurrentUserId();
-        boolean submit = "submit".equals(action);
+        // actionSubmit is non-null only when the submit button was clicked (not save)
+        boolean submit = (actionSubmit != null);
 
-        // Get or create response
-        EvalResponse response;
-        if (responseId != null) {
-            response = deliveryService.getResponseById(responseId);
-        } else {
-            // create new response
-            EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-            response = new EvalResponse(currentUserId, evalGroupId, eval, new Date());
+        // Step 1: Always save answers without endTime in its own transaction.
+        // This commits immediately so we always have a responseId we can include in
+        // any subsequent error redirect, allowing the form to reload with saved answers.
+        Long[] savedId = {responseId};
+        try {
+            daoInvoker.invokeTransactionalAccess(() -> {
+                EvalResponse response;
+                if (savedId[0] != null) {
+                    response = deliveryService.getResponseById(savedId[0]);
+                } else {
+                    EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+                    response = new EvalResponse(currentUserId, evalGroupId, eval, new Date());
+                }
+
+                response.setAnswers(buildAnswers(response, formWrapper));
+                // No endTime set here — partial save, responseComplete=false
+                deliveryService.saveResponse(response, currentUserId);
+                savedId[0] = response.getId();
+            });
+        } catch (Exception e) {
+            log.error("Error saving partial response for evaluation {}: {}", evaluationId, e.getMessage(), e);
+            return "redirect:/take_eval?evaluationId=" + evaluationId
+                    + "&evalGroupId=" + evalGroupId
+                    + (responseId != null ? "&responseId=" + responseId : "")
+                    + "&error=savefailed";
         }
 
-        // Build answer objects from form data
+        if (!submit) {
+            // Save-only: return to form so user can see saved progress
+            return "redirect:/take_eval?evaluationId=" + evaluationId
+                    + "&evalGroupId=" + evalGroupId
+                    + "&responseId=" + savedId[0];
+        }
+
+        // Step 2: Mark response complete in a separate transaction from step 1.
+        // If validation fails (required answers missing), step 1 has already committed,
+        // so the redirect includes responseId and the form reloads with the saved answers.
+        Long finalId = savedId[0];
+        try {
+            daoInvoker.invokeTransactionalAccess(() -> {
+                EvalResponse response = deliveryService.getResponseById(finalId);
+                // Decode multiAnswerCode into the transient multipleAnswers field so
+                // saveResponse's cleanup re-encodes them correctly rather than losing them.
+                for (EvalAnswer answer : response.getAnswers()) {
+                    String mac = answer.getMultiAnswerCode();
+                    if (mac != null && !mac.isEmpty()) {
+                        answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(mac);
+                    }
+                }
+                response.setEndTime(new Date());
+                deliveryService.saveResponse(response, currentUserId);
+            });
+        } catch (ResponseSaveException e) {
+            String errorCode = ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)
+                    ? "blank_response" : "missing_required";
+            log.warn("Submission rejected for response {}: {}", finalId, e.getMessage());
+            return "redirect:/take_eval?evaluationId=" + evaluationId
+                    + "&evalGroupId=" + evalGroupId
+                    + "&responseId=" + finalId
+                    + "&error=" + errorCode;
+        } catch (Exception e) {
+            log.error("Error completing response {}: {}", finalId, e.getMessage(), e);
+            return "redirect:/take_eval?evaluationId=" + evaluationId
+                    + "&evalGroupId=" + evalGroupId
+                    + "&responseId=" + finalId
+                    + "&error=savefailed";
+        }
+
+        return "redirect:/summary";
+    }
+
+    /** Builds the answer set from the submitted form data. */
+    private Set<EvalAnswer> buildAnswers(EvalResponse response, EvalFormWrapper formWrapper) {
         Set<EvalAnswer> answers = new HashSet<>();
         for (EvalFormWrapper.AnswerSubmission sub : formWrapper.getAnswers()) {
             if (sub.getTemplateItemId() == null) continue;
@@ -506,7 +586,6 @@ public class TakeEvalController {
 
             EvalAnswer answer;
             if (sub.getExistingAnswerId() != null) {
-                // find in response answers
                 answer = findAnswerInResponse(response, sub.getExistingAnswerId());
                 if (answer == null) {
                     answer = new EvalAnswer(response, ti, ti.getItem());
@@ -515,14 +594,18 @@ public class TakeEvalController {
                 answer = new EvalAnswer(response, ti, ti.getItem());
             }
 
-            answer.setAssociatedId(sub.getAssociatedId());
-            answer.setAssociatedType(sub.getAssociatedType());
+            // Normalize empty strings to null: th:value="${null}" renders as "" in HTML,
+            // so blank form values must be treated as null to match the answer map keys
+            // built by makeTemplateItemAnswerKey (which uses null, not "").
+            String assocId = sub.getAssociatedId();
+            answer.setAssociatedId(assocId != null && !assocId.isEmpty() ? assocId : null);
+            String assocType = sub.getAssociatedType();
+            answer.setAssociatedType(assocType != null && !assocType.isEmpty() ? assocType : null);
 
             String type = sub.getItemType();
             if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
                 answer.setText(sub.getText());
             } else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
-                // encode multi-answer
                 if (sub.isNa()) {
                     answer.setNumeric(EvalConstants.NA_VALUE);
                 } else if (sub.getMultipleAnswers() != null && !sub.getMultipleAnswers().isEmpty()) {
@@ -536,7 +619,6 @@ public class TakeEvalController {
                     answer.setNumeric(null);
                 }
             } else {
-                // Scaled / MultipleChoice
                 if (sub.isNa()) {
                     answer.setNumeric(EvalConstants.NA_VALUE);
                 } else {
@@ -546,24 +628,7 @@ public class TakeEvalController {
             answer.setComment(sub.getComment());
             answers.add(answer);
         }
-
-        response.setAnswers(answers);
-        if (submit) {
-            response.setEndTime(new Date());
-        }
-
-        try {
-            deliveryService.saveResponse(response, currentUserId);
-        } catch (Exception e) {
-            log.error("Error saving response: " + e.getMessage(), e);
-            // Redirect back to GET with error
-            return "redirect:/take_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + evalGroupId
-                    + (responseId != null ? "&responseId=" + responseId : "")
-                    + "&error=savefailed";
-        }
-
-        return "redirect:/summary";
+        return answers;
     }
 
     // ---- Item building -------------------------------------------------------

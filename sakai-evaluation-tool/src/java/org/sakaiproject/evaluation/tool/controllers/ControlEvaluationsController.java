@@ -23,13 +23,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -126,8 +126,10 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam(defaultValue = "6") int maxAgeToDisplay,
-                       Locale locale, Model model) {
+                       Locale locale, Model model,
+                       HttpServletRequest request) {
 
+        String contextPath = request.getContextPath();
         String currentUserId = commonLogic.getCurrentUserId();
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
@@ -196,7 +198,7 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
         for (EvalEvaluation eval : inqueueEvals) {
             EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false, contextPath);
 
             // Verificar grupos no publicados
             if (checkUnpublished) {
@@ -218,13 +220,13 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
         for (EvalEvaluation eval : activeEvals) {
             EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, true);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, true, contextPath);
             activeRows.add(row);
         }
 
         for (EvalEvaluation eval : closedEvals) {
             EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false);
+                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false, contextPath);
             row.setCanChown(false); // chown not available for closed evals
             closedRows.add(row);
         }
@@ -262,7 +264,7 @@ public class ControlEvaluationsController extends EvalControllerSupport {
             String currentUserId, boolean userReadonlyAdmin, boolean isUserAdmin,
             boolean earlyCloseAllowed, boolean reopeningAllowed,
             boolean viewResultsIgnoreDates, int responsesRequired,
-            boolean isActive) {
+            boolean isActive, String contextPath) {
 
         EvalRow row = new EvalRow();
         row.setEvalId(eval.getId());
@@ -275,11 +277,11 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         row.setDueDate(dueDate != null ? df.format(dueDate) : "");
         row.setDueDateSort(dueDate != null ? String.valueOf(dueDate.getTime()) : "0");
 
-        // Direct URLs
-        row.setDirectUrl(commonLogic.getEntityURL(eval));
+        // Direct URL: opens in a new tab, so suppress back/breadcrumb with external=true
+        row.setDirectUrl(contextPath + "/preview_eval?evaluationId=" + eval.getId() + "&external=true");
         if (eval.getEvalCategory() != null) {
             row.setCategoryLabel(shortenText(eval.getEvalCategory(), 20));
-            row.setCategoryUrl(commonLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, eval.getEvalCategory()));
+            row.setCategoryUrl(contextPath + "/control_evaluations?category=" + eval.getEvalCategory());
         }
 
         // Groups

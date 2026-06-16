@@ -97,6 +97,11 @@
         <span th:text="${savedWarning}">Saved warning</span>
     </div>
 
+    <!-- Validation error (missing required answers, blank response, or save failure) -->
+    <div th:if="${validationError != null}" class="alertMessage">
+        <span th:text="${validationError}">Validation error</span>
+    </div>
+
     <!-- Main evaluation form -->
     <div th:if="${cannotTakeMessage == null}">
         <form th:action="@{/take_eval}" method="post" id="evaluationForm">
@@ -106,15 +111,15 @@
 
             <!-- Hidden fields for indexed answer binding -->
             <th:block th:each="sub, stat : ${evalForm.answers}">
-                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].templateItemId'}"
+                <input type="hidden" th:name="${'answers[' + stat.index + '].templateItemId'}"
                        th:value="${sub.templateItemId}"/>
-                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].existingAnswerId'}"
+                <input type="hidden" th:name="${'answers[' + stat.index + '].existingAnswerId'}"
                        th:value="${sub.existingAnswerId}"/>
-                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].associatedId'}"
+                <input type="hidden" th:name="${'answers[' + stat.index + '].associatedId'}"
                        th:value="${sub.associatedId}"/>
-                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].associatedType'}"
+                <input type="hidden" th:name="${'answers[' + stat.index + '].associatedType'}"
                        th:value="${sub.associatedType}"/>
-                <input type="hidden" th:name="${'evalForm.answers[' + stat.index + '].itemType'}"
+                <input type="hidden" th:name="${'answers[' + stat.index + '].itemType'}"
                        th:value="${sub.itemType}"/>
             </th:block>
 
@@ -140,11 +145,11 @@
             <!-- Buttons -->
             <div class="act">
                 <th:block th:if="${saveWithoutSubmit}">
-                    <input type="submit" name="action" value="save"
+                    <input type="submit" name="actionSave"
                            th:value="#{takeeval.save.button}"
                            onclick="if (typeof SPNR !== 'undefined') SPNR.disableControlsAndSpin(this, null);"/>
                 </th:block>
-                <input type="submit" name="action" value="submit"
+                <input type="submit" name="actionSubmit"
                        th:value="#{takeeval.submit.button}"
                        class="active"
                        onclick="if (typeof SPNR !== 'undefined') SPNR.disableControlsAndSpin(this, null);"/>
@@ -159,6 +164,13 @@
 <script type="text/javascript">evalsys.instrumentItems(".evaluation");</script>
 <th:block th:if="${mainFrameId != ''}">
     <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+<th:block th:if="${savedWarning != null or validationError != null}">
+    <script type="text/javascript">
+        // Scroll to top so the feedback message is visible after save/validation redirect.
+        try { window.parent.scrollTo(0, 0); } catch(e) {}
+        window.scrollTo(0, 0);
+    </script>
 </th:block>
 </body>
 </html>

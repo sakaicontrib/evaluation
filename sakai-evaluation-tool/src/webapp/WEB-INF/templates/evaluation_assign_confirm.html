@@ -93,11 +93,6 @@
         <tr th:each="row : ${normalRows}">
             <td width="60%">
                 <span th:text="${row.title}">Group title</span>
-                <span th:if="${row.directLink != null}">
-                    (<a th:href="${row.directLink}"
-                        th:text="#{evaluationassignconfirm.direct.link}"
-                        target="_blank">Direct link</a>)
-                </span>
             </td>
             <td width="40%">
                 <span th:text="${row.enrollmentCount}">0</span>
@@ -113,10 +108,6 @@
             <tr th:each="row : ${adhocRows}">
                 <td width="60%">
                     <span th:text="${row.title}">Group title</span>
-                    <span th:if="${row.directLink != null}">
-                        (<a th:href="${row.directLink}"
-                            th:text="#{evaluationassignconfirm.direct.link}">Direct link</a>)
-                    </span>
                 </td>
                 <td width="40%">
                     <span th:text="${row.enrollmentCount}">0</span>

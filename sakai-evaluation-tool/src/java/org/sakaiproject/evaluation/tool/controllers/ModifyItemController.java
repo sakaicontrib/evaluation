@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import lombok.Data;
 
 /**
@@ -346,7 +345,8 @@ public class ModifyItemController {
                        @RequestParam(required = false) String expertDescription,
                        @RequestParam(required = false) Long itemGroupId,
                        @RequestParam(required = false) String resultsSharing,
-                       HttpServletRequest request) {
+                       HttpServletRequest request,
+                       Model model) {
 
         boolean inFacebox = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         final String currentUserId = commonLogic.getCurrentUserId();
@@ -425,9 +425,14 @@ public class ModifyItemController {
                     item.setScale(null);
                 }
 
-                // Display hints on the item (when there is no target templateItem)
+                // scaleDisplaySetting must always be set on the item — the service
+                // validation checks the item field regardless of whether it is also
+                // stored on the templateItem.
+                item.setScaleDisplaySetting(scaleDisplaySetting);
+
+                // Remaining display hints only apply when not in a template
+                // (in-template display hints are stored on the templateItem below)
                 if (!inTemplate) {
-                    item.setScaleDisplaySetting(scaleDisplaySetting);
                     item.setDisplayRows(displayRows != null ? Integer.valueOf(displayRows) : null);
                     item.setUsesNA(usesNA);
                     item.setUsesComment(usesComment);

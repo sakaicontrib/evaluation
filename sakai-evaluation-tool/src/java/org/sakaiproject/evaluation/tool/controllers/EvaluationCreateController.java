@@ -19,6 +19,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -94,7 +96,13 @@ public class EvaluationCreateController {
     @PostMapping
     public String create(@RequestParam(required = false) String title,
                          @RequestParam(required = false) String instructions,
-                         @RequestParam Long templateId) {
+                         @RequestParam Long templateId,
+                         Model model) {
+        if (StringUtils.isBlank(title)) {
+            show(templateId, model);
+            model.addAttribute("titleError", true);
+            return "evaluation_create";
+        }
         String currentUserId = commonLogic.getCurrentUserId();
 
         // Create a new evaluation in PARTIAL state (same process as EvaluationBeanLocator)

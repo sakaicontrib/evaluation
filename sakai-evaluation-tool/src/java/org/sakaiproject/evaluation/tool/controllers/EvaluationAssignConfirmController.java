@@ -109,16 +109,6 @@ public class EvaluationAssignConfirmController extends EvalControllerSupport {
             row.setEnrollmentCount(
                 commonLogic.countUserIdsForEvalGroup(gid, EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness()));
 
-            // If the evaluation already exists in DB with this group assigned, add direct link
-            if (!isPartial) {
-                EvalAssignGroup ag = evaluationService.getAssignGroupByEvalAndGroupId(evaluationId, gid);
-                if (ag != null) {
-                    row.setDirectLink(commonLogic.getEntityURL(
-                        org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider.ENTITY_PREFIX,
-                        ag.getId().toString()));
-                }
-            }
-
             if (EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
                 adhocRows.add(row);
             } else {

@@ -111,6 +111,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         Boolean showHierarchy      = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
         Boolean consolidatedEmail  = (Boolean) settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
         Boolean allowToggleMail    = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
+        Boolean submissionEmailEnabled = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
         Boolean studentUnanswered  = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
         Boolean studentModify      = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
         Boolean allRolesSetting    = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
@@ -177,8 +178,9 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         model.addAttribute("categoriesEnabled", categoriesEnabled);
         model.addAttribute("termIdsEnabled",    termIdsEnabled);
         model.addAttribute("showHierarchy",     showHierarchy);
-        model.addAttribute("consolidatedEmail", consolidatedEmail);
-        model.addAttribute("allowToggleMail",   allowToggleMail);
+        model.addAttribute("consolidatedEmail",        consolidatedEmail);
+        model.addAttribute("allowToggleMail",          allowToggleMail);
+        model.addAttribute("submissionEmailEnabled",   Boolean.TRUE.equals(submissionEmailEnabled));
         model.addAttribute("instrOptIsSelect",  instrOptIsSelect);
         model.addAttribute("instrOptFixedLabel",instrOptFixedLabel);
 

@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
+import java.util.Objects;
+
 import javax.annotation.Resource;
 
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
@@ -74,20 +76,48 @@ public class ModifyEmailController {
 
         String userId = commonLogic.getCurrentUserId();
         EvalEmailTemplate template = loadTemplate(templateId, emailType, evaluationId);
-        template.setSubject(subject);
-        template.setMessage(message);
-        if (template.getType() == null && emailType != null) {
-            template.setType(emailType);
+
+        // A brand-new template pre-populated from the default: if the user submits it
+        // without changing anything, skip saving so we don't permanently clone the
+        // default template for every evaluation that never customizes its emails.
+        boolean unchanged = template.getId() == null
+                && textEquals(template.getSubject(), subject)
+                && textEquals(template.getMessage(), message);
+
+        if (!unchanged) {
+            template.setSubject(subject);
+            template.setMessage(message);
+            if (template.getType() == null && emailType != null) {
+                template.setType(emailType);
+            }
+            evaluationSetupService.saveEmailTemplate(template, userId);
+
+            if (evaluationId != null) {
+                evaluationSetupService.assignEmailTemplate(template.getId(), evaluationId, null, userId);
+            }
         }
-        evaluationSetupService.saveEmailTemplate(template, userId);
 
         if (evaluationId != null) {
-            evaluationSetupService.assignEmailTemplate(template.getId(), evaluationId, null, userId);
-            return "redirect:/preview_email?templateId=" + template.getId()
-                    + (emailType != null ? "&emailType=" + emailType : "")
-                    + "&evaluationId=" + evaluationId;
+            StringBuilder redirect = new StringBuilder("redirect:/preview_email?evaluationId=").append(evaluationId);
+            if (template.getId() != null) {
+                redirect.append("&templateId=").append(template.getId());
+            }
+            if (emailType != null) {
+                redirect.append("&emailType=").append(emailType);
+            }
+            return redirect.toString();
         }
         return "redirect:/control_email_templates";
+    }
+
+    /**
+     * Compares text ignoring line-ending differences: browsers normalize textarea
+     * line breaks to CRLF on submission while stored templates use LF.
+     */
+    private boolean textEquals(String a, String b) {
+        String na = a != null ? a.replace("\r\n", "\n") : null;
+        String nb = b != null ? b.replace("\r\n", "\n") : null;
+        return Objects.equals(na, nb);
     }
 
     @PostMapping("/reset")

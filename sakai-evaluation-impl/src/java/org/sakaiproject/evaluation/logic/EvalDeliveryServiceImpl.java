@@ -203,16 +203,20 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             if (newResponse) {
                 commonLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
             } else {
-                commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+                commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);
             }
-            
-            //send an confirmation email to the responder 
-            try {
-            	if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL))) {
-                	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
-                  }
-            }catch(Exception e){
-            	log.warn("Unable to send the confirmation email to user: " + userId, e);
+
+            // Send confirmation email only when the response is fully submitted.
+            // Sending on partial saves is wrong and risks leaving the transaction
+            // rollback-only if the email call fails.
+            if (responseComplete) {
+                try {
+                    if (((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL))) {
+                        emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
+                    }
+                } catch (Exception e) {
+                    log.warn("Unable to send the confirmation email to user: " + userId, e);
+                }
             }
             
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();

@@ -24,6 +24,7 @@
     <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
     <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
     <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    [(${sakaiHtmlHead})]
 </head>
 <body>
 <div class="portletBody evaluation">
@@ -45,9 +46,10 @@
     <form th:action="@{/evaluation_create}" method="post">
 
         <!-- Title -->
+        <p th:if="${titleError}" class="alertMessage" th:text="#{general.blank.required.field.user.message1}">Title is required.</p>
         <p class="shorttext">
             <label for="title" th:text="#{starteval.title.header}">Title</label>
-            <input type="text" id="title" name="title" size="50" maxlength="255"/>
+            <input type="text" id="title" name="title" size="50" maxlength="255" required="required"/>
         </p>
 
         <!-- Instrucciones -->
@@ -108,6 +110,7 @@
     </form>
 
 </div>
+<script>sakai.editor.launch("instructions", "{noop:0}");</script>
 <th:block th:if="${mainFrameId != ''}">
     <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
 </th:block>
