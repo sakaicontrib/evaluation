@@ -608,6 +608,9 @@ public class TakeEvalController {
             } else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
                 if (sub.isNa()) {
                     answer.setNumeric(EvalConstants.NA_VALUE);
+                    // Clear any stale multiple-answer state from a previous save.
+                    answer.multipleAnswers = null;
+                    answer.setMultiAnswerCode(null);
                 } else if (sub.getMultipleAnswers() != null && !sub.getMultipleAnswers().isEmpty()) {
                     Integer[] vals = sub.getMultipleAnswers().stream()
                             .filter(s -> s != null && !s.isEmpty())
@@ -615,8 +618,13 @@ public class TakeEvalController {
                             .toArray(Integer[]::new);
                     answer.multipleAnswers = vals;
                     answer.setMultiAnswerCode(EvalUtils.encodeMultipleAnswers(vals));
-                } else {
+                    // Clear stale NA_VALUE if the user switched from N/A back to a selection.
                     answer.setNumeric(null);
+                } else {
+                    // All checkboxes deselected: clear everything.
+                    answer.setNumeric(null);
+                    answer.multipleAnswers = null;
+                    answer.setMultiAnswerCode(null);
                 }
             } else {
                 if (sub.isNa()) {

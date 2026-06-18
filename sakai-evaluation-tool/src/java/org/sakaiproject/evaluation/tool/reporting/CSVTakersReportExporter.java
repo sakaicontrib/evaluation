@@ -28,7 +28,9 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
@@ -57,6 +59,11 @@ public class CSVTakersReportExporter implements ReportExporter {
     private EvalDeliveryService deliveryService;
     public void setDeliveryService(EvalDeliveryService deliveryService) {
         this.deliveryService = deliveryService;
+    }
+
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+        this.evaluationService = evaluationService;
     }
 
     private EvalMessageLocator messageLocator;
@@ -106,12 +113,28 @@ public class CSVTakersReportExporter implements ReportExporter {
             headers.add(messageLocator.getMessage("viewreport.takers.csv.status.header"));
             writer.writeNext(headers.toArray(new String[0]));
 
+            // Resolve participant list using EvalAssignUser rows when available (same as
+            // EvaluationRespondersController) so the CSV agrees with the responders screen.
+            Map<String, List<EvalUser>> usersByGroupId = new HashMap<>();
+            List<EvalAssignUser> assigned = evaluationService.getParticipantsForEval(
+                    evaluation.getId(), null, groupIds, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+            if (!assigned.isEmpty()) {
+                for (EvalAssignUser au : assigned) {
+                    usersByGroupId.computeIfAbsent(au.getEvalGroupId(), k -> new ArrayList<>())
+                            .add(commonLogic.getEvalUserById(au.getUserId()));
+                }
+            } else {
+                for (String groupId : groupIds) {
+                    Set<String> ids = commonLogic.getUserIdsForEvalGroup(groupId, EvalConstants.PERM_TAKE_EVALUATION, false);
+                    usersByGroupId.put(groupId, commonLogic.getEvalUsersByIds(new ArrayList<>(ids)));
+                }
+            }
+
             for (String groupId : groupIds) {
                 String groupTitle = multiGroup ? commonLogic.makeEvalGroupObject(groupId).title : null;
                 Map<String, EvalResponse> userResponses = groupUserResponses.getOrDefault(groupId, Collections.emptyMap());
 
-                Set<String> userIds = commonLogic.getUserIdsForEvalGroup(groupId, EvalConstants.PERM_TAKE_EVALUATION, false);
-                List<EvalUser> users = commonLogic.getEvalUsersByIds(new ArrayList<>(userIds));
+                List<EvalUser> users = new ArrayList<>(usersByGroupId.getOrDefault(groupId, Collections.emptyList()));
                 users.sort(new EvalUser.SortNameComparator());
 
                 log.debug("Group {}: {} assigned users, {} responses", groupId, users.size(), userResponses.size());

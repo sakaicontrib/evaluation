@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,6 +129,7 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam(defaultValue = "6") int maxAgeToDisplay,
+                       @RequestParam(required = false) String category,
                        Locale locale, Model model,
                        HttpServletRequest request) {
 
@@ -151,6 +155,12 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
         List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(
                 currentUserId, false, false, true, maxAgeToDisplay);
+
+        if (category != null && !category.isEmpty()) {
+            evals = evals.stream()
+                    .filter(e -> category.equals(e.getEvalCategory()))
+                    .collect(java.util.stream.Collectors.toList());
+        }
 
         for (EvalEvaluation eval : evals) {
             String state = evaluationService.updateEvaluationState(eval.getId());
@@ -281,7 +291,12 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         row.setDirectUrl(contextPath + "/preview_eval?evaluationId=" + eval.getId() + "&external=true");
         if (eval.getEvalCategory() != null) {
             row.setCategoryLabel(shortenText(eval.getEvalCategory(), 20));
-            row.setCategoryUrl(contextPath + "/control_evaluations?category=" + eval.getEvalCategory());
+            try {
+                row.setCategoryUrl(contextPath + "/control_evaluations?category="
+                        + URLEncoder.encode(eval.getEvalCategory(), StandardCharsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException e) {
+                row.setCategoryUrl(contextPath + "/control_evaluations");
+            }
         }
 
         // Groups

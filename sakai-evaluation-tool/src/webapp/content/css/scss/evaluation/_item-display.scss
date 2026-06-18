@@ -507,10 +507,17 @@ remove input width in template and use these instead
 }
 
 .blockChoiceColored {
-  width: 100%;
   display: flex;
   justify-content: center;
   background-color: transparent;
+}
+
+/* Stepped non-colored: float right so it matches the N×25px arrow width */
+.blockChoiceNotColored {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  float: right;
 }
 
 .blockChoiceColored label.blockItemLabelSelected {
