@@ -105,12 +105,9 @@ var evalTemplateLoaderEvents = (function($) {
                     itemType: 'blockChild',
                     text:   '$(this).parents("div.itemRowBlock").find("span.text").text()'
                 });
-        $(scope).find('a[rel=childUngroup]').itemRemove({
-                    ref:    'eval-templateitem/unblock',
-                    id:    '$(this).parents("div.itemRowBlock").find("input[name=hidden-item-id]").val()',
-                    itemType: 'blockChild',
-                    text:   '$(this).parents("div.itemRowBlock").find("span.text:visible").text()'
-                });
+        // rel=childUngroup is NOT bound here: it navigates straight to /unblock_item,
+        // a real Spring MVC confirmation page (see UnblockItemController), instead of
+        // going through the legacy small popup + EntityBroker AJAX call below.
         $(scope).find('a[rel=unblock]').itemRemove({
             ref:    'eval-templateitem',
             id:        'evalTemplateUtils.getTemplateItemId($(this))',
@@ -122,7 +119,6 @@ var evalTemplateLoaderEvents = (function($) {
     unBindDeleteIcons = function(){
         $('a[rel=remove]').unbind("click");
         $('a[rel=childRemove]').unbind("click");
-        $('a[rel=childUngroup]').unbind("click");
         $('a[rel=unblock]').unbind("click");
     },
 
@@ -138,27 +134,22 @@ var evalTemplateLoaderEvents = (function($) {
           */
     bindGroupParentTextControls = function(row){
         var scope = (typeof row === 'undefined') ? document : row.get();
-        $(scope).find('.blockExpandText').toggle(
-            function() {
-                if ($(this).parents('.itemRow').find('.itemLine3').is(':hidden')) {
-                    $(this).click();
-                    return false;
-                }
-                var text = evalTemplateUtils.messageLocator('modifytemplate.group.show');
-                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
-                $(this).text(text);
-                // save closed state
-                evalTemplateUtils.closedGroup.add( $(this).parents(".itemRow").attr('name') );
-                return false;
-            },
-            function() {
-                var text = evalTemplateUtils.messageLocator('modifytemplate.group.hide');
-                $(this).parents('.itemRow').find('.itemLine3').slideToggle();
-                $(this).text(text);
-                // remove closed state
-                evalTemplateUtils.closedGroup.remove( $(this).parents(".itemRow").attr('name') );
-                return false;
-            });
+        // jQuery >= 1.9 dropped the click-alternating form of .toggle(fnShow, fnHide),
+        // so the show/hide state is driven from the current visibility of .itemLine3 instead.
+        $(scope).find('.blockExpandText').on('click', function() {
+            var groupName = $(this).parents('.itemRow').attr('name');
+            var itemLine3 = $(this).parents('.itemRow').find('.itemLine3');
+            var wasVisible = itemLine3.is(':visible');
+            itemLine3.slideToggle();
+            if (wasVisible) {
+                $(this).text(evalTemplateUtils.messageLocator('modifytemplate.group.show'));
+                evalTemplateUtils.closedGroup.add( groupName );
+            } else {
+                $(this).text(evalTemplateUtils.messageLocator('modifytemplate.group.hide'));
+                evalTemplateUtils.closedGroup.remove( groupName );
+            }
+            return false;
+        });
         $(scope).find('.more').bind('click', function() {
             if ($(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').length === 0) {
                 $(this).parents('.itemLine2').find('.itemText').eq(1).find('.blockExpandText').remove();
@@ -299,8 +290,9 @@ var evalTemplateLoaderEvents = (function($) {
 
                     if (checkBoxes_CHECKED.length < 2) {
                         alert(evalTemplateUtils.messageLocator('modifytemplate.group.warn.minimum'));
-                         return false;
+                        return false;
                     }
+                    $(destinationForm).trigger('submit');
                     return true;
                 }
                 return false;

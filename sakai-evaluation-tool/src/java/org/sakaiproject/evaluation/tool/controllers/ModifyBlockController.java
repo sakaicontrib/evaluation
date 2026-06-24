@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -234,10 +235,21 @@ public class ModifyBlockController extends EvalControllerSupport {
                        @RequestParam(required = false) Boolean usesNA,
                        @RequestParam(required = false) String category,
                        @RequestParam(required = false) String blockTextChoice,
+                       Model model,
                        HttpServletRequest request) {
 
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         boolean isNewBlock = "new1".equals(blockId);
+
+        // When creating a new block with no existing block text to reuse, the item header
+        // text comes from the itemText param. Reject it here instead of letting the blank
+        // text reach EvalAuthoringServiceImpl.saveItem(), which throws BlankRequiredFieldException.
+        boolean reusingExistingText = blockTextChoice != null && !"new1".equals(blockTextChoice);
+        if (isNewBlock && !reusingExistingText && EvalUtils.isBlank(itemText)) {
+            model.addAttribute("blankTextError", true);
+            return show(templateId, templateItemIds, model, request);
+        }
+
         Long[] parentIdHolder = {null};
 
         daoInvoker.invokeTransactionalAccess(() -> {
@@ -307,7 +319,7 @@ public class ModifyBlockController extends EvalControllerSupport {
                                String category, String blockTextChoice, int originalDisplayOrder) {
 
         List<String> templateItemIdList = Arrays.asList(templateItemIds.split(","));
-        List<String> orderedChildIdList = orderedChildIds != null
+        List<String> orderedChildIdList = (orderedChildIds != null && !orderedChildIds.isEmpty())
                 ? Arrays.asList(orderedChildIds.split(",")) : templateItemIdList;
 
         // Resolve text source

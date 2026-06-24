@@ -44,6 +44,9 @@
         <!-- Main form -->
         <div th:if="${validChildsNo}" class="evalEditorSmall">
 
+            <!-- Error: blank item header text on create -->
+            <p th:if="${blankTextError}" class="alertMessage" th:text="#{modifyblock.error.blanktext.message}">You must enter the item header text.</p>
+
             <form id="blockForm" name="block_form" method="post" th:action="@{/modify_block}">
                 <input type="hidden" name="templateId" th:value="${templateId}"/>
                 <input type="hidden" name="templateItemIds" th:value="${templateItemIds}"/>

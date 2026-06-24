@@ -112,7 +112,16 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             // except starttime, endtime, and answers
         }
 
-        boolean responseComplete = response.getEndTime() != null;
+        // Capture endTime and clear it on the entity before any DB queries.
+        // Hibernate's auto-flush mode writes dirty fields before executing queries;
+        // if endTime were left set, the canTakeEvaluation query below would see the
+        // response as already complete and reject the save. We restore it after all
+        // checks pass, immediately before the actual saveMixedSet call.
+        Date capturedEndTime = response.getEndTime();
+        if (capturedEndTime != null) {
+            response.setEndTime(null);
+        }
+        boolean responseComplete = capturedEndTime != null;
 
         // fill in any default values and nulls here
 
@@ -169,6 +178,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                 }
             }
             checkAnswersValidForEval(response, responseComplete);
+
+            // All checks passed — restore endTime so it is persisted in the save below.
+            if (capturedEndTime != null) {
+                response.setEndTime(capturedEndTime);
+            }
 
             // save everything in one transaction
 

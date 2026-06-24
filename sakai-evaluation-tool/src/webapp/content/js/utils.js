@@ -839,6 +839,14 @@ evalsys.initTemplateItemsModal = function() {
         if ($form.length === 0) { return; }
         $form.off('submit.modalEdit').on('submit.modalEdit', function(e) {
             e.preventDefault();
+            // Sync CKEditor instances (e.g. the block item text) into their
+            // textareas before serializing, since they don't update on their
+            // own when the AJAX submit below bypasses the native form submit.
+            if (typeof CKEDITOR !== 'undefined') {
+                jQuery.each(CKEDITOR.instances, function(name, instance) {
+                    instance.updateElement();
+                });
+            }
             jQuery.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
@@ -864,6 +872,11 @@ evalsys.initTemplateItemsModal = function() {
     jQuery(document).on('click', 'a[rel=faceboxGrid], a[rel=childEdit]', function(e) {
         e.preventDefault();
         loadIntoModal(this.href);
+    });
+
+    jQuery(document).on('submit', '#createBlockForm', function(e) {
+        e.preventDefault();
+        loadIntoModal(this.action + '?' + jQuery(this).serialize());
     });
 
     modalEl.addEventListener('shown.bs.modal', function() {
@@ -1008,3 +1021,59 @@ evalsys.initStickyHeaders = function() {
         });
     });
 };
+
+/**
+ * Block Matrix items show the start/middle/end scale text above their
+ * own option column (.matrixLegendRow > th > .matrixLegendText). With long
+ * scale text and many columns the start/middle/end labels can overlap each
+ * other; shrink their font-size step by step until they no longer do.
+ */
+evalsys.fitMatrixLegendRows = function(scope) {
+    var root = scope ? jQuery(scope) : jQuery(document);
+    var MIN_FONT_SIZE = 8;
+    var START_FONT_SIZE = 12;
+
+    function overlaps(spans) {
+        var rects = [];
+        for (var i = 0; i < spans.length; i++) {
+            rects.push(spans[i].getBoundingClientRect());
+        }
+        for (var a = 0; a < rects.length - 1; a++) {
+            for (var b = a + 1; b < rects.length; b++) {
+                if (rects[a].right > rects[b].left && rects[b].right > rects[a].left) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    root.find('.matrixLegendRow').each(function() {
+        var spans = jQuery(this).find('.matrixLegendText').get();
+        if (spans.length < 2) return;
+
+        var fontSize = START_FONT_SIZE;
+        jQuery(spans).css('font-size', fontSize + 'px');
+        while (fontSize > MIN_FONT_SIZE && overlaps(spans)) {
+            fontSize -= 1;
+            jQuery(spans).css('font-size', fontSize + 'px');
+        }
+    });
+};
+
+jQuery(function() {
+    evalsys.fitMatrixLegendRows();
+
+    // preview_item loaded into the legacy jQuery facebox (control_items, modify_item)
+    jQuery(document).bind('reveal.facebox', function() {
+        evalsys.fitMatrixLegendRows('#facebox');
+    });
+
+    // preview_item loaded into the Bootstrap modal (modify_template_items)
+    var templateItemModal = document.getElementById('templateItemModal');
+    if (templateItemModal) {
+        templateItemModal.addEventListener('shown.bs.modal', function() {
+            evalsys.fitMatrixLegendRows(templateItemModal);
+        });
+    }
+});

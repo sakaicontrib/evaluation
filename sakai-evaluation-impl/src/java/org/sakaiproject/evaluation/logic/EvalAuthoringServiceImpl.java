@@ -673,6 +673,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 templateSet.add(template);
                 entitySets[2] = templateSet;
 
+                template.setLastModified(new Date());
                 dao.saveMixedSet(entitySets);
                 commonLogic.registerEntityEvent(EVENT_TEMPLATEITEM_CREATE, templateItem);
             } else {
@@ -680,6 +681,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 // TODO - make sure the item and template do not change for existing templateItems
 
                 dao.save(templateItem);
+                template.setLastModified(new Date());
+                dao.save(template);
                 commonLogic.registerEntityEvent(EVENT_TEMPLATEITEM_UPDATE, templateItem);
             }
 

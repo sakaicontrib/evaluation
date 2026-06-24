@@ -254,6 +254,8 @@
                     <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="blankResponsesAllowed"
                            name="blankResponsesAllowed" value="true"
                            th:checked="${eval.blankResponsesAllowed}"/>
+                    <input th:if="${respondentSettingsDisabled}" type="checkbox" disabled="disabled"
+                           th:checked="${eval.blankResponsesAllowed}"/>
                     <input th:if="${respondentSettingsDisabled}" type="hidden" name="blankResponsesAllowed"
                            th:value="${eval.blankResponsesAllowed}"/>
                     <label for="blankResponsesAllowed"
@@ -264,7 +266,8 @@
                     <label th:text="${studentUnansweredSetting} ? #{evalsettings.blankResponsesAllowed.label} : #{evalsettings.blankResponsesAllowed.disabled}">
                         Blank responses</label>
                 </span>
-                <p class="instructionText textPanelFooter indnt2"
+                <p th:if="${studentUnansweredSetting == null and !eval.blankResponsesAllowed}"
+                   class="instructionText textPanelFooter indnt2"
                    th:text="#{evalsettings.blank.responses.allowed.note}">Blank responses note</p>
             </div>
 
@@ -273,6 +276,8 @@
                 <span th:if="${studentModifySetting == null}">
                     <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="modifyResponsesAllowed"
                            name="modifyResponsesAllowed" value="true"
+                           th:checked="${eval.modifyResponsesAllowed}"/>
+                    <input th:if="${respondentSettingsDisabled}" type="checkbox" disabled="disabled"
                            th:checked="${eval.modifyResponsesAllowed}"/>
                     <input th:if="${respondentSettingsDisabled}" type="hidden" name="modifyResponsesAllowed"
                            th:value="${eval.modifyResponsesAllowed}"/>
@@ -293,6 +298,8 @@
                 <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="allRolesParticipate"
                        name="allRolesParticipate" value="true"
                        th:checked="${eval.allRolesParticipate}"/>
+                <input th:if="${respondentSettingsDisabled}" type="checkbox" disabled="disabled"
+                       th:checked="${eval.allRolesParticipate}"/>
                 <input th:if="${respondentSettingsDisabled}" type="hidden" name="allRolesParticipate"
                        th:value="${eval.allRolesParticipate}"/>
                 <label for="allRolesParticipate"
@@ -306,6 +313,8 @@
             <div th:if="${compulsoryTextSetting == null}" class="shorttext">
                 <input th:if="${!respondentSettingsDisabled}" type="checkbox" id="compulsoryTextItemsAllowed"
                        name="compulsoryTextItemsAllowed" value="true"
+                       th:checked="${eval.compulsoryTextItemsAllowed}"/>
+                <input th:if="${respondentSettingsDisabled}" type="checkbox" disabled="disabled"
                        th:checked="${eval.compulsoryTextItemsAllowed}"/>
                 <label for="compulsoryTextItemsAllowed"
                        th:text="#{evalsettings.compulsoryTextItemsAllowed.label}">Compulsory text</label>

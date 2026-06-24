@@ -169,7 +169,7 @@
 
                     <!-- ==================== MATRIX ==================== -->
                     <th:block th:if="${section.displaySetting == 'Matrix' or section.displaySetting == 'MatrixColored'}">
-                        <div class="matrixDisplay">
+                        <div class="matrixDisplay scale">
                             <div class="matrix">
                                 <h5 class="title">
                                     <span class="number">1</span>
@@ -189,7 +189,7 @@
                                             <span class="response-scale-end" th:text="${section.matrixLabelEnd}">end</span>
                                         </legend>
                                         <div class="response-list">
-                                            <ol class="response-list">
+                                            <ol th:class="'response-list matrixRadioItems-' + ${#lists.size(section.options)}">
                                                 <li th:each="o : ${section.options}">
                                                     <label>
                                                         <span th:text="${o.label}">1</span>

@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title th:text="#{previewemail.page.title}">Preview Email</title>
+    <title th:text="#{unblockitem.page.title}">Ungroup Item</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <script src="/library/js/headscripts.js" type="text/javascript"></script>
@@ -35,32 +35,28 @@
 
     <ul class="breadCrumb">
         <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
-        <li><a th:href="@{/control_email_templates}" th:text="#{controlemailtemplates.page.title}">Email Templates</a></li>
-        <li class="lastCrumbNoFloat" th:text="#{previewemail.page.title}">Preview Email</li>
+        <li>
+            <a th:href="@{/modify_template_items(templateId=${templateId})}"
+               th:text="#{modifytemplateitems.page.title}">Template Items</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{unblockitem.page.title}">Ungroup Item</li>
     </ul>
 
-    <h3 th:text="#{previewemail.header}">Preview of email text</h3>
-    <p th:text="#{previewemail.desc}" class="instructionText">Key values will be substituted...</p>
+    <p th:text="#{unblockitem.confirmation}" class="instructionText">Are you sure...?</p>
 
-    <div th:utext="#{email.templates.field.names}" class="highlightPanel" style="background:#eee;padding:.5em;margin-bottom:1em"></div>
-
-    <div th:if="${template != null}">
-        <p><strong th:text="#{modifyemail.template.subject}">Subject:</strong>
-           <span th:text="${template.subject}">Subject text</span></p>
-        <div th:utext="${messageHtml}" style="border:1px solid #ccc;padding:1em;background:#fafafa">Message text</div>
+    <div class="itemListReport" style="margin:1em 0;padding:1em;border:1px solid #ccc">
+        <span th:utext="${itemText}">Item text here</span>
     </div>
 
-    <p class="act" style="margin-top:1em">
-        <a th:if="${evaluationId != null}"
-           th:href="@{/modify_email(templateId=${templateId}, emailType=${emailType}, evaluationId=${evaluationId})}"
-           th:text="#{previewemail.modify.button}" class="active">Edit</a>
-        <a th:if="${evaluationId != null}"
-           th:href="@{/evaluation_settings(evaluationId=${evaluationId})}"
-           th:text="#{previewemail.back.button}">Back</a>
-        <a th:if="${evaluationId == null}"
-           th:href="@{/control_email_templates}"
-           th:text="#{previewemail.back.button}">Back</a>
-    </p>
+    <form method="post" th:action="@{/unblock_item}">
+        <input type="hidden" name="templateItemId" th:value="${templateItemId}"/>
+        <input type="hidden" name="templateId" th:value="${templateId}"/>
+        <p class="act">
+            <input type="submit" th:value="#{modifytemplate.group.ungroup}" class="active"/>
+            <a th:href="@{/modify_template_items(templateId=${templateId})}"
+               th:text="#{general.cancel.button}">Cancel</a>
+        </p>
+    </form>
 
 </div>
 

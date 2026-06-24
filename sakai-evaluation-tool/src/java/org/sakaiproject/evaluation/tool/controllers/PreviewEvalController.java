@@ -74,6 +74,8 @@ public class PreviewEvalController {
         int index;
         String value;
         String label;
+        String matrixLegend;
+        String matrixLegendAlign;
     }
 
     @Data
@@ -434,10 +436,17 @@ public class PreviewEvalController {
             d.setMatrixLabelStart(headers.get(0));
             d.setMatrixLabelEnd(headers.get(1));
             if (headers.size() >= 3) d.setMatrixLabelMiddle(headers.get(2));
+            boolean numericScale = RenderingUtils.isNumericScale(rawOptions);
+            int middleIndex = n > 4 ? (n - 1) / 2 : -1;
             List<OptionData> opts = new ArrayList<>();
             for (int j = 0; j < n; j++) {
                 OptionData o = new OptionData();
                 o.setIndex(j); o.setValue(String.valueOf(n - 1 - j)); o.setLabel(String.valueOf(j + 1));
+                if (!numericScale) {
+                    if (j == 0) { o.setMatrixLegend(headers.get(0)); o.setMatrixLegendAlign("left"); }
+                    else if (j == n - 1) { o.setMatrixLegend(headers.get(1)); o.setMatrixLegendAlign("right"); }
+                    else if (j == middleIndex) { o.setMatrixLegend(headers.get(2)); o.setMatrixLegendAlign("center"); }
+                }
                 opts.add(o);
             }
             d.setOptions(opts);

@@ -126,8 +126,8 @@ var evalTemplateUtils = (function() {
                     evalTemplateUtils.debug.timeEnd = console.timeEnd.bind(console);
                 }
             }
-            //browser check
-            evalTemplateUtils.vars.isIE = $.browser.msie;
+            //browser check: $.browser was removed in jQuery 1.9+, no IE versions remain in use
+            evalTemplateUtils.vars.isIE = false;
 
             // Message Locale bundle loader
             loadMessageBundle();

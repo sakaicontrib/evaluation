@@ -430,6 +430,13 @@ public class ModifyItemController {
                 // stored on the templateItem.
                 item.setScaleDisplaySetting(scaleDisplaySetting);
 
+                // displayRows must always be set on the item for TEXT type — service
+                // validation requires it on the item regardless of whether it is also
+                // stored on the templateItem.
+                if (EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
+                    item.setDisplayRows(displayRows != null ? Integer.valueOf(displayRows) : 2);
+                }
+
                 // Remaining display hints only apply when not in a template
                 // (in-template display hints are stored on the templateItem below)
                 if (!inTemplate) {

@@ -39,8 +39,8 @@
                 <h5 class="title">
                     <span class="number" th:text="${item.displayNumber}">1</span>
                     <span class="delineator"><span class="dot">.</span></span>
-                    <span class="label" th:utext="${item.itemText}">Item text</span>
                     <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                    <span class="label" th:utext="${item.itemText}">Item text</span>
                 </h5>
                 <div class="content">
                     <textarea disabled="disabled" th:attr="rows=${item.displayRows}"></textarea>
@@ -71,8 +71,8 @@
                     <h5 class="title">
                         <span class="number" th:text="${item.displayNumber}">1</span>
                         <span class="delineator"><span class="dot">.</span></span>
-                        <span class="label" th:utext="${item.itemText}">Item text</span>
                         <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                        <span class="label" th:utext="${item.itemText}">Item text</span>
                     </h5>
                     <div class="content">
                         <table border="0" cellspacing="0" cellpadding="0" width="10%" class="itemScalePanel">
@@ -118,8 +118,8 @@
                     <h5 class="title">
                         <span class="number" th:text="${item.displayNumber}">1</span>
                         <span class="delineator"><span class="dot">.</span></span>
-                        <span class="label" th:utext="${item.itemText}">Item text</span>
                         <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                        <span class="label" th:utext="${item.itemText}">Item text</span>
                     </h5>
                     <div style="padding:0;">
                         <table border="0" cellspacing="0" cellpadding="0" width="100%"
@@ -145,8 +145,8 @@
                     <h5 class="title">
                         <span class="number" th:text="${item.displayNumber}">1</span>
                         <span class="delineator"><span class="dot">.</span></span>
-                        <span class="label" th:utext="${item.itemText}">Item text</span>
                         <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                        <span class="label" th:utext="${item.itemText}">Item text</span>
                     </h5>
                     <div style="padding:0;">
                         <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
@@ -185,8 +185,8 @@
                     <h5 class="title">
                         <span class="number" th:text="${item.displayNumber}">1</span>
                         <span class="delineator"><span class="dot">.</span></span>
-                        <span class="label" th:utext="${item.itemText}">Item text</span>
                         <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                        <span class="label" th:utext="${item.itemText}">Item text</span>
                     </h5>
                     <div class="fullVertical">
                         <ul class="fullVertical mult-choice-ans">
@@ -209,8 +209,8 @@
                         <h5 class="title">
                             <span class="number" th:text="${item.displayNumber}">1</span>
                             <span class="delineator"><span class="dot">.</span></span>
-                            <span class="label" th:utext="${item.itemText}">Item text</span>
                             <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                            <span class="label" th:utext="${item.itemText}">Item text</span>
                         </h5>
                         <div class="content">
                             <fieldset>
@@ -314,8 +314,8 @@
                 <h5 class="title">
                     <span class="number" th:text="${item.displayNumber}">1</span>
                     <span class="delineator"><span class="dot">.</span></span>
-                    <span class="label" th:utext="${item.itemText}">Item text</span>
                     <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                    <span class="label" th:utext="${item.itemText}">Item text</span>
                 </h5>
                 <div class="nextrow content">
                     <th:block th:if="${item.scaleDisplaySetting == 'Vertical'}">
@@ -364,8 +364,8 @@
                 <h5 class="title">
                     <span class="number" th:text="${item.displayNumber}">1</span>
                     <span class="delineator"><span class="dot">.</span></span>
-                    <span class="label" th:utext="${item.itemText}">Item text</span>
                     <span th:if="${item.compulsory}" class="compulsory" title="Required">*</span>
+                    <span class="label" th:utext="${item.itemText}">Item text</span>
                 </h5>
                 <div class="content">
                     <div class="nextrow">
@@ -416,49 +416,53 @@
         <th:block th:if="${item.scaleDisplaySetting == 'Matrix' or item.scaleDisplaySetting == 'MatrixColored'}">
             <div class="evaluation">
                 <div class="content">
-                    <div class="item-group matrix">
+                    <div class="item-group">
                         <h5 class="title">
                             <span class="label" th:utext="${item.itemText}">Block title</span>
                         </h5>
                         <div class="content">
-                            <fieldset>
-                                <legend>
-                                    <span class="response-type">Scale Response:</span>
-                                    <span class="response-scale-start" th:text="${item.matrixLabelStart}">start</span>
-                                    <th:block th:if="${item.matrixLabelMiddle != null}">
-                                        <span class="response-scale-delineator"> - </span>
-                                        <span class="response-scale-middle" th:text="${item.matrixLabelMiddle}">middle</span>
-                                    </th:block>
-                                    <span class="response-scale-delineator"> - </span>
-                                    <span class="response-scale-end" th:text="${item.matrixLabelEnd}">end</span>
-                                </legend>
-                                <th:block th:each="child : ${item.childItems}">
-                                    <div class="item scale">
-                                        <div class="matrix">
-                                            <h5 class="title">
-                                                <span class="number" th:text="${child.displayNumber}">1</span>
-                                                <span class="delineator"><span class="dot">.</span></span>
-                                                <span class="label" th:utext="${child.itemText}">Child text</span>
-                                            </h5>
-                                            <div class="content">
-                                                <fieldset>
-                                                    <div class="response-list">
-                                                        <ol class="response-list">
-                                                            <li th:each="o : ${item.options}">
-                                                                <label>
-                                                                    <span th:text="${o.label}">1</span>
-                                                                    <input type="radio" disabled="disabled"
-                                                                           th:attr="name=${'radio-block-' + child.displayNumber},value=${o.value}"/>
-                                                                </label>
-                                                            </li>
-                                                        </ol>
-                                                    </div>
-                                                </fieldset>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </th:block>
-                            </fieldset>
+                            <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                                <thead>
+                                    <tr th:if="${item.options[0].matrixLegend != null}" class="matrixLegendRow">
+                                        <th style="width:50%;"></th>
+                                        <th th:each="o : ${item.options}"
+                                            th:style="${o.matrixLegendAlign != null} ? |text-align:${o.matrixLegendAlign};padding:4px 2px;| : 'padding:4px 2px;'">
+                                            <span th:if="${o.matrixLegend != null}"
+                                                  class="matrixLegendText"
+                                                  th:text="${o.matrixLegend}"
+                                                  style="display:inline-block;white-space:nowrap;font-size:12px;">legend</span>
+                                        </th>
+                                        <th th:if="${item.usesNA}"></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;padding:4px 8px;border-bottom:2px solid #dee2e6;width:50%;"></th>
+                                        <th th:each="o : ${item.options}"
+                                            th:text="${o.label}"
+                                            style="text-align:center;padding:4px 8px;border-bottom:2px solid #dee2e6;font-size:12px;font-weight:normal;">1</th>
+                                        <th th:if="${item.usesNA}"
+                                            style="text-align:center;padding:4px 8px;border-bottom:2px solid #dee2e6;font-size:12px;font-weight:normal;">N/A</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="child, cStat : ${item.childItems}"
+                                        th:style="${cStat.odd} ? 'background-color:var(--bs-light,#f8f9fa)' : ''">
+                                        <td style="padding:6px 8px;vertical-align:middle;">
+                                            <span th:text="${child.displayNumber}">1</span>.
+                                            <span th:utext="${child.itemText}">Child text</span>
+                                        </td>
+                                        <td th:each="o : ${item.options}"
+                                            style="text-align:center;padding:6px 8px;vertical-align:middle;">
+                                            <input type="radio" disabled="disabled"
+                                                   th:attr="name=${'radio-block-' + child.displayNumber},value=${o.value}"/>
+                                        </td>
+                                        <td th:if="${item.usesNA}"
+                                            style="text-align:center;padding:6px 8px;vertical-align:middle;">
+                                            <input type="radio" disabled="disabled"
+                                                   th:attr="name=${'radio-block-' + child.displayNumber},value='-1'"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -468,6 +472,13 @@
         <!-- BLOCK STEPPED / STEPPED COLORED -->
         <th:block th:if="${item.scaleDisplaySetting == 'Stepped' or item.scaleDisplaySetting == 'SteppedColored'}">
             <table border="0" cellspacing="0" cellpadding="0" width="99%" class="item blockItemGroup">
+                <tr>
+                    <td colspan="2">
+                        <h5 class="title">
+                            <span class="label" th:utext="${item.itemText}">Block title</span>
+                        </h5>
+                    </td>
+                </tr>
                 <tr>
                     <td>
                         <table border="0" cellspacing="0" cellpadding="0" width="100%">

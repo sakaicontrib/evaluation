@@ -12,6 +12,15 @@
 // Evaluation
 /////////////////////////
 .evaluation {
+  // Confirmation popup for delete/ungroup actions (evalAjax.js show_hide_box).
+  .eval-template-popup {
+    color: var(--bs-body-color, #212529);
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #ced4da);
+    border-radius: var(--bs-border-radius, .375rem);
+    box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0, 0, 0, 0.075));
+  }
+
   .eval-selector-option--active {
     background: var(--bs-body-tertiary-bg, rgba(33, 37, 41, 0.08));
   }
@@ -25,14 +34,6 @@
   .item-delete-target--active,
   .eval-item-updated {
     background: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.15));
-  }
-
-  .eval-template-popup {
-    color: var(--bs-body-color, #212529);
-    background: var(--bs-body-bg, #fff);
-    border: 1px solid var(--bs-border-color, #ced4da);
-    border-radius: var(--bs-border-radius, .375rem);
-    box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0, 0, 0, 0.075));
   }
 
   .template-link-muted {
@@ -91,8 +92,16 @@
         left: 2.5em;
         display: none;
       }
+      .compulsory {
+        position: absolute;
+        left: 45px;
+      }
       .label {
         margin-left: 45px;
+        br { display: none; }
+      }
+      .compulsory + .label {
+        margin-left: 58px;
       }
     }
     .compulsory .title .required {
@@ -112,6 +121,7 @@
       font-weight: bold;
       @include h.inline-block;
       width: 80%;
+      br { display: none; }
     }
   } // end item
 

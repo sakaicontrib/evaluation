@@ -207,6 +207,28 @@ public class RenderingUtils {
     }
 
     /**
+     * Matrix display always shows the option's 1-based position as its column header
+     * (e.g. "1", "2", "3"), regardless of the scale's actual option text. This is only
+     * self-explanatory when the scale options are themselves numeric; for text scales
+     * (e.g. "Strongly disagree" .. "Strongly agree") the position numbers need a legend
+     * to be meaningful.
+     *
+     * @param scaleOptions the array of scale options for a matrix templateItem
+     * @return false if every option parses as a number, true otherwise
+     */
+    public static boolean isNumericScale(List<String> scaleOptions) {
+        if (scaleOptions == null || scaleOptions.isEmpty()) {
+            return false;
+        }
+        for (String option : scaleOptions) {
+            if (!org.apache.commons.lang3.math.NumberUtils.isParsable(option)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calculate the proper set of scale labels to use for a template item
      * in a report based on the item type (note, this will only return useful data for scale items)
      * 
