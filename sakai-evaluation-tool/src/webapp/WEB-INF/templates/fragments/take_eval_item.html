@@ -512,7 +512,7 @@
                                             <input type="checkbox" class="ma"
                                                    th:name="${'answers[' + item.answerIndex + '].multipleAnswers'}"
                                                    th:value="${o.value}"
-                                                   th:checked="${item.currentMultipleAnswers != null and item.currentMultipleAnswers.contains(#numbers.toInt(o.value))}"/>
+                                                   th:checked="${o.selected}"/>
                                             <span th:text="${o.label}">label</span>
                                         </label>
                                     </li>
@@ -535,7 +535,7 @@
                                         <input type="checkbox" class="ma check"
                                                th:name="${'answers[' + item.answerIndex + '].multipleAnswers'}"
                                                th:value="${o.value}"
-                                               th:checked="${item.currentMultipleAnswers != null and item.currentMultipleAnswers.contains(#numbers.toInt(o.value))}"/>
+                                               th:checked="${o.selected}"/>
                                         <span th:text="${o.label}">label</span>
                                     </label>
                                 </li>

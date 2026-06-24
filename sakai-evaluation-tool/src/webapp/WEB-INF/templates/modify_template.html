@@ -51,6 +51,10 @@
     <!-- Form fragment (also loaded into Bootstrap Modal) -->
     <div th:fragment="basicForm">
 
+        <div th:if="${errorMessage}" class="alertMessage">
+            <ul><li th:text="${errorMessage}">Error</li></ul>
+        </div>
+
         <form id="basic-form" th:action="@{/modify_template}" method="post">
             <input type="hidden" name="templateId" th:if="${templateId != null}" th:value="${templateId}"/>
             <input type="hidden" name="fixedSharing" th:if="${fixedSharingValue != null}" th:value="${fixedSharingValue}"/>

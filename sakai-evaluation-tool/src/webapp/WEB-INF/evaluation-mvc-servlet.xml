@@ -39,7 +39,9 @@
 
     <!-- Serve static resources (CSS, JS, images) from /content/ -->
     <mvc:resources mapping="/content/**" location="/content/"/>
-    <mvc:resources mapping="/webjars/**" location="/webjars/"/>
+    <!-- WebJar content (e.g. autosize) lives inside the jar's META-INF/resources/webjars/,
+         not in a physical /webjars/ folder in the deployed WAR -->
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
 
     <!-- Thymeleaf: template resolver -->
     <bean id="mvcTemplateResolver"

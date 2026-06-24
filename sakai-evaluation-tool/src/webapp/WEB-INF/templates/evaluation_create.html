@@ -43,6 +43,10 @@
 
     <h3 th:text="#{starteval.header}">Add a new evaluation</h3>
 
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="${errorMessage}">Error</li></ul>
+    </div>
+
     <form th:action="@{/evaluation_create}" method="post">
 
         <!-- Title -->

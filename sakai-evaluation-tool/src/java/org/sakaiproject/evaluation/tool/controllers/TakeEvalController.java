@@ -85,6 +85,7 @@ public class TakeEvalController {
         String label;
         String matrixLegend;
         String matrixLegendAlign;
+        boolean selected;
     }
 
     @Data
@@ -516,8 +517,18 @@ public class TakeEvalController {
                 if (savedId[0] != null) {
                     response = deliveryService.getResponseById(savedId[0]);
                 } else {
-                    EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-                    response = new EvalResponse(currentUserId, evalGroupId, eval, new Date());
+                    // No responseId in the post (e.g. a stale/cached form re-submitted without
+                    // it) — reuse the existing response for this user/eval/group if there is one,
+                    // same lookup show() does, instead of unconditionally creating a new one.
+                    // Creating a second EvalResponse here violates the one-response-per-user/
+                    // eval/group invariant and permanently locks the user out: every later
+                    // canTakeEvaluation() call throws IllegalStateException via
+                    // getResponseForUserAndGroup().
+                    response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
+                    if (response == null) {
+                        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+                        response = new EvalResponse(currentUserId, evalGroupId, eval, new Date());
+                    }
                 }
 
                 response.setAnswers(buildAnswers(response, formWrapper));
@@ -791,6 +802,7 @@ public class TakeEvalController {
         for (int j = 0; j < rawOptions.size(); j++) {
             OptionData o = new OptionData();
             o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(rawOptions.get(j));
+            o.setSelected(d.getCurrentMultipleAnswers() != null && d.getCurrentMultipleAnswers().contains(j));
             opts.add(o);
         }
         d.setOptions(opts);
