@@ -290,7 +290,7 @@
                         </h5>
                         <div class="content">
                             <fieldset>
-                                <legend>
+                                <legend th:classappend="${item.usesNA} ? 'legend-na-adjust'">
                                     <span class="response-type">Scale Response:</span>
                                     <span class="response-scale-start" th:text="${item.matrixLabelStart}">start</span>
                                     <th:block th:if="${item.matrixLabelMiddle != null}">
@@ -313,11 +313,11 @@
                                         </li>
                                         <li th:if="${item.usesNA}" class="na">
                                             <label>
+                                                <span>N/A</span>
                                                 <input type="radio"
                                                        th:name="${'answers[' + item.answerIndex + '].numeric'}"
                                                        value="-1"
                                                        th:checked="${item.currentNA}"/>
-                                                <span>N/A</span>
                                             </label>
                                         </li>
                                     </ol>

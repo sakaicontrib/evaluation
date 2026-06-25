@@ -145,10 +145,10 @@ public class PreviewItemController {
         d.setItemType(type);
         d.setItemText(ti.getItem().getItemText());
         d.setDisplayNumber(displayNumber);
+        d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
 
         if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
             d.setDisplayRows(ti.getDisplayRows() != null ? ti.getDisplayRows() : 3);
-            d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
 
         } else if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
             populateScaleData(d, ti);

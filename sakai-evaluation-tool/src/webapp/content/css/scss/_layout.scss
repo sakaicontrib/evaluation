@@ -234,21 +234,43 @@
         .response-type, .response-scale-delineator {
           @include h.visuallyhidden();
         }
+        // Smallest readable size: start/middle/end are positioned with fixed
+        // pixel offsets (not per-column like the block matrix legend), so with
+        // long scale text they can still overlap - keep them as small as
+        // possible to minimize it.
+        .response-scale-start, .response-scale-middle, .response-scale-end {
+          font-size: 8px;
+        }
+        // Anchored at 0% / 50% / 100% of the legend width (same width as the
+        // response-list below it) instead of fixed pixel offsets, so they line
+        // up with the first/middle/last radio column regardless of container width.
         .response-scale-end {
           position: absolute;
           top: 0;
-          right: 10px;
+          right: 0;
         }
         .response-scale-start {
           position: absolute;
           top: 0;
-        }
-        .response-scale-start {
-          left: 70px;
+          left: 0;
         }
         .response-scale-middle {
-          position: relative;
-          left: 32px;
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+      // N/A adds one more item to the response-list, after the last scale
+      // option, so 100%/50% no longer line up with the real last/middle
+      // option. Approximate correction (exact value depends on the actual
+      // option count, which isn't known here) - nudge end/middle left a bit.
+      legend.legend-na-adjust {
+        .response-scale-end {
+          right: 23%;
+        }
+        .response-scale-middle {
+          left: 40%;
         }
       }
     } // end fieldset
@@ -460,22 +482,6 @@
     }
   }
   
-
-/////////////////////////
-// N/A Option
-/////////////////////////
-  .matrix {
-    .response-scale-na, .na {
-      visibility: hidden !important;
-    }
-  }
-  .use-na {
-    .matrix {
-      .response-scale-na, .na {
-        visibility: visible !important;
-      }
-    }
-  }
 
 /////////////////////////
 // Evaluation List

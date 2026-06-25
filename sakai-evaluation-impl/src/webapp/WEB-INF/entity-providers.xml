@@ -26,6 +26,23 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
+	<!-- Handles direct (non-portal) access to /direct/eval-evaluation/{id} and
+	     /direct/eval-assigngroup/{id} so anonymous (NONE auth control) evaluations
+	     can be taken without hitting the Sakai portal's login wall, and so the
+	     permanent link / notification email links don't 406. -->
+	<bean id="org.sakaiproject.evaluation.logic.entity.EvalAnonymousAccessProvider"
+			class="org.sakaiproject.evaluation.logic.entity.EvalAnonymousAccessProvider"
+			init-method="init">
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="sessionManager"
+			ref="org.sakaiproject.tool.api.SessionManager" />
+		<property name="serverConfigurationService"
+			ref="org.sakaiproject.component.api.ServerConfigurationService" />
+		<property name="accessProviderManager"
+			ref="org.sakaiproject.entitybroker.access.EntityViewAccessProviderManager" />
+	</bean>
+
 	<bean id="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider"
 			class="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProviderImpl">
         <property name="commonLogic"

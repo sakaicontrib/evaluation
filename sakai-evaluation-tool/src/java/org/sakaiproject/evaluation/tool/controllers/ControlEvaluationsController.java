@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -287,8 +288,16 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         row.setDueDate(dueDate != null ? df.format(dueDate) : "");
         row.setDueDateSort(dueDate != null ? String.valueOf(dueDate.getTime()) : "0");
 
-        // Direct URL: opens in a new tab, so suppress back/breadcrumb with external=true
-        row.setDirectUrl(contextPath + "/preview_eval?evaluationId=" + eval.getId() + "&external=true");
+        // Direct URL: opens in a new tab, so suppress back/breadcrumb with external=true.
+        // For NONE-auth-control (anonymous) evaluations this needs to be the actual
+        // take_eval link, reachable without a Sakai login - which /preview_eval (a normal
+        // portal tool URL) cannot do. Use the EntityBroker URL instead: it goes through
+        // EvalAnonymousAccessProvider, which redirects straight to take_eval for these.
+        if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
+            row.setDirectUrl(commonLogic.getEntityURL(EvaluationEntityProvider.ENTITY_PREFIX, eval.getId().toString()));
+        } else {
+            row.setDirectUrl(contextPath + "/preview_eval?evaluationId=" + eval.getId() + "&external=true");
+        }
         if (eval.getEvalCategory() != null) {
             row.setCategoryLabel(shortenText(eval.getEvalCategory(), 20));
             try {
