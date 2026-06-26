@@ -1,0 +1,378 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{modifytemplate.page.title}">Edit Template</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/tipsy.css}" rel="stylesheet" media="all"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/library/webjars/jquery-ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/webjars/autosize/3.0.21/dist/autosize.min.js}"></script>
+    <script th:src="@{/content/js/jquery/form.js}"></script>
+    <script th:src="@{/content/js/fluid/Fluid.js}"></script>
+    <script th:src="@{/content/js/evalUtils.js}"></script>
+    <script th:src="@{/content/js/reorderUtils.js}"></script>
+    <script th:src="@{/content/js/eval.template.utils.js}"></script>
+    <script th:src="@{/content/js/evalAjax.js}"></script>
+    <script th:src="@{/content/js/jquery/jquery.tipsy.js}"></script>
+    <script th:src="@{/content/js/utils.js}"></script>
+    <script th:src="@{/content/js/eval.template.loader.js}"></script>
+    <script th:src="@{/content/js/eval.template.loader.events.js}"></script>
+    <script th:src="@{/content/js/eval.template.sort.js}"></script>
+    <script th:src="@{/content/js/eval.template.order.js}"></script>
+    <script th:src="@{/content/js/eval.template.data.js}"></script>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <!-- Navigation -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/control_templates}" th:text="#{controltemplates.page.title}">My Templates</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{modifytemplate.page.title}">Edit Template</li>
+    </ul>
+
+    <!-- hidden site-id for JS -->
+    <span id="site-id" th:text="${siteId}" style="display:none"></span>
+    <!-- hidden templateId for JS -->
+    <input type="hidden" name="templateId" th:value="${templateId}"/>
+
+    <div style="width:96%">
+
+        <!-- Template title panel -->
+        <div class="navPanel highlightPanel">
+            <h3 class="viewNav">
+                <span id="title" class="highlight" th:text="${templateTitle}">Template title</span>
+            </h3>
+            <div class="listNav itemAction">
+                <a th:href="@{/modify_template(templateId=${templateId})}"
+                   rel="faceboxGrid"
+                   th:text="#{modifytemplate.modify.title.desc.link}">Edit title/desc</a>
+                |
+                <a th:href="@{/preview_eval(templateId=${templateId})}"
+                   th:text="#{modifytemplate.preview.eval.link}">View a preview</a>
+                |
+                <a th:if="${beginEvalEnabled}"
+                   id="begin_eval_link"
+                   th:href="@{/evaluation_create(templateId=${templateId})}"
+                   th:text="#{modifytemplate.begin.eval.link}">Begin an evaluation</a>
+                <span th:unless="${beginEvalEnabled}"
+                      style="color:gray;"
+                      th:text="#{modifytemplate.begin.eval.link}">Begin an evaluation</span>
+            </div>
+        </div>
+
+        <!-- Description (always in DOM so JS can update it after modal save) -->
+        <div id="description-switch" class="textPanel"
+             th:style="${!showDescription} ? 'display:none' : ''">
+            <span id="description-switch::description"
+                  th:text="${templateDescription}">Template description</span>
+        </div>
+
+        <!-- Level panel and add item control -->
+        <div class="navPanel">
+            <div class="listNav">
+                <div class="instructionText">
+                    <span th:text="#{modifytemplate.level.header.level(Current)}">Current Level - </span>
+                    <span id="level-header-number" th:text="${itemCount}">0</span>
+                    <span th:text="#{modifytemplate.level.header.items}"> existing items</span>
+                </div>
+                <label th:text="#{modifytemplate.add.item.note}">Add Item:</label>
+                <div style="display:inline;">
+                    <form name="modify_template_items_form" style="display:inline;">
+                        <select id="itemClassification-selection">
+                            <th:block th:each="val, vStat : ${addItemValues}">
+                                <option th:value="@{/modify_item(itemClassification=${val},templateId=${templateId})}"
+                                        th:selected="${vStat.first}"
+                                        th:text="#{__${addItemLabels[vStat.index]}__}">Type</option>
+                            </th:block>
+                            <option th:value="@{/choose_existing_items(templateId=${templateId})}"
+                                    th:text="#{item.classification.existing}">Existing</option>
+                            <option th:if="${useExpertItems}"
+                                    th:value="@{/choose_expert_category(templateId=${templateId})}"
+                                    th:text="#{item.classification.expert}">Expert</option>
+                        </select>
+                        <input id="add_questions" type="button"
+                               th:value="#{modifytemplate.add.item.button}"
+                               onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reorder form -->
+        <div style="padding:.3em 0;">
+            <form id="modifyFormRows" name="modify_form_rows" method="post"
+                  th:action="@{/modify_template_items(templateId=${templateId})}">
+                <input type="hidden" name="templateId" th:value="${templateId}"/>
+                <input id="hiddenBtn" type="submit" style="display:none;"/>
+
+                <div class="itemOperations" id="orderInputs">
+                    <input id="revertOrderButton" type="button" disabled="disabled"
+                           th:value="#{modifytemplate.button.revert.order}"/>
+                    <input id="saveReorderButton" type="submit" disabled="disabled"
+                           th:value="#{modifytemplate.button.save.order}"/>
+                    <span class="instruction" th:text="#{modifytemplate.instructions.reorder}">
+                        Drag items to reorder and click save
+                    </span>
+                </div>
+
+                <!-- Item list -->
+                <div id="itemTable">
+                    <div id="itemList" class="itemList">
+
+                        <div th:each="row, rStat : ${items}"
+                             class="itemRow"
+                             th:id="|item-row:${rStat.index}:|"
+                             th:name="${row.blockParent} ? |blockparent-${row.templateItemId}| : ''">
+
+                            <!-- Hidden inputs used by JS -->
+                            <input type="hidden" name="hidden-item-num"
+                                   th:id="|item-row:${rStat.index}:hidden-item-num|"
+                                   th:value="${rStat.index}"/>
+                            <input type="hidden" name="template-item-id"
+                                   th:value="${row.templateItemId}"/>
+                            <input type="hidden" name="item-classification"
+                                   th:value="${row.classification}"/>
+
+                            <div class="itemLine2">
+
+                                <!-- Block checkbox (only for Scaled and BlockParent items) -->
+                                <th:block th:if="${row.showBlockCheckbox}">
+                                    <label class="itemCheckbox"
+                                           th:for="${row.blockCheckboxId}">
+                                        <input type="checkbox"
+                                               th:id="${row.blockCheckboxId}"
+                                               th:name="|${row.blockCheckboxId}-block-checkbox|"
+                                               th:title="#{modifytemplate.item.checkbox.title}"/>
+                                        &nbsp;
+                                        <span class="skip" th:text="#{modifytemplate.check.label.title}">Select to add to block</span>
+                                    </label>
+                                </th:block>
+                                <th:block th:unless="${row.showBlockCheckbox}">
+                                    <span class="checkPlaceholder">&nbsp;</span>
+                                </th:block>
+
+                                <!-- Reorder select -->
+                                <select class="selectReorder"
+                                        th:id="|item-row:${rStat.index}:item-select-selection|"
+                                        th:title="#{modifytemplate.select.order.title}">
+                                    <option th:each="n : ${#numbers.sequence(1, itemCount)}"
+                                            th:value="${n}"
+                                            th:selected="${n == row.displayOrder}"
+                                            th:text="${n}">1</option>
+                                </select>
+
+                                <!-- Item text -->
+                                <span class="itemTextReplacementHolder">
+                                    <h4 th:class="${row.blockParent} ? 'itemText itemBlockRow' : 'itemText'">
+                                        <span th:text="${row.itemTextShort}">Item text</span>
+                                        <a th:if="${row.longText}" href="#" class="more">
+                                            <span class="bi bi-chevron-down" aria-hidden="true"></span> more
+                                        </a>
+                                        <a th:if="${row.blockParent}" href="#" class="blockExpandText">
+                                            [<span th:text="#{modifytemplate.group.hide}">Hide child items</span>]
+                                        </a>
+                                    </h4>
+                                    <h4 th:if="${row.longText}" class="itemText" style="display:none">
+                                        <span th:text="${row.itemTextFull}">Full text</span>
+                                        <a href="#" class="less">
+                                            <span class="bi bi-chevron-up" aria-hidden="true"></span> less
+                                        </a>
+                                        <a th:if="${row.blockParent}" href="#" class="blockExpandText">
+                                            [<span th:text="#{modifytemplate.group.hide}">Hide child items</span>]
+                                        </a>
+                                    </h4>
+                                </span>
+
+                                <!-- Item metadata and actions -->
+                                <div class="scaleDesc textPanelFooter">
+                                    <span class="textPanelReplacementHolder">
+                                        <!-- Results sharing -->
+                                        <span th:if="${row.showResultsSharing and row.resultsSharingKey != null}"
+                                              th:text="#{__${row.resultsSharingKey}__}">Sharing</span>
+                                        <!-- Classification -->
+                                        <span class="itemClassification lighthighlight"
+                                              th:text="#{__${row.classificationLabelKey}__}">Type</span>
+                                        <!-- Scale display setting -->
+                                        <span th:if="${row.scaleDisplaySetting != null}"
+                                              class="scaleDisplay"
+                                              th:text="|- ${row.scaleDisplaySetting}|">Scale</span>
+                                        <!-- Category (non-Course) -->
+                                        <span th:if="${row.showCategory}"
+                                              class="lighthighlight"
+                                              th:text="|( #{__${row.categoryLabelKey}__} )|">(Tutor)</span>
+                                        &nbsp;
+                                        <!-- Hierarchy node -->
+                                        <span th:if="${row.showHierarchy}"
+                                              class="bi bi-text-paragraph"
+                                              th:title="|#{modifytemplate.item.hierarchy.nodeid.title} ${row.hierarchyNodeTitle}|"
+                                              aria-hidden="true"></span>
+                                        &nbsp;
+                                    </span>
+                                    <span>
+                                        <!-- Preview -->
+                                        <a th:href="@{/preview_item(templateItemId=${row.templateItemId})}"
+                                           rel="faceboxGrid"
+                                           th:title="#{modifytemplate.item.preview}">
+                                            <span class="bi bi-zoom-in" aria-hidden="true"></span>
+                                            <span class="visually-hidden" th:text="#{general.command.preview}">Preview</span>
+                                        </a>
+                                        &nbsp;
+                                        <!-- Edit (regular or block parent) -->
+                                        <a th:if="${!row.blockParent}"
+                                           th:href="@{/modify_item(templateItemId=${row.templateItemId},templateId=${templateId})}"
+                                           rel="faceboxGrid"
+                                           th:title="#{modifytemplate.item.edit}">
+                                            <span class="bi bi-pencil" aria-hidden="true"></span>
+                                            <span class="visually-hidden" th:text="#{general.command.edit}">Edit</span>
+                                        </a>
+                                        <a th:if="${row.blockParent}"
+                                           th:href="@{/modify_block(templateId=${templateId},templateItemIds=${row.templateItemId})}"
+                                           rel="faceboxGrid"
+                                           th:title="#{modifytemplate.item.edit}">
+                                            <span class="bi bi-pencil" aria-hidden="true"></span>
+                                            <span class="visually-hidden" th:text="#{general.command.edit}">Edit</span>
+                                        </a>
+                                        &nbsp;
+                                        <!-- Delete or ungroup -->
+                                        <a th:if="${!row.blockParent}"
+                                           th:href="@{/remove_item(templateItemId=${row.templateItemId},templateId=${templateId})}"
+                                           rel="remove"
+                                           th:title="#{modifytemplate.item.delete}">
+                                            <span class="bi bi-x-lg" aria-hidden="true"></span>
+                                            <span class="visually-hidden" th:text="#{general.command.delete}">Remove</span>
+                                        </a>
+                                        <a th:if="${row.blockParent}"
+                                           th:href="@{/remove_item(templateItemId=${row.templateItemId},templateId=${templateId})}"
+                                           rel="unblock"
+                                           th:text="#{modifytemplate.group.ungroup}">Ungroup</a>
+                                    </span>
+                                </div>
+
+                                <div class="cleaner">&nbsp;</div>
+                            </div>
+
+                            <!-- Block children (only for blockParent items) -->
+                            <div th:if="${row.blockParent and not #lists.isEmpty(row.children)}"
+                                 class="itemLine3">
+                                <div class="itemTableBlock">
+                                    <span class="instructionText"
+                                          th:text="#{modifyblock.page.instructions}">Drag and drop to rearrange</span>
+
+                                    <div th:each="child, cStat : ${row.children}"
+                                         th:id="|itemRowBlock:${child.templateItemId}:|"
+                                         class="itemRowBlock inlineEditable"
+                                         style="padding:.2em;width:99%">
+
+                                        <input type="hidden" name="hidden-item-id"
+                                               th:value="${child.templateItemId}"/>
+
+                                        <span class="itemLabel" th:text="${cStat.count}">1</span>.&nbsp;
+                                        <span class="text" th:text="${child.itemText}">Child text</span>
+
+                                        <span class="itemRight">
+                                            &nbsp;
+                                            <a th:href="@{/modify_item(templateItemId=${child.templateItemId},templateId=${templateId})}"
+                                               rel="childEdit"
+                                               th:title="#{modifytemplate.item.edit}">
+                                                <span class="bi bi-pencil" aria-hidden="true"></span>
+                                                <span class="visually-hidden" th:text="#{general.command.edit}">Edit</span>
+                                            </a>
+                                            <a th:href="@{/unblock_item(templateItemId=${child.templateItemId},templateId=${templateId})}"
+                                               rel="childUngroup"
+                                               th:text="#{modifytemplate.group.ungroup}">Ungroup</a>
+                                            <a th:href="@{/remove_item(templateItemId=${child.templateItemId},templateId=${templateId})}"
+                                               rel="childRemove"
+                                               th:title="#{modifytemplate.item.delete}">
+                                                <span class="bi bi-x-lg" aria-hidden="true"></span>
+                                                <span class="visually-hidden" th:text="#{general.command.delete}">Remove</span>
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end th:each item row -->
+
+                    </div>
+                    <!-- end #itemList -->
+                </div>
+                <!-- end #itemTable -->
+            </form>
+
+            <!-- Total row count for JS -->
+            <span id="total-rows" class="totalRows" style="display:none"
+                  th:text="${itemCount}"></span>
+
+            <!-- Block controls -->
+            <div>
+                <div class="itemOperations" id="blockInputs">
+                    <form id="createBlockForm" name="create_block_form" method="get"
+                          th:action="@{/modify_block}" class="inlineForm">
+                        <input type="hidden" name="templateId" th:value="${templateId}"/>
+                        <input type="hidden" name="templateItemIds"/>
+                        <input id="createBlockBtn" name="create_block_btn" type="button"
+                               disabled="disabled"
+                               th:value="#{modifytemplate.button.createblock}"/>
+                    </form>
+                </div>
+                <div class="cleaner">&nbsp;</div>
+            </div>
+
+        </div>
+        <!-- end padding div -->
+
+    </div>
+    <!-- end width div -->
+
+    <!-- Bootstrap Modal for item/block/template editing and preview -->
+    <div class="modal fade" id="templateItemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="cursor:move">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="templateItemModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- end portletBody -->
+
+<script type="text/javascript">evalsys.initTemplateItemsModal();</script>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+</body>
+</html>

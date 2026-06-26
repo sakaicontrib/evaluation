@@ -1,0 +1,101 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{evalnotify.page.title}">Send Evaluation Notifications</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/control_evaluations}" th:text="#{controlevaluations.page.title}">My Evaluations</a></li>
+        <li><a th:href="@{/evaluation_responders(evaluationId=${evaluationId})}"
+               th:text="#{evalresponders.page.title}">Evaluation Responders</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{evalnotify.page.title}">Send Notifications</li>
+    </ul>
+
+    <div th:if="${errorMessage != null}" class="alertMessage">
+        <ul><li th:text="#{__${errorMessage}__}">Error</li></ul>
+    </div>
+
+    <h3 th:text="#{evalnotify.page.title}">Send Evaluation Notifications</h3>
+
+    <div>
+        <span th:text="#{evalnotify.eval.info(${evalTitle}, ${evalStartDate}, ${evalDueDate})}"
+              style="font-weight:bold;font-size:1.1em;">Eval Title (Start - Due)</span>
+        <span th:if="${groupTitle != null}"
+              th:text="#{evalnotify.group.info(${groupTitle})}"
+              style="font-weight:bold;">Group: Title</span>
+        -
+        <a th:href="@{/evaluation_responders(evaluationId=${evaluationId},evalGroupId=${evalGroupId})}"
+           th:text="#{evalresponders.page.title}">Evaluation Responders</a>
+    </div>
+
+    <form name="emailForm" method="post" th:action="@{/evaluation_notifications}">
+        <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+        <input type="hidden" th:if="${evalGroupId != null}" name="evalGroupId" th:value="${evalGroupId}"/>
+
+        <div style="width:80%">
+            <p th:text="#{modifyemail.modify.text.instructions}" class="instructionText">Edit the text...</p>
+            <div th:utext="#{email.templates.field.names}" class="highlightPanel" style="background:#eee;padding:.5em"></div>
+
+            <div>
+                <label for="emailSubject" th:text="#{modifyemail.template.subject}">Subject:</label>
+                <input type="text" id="emailSubject" name="subject" size="80" maxlength="250"/>
+            </div>
+            <div>
+                <textarea name="message" rows="20" cols="120" id="emailMessage"></textarea>
+            </div>
+        </div>
+
+        <div style="width:80%">
+            <label for="emailSendTo" th:text="#{evalnotify.send.to.list}">Send message to:</label>
+            <select id="emailSendTo" name="sendTo">
+                <option th:each="opt : ${sendToOptions}"
+                        th:value="${opt.value}"
+                        th:text="#{__${opt.labelKey}__}">Option</option>
+            </select>
+        </div>
+
+        <p class="act">
+            <input type="submit" th:value="#{evalnotify.send.emails}" class="active" accesskey="s"
+                   onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            <input type="button" th:value="#{general.cancel.button}" accesskey="x"
+                   onclick="SPNR.disableControlsAndSpin(this, null); history.go(-1); return false;"/>
+        </p>
+    </form>
+
+</div>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+</body>
+</html>

@@ -112,7 +112,16 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             // except starttime, endtime, and answers
         }
 
-        boolean responseComplete = response.getEndTime() != null;
+        // Capture endTime and clear it on the entity before any DB queries.
+        // Hibernate's auto-flush mode writes dirty fields before executing queries;
+        // if endTime were left set, the canTakeEvaluation query below would see the
+        // response as already complete and reject the save. We restore it after all
+        // checks pass, immediately before the actual saveMixedSet call.
+        Date capturedEndTime = response.getEndTime();
+        if (capturedEndTime != null) {
+            response.setEndTime(null);
+        }
+        boolean responseComplete = capturedEndTime != null;
 
         // fill in any default values and nulls here
 
@@ -170,6 +179,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
             checkAnswersValidForEval(response, responseComplete);
 
+            // All checks passed — restore endTime so it is persisted in the save below.
+            if (capturedEndTime != null) {
+                response.setEndTime(capturedEndTime);
+            }
+
             // save everything in one transaction
 
             // response has to be saved first
@@ -203,16 +217,20 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             if (newResponse) {
                 commonLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
             } else {
-                commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+                commonLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);
             }
-            
-            //send an confirmation email to the responder 
-            try {
-            	if(((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL))) {
-                	  emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
-                  }
-            }catch(Exception e){
-            	log.warn("Unable to send the confirmation email to user: " + userId, e);
+
+            // Send confirmation email only when the response is fully submitted.
+            // Sending on partial saves is wrong and risks leaving the transaction
+            // rollback-only if the email call fails.
+            if (responseComplete) {
+                try {
+                    if (((Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL))) {
+                        emailsLogic.sendEvalSubmissionConfirmationEmail(userId, response.getEvaluation().getId());
+                    }
+                } catch (Exception e) {
+                    log.warn("Unable to send the confirmation email to user: " + userId, e);
+                }
             }
             
             int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();

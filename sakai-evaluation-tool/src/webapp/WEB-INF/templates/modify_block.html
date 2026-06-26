@@ -1,0 +1,164 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{modifyblock.page.title}">Edit Block</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <h2 class="titleHeader pageHeaderOnPage" th:text="#{modifyblock.page.title}">Edit Block</h2>
+
+    <div th:fragment="blockContent">
+
+        <!-- Error: too many children -->
+        <div th:if="${!validChildsNo}">
+            <p class="alertMessage" th:text="#{modifyblock.error.numberofblockChilds.message}">Too many items for a block.</p>
+            <input type="button" th:value="#{modifyblock.back.button}" onclick="history.go(-1)"/>
+        </div>
+
+        <!-- Main form -->
+        <div th:if="${validChildsNo}" class="evalEditorSmall">
+
+            <!-- Error: blank item header text on create -->
+            <p th:if="${blankTextError}" class="alertMessage" th:text="#{modifyblock.error.blanktext.message}">You must enter the item header text.</p>
+
+            <form id="blockForm" name="block_form" method="post" th:action="@{/modify_block}">
+                <input type="hidden" name="templateId" th:value="${templateId}"/>
+                <input type="hidden" name="templateItemIds" th:value="${templateItemIds}"/>
+                <input type="hidden" name="blockId" th:value="${blockId}"/>
+                <input type="hidden" name="originalDisplayOrder" th:value="${originalDisplayOrder}"/>
+                <input type="hidden" id="ordered-child-ids" name="orderedChildIds" value=""/>
+
+                <!-- Item header -->
+                <span th:text="#{modifyblock.item.header}">Blocking items:</span>
+                <span th:text="${originalDisplayOrder}">1</span>:
+                <span th:text="#{modifytemplate.itemtype.block}">Block</span>
+
+                <!-- Scale -->
+                <p>
+                    <span th:text="#{modifyblock.scale.type.header}">Scale Type:</span>
+                    <span class="highlight" th:text="${scaleTitle}">Scale title</span>
+                </p>
+
+                <h4 th:text="#{modifyblock.item.header.text.header}">Item Header Text:</h4>
+
+                <!-- Text selector (only when creating from existing blocks) -->
+                <div th:if="${!#lists.isEmpty(blockTextChoices)}">
+                    <th:block th:each="choice, cStat : ${blockTextChoices}">
+                        <div class="blockText">
+                            <input type="radio" name="blockTextChoice"
+                                   th:value="${choice.id}"
+                                   th:checked="${cStat.first}"/>
+                            <span th:utext="${choice.text}">Block text</span>
+                        </div>
+                    </th:block>
+                    <!-- Option: new text -->
+                    <div class="blockText">
+                        <input type="radio" name="blockTextChoice" value="new1"/>
+                        <span th:text="#{modifyblock.new.block.text}">Enter new block text</span>
+                    </div>
+                </div>
+
+                <!-- CKEditor for the block text -->
+                <div id="item-text-div" class="longtext evalEditorSmall">
+                    <textarea id="item-text::input" name="item-text::input" cols="80" rows="5"
+                              th:text="${currentItemText}"></textarea>
+                </div>
+                <br/>
+
+                <!-- Child item list -->
+                <p th:text="#{modifyitem.item.header}">Items:</p>
+                <div th:each="child : ${childRows}" class="itemRow" style="padding:.2em;width:99%">
+                    <input type="hidden" name="hidden-item-id" th:value="${child.templateItemId}"/>
+                    <span class="itemLabel" th:text="${child.orderNum}">1</span>.&nbsp;
+                    <span class="text" th:utext="${child.itemText}">Child text</span>
+                </div>
+
+                <!-- Scale display -->
+                <p class="longtext">
+                    <label class="block" for="scale-display-list"
+                           th:text="#{modifyitem.scale.display.header}">Scale Display Setting:</label>
+                    <select id="scale-display-list" name="scaleDisplaySetting">
+                        <th:block th:each="val, vStat : ${scaleDisplayValues}">
+                            <option th:value="${val}"
+                                    th:selected="${val == currentScaleDisplay}"
+                                    th:text="#{__${scaleDisplayLabels[vStat.index]}__}">Display option</option>
+                        </th:block>
+                    </select>
+                </p>
+
+                <!-- NA checkbox -->
+                <p th:if="${enableNA}" class="checkbox">
+                    <input type="checkbox" id="item-na" name="usesNA" value="true"
+                           th:checked="${currentUsesNA}"/>
+                    <label for="item-na" th:text="#{modifyitem.item.na.header}">N/A (not applicable)</label>
+                </p>
+
+                <!-- Category -->
+                <div th:if="${showCategorySelector}">
+                    <b th:text="#{modifyitem.item.category.header}">Item Category:</b>
+                    <th:block th:each="catVal, cStat : ${categoryValues}">
+                        <span class="checkbox">
+                            <input type="radio" name="category"
+                                   th:id="|item-category-radio-${cStat.index}|"
+                                   th:value="${catVal}"
+                                   th:checked="${catVal == currentCategory}"/>
+                            <label th:for="|item-category-radio-${cStat.index}|"
+                                   th:text="#{__${categoryLabels[cStat.index]}__}">Category</label>
+                        </span>
+                    </th:block>
+                </div>
+                <div th:if="${!showCategorySelector}">
+                    <input type="hidden" name="category" th:value="${fixedCategory}"/>
+                </div>
+
+                <p class="act">
+                    <input type="submit" id="saveBlockAction" name="saveBlockAction"
+                           class="active submit"
+                           th:value="#{modifyitem.save.button}"
+                           accesskey="s"/>
+                    <input type="button"
+                           th:value="#{general.cancel.button}"
+                           accesskey="x"
+                           th:onclick="${inModal} ? 'var m = document.querySelector(\'.modal.show\'); if (m) bootstrap.Modal.getInstance(m).hide(); return false;' : 'history.go(-1); return false;'"/>
+                </p>
+
+            </form>
+        </div>
+
+        <!-- CKEditor: in direct navigation and also in facebox -->
+        <script>
+            if (typeof sakai !== 'undefined' && sakai.editor) {
+                sakai.editor.launch('item-text::input', '{noop:0}');
+            }
+        </script>
+
+    </div>
+    <!-- end blockContent fragment -->
+
+</div>
+</body>
+</html>

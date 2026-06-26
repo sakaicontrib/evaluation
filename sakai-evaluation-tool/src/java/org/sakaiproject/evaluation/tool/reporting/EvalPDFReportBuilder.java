@@ -42,7 +42,7 @@ import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.util.UniversalRuntimeException;
+
 
 /**
  * 
@@ -99,7 +99,7 @@ public class EvalPDFReportBuilder {
             frontAuthorFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 18, Font.NORMAL);
             frontInfoFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.NORMAL);
         } catch (Exception e) {
-            throw UniversalRuntimeException.accumulate(e, "Unable to start PDF Report");
+            throw new RuntimeException("Unable to start PDF Report", e);
         }
     }
 
@@ -175,7 +175,7 @@ public class EvalPDFReportBuilder {
             responseArea.setSimpleColumn(document.left(),document.top(),document.right()/2, document.bottom()+pagefooter);
             responseArea.go();
         } catch (DocumentException | IOException de) {
-            throw UniversalRuntimeException.accumulate(de, "Unable to create title page");
+            throw new RuntimeException("Unable to create title page", de);
         }
     }
 
@@ -437,7 +437,7 @@ public class EvalPDFReportBuilder {
 		}
     	catch (DocumentException e) {
 			// TODO Auto-generated catch block
-    		throw UniversalRuntimeException.accumulate(e, "Unable to add element to PDF Report");
+    		throw new RuntimeException("Unable to add element to PDF Report", e);
 		}
     }
     
@@ -524,7 +524,7 @@ public class EvalPDFReportBuilder {
 		}
     	catch (DocumentException e) {
 			// TODO Auto-generated catch block
-    		throw UniversalRuntimeException.accumulate(e, "Unable to add elements to PDF Report");
+    		throw new RuntimeException("Unable to add elements to PDF Report", e);
 		}
     }
 
@@ -589,7 +589,7 @@ public class EvalPDFReportBuilder {
 		}
 		catch (DocumentException e) {
 			// TODO Auto-generated catch block
-			throw UniversalRuntimeException.accumulate(e, "Unable to add elements to PDF Report");
+			throw new RuntimeException("Unable to add elements to PDF Report", e);
 		}
     }
     

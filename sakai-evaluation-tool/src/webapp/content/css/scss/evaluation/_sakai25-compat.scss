@@ -1,0 +1,134 @@
+/*
+ * Sakai 25 compatibility styles.
+ *
+ * These rules existed in evaluation_base.css prior to the Sakai 26 UI overhaul
+ * (commit 413533a6). Sakai 26 provides equivalent styles via its own tool_base.css,
+ * but Sakai 25 does not. Remove this file when targeting Sakai 26 exclusively.
+ */
+
+/* ===== evalsysTable — generic data table used across many views ===== */
+.portletBody.evaluation table.evalsysTable,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable {
+  margin: 1em 0;
+  border: 1px solid var(--bs-border-color, #ccc);
+  width: auto;
+}
+
+.portletBody.evaluation table.evalsysTable thead,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable thead {
+  background: var(--bs-secondary-bg, #aaa);
+  color: var(--bs-body-bg, #fff);
+}
+
+.portletBody.evaluation table.evalsysTable thead tr th,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable thead tr th {
+  padding: 0.5em 0.75em;
+  color: var(--bs-body-bg, #fff);
+}
+
+.portletBody.evaluation table.evalsysTable thead a,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable thead a {
+  color: var(--bs-body-bg, #fff);
+}
+
+.portletBody.evaluation table.evalsysTable thead input.makeLink,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable thead input.makeLink {
+  color: var(--bs-body-bg, #fff);
+}
+
+.portletBody.evaluation table.evalsysTable tr,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable tr {
+  padding: 10px 0;
+}
+
+.portletBody.evaluation table.evalsysTable tbody tr:nth-child(even),
+.Mrphs-sakai-rsf-evaluation table.evalsysTable tbody tr:nth-child(even) {
+  background: var(--bs-tertiary-bg, #f5f5f5);
+}
+
+.portletBody.evaluation table.evalsysTable td,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable td {
+  padding: 0.5em 0.75em;
+  vertical-align: middle;
+}
+
+/* ===== itemOperations — reorder/block action bar ===== */
+.portletBody.evaluation .itemOperations,
+.Mrphs-sakai-rsf-evaluation .itemOperations {
+  border: 1px solid var(--bs-warning-border-subtle, #ffa);
+  background: var(--bs-warning-bg-subtle, #ffe);
+  padding: 0.3em;
+}
+
+.portletBody.evaluation .itemOperationsEnabled,
+.Mrphs-sakai-rsf-evaluation .itemOperationsEnabled {
+  border: 1px solid var(--bs-warning-border-subtle, #fd7);
+  background: var(--bs-warning-bg-subtle, rgba(255,193,7,0.2));
+  padding: 0.3em;
+}
+
+/* ===== makeLink — input[type=submit] styled as a link ===== */
+.portletBody.evaluation .makeLink,
+.Mrphs-sakai-rsf-evaluation .makeLink {
+  color: var(--bs-link-color, #27d);
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  overflow: visible;
+  font: inherit;
+}
+
+.portletBody.evaluation .makeLink:hover,
+.Mrphs-sakai-rsf-evaluation .makeLink:hover {
+  color: var(--bs-link-hover-color, #33f);
+  text-decoration: none;
+}
+
+/* ===== itemsListOddLine — odd row highlight ===== */
+.portletBody.evaluation .itemsListOddLine,
+.Mrphs-sakai-rsf-evaluation .itemsListOddLine {
+  background-color: var(--bs-tertiary-bg, #eeeeee);
+}
+
+/* ===== evalEditorLarge — wide CKEditor container ===== */
+.portletBody.evaluation .evalEditorLarge,
+.Mrphs-sakai-rsf-evaluation .evalEditorLarge {
+  width: 60em;
+}
+
+/* ===== inlineBlockForm — inline form display ===== */
+.portletBody.evaluation .inlineBlockForm,
+.Mrphs-sakai-rsf-evaluation .inlineBlockForm {
+  display: inline-block;
+}
+
+/* ===== evalsysTable thead last column — separated from adjacent title ===== */
+.portletBody.evaluation table.evalsysTable thead tr th:last-child,
+.Mrphs-sakai-rsf-evaluation table.evalsysTable thead tr th:last-child {
+  white-space: nowrap;
+}
+
+/* ===== Colored scale gradients — hardcoded fallback for Sakai 25 (no Bootstrap 5 CSS vars) ===== */
+/* red(0%) → orange(30%) → yellow(60%) → green(100%) */
+.portletBody.evaluation .compact.compact-colored .itemScalePanel td.idealScale,
+.Mrphs-sakai-rsf-evaluation .compact.compact-colored .itemScalePanel td.idealScale {
+  background-image: linear-gradient(90deg,
+    rgba(220, 53, 69, 0.35) 0%,
+    rgba(253, 126, 20, 0.35) 30%,
+    rgba(255, 193, 7, 0.3) 60%,
+    rgba(25, 135, 84, 0.35) 100%
+  ) !important;
+}
+
+.portletBody.evaluation .fullDisplayHorizontalColored,
+.Mrphs-sakai-rsf-evaluation .fullDisplayHorizontalColored {
+  background-image: linear-gradient(90deg,
+    rgba(220, 53, 69, 0.35) 0%,
+    rgba(253, 126, 20, 0.35) 30%,
+    rgba(255, 193, 7, 0.3) 60%,
+    rgba(25, 135, 84, 0.35) 100%
+  ) !important;
+}

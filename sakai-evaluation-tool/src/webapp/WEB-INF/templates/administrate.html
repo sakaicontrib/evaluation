@@ -1,0 +1,469 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{administrate.page.title}">Administrate</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/jquery/jquery-ui-1.8.all.min.js}" type="text/javascript"></script>
+    <script th:src="@{/content/js/eval.administrate.js}" type="text/javascript"></script>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+    <link th:href="@{/content/css/jquery/jquery-ui-1.8.all.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{administrate.page.title}">Administrate</li>
+    </ul>
+
+    <!-- Sub-page links -->
+    <div style="margin:.5em 0 1em 0">
+        <a th:href="@{/administrate_email}"                 th:text="#{controlemail.page.title}"                    class="button" style="margin-right:.3em">Email</a>
+        <a th:href="@{/control_eval_admin}"                th:text="#{administrate.top.control.evaladmin}"         class="button" style="margin-right:.3em">Eval Admin</a>
+        <a th:href="@{/administrate_reporting}"             th:text="#{administrate.top.control.reporting}"         class="button" style="margin-right:.3em">Reporting</a>
+        <a th:href="@{/administrate_search}"              th:text="#{administrate.top.control.search}"            class="button" style="margin-right:.3em">Search</a>
+        <a th:href="@{/export_settings}"                    th:text="#{administrate.top.control.export.settings}"   class="button" style="margin-right:.3em">Export Config</a>
+        <a th:href="@{/import_config}"                      th:text="#{administrate.top.control.import.settings}"   class="button" style="margin-right:.3em">Import Config</a>
+        <a th:href="@{/admin_test_evalgroup_provider}"      th:text="#{admintesteg.page.title}"                   class="button" style="margin-right:.3em">Test EvalGroupProvider</a>
+        <a th:if="${useHierarchy}"    th:href="@{/control_hierarchy}"              th:text="#{administrate.top.control.hierarchy}"  class="button" style="margin-right:.3em">Hierarchy</a>
+        <a th:if="${enableImporting}" th:href="@{/control_import}"                 th:text="#{administrate.top.import.data}"        class="button" style="margin-right:.3em">Import Data</a>
+        <a th:if="${enableProviderSync}" th:href="@{/administrate_provider_sync}"       th:text="#{administrate.sync.page.title}"   class="button" style="margin-right:.3em">Sync</a>
+    </div>
+
+    <!-- Email delivery alert -->
+    <p th:text="#{administrate.email.delivery(${emailDeliveryMode}, ${emailDeliveryEnv})}"
+       class="alertMessage" style="font-weight:bold">Email delivery mode</p>
+
+    <form class="administrate-form" method="post" th:action="@{/administrate}">
+
+        <!-- ===== INSTRUCTOR SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.instructor.settings.header}">Instructor Settings</span></legend>
+
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS"
+                       name="INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS"
+                       th:checked="${s_INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS}"/>
+                <label for="cb-INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS"
+                       th:text="#{administrate.instructors.eval.create.note}">Instructors may create evaluations</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-INSTRUCTOR_ALLOWED_EMAIL_STUDENTS"
+                       name="INSTRUCTOR_ALLOWED_EMAIL_STUDENTS"
+                       th:checked="${s_INSTRUCTOR_ALLOWED_EMAIL_STUDENTS}"/>
+                <label for="cb-INSTRUCTOR_ALLOWED_EMAIL_STUDENTS"
+                       th:text="#{administrate.instructors.email.students.note}">Instructors may email students</label>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-INSTRUCTOR_ALLOWED_VIEW_RESULTS"
+                       th:text="#{administrate.instructors.view.results.note}">Instructors may view results</label>
+                <select id="sel-INSTRUCTOR_ALLOWED_VIEW_RESULTS" name="INSTRUCTOR_ALLOWED_VIEW_RESULTS">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_INSTRUCTOR_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_INSTRUCTOR_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_INSTRUCTOR_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE"
+                       th:text="#{administrate.instructors.hierarchy.note}">Instructors must use evals from above</label>
+                <select id="sel-INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" name="INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE">
+                    <option value="opt_in"   th:text="#{evalsettings.instructors.label.opt.in}"   th:selected="${s_INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE == 'opt_in'}">Opt In</option>
+                    <option value="opt_out"  th:text="#{evalsettings.instructors.label.opt.out}"  th:selected="${s_INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE == 'opt_out'}">Opt Out</option>
+                    <option value="required" th:text="#{evalsettings.instructors.label.required}" th:selected="${s_INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE == 'required'}">Required</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-INSTRUCTOR_ADD_ITEMS_NUMBER"
+                       th:text="#{administrate.instructors.num.questions.note}">Instructor may add N questions</label>
+                <select id="sel-INSTRUCTOR_ADD_ITEMS_NUMBER" name="INSTRUCTOR_ADD_ITEMS_NUMBER">
+                    <option th:each="v : ${pulldownValues}" th:value="${v}" th:text="${v}"
+                            th:selected="${s_INSTRUCTOR_ADD_ITEMS_NUMBER == v}">0</option>
+                </select>
+            </p>
+            <p class="longtext indnt1 cbxmultlftalgn">
+                <label for="input-EVAL_MIN_LIST_LENGTH" th:text="#{administrate.min.list.length.note}">Min list length</label>
+                <input type="text" id="input-EVAL_MIN_LIST_LENGTH" name="EVAL_MIN_LIST_LENGTH" size="3"
+                       class="min-list-length-marker" th:value="${s_EVAL_MIN_LIST_LENGTH}"/>
+            </p>
+            <p class="longtext indnt1 cbxmultlftalgn">
+                <label for="input-EVAL_MAX_LIST_LENGTH" th:text="#{administrate.max.list.length.note}">Max list length</label>
+                <input type="text" id="input-EVAL_MAX_LIST_LENGTH" name="EVAL_MAX_LIST_LENGTH" size="3"
+                       class="max-list-length-marker" th:value="${s_EVAL_MAX_LIST_LENGTH}"/>
+            </p>
+        </fieldset>
+
+        <!-- ===== STUDENT SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.student.settings.header}">Student Settings</span></legend>
+            <p class="checkbox" th:text="#{administrate.student.settings.header.inner}">Students may...</p>
+
+            <p class="longtext indnt1">
+                <label for="sel-STUDENT_ALLOWED_LEAVE_UNANSWERED"
+                       th:text="#{administrate.students.unanswered.note}">Leave questions unanswered</label>
+                <select id="sel-STUDENT_ALLOWED_LEAVE_UNANSWERED" name="STUDENT_ALLOWED_LEAVE_UNANSWERED">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_STUDENT_ALLOWED_LEAVE_UNANSWERED == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_STUDENT_ALLOWED_LEAVE_UNANSWERED == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_STUDENT_ALLOWED_LEAVE_UNANSWERED == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-STUDENT_MODIFY_RESPONSES"
+                       th:text="#{administrate.students.modify.responses.note}">Modify responses</label>
+                <select id="sel-STUDENT_MODIFY_RESPONSES" name="STUDENT_MODIFY_RESPONSES">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_STUDENT_MODIFY_RESPONSES == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_STUDENT_MODIFY_RESPONSES == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_STUDENT_MODIFY_RESPONSES == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-STUDENT_ALLOWED_VIEW_RESULTS"
+                       th:text="#{administrate.students.view.results.note}">View results</label>
+                <select id="sel-STUDENT_ALLOWED_VIEW_RESULTS" name="STUDENT_ALLOWED_VIEW_RESULTS">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_STUDENT_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_STUDENT_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_STUDENT_ALLOWED_VIEW_RESULTS == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <div class="form-group">
+                <input type="checkbox" id="cb-STUDENT_SAVE_WITHOUT_SUBMIT" name="STUDENT_SAVE_WITHOUT_SUBMIT"
+                       th:checked="${s_STUDENT_SAVE_WITHOUT_SUBMIT}"/>
+                <label for="cb-STUDENT_SAVE_WITHOUT_SUBMIT" th:text="#{administrate.students.save.without.submit.note}">Save without submit</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="cb-STUDENT_CANCEL_ALLOWED" name="STUDENT_CANCEL_ALLOWED"
+                       th:checked="${s_STUDENT_CANCEL_ALLOWED}"/>
+                <label for="cb-STUDENT_CANCEL_ALLOWED" th:text="#{administrate.students.cancel.allowed.note}">Cancel allowed</label>
+            </div>
+            <div class="form-group">
+                <label for="sel-ENABLE_TEXT_ITEM_REQUIRED"
+                       th:text="#{administrate.general.allow.required.textitem}">Required text items</label>
+                <select id="sel-ENABLE_TEXT_ITEM_REQUIRED" name="ENABLE_TEXT_ITEM_REQUIRED">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_ENABLE_TEXT_ITEM_REQUIRED == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_ENABLE_TEXT_ITEM_REQUIRED == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_ENABLE_TEXT_ITEM_REQUIRED == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <!-- ===== ADMINISTRATOR SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.admin.settings.header}">Administrator Settings</span></legend>
+            <p class="longtext indnt1">
+                <label for="sel-ADMIN_ADD_ITEMS_NUMBER"
+                       th:text="#{administrate.admin.hierarchy.num.questions.note}">Admin may add N questions</label>
+                <select id="sel-ADMIN_ADD_ITEMS_NUMBER" name="ADMIN_ADD_ITEMS_NUMBER">
+                    <option th:each="v : ${pulldownValues}" th:value="${v}" th:text="${v}"
+                            th:selected="${s_ADMIN_ADD_ITEMS_NUMBER == v}">0</option>
+                </select>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS" name="ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS"
+                       th:checked="${s_ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS}"/>
+                <label for="cb-ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS" th:text="#{administrate.admin.view.instructor.added.results.note}">View instructor results</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ADMIN_VIEW_BELOW_RESULTS" name="ADMIN_VIEW_BELOW_RESULTS"
+                       th:checked="${s_ADMIN_VIEW_BELOW_RESULTS}"/>
+                <label for="cb-ADMIN_VIEW_BELOW_RESULTS" th:text="#{administrate.admin.view.below.results.note}">View below hierarchy results</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_PROVIDER_SYNC" name="ENABLE_PROVIDER_SYNC"
+                       th:checked="${s_ENABLE_PROVIDER_SYNC}"/>
+                <label for="cb-ENABLE_PROVIDER_SYNC" th:text="#{administrate.admin.enable.provider.sync}">Enable provider sync</label>
+            </p>
+        </fieldset>
+
+        <!-- ===== HIERARCHY SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.hierarchy.settings.header}">Hierarchy Settings</span></legend>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-DISPLAY_HIERARCHY_OPTIONS" name="DISPLAY_HIERARCHY_OPTIONS"
+                       th:checked="${s_DISPLAY_HIERARCHY_OPTIONS}"/>
+                <label for="cb-DISPLAY_HIERARCHY_OPTIONS" th:text="#{administrate.general.show.hierarchy.information}">Display hierarchy</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-DISPLAY_HIERARCHY_HEADERS" name="DISPLAY_HIERARCHY_HEADERS"
+                       th:checked="${s_DISPLAY_HIERARCHY_HEADERS}"/>
+                <label for="cb-DISPLAY_HIERARCHY_HEADERS" th:text="#{administrate.hierarchy-display-node-headers-note}">Display node headers</label>
+            </p>
+        </fieldset>
+
+        <!-- ===== DASHBOARD SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.dash.settings.header}">Dashboard Settings</span></legend>
+            <p class="checkbox" th:text="#{administrate.dash.summary.note}">Summary lists:</p>
+            <p class="checkbox indnt1 cbxmultlftalgn">
+                <input type="checkbox" id="cb-ENABLE_EVALUATEE_BOX" name="ENABLE_EVALUATEE_BOX"
+                       class="cbx dash-enable-evaluatee-box-marker" th:checked="${s_ENABLE_EVALUATEE_BOX}"/>
+                <label for="cb-ENABLE_EVALUATEE_BOX" th:text="#{administrate.dash.enable.evaluatee.box}">Evaluatee box</label>
+            </p>
+            <p class="longtext indnt1 cbxmultlftalgn">
+                <label for="input-EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS" th:text="#{administrate.dash.evaluatee.closed.still.recent.note}">Recently closed days (evaluatee)</label>
+                <input type="text" id="input-EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS" name="EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS"
+                       size="3" class="dash-evaluatee-closed-still-recent-marker" th:value="${s_EVAL_EVALUATEE_RECENTLY_CLOSED_DAYS}"/>
+            </p>
+            <p class="checkbox indnt1 cbxmultlftalgn">
+                <input type="checkbox" id="cb-ENABLE_ADMINISTRATING_BOX" name="ENABLE_ADMINISTRATING_BOX"
+                       class="cbx dash-enable-administrating-box-marker" th:checked="${s_ENABLE_ADMINISTRATING_BOX}"/>
+                <label for="cb-ENABLE_ADMINISTRATING_BOX" th:text="#{administrate.dash.enable.administrating.box}">Administrating box</label>
+            </p>
+            <p class="longtext indnt1 cbxmultlftalgn">
+                <label for="input-EVAL_RECENTLY_CLOSED_DAYS" th:text="#{administrate.dash.admin.closed.still.recent.note}">Recently closed days (admin)</label>
+                <input type="text" id="input-EVAL_RECENTLY_CLOSED_DAYS" name="EVAL_RECENTLY_CLOSED_DAYS"
+                       size="3" class="dash-eval-closed-still-recent-marker" th:value="${s_EVAL_RECENTLY_CLOSED_DAYS}"/>
+            </p>
+            <p class="checkbox indnt1 cbxmultlftalgn">
+                <input type="checkbox" id="cb-ENABLE_SUMMARY_SITES_BOX" name="ENABLE_SUMMARY_SITES_BOX"
+                       class="cbx" th:checked="${s_ENABLE_SUMMARY_SITES_BOX}"/>
+                <label for="cb-ENABLE_SUMMARY_SITES_BOX" th:text="#{administrate.dash.enable.sites.summary}">Sites summary box</label>
+            </p>
+        </fieldset>
+
+        <!-- ===== GENERAL SETTINGS ===== -->
+        <fieldset class="visibleFS">
+            <legend><span th:text="#{administrate.general.settings.header}">General Settings</span></legend>
+            <p class="longtext indnt1">
+                <label for="sel-RESPONSES_REQUIRED_TO_VIEW_RESULTS"
+                       th:text="#{administrate.general.responses.before.view.note}">Responses before view</label>
+                <select id="sel-RESPONSES_REQUIRED_TO_VIEW_RESULTS" name="RESPONSES_REQUIRED_TO_VIEW_RESULTS">
+                    <option th:each="v : ${pulldownValues}" th:value="${v}" th:text="${v}"
+                            th:selected="${s_RESPONSES_REQUIRED_TO_VIEW_RESULTS == v}">0</option>
+                </select>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_NOT_AVAILABLE" name="ENABLE_NOT_AVAILABLE"
+                       th:checked="${s_ENABLE_NOT_AVAILABLE}"/>
+                <label for="cb-ENABLE_NOT_AVAILABLE" th:text="#{administrate.general.na.allowed.note}">N/A allowed</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_ITEM_COMMENTS" name="ENABLE_ITEM_COMMENTS"
+                       th:checked="${s_ENABLE_ITEM_COMMENTS}"/>
+                <label for="cb-ENABLE_ITEM_COMMENTS" th:text="#{administrate.general.enable.item.comments.note}">Item comments</label>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-ITEMS_ALLOWED_IN_QUESTION_BLOCK" th:text="#{administrate.general.max.questions.block.note}">Max questions in block</label>
+                <select id="sel-ITEMS_ALLOWED_IN_QUESTION_BLOCK" name="ITEMS_ALLOWED_IN_QUESTION_BLOCK">
+                    <option th:each="v : ${pulldownValues}" th:value="${v}" th:text="${v}"
+                            th:selected="${s_ITEMS_ALLOWED_IN_QUESTION_BLOCK == v}">0</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-TEMPLATE_SHARING_AND_VISIBILITY"
+                       th:text="#{administrate.general.template.sharing.note}">Template sharing</label>
+                <select id="sel-TEMPLATE_SHARING_AND_VISIBILITY" name="TEMPLATE_SHARING_AND_VISIBILITY">
+                    <option value="owner"   th:text="#{administrate.sharing.owner}"  th:selected="${s_TEMPLATE_SHARING_AND_VISIBILITY == 'owner'}">Owner</option>
+                    <option value="private" th:text="#{sharing.private}"             th:selected="${s_TEMPLATE_SHARING_AND_VISIBILITY == 'private'}">Private</option>
+                    <option value="public"  th:text="#{sharing.public}"              th:selected="${s_TEMPLATE_SHARING_AND_VISIBILITY == 'public'}">Public</option>
+                </select>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-ALLOW_ALL_SITE_ROLES_TO_RESPOND"
+                       th:text="#{administrate.general.all.roles.participate.note}">All roles participate</label>
+                <select id="sel-ALLOW_ALL_SITE_ROLES_TO_RESPOND" name="ALLOW_ALL_SITE_ROLES_TO_RESPOND">
+                    <option th:value="${ADMIN_BOOLEAN_YES}"    th:text="#{administrate.true.label}"   th:selected="${s_ALLOW_ALL_SITE_ROLES_TO_RESPOND == ADMIN_BOOLEAN_YES}">Yes</option>
+                    <option th:value="${ADMIN_BOOLEAN_NO}"     th:text="#{administrate.false.label}"  th:selected="${s_ALLOW_ALL_SITE_ROLES_TO_RESPOND == ADMIN_BOOLEAN_NO}">No</option>
+                    <option th:value="${ADMIN_BOOLEAN_CONFIGURABLE}" th:text="#{general.configurable}" th:selected="${s_ALLOW_ALL_SITE_ROLES_TO_RESPOND == ADMIN_BOOLEAN_CONFIGURABLE}">Configurable</option>
+                </select>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-VIEW_SURVEY_RESULTS_IGNORE_DATES" name="VIEW_SURVEY_RESULTS_IGNORE_DATES"
+                       th:checked="${s_VIEW_SURVEY_RESULTS_IGNORE_DATES}"/>
+                <label for="cb-VIEW_SURVEY_RESULTS_IGNORE_DATES" th:text="#{administrate.general.view.results.ignore.dates.note}">View results ignore dates</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_TEMPLATE_COPYING" name="ENABLE_TEMPLATE_COPYING"
+                       th:checked="${s_ENABLE_TEMPLATE_COPYING}"/>
+                <label for="cb-ENABLE_TEMPLATE_COPYING" th:text="#{administrate.general.template.copying.note}">Template copying</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_ADHOC_GROUPS" name="ENABLE_ADHOC_GROUPS"
+                       th:checked="${s_ENABLE_ADHOC_GROUPS}"/>
+                <label for="cb-ENABLE_ADHOC_GROUPS" th:text="#{administrate.general.enable.adhoc.groups.note}">Adhoc groups</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_ADHOC_USERS" name="ENABLE_ADHOC_USERS"
+                       th:checked="${s_ENABLE_ADHOC_USERS}"/>
+                <label for="cb-ENABLE_ADHOC_USERS" th:text="#{administrate.general.enable.adhoc.users.note}">Adhoc users</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_EVAL_EARLY_CLOSE" name="ENABLE_EVAL_EARLY_CLOSE"
+                       th:checked="${s_ENABLE_EVAL_EARLY_CLOSE}"/>
+                <label for="cb-ENABLE_EVAL_EARLY_CLOSE" th:text="#{administrate.general.enable.eval.close.note}">Early close</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_EVAL_REOPEN" name="ENABLE_EVAL_REOPEN"
+                       th:checked="${s_ENABLE_EVAL_REOPEN}"/>
+                <label for="cb-ENABLE_EVAL_REOPEN" th:text="#{administrate.general.enable.eval.reopen.note}">Reopen</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_MY_TOPLINKS" name="ENABLE_MY_TOPLINKS"
+                       th:checked="${s_ENABLE_MY_TOPLINKS}"/>
+                <label for="cb-ENABLE_MY_TOPLINKS" th:text="#{administrate.general.show.my.toplinks}">Show My toplinks</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_EVAL_RESPONSE_REMOVAL" name="ENABLE_EVAL_RESPONSE_REMOVAL"
+                       th:checked="${s_ENABLE_EVAL_RESPONSE_REMOVAL}"/>
+                <label for="cb-ENABLE_EVAL_RESPONSE_REMOVAL" th:text="#{administrate.general.enable.response.removal}">Response removal</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_EVAL_CATEGORIES" name="ENABLE_EVAL_CATEGORIES"
+                       th:checked="${s_ENABLE_EVAL_CATEGORIES}"/>
+                <label for="cb-ENABLE_EVAL_CATEGORIES" th:text="#{administrate.general.use.evaluation.category}">Eval categories</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_EVAL_TERM_IDS" name="ENABLE_EVAL_TERM_IDS"
+                       th:checked="${s_ENABLE_EVAL_TERM_IDS}"/>
+                <label for="cb-ENABLE_EVAL_TERM_IDS" th:text="#{administrate.general.use.evaluation.term.id}">Term IDs</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ITEM_USE_COURSE_CATEGORY_ONLY" name="ITEM_USE_COURSE_CATEGORY_ONLY"
+                       th:checked="${s_ITEM_USE_COURSE_CATEGORY_ONLY}"/>
+                <label for="cb-ITEM_USE_COURSE_CATEGORY_ONLY" th:text="#{administrate.general.default.question.category.note}">Course category only</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-EVAL_USE_DATE_TIME" name="EVAL_USE_DATE_TIME"
+                       th:checked="${s_EVAL_USE_DATE_TIME}"/>
+                <label for="cb-EVAL_USE_DATE_TIME" th:text="#{administrate.general.use.date.time.note}">Use date+time</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-EVAL_USE_STOP_DATE" name="EVAL_USE_STOP_DATE"
+                       th:checked="${s_EVAL_USE_STOP_DATE}"/>
+                <label for="cb-EVAL_USE_STOP_DATE" th:text="#{administrate.general.use.stop.date.note}">Use stop date</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-EVAL_USE_VIEW_DATE" name="EVAL_USE_VIEW_DATE"
+                       th:checked="${s_EVAL_USE_VIEW_DATE}"/>
+                <label for="cb-EVAL_USE_VIEW_DATE" th:text="#{administrate.general.use.view.date.note}">Use view date</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-EVAL_USE_SAME_VIEW_DATES" name="EVAL_USE_SAME_VIEW_DATES"
+                       th:checked="${s_EVAL_USE_SAME_VIEW_DATES}"/>
+                <label for="cb-EVAL_USE_SAME_VIEW_DATES" th:text="#{administrate.general.same.view.date.note}">Same view date</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-USE_EXPERT_TEMPLATES" name="USE_EXPERT_TEMPLATES"
+                       th:checked="${s_USE_EXPERT_TEMPLATES}"/>
+                <label for="cb-USE_EXPERT_TEMPLATES" th:text="#{administrate.general.expert.templates.note}">Expert templates</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-USE_EXPERT_ITEMS" name="USE_EXPERT_ITEMS"
+                       th:checked="${s_USE_EXPERT_ITEMS}"/>
+                <label for="cb-USE_EXPERT_ITEMS" th:text="#{administrate.general.expert.questions.note}">Expert questions</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_GROUP_SPECIFIC_PREVIEW" name="ENABLE_GROUP_SPECIFIC_PREVIEW"
+                       th:checked="${s_ENABLE_GROUP_SPECIFIC_PREVIEW}"/>
+                <label for="cb-ENABLE_GROUP_SPECIFIC_PREVIEW" th:text="#{administrate.general.enable.group.specific.preview.note}">Group-specific preview</label>
+            </p>
+            <p class="longtext indnt1">
+                <label for="sel-EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE"
+                       th:text="#{administrate.general.eval.mim.time.diff.between.dates}">Min time diff start/due</label>
+                <select id="sel-EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE" name="EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE">
+                    <option th:each="v : ${minimumTimeDiff}" th:value="${v}" th:text="${v}"
+                            th:selected="${s_EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE == v}">0</option>
+                </select>
+            </p>
+        </fieldset>
+
+        <!-- ===== INSTITUTION SPECIFIC SETTINGS ===== -->
+        <fieldset id="institution-specific-settings" class="visibleFS">
+            <legend><span th:text="#{administrate.institution.specific.settings.header}">Institution Specific</span></legend>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ITEM_USE_RESULTS_SHARING" name="ITEM_USE_RESULTS_SHARING"
+                       th:checked="${s_ITEM_USE_RESULTS_SHARING}"/>
+                <label for="cb-ITEM_USE_RESULTS_SHARING" th:text="#{administrate.general.item.sharing.note}">Item results sharing</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_IMPORTING" name="ENABLE_IMPORTING"
+                       th:checked="${s_ENABLE_IMPORTING}"/>
+                <label for="cb-ENABLE_IMPORTING" th:text="#{administrate.general.enable.importing.note}">Enable importing</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-DISABLE_ITEM_BANK" name="DISABLE_ITEM_BANK"
+                       th:checked="${s_DISABLE_ITEM_BANK}"/>
+                <label for="cb-DISABLE_ITEM_BANK" th:text="#{administrate.general.disable.item.bank}">Disable item bank</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-DISABLE_QUESTION_BLOCKS" name="DISABLE_QUESTION_BLOCKS"
+                       th:checked="${s_DISABLE_QUESTION_BLOCKS}"/>
+                <label for="cb-DISABLE_QUESTION_BLOCKS" th:text="#{administrate.general.disable.question.blocks}">Disable question blocks</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_ASSISTANT_CATEGORY" name="ENABLE_ASSISTANT_CATEGORY"
+                       th:checked="${s_ENABLE_ASSISTANT_CATEGORY}"/>
+                <label for="cb-ENABLE_ASSISTANT_CATEGORY" th:text="#{administrate.general.enable.ta.category}">TA category</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_INSTRUCTOR_ASSISTANT_SELECTION" name="ENABLE_INSTRUCTOR_ASSISTANT_SELECTION"
+                       th:checked="${s_ENABLE_INSTRUCTOR_ASSISTANT_SELECTION}"/>
+                <label for="cb-ENABLE_INSTRUCTOR_ASSISTANT_SELECTION" th:text="#{administrate.general.enable.selections}">Instructor/TA selection</label>
+            </p>
+            <p class="checkbox indnt1">
+                <input type="checkbox" id="cb-ENABLE_SITE_GROUP_PUBLISH_CHECK" name="ENABLE_SITE_GROUP_PUBLISH_CHECK"
+                       th:checked="${s_ENABLE_SITE_GROUP_PUBLISH_CHECK}"/>
+                <label for="cb-ENABLE_SITE_GROUP_PUBLISH_CHECK" th:text="#{administrate.general.enable.site.published.check}">Site publish check</label>
+            </p>
+            <p class="longtext indnt1">
+                <label class="block" for="input-LOCAL_CSS_PATH" th:text="#{administrate.general.local.css.path.note}">Local CSS path</label>
+                <input type="text" id="input-LOCAL_CSS_PATH" name="LOCAL_CSS_PATH" size="72" maxlength="200"
+                       th:value="${s_LOCAL_CSS_PATH}"/>
+            </p>
+        </fieldset>
+
+        <p class="act">
+            <input type="submit" th:value="#{administrate.save.settings.button}" class="active" accesskey="s"
+                   onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            <input type="button" th:value="#{general.cancel.button}" accesskey="x"
+                   onclick="SPNR.disableControlsAndSpin(this, null); history.go(-1); return false;"/>
+        </p>
+    </form>
+
+    <!-- Reset cache -->
+    <fieldset class="visibleFS" style="margin-top:1em">
+        <form method="post" th:action="@{/administrate/reset}">
+            <input type="submit" th:value="#{administrate.reset.button}" onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            <span th:text="#{administrate.reset.cache}" style="margin-left:.5em">Reset cache description</span>
+        </form>
+    </fieldset>
+
+    <div th:text="#{administrate.version.revision(${appVersion}, ${svnRevision}, '')}"
+         style="font-style:italic;font-size:.8em;margin-top:1em">Version info</div>
+
+</div>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+<script th:inline="javascript">
+    evalsys.initAdministrate();
+</script>
+
+</body>
+</html>

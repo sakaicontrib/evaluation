@@ -1,0 +1,97 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{importconfig.page.title}">Import Configuration</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/administrate}" th:text="#{administrate.page.title}">Administrate</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{importconfig.page.title}">Import Configuration</li>
+    </ul>
+
+    <!-- Upload form -->
+    <div style="margin:20px">
+        <form method="post" th:action="@{/import_config/upload}" enctype="multipart/form-data">
+            <span th:text="#{importconfig.upload.instructions}">Select Eval configuration file to upload</span><br/>
+            <input type="file" name="configFile" size="90"/><br/>
+            <button type="submit" th:text="#{importconfig.upload.button}">Upload</button>
+        </form>
+    </div>
+
+    <!-- Overwrite form (only shown when a file has been uploaded) -->
+    <div th:if="${hasUpload}" style="margin:20px">
+        <form method="post" th:action="@{/import_config/overwrite}"
+              th:onsubmit="${'return confirm(\'' + #messages.msg('importconfig.confirm.overwrite') + '\')'}">
+            <button type="submit" id="overwrite-button" th:text="#{importconfig.overwrite.config.button}">Overwrite Settings</button>
+        </form>
+    </div>
+
+    <!-- Settings table -->
+    <h3 th:text="#{importconfig.settings.header}">System Configuration</h3>
+    <table width="60%">
+        <thead>
+        <tr>
+            <th th:text="#{importconfig.config.property}" align="center" width="50%">Property Name</th>
+            <th th:text="#{importconfig.config.current.property}" align="center">Current Setting</th>
+            <th th:text="#{importconfig.config.import.property}" align="center">Import Setting</th>
+        </tr>
+        </thead>
+        <tbody id="propertyValues">
+        <tr th:each="row,stat : ${settingRows}"
+            th:classappend="${stat.odd} ? 'oddrow' : ''">
+            <td class="tdPropertyName" th:text="${row.propertyName}">key</td>
+            <td class="tdCurrentValue" align="center" th:text="${row.currentValue}">current</td>
+            <td class="tdNewPropertyValue" align="center" th:text="${row.incomingValue}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Si hay fichero subido, marcar en rojo las diferencias
+        if ($('#overwrite-button').length > 0) {
+            $('td.tdCurrentValue').each(function () {
+                if ($(this).text() !== $(this).next().text()) {
+                    $(this).next().css("background", "red");
+                }
+            });
+        }
+    });
+</script>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

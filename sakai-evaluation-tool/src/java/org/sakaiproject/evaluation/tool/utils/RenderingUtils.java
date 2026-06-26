@@ -30,13 +30,6 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.tool.producers.EvaluationNotificationsProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationRespondersProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
-import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
-import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
@@ -44,13 +37,6 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 
 /**
@@ -221,6 +207,28 @@ public class RenderingUtils {
     }
 
     /**
+     * Matrix display always shows the option's 1-based position as its column header
+     * (e.g. "1", "2", "3"), regardless of the scale's actual option text. This is only
+     * self-explanatory when the scale options are themselves numeric; for text scales
+     * (e.g. "Strongly disagree" .. "Strongly agree") the position numbers need a legend
+     * to be meaningful.
+     *
+     * @param scaleOptions the array of scale options for a matrix templateItem
+     * @return false if every option parses as a number, true otherwise
+     */
+    public static boolean isNumericScale(List<String> scaleOptions) {
+        if (scaleOptions == null || scaleOptions.isEmpty()) {
+            return false;
+        }
+        for (String option : scaleOptions) {
+            if (!org.apache.commons.lang3.math.NumberUtils.isParsable(option)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calculate the proper set of scale labels to use for a template item
      * in a report based on the item type (note, this will only return useful data for scale items)
      * 
@@ -300,218 +308,6 @@ public class RenderingUtils {
             categoryMessage = "modifyitem.environment.category";
         }
         return categoryMessage;
-    }
-
-
-    /**
-     * Renders the reports/results column content (since the logic is complex)
-     * 
-     * @param container the branch container (must contain the following elements):
-     *      evalReportDisplay (output)
-     *      evalReportDisplayLink (link)
-     *      evalRespondentsDisplayLink (link)
-     * @param eval the evaluation
-     * @param group the eval group
-     * @param viewDate the date at which results can be viewed
-     * @param df the formatter for the dates
-     * @param responsesNeeded responses needed before results can be viewed (0 indicates they can be viewed now),
-     *      normally should be the output from EvalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount)
-     * @param responsesRequired the int value of EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS
-     * @param evalResultsViewable true if the reports can be viewed based on eval state, prefs, and dates, 
-     *      usually the result of EvalBeanUtils.checkInstructorViewResultsForEval(),
-     *      NOTE: this doesn't guarantee the link is visible as there might not be enough respondents 
-     *      or the view date may not be reached yet (should handle EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS)
-     * 
-     * Sample rendering html (from summary.html):
-      <tr rsf:id="evalResponsesList:">
-        ...
-        <td nowrap="nowrap">
-          <span rsf:id="evalReportDisplay"></span>
-          <a rsf:id="evalReportDisplayLink" href="report_view.html">results</a>
-          <a rsf:id="evalRespondentsDisplayLink" class="left-separator" href="evaluation_responders.html">respondents</a>
-        </td>
-      </tr>
-     *
-     */
-    public static void renderResultsColumn(UIBranchContainer container, EvalEvaluation eval, EvalGroup group, 
-            Date viewDate, DateFormat df, int responsesNeeded, int responsesRequired, boolean evalResultsViewable) {
-
-        Date now = new Date();
-
-        if (container == null) { throw new IllegalArgumentException("container must be set"); }
-        if (eval == null) { throw new IllegalArgumentException("eval must be set"); }
-        String evalState = EvalUtils.getEvaluationState(eval, true);
-        if (viewDate == null) {
-            viewDate = eval.getSafeViewDate(); // ensure no NPE
-        }
-        if (df == null) {
-            df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        }
-        String viewableDate = df.format(viewDate);
-        /* Reports column logic: 
-         * - if eval OPEN (in progress) 
-         * -- if view date not reached and if responses count not reached: show "{viewDate}: if at least {num} responses" 
-         * -- if responses count not reached: show "After {num} more responses" 
-         * -- if view date not reached but responses count reached: show "{viewDate}" 
-         * -- if INSTRUCTOR_ALLOWED_VIEW_RESULTS and responses count reached: show link to report view 
-         * - if eval CLOSED 
-         * -- if responses count not reached: show "After {num} more responses" 
-         * -- if view date not reached but responses count reached: show "{viewDate}" 
-         * -- if view date and responses count reached: show link to report view
-         */
-        boolean evalOpen = EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_CLOSED, false); // eval is open (still in progress)
-        if (evalOpen && !evalResultsViewable && responsesNeeded > 0) {
-            // show view date + responses message (only if the eval is still OPEN)
-            // controlevaluations.eval.report.viewablew.awaiting.responses
-            UIMessage resultOutput = UIMessage.make(container, "evalReportDisplay", "controlevaluations.eval.report.viewable.least.responses", 
-                    new Object[] { viewableDate, responsesRequired });
-            // indicate the viewable date as well
-            resultOutput.decorate(new UITooltipDecorator(
-                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-        } else if ( responsesNeeded > 0 ) {
-            // not viewable yet because there are not enough responses
-            UIMessage resultOutput = UIMessage.make(container, "evalReportDisplay", "controlevaluations.eval.report.after.responses", 
-                    new Object[] { responsesNeeded });
-            // indicate the viewable date as well
-            resultOutput.decorate(new UITooltipDecorator(
-                    UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-        } else if (now.before(viewDate) || !evalResultsViewable) {
-            // not viewable yet because of the view date
-            UIOutput resultOutput = UIOutput.make(container, "evalReportDisplay", viewableDate );
-            if ( responsesNeeded == 0 ) {
-                // just show date if we have enough responses
-                resultOutput.decorate(new UITooltipDecorator(
-                        UIMessage.make("controlevaluations.eval.report.viewable.on", new Object[] { viewableDate }) ));
-            } else {
-                // show if responses are still needed
-                resultOutput.decorate(new UITooltipDecorator( 
-                        UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-            }
-        } else { // if (evalResultsViewable)
-            // reports are viewable so just display the reports link
-            ViewParameters viewparams;
-            if (group != null) {
-                viewparams = new ReportParameters(ReportsViewingProducer.VIEW_ID, eval.getId(), new String[] { group.evalGroupId });
-            } else {
-                viewparams = new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId());
-            }
-            UIInternalLink.make(container, "evalReportDisplayLink", UIMessage.make("controlevaluations.eval.report.link"), viewparams);
-        }
-    }
-
-    /**
-     * Renders the response rate column (since the logic is complex)
-     * 
-     * @param container the branch container (must contain the following elements):
-     *      responseRateDisplay (output)
-     *      responseRateLink (link)
-     * @param evaluationId the id of the evaluation
-     * @param responsesNeeded responses needed before results can be viewed (0 indicates they can be viewed now),
-     *      normally should be the output from EvalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount)
-     * @param responseString the string representing the response rate output
-     * @param allowedViewResponders if true, this user can view the responders listing,
-     *      normally only if user have view responders permission or is admin user
-     * @param allowedEmailStudents if true, this user can send emails to evaluators,
-     *      normally only if EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS is true or is admin/owner of eval
-     * 
-     * Sample html (from summary.html):
-      <tr rsf:id="evalResponsesList:">
-        ...
-        <td nowrap="nowrap">
-          <a rsf:id="responseRateLink" href="evaluation_responders.html">2 of 39</a>
-          <span rsf:id="responseRateDisplay"></span>
-        </td>
-      </tr>
-     * 
-     */
-    public static void renderReponseRateColumn(UIBranchContainer container, Long evaluationId, 
-            int responsesNeeded, String responseString, boolean allowedViewResponders, boolean allowedEmailStudents) {
-        if (container == null) { throw new IllegalArgumentException("container must be set"); }
-        if (evaluationId == null) { throw new IllegalArgumentException("evaluationId must be set"); }
-        if (responseString == null || "".equals(responseString)) { throw new IllegalArgumentException("responseString must be set"); }
-        /* Responses column:
-         * - if min responses reached and user have view responders permission: link to the responders view 
-         * - else if INSTRUCTOR_ALLOWED_EMAIL_STUDENTS: link to notifications (send emails) view 
-         * - else no options enabled and not admin ONLY show the text of the responses info (and tooltip if min responses not reached)
-         */
-        boolean showRespondersLink = (responsesNeeded == 0 && allowedViewResponders);
-        UIComponent responseRateCompoenent;
-        if (allowedEmailStudents || showRespondersLink) {
-            ViewParameters viewparams;
-            if (showRespondersLink) {
-                viewparams = new EvalViewParameters( EvaluationRespondersProducer.VIEW_ID, evaluationId );
-            } else if (allowedEmailStudents) {
-                viewparams = new EvalViewParameters( EvaluationNotificationsProducer.VIEW_ID, evaluationId );
-            } else {
-                throw new RuntimeException("Bad logic in renderReponseRateColumn: should not be possible to reach this");
-            }
-            responseRateCompoenent = UIInternalLink.make(container, "responseRateLink", 
-                    UIMessage.make("controlevaluations.eval.responses.inline", new Object[] { responseString }),
-                    viewparams );
-        } else {
-            responseRateCompoenent = UIMessage.make(container, "responseRateDisplay", "controlevaluations.eval.responses.inline", 
-                    new Object[] { responseString } );
-        }
-        if (responsesNeeded > 0) {
-            // show if responses are still needed
-            responseRateCompoenent.decorate(new UITooltipDecorator( 
-                    UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ));
-        }
-    }
-
-    /**
-     * Ensures all rendering calcs work the same way and generate the same general properties
-     * 
-     * @param dti the dti which holds the template item (wrap the template item if you need to)
-     * @param eval (OPTIONAL) the evaluation related to the template item to be rendered
-     * @param missingKeys (OPTIONAL) the set of missing keys which should cause the matching items to rendered with an invalid marker
-     * @param renderProperties (OPTIONAL) the existing map of rendering properties (one is created if this is null)
-     * @return the map of render properties (created if the input map is null)
-     */
-    public Map<String,Object> makeRenderProps(DataTemplateItem dti, 
-            EvalEvaluation eval, Set<String> missingKeys, 
-            Map<String,Object> renderProperties) {
-        if (dti == null || dti.templateItem == null) {
-            throw new IllegalArgumentException("dti and dti.templateItem cannot be null");
-        }
-
-        if (renderProperties == null) {
-            renderProperties = new HashMap<>();
-        }
-
-        boolean evalRequiresItems = false;
-        if (eval != null) {
-            evalRequiresItems = ! EvalUtils.safeBool(eval.getBlankResponsesAllowed(), true);
-        }
-        
-        boolean isDtiCompulsory = authoringService.isCompulsory(dti.templateItem, eval);
-                
-        if ( isDtiCompulsory || (evalRequiresItems && dti.isRequireable()) ) {
-            renderProperties.put(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED, Boolean.TRUE);
-        } else {
-            renderProperties.remove(ItemRenderer.EVAL_PROP_ANSWER_REQUIRED);
-        }
-
-        if (missingKeys != null && ! missingKeys.isEmpty()) {
-            if (missingKeys.contains(dti.getKey())) {
-                renderProperties.put(ItemRenderer.EVAL_PROP_RENDER_INVALID, Boolean.TRUE);
-            }
-        } else {
-            renderProperties.remove(ItemRenderer.EVAL_PROP_RENDER_INVALID);
-        }
-
-        // loop through and add in children render props
-        if (dti.isBlockParent()) {
-            List<DataTemplateItem> children = dti.getBlockChildren();
-            for (DataTemplateItem childDTI : children) {
-                HashMap<String,Object> childRenderProps = new HashMap<>();
-                makeRenderProps(childDTI, eval, missingKeys, childRenderProps);
-                String key = "child-"+childDTI.templateItem.getId();
-                renderProperties.put(key, childRenderProps);
-            }
-        }
-
-        return renderProperties;
     }
 
     // NOTE: caching stuff copied from EntityBus project

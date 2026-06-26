@@ -277,7 +277,11 @@ function updateControlItemsTotal() {
         boxdiv.style.padding = '4px';
         $(boxdiv).addClass('act eval-template-popup');
         $(boxdiv).hide();
-        document.body.appendChild(boxdiv);
+        // Appended inside .portletBody.evaluation (not document.body) so the
+        // evaluation_base.css rules for .eval-template-popup apply: the CSS build
+        // prefixes every selector with .portletBody.evaluation/.Mrphs-sakai-rsf-evaluation,
+        // so a body-level node would never match and rendered with no background.
+        $('.portletBody.evaluation').append(boxdiv);
 
         //var actionText = evalTemplateUtils.messageLocator('general.command.delete');
         var actionText = options.itemType.search('block') === -1 ? evalTemplateUtils.messageLocator('general.command.delete') : evalTemplateUtils.messageLocator('modifytemplate.group.ungroup');
@@ -287,10 +291,10 @@ function updateControlItemsTotal() {
 
         itemTarget.addClass('item-delete-target--active');
 
-        var content = '<div class="" style="font-weight: bold;">'+actionText+' item</div><div>"' + options.text + '"</div>' +
+        var content = '<div class="" style="font-weight: bold;">'+evalTemplateUtils.messageLocator('general.confirm.action.item', actionText)+'</div><div>"' + options.text + '"</div>' +
                       '<div class="" style="float: right;">' +
                       '<input type="button" value="'+actionText+'" accesskey="s" class="removeItemConfirmYes active"/> ' +
-                      '<input type="button" value="Cancel" accesskey="x" class="closeImage"/>' +
+                      '<input type="button" value="'+evalTemplateUtils.messageLocator('general.cancel.button')+'" accesskey="x" class="closeImage"/>' +
                       '</div>';
         $(boxdiv).html(content);
         $('.closeImage').click(function()
@@ -306,7 +310,7 @@ function updateControlItemsTotal() {
                 if ($('div.itemRowBlock[id$=:itemRowBlock:'+options.id+':]').parents('.itemTableBlock').find('div.itemRowBlock').get().length <= 2) {
                     var error = '<div class="item-operations item-operations--enabled alert alert-warning d-flex flex-wrap align-items-center gap-2 py-2 px-3" role="alert">' +
                                 '<span class="bi bi-x-circle" aria-hidden="true"></span>' +
-                                '<span class="visually-hidden">Error</span> ' +
+                                '<span class="visually-hidden">'+evalTemplateUtils.messageLocator('general.error')+'</span> ' +
                                 '<span class="instructionText"></span>' + evalTemplateUtils.messageLocator('modifytemplate.group.cannot.delete.item') + ' <a href="#" id="closeItemOperationsEnabled">x</a></div>';
                     $(that).parents('.itemLine3').prepend(error).effect('highlight', 1000);
                     $('#closeItemOperationsEnabled').click(function() {

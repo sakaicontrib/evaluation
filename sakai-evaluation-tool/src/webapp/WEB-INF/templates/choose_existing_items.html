@@ -1,0 +1,125 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{items.existing.page.title}">Choose Items</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/modify_template_items(templateId=${templateId})}"
+               th:text="#{modifytemplate.page.title}">Template</a></li>
+        <li><a th:href="@{/control_items}" th:text="#{items.page.title}">Items</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{items.choose.items}">Choose Items</li>
+    </ul>
+
+    <div class="navPanel">
+        <div class="viewNav">
+            <h3 th:text="#{items.existing.page.title}">Items</h3>
+        </div>
+        <div class="searchNav">
+            <th:block th:if="${hasSearch}">
+                <span class="highlight" th:text="#{existing.items}">Current Search:</span>
+                <span class="instructionText" th:text="${searchString}"></span>
+            </th:block>
+            <form th:action="@{/choose_existing_items}" method="get">
+                <input type="hidden" name="templateId" th:value="${templateId}"/>
+                <input type="text" name="searchString" size="25" maxlength="100"
+                       th:value="${searchString}"/>
+                <input type="submit" th:value="#{items.search.command}"
+                       onclick="SPNR.disableControlsAndSpin(this, null);"/>
+            </form>
+        </div>
+    </div>
+
+    <form th:action="@{/choose_existing_items}" method="post" style="margin:0px;">
+        <input type="hidden" name="templateId" th:value="${templateId}"/>
+
+        <th:block th:if="${hasItems}">
+            <p>
+                <input type="submit" th:value="#{expert.items.insert}" class="active"
+                       accesskey="s" onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                <a th:href="@{/modify_template_items(templateId=${templateId})}"
+                   class="makeButton" style="display:inline;float:none" accesskey="x"
+                   th:text="#{items.cancel}">Cancel</a>
+            </p>
+
+            <table class="evalsysTable">
+                <caption class="skip" th:text="#{item.list.summary}">Selectable items</caption>
+                <thead class="skip">
+                    <tr>
+                        <th width="5%" scope="col" class="attach">
+                            <span class="skip" th:text="#{items.select.col.title}">Select</span>
+                        </th>
+                        <th scope="col">
+                            <span th:text="#{items.item.col.title}">Items</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${itemRows}"
+                        th:classappend="${row.odd} ? 'itemsListOddLine'">
+                        <td class="attach">
+                            <input type="checkbox" name="selectedIds"
+                                   th:id="|item-cb-${row.itemId}|"
+                                   th:value="${row.itemId}"/>
+                        </td>
+                        <td>
+                            <h5>
+                                <label th:for="|item-cb-${row.itemId}|">
+                                    <span th:utext="${row.itemText}">Item text</span>
+                                </label>
+                            </h5>
+                            <div class="instructionText" th:text="${row.scaleInfo}">Scale info</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <input type="submit" th:value="#{expert.items.insert}" class="active"
+                       accesskey="s" onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                <a th:href="@{/modify_template_items(templateId=${templateId})}"
+                   class="makeButton" style="display:inline;float:none" accesskey="x"
+                   th:text="#{items.cancel}">Cancel</a>
+            </p>
+        </th:block>
+
+        <p th:unless="${hasItems}" th:text="#{no.list.items}">No items available.</p>
+    </form>
+
+</div>
+
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+
+</body>
+</html>

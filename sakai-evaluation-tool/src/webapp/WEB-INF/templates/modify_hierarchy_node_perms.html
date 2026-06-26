@@ -1,0 +1,132 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{modifynodeperms.page.title}">Hierarchy Node Permissions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <ul class="breadCrumb">
+        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li><a th:href="@{/administrate}" th:text="#{administrate.page.title}">Administrate</a></li>
+        <li><a th:href="@{/control_hierarchy(expanded=${expanded})}" th:text="#{controlhierarchy.breadcrumb.title}">Hierarchy</a></li>
+        <li class="lastCrumbNoFloat" th:text="#{modifynodeperms.breadcrumb.title}">Modify Node Permissions</li>
+    </ul>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="alertMessage successMessage">
+        <ul><li th:text="#{__${successMessage}__(${successArgs != null ? successArgs[0] : ''})}">OK</li></ul>
+    </div>
+    <div th:if="${errorMessage}" class="alertMessage">
+        <ul><li th:text="#{__${errorMessage}__(${errorArgs != null ? errorArgs[0] : ''})}">Error</li></ul>
+    </div>
+
+    <h3 th:text="#{modifynodeperms.page.title}">Hierarchy Node Permissions</h3>
+    <p th:text="#{modifynodeperms.node.info(${nodeTitle}, ${nodeDesc})}">Node info</p>
+    <p class="instructionText" th:text="#{modifynodeperms.instructions}">Instructions</p>
+
+    <p>
+        <a th:href="@{/control_hierarchy(expanded=${expanded})}" th:text="#{controlhierarchy.return.link}">Return</a>
+    </p>
+
+    <!-- Current users table -->
+    <table th:unless="${#lists.isEmpty(userRows)}" class="evalsysTable">
+        <thead>
+        <tr>
+            <th th:text="#{modifynodeperms.user.info.header}">User Info</th>
+            <th th:text="#{modifynodeperms.perms.header}">Permissions</th>
+            <th th:text="#{modifynodeperms.actions.header}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${userRows}">
+            <td th:text="#{modifynodeperms.user.info(${row.displayName}, ${row.username})}">User</td>
+            <td>
+                <form method="post" th:action="@{/modify_hierarchy_node_perms/save}" style="display:inline">
+                    <input type="hidden" name="nodeId" th:value="${nodeId}"/>
+                    <input type="hidden" name="userId" th:value="${row.userId}"/>
+                    <th:block th:each="e : ${expanded}">
+                        <input type="hidden" name="expanded" th:value="${e}"/>
+                    </th:block>
+                    <th:block th:each="pv,pvStat : ${permValues}">
+                        <input type="checkbox" th:id="${'perm-' + row.userId + '-' + pvStat.index}"
+                               name="perms" th:value="${pv}"
+                               th:checked="${row.perms.contains(pv)}"/>
+                        <label th:for="${'perm-' + row.userId + '-' + pvStat.index}"
+                               th:text="${#messages.msg(permLabels[pvStat.index])}">Perm</label><br/>
+                    </th:block>
+                    <input type="submit" th:value="#{modifynodeperms.save.changes.button}" class="active"
+                           onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                </form>
+            </td>
+            <td>
+                <form th:unless="${row.currentUser}" method="post" th:action="@{/modify_hierarchy_node_perms/remove-user}">
+                    <input type="hidden" name="nodeId" th:value="${nodeId}"/>
+                    <input type="hidden" name="userId" th:value="${row.userId}"/>
+                    <th:block th:each="e : ${expanded}">
+                        <input type="hidden" name="expanded" th:value="${e}"/>
+                    </th:block>
+                    <input type="submit" th:value="#{modifynodeperms.remove.user.button}"
+                           onclick="SPNR.disableControlsAndSpin(this, null);"/>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Add new user -->
+    <form method="post" th:action="@{/modify_hierarchy_node_perms/add}" style="margin-top:1em" class="inlineBlockForm">
+        <input type="hidden" name="nodeId" th:value="${nodeId}"/>
+        <th:block th:each="e : ${expanded}">
+            <input type="hidden" name="expanded" th:value="${e}"/>
+        </th:block>
+        <p>
+            <label for="user-eid">EID / Email:</label>
+            <input type="text" id="user-eid" name="userEid" size="30"/>
+        </p>
+        <p>
+            <th:block th:each="pv,pvStat : ${permValues}">
+                <input type="checkbox" th:id="${'new-perm-' + pvStat.index}" name="perms" th:value="${pv}"/>
+                <label th:for="${'new-perm-' + pvStat.index}" th:text="${#messages.msg(permLabels[pvStat.index])}">Perm</label>&nbsp;
+            </th:block>
+        </p>
+        <input type="submit" th:value="#{modifynodeperms.add.user.button}" class="active"
+               onclick="SPNR.disableControlsAndSpin(this, null);"/>
+    </form>
+
+    <p style="margin-top:1em">
+        <a th:href="@{/control_hierarchy(expanded=${expanded})}" th:text="#{controlhierarchy.return.link}">Return</a>
+    </p>
+
+</div>
+<th:block th:if="${mainFrameId != ''}">
+    <script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script>
+</th:block>
+</body>
+</html>

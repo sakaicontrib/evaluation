@@ -1,0 +1,152 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{controlitems.page.title}">My Items</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+    <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/library/webjars/jquery-ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/content/js/utils.js}"></script>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <!-- Breadcrumb -->
+    <ul class="breadCrumb">
+        <li>
+            <a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a>
+        </li>
+        <li class="lastCrumbNoFloat" th:text="#{controlitems.page.title}">My Items</li>
+    </ul>
+
+    <!-- Link to expert items (if enabled) -->
+    <p th:if="${useExpertItems}">
+        <a th:href="@{/control_expert_items}"
+           th:text="#{controlexpertitems.page.title}">Expert Items</a>
+    </p>
+
+    <h3 th:text="#{controlitems.items.header}">Items</h3>
+    <p class="instructionText" th:text="#{controlitems.items.description}">
+        Questions or statements which the evaluator responds to.
+    </p>
+
+    <!-- Form to add a new item -->
+    <div>
+        <strong th:text="#{controlitems.items.add}">Add Item</strong>
+        <form th:action="@{/modify_item}" method="get" class="inlineForm">
+            <select name="itemClassification">
+                <option th:each="i : ${#numbers.sequence(0, itemClassificationValues.length - 1)}"
+                        th:value="${itemClassificationValues[i]}"
+                        th:text="#{__${itemClassificationLabels[i]}__}">Type</option>
+            </select>
+            <input type="submit" th:value="#{controlitems.items.add.button}" class="active"/>
+        </form>
+    </div>
+
+    <!-- Item list -->
+    <div th:if="${not #lists.isEmpty(itemRows)}">
+        <table class="evalsysTable">
+            <thead>
+                <tr>
+                    <th th:text="#{controlitems.items.metadata.title}">Item details</th>
+                    <th th:text="#{controlitems.items.action.title}" class="screenOnly">Actions</th>
+                    <th th:text="#{controlitems.items.owner.title}">Owner</th>
+                    <th th:text="#{controlitems.items.expert.title}">Expert</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${itemRows}"
+                    th:classappend="${row.odd} ? 'itemsListOddLine'">
+                    <td>
+                        <span th:text="${row.classification}">scaled</span>
+                        <span th:if="${row.scaleDisplaySetting != null}"
+                              th:text="${row.scaleDisplaySetting}"> - Likert</span>
+                        <br/>
+                        <span th:utext="${row.itemText}">Item text</span>
+                    </td>
+                    <td class="itemAction screenOnly">
+                        <!-- Previsualizar -->
+                        <a th:href="@{/preview_item(itemId=${row.itemId})}"
+                           class="preview_item"
+                           th:text="#{general.command.preview}">Preview</a>
+                        <!-- Editar -->
+                        <a th:if="${row.canModify}"
+                           th:href="@{/modify_item(itemId=${row.itemId})}"
+                           class="edit_item left-separator"
+                           th:text="#{general.command.edit}">Edit</a>
+                        <span th:unless="${row.canModify}"
+                              th:text="#{general.command.edit}"
+                              class="inactive left-separator">Edit</span>
+                        <!-- Eliminar -->
+                        <a th:if="${row.canDelete}"
+                           th:href="@{/remove_item(itemId=${row.itemId})}"
+                           class="left-separator"
+                           th:text="#{general.command.delete}">Delete</a>
+                        <span th:unless="${row.canDelete}"
+                              th:text="#{general.command.delete}"
+                              class="inactive left-separator">Delete</span>
+                        <!-- Copiar -->
+                        <form th:action="@{/control_items/copy}" method="post" class="inlineForm left-separator">
+                            <input type="hidden" name="itemId" th:value="${row.itemId}"/>
+                            <input type="submit" th:value="#{general.copy}" class="makeLink"/>
+                        </form>
+                    </td>
+                    <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
+                    <td>
+                        <th:block th:if="${row.expert}">
+                            <span th:text="#{controlitems.expert.label}">Expert - </span>
+                            <span th:text="${row.expertCategory}"></span>
+                            <span th:if="${row.expertObjective != null}"
+                                  th:text="${row.expertObjective}"></span>
+                        </th:block>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p th:if="${#lists.isEmpty(itemRows)}" class="instructionText highlightPanel"
+       th:text="#{controlitems.items.none}">No items available</p>
+
+    <!-- Bootstrap Modal for preview and edit items -->
+    <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="cursor:move">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="itemModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">evalsys.initControlItemsModal();</script>
+<th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
+</body>
+</html>

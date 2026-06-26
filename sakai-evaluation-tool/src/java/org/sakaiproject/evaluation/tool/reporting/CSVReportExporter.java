@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -39,8 +41,8 @@ import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.user.cover.UserDirectoryService;
 
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
+
+
 import com.opencsv.CSVWriter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,8 +69,8 @@ public class CSVReportExporter implements ReportExporter {
         this.responseAggregator = bean;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalMessageLocator messageLocator;
+    public void setEvalMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 
@@ -357,7 +359,7 @@ public class CSVReportExporter implements ReportExporter {
             // Close the ZipOutputStream
             zout.close();
         }
-        catch( IOException ex ) { throw UniversalRuntimeException.accumulate( ex, "Could not close the ZipOutputStream" ); }
+        catch( IOException ex ) { throw new RuntimeException("Could not close the ZipOutputStream" ,  ex); }
     }
 
     /**
@@ -501,7 +503,7 @@ public class CSVReportExporter implements ReportExporter {
             try {
                 writer.close();
             } catch (IOException e1) {
-                throw UniversalRuntimeException.accumulate(e1, "Could not close the CSVWriter");
+                throw new RuntimeException("Could not close the CSVWriter", e1);
             }
         }
     }

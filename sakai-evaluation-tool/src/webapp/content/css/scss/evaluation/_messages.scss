@@ -44,6 +44,12 @@
   /*class applied to the outermost parent of an element that has failed validation, can be styled, or children can be style as below*/
 }
 
+span.compulsory {
+  color: var(--bs-danger, #dc3545);
+  font-weight: bold;
+  margin-right: 3px;
+}
+
 .compulsory .label {
   /* color: #b11; font-weight: bold */
 }

@@ -17,27 +17,32 @@ package org.sakaiproject.evaluation.tool.reporting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
 import com.opencsv.CSVWriter;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * 
+ * Exports the full list of evaluation participants (respondents and non-respondents)
+ * as a CSV file, with columns for group (when multiple groups), username, email,
+ * display name, and response status.
+ *
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -51,70 +56,115 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.commonLogic = commonLogic;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalDeliveryService deliveryService;
+    public void setDeliveryService(EvalDeliveryService deliveryService) {
+        this.deliveryService = deliveryService;
+    }
+
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+        this.evaluationService = evaluationService;
+    }
+
+    private EvalMessageLocator messageLocator;
+    public void setEvalMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
         buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
     }
-	
+
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
-        OutputStreamWriter osw = new OutputStreamWriter(outputStream);
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
-            try {
+            try (OutputStreamWriter osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
                 osw.write(messageLocator.getMessage("reporting.respondents.nologin"));
-                osw.flush();
-                osw.close();
-                return;
             } catch (IOException e) {
-                throw UniversalRuntimeException.accumulate(e, "IO Exception thrown whilst trying to print out CSV of evaluation takers");
+                throw new RuntimeException("IO Exception writing CSV takers", e);
             }
+            return;
         }
 
-        CSVWriter writer = new CSVWriter(osw, DELIMITER, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+        boolean multiGroup = groupIds != null && groupIds.length > 1;
 
-        Set<EvalResponse> responses = evaluation.getResponses();
-        Set<String> groupIdSet = new HashSet<>(Arrays.asList(groupIds));
-        List<String> userIds = ownersOfResponses(responses, groupIdSet);
-        List<EvalUser> users = commonLogic.getEvalUsersByIds(userIds);
-        Collections.sort(users, new EvalUser.SortNameComparator());
-        log.debug("users.size(): " + users.size());
-        String[] row = new String[3];
+        // Load responses indexed by groupId → (userId → response)
+        List<EvalResponse> responses = deliveryService.getEvaluationResponses(evaluation.getId(), groupIds, null);
+        Map<String, Map<String, EvalResponse>> groupUserResponses = new HashMap<>();
+        for (EvalResponse r : responses) {
+            groupUserResponses.computeIfAbsent(r.getEvalGroupId(), k -> new HashMap<>())
+                    .put(r.getOwner(), r);
+        }
 
-        // Headers
-        row[0] = messageLocator.getMessage( "viewreport.takers.csv.email.header" );
-        row[1] = messageLocator.getMessage( "viewreport.takers.csv.name.header" );
-        writer.writeNext( row );
+        try (CSVWriter writer = new CSVWriter(
+                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                DELIMITER,
+                CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                CSVWriter.DEFAULT_LINE_END)) {
 
-        try {
-
-            for (EvalUser user : users) {
-                row[0] = user.username;
-                row[1] = user.email;
-                row[2] = user.sortName;
-                writer.writeNext(row);
+            // Header row
+            List<String> headers = new ArrayList<>();
+            if (multiGroup) {
+                headers.add(messageLocator.getMessage("viewreport.takers.csv.group.header"));
             }
-            writer.close();
-            osw.close();
+            headers.add(messageLocator.getMessage("viewreport.takers.csv.username.header"));
+            headers.add(messageLocator.getMessage("viewreport.takers.csv.email.header"));
+            headers.add(messageLocator.getMessage("viewreport.takers.csv.name.header"));
+            headers.add(messageLocator.getMessage("viewreport.takers.csv.status.header"));
+            writer.writeNext(headers.toArray(new String[0]));
+
+            // Resolve participant list using EvalAssignUser rows when available (same as
+            // EvaluationRespondersController) so the CSV agrees with the responders screen.
+            Map<String, List<EvalUser>> usersByGroupId = new HashMap<>();
+            List<EvalAssignUser> assigned = evaluationService.getParticipantsForEval(
+                    evaluation.getId(), null, groupIds, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+            if (!assigned.isEmpty()) {
+                for (EvalAssignUser au : assigned) {
+                    usersByGroupId.computeIfAbsent(au.getEvalGroupId(), k -> new ArrayList<>())
+                            .add(commonLogic.getEvalUserById(au.getUserId()));
+                }
+            } else {
+                for (String groupId : groupIds) {
+                    Set<String> ids = commonLogic.getUserIdsForEvalGroup(groupId, EvalConstants.PERM_TAKE_EVALUATION, false);
+                    usersByGroupId.put(groupId, commonLogic.getEvalUsersByIds(new ArrayList<>(ids)));
+                }
+            }
+
+            for (String groupId : groupIds) {
+                String groupTitle = multiGroup ? commonLogic.makeEvalGroupObject(groupId).title : null;
+                Map<String, EvalResponse> userResponses = groupUserResponses.getOrDefault(groupId, Collections.emptyMap());
+
+                List<EvalUser> users = new ArrayList<>(usersByGroupId.getOrDefault(groupId, Collections.emptyList()));
+                users.sort(new EvalUser.SortNameComparator());
+
+                log.debug("Group {}: {} assigned users, {} responses", groupId, users.size(), userResponses.size());
+
+                for (EvalUser user : users) {
+                    EvalResponse resp = userResponses.get(user.userId);
+                    String status;
+                    if (resp == null) {
+                        status = messageLocator.getMessage("evalresponders.status.untaken");
+                    } else if (resp.complete) {
+                        status = messageLocator.getMessage("evalresponders.status.complete");
+                    } else {
+                        status = messageLocator.getMessage("evalresponders.status.incomplete");
+                    }
+
+                    List<String> row = new ArrayList<>();
+                    if (multiGroup) row.add(groupTitle);
+                    row.add(user.username);
+                    row.add(user.email);
+                    row.add(user.displayName);
+                    row.add(status);
+                    writer.writeNext(row.toArray(new String[0]));
+                }
+            }
         } catch (IOException e) {
-            throw UniversalRuntimeException.accumulate(e, "IO Exception thrown whilst trying to print out CSV of evaluation takers");
+            throw new RuntimeException("IO Exception writing CSV takers", e);
         }
-    }
-
-    private List<String> ownersOfResponses(Set<EvalResponse> responses, Set<String> groupIdSet) {
-        ArrayList<String> owners = new ArrayList<>(responses.size());
-        for (EvalResponse response : responses) {
-            if (response.getEvalGroupId() != null && groupIdSet.contains(response.getEvalGroupId())) {
-                owners.add(response.getOwner());
-            }
-        }
-        return owners;
     }
 
     public String getContentType() {
         return "text/csv";
     }
-
 }

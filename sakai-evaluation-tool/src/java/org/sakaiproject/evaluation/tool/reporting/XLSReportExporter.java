@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -47,8 +49,8 @@ import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.user.api.UserDirectoryService;
 
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
+
+
 
 /**
  * 
@@ -84,8 +86,8 @@ public class XLSReportExporter implements ReportExporter {
         this.evaluationService = evaluationService;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalMessageLocator messageLocator;
+    public void setEvalMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 
@@ -466,7 +468,7 @@ public class XLSReportExporter implements ReportExporter {
 
         // Dump the output to the response stream
         try { wb.write( outputStream ); }
-        catch( IOException e ) { throw UniversalRuntimeException.accumulate( e, "Could not get Writer to dump output to xls" ); }
+        catch( IOException e ) { throw new RuntimeException("Could not get Writer to dump output to xls" ,  e); }
 
     }
 
@@ -706,8 +708,7 @@ public class XLSReportExporter implements ReportExporter {
            try {
                wb.write(outputStream);
            } catch (IOException e) {
-               throw UniversalRuntimeException.accumulate(e,
-                       "Could not get Writer to dump output to xls");
+               throw new RuntimeException("Could not get Writer to dump output to xls", e);
            }
         }
     }

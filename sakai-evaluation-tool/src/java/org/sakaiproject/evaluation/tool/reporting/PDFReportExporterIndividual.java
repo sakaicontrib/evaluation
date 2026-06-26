@@ -42,7 +42,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.org.ponder.messageutil.MessageLocator;
+
 
 /**
  * 
@@ -82,8 +82,8 @@ public class PDFReportExporterIndividual implements ReportExporter {
         this.responseAggregator = bean;
     }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator locator) {
+    private EvalMessageLocator messageLocator;
+    public void setEvalMessageLocator(EvalMessageLocator locator) {
         this.messageLocator = locator;
     }
 

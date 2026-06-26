@@ -1,0 +1,92 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{showevalcategory.page.title(${evalCategory})}">Evaluation Category</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/tool_base.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <script src="/library/js/headscripts.js" type="text/javascript"></script>
+    <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
+    <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div class="portletBody evaluation">
+
+
+    <!-- Navigation bar -->
+    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+
+    <h3 th:text="${evalCategory}">Category name</h3>
+    <p class="instructionText" th:text="#{showevalcategory.evaluation.instructions}">
+        Click on the group title link to fill out an evaluation
+    </p>
+
+    <!-- Evaluations list -->
+    <div th:if="${not #lists.isEmpty(evals)}" class="itemListNew">
+        <ol>
+            <li th:each="eval : ${evals}">
+                <h4>
+                    <span style="font-weight:bold;" th:text="#{showevalcategory.evaluation.header}">Evaluation</span> :
+                    <span th:text="${eval.title}">Eval title here</span>
+                    <span class="textPanelFooter"
+                          th:text="#{showevalcategory.evaluation.dates(${df.format(eval.startDate)}, ${df.format(eval.dueDate)})}">
+                        (starts 10 May 2007 until 20 May 2007)
+                    </span>
+                </h4>
+
+                <!-- Groups associated with this evaluation -->
+                <th:block th:with="groups=${groupsByEval.get(eval.id)}">
+                    <th:block th:if="${groups != null and not #lists.isEmpty(groups)}">
+                        <ol>
+                            <li th:each="group,iter : ${groups}"
+                                th:if="${not INVALID.equals(group.type)}"
+                                th:class="${iter.index % 2 == 0 ? 'itemsListOddLine' : ''}">
+                                <!-- Link if the evaluation is active -->
+                                <a th:if="${ACTIVE.equals(eval.state)}"
+                                   th:href="@{/take_eval(evaluationId=${eval.id},evalGroupId=${group.evalGroupId},evalCategory=${evalCategory})}"
+                                   th:text="${group.title}">Group title</a>
+                                <!-- Text only if the evaluation is not active -->
+                                <span th:unless="${ACTIVE.equals(eval.state)}"
+                                      th:text="${group.title}">Group title</span>
+                            </li>
+                        </ol>
+                    </th:block>
+                    <!-- No groups: direct link to the evaluation -->
+                    <th:block th:if="${groups == null or #lists.isEmpty(groups)}">
+                        <a th:if="${ACTIVE.equals(eval.state)}"
+                           th:href="@{/take_eval(evaluationId=${eval.id},evalCategory=${evalCategory})}"
+                           th:text="#{showevalcategory.evaluation.take.eval.link}">Take evaluation</a>
+                    </th:block>
+                </th:block>
+            </li>
+        </ol>
+    </div>
+
+    <!-- Sin evaluaciones -->
+    <div th:if="${#lists.isEmpty(evals)}"
+         style="font-style:italic;padding:1em;"
+         th:text="#{showevalcategory.no.evaluations}">
+        No evaluations for this category
+    </div>
+
+</div>
+<th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
+</body>
+</html>
