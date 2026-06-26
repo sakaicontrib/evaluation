@@ -16,9 +16,11 @@ package org.sakaiproject.evaluation.dao;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.TransactionStatus;
+
+import lombok.Setter;
 
 /**
  * Impl
@@ -27,10 +29,8 @@ import org.springframework.transaction.TransactionStatus;
  */
 public class EvalDaoInvokerImpl implements EvalDaoInvoker {
 
+   @Setter
    private PlatformTransactionManager transactionManager;
-   public void setTransactionManager(PlatformTransactionManager transactionManager) {
-      this.transactionManager = transactionManager;
-   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvalDaoInvoker#invokeTransactionalAccess(java.lang.Runnable)

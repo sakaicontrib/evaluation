@@ -19,13 +19,13 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalAdmin;
 
+import lombok.Setter;
+
 public class EvalAdminSupportImpl implements EvalAdminSupport {
-	
+
+	@Setter
 	private EvaluationDao dao;
-	public void setDao(EvaluationDao dao) {
-		this.dao = dao;
-	}
-	
+
 	public List<EvalAdmin> getEvalAdmins() {
 		return dao.getAllEvalAdmins();
 	}

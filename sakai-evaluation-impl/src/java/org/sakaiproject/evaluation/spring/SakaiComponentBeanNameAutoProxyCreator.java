@@ -18,8 +18,14 @@ package org.sakaiproject.evaluation.spring;
 import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
 
 /**
- * Uses the Sakai component classloader when Spring creates transactional
- * proxies for evaluation beans.
+ * Bean-name transaction proxy creator for the legacy evaluation component
+ * context.
+ * <p>
+ * Evaluation still uses XML bean-name transaction proxying. In Sakai, those
+ * component beans must remain visible through the component classloader, so
+ * this class forces Spring's generated proxies to use that loader. Keep this
+ * limited to that classloader bridge; do not add DAO or transaction policy
+ * behavior here.
  */
 public class SakaiComponentBeanNameAutoProxyCreator extends BeanNameAutoProxyCreator {
 

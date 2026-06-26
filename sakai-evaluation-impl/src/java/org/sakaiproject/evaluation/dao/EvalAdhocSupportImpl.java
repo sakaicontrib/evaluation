@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -43,15 +44,11 @@ import lombok.extern.slf4j.Slf4j;
 public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
 
+   @Setter
    private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
-      this.dao = dao;
-   }
-   
+
+   @Setter
    private EvalSettings settings;
-   public void setSettings(EvalSettings settings) {
-      this.settings = settings;
-   }
 
 
    // USERS

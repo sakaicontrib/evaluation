@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,11 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
 {
 
+    @Setter
     private EvaluationDao dao;
-    public void setDao( EvaluationDao dao )
-    {
-        this.dao = dao;
-    }
 
     /*
      * (non-Javadoc)
