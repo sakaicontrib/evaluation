@@ -21,12 +21,14 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Impl
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalDaoInvokerImpl implements EvalDaoInvoker {
 
    @Setter
@@ -37,6 +39,7 @@ public class EvalDaoInvokerImpl implements EvalDaoInvoker {
     */
    public void invokeTransactionalAccess(Runnable toInvoke) {
       if (transactionManager == null) {
+         log.warn("transactionManager is not configured; running DAO callback outside a transaction");
          toInvoke.run();
          return;
       }
