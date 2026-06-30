@@ -84,7 +84,7 @@
             </p>
 
             <p th:text="#{modifyadhocgroup.message.members}">Enter usernames or emails, one per line.</p>
-            <textarea name="newMembers" rows="5" cols="80"></textarea>
+            <textarea name="newMembers" rows="5" cols="80" th:text="${prefillMembers}"></textarea>
 
             <p>
                 <input type="submit" th:value="${isNew} ? #{modifyadhocgroup.newsave} : #{modifyadhocgroup.update}"
@@ -93,10 +93,8 @@
         </div>
     </form>
 
-    <!-- Back link to the wizard if returnUrl is provided -->
-    <a th:if="${returnUrl != null and !returnUrl.isEmpty()}"
-       th:href="${returnUrl}"
-       th:text="#{modifyadhocgroup.backtoevalassign}">Back to Evaluation Group Assignments</a>
+    <a th:href="${returnUrl != null and !#strings.isEmpty(returnUrl)} ? ${returnUrl} : @{/control_adhoc_groups}"
+       th:text="#{general.command.cancel}">Cancel</a>
 
 </div>
 <th:block th:if="${mainFrameId != ''}">

@@ -120,6 +120,9 @@ public class SakaiSkinInterceptor implements HandlerInterceptor {
             if (isAdmin || canBegin) {
                 items.add(new NavItem("/control_email_templates", "controlemailtemplates.page.title", currentPath.startsWith("/control_email_templates")));
             }
+            if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_ADHOC_GROUPS)) && (isAdmin || canBegin)) {
+                items.add(new NavItem("/control_adhoc_groups", "controladhocgroups.page.title", currentPath.startsWith("/control_adhoc_groups")));
+            }
         }
         return items;
     }
