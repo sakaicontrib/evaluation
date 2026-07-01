@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
@@ -170,7 +171,9 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         if (id == null) {
             getHibernateTemplate().delete(object);
         } else {
-            delete(object.getClass(), id);
+            // Re-fetch by id so deleting a detached instance still works when the
+            // current session already contains another instance for the same row.
+            delete(Hibernate.getClass(object), id);
         }
     }
 
@@ -184,7 +187,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
     }
 
     private Serializable getPersistentId(Object object) {
-        ClassMetadata metadata = getSessionFactory().getClassMetadata(object.getClass());
+        ClassMetadata metadata = getSessionFactory().getClassMetadata(Hibernate.getClass(object));
         if (metadata == null) {
             throw new IllegalArgumentException("Could not get class metadata for this object, it may not be persistent: " + object);
         }

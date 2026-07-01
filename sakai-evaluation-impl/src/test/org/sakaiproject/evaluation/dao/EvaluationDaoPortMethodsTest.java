@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +73,59 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         Assert.assertNotNull( assignUsers );
         Assert.assertTrue(assignUsers.size() > 20);
         evaluationDao.findAll(EvalEmailTemplate.class);
+    }
+
+    @Test
+    public void testDeleteObjectAcceptsHibernateProxy() {
+        EvalTemplate template = new EvalTemplate(EvalTestDataLoad.ADMIN_USER_ID,
+                EvalConstants.TEMPLATE_TYPE_STANDARD, "DAO proxy delete template",
+                EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT);
+        template.setEid("dao-proxy-delete-template");
+        evaluationDao.save(template);
+        Long templateId = template.getId();
+
+        SessionFactory sessionFactory = applicationContext.getBean(
+                "org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory", SessionFactory.class);
+        Session session = sessionFactory.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        EvalTemplate templateProxy = session.load(EvalTemplate.class, templateId);
+        Assert.assertTrue(templateProxy instanceof HibernateProxy);
+
+        evaluationDao.delete(templateProxy);
+        session.flush();
+        session.clear();
+
+        Assert.assertNull(evaluationDao.findById(EvalTemplate.class, templateId));
+    }
+
+    @Test
+    public void testDeleteObjectHandlesDetachedDuplicateInSession() {
+        EvalTemplate detachedTemplate = new EvalTemplate(EvalTestDataLoad.ADMIN_USER_ID,
+                EvalConstants.TEMPLATE_TYPE_STANDARD, "DAO detached delete template",
+                EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT);
+        detachedTemplate.setEid("dao-detached-delete-template");
+        evaluationDao.save(detachedTemplate);
+        Long templateId = detachedTemplate.getId();
+
+        SessionFactory sessionFactory = applicationContext.getBean(
+                "org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory", SessionFactory.class);
+        Session session = sessionFactory.getCurrentSession();
+        session.flush();
+        session.evict(detachedTemplate);
+
+        EvalTemplate managedTemplate = evaluationDao.findById(EvalTemplate.class, templateId);
+        Assert.assertNotNull(managedTemplate);
+        Assert.assertNotSame(detachedTemplate, managedTemplate);
+        Assert.assertFalse(session.contains(detachedTemplate));
+        Assert.assertTrue(session.contains(managedTemplate));
+
+        evaluationDao.delete(detachedTemplate);
+        session.flush();
+        session.clear();
+
+        Assert.assertNull(evaluationDao.findById(EvalTemplate.class, templateId));
     }
 
     @Test
